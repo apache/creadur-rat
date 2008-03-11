@@ -1,0 +1,90 @@
+/*
+ * Copyright 2006 Robert Burrell Donkin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */ 
+package rat.report.claim.impl.xml;
+
+import junit.framework.TestCase;
+import rat.report.xml.MockXmlWriter;
+
+public class SimpleXmlClaimReporterTest extends TestCase {
+
+    MockXmlWriter mockWriter;
+    SimpleXmlClaimReporter reporter;
+    
+    protected void setUp() throws Exception {
+        super.setUp();
+        mockWriter = new MockXmlWriter();
+        reporter = new SimpleXmlClaimReporter(mockWriter);
+    }
+
+    protected void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    public void testClaimsAboutOneResource() throws Exception {
+        final String subject = "subject";
+        final String predicate = "predicate";
+        final String object = "object";
+        reporter.claim(subject, predicate, object, false);
+        assertEquals("Five calls made", 5, mockWriter.calls.size());
+        assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
+        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject, 1));
+        assertTrue("Third call is predicate element", mockWriter.isOpenElement(predicate, 2));
+        assertTrue("Forth call is object attribute", mockWriter.isAttribute("name", object, 3));    
+        assertTrue("Fifth call is close element", mockWriter.isCloseElement(4));    
+        final String predicateTwo = "another-predicate";
+        final String objectTwo = "another-object";
+        reporter.claim(subject, predicateTwo, objectTwo, false);
+        assertEquals("Another three calls made", 8, mockWriter.calls.size());
+        assertTrue("Sixth call is predicate element", mockWriter.isOpenElement(predicateTwo, 5));
+        assertTrue("Seventh call is object attribute", mockWriter.isAttribute("name", objectTwo, 6));    
+        assertTrue("Eighth call is close element", mockWriter.isCloseElement(7));    
+    }
+
+    public void testClaimsAboutTwoResource() throws Exception {
+        final String subject = "subject";
+        final String predicate = "predicate";
+        final String object = "object";
+        reporter.claim(subject, predicate, object, false);
+        assertEquals("Five calls made", 5, mockWriter.calls.size());
+        assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
+        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject, 1));
+        assertTrue("Third call is predicate element", mockWriter.isOpenElement(predicate, 2));
+        assertTrue("Forth call is object attribute", mockWriter.isAttribute("name", object, 3));    
+        assertTrue("Fifth call is close element", mockWriter.isCloseElement(4));    
+        final String subjectTwo = "another-subject";
+        reporter.claim(subjectTwo, predicate, object, false);
+        assertEquals("Another found calls made", 11, mockWriter.calls.size());
+        assertTrue("Sixth call is close element", mockWriter.isCloseElement(5));  
+        assertTrue("Seventh call is open element 'resource'", mockWriter.isOpenElement("resource", 6));
+        assertTrue("Eighth call is name attribute", mockWriter.isAttribute("name", subjectTwo, 7));
+        assertTrue("Nineth call is predicate element", mockWriter.isOpenElement(predicate, 8));
+        assertTrue("Tenth call is object attribute", mockWriter.isAttribute("name", object, 9));    
+        assertTrue("Eleventh call is close element", mockWriter.isCloseElement(10));
+    }
+
+    public void testLiteralClaim() throws Exception {
+        final String subject = "subject";
+        final String predicate = "predicate";
+        final String object = "object";
+        reporter.claim(subject, predicate, object, true);
+        assertEquals("Five calls made", 5, mockWriter.calls.size());
+        assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
+        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject, 1));
+        assertTrue("Third call is predicate element", mockWriter.isOpenElement(predicate, 2));
+        assertTrue("Forth call is object content", mockWriter.isContent(object, 3));    
+        assertTrue("Fifth call is close element", mockWriter.isCloseElement(4));  
+    }
+}
