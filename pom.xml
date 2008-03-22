@@ -29,12 +29,12 @@ RAT cannot be built from this pom.
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.google.code.p.arat</groupId>
+  <groupId>org.apache.rat</groupId>
   <artifactId>rat-lib</artifactId>
   <packaging>jar</packaging>
   <version>0.5.2-SNAPSHOT</version>
   <name>A Release Audit Tool, Library</name>
-  <url>http://code.google.com/p/arat/</url>
+  <url>http://incubator.apache.org/rat</url>
   <description>
 Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
@@ -53,6 +53,10 @@ Note that binary compatibility is not gauranteed between 0.x releases.
     	<distribution>repo</distribution>
   	</license>
   </licenses>
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org</url>
+  </organization>
   <dependencies>
     <dependency>
       <groupId>commons-collections</groupId>
@@ -118,11 +122,11 @@ Note that binary compatibility is not gauranteed between 0.x releases.
               <Main-Class>rat.Report</Main-Class>
               <Extension-Name>rat</Extension-Name>
               <Specification-Title>Release Audit Tool</Specification-Title>
-              <Specification-Vendor>aRAT</Specification-Vendor>
+              <Specification-Vendor>apache.org</Specification-Vendor>
               <Specification-Version>${project.version}</Specification-Version>
-              <Implementation-Vendor-Id>code.google.com/p/arat</Implementation-Vendor-Id>
+              <Implementation-Vendor-Id>apache.org</Implementation-Vendor-Id>
               <Implementation-Title>Release Audit Tool</Implementation-Title>
-              <Implementation-Vendor>aRAT</Implementation-Vendor>
+              <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
               <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
           </archive>
@@ -131,9 +135,22 @@ Note that binary compatibility is not gauranteed between 0.x releases.
     </plugins>
   </build>
 
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://issues.apache.org/jira/browse/RAT</url>
+  </issueManagement>
+    <mailingLists>
+    <mailingList>
+      <name>RAT </name>
+      <subscribe>rat-dev-unsubscribe@incubator.apache.org</subscribe>
+      <unsubscribe>rat-dev-unsubscribe@incubator.apache.org</unsubscribe>
+      <post>rat-dev@incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/incubator-rat-dev/</archive>
+    </mailingList>
+  </mailingLists>
   <scm>
-    <connection>scm:svn:http://arat.googlecode.com/svn/trunk/</connection>
-    <developerConnection>scm:svn:https://arat.googlecode.com/svn/trunk/</developerConnection>
-    <url>http://arat.googlecode.com/svn/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/</url>
   </scm>
 </project>
