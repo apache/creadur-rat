@@ -1,5 +1,12 @@
                             Release Audit Tool
                             ==================
+
+Apache RAT is an effort undergoing incubation at The Apache Software Foundation (ASF), 
+sponsored by the Incubator PMC. Incubation is required of all newly accepted projects 
+until a further review indicates that the infrastructure, communications, and decision 
+making process have stabilized in a manner consistent with other successful ASF projects.
+While incubation status is not necessarily a reflection of the completeness or stability 
+of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
       
 Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
@@ -32,8 +39,7 @@ is not gauranteed between 0.x releases. The XML output format is not yet in it's
 final form and so library users are recommended to either use the supplied 
 stylesheets or keep in close touch with the code.
 
-RAT is kindly hosted by googlecode: http://code.google.com/p/arat/. Read (even) more
-on http://groups.google.com/group/discuss-a-release-audit-tool. 
+RAT is in Incubation at Apache: http://incubator.apache.org/rat. 
 
 Artifacts
 =========
@@ -46,6 +52,7 @@ Artifacts
 After 0.5.1
 ===========
  * Added reporting capability to recursive rat script
+ * Moved to the Incubator@Apache
 
 RAT 0.5.1
 =========
