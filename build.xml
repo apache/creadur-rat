@@ -31,8 +31,8 @@
         <property name='minor.version' value='0.5'/>
         <property name='point.version' value='2-SNAPSHOT'/>
         <property name='version' value='${minor.version}.${point.version}'/>
-        <property name='vendor.name' value='aRAT'/>
-        <property name='vendor.id' value='code.google.com/p/arat'/>
+        <property name='vendor.name' value='Apache Software Foundation'/>
+        <property name='vendor.id' value='apache.org'/>
         <property name='jar.name' value='rat-${version}.jar'/>
         <property name='lib.jar.name' value='rat-lib-${version}.jar'/>
         <property name='lib.all.jar.name' value='rat-lib-all-${version}.jar'/>
@@ -71,6 +71,7 @@
        <include name="LICENSE.txt"/>
        <include name="NOTICE.txt"/>
        <include name="RELEASE_NOTES.txt"/>
+       <include name="DISLAIMER.txt"/>   
        <include name="ant-task-examples.xml"/>
        <include name="build.xml"/>
        <include name="pom.xml"/>
@@ -141,6 +142,7 @@
                 <mkdir dir='${bin.meta}' />
                 <copy file="LICENSE.txt" todir="${bin.meta}" />
                 <copy file="NOTICE.txt" todir="${bin.meta}" />
+                <copy file="DISCLAIMER.txt" todir="${bin.meta}" />   
                 <copy todir="${bin}">
                         <fileset dir="${src}" includes="**/antlib.xml" />
                         <fileset dir="${src}" includes="**/*.xsl" />
