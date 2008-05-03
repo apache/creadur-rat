@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.header;
+package org.apache.rat.header;
 
 import java.io.IOException;
 import java.io.LineNumberReader;

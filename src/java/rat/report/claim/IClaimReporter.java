@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.report.claim;
+package org.apache.rat.report.claim;
 
 import rat.report.RatReportFailedException;
 

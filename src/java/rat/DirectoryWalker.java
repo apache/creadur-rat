@@ -17,7 +17,7 @@
  * under the License.                                           *
  */
 
-package rat;
+package org.apache.rat;
 
 import java.io.File;
 import java.util.Arrays;

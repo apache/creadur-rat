@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.analysis.util;
+package org.apache.rat.analysis.util;
 
 import junit.framework.TestCase;
 import rat.analysis.IHeaderMatcher;

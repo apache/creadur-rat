@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat;
+package org.apache.rat;
 
 /**
  * Indicates that a report has failed in a fatal manner.

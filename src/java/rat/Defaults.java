@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat;
+package org.apache.rat;
 
 import java.io.InputStream;
 

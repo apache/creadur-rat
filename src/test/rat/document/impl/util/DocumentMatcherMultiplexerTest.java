@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.document.impl.util;
+package org.apache.rat.document.impl.util;
 
 import junit.framework.TestCase;
 import rat.document.IDocumentMatcher;

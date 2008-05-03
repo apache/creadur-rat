@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.license;
+package org.apache.rat.license;
 
 public class W3CSoftwareLicenseFamily implements ILicenseFamily {
 

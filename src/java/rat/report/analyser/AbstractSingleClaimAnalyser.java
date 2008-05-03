@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.report.analyser;
+package org.apache.rat.report.analyser;
 
 import rat.document.IDocument;
 import rat.document.IDocumentAnalyser;

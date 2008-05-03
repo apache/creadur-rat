@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.document.impl;
+package org.apache.rat.document.impl;
 
 import java.io.IOException;
 import java.io.Reader;

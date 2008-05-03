@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.analysis.license;
+package org.apache.rat.analysis.license;
 
 import junit.framework.TestCase;
 import rat.report.claim.impl.xml.MockClaimReporter;

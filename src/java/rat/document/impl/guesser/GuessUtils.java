@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.document.impl.guesser;
+package org.apache.rat.document.impl.guesser;
 
 import java.util.Locale;
 

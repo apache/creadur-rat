@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.test.utils;
+package org.apache.rat.test.utils;
 
 import java.util.Collection;
 import java.util.Iterator;

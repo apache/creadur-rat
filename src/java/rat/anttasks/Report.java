@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.anttasks;
+package org.apache.rat.anttasks;
 
 import java.io.File;
 import java.io.FileWriter;

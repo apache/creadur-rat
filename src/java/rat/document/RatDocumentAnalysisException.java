@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.document;
+package org.apache.rat.document;
 
 import org.apache.commons.lang.exception.NestableException;
 

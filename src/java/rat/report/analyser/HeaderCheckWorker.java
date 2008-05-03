@@ -1,4 +1,4 @@
-package rat.report.analyser;
+package org.apache.rat.report.analyser;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one   *
  * or more contributor license agreements.  See the NOTICE file *

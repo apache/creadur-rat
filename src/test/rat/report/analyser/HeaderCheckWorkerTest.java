@@ -17,7 +17,7 @@
  * under the License.                                           *
  */ 
 
-package rat.report.analyser;
+package org.apache.rat.report.analyser;
 
 import java.io.StringReader;
 

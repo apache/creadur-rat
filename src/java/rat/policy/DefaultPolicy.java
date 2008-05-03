@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.policy;
+package org.apache.rat.policy;
 
 import java.util.Arrays;
 

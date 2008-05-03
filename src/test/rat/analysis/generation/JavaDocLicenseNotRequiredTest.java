@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.analysis.generation;
+package org.apache.rat.analysis.generation;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package rat.document.impl.zip;
+package org.apache.rat.document.impl.zip;
 
 import java.util.Collection;
 import java.util.Iterator;
