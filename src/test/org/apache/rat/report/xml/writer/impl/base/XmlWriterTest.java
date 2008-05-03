@@ -21,8 +21,8 @@ package org.apache.rat.report.xml.writer.impl.base;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
-import rat.report.xml.writer.InvalidXmlException;
-import rat.report.xml.writer.OperationNotAllowedException;
+import org.apache.rat.report.xml.writer.InvalidXmlException;
+import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 
 public class XmlWriterTest extends TestCase {
 

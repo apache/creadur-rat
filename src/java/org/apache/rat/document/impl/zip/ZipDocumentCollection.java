@@ -21,7 +21,7 @@ package org.apache.rat.document.impl.zip;
 import java.util.Collection;
 import java.util.Iterator;
 
-import rat.document.IDocumentCollection;
+import org.apache.rat.document.IDocumentCollection;
 
 abstract class ZipDocumentCollection  implements IDocumentCollection {
 

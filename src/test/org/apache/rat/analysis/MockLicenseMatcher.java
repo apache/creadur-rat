@@ -21,7 +21,7 @@ package org.apache.rat.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.IClaimReporter;
 
 public class MockLicenseMatcher implements IHeaderMatcher {
 

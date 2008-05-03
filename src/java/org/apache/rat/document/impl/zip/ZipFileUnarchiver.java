@@ -21,8 +21,8 @@ package org.apache.rat.document.impl.zip;
 import java.io.File;
 import java.io.IOException;
 
-import rat.document.IDocumentCollection;
-import rat.document.IFileUnarchiver;
+import org.apache.rat.document.IDocumentCollection;
+import org.apache.rat.document.IFileUnarchiver;
 
 public class ZipFileUnarchiver implements IFileUnarchiver {
 

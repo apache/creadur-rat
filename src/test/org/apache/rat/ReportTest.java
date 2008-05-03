@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
-import rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 
 public class ReportTest extends TestCase {
 

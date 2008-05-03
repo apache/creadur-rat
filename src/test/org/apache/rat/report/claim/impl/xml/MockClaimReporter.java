@@ -21,8 +21,8 @@ package org.apache.rat.report.claim.impl.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-import rat.report.RatReportFailedException;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaimReporter;
 
 public class MockClaimReporter implements IClaimReporter {
 

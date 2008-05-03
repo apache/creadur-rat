@@ -18,11 +18,11 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import rat.analysis.Claims;
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.RatHeaderAnalysisException;
-import rat.license.Apache20LicenseFamily;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.Claims;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.license.Apache20LicenseFamily;
+import org.apache.rat.report.claim.IClaimReporter;
 
 /**
  * Matches Apache Software License, Version 2.0

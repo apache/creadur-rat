@@ -22,9 +22,9 @@ package org.apache.rat.report.analyser;
 import java.io.StringReader;
 
 import junit.framework.TestCase;
-import rat.analysis.license.ApacheSoftwareLicense20;
-import rat.report.analyser.HeaderCheckWorker;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
+import org.apache.rat.report.analyser.HeaderCheckWorker;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class HeaderCheckWorkerTest extends TestCase {
 

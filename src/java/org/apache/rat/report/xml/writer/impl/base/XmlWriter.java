@@ -26,9 +26,9 @@ import java.util.Set;
 
 import org.apache.commons.collections.ArrayStack;
 
-import rat.report.xml.writer.IXmlWriter;
-import rat.report.xml.writer.InvalidXmlException;
-import rat.report.xml.writer.OperationNotAllowedException;
+import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.InvalidXmlException;
+import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 
 /**
  * <p>Lightweight {@link IXmlWriter} implementation.</p>

@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Locale;
 
-import rat.document.IDocument;
-import rat.document.IDocumentMatcher;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentMatcher;
 
 /**
  * TODO: factor into MIME guesser and MIME->binary guesser

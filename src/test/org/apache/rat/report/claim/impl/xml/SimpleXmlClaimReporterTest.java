@@ -19,7 +19,7 @@
 package org.apache.rat.report.claim.impl.xml;
 
 import junit.framework.TestCase;
-import rat.report.xml.MockXmlWriter;
+import org.apache.rat.report.xml.MockXmlWriter;
 
 public class SimpleXmlClaimReporterTest extends TestCase {
 

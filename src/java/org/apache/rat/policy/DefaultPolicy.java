@@ -20,15 +20,15 @@ package org.apache.rat.policy;
 
 import java.util.Arrays;
 
-import rat.analysis.Claims;
-import rat.license.Apache20LicenseFamily;
-import rat.license.ILicenseFamily;
-import rat.license.ModifiedBSDLicenseFamily;
-import rat.license.OASISLicenseFamily;
-import rat.license.W3CDocumentLicenseFamily;
-import rat.license.W3CSoftwareLicenseFamily;
-import rat.report.RatReportFailedException;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.Claims;
+import org.apache.rat.license.Apache20LicenseFamily;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.ModifiedBSDLicenseFamily;
+import org.apache.rat.license.OASISLicenseFamily;
+import org.apache.rat.license.W3CDocumentLicenseFamily;
+import org.apache.rat.license.W3CSoftwareLicenseFamily;
+import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaimReporter;
 
 public class DefaultPolicy implements IClaimReporter {
 

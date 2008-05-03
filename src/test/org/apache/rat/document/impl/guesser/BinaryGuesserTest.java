@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
-import rat.document.MockDocument;
+import org.apache.rat.document.MockDocument;
 import junit.framework.TestCase;
 
 public class BinaryGuesserTest extends TestCase {

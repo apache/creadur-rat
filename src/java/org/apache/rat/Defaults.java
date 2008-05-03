@@ -20,16 +20,16 @@ package org.apache.rat;
 
 import java.io.InputStream;
 
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.generation.GeneratedLicenseNotRequired;
-import rat.analysis.generation.JavaDocLicenseNotRequired;
-import rat.analysis.license.ApacheSoftwareLicense20;
-import rat.analysis.license.DojoLicenseHeader;
-import rat.analysis.license.OASISLicense;
-import rat.analysis.license.TMF854LicenseHeader;
-import rat.analysis.license.W3CDocLicense;
-import rat.analysis.license.W3CLicense;
-import rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.generation.GeneratedLicenseNotRequired;
+import org.apache.rat.analysis.generation.JavaDocLicenseNotRequired;
+import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
+import org.apache.rat.analysis.license.DojoLicenseHeader;
+import org.apache.rat.analysis.license.OASISLicense;
+import org.apache.rat.analysis.license.TMF854LicenseHeader;
+import org.apache.rat.analysis.license.W3CDocLicense;
+import org.apache.rat.analysis.license.W3CLicense;
+import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 
 
 

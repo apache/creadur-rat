@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import rat.document.impl.zip.ZipDocumentFactory;
+import org.apache.rat.document.impl.zip.ZipDocumentFactory;
 
 public class DocumentUtilsTest extends TestCase {
 

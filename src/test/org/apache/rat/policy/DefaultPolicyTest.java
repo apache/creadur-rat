@@ -18,12 +18,12 @@
  */ 
 package org.apache.rat.policy;
 
-import rat.analysis.Claims;
-import rat.license.Apache20LicenseFamily;
-import rat.license.OASISLicenseFamily;
-import rat.license.W3CDocumentLicenseFamily;
-import rat.license.W3CSoftwareLicenseFamily;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.analysis.Claims;
+import org.apache.rat.license.Apache20LicenseFamily;
+import org.apache.rat.license.OASISLicenseFamily;
+import org.apache.rat.license.W3CDocumentLicenseFamily;
+import org.apache.rat.license.W3CSoftwareLicenseFamily;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import junit.framework.TestCase;
 
 public class DefaultPolicyTest extends TestCase {

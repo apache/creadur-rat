@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.report.claim;
 
-import rat.report.RatReportFailedException;
+import org.apache.rat.report.RatReportFailedException;
 
 public interface IClaimReporter {
 

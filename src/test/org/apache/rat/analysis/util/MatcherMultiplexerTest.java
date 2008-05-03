@@ -19,10 +19,10 @@
 package org.apache.rat.analysis.util;
 
 import junit.framework.TestCase;
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.MockLicenseMatcher;
-import rat.analysis.util.HeaderMatcherMultiplexer;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.MockLicenseMatcher;
+import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class MatcherMultiplexerTest extends TestCase {
 

@@ -21,8 +21,8 @@ package org.apache.rat.document.impl.zip;
 import java.io.File;
 import java.io.IOException;
 
-import rat.document.IDocumentCollection;
-import rat.document.impl.CompositeDocument;
+import org.apache.rat.document.IDocumentCollection;
+import org.apache.rat.document.impl.CompositeDocument;
 
 /**
  * Document which is a zip file.

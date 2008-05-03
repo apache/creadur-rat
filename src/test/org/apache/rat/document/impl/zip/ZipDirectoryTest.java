@@ -24,8 +24,8 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 
 import junit.framework.TestCase;
-import rat.document.MockDocument;
-import rat.document.MockDocumentCollection;
+import org.apache.rat.document.MockDocument;
+import org.apache.rat.document.MockDocumentCollection;
 
 public class ZipDirectoryTest extends TestCase {
     

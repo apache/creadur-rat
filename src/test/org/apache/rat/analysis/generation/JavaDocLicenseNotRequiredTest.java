@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 
 import junit.framework.TestCase;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class JavaDocLicenseNotRequiredTest extends TestCase {
 

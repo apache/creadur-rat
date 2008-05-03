@@ -18,9 +18,9 @@
  */ 
 package org.apache.rat.report.analyser;
 
-import rat.document.IDocument;
-import rat.document.RatDocumentAnalysisException;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.report.claim.IClaimReporter;
 
 public class ConstantClaimAnalyser extends AbstractSingleClaimAnalyser {
 

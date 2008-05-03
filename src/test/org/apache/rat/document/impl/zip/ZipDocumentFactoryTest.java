@@ -20,8 +20,8 @@ package org.apache.rat.document.impl.zip;
 
 import java.io.File;
 
-import rat.document.IDocumentCollection;
-import rat.test.utils.RATCase;
+import org.apache.rat.document.IDocumentCollection;
+import org.apache.rat.test.utils.RATCase;
 
 public class ZipDocumentFactoryTest extends RATCase {
 

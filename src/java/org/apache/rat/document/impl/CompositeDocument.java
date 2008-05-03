@@ -21,8 +21,8 @@ package org.apache.rat.document.impl;
 import java.io.IOException;
 import java.io.Reader;
 
-import rat.document.CompositeDocumentException;
-import rat.document.IDocument;
+import org.apache.rat.document.CompositeDocumentException;
+import org.apache.rat.document.IDocument;
 
 /**
  * Composed from a set of archived documents.

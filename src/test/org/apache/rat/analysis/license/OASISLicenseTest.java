@@ -24,7 +24,7 @@ import java.io.FileReader;
 import java.io.StringReader;
 
 import junit.framework.TestCase;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class OASISLicenseTest extends TestCase {
     

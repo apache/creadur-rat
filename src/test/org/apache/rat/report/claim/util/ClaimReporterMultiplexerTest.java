@@ -18,8 +18,8 @@
  */ 
 package org.apache.rat.report.claim.util;
 
-import rat.report.claim.IClaimReporter;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import junit.framework.TestCase;
 
 public class ClaimReporterMultiplexerTest extends TestCase {

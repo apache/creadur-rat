@@ -21,7 +21,7 @@ package org.apache.rat.analysis.generation;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class GeneratedLicenseNotRequiredTest extends TestCase {
 

@@ -18,11 +18,11 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import rat.analysis.Claims;
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.RatHeaderAnalysisException;
-import rat.license.ModifiedBSDLicenseFamily;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.Claims;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.license.ModifiedBSDLicenseFamily;
+import org.apache.rat.report.claim.IClaimReporter;
 
 
 public class DojoLicenseHeader extends BaseLicense implements IHeaderMatcher {

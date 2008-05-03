@@ -21,7 +21,7 @@ package org.apache.rat.report.xml.writer;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
-import rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 public class XmlWriterUtilsTest extends TestCase {
 

@@ -26,9 +26,9 @@ import junit.framework.TestCase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IteratorUtils;
 
-import rat.document.DocumentUtils;
-import rat.document.IDocument;
-import rat.document.IDocumentCollection;
+import org.apache.rat.document.DocumentUtils;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentCollection;
 
 public abstract class RATCase extends TestCase {
 

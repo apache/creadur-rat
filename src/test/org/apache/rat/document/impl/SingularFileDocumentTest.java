@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.Reader;
 
 import junit.framework.TestCase;
-import rat.document.UnreadableArchiveException;
+import org.apache.rat.document.UnreadableArchiveException;
 
 public class SingularFileDocumentTest extends TestCase {
 

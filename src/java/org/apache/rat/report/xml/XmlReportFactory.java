@@ -18,16 +18,16 @@
  */ 
 package org.apache.rat.report.xml;
 
-import rat.analysis.IHeaderMatcher;
-import rat.document.IDocumentAnalyser;
-import rat.license.ILicenseFamily;
-import rat.policy.DefaultPolicy;
-import rat.report.RatReport;
-import rat.report.analyser.DefaultAnalyserFactory;
-import rat.report.claim.IClaimReporter;
-import rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import rat.report.claim.util.ClaimReporterMultiplexer;
-import rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.policy.DefaultPolicy;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.analyser.DefaultAnalyserFactory;
+import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
+import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
+import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
  * Creates reports.

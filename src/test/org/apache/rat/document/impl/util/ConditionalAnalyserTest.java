@@ -18,9 +18,9 @@
  */ 
 package org.apache.rat.document.impl.util;
 
-import rat.document.MockDocument;
-import rat.document.MockDocumentAnalyser;
-import rat.document.MockDocumentMatcher;
+import org.apache.rat.document.MockDocument;
+import org.apache.rat.document.MockDocumentAnalyser;
+import org.apache.rat.document.MockDocumentMatcher;
 import junit.framework.TestCase;
 
 public class ConditionalAnalyserTest extends TestCase {

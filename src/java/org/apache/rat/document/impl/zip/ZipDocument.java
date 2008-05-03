@@ -25,9 +25,9 @@ import java.io.Reader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import rat.document.IDocument;
-import rat.document.IDocumentCollection;
-import rat.document.UnreadableArchiveException;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentCollection;
+import org.apache.rat.document.UnreadableArchiveException;
 
 class ZipDocument implements IDocument {
 

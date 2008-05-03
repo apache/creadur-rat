@@ -23,12 +23,12 @@ import java.io.StringWriter;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
-import rat.DirectoryWalker;
-import rat.document.IDocumentAnalyser;
-import rat.report.analyser.DefaultAnalyserFactory;
-import rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import rat.report.xml.writer.IXmlWriter;
-import rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.DirectoryWalker;
+import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.report.analyser.DefaultAnalyserFactory;
+import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
+import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 public class XmlReportTest extends TestCase {
 

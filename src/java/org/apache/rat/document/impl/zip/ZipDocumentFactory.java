@@ -29,7 +29,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.collections.EnumerationUtils;
 
-import rat.document.IDocumentCollection;
+import org.apache.rat.document.IDocumentCollection;
 
 public class ZipDocumentFactory {
 

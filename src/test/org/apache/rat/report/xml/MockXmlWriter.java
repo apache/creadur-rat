@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class MockXmlWriter implements IXmlWriter {
 

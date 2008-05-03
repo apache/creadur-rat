@@ -23,9 +23,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import rat.document.IDocument;
-import rat.document.IDocumentCollection;
-import rat.document.IFileUnarchiver;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentCollection;
+import org.apache.rat.document.IFileUnarchiver;
 
 /**
  * Document wrapping a file of undetermined composition.

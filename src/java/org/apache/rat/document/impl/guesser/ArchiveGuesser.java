@@ -20,8 +20,8 @@ package org.apache.rat.document.impl.guesser;
 
 import java.util.Locale;
 
-import rat.document.IDocument;
-import rat.document.IDocumentMatcher;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentMatcher;
 
 public class ArchiveGuesser implements IDocumentMatcher {
     

@@ -21,8 +21,8 @@ package org.apache.rat.document.impl.guesser;
 import java.util.Arrays;
 import java.util.List;
 
-import rat.document.IDocument;
-import rat.document.IDocumentMatcher;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentMatcher;
 
 public class NoteGuesser implements IDocumentMatcher {
 

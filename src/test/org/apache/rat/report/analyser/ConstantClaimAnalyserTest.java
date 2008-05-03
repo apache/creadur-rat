@@ -19,9 +19,9 @@
 package org.apache.rat.report.analyser;
 
 import junit.framework.TestCase;
-import rat.document.MockDocument;
-import rat.report.claim.impl.xml.MockClaimReporter;
-import rat.report.claim.impl.xml.MockClaimReporter.Claim;
+import org.apache.rat.document.MockDocument;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter.Claim;
 
 public class ConstantClaimAnalyserTest extends TestCase {
 

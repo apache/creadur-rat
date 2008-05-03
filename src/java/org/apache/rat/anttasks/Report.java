@@ -35,11 +35,11 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 import org.apache.tools.ant.util.FileUtils;
 
-import rat.Defaults;
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.util.HeaderMatcherMultiplexer;
-import rat.license.ILicenseFamily;
-import rat.report.RatReportFailedException;
+import org.apache.rat.Defaults;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.report.RatReportFailedException;
 
 /**
  * A basic Ant task that generates a report on all files specified by

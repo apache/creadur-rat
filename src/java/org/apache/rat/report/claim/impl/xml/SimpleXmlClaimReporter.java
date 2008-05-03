@@ -20,9 +20,9 @@ package org.apache.rat.report.claim.impl.xml;
 
 import java.io.IOException;
 
-import rat.report.RatReportFailedException;
-import rat.report.claim.IClaimReporter;
-import rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class SimpleXmlClaimReporter implements IClaimReporter {
 

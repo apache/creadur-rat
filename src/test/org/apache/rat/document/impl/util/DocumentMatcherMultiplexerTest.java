@@ -19,9 +19,9 @@
 package org.apache.rat.document.impl.util;
 
 import junit.framework.TestCase;
-import rat.document.IDocumentMatcher;
-import rat.document.MockDocument;
-import rat.document.MockDocumentMatcher;
+import org.apache.rat.document.IDocumentMatcher;
+import org.apache.rat.document.MockDocument;
+import org.apache.rat.document.MockDocumentMatcher;
 
 public class DocumentMatcherMultiplexerTest extends TestCase {
 

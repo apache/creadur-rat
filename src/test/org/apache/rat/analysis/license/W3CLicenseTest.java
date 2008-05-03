@@ -19,7 +19,7 @@
 package org.apache.rat.analysis.license;
 
 import junit.framework.TestCase;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class W3CLicenseTest extends TestCase {
 

@@ -20,12 +20,12 @@ package org.apache.rat.report.xml;
 
 import java.io.IOException;
 
-import rat.document.IDocument;
-import rat.document.IDocumentAnalyser;
-import rat.document.RatDocumentAnalysisException;
-import rat.report.RatReport;
-import rat.report.RatReportFailedException;
-import rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.xml.writer.IXmlWriter;
 
 class XmlReport implements RatReport {
    

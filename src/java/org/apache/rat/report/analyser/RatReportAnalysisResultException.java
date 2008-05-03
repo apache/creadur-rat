@@ -18,8 +18,8 @@
  */ 
 package org.apache.rat.report.analyser;
 
-import rat.document.RatDocumentAnalysisException;
-import rat.report.RatReportFailedException;
+import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.report.RatReportFailedException;
 
 public class RatReportAnalysisResultException extends RatDocumentAnalysisException {
     

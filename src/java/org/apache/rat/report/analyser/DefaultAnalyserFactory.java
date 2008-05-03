@@ -18,17 +18,17 @@
  */ 
 package org.apache.rat.report.analyser;
 
-import rat.analysis.IHeaderMatcher;
-import rat.document.IDocumentAnalyser;
-import rat.document.IDocumentMatcher;
-import rat.document.impl.guesser.ArchiveGuesser;
-import rat.document.impl.guesser.BinaryGuesser;
-import rat.document.impl.guesser.NoteGuesser;
-import rat.document.impl.util.ConditionalAnalyser;
-import rat.document.impl.util.DocumentAnalyserMultiplexer;
-import rat.document.impl.util.DocumentMatcherMultiplexer;
-import rat.document.impl.util.MatchNegator;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.IDocumentMatcher;
+import org.apache.rat.document.impl.guesser.ArchiveGuesser;
+import org.apache.rat.document.impl.guesser.BinaryGuesser;
+import org.apache.rat.document.impl.guesser.NoteGuesser;
+import org.apache.rat.document.impl.util.ConditionalAnalyser;
+import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
+import org.apache.rat.document.impl.util.DocumentMatcherMultiplexer;
+import org.apache.rat.document.impl.util.MatchNegator;
+import org.apache.rat.report.claim.IClaimReporter;
 
 /**
  * Creates default analysers.

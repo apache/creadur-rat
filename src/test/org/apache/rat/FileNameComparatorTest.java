@@ -20,7 +20,7 @@ package org.apache.rat;
 
 import java.io.File;
 
-import rat.FileNameComparator;
+import org.apache.rat.FileNameComparator;
 
 import junit.framework.TestCase;
 

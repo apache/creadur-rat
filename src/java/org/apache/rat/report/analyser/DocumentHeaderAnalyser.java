@@ -21,12 +21,12 @@ package org.apache.rat.report.analyser;
 import java.io.IOException;
 import java.io.Reader;
 
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.RatHeaderAnalysisException;
-import rat.document.IDocument;
-import rat.document.IDocumentAnalyser;
-import rat.document.RatDocumentAnalysisException;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.report.claim.IClaimReporter;
 
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 

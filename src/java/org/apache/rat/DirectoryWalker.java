@@ -23,12 +23,12 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import rat.document.IDocument;
-import rat.document.impl.FileDocument;
-import rat.document.impl.zip.ZipFileUnarchiver;
-import rat.report.IReportable;
-import rat.report.RatReport;
-import rat.report.RatReportFailedException;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.zip.ZipFileUnarchiver;
+import org.apache.rat.report.IReportable;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.RatReportFailedException;
 
 /**
  * Walks directories.

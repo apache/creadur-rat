@@ -18,10 +18,10 @@
  */ 
 package org.apache.rat.report.analyser;
 
-import rat.document.MockArchiveDocument;
-import rat.document.MockDocument;
-import rat.document.MockDocumentCollection;
-import rat.report.claim.impl.xml.MockClaimReporter;
+import org.apache.rat.document.MockArchiveDocument;
+import org.apache.rat.document.MockDocument;
+import org.apache.rat.document.MockDocumentCollection;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import junit.framework.TestCase;
 
 public class ReadableArchiveAnalyserTest extends TestCase {

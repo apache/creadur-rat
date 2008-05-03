@@ -18,8 +18,8 @@
  */ 
 package org.apache.rat.report.claim.util;
 
-import rat.report.RatReportFailedException;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaimReporter;
 
 public class ClaimReporterMultiplexer implements IClaimReporter {
 

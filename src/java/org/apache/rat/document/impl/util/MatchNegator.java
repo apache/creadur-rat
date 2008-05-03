@@ -18,9 +18,9 @@
  */ 
 package org.apache.rat.document.impl.util;
 
-import rat.document.IDocument;
-import rat.document.IDocumentMatcher;
-import rat.document.RatDocumentAnalysisException;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentMatcher;
+import org.apache.rat.document.RatDocumentAnalysisException;
 
 /**
  * Negatives the result of the given matcher.

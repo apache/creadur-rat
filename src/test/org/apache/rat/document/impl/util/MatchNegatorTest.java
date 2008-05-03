@@ -18,8 +18,8 @@
  */ 
 package org.apache.rat.document.impl.util;
 
-import rat.document.MockDocument;
-import rat.document.MockDocumentMatcher;
+import org.apache.rat.document.MockDocument;
+import org.apache.rat.document.MockDocumentMatcher;
 import junit.framework.TestCase;
 
 public class MatchNegatorTest extends TestCase {

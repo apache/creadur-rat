@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.report;
 
-import rat.document.IDocument;
+import org.apache.rat.document.IDocument;
 
 public interface RatReport {
 

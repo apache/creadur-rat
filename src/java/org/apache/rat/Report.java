@@ -30,14 +30,14 @@ import java.io.Writer;
 
 import javax.xml.transform.TransformerConfigurationException;
 
-import rat.analysis.IHeaderMatcher;
-import rat.license.ILicenseFamily;
-import rat.report.IReportable;
-import rat.report.RatReport;
-import rat.report.RatReportFailedException;
-import rat.report.xml.XmlReportFactory;
-import rat.report.xml.writer.IXmlWriter;
-import rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.report.IReportable;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.xml.XmlReportFactory;
+import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 public class Report {
 

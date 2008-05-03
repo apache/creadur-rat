@@ -22,10 +22,10 @@ import java.io.File;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
-import rat.document.IDocumentAnalyser;
-import rat.document.impl.MonolithicFileDocument;
-import rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.impl.MonolithicFileDocument;
+import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 public class AnalyserFactoryTest extends TestCase {
 

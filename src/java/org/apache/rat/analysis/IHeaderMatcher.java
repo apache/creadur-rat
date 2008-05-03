@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.analysis;
 
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.IClaimReporter;
 
 /**
  * Matches text headers to known licenses.

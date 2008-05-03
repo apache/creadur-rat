@@ -23,11 +23,11 @@ import java.io.StringWriter;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
-import rat.DirectoryWalker;
-import rat.analysis.MockLicenseMatcher;
-import rat.report.RatReport;
-import rat.report.xml.writer.IXmlWriter;
-import rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.DirectoryWalker;
+import org.apache.rat.analysis.MockLicenseMatcher;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 public class XmlReportFactoryTest extends TestCase {
 

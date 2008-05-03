@@ -20,10 +20,10 @@ package org.apache.rat.report.analyser;
 
 import java.io.IOException;
 
-import rat.document.IDocument;
-import rat.document.IDocumentCollection;
-import rat.document.RatDocumentAnalysisException;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentCollection;
+import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.report.claim.IClaimReporter;
 
 public final class ReadableArchiveAnalyser extends AbstractSingleClaimAnalyser {
 

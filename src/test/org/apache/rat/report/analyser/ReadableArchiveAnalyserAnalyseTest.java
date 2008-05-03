@@ -22,9 +22,9 @@ import java.io.File;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
-import rat.document.impl.zip.ZipFileDocument;
-import rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.document.impl.zip.ZipFileDocument;
+import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 public class ReadableArchiveAnalyserAnalyseTest extends TestCase {
 

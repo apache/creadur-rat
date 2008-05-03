@@ -20,11 +20,11 @@ package org.apache.rat.analysis.license;
 
 import java.util.regex.Pattern;
 
-import rat.analysis.Claims;
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.RatHeaderAnalysisException;
-import rat.license.OASISLicenseFamily;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.Claims;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.license.OASISLicenseFamily;
+import org.apache.rat.report.claim.IClaimReporter;
 
 /**
  * Looks for documents contain the OASIS copyright claim plus derivative work clause.

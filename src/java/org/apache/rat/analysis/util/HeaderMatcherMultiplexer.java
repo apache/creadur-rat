@@ -18,9 +18,9 @@
  */ 
 package org.apache.rat.analysis.util;
 
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.RatHeaderAnalysisException;
-import rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.report.claim.IClaimReporter;
 
 /**
  * Delegates to an ordered set of matchers.
