@@ -55,7 +55,7 @@ public class Defaults {
             new TMF854LicenseHeader()
     };
     
-    public static final String PLAIN_STYLESHEET = "rat/plain-rat.xsl";
+    public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
     
     public static final InputStream getPlainStyleSheet() {
         InputStream result = Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
