@@ -33,10 +33,10 @@
         <property name='version' value='${minor.version}.${point.version}'/>
         <property name='vendor.name' value='Apache Software Foundation'/>
         <property name='vendor.id' value='apache.org'/>
-        <property name='jar.name' value='rat-${version}.jar'/>
-        <property name='lib.jar.name' value='rat-lib-${version}.jar'/>
-        <property name='lib.all.jar.name' value='rat-lib-all-${version}.jar'/>
-	    <property name='src.dist.prefix' value='rat-${version}-src'/>
+        <property name='jar.name' value='apache-rat-${version}.jar'/>
+        <property name='lib.jar.name' value='apache-rat-lib-${version}.jar'/>
+        <property name='lib.all.jar.name' value='apache-rat-lib-all-${version}.jar'/>
+	    <property name='src.dist.prefix' value='apache-rat-${version}-src'/>
         <property name='main-class' value='rat.Report'/>
         <property name='bin.meta' value='${bin}/META-INF'/>
         <available property='Ant-1.7.0-or-later'
