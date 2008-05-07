@@ -22,7 +22,7 @@
 
 <project default="allTests"
   xmlns:au="antlib:org.apache.ant.antunit"
-  xmlns:rat="antlib:rat.anttasks">
+  xmlns:rat="antlib:org.apache.rat.anttasks">
 
   <property name="output.dir" location="testoutput"/>
   <pathconvert dirsep="/" property="file.name">
@@ -80,10 +80,10 @@
     <mkdir dir="${output.dir}/src/org/example"/>
     <echo file="${output.dir}/src/org/example/Matcher.java"><![CDATA[
 package org.example;
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.license.BaseLicense;
-import rat.report.claim.IClaimReporter;
-import rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.license.BaseLicense;
+import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
 public class Matcher extends BaseLicense implements IHeaderMatcher {
     public Matcher() {
     	super("EXMPL", "Example License", "");
@@ -98,7 +98,7 @@ public class Matcher extends BaseLicense implements IHeaderMatcher {
 ]]></echo>
     <echo file="${output.dir}/src/org/example/LicenseFamily.java"><![CDATA[
 package org.example;
-import rat.license.ILicenseFamily;
+import org.apache.rat.license.ILicenseFamily;
 public class LicenseFamily implements ILicenseFamily {
     public String getFamilyName() {
     	return "Example License";

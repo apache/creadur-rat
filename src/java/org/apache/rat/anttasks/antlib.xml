@@ -21,28 +21,28 @@
 -->
 
 <antlib>
-  <taskdef name="report" classname="rat.anttasks.Report"/>
+  <taskdef name="report" classname="org.apache.rat.anttasks.Report"/>
 
   <!-- typedef the built-in license matchers -->
   <typedef name="asl20"
-    classname="rat.analysis.license.ApacheSoftwareLicense20"/>
+    classname="org.apache.rat.analysis.license.ApacheSoftwareLicense20"/>
   <typedef name="generated"
-    classname="rat.analysis.generation.GeneratedLicenseNotRequired"/>
+    classname="org.apache.rat.analysis.generation.GeneratedLicenseNotRequired"/>
   <typedef name="javadoc"
-    classname="rat.analysis.generation.JavaDocLicenseNotRequired"/>
+    classname="org.apache.rat.analysis.generation.JavaDocLicenseNotRequired"/>
   <typedef name="oasis"
-    classname="rat.analysis.license.OASISLicense"/>
+    classname="org.apache.rat.analysis.license.OASISLicense"/>
   <typedef name="w3c"
-    classname="rat.analysis.license.W3CLicense"/>
+    classname="org.apache.rat.analysis.license.W3CLicense"/>
   <typedef name="w3c-doc"
-    classname="rat.analysis.license.W3CDocLicense"/>
+    classname="org.apache.rat.analysis.license.W3CDocLicense"/>
   <typedef name="w3c-doc-license"
-    classname="rat.license.W3CDocumentLicenseFamily"/>
+    classname="org.apache.rat.license.W3CDocumentLicenseFamily"/>
   <typedef name="w3c-soft-license"
-    classname="rat.license.W3CSoftwareLicenseFamily"/>
+    classname="org.apache.rat.license.W3CSoftwareLicenseFamily"/>
   <typedef name="oasis-license"
-    classname="rat.license.OASISLicenseFamily"/>
+    classname="org.apache.rat.license.OASISLicenseFamily"/>
   <typedef name="apache20-license"
-    classname="rat.license.Apache20LicenseFamily"/> 
+    classname="org.apache.rat.license.Apache20LicenseFamily"/> 
     
 </antlib>

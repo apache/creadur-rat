@@ -22,7 +22,7 @@
 
 <project default="allTests"
   xmlns:au="antlib:org.apache.ant.antunit"
-  xmlns:rat="antlib:rat.anttasks">
+  xmlns:rat="antlib:org.apache.rat.anttasks">
 
   <target name="allTests">
     <au:antunit xmlns:au="antlib:org.apache.ant.antunit"
