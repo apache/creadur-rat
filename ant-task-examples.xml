@@ -22,7 +22,7 @@
 
   <target name="javasources" depends="-taskdef"
     description="runs the tasks over src/java excluding the license directory">
-    <rat:report xmlns:rat="antlib:rat.anttasks">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <fileset dir="src/java">
         <exclude name="rat/license/"/>
       </fileset>
@@ -31,7 +31,7 @@
 
   <target name="jar" depends="-taskdef"
     description="runs the task over rat-0.3.jar">
-    <rat:report xmlns:rat="antlib:rat.anttasks">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <zipfileset src="rat-0.3.jar"/>
     </rat:report>
   </target>
@@ -41,7 +41,7 @@
     <tar destfile="ratsrc.tar.gz" compression="gzip">
       <fileset dir="src/java"/>
     </tar>
-    <rat:report xmlns:rat="antlib:rat.anttasks">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <tarfileset>
         <gzipresource>
           <file file="ratsrc.tar.gz"/>
@@ -53,7 +53,7 @@
 
   <target name="javasources-w3c" depends="-taskdef"
     description="runs the tasks over src/java accepting only the W3C license">
-    <rat:report xmlns:rat="antlib:rat.anttasks"
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
       addDefaultLicenseMatchers="false">
       <fileset dir="src/java"/>
 

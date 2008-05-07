@@ -37,7 +37,7 @@
 	<property name='lib.jar.name' value='apache-rat-lib-${version}.jar'/>
 	<property name='lib.all.jar.name' value='apache-rat-lib-all-${version}.jar'/>
 	<property name='src.dist.prefix' value='apache-rat-${version}-src'/>
-	<property name='main-class' value='rat.Report'/>
+	<property name='main-class' value='org.apache.rat.Report'/>
 	<property name='bin.meta' value='${bin}/META-INF'/>
 	<available property='Ant-1.7.0-or-later'
                    classname='org.apache.tools.ant.types.ResourceCollection'/>
