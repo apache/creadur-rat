@@ -21,272 +21,272 @@
 -->
 
 <project name='RAT' default='build' >
-        <property name='src' value='src/java'/>
-        <property name='src.tests' value='src/test'/>
-    <property name='build.base' value='target'/>
-    <property name='build.lib' value='lib'/>
-        <property name='bin' value='${build.base}/classes'/>
-        <property name='bin.doc' value='${build.base}/docs'/>
-        <property name='bin.test' value='${build.base}/test-classes'/>
-        <property name='minor.version' value='0.5'/>
-        <property name='point.version' value='2-SNAPSHOT'/>
-        <property name='version' value='${minor.version}.${point.version}'/>
-        <property name='vendor.name' value='Apache Software Foundation'/>
-        <property name='vendor.id' value='apache.org'/>
-        <property name='jar.name' value='apache-rat-${version}.jar'/>
-        <property name='lib.jar.name' value='apache-rat-lib-${version}.jar'/>
-        <property name='lib.all.jar.name' value='apache-rat-lib-all-${version}.jar'/>
-	    <property name='src.dist.prefix' value='apache-rat-${version}-src'/>
-        <property name='main-class' value='rat.Report'/>
-        <property name='bin.meta' value='${bin}/META-INF'/>
-        <available property='Ant-1.7.0-or-later'
+	<property name='src' value='src/java'/>
+	<property name='src.tests' value='src/test'/>
+	<property name='build.base' value='target'/>
+	<property name='build.lib' value='lib'/>
+	<property name='bin' value='${build.base}/classes'/>
+	<property name='bin.doc' value='${build.base}/docs'/>
+	<property name='bin.test' value='${build.base}/test-classes'/>
+	<property name='minor.version' value='0.5'/>
+	<property name='point.version' value='2-SNAPSHOT'/>
+	<property name='version' value='${minor.version}.${point.version}'/>
+	<property name='vendor.name' value='Apache Software Foundation'/>
+	<property name='vendor.id' value='apache.org'/>
+	<property name='jar.name' value='apache-rat-${version}.jar'/>
+	<property name='lib.jar.name' value='apache-rat-lib-${version}.jar'/>
+	<property name='lib.all.jar.name' value='apache-rat-lib-all-${version}.jar'/>
+	<property name='src.dist.prefix' value='apache-rat-${version}-src'/>
+	<property name='main-class' value='rat.Report'/>
+	<property name='bin.meta' value='${bin}/META-INF'/>
+	<available property='Ant-1.7.0-or-later'
                    classname='org.apache.tools.ant.types.ResourceCollection'/>
 
-    <property name='commons.lang.jar' value='commons-lang-2.1.jar'/>
-    <property name='commons.lang.url' value='http://repo1.maven.org/maven2/commons-lang/commons-lang/2.1/commons-lang-2.1.jar'/>
-        <property name='commons.collections.jar' value='commons-collections-3.2.jar'/>
-        <property name='commons.collections.url' value='http://repo1.maven.org/maven2/commons-collections/commons-collections/3.2/commons-collections-3.2.jar'/>
-        <property name='junit.jar' value='junit-3.8.2.jar'/>
-        <property name='junit.url' value='http://repo1.maven.org/maven2/junit/junit/3.8.2/junit-3.8.2.jar'/>
-    <property name='ant.jar' value='ant-1.7.0.jar'/>
-    <property name='ant.url' value='http://repo1.maven.org/maven2/org/apache/ant/ant/1.7.0/ant-1.7.0.jar'/>
-    <property name='ant.launcher.jar' value='ant-launcher-1.7.0.jar'/>
-    <property name='ant.launcher.url' value='http://repo1.maven.org/maven2/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar'/>
+	<property name='commons.lang.jar' value='commons-lang-2.1.jar'/>
+	<property name='commons.lang.url' value='http://repo1.maven.org/maven2/commons-lang/commons-lang/2.1/commons-lang-2.1.jar'/>
+	<property name='commons.collections.jar' value='commons-collections-3.2.jar'/>
+	<property name='commons.collections.url' value='http://repo1.maven.org/maven2/commons-collections/commons-collections/3.2/commons-collections-3.2.jar'/>
+	<property name='junit.jar' value='junit-3.8.2.jar'/>
+	<property name='junit.url' value='http://repo1.maven.org/maven2/junit/junit/3.8.2/junit-3.8.2.jar'/>
+	<property name='ant.jar' value='ant-1.7.0.jar'/>
+	<property name='ant.url' value='http://repo1.maven.org/maven2/org/apache/ant/ant/1.7.0/ant-1.7.0.jar'/>
+	<property name='ant.launcher.jar' value='ant-launcher-1.7.0.jar'/>
+	<property name='ant.launcher.url' value='http://repo1.maven.org/maven2/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar'/>
 
-        <available property='commons.lang.available' file='${build.lib}/${commons.lang.jar}'/>
-    <available property='commons.collections.available' file='${build.lib}/${commons.collections.jar}'/>
-    <available property='junit.available' file='${build.lib}/${junit.jar}'/>
-        <condition property="ant.available">
-                <and>
-            <available file='${build.lib}/${ant.jar}'/>
-            <available file='${build.lib}/${ant.launcher.jar}'/>
-            </and>
-        </condition>
+	<available property='commons.lang.available' file='${build.lib}/${commons.lang.jar}'/>
+	<available property='commons.collections.available' file='${build.lib}/${commons.collections.jar}'/>
+	<available property='junit.available' file='${build.lib}/${junit.jar}'/>
+	<condition property="ant.available">
+		<and>
+			<available file='${build.lib}/${ant.jar}'/>
+			<available file='${build.lib}/${ant.launcher.jar}'/>
+		</and>
+	</condition>
 
 	<condition property="running.windows">
 		<os family="windows"/>
 	</condition>
 
-    <zipfileset id="src.files" prefix="${src.dist.prefix}" dir="${basedir}">
-       <include name="LICENSE.txt"/>
-       <include name="NOTICE.txt"/>
-       <include name="RELEASE_NOTES.txt"/>
-       <include name="DISLAIMER.txt"/>   
-       <include name="ant-task-examples.xml"/>
-       <include name="build.xml"/>
-       <include name="pom.xml"/>
-       <include name="src/**/*"/>
-    </zipfileset>
+	<zipfileset id="src.files" prefix="${src.dist.prefix}" dir="${basedir}">
+		<include name="LICENSE.txt"/>
+		<include name="NOTICE.txt"/>
+		<include name="RELEASE_NOTES.txt"/>
+		<include name="DISLAIMER.txt"/>
+		<include name="ant-task-examples.xml"/>
+		<include name="build.xml"/>
+		<include name="pom.xml"/>
+		<include name="src/**/*"/>
+	</zipfileset>
 
-    <target name='setup.proxy' if='http.proxyHost'>
-        <setproxy proxyhost='${http.proxyHost}' proxyport='${http.proxyPort}'
+	<target name='setup.proxy' if='http.proxyHost'>
+		<setproxy proxyhost='${http.proxyHost}' proxyport='${http.proxyPort}'
                 proxyuser='${http.proxyUser}' proxypassword='${http.proxyPassword}'/>
-        </target>
+	</target>
 
-        <macrodef name='download'>
-                <attribute name='jar'/>
-                <attribute name='url'/>
-                <sequential>
-                <mkdir dir='${build.lib}'/>
-            <get dest='${build.lib}/@{jar}' src='@{url}'/>
-                </sequential>
-        </macrodef>
+	<macrodef name='download'>
+		<attribute name='jar'/>
+		<attribute name='url'/>
+		<sequential>
+			<mkdir dir='${build.lib}'/>
+			<get dest='${build.lib}/@{jar}' src='@{url}'/>
+		</sequential>
+	</macrodef>
 
-        <target name='commons.lang.download' unless='commons.lang.available'>
-                <download jar='${commons.lang.jar}' url='${commons.lang.url}'/>
-        </target>
+	<target name='commons.lang.download' unless='commons.lang.available'>
+		<download jar='${commons.lang.jar}' url='${commons.lang.url}'/>
+	</target>
 
-    <target name='commons.collections.download' unless='commons.collections.available'>
-        <download jar='${commons.collections.jar}' url='${commons.collections.url}'/>
-        </target>
+	<target name='commons.collections.download' unless='commons.collections.available'>
+		<download jar='${commons.collections.jar}' url='${commons.collections.url}'/>
+	</target>
 
-    <target name='junit.download' unless='junit.available'>
-        <download jar='${junit.jar}' url='${junit.url}'/>
-    </target>
+	<target name='junit.download' unless='junit.available'>
+		<download jar='${junit.jar}' url='${junit.url}'/>
+	</target>
 
-    <target name='ant.download' unless='ant.available'>
-        <download jar='${ant.jar}' url='${ant.url}'/>
-        <download jar='${ant.launcher.jar}' url='${ant.launcher.url}'/>
-    </target>
+	<target name='ant.download' unless='ant.available'>
+		<download jar='${ant.jar}' url='${ant.url}'/>
+		<download jar='${ant.launcher.jar}' url='${ant.launcher.url}'/>
+	</target>
 
-    <target name='prerequisites' depends='setup.proxy,commons.lang.download,commons.collections.download,junit.download,ant.download'/>
-        
-        <target name='clean'>
-                <delete dir='${build.base}'/>
-                <mkdir dir='${build.base}'/>
-                <mkdir dir='${bin}'/>
-                <mkdir dir='${bin.test}'/>
-                <mkdir dir='${bin.doc}'/>
-                <delete file='${jar.name}'/>
-                <delete file='${lib.jar.name}'/>
-                <delete file='${src.dist.prefix}.zip'/>   
-                <delete file='${src.dist.prefix}.tar.gz'/>
-                <delete file='${src.dist.prefix}.tar.bz2'/>   
-                <delete file='${lib.all.jar.name}'/>
-        </target>
+	<target name='prerequisites' depends='setup.proxy,commons.lang.download,commons.collections.download,junit.download,ant.download'/>
 
-        <target name='manifest'>
+	<target name='clean'>
+		<delete dir='${build.base}'/>
+		<mkdir dir='${build.base}'/>
+		<mkdir dir='${bin}'/>
+		<mkdir dir='${bin.test}'/>
+		<mkdir dir='${bin.doc}'/>
+		<delete file='${jar.name}'/>
+		<delete file='${lib.jar.name}'/>
+		<delete file='${src.dist.prefix}.zip'/>
+		<delete file='${src.dist.prefix}.tar.gz'/>
+		<delete file='${src.dist.prefix}.tar.bz2'/>
+		<delete file='${lib.all.jar.name}'/>
+	</target>
 
-        </target>
+	<target name='manifest'>
 
-        <target name='compile' depends='prerequisites'>
-        <path id='rat.compile.path'>
-            <pathelement location='${build.lib}/${commons.collections.jar}'/>
-            <pathelement location='${build.lib}/${commons.lang.jar}'/>
-            <pathelement location='${build.lib}/${ant.jar}'/>
-            <pathelement location='${build.lib}/${ant.launcher.jar}'/>
-        </path>
-                <mkdir dir='${bin}'/>
-                <javac srcdir="${src}" destdir="${bin}" source="1.4"
+	</target>
+
+	<target name='compile' depends='prerequisites'>
+		<path id='rat.compile.path'>
+			<pathelement location='${build.lib}/${commons.collections.jar}'/>
+			<pathelement location='${build.lib}/${commons.lang.jar}'/>
+			<pathelement location='${build.lib}/${ant.jar}'/>
+			<pathelement location='${build.lib}/${ant.launcher.jar}'/>
+		</path>
+		<mkdir dir='${bin}'/>
+		<javac srcdir="${src}" destdir="${bin}" source="1.4"
                        target="1.4" debug="on" classpathref="rat.compile.path"/>
-                <mkdir dir='${bin.meta}' />
-                <copy file="LICENSE.txt" todir="${bin.meta}" />
-                <copy file="NOTICE.txt" todir="${bin.meta}" />
-                <copy file="DISCLAIMER.txt" todir="${bin.meta}" />   
-                <copy todir="${bin}">
-                        <fileset dir="${src}" includes="**/antlib.xml" />
-                        <fileset dir="${src}" includes="**/*.xsl" />
-                </copy>
-        </target>
+		<mkdir dir='${bin.meta}' />
+		<copy file="LICENSE.txt" todir="${bin.meta}" />
+		<copy file="NOTICE.txt" todir="${bin.meta}" />
+		<copy file="DISCLAIMER.txt" todir="${bin.meta}" />
+		<copy todir="${bin}">
+			<fileset dir="${src}" includes="**/antlib.xml" />
+			<fileset dir="${src}" includes="**/*.xsl" />
+		</copy>
+	</target>
 
-        <target name='compile-tests' depends='compile'>
-            <path id='rat.test.path'>
-                <path refid='rat.compile.path'/>
-                <pathelement location='${build.lib}/${junit.jar}'/>
-            </path>
-                <mkdir dir='${bin.test}'/>
-                <javac srcdir="${src.tests}" destdir="${bin.test}" source="1.4"
+	<target name='compile-tests' depends='compile'>
+		<path id='rat.test.path'>
+			<path refid='rat.compile.path'/>
+			<pathelement location='${build.lib}/${junit.jar}'/>
+		</path>
+		<mkdir dir='${bin.test}'/>
+		<javac srcdir="${src.tests}" destdir="${bin.test}" source="1.4"
                        target="1.4" debug="on" classpath="${bin}" classpathref="rat.test.path"/>
-        </target>
-        
-        <target name='run-unit-tests' depends='compile-tests'>
-                <junit printsummary='true' haltonfailure='true'>
-                        <classpath>
-                                <pathelement location='${bin}'/>
-                                <pathelement location='${bin.test}'/>
-                                <path refid='rat.test.path'/>
-                        </classpath>
-                        <batchtest>
-                                <fileset dir='${bin.test}'>
-                                        <include name='**/*Test.class'/>
-                                </fileset>
-                        </batchtest>
-                        <formatter type="brief" usefile="false"/>
-                </junit>
-        </target>
+	</target>
 
-	    <target name="runAntWin" if="running.windows">
-	    	<macrodef name="runAnt">
-	    		<attribute name="buildfile"/>
-	    		<sequential>
-	                <exec executable="cmd">
-	                	<arg value="/c"/>
-	                	<arg file="${ant.home}/bin/ant.bat"/>
-	                    <arg value="-buildfile"/>
-	                    <arg value="@{buildfile}"/>
-	                    <arg value="-lib"/>
-	                    <arg value="${jar.name}"/>
-	                </exec>
-	    	    </sequential>
-	    	</macrodef>
-	    </target>
+	<target name='run-unit-tests' depends='compile-tests'>
+		<junit printsummary='true' haltonfailure='true'>
+			<classpath>
+				<pathelement location='${bin}'/>
+				<pathelement location='${bin.test}'/>
+				<path refid='rat.test.path'/>
+			</classpath>
+			<batchtest>
+				<fileset dir='${bin.test}'>
+					<include name='**/*Test.class'/>
+				</fileset>
+			</batchtest>
+			<formatter type="brief" usefile="false"/>
+		</junit>
+	</target>
 
-        <target name="runAntNonWin" unless="running.windows">
-            <macrodef name="runAnt">
-                <attribute name="buildfile"/>
-                <sequential>
-                    <exec executable="ant">
-                        <arg value="-buildfile"/>
-                        <arg value="@{buildfile}"/>
-                        <arg value="-lib"/>
-                        <arg value="${jar.name}"/>
-                    </exec>
-                </sequential>
-            </macrodef>
-        </target>
+	<target name="runAntWin" if="running.windows">
+		<macrodef name="runAnt">
+			<attribute name="buildfile"/>
+			<sequential>
+				<exec executable="cmd">
+					<arg value="/c"/>
+					<arg file="${ant.home}/bin/ant.bat"/>
+					<arg value="-buildfile"/>
+					<arg value="@{buildfile}"/>
+					<arg value="-lib"/>
+					<arg value="${jar.name}"/>
+				</exec>
+			</sequential>
+		</macrodef>
+	</target>
 
-        <target name='run-task-tests' depends='build,runAntWin,runAntNonWin' 
+	<target name="runAntNonWin" unless="running.windows">
+		<macrodef name="runAnt">
+			<attribute name="buildfile"/>
+			<sequential>
+				<exec executable="ant">
+					<arg value="-buildfile"/>
+					<arg value="@{buildfile}"/>
+					<arg value="-lib"/>
+					<arg value="${jar.name}"/>
+				</exec>
+			</sequential>
+		</macrodef>
+	</target>
+
+	<target name='run-task-tests' depends='build,runAntWin,runAntNonWin' 
                 if='Ant-1.7.0-or-later' 
                 description='Runs Ant task tests'>
-        	<runAnt buildfile="${src.tests}/antunit/report-bad-configurations.xml"/>
-            <runAnt buildfile="${src.tests}/antunit/report-normal-operation.xml"/>
-        </target>
-        
-        <target name='run-tests' depends='run-unit-tests, run-task-tests'>
-        </target>
-        
-        <target name='javadoc'>
-                <javadoc sourcepath="${src}" packagenames="rat.*" destdir="${bin.doc}">
-                </javadoc>
-        </target>
+		<runAnt buildfile="${src.tests}/antunit/report-bad-configurations.xml"/>
+		<runAnt buildfile="${src.tests}/antunit/report-normal-operation.xml"/>
+	</target>
 
-        <target name='build' depends='compile, manifest'>
-                <jar destfile='${jar.name}' basedir="${bin}">
-                        <manifest>
-                                <attribute name="Main-Class" value="${main-class}"/>
-                                <attribute name="Extension-Name" value="rat"/>
-                                <attribute name="Specification-Title" value="Release Audit Tool"/>
-                                <attribute name="Specification-Vendor" value="${vendor.name}"/>
-                                <attribute name="Specification-Version" value="${minor.version}"/>
-                                <attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
-                                <attribute name="Implementation-Title" value="Release Audit Tool"/>
-                                <attribute name="Implementation-Vendor" value="${vendor.name}"/>
-                                <attribute name="Implementation-Version" value="${version}"/>
-                        </manifest>
-            <zipfileset src='${build.lib}/${commons.collections.jar}'/>
-            <zipfileset src='${build.lib}/${commons.lang.jar}'/>         
-                </jar>
-                <echo>To run RAT: java -jar ${jar.name} </echo>
-        </target>
+	<target name='run-tests' depends='run-unit-tests, run-task-tests'>
+	</target>
 
-        <target name='clean-build' depends='clean, build'/>
-        
-        <target name='dist' description='Please run before checking in' depends='clean,build,run-tests,package'/>
+	<target name='javadoc'>
+		<javadoc sourcepath="${src}" packagenames="rat.*" destdir="${bin.doc}">
+		</javadoc>
+	</target>
 
-        <target name='package' depends='build'>
-                <jar destfile='${lib.jar.name}'>
-                        <fileset dir='${bin}'>
-                                <exclude name='**/antlib.xml'/>
-                                <exclude name='rat/anttasks/**/*.*'/>
-                                <exclude name='org/apache/commons/**/*.*'/>
-                        </fileset>
-                        <manifest>
-                                <attribute name="Extension-Name" value="rat-lib"/>
-                                <attribute name="Specification-Title" value="Release Audit Tool, Library"/>
-                                <attribute name="Specification-Vendor" value="${vendor.name}"/>
-                                <attribute name="Specification-Version" value="${minor.version}"/>
-                                <attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
-                                <attribute name="Implementation-Title" value="Release Audit Tool, Library"/>
-                                <attribute name="Implementation-Vendor" value="${vendor.name}"/>
-                                <attribute name="Implementation-Version" value="${version}"/>
-                        </manifest>
-                </jar>
-                <jar destfile='${lib.all.jar.name}'>
-                    <zipfileset src='${lib.jar.name}'/>
-                    <zipfileset src='${build.lib}/${commons.collections.jar}'/>
-                    <zipfileset src='${build.lib}/${commons.lang.jar}'/>
-                    <manifest>
-                            <attribute name="Extension-Name" value="rat-lib"/>
-                            <attribute name="Specification-Title" value="Release Audit Tool, Library"/>
-                            <attribute name="Specification-Vendor" value="${vendor.name}"/>
-                            <attribute name="Specification-Version" value="${minor.version}"/>
-                            <attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
-                            <attribute name="Implementation-Title" value="Release Audit Tool, Library"/>
-                            <attribute name="Implementation-Vendor" value="${vendor.name}"/>
-                            <attribute name="Implementation-Version" value="${version}"/>
-                    </manifest>
-                </jar>
+	<target name='build' depends='compile, manifest'>
+		<jar destfile='${jar.name}' basedir="${bin}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}"/>
+				<attribute name="Extension-Name" value="rat"/>
+				<attribute name="Specification-Title" value="Release Audit Tool"/>
+				<attribute name="Specification-Vendor" value="${vendor.name}"/>
+				<attribute name="Specification-Version" value="${minor.version}"/>
+				<attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
+				<attribute name="Implementation-Title" value="Release Audit Tool"/>
+				<attribute name="Implementation-Vendor" value="${vendor.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+			<zipfileset src='${build.lib}/${commons.collections.jar}'/>
+			<zipfileset src='${build.lib}/${commons.lang.jar}'/>
+		</jar>
+		<echo>To run RAT: java -jar ${jar.name} </echo>
+	</target>
 
-        	<zip destfile="${src.dist.prefix}.zip">
-        		<zipfileset refid="src.files"/>
-        	</zip>
+	<target name='clean-build' depends='clean, build'/>
 
-        	<tar destfile="${src.dist.prefix}.tar.gz" compression="gzip">
-                <zipfileset refid="src.files"/>
-            </tar>
+	<target name='dist' description='Please run before checking in' depends='clean,build,run-tests,package'/>
 
-        	<tar destfile="${src.dist.prefix}.tar.bz2" compression="bzip2">
-                <zipfileset refid="src.files"/>
-            </tar>
-        </target>
+	<target name='package' depends='build'>
+		<jar destfile='${lib.jar.name}'>
+			<fileset dir='${bin}'>
+				<exclude name='**/antlib.xml'/>
+				<exclude name='rat/anttasks/**/*.*'/>
+				<exclude name='org/apache/commons/**/*.*'/>
+			</fileset>
+			<manifest>
+				<attribute name="Extension-Name" value="rat-lib"/>
+				<attribute name="Specification-Title" value="Release Audit Tool, Library"/>
+				<attribute name="Specification-Vendor" value="${vendor.name}"/>
+				<attribute name="Specification-Version" value="${minor.version}"/>
+				<attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
+				<attribute name="Implementation-Title" value="Release Audit Tool, Library"/>
+				<attribute name="Implementation-Vendor" value="${vendor.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+		</jar>
+		<jar destfile='${lib.all.jar.name}'>
+			<zipfileset src='${lib.jar.name}'/>
+			<zipfileset src='${build.lib}/${commons.collections.jar}'/>
+			<zipfileset src='${build.lib}/${commons.lang.jar}'/>
+			<manifest>
+				<attribute name="Extension-Name" value="rat-lib"/>
+				<attribute name="Specification-Title" value="Release Audit Tool, Library"/>
+				<attribute name="Specification-Vendor" value="${vendor.name}"/>
+				<attribute name="Specification-Version" value="${minor.version}"/>
+				<attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
+				<attribute name="Implementation-Title" value="Release Audit Tool, Library"/>
+				<attribute name="Implementation-Vendor" value="${vendor.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+		</jar>
+
+		<zip destfile="${src.dist.prefix}.zip">
+			<zipfileset refid="src.files"/>
+		</zip>
+
+		<tar destfile="${src.dist.prefix}.tar.gz" compression="gzip">
+			<zipfileset refid="src.files"/>
+		</tar>
+
+		<tar destfile="${src.dist.prefix}.tar.bz2" compression="bzip2">
+			<zipfileset refid="src.files"/>
+		</tar>
+	</target>
 </project>
