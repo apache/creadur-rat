@@ -1,0 +1,193 @@
+<?xml version='1.0'?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one   *
+ or more contributor license agreements.  See the NOTICE file *
+ distributed with this work for additional information        *
+ regarding copyright ownership.  The ASF licenses this file   *
+ to you under the Apache License, Version 2.0 (the            *
+ "License"); you may not use this file except in compliance   *
+ with the License.  You may obtain a copy of the License at   *
+                                                              *
+   http://www.apache.org/licenses/LICENSE-2.0                 *
+                                                              *
+ Unless required by applicable law or agreed to in writing,   *
+ software distributed under the License is distributed on an  *
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ KIND, either express or implied.  See the License for the    *
+ specific language governing permissions and limitations      *
+ under the License.                                           *
+
+-->
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.rat</groupId>
+  <artifactId>rat-lib</artifactId>
+  <packaging>jar</packaging>
+  <version>0.5.2-SNAPSHOT</version>
+  <name>A Release Audit Tool, Library</name>
+  <url>http://incubator.apache.org/rat</url>
+  <description>
+Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
+releases. It is heuristic in nature: making guesses about possible problems. It
+will produce false positives and cannot find every possible issue with a release.
+It's reports require interpretation.
+
+In response to demands from project quality tool developers, RAT is available as a 
+library suitable for inclusion in tools. This POM describes that library.
+Note that binary compatibility is not gauranteed between 0.x releases.
+  </description>
+  <inceptionYear>2006</inceptionYear>
+  <licenses>
+  	<license>
+  		<name>The Apache License Version 2.0</name>
+  		<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    	<distribution>repo</distribution>
+  	</license>
+  </licenses>
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org</url>
+  </organization>
+  <dependencies>    
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.7.0</version>
+      <scope>provided</scope>
+    </dependency>  
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+  </dependencies>
+  
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>         
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>     
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <reportSets>
+             <reportSet>
+                <reports>
+                   <report>dependencies</report>
+                   <report>project-team</report>
+                   <report>mailing-list</report>
+                   <report>issue-tracking</report>
+                   <report>license</report>
+                   <report>scm</report>
+                </reports>
+             </reportSet>
+          </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  
+  <build>
+    <sourceDirectory>src/java</sourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/java</directory>
+        <includes>
+          <include>**/*.xsl</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${basedir}</directory>
+        <includes>
+          <include>LICENSE.txt</include>
+          <include>NOTICE.txt</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.0.3</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Main-Class>rat.Report</Main-Class>
+              <Extension-Name>rat</Extension-Name>
+              <Specification-Title>Release Audit Tool</Specification-Title>
+              <Specification-Vendor>apache.org</Specification-Vendor>
+              <Specification-Version>${project.version}</Specification-Version>
+              <Implementation-Vendor-Id>apache.org</Implementation-Vendor-Id>
+              <Implementation-Title>Release Audit Tool</Implementation-Title>
+              <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://issues.apache.org/jira/browse/RAT</url>
+  </issueManagement>
+    <mailingLists>
+    <mailingList>
+      <name>RAT </name>
+      <subscribe>rat-dev-unsubscribe@incubator.apache.org</subscribe>
+      <unsubscribe>rat-dev-unsubscribe@incubator.apache.org</unsubscribe>
+      <post>rat-dev@incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/incubator-rat-dev/</archive>
+    </mailingList>
+  </mailingLists>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/</url>
+  </scm>
+</project>

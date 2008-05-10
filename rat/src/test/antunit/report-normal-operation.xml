@@ -1,0 +1,126 @@
+<?xml version='1.0'?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one   *
+ or more contributor license agreements.  See the NOTICE file *
+ distributed with this work for additional information        *
+ regarding copyright ownership.  The ASF licenses this file   *
+ to you under the Apache License, Version 2.0 (the            *
+ "License"); you may not use this file except in compliance   *
+ with the License.  You may obtain a copy of the License at   *
+                                                              *
+   http://www.apache.org/licenses/LICENSE-2.0                 *
+                                                              *
+ Unless required by applicable law or agreed to in writing,   *
+ software distributed under the License is distributed on an  *
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ KIND, either express or implied.  See the License for the    *
+ specific language governing permissions and limitations      *
+ under the License.                                           *
+
+-->
+
+<project default="allTests"
+  xmlns:au="antlib:org.apache.ant.antunit"
+  xmlns:rat="antlib:org.apache.rat.anttasks">
+
+  <property name="output.dir" location="testoutput"/>
+  <pathconvert dirsep="/" property="file.name">
+    <path>
+      <pathelement location="${ant.file}"/>
+    </path>
+  </pathconvert>
+  <property name="expectedOutput" value=" AL    ${file.name}"/>
+
+  <target name="allTests">
+    <au:antunit xmlns:au="antlib:org.apache.ant.antunit"
+                failonerror="false" errorproperty="antunit.failed">
+      <file file="${ant.file}"/>
+      <au:plainlistener />
+    </au:antunit>
+  </target>
+
+  <target name="tearDown">
+    <delete dir="${output.dir}"/>
+  </target>
+
+  <target name="testWithReportSentToAnt">
+    <rat:report>
+      <file file="${ant.file}"/>
+    </rat:report>
+    <au:assertLogContains text="${expectedOutput}"/>
+  </target>
+
+  <target name="testWithReportSentToFile" depends="makeOutputDir">
+    <property name="report.file" location="${output.dir}/selftest.report"/>
+    <au:assertFileDoesntExist file="${report.file}"/>
+    <rat:report reportFile="${report.file}">
+      <file file="${ant.file}"/>
+    </rat:report>
+    <au:assertLogDoesntContain text="${expectedOutput}"/>
+    <au:assertFileExists file="${report.file}"/>
+
+    <loadfile srcFile="${report.file}" property="report"/>
+    <au:assertTrue message="expected report to contain '${expectedOutput}' but was '${report}'">
+      <contains string="${report}" substring="${expectedOutput}"/>
+    </au:assertTrue>
+  </target>
+
+  <target name="testWithASLUnknown">
+    <rat:report addDefaultLicenseMatchers="false">
+      <file file="${ant.file}"/>
+      <rat:w3c/>
+    </rat:report>
+    <au:assertLogDoesntContain text="${expectedOutput}"/>
+    <au:assertLogContains text="!????? ${file.name}"/>
+  </target>
+
+  <target name="testCustomMatcher">
+    <mkdir dir="${output.dir}/dest"/>
+    <mkdir dir="${output.dir}/src/org/example"/>
+    <echo file="${output.dir}/src/org/example/Matcher.java"><![CDATA[
+package org.example;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.license.BaseLicense;
+import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+public class Matcher extends BaseLicense implements IHeaderMatcher {
+    public Matcher() {
+    	super("EXMPL", "Example License", "");
+    }
+    public void reset() {}
+    
+    public boolean match(String subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    	reportOnLicense(subject, reporter);
+    	return true;
+    }
+}
+]]></echo>
+    <echo file="${output.dir}/src/org/example/LicenseFamily.java"><![CDATA[
+package org.example;
+import org.apache.rat.license.ILicenseFamily;
+public class LicenseFamily implements ILicenseFamily {
+    public String getFamilyName() {
+    	return "Example License";
+   	}
+}
+]]></echo>
+    <javac srcdir="${output.dir}/src" destdir="${output.dir}/dest"/>
+    <typedef name="exmpl" classname="org.example.Matcher"
+      classpath="${output.dir}/dest"/>
+    <typedef name="exmpl-license" classname="org.example.LicenseFamily"
+      classpath="${output.dir}/dest"/>
+    <rat:report>
+      <file file="${ant.file}"/>
+      <exmpl/>
+      <exmpl-license/>
+    </rat:report>
+    <au:assertLogDoesntContain text="${expectedOutput}"/>
+    <au:assertLogContains text=" EXMPL ${file.name}"/>
+  </target>
+
+  <target name="makeOutputDir">
+    <mkdir dir="${output.dir}"/>
+  </target>
+
+</project>
