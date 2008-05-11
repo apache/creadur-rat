@@ -1,0 +1,53 @@
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~  
+~~        http://www.apache.org/licenses/LICENSE-2.0
+~~  
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+
+ ------
+ Introduction
+ ------
+
+
+The Rat Maven Plugin
+
+  This plugin may be used to run RAT, the
+  {{{http://code.google.com/p/arat/}Release Audit Tool}}. It
+  verifies, whether your source code matches standards like the
+  {{{http://www.apache.org/legal/src-headers.html}ASF Source Header
+  and Copyright Notice Policy}}.
+
+* Goals Overview
+
+  The following goals are available:
+
+  * {{{check.html}rat:check}} Runs RAT and creates a report, which is written
+    to a plain text file.
+
+  * {{{rat.html}rat:rat}} Runs RAT and creates a report, which will be added
+    to the generated site.
+
+* Usage
+
+  Instructions on how to use the Rat Maven Plugin can be found on the {{{usage.html}usage page}}.
+
+* Examples
+
+  To provide you with better understanding of some usages of the Rat Maven Plugin,
+  you can take a look into the following examples:
+
+  * {{{examples/basic.html}Basic use}} of the rat:check goal.
+
+  * {{{examples/verify.html}Automatically}} running the rat:check goal
+    when the project is built.
+
+  * Adding the report to the {{{examples/site.html}generated site}}.

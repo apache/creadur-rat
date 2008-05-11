@@ -1,0 +1,2 @@
+This is a text file, which intentionally has no Apache License Header.
+The RAT plugin should detect it.

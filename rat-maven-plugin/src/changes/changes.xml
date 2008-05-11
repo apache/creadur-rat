@@ -1,0 +1,62 @@
+<!-- 
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Changes in the Rat Maven Plugin</title>
+  </properties>
+  <body>
+    <release version="1.0-alpha-4" date="Not yet released">
+      <action dev="jochen" type="fix" issue="MOJO-866">
+        Added @requiresDependencyResolution to the RatReportMojo, so that
+        the dependencies are guaranteed to be present, if the mojo is
+        invoked from the command line.
+      </action>
+    </release>
+    <release version="1.0-alpha-3" date="2007-Aug-28">
+      <action dev="jochen" type="fix">
+        Upgraded rat-lib to 0.5.1.
+      </action>
+    </release>
+    <release version="1.0-alpha-2" date="2007-Jun-16">
+      <action dev="jochen" type="add" due-to="Bernd Bohmann"
+          due-to-email="bommel@apache.org" issue="MOJO-685">
+        Added the IDEA specific default excludes.
+      </action>
+      <action dev="jochen" type="add" due-to="Bernd Bohmann"
+          due-to-email="bommel@apache.org" issue="MOJO-685">
+        Added the possibility to exclude subprojects.
+      </action>
+      <action dev="jochen" type="fix" due-to="Lars Trieloff"
+          due-to-email="lars@trieloff.net" issue="MOJO-661">
+        Upgrade to rat-lib-0.5
+      </action>
+      <action dev="jochen" type="fix">
+        The plugin description on the project-reports page was wrong.
+      </action>
+      <action dev="jochen" type="fix" issue="MOJO-819">
+        The plugins report contains now relative paths in the
+        default configuration, in order to avoid exposing
+        unnecessary information on public sites.
+      </action>
+    </release>
+    <release version="1.0-alpha-1" date="2007-Feb-12">
+      <action dev="jochen" type="add">
+        Initial release.
+      </action>
+    </release>
+  </body>
+</document>
