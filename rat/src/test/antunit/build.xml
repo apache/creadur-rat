@@ -1,0 +1,48 @@
+<project name="antunit" default="all">
+    <condition property="running.windows">
+        <os family="windows"/>
+    </condition>
+
+	<target name="runAntWin" if="running.windows">
+        <macrodef name="runAnt">
+            <attribute name="buildfile"/>
+            <sequential>
+                <exec executable="cmd">
+                    <arg value="/c"/>
+                    <arg file="${ant.home}/bin/ant.bat"/>
+                    <arg value="-buildfile"/>
+                    <arg value="@{buildfile}"/>
+                    <arg value="-lib"/>
+                    <arg value="${jar.name}"/>
+                	<arg value="-lib"/>
+                	<arg value="${antunit.jar.name}"/>
+                    <arg value="-Dbasedir"/>
+                    <arg value="${base.dir}"/>
+                </exec>
+            </sequential>
+        </macrodef>
+    </target>
+
+    <target name="runAntNonWin" unless="running.windows">
+        <macrodef name="runAnt">
+            <attribute name="buildfile"/>
+            <sequential>
+                <exec executable="ant">
+                    <arg value="-buildfile"/>
+                    <arg value="@{buildfile}"/>
+                    <arg value="-lib"/>
+                    <arg value="${jar.name}"/>
+                	<arg value="-Dbasedir"/>
+            	    <arg value="${base.dir}"/>
+                    <arg value="-lib"/>
+                    <arg value="${antunit.jar.name}"/>
+                </exec>
+            </sequential>
+        </macrodef>
+    </target>
+
+    <target name="all" depends="runAntWin,runAntNonWin">
+    	<runAnt buildfile="report-bad-configurations.xml"/>
+        <runAnt buildfile="report-normal-operation.xml"/>
+	</target>
+</project>

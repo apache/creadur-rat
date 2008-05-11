@@ -74,7 +74,13 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       <artifactId>ant</artifactId>
       <version>1.7.0</version>
       <scope>provided</scope>
-    </dependency>  
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant-antunit</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
@@ -168,6 +174,42 @@ Note that binary compatibility is not gauranteed between 0.x releases.
             </manifestEntries>
           </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <stripVersion>true</stripVersion>
+              <includeArtifactIds>ant-antunit</includeArtifactIds>
+              <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <ant antfile="src/test/antunit/build.xml" inheritAll="false" inheritRefs="false">
+                  <property name="jar.name" location="${project.build.outputDirectory}"/>
+                  <property name="base.dir" location="${basedir}"/>
+                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar"/>
+                </ant>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -52,6 +52,8 @@
 	<property name='ant.url' value='http://repo1.maven.org/maven2/org/apache/ant/ant/1.7.0/ant-1.7.0.jar'/>
 	<property name='ant.launcher.jar' value='ant-launcher-1.7.0.jar'/>
 	<property name='ant.launcher.url' value='http://repo1.maven.org/maven2/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar'/>
+	<property name='antunit.jar' value='ant-antunit-1.0.jar'/>
+	<property name='antunit.url' value='http://repo1.maven.org/maven2/org/apache/ant/ant-antunit/1.0/ant-antunit-1.0.jar'/>
 
 	<available property='commons.lang.available' file='${build.lib}/${commons.lang.jar}'/>
 	<available property='commons.collections.available' file='${build.lib}/${commons.collections.jar}'/>
@@ -62,10 +64,7 @@
 			<available file='${build.lib}/${ant.launcher.jar}'/>
 		</and>
 	</condition>
-
-	<condition property="running.windows">
-		<os family="windows"/>
-	</condition>
+	<available property='antunit.available' file="${build.lib}/${antunit.jar}"/>
 
 	<zipfileset id="src.files" prefix="${src.dist.prefix}" dir="${basedir}">
 		<include name="LICENSE.txt"/>
@@ -109,7 +108,11 @@
 		<download jar='${ant.launcher.jar}' url='${ant.launcher.url}'/>
 	</target>
 
-	<target name='prerequisites' depends='setup.proxy,commons.lang.download,commons.collections.download,junit.download,ant.download'/>
+	<target name='antunit.download' unless='antunit.available'>
+        <download jar='${antunit.jar}' url='${antunit.url}'/>
+	</target>
+
+	<target name='prerequisites' depends='setup.proxy,commons.lang.download,commons.collections.download,junit.download,ant.download,antunit.download'/>
 
 	<target name='clean'>
 		<delete dir='${build.base}'/>
@@ -175,41 +178,14 @@
 		</junit>
 	</target>
 
-	<target name="runAntWin" if="running.windows">
-		<macrodef name="runAnt">
-			<attribute name="buildfile"/>
-			<sequential>
-				<exec executable="cmd">
-					<arg value="/c"/>
-					<arg file="${ant.home}/bin/ant.bat"/>
-					<arg value="-buildfile"/>
-					<arg value="@{buildfile}"/>
-					<arg value="-lib"/>
-					<arg value="${jar.name}"/>
-				</exec>
-			</sequential>
-		</macrodef>
-	</target>
-
-	<target name="runAntNonWin" unless="running.windows">
-		<macrodef name="runAnt">
-			<attribute name="buildfile"/>
-			<sequential>
-				<exec executable="ant">
-					<arg value="-buildfile"/>
-					<arg value="@{buildfile}"/>
-					<arg value="-lib"/>
-					<arg value="${jar.name}"/>
-				</exec>
-			</sequential>
-		</macrodef>
-	</target>
-
-	<target name='run-task-tests' depends='build,runAntWin,runAntNonWin' 
+	<target name='run-task-tests' depends='build' 
                 if='Ant-1.7.0-or-later' 
                 description='Runs Ant task tests'>
-		<runAnt buildfile="${src.tests}/antunit/report-bad-configurations.xml"/>
-		<runAnt buildfile="${src.tests}/antunit/report-normal-operation.xml"/>
+		<ant dir="${src.tests}/antunit" inheritall="false" inheritrefs="false">
+			<property name="jar.name" location="${jar.name}"/>
+			<property name="base.dir" location="${basedir}"/>
+			<property name="antunit.jar.name" location="${build.lib}/${antunit.jar}"/>
+		</ant>
 	</target>
 
 	<target name='run-tests' depends='run-unit-tests, run-task-tests'>
