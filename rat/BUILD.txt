@@ -1,0 +1,10 @@
+	How to build
+	============
+
+Normal development:
+
+    mvn install
+
+Release
+
+    mvn clean package assembly:assembly
