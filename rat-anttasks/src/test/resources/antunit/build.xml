@@ -1,5 +1,9 @@
 <project name="antunit" default="all">
-    <condition property="running.windows">
+    <condition property="skipping">
+    	<istrue value="${test.skipped}"/>
+	</condition>
+
+	<condition property="running.windows">
         <os family="windows"/>
     </condition>
 
@@ -41,7 +45,7 @@
         </macrodef>
     </target>
 
-    <target name="all" depends="runAntWin,runAntNonWin">
+    <target name="all" depends="runAntWin,runAntNonWin" unless="skipping">
     	<runAnt buildfile="report-bad-configurations.xml"/>
         <runAnt buildfile="report-normal-operation.xml"/>
 	</target>
