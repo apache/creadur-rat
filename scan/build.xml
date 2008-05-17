@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<project name="site" default="docs" basedir=".">
+
+    <!-- Initialization properties -->
+    <property name="project.name"   value="site"/>
+
+    <!-- The source directory for our XML source documents which are
+    to be sytlized and transformed into XHTML. -->
+    <property name="docs.src" value="site-author"/>
+
+    <!-- The destination directory for content generated from our XML
+    sources. -->
+    <property name="docs.dest" value="site-publish"/>
+
+    <path id="classpath">
+        <fileset dir="./lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="prepare">    
+        <available classname="org.apache.velocity.anakia.AnakiaTask" 
+            property="AnakiaTask.present">
+            <classpath refid="classpath"/>
+        </available>
+    </target>
+
+    <target depends="prepare" name="prepare-error" unless="AnakiaTask.present">
+        <echo>
+            AnakiaTask is not present! Please check to make sure that 
+            velocity.jar is in your classpath.
+        </echo>
+    </target>
+
+    <target name="docs" depends="prepare-error" if="AnakiaTask.present">
+        <taskdef name="anakia" classname="org.apache.velocity.anakia.AnakiaTask">
+            <classpath refid="classpath"/>
+        </taskdef>
+        <anakia basedir="${docs.src}" destdir="${docs.dest}/"
+             extension=".html" style="./site.vsl"
+             projectFile="stylesheets/project.xml"
+             excludes="**/stylesheets/** empty.xml **/projects/activemq/** **/projects/servicemix/**"
+             includes="**/*.xml"
+             lastModifiedCheck="true"
+             templatePath="${docs.src}/stylesheets"
+        >
+        </anakia>
+
+        <copy todir="${docs.dest}/" filtering="no">
+            <fileset dir="${docs.src}/">
+                <!-- Ignore the Anakia style sheet used for processing
+                of the xdocs, and the unprocessed xdocs themselves,
+                but copy all other content to the directory which is
+                checked out on the server. -->
+                <exclude name="**/*.xml"/>
+                <exclude name="**/stylesheets/**"/>
+                <!-- Editor-specific ignores. -->
+                <exclude name="**/*~"/>
+                <exclude name="**/.#*"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <!-- Optional task to fix "svn: Inconsistent line ending style" issues with generated files -->
+    <target name="fix">    
+        <fixcrlf srcdir="${docs.dest}" includes="**/*.html"/> 
+    </target>    
+	
+	<!--
+Audit Tasks
+===========
+	-->
+	
+	<target 
+		name='audit-setup'
+		description='- common preparation for audit targets'>
+		<tstamp>
+		    <format property="ISO_TODAY" pattern="yyyy-MM-dd" locale="en,GMT"/>
+		</tstamp>
+		<property name='file.audit.data.xml' location='audit/incubator-${ISO_TODAY}.xml'/>
+		<property name='file.audit.data.asc' location='audit/incubator-${ISO_TODAY}.xml.asc'/>
+		<property name='file.audit.in' location='audit/changes-${ISO_TODAY}.xml'/>
+		<property name='file.audit.out.txt' location='site-author/audit/changes-${ISO_TODAY}.txt'/>
+		<property name='file.audit.out.xml' location='site-author/audit/changes-${ISO_TODAY}.xml'/>
+		<property name='file.audit.properties' location='audit.properties'/>
+		<property name='file.audit.publish.txt' location='site-publish/audit/changes-${ISO_TODAY}.txt'/>
+		<property name='file.audit.publish.html' location='site-publish/audit/changes-${ISO_TODAY}.html'/>
+		<property file='mail.properties' prefix='mail'/>
+		<condition property="enable.audit.mail">
+			<istrue value="${mail.enabled}"/>
+		</condition>
+		<condition property="completely-configured.audit.mail">
+			<and>
+				<isset property='mail.from'/>
+				<isset property='mail.mailhost'/>
+				<isset property='mail.mailport'/>
+				<isset property='mail.user'/>
+				<isset property='mail.password'/>
+			</and>
+		</condition>
+	</target>
+	
+	<target 
+		name='do-audit' 
+		description='- connects to people.apache.org and audits incubator releases'
+		depends='audit-setup'>
+		<echo>
+Audit pipes a python script to people.apache.org.
+The connection is made over ssh to alias named apache.
+Configure ssh appropriately.
+Before running, add a key to the agent.
+		</echo>
+		<echo>
+GnuPG is used to create digital signatures of the audit
+records. These allow the records to be trusted
+without the need to trust that the repository 
+is secure. gpg must be on the PATH.
+This script has been tested using gpg (GnuPG) 2.0.7
+		</echo>
+		<echo>
+A signed copy of the results will be posted to the 
+incubator general list if mail is available.
+Copy EXAMPLE.mail.properties to mail.properties
+then edit.
+		</echo>
+		<echo>
+Until someone steps up with a port, 
+this script is unlikely to work on windows
+(or - for that matter - AmigaOS, CPM...)
+		</echo>
+		<echo>
+Auditing may take a few minutes. Time for a tea...
+		</echo>
+		<exec executable="python">
+			<arg line='connect.py'/>
+		</exec>
+		
+		<exec executable="svn">
+			<arg line="add ${file.audit.data.xml} ${file.audit.data.asc} ${file.audit.in}"/>
+		</exec>
+	</target>
+	
+	<target 
+		name='publish-audit-reports' 
+		description='- generates audit web reports'
+		depends='audit-setup'>
+
+		
+		<delete file="${file.audit.changes}"/>
+		<xslt 
+			style="audit/summary-txt.xsl" 
+			in='${file.audit.in}'
+			out='${file.audit.out.txt}'></xslt>
+		<delete file="${file.audit.out.xml}"/>
+		<xslt 
+			style="audit/summary-web.xsl" 
+			in='${file.audit.in}'
+			out='${file.audit.out.xml}'></xslt>
+		<xslt 
+			style="audit/ant-property.xsl" 
+			in='${file.audit.in}'
+			out='${file.audit.properties}'></xslt>
+		
+		<antcall target="docs"></antcall>
+			
+		<exec executable='gpg'>
+			<arg line='--output ${file.audit.publish.txt}.asc --clearsign ${file.audit.publish.txt}'/>
+		</exec>
+		<move 
+			file="${file.audit.publish.txt}.asc" 
+			tofile="${file.audit.publish.txt}"
+			overwrite="true"/>
+		
+		<exec executable="svn">
+			<arg line="add ${file.audit.out.txt} ${file.audit.out.xml} ${file.audit.publish.html} ${file.audit.publish.txt}"/>
+		</exec>
+	</target>
+	
+	
+	<target
+		name='mail-audit-messages'
+		description='- prints warning when mail disabled'
+		depends='audit-setup' 
+		unless='enable.audit.mail'>
+		<echo>Mail disabled. See EXAMPLE.mail.properties.</echo>
+
+	</target>
+	
+	<target
+		name='_do-mail-audit-report'
+		description='[INTERNAL]'
+		depends='audit-setup' 
+		if='do.audit.mail'>
+		<echo>Mailing results to general list...</echo>
+		<mail
+			from='${mail.from}'
+			subject='Release Audit Report ${ISO_TODAY}'
+			mailhost='${mail.mailhost}'
+			mailport='${mail.mailport}'
+			user='${mail.user}'
+			password='${mail.password}'>
+			<message 
+				src="${file.audit.publish.txt}" 
+				charset="iso-8859-1" 
+				mimetype="text/plain"/>
+			<to 
+				address="general@incubator.apache.org"
+				name="Incubator General Mailing List"/>
+		</mail>
+	</target>
+	
+	<target
+		name='mail-audit-report'
+		description='- mails copy of audit report to incubator general mailing list'
+		depends='audit-setup' 
+		if='enable.audit.mail'>
+		
+		<property file="${file.audit.properties}" prefix="generated"/>
+		
+		<condition property="do.audit.mail">
+			<and>
+				<isset property="generated.is_changed" />
+				<istrue value="${generated.is_changed}" />
+			</and>
+		</condition>
+		<fail unless="completely-configured.audit.mail">Required property is missing from mail.properties</fail>
+		<antcall target='_do-mail-audit-report'/>
+	</target>
+	
+	
+	<target name='audit'>
+		<antcall target='do-audit'/>
+		<antcall target='publish-audit-reports'/>
+		<antcall target='mail-audit-report'/>
+	</target>
+</project>
