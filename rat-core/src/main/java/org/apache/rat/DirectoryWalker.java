@@ -76,16 +76,37 @@ public class DirectoryWalker implements IReportable {
 		return result;
 	}
     
+	  /**
+	   * Process a directory, restricted directories will be ignored.
+	   * 
+	   * @param report The report to process the directory with
+	   * @param file the directory to process
+	   * @throws RatReportFailedException
+	   */
     private void processDirectory(RatReport  report, final File file) throws RatReportFailedException {
         if (!isRestricted(file)) {
             process(report, file);
         }
     }
     
+    /**
+     * Run a report over all files and directories in this DirectoryWalker,
+     * ignoring any files/directories set to be ignored.
+     * 
+     * @param report the defined RatReport to run on this Directory walker.
+     * 
+     */
     public void run(final RatReport report) throws RatReportFailedException {
         process(report, file);
     }
 
+    /**
+     * Process a directory, ignoring any files/directories set to be ignored.
+     * 
+     * @param report the report to use in processing
+     * @param file the run the report against
+     * @throws RatReportFailedException
+     */
     private void process(final RatReport report, final File file) throws RatReportFailedException {
         final File[] files = file.listFiles();
         Arrays.sort(files, COMPARATOR);
@@ -96,6 +117,13 @@ public class DirectoryWalker implements IReportable {
         }
     }
 
+    /**
+     * Process all directories in a set of file objects, ignoring any directories set to be ignored.
+     * 
+     * @param report the report to use in processing
+     * @param files the files to process (only directories will be processed)
+     * @throws RatReportFailedException
+     */
     private void processDirectories(final RatReport report, final File[] files) throws RatReportFailedException {
         for (int i = 0; i < files.length; i++) {
             final File file = files[i];
@@ -107,7 +135,14 @@ public class DirectoryWalker implements IReportable {
             }
         }
     }
-
+    
+    /**
+     * Process all files in a set of file objects, ignoring any files set to be ignored.
+     * 
+     * @param report the report to use in processing
+     * @param files the files to process (only files will be processed)
+     * @throws RatReportFailedException
+     */
     private void processNonDirectories(final RatReport report, final File[] files) throws RatReportFailedException {
         for (int i = 0; i < files.length; i++) {
             final File file = files[i];
@@ -120,6 +155,13 @@ public class DirectoryWalker implements IReportable {
         }
     }
 
+    /**
+     * Report on the given file.
+     * 
+     * @param report the report to process the file with
+     * @param file the file to be reported on
+     * @throws RatReportFailedException
+     */
     private void report(final RatReport report, File file) throws RatReportFailedException {
 
         IDocument document = new FileDocument(file, UNARCHIVER);
