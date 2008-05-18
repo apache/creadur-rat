@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project name="RAT Scan build" default="dist">
+
+	<macrodef name="SetupBuildDirs">
+		<sequential>
+			<property name='home.build' value='target'/>
+            <property name='vendor.id' value='org.apache'/> 
+            <property name='vendor.name' value='Apache Software Foundation'/>          
+            <property name='version.minor' value='0.1'/>
+            <property name='version.point' value=''/>         
+			<property name='version' value='${minor.version}${version.point}'/>
+			<property name='artifact.name' value='apache-rat-scan-incubating'/>
+			<mkdir dir='home.build'/>
+		</sequential>
+	</macrodef>
+
+	<target 
+		name='_setup'
+		description=' - prepares environment (internal) '>
+		<property name='home.src' value='src'/>
+
+		<SetupBuildDirs/>
+	</target>
+
+	<target 
+			name='clean' 
+			description=' - cleans up temporary build files'
+			depends='_setup'>
+		<delete dir='${home.build}'/>
+		<SetupBuildDirs/>
+	</target>
+
+	<target 
+		name='assemble'
+		description=' - assembles a jar containing the scan scripts'
+		depends='_setup'>
+		<jar 
+			basedir="${home.src}"
+			destfile="${home.build}/${artifact.version}">
+			<manifest>
+				<attribute name="Extension-Name" value="rat-scan"/>
+				<attribute name="Specification-Title" value="Release Audit Tool Scan"/>
+				<attribute name="Specification-Vendor" value="${vendor.name}"/>
+				<attribute name="Specification-Version" value="${version.minor}"/>
+				<attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
+				<attribute name="Implementation-Title" value="Release Audit Tool Scan"/>
+				<attribute name="Implementation-Vendor" value="${vendor.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target 
+			name='dist' 
+			description=' - creates a distribution'
+			depends='clean, _setup'>
+
+	</target>
+</project>
