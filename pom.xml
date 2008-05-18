@@ -199,6 +199,14 @@ Note that binary compatibility is not gauranteed between 0.x releases.
     <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/</url>
   </scm>
 
+  <distributionManagement>
+    <site>
+      <id>org.apache.rat.incubating</id>
+      <name>Apache RAT Website</name>
+      <url>scp://people.apache.org/www/incubator/rat/</url>
+    </site>
+  </distributionManagement>
+
   <modules>
     <module>rat-core</module>
     <module>rat-anttasks</module>
