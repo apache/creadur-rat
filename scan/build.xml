@@ -48,7 +48,7 @@
         description=' - assembles a jar containing the scan scripts'
         depends='_setup'>
         <jar 
-            basedir="${home.src}"
+            basedir="${home.src}"   
             destfile="${home.build}/${artifact.name}-${version}.jar">
             <manifest>
                 <attribute name="Extension-Name" value="rat-scan"/>
@@ -60,6 +60,11 @@
                 <attribute name="Implementation-Vendor" value="${vendor.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
             </manifest>
+            <metainf dir='${basedir}'>
+                <include name='LICENSE.txt'/>  
+                <include name='DISCLAIMER.txt'/>   
+                <include name='NOTICE.txt'/>   
+            </metainf>  
         </jar>
     </target>
 
