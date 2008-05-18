@@ -46,8 +46,8 @@ public class Report {
 			printUsage();
 		} else {
 			Report report = new Report(args[0]);
-			//report.report(System.out);
-            report.styleReport(System.out);
+			report.report(System.out);
+            //report.styleReport(System.out);
 		} 		
 	}
 	
@@ -95,6 +95,13 @@ public class Report {
         return result;
     }
     
+    /**
+     * Output a report in the default style and default licence
+     * header matcher. 
+     * 
+     * @param out - the output stream to recieve the styled report
+     * @throws Exception
+     */
     public void styleReport(PrintStream out) throws Exception {
         DirectoryWalker base = getDirectory(out);
         if (base != null) {
@@ -103,6 +110,19 @@ public class Report {
         }
     }
 
+    /**
+     * Output a report that is styled using a defined stylesheet.
+     * 
+     * @param out the stream to write the report to
+     * @param base the files or directories to report on
+     * @param style an input stream representing the stylesheet to use for styling the report
+     * @param matcher the header matcher for matching licence headers
+     * @param approvedLicenseNames a list of licence families that are approved for use in the project
+     * @throws IOException
+     * @throws TransformerConfigurationException
+     * @throws InterruptedException
+     * @throws RatReportFailedException
+     */
     public static void report(PrintStream out, IReportable base, final InputStream style, final IHeaderMatcher matcher,
             final ILicenseFamily[] approvedLicenseNames) 
            throws IOException, TransformerConfigurationException, 
@@ -110,6 +130,21 @@ public class Report {
         report(new OutputStreamWriter(out), base, style, matcher, approvedLicenseNames);
     }
 
+    /**
+     * 
+     * Output a report that is styled using a defined stylesheet.
+     * 
+     * @param out the writer to write the report to
+     * @param base the files or directories to report on
+     * @param style an input stream representing the stylesheet to use for styling the report
+     * @param matcher the header matcher for matching licence headers
+     * @param approvedLicenseNames a list of licence families that are approved for use in the project
+     * @throws IOException
+     * @throws TransformerConfigurationException
+     * @throws FileNotFoundException
+     * @throws InterruptedException
+     * @throws RatReportFailedException
+     */
     public static void report(Writer out, IReportable base, final InputStream style, 
             final IHeaderMatcher matcher, final ILicenseFamily[] approvedLicenseNames) 
                 throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatReportFailedException {
@@ -124,7 +159,15 @@ public class Report {
         transformerThread.join();
     }
     
-    
+    /**
+     * 
+     * @param container the files or directories to report on
+     * @param out the writer to write the report to
+     * @param matcher the header matcher for matching licence headers
+     * @param approvedLicenseNames a list of licence families that are approved for use in the project
+     * @throws IOException
+     * @throws RatReportFailedException
+     */
     public static void report(final IReportable container, final Writer out, final IHeaderMatcher matcher,
              final ILicenseFamily[] approvedLicenseNames) throws IOException, RatReportFailedException {
         IXmlWriter writer = new XmlWriter(out);

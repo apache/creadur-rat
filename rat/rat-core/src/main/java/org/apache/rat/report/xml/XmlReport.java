@@ -53,6 +53,12 @@ class XmlReport implements RatReport {
         }
     }
 
+    /**
+     * Report on a document. This will result in the document being passed through
+     * the document analyser with descriptive elements added to the analysis report.
+     * 
+     * @param document the document to report on.
+     */
     public void report(IDocument document) throws RatReportFailedException {
         try {
             analyser.analyse(document);
