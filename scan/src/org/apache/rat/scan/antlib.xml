@@ -1,237 +1,153 @@
 <?xml version="1.0"?>
-<project name="site" default="docs" basedir=".">
-
-    <!-- Initialization properties -->
-    <property name="project.name"   value="site"/>
-
-    <!-- The source directory for our XML source documents which are
-    to be sytlized and transformed into XHTML. -->
-    <property name="docs.src" value="site-author"/>
-
-    <!-- The destination directory for content generated from our XML
-    sources. -->
-    <property name="docs.dest" value="site-publish"/>
-
-    <path id="classpath">
-        <fileset dir="./lib">
-            <include name="**/*.jar"/>
-        </fileset>
-    </path>
-
-    <target name="prepare">    
-        <available classname="org.apache.velocity.anakia.AnakiaTask" 
-            property="AnakiaTask.present">
-            <classpath refid="classpath"/>
-        </available>
-    </target>
-
-    <target depends="prepare" name="prepare-error" unless="AnakiaTask.present">
-        <echo>
-            AnakiaTask is not present! Please check to make sure that 
-            velocity.jar is in your classpath.
-        </echo>
-    </target>
-
-    <target name="docs" depends="prepare-error" if="AnakiaTask.present">
-        <taskdef name="anakia" classname="org.apache.velocity.anakia.AnakiaTask">
-            <classpath refid="classpath"/>
-        </taskdef>
-        <anakia basedir="${docs.src}" destdir="${docs.dest}/"
-             extension=".html" style="./site.vsl"
-             projectFile="stylesheets/project.xml"
-             excludes="**/stylesheets/** empty.xml **/projects/activemq/** **/projects/servicemix/**"
-             includes="**/*.xml"
-             lastModifiedCheck="true"
-             templatePath="${docs.src}/stylesheets"
-        >
-        </anakia>
-
-        <copy todir="${docs.dest}/" filtering="no">
-            <fileset dir="${docs.src}/">
-                <!-- Ignore the Anakia style sheet used for processing
-                of the xdocs, and the unprocessed xdocs themselves,
-                but copy all other content to the directory which is
-                checked out on the server. -->
-                <exclude name="**/*.xml"/>
-                <exclude name="**/stylesheets/**"/>
-                <!-- Editor-specific ignores. -->
-                <exclude name="**/*~"/>
-                <exclude name="**/.#*"/>
-            </fileset>
-        </copy>
-
-    </target>
-
-    <!-- Optional task to fix "svn: Inconsistent line ending style" issues with generated files -->
-    <target name="fix">    
-        <fixcrlf srcdir="${docs.dest}" includes="**/*.html"/> 
-    </target>    
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<antlib>
 	
-	<!--
-Audit Tasks
-===========
-	-->
-	
-	<target 
-		name='audit-setup'
-		description='- common preparation for audit targets'>
+	<macrodef 
+		name='AuditSetup'
+		description='Common preparation for audit'>
 		<tstamp>
-		    <format property="ISO_TODAY" pattern="yyyy-MM-dd" locale="en,GMT"/>
+		    <format property="org.apache.rat.scan.ISO_TODAY" pattern="yyyy-MM-dd" locale="en,GMT"/>
 		</tstamp>
-		<property name='file.audit.data.xml' location='audit/incubator-${ISO_TODAY}.xml'/>
-		<property name='file.audit.data.asc' location='audit/incubator-${ISO_TODAY}.xml.asc'/>
-		<property name='file.audit.in' location='audit/changes-${ISO_TODAY}.xml'/>
-		<property name='file.audit.out.txt' location='site-author/audit/changes-${ISO_TODAY}.txt'/>
-		<property name='file.audit.out.xml' location='site-author/audit/changes-${ISO_TODAY}.xml'/>
-		<property name='file.audit.properties' location='audit.properties'/>
-		<property name='file.audit.publish.txt' location='site-publish/audit/changes-${ISO_TODAY}.txt'/>
-		<property name='file.audit.publish.html' location='site-publish/audit/changes-${ISO_TODAY}.html'/>
-		<property file='mail.properties' prefix='mail'/>
-		<condition property="enable.audit.mail">
-			<istrue value="${mail.enabled}"/>
-		</condition>
-		<condition property="completely-configured.audit.mail">
-			<and>
-				<isset property='mail.from'/>
-				<isset property='mail.mailhost'/>
-				<isset property='mail.mailport'/>
-				<isset property='mail.user'/>
-				<isset property='mail.password'/>
-			</and>
-		</condition>
-	</target>
+		<property name='org.apache.rat.scan.data.xml' location='audit/incubator-${org.apache.rat.scan.ISO_TODAY}.xml'/>
+		<property name='org.apache.rat.scan.data.asc' location='audit/incubator-${org.apache.rat.scan.ISO_TODAY}.xml.asc'/>
+		<property name='org.apache.rat.scan.in' location='audit/changes-${org.apache.rat.scan.ISO_TODAY}.xml'/>
+		<property name='org.apache.rat.scan.out.txt' location='site-author/audit/changes-${org.apache.rat.scan.ISO_TODAY}.txt'/>
+		<property name='org.apache.rat.scan.out.xml' location='site-author/audit/changes-${org.apache.rat.scan.ISO_TODAY}.xml'/>
+		<property name='org.apache.rat.scan.properties' location='audit.properties'/>
+		<property name='org.apache.rat.scan.publish.txt' location='site-publish/audit/changes-${org.apache.rat.scan.ISO_TODAY}.txt'/>
+		<property name='org.apache.rat.scan.publish.html' location='site-publish/audit/changes-${org.apache.rat.scan.ISO_TODAY}.html'/>
+
+	</macrodef>
 	
-	<target 
-		name='do-audit' 
-		description='- connects to people.apache.org and audits incubator releases'
-		depends='audit-setup'>
-		<echo>
+	
+	<macrodef
+		name='DoAudit' 
+		description='Connects to people.apache.org and audits incubator releases'>
+		<sequential>
+			<echo>
 Audit pipes a python script to people.apache.org.
 The connection is made over ssh to alias named apache.
 Configure ssh appropriately.
 Before running, add a key to the agent.
-		</echo>
-		<echo>
+			</echo>
+			<echo>
 GnuPG is used to create digital signatures of the audit
 records. These allow the records to be trusted
 without the need to trust that the repository 
 is secure. gpg must be on the PATH.
 This script has been tested using gpg (GnuPG) 2.0.7
-		</echo>
-		<echo>
+			</echo>
+			<echo>
 A signed copy of the results will be posted to the 
 incubator general list if mail is available.
 Copy EXAMPLE.mail.properties to mail.properties
 then edit.
-		</echo>
-		<echo>
+			</echo>
+			<echo>
 Until someone steps up with a port, 
 this script is unlikely to work on windows
 (or - for that matter - AmigaOS, CPM...)
-		</echo>
-		<echo>
+			</echo>
+			<echo>
 Auditing may take a few minutes. Time for a tea...
-		</echo>
-		<exec executable="python">
-			<arg line='connect.py'/>
-		</exec>
-		
-		<exec executable="svn">
-			<arg line="add ${file.audit.data.xml} ${file.audit.data.asc} ${file.audit.in}"/>
-		</exec>
-	</target>
-	
-	<target 
-		name='publish-audit-reports' 
-		description='- generates audit web reports'
-		depends='audit-setup'>
-
-		
-		<delete file="${file.audit.changes}"/>
-		<xslt 
-			style="audit/summary-txt.xsl" 
-			in='${file.audit.in}'
-			out='${file.audit.out.txt}'></xslt>
-		<delete file="${file.audit.out.xml}"/>
-		<xslt 
-			style="audit/summary-web.xsl" 
-			in='${file.audit.in}'
-			out='${file.audit.out.xml}'></xslt>
-		<xslt 
-			style="audit/ant-property.xsl" 
-			in='${file.audit.in}'
-			out='${file.audit.properties}'></xslt>
-		
-		<antcall target="docs"></antcall>
+			</echo>
 			
-		<exec executable='gpg'>
-			<arg line='--output ${file.audit.publish.txt}.asc --clearsign ${file.audit.publish.txt}'/>
-		</exec>
-		<move 
-			file="${file.audit.publish.txt}.asc" 
-			tofile="${file.audit.publish.txt}"
-			overwrite="true"/>
+			<exec executable="python">
+				<arg line='connect.py'/>
+			</exec>
 		
-		<exec executable="svn">
-			<arg line="add ${file.audit.out.txt} ${file.audit.out.xml} ${file.audit.publish.html} ${file.audit.publish.txt}"/>
-		</exec>
-	</target>
+			<exec executable="svn">
+				<arg line="add ${org.apache.rat.scan.data.xml} ${org.apache.rat.scan.data.asc} ${org.apache.rat.scan.in}"/>
+			</exec>
+		</sequential>
+	</macrodef>
 	
+	<macrodef
+		name='PublishAuditReports' 
+		description='Generates audit web reports'>
+		<sequential>
+			<delete file="${org.apache.rat.scan.changes}"/>
+			<xslt 
+				style="org/apache/rat/scan/summary-txt.xsl" 
+				in='${org.apache.rat.scan.in}'
+				out='${org.apache.rat.scan.out.txt}'></xslt>
+			<delete file="${org.apache.rat.scan.out.xml}"/>
+			<xslt 
+				style="org/apache/rat/scan/summary-web.xsl" 
+				in='${org.apache.rat.scan.in}'
+				out='${org.apache.rat.scan.out.xml}'></xslt>
+			<xslt 
+				style="org/apache/rat/scan/ant-property.xsl" 
+				in='${org.apache.rat.scan.in}'
+				out='${org.apache.rat.scan.properties}'></xslt>
+			
+			<antcall target="docs"></antcall>
+				
+			<exec executable='gpg'>
+				<arg line='--output ${org.apache.rat.scan.publish.txt}.asc --clearsign ${org.apache.rat.scan.publish.txt}'/>
+			</exec>
+			<move 
+				file="${org.apache.rat.scan.publish.txt}.asc" 
+				tofile="${org.apache.rat.scan.publish.txt}"
+				overwrite="true"/>
+			
+			<exec executable="svn">
+				<arg line="add ${org.apache.rat.scan.out.txt} ${org.apache.rat.scan.out.xml} ${org.apache.rat.scan.publish.html} ${org.apache.rat.scan.publish.txt}"/>
+			</exec>
+		</sequential>
+	</macrodef>
 	
-	<target
-		name='mail-audit-messages'
-		description='- prints warning when mail disabled'
-		depends='audit-setup' 
-		unless='enable.audit.mail'>
-		<echo>Mail disabled. See EXAMPLE.mail.properties.</echo>
-
-	</target>
+	<macrodef
+		name='MailAuditReport'
+		description='Mails audit report'>
+		<sequential>
+			<echo>Mailing results to list...</echo>
+			<mail
+				from='${mail.from}'
+				subject='Release Audit Report ${ISO_TODAY}'
+				mailhost='${mail.mailhost}'
+				mailport='${mail.mailport}'
+				user='${mail.user}'
+				password='${mail.password}'>
+				<message 
+					src="${file.audit.publish.txt}" 
+					charset="iso-8859-1" 
+					mimetype="text/plain"/>
+				<to 
+					address="general@incubator.apache.org"
+					name="Incubator General Mailing List"/>
+			</mail>
+		</sequential>
+	</macrodef>
 	
-	<target
-		name='_do-mail-audit-report'
-		description='[INTERNAL]'
-		depends='audit-setup' 
-		if='do.audit.mail'>
-		<echo>Mailing results to general list...</echo>
-		<mail
-			from='${mail.from}'
-			subject='Release Audit Report ${ISO_TODAY}'
-			mailhost='${mail.mailhost}'
-			mailport='${mail.mailport}'
-			user='${mail.user}'
-			password='${mail.password}'>
-			<message 
-				src="${file.audit.publish.txt}" 
-				charset="iso-8859-1" 
-				mimetype="text/plain"/>
-			<to 
-				address="general@incubator.apache.org"
-				name="Incubator General Mailing List"/>
-		</mail>
-	</target>
-	
-	<target
-		name='mail-audit-report'
-		description='- mails copy of audit report to incubator general mailing list'
-		depends='audit-setup' 
-		if='enable.audit.mail'>
+	<macrodef
+		name='CheckForChanges'
+		description='Checks whether artifacts were changed since the last scan'>
+		<attribute name='property'/>
+		<sequential>
+			<property file="${file.audit.properties}" prefix="org.apache.rat.scan.generated"/>
 		
-		<property file="${file.audit.properties}" prefix="generated"/>
+			<condition property="@{property}">
+				<and>
+					<isset property="generated.is_changed" />
+					<istrue value="${generated.is_changed}" />
+				</and>
+			</condition>
 		
-		<condition property="do.audit.mail">
-			<and>
-				<isset property="generated.is_changed" />
-				<istrue value="${generated.is_changed}" />
-			</and>
-		</condition>
 		<fail unless="completely-configured.audit.mail">Required property is missing from mail.properties</fail>
-		<antcall target='_do-mail-audit-report'/>
-	</target>
+		</sequential>
+	</macrodef>
 	
-	
-	<target name='audit'>
-		<antcall target='do-audit'/>
-		<antcall target='publish-audit-reports'/>
-		<antcall target='mail-audit-report'/>
-	</target>
-</project>
+</antlib>
