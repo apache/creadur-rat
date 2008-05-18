@@ -21,9 +21,9 @@
             <property name='vendor.name' value='Apache Software Foundation'/>          
             <property name='version.minor' value='0.1'/>
             <property name='version.point' value=''/>         
-            <property name='version' value='${minor.version}${version.point}'/>
+            <property name='version' value='${version.minor}${version.point}'/>
             <property name='artifact.name' value='apache-rat-scan-incubating'/>
-            <mkdir dir='home.build'/>
+            <mkdir dir='${home.build}'/>
         </sequential>
     </macrodef>
 
@@ -49,7 +49,7 @@
         depends='_setup'>
         <jar 
             basedir="${home.src}"
-            destfile="${home.build}/${artifact.version}">
+            destfile="${home.build}/${artifact.name}-${version}.jar">
             <manifest>
                 <attribute name="Extension-Name" value="rat-scan"/>
                 <attribute name="Specification-Title" value="Release Audit Tool Scan"/>
@@ -67,6 +67,6 @@
             name='dist' 
             description=' - creates a distribution'
             depends='clean, _setup'>
-
+        <antcall target='assemble'/>
     </target>
 </project>
