@@ -14,59 +14,59 @@
 -->
 <project name="RAT Scan build" default="dist">
 
-	<macrodef name="SetupBuildDirs">
-		<sequential>
-			<property name='home.build' value='target'/>
+    <macrodef name="SetupBuildDirs">
+        <sequential>
+            <property name='home.build' value='target'/>
             <property name='vendor.id' value='org.apache'/> 
             <property name='vendor.name' value='Apache Software Foundation'/>          
             <property name='version.minor' value='0.1'/>
             <property name='version.point' value=''/>         
-			<property name='version' value='${minor.version}${version.point}'/>
-			<property name='artifact.name' value='apache-rat-scan-incubating'/>
-			<mkdir dir='home.build'/>
-		</sequential>
-	</macrodef>
+            <property name='version' value='${minor.version}${version.point}'/>
+            <property name='artifact.name' value='apache-rat-scan-incubating'/>
+            <mkdir dir='home.build'/>
+        </sequential>
+    </macrodef>
 
-	<target 
-		name='_setup'
-		description=' - prepares environment (internal) '>
-		<property name='home.src' value='src'/>
+    <target 
+        name='_setup'
+        description=' - prepares environment (internal) '>
+        <property name='home.src' value='src'/>
 
-		<SetupBuildDirs/>
-	</target>
+        <SetupBuildDirs/>
+    </target>
 
-	<target 
-			name='clean' 
-			description=' - cleans up temporary build files'
-			depends='_setup'>
-		<delete dir='${home.build}'/>
-		<SetupBuildDirs/>
-	</target>
+    <target 
+            name='clean' 
+            description=' - cleans up temporary build files'
+            depends='_setup'>
+        <delete dir='${home.build}'/>
+        <SetupBuildDirs/>
+    </target>
 
-	<target 
-		name='assemble'
-		description=' - assembles a jar containing the scan scripts'
-		depends='_setup'>
-		<jar 
-			basedir="${home.src}"
-			destfile="${home.build}/${artifact.version}">
-			<manifest>
-				<attribute name="Extension-Name" value="rat-scan"/>
-				<attribute name="Specification-Title" value="Release Audit Tool Scan"/>
-				<attribute name="Specification-Vendor" value="${vendor.name}"/>
-				<attribute name="Specification-Version" value="${version.minor}"/>
-				<attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
-				<attribute name="Implementation-Title" value="Release Audit Tool Scan"/>
-				<attribute name="Implementation-Vendor" value="${vendor.name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-			</manifest>
-		</jar>
-	</target>
+    <target 
+        name='assemble'
+        description=' - assembles a jar containing the scan scripts'
+        depends='_setup'>
+        <jar 
+            basedir="${home.src}"
+            destfile="${home.build}/${artifact.version}">
+            <manifest>
+                <attribute name="Extension-Name" value="rat-scan"/>
+                <attribute name="Specification-Title" value="Release Audit Tool Scan"/>
+                <attribute name="Specification-Vendor" value="${vendor.name}"/>
+                <attribute name="Specification-Version" value="${version.minor}"/>
+                <attribute name="Implementation-Vendor-Id" value="${vendor.id}"/>
+                <attribute name="Implementation-Title" value="Release Audit Tool Scan"/>
+                <attribute name="Implementation-Vendor" value="${vendor.name}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+            </manifest>
+        </jar>
+    </target>
 
-	<target 
-			name='dist' 
-			description=' - creates a distribution'
-			depends='clean, _setup'>
+    <target 
+            name='dist' 
+            description=' - creates a distribution'
+            depends='clean, _setup'>
 
-	</target>
+    </target>
 </project>
