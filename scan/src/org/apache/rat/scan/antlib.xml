@@ -79,6 +79,7 @@ Auditing may take a few minutes. Time for a tea...
             </echo>
             
             <current:AuditSetup/>
+            <mkdir dir='@{result-dir}'/>
             <exec executable="python">
                 <arg path='@{src-dir}/org/apache/rat/scan/connect.py'/>
                 <arg path='@{result-dir}'/>
@@ -119,6 +120,16 @@ Auditing may take a few minutes. Time for a tea...
             
             <current:AuditSetup/>
             
+            <condition property='org.apache.rat.scan.publish.exists.diff'>
+              <available file='@{input-dir}/${org.apache.rat.scan.name.diff}'/>
+            </condition>
+            
+            <fail unless='org.apache.rat.scan.publish.exists.diff'>
+            Changes file expected at @{input-dir}/${org.apache.rat.scan.name.diff} but is missing.
+            </fail>
+            
+            <mkdir dir='@{output-dir}'/>
+            
             <delete file="@{input-dir}/${org.apache.rat.scan.name.txt}"/>
             <xslt 
                 style="@{src-dir}/org/apache/rat/scan/summary-txt.xsl" 
@@ -152,5 +163,27 @@ Auditing may take a few minutes. Time for a tea...
              </exec>
               -->
         </sequential>
+    </macrodef>
+    
+    <macrodef 
+      name='Audit'
+      description='Complete audit cycle with standard defaults'>
+      <attribute 
+        name='host'
+        default='apache'/>
+      <attribute
+        name='src'
+        default='src'/>
+      <attribute 
+        name='build-dir'
+        default='target'/>
+      <sequential>
+        <current:DoAudit result-dir='@{build-dir}/rat-scan-results' host='@{host}' src-dir='@{src}'/>
+        <current:PublishAuditReports 
+          input-dir='@{build-dir}/rat-scan-results' 
+          output-dir='@{build-dir}/rat-scan' 
+          src-dir='@{src}'
+          build-dir='@{build-dir}'/>
+      </sequential> 
     </macrodef>
 </antlib>

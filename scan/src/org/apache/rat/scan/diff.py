@@ -197,7 +197,10 @@ class Auditor:
                 
     def latestDiffs(self):
         latest = self.latest()
-        return self.diffs(latest[1], latest[0])
+        if len(latest)>1:
+            return self.diffs(latest[1], latest[0])
+        else:
+            return None
         
     def diffs(self, one, two):
         added, removed, modified = one.compare(two)

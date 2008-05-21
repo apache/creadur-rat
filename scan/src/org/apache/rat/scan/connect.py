@@ -111,5 +111,9 @@ else:
     prefix = base_file_name[0:-14]
     auditor = diff.Auditor(build_dir, prefix)
     auditor.printSignatureChecks()
-    save(diff_file, addPreamble(auditor.latestDiffs()))
+    latestDiffs = auditor.latestDiffs()
+    if latestDiffs == None:
+        print "First run so skipping comparison "
+    else:
+        save(diff_file, addPreamble(latestDiffs))
     
