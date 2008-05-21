@@ -26,6 +26,8 @@ with 'apache' as a local alias for people.apache.org.
 import subprocess
 import datetime
 import diff
+import sys
+import os.path
 
 def addPreamble(xml):
     return """<?xml version='1.0'?>
@@ -44,20 +46,25 @@ def addPreamble(xml):
 
 -->\n""" + xml
 
-def outputPath(subject):
-    return "audit/" + subject + '-' + datetime.datetime.utcnow().date().isoformat() + ".xml"
+def save(file, document):
 
-def save(subject, document):
-
-    path = outputPath(subject)
-    f = open(path, 'w')
+    f = open(file, 'w')
     try:
         f.write(document)
     finally:
         f.close()
-    return path
+    return file
 
-print 'Apache Incubator - Distribution Scanner'
+build_dir = sys.argv[1]
+base_file_name = sys.argv[2]
+diff_file_name = sys.argv[3]
+ssh_host = sys.argv[4]
+src_dir = sys.argv[5]
+
+base_file = os.path.join(build_dir, base_file_name)
+diff_file = os.path.join(build_dir, diff_file_name)
+
+print 'Apache RAT Scan - Distribution Scanner'
 print '---------------------------------------'
 print 'ssh-agent MUST loaded with an appropriate'
 print 'key for people.apache.org.'
@@ -65,13 +72,13 @@ print 'Alias host apache to people.apache.org'
 print 'in the ssh client configuration.'
 print ''
 print 'Reading scanning script from local disc...'
-file = open('scanner.py', 'r')
+file = open(os.path.join(src_dir,'scanner.py'), 'r')
 script = file.read()
 file.close()
 print 'Ok'
 print ''
 print 'Opening connection to people.apache.org...'
-process = subprocess.Popen('ssh -T -t apache', shell=True, 
+process = subprocess.Popen('ssh -T -t ' + ssh_host, shell=True, 
                            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 print 'Ok'
 print ''
@@ -97,10 +104,12 @@ if xml == "":
     print "No results returned"
 else:
     xml = addPreamble("<audit on='" + datetime.datetime.utcnow().date().isoformat() + "'>" + xml + "</audit>")
-    path = save('incubator', xml)
+    path = save(base_file, xml)
     subprocess.Popen('gpg --armor --detach-sig ' + path, shell=True).wait()
     
-    auditor = diff.Auditor('audit')
+    
+    prefix = base_file_name[0:-14]
+    auditor = diff.Auditor(build_dir, prefix)
     auditor.printSignatureChecks()
-    save('changes', addPreamble(auditor.latestDiffs()))
+    save(diff_file, addPreamble(auditor.latestDiffs()))
     

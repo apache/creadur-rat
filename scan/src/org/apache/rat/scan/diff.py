@@ -167,8 +167,9 @@ def documents(documents):
     return results
 
 class Auditor:
-    def __init__(self, basedir):
+    def __init__(self, basedir, prefix):
         self.basedir = basedir
+        self.prefix = prefix
         
     def printSignatureChecks(self):
         for file in os.listdir(self.basedir):
@@ -178,18 +179,19 @@ class Auditor:
                 print
                 
     def load(self, name):
-        f = open(os.path.join(self.basedir, name), 'r')
+        file = os.path.join(self.basedir, name)
+        f = open(file, 'r')
         try:
             documents = Documents()
             documents.load(f.read())
             if not documents.on == name[-14:-4]:
-                raise InvalidDocument('Document date does not match file date.')
+                raise InvalidDocument('Document date does not match file date. File: ' + file)
             return documents
         finally:
             f.close()
             
     def latest(self):
-        xmlDocuments = filter(lambda x:x.endswith('.xml'), os.listdir(self.basedir))
+        xmlDocuments = filter(lambda x:x.endswith('.xml') and x.startswith(self.prefix), os.listdir(self.basedir))
         xmlDocuments.sort()
         return map(self.load, xmlDocuments[-2:])
                 

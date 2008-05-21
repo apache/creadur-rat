@@ -12,8 +12,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project name="RAT Scan build" default="dist">
+<project name="RAT Scan build" default="dist" xmlns:rat='antlib:org.apache.rat.scan'>
 
+
+    
+    <target name='run'>
+        <taskdef uri="antlib:org.apache.rat.scan"
+                    resource="org/apache/rat/scan/antlib.xml" classpath="src"/>   
+        <property name='run.home' location='target/run'/>   
+        <mkdir dir='${run.home}'/>
+        <rat:DoAudit result-dir='${run.home}' host='thebes' src-dir='src'/>   
+    </target>   
+    
     <macrodef name="SetupBuildDirs">
         <sequential>
             <property name='home.build' value='target'/>

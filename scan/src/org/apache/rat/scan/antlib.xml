@@ -12,29 +12,41 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<antlib>
+<antlib xmlns:current="ant:current">
     
     <macrodef 
         name='AuditSetup'
         description='Common preparation for audit'>
-        <tstamp>
-            <format property="org.apache.rat.scan.ISO_TODAY" pattern="yyyy-MM-dd" locale="en,GMT"/>
-        </tstamp>
-        <property name='org.apache.rat.scan.data.xml' location='audit/incubator-${org.apache.rat.scan.ISO_TODAY}.xml'/>
-        <property name='org.apache.rat.scan.data.asc' location='audit/incubator-${org.apache.rat.scan.ISO_TODAY}.xml.asc'/>
-        <property name='org.apache.rat.scan.in' location='audit/changes-${org.apache.rat.scan.ISO_TODAY}.xml'/>
-        <property name='org.apache.rat.scan.out.txt' location='site-author/audit/changes-${org.apache.rat.scan.ISO_TODAY}.txt'/>
-        <property name='org.apache.rat.scan.out.xml' location='site-author/audit/changes-${org.apache.rat.scan.ISO_TODAY}.xml'/>
-        <property name='org.apache.rat.scan.properties' location='audit.properties'/>
-        <property name='org.apache.rat.scan.publish.txt' location='site-publish/audit/changes-${org.apache.rat.scan.ISO_TODAY}.txt'/>
-        <property name='org.apache.rat.scan.publish.html' location='site-publish/audit/changes-${org.apache.rat.scan.ISO_TODAY}.html'/>
-
+        <attribute 
+            name='stem' 
+            default='rat-scan'
+            description='File name prefix'/>
+        <sequential>
+          <tstamp>
+              <format property="org.apache.rat.scan.ISO_TODAY" pattern="yyyy-MM-dd" locale="en,GMT"/>
+          </tstamp>
+          <property name='org.apache.rat.scan.name.data' value='@{stem}-data-${org.apache.rat.scan.ISO_TODAY}.xml'/>
+          <property name='org.apache.rat.scan.name.diff' value='@{stem}-diff-${org.apache.rat.scan.ISO_TODAY}.xml'/>
+        
+        </sequential>
     </macrodef>
-    
     
     <macrodef
         name='DoAudit' 
         description='Connects to people.apache.org and audits incubator releases'>
+        <attribute 
+            name='src-dir'
+            description='Directory containing rat scan source'/>
+        <attribute 
+            name='result-dir'
+            description='Directory to store outputs'/>
+        <attribute 
+            name='host'
+            description='SSH host address'/>
+        <attribute 
+            name='stem' 
+            default='rat-scan'
+            description='File name prefix'/>
         <sequential>
             <echo>
 Audit pipes a python script to people.apache.org.
@@ -64,90 +76,20 @@ this script is unlikely to work on windows
 Auditing may take a few minutes. Time for a tea...
             </echo>
             
+            <current:AuditSetup/>
             <exec executable="python">
-                <arg line='connect.py'/>
+                <arg path='@{src-dir}/org/apache/rat/scan/connect.py'/>
+                <arg path='@{result-dir}'/>
+                <arg value='${org.apache.rat.scan.name.data}'/>
+                <arg value='${org.apache.rat.scan.name.diff}'/>
+                <arg value='@{host}'/>
+                <arg path='@{src-dir}/org/apache/rat/scan/'/>
             </exec>
-        
+            <!--
             <exec executable="svn">
                 <arg line="add ${org.apache.rat.scan.data.xml} ${org.apache.rat.scan.data.asc} ${org.apache.rat.scan.in}"/>
             </exec>
+            -->
         </sequential>
     </macrodef>
-    
-    <macrodef
-        name='PublishAuditReports' 
-        description='Generates audit web reports'>
-        <sequential>
-            <delete file="${org.apache.rat.scan.changes}"/>
-            <xslt 
-                style="org/apache/rat/scan/summary-txt.xsl" 
-                in='${org.apache.rat.scan.in}'
-                out='${org.apache.rat.scan.out.txt}'></xslt>
-            <delete file="${org.apache.rat.scan.out.xml}"/>
-            <xslt 
-                style="org/apache/rat/scan/summary-web.xsl" 
-                in='${org.apache.rat.scan.in}'
-                out='${org.apache.rat.scan.out.xml}'></xslt>
-            <xslt 
-                style="org/apache/rat/scan/ant-property.xsl" 
-                in='${org.apache.rat.scan.in}'
-                out='${org.apache.rat.scan.properties}'></xslt>
-            
-            <antcall target="docs"></antcall>
-                
-            <exec executable='gpg'>
-                <arg line='--output ${org.apache.rat.scan.publish.txt}.asc --clearsign ${org.apache.rat.scan.publish.txt}'/>
-            </exec>
-            <move 
-                file="${org.apache.rat.scan.publish.txt}.asc" 
-                tofile="${org.apache.rat.scan.publish.txt}"
-                overwrite="true"/>
-            
-            <exec executable="svn">
-                <arg line="add ${org.apache.rat.scan.out.txt} ${org.apache.rat.scan.out.xml} ${org.apache.rat.scan.publish.html} ${org.apache.rat.scan.publish.txt}"/>
-            </exec>
-        </sequential>
-    </macrodef>
-    
-    <macrodef
-        name='MailAuditReport'
-        description='Mails audit report'>
-        <sequential>
-            <echo>Mailing results to list...</echo>
-            <mail
-                from='${mail.from}'
-                subject='Release Audit Report ${ISO_TODAY}'
-                mailhost='${mail.mailhost}'
-                mailport='${mail.mailport}'
-                user='${mail.user}'
-                password='${mail.password}'>
-                <message 
-                    src="${file.audit.publish.txt}" 
-                    charset="iso-8859-1" 
-                    mimetype="text/plain"/>
-                <to 
-                    address="general@incubator.apache.org"
-                    name="Incubator General Mailing List"/>
-            </mail>
-        </sequential>
-    </macrodef>
-    
-    <macrodef
-        name='CheckForChanges'
-        description='Checks whether artifacts were changed since the last scan'>
-        <attribute name='property'/>
-        <sequential>
-            <property file="${file.audit.properties}" prefix="org.apache.rat.scan.generated"/>
-        
-            <condition property="@{property}">
-                <and>
-                    <isset property="generated.is_changed" />
-                    <istrue value="${generated.is_changed}" />
-                </and>
-            </condition>
-        
-        <fail unless="completely-configured.audit.mail">Required property is missing from mail.properties</fail>
-        </sequential>
-    </macrodef>
-    
 </antlib>
