@@ -27,7 +27,9 @@
           </tstamp>
           <property name='org.apache.rat.scan.name.data' value='@{stem}-data-${org.apache.rat.scan.ISO_TODAY}.xml'/>
           <property name='org.apache.rat.scan.name.diff' value='@{stem}-diff-${org.apache.rat.scan.ISO_TODAY}.xml'/>
-        
+          <property name='org.apache.rat.scan.name.anakia' value='@{stem}-${org.apache.rat.scan.ISO_TODAY}.xml'/>
+          <property name='org.apache.rat.scan.name.txt' value='@{stem}-${org.apache.rat.scan.ISO_TODAY}.txt'/>
+          <property name='org.apache.rat.scan.name.props' value='org-apache-rat-scan.properties'/>
         </sequential>
     </macrodef>
     
@@ -90,6 +92,65 @@ Auditing may take a few minutes. Time for a tea...
                 <arg line="add ${org.apache.rat.scan.data.xml} ${org.apache.rat.scan.data.asc} ${org.apache.rat.scan.in}"/>
             </exec>
             -->
+        </sequential>
+    </macrodef>
+    
+    <macrodef
+        name='PublishAuditReports' 
+        description='Generates audit web reports'>
+        <attribute 
+            name='src-dir'
+            description='Directory containing rat scan source'/>
+        <attribute 
+            name='stem' 
+            default='rat-scan'
+            description='File name prefix'/>
+        <attribute 
+            name='input-dir' 
+            description='Directory containing input xml'/>
+        <attribute 
+            name='output-dir' 
+            description='Directory into which output will be generated'/>
+        <attribute 
+            name='build-dir' 
+            description='Directory suitable for files used only during the build'
+            default='target'/>
+        <sequential>
+            
+            <current:AuditSetup/>
+            
+            <delete file="@{input-dir}/${org.apache.rat.scan.name.txt}"/>
+            <xslt 
+                style="@{src-dir}/org/apache/rat/scan/summary-txt.xsl" 
+                in='@{input-dir}/${org.apache.rat.scan.name.diff}'
+                out='@{output-dir}/${org.apache.rat.scan.name.txt}'></xslt>
+            
+            <!-- Replace by signed version -->           
+            <exec executable='gpg'>
+                <arg line='--output @{output-dir}/${org.apache.rat.scan.name.txt}.asc --clearsign @{output-dir}/${org.apache.rat.scan.name.txt}'/>
+            </exec>
+            <move 
+                file="@{output-dir}/${org.apache.rat.scan.name.txt}.asc" 
+                tofile="@{output-dir}/${org.apache.rat.scan.name.txt}"
+                overwrite="true"/>
+     
+                
+            <delete file="@{input-dir}/${org.apache.rat.scan.name.anakia}"/>
+            <xslt 
+                style="@{src-dir}/org/apache/rat/scan/summary-web.xsl" 
+                in='@{input-dir}/${org.apache.rat.scan.name.diff}'
+                out='@{output-dir}/${org.apache.rat.scan.name.anakia}'></xslt>
+                
+            <xslt 
+                style="@{src-dir}/org/apache/rat/scan/ant-property.xsl" 
+                in='@{input-dir}/${org.apache.rat.scan.name.diff}'
+                out='@{build-dir}/${org.apache.rat.scan.name.props}'></xslt>
+                
+             <!-- 
+             <exec executable="svn">
+                <arg line="add ${org.apache.rat.scan.out.txt} ${org.apache.rat.scan.out.xml} ${org.apache.rat.scan.publish.html} ${org.apache.rat.scan.publish.txt}"/>
+             </exec>
+              -->
         </sequential>
     </macrodef>
 </antlib>

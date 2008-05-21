@@ -20,8 +20,11 @@
         <taskdef uri="antlib:org.apache.rat.scan"
                     resource="org/apache/rat/scan/antlib.xml" classpath="src"/>   
         <property name='run.home' location='target/run'/>   
+        <property name='run.out' location='target/publish'/>    
         <mkdir dir='${run.home}'/>
-        <rat:DoAudit result-dir='${run.home}' host='thebes' src-dir='src'/>   
+        <mkdir dir='${run.out}'/>   
+        <rat:DoAudit result-dir='${run.home}' host='thebes' src-dir='src'/>
+        <rat:PublishAuditReports src-dir='src' input-dir='${run.home}' output-dir='${run.out}' build-dir='target'/>
     </target>   
     
     <macrodef name="SetupBuildDirs">
