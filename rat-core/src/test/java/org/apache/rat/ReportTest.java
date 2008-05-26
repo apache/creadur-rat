@@ -73,7 +73,7 @@ public class ReportTest extends TestCase {
             " =======================================================================\n" + 
             " ==" + pElementsPath + "/Source.java\n" + 
             " =======================================================================\n" + 
-            " package elements;\n" + 
+            "package elements;\n" + 
             "\n" + 
             "public class Source {\n" + 
             "\n" + 
@@ -82,7 +82,7 @@ public class ReportTest extends TestCase {
             " =======================================================================\n" + 
             " ==" + pElementsPath + "/sub/Empty.txt\n" + 
             " =======================================================================\n" + 
-            " ";
+            "";
 	}
     
     protected void setUp() throws Exception {
