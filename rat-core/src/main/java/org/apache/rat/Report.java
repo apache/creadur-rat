@@ -46,8 +46,8 @@ public class Report {
 			printUsage();
 		} else {
 			Report report = new Report(args[0]);
-			report.report(System.out);
-            //report.styleReport(System.out);
+			//report.report(System.out);
+            report.styleReport(System.out);
 		} 		
 	}
 	
