@@ -189,6 +189,38 @@ Auditing may take a few minutes. Time for a tea...
         </sequential>
     </macrodef>
     
+    <macrodef
+        name='MailAuditReport'
+        description='Mails audit report'>
+        <attribute name='host'/>
+        <attribute name='port'/>
+        <attribute name='user'/>
+        <attribute name='password'/>
+        <attribute name='from'/>
+        <attribute name='to-address'/>
+        <attribute name='to-name'/>
+        <attribute name='dir'/>
+        <sequential>
+            <current:AuditSetup/>
+            <echo>Mailing results to list...</echo>
+            <mail
+                from='@{from}'
+                subject='Release Audit Report ${org.apache.rat.scan.ISO_TODAY}'
+                mailhost='@{host}'
+                mailport='@{port}'
+                user='@{user}'
+                password='@{password}'>
+                <message 
+                    src="@{dir}/${org.apache.rat.scan.name.txt}" 
+                    charset="iso-8859-1" 
+                    mimetype="text/plain"/>
+                <to 
+                    address="@{to-address}"
+                    name="@{to-name}"/>
+            </mail>
+        </sequential>
+    </macrodef>
+    
     <macrodef 
       name='Audit'
       description='Complete audit cycle with standard defaults'>
