@@ -23,10 +23,10 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/rat-maven-plugin</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/rat-maven-plugin</developerConnection>
-    <url>http://svn.codehaus.org/mojo/trunk/mojo/rat-maven-plugin</url>
-  </scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat-maven-plugin</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat-maven-plugin</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat-maven-plugin</url>
+   </scm>
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org/</url>
