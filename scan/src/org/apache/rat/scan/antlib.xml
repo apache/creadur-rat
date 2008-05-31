@@ -27,8 +27,8 @@
           </tstamp>
           <property name='org.apache.rat.scan.name.data' value='@{stem}-data-${org.apache.rat.scan.ISO_TODAY}.xml'/>
           <property name='org.apache.rat.scan.name.diff' value='@{stem}-diff-${org.apache.rat.scan.ISO_TODAY}.xml'/>
-          <property name='org.apache.rat.scan.name.anakia' value='@{stem}-${org.apache.rat.scan.ISO_TODAY}.xml'/>
-          <property name='org.apache.rat.scan.name.txt' value='@{stem}-${org.apache.rat.scan.ISO_TODAY}.txt'/>
+          <property name='org.apache.rat.scan.name.anakia' value='@{stem}-report-${org.apache.rat.scan.ISO_TODAY}.xml'/>
+          <property name='org.apache.rat.scan.name.txt' value='@{stem}-report-${org.apache.rat.scan.ISO_TODAY}.txt'/>
           <property name='org.apache.rat.scan.name.props' value='org-apache-rat-scan.properties'/>
         </sequential>
     </macrodef>
@@ -231,15 +231,18 @@ Auditing may take a few minutes. Time for a tea...
         name='src'
         default='src'/>
       <attribute 
-        name='build-dir'
+        name='output'
+        default='target/audit'/>
+      <attribute 
+        name='build'
         default='target'/>
       <sequential>
-        <current:DoAudit result-dir='@{build-dir}/rat-scan-results' host='@{host}' src-dir='@{src}'/>
+        <current:DoAudit result-dir='@{output}' host='@{host}' src-dir='@{src}'/>
         <current:PublishAuditReports 
-          input-dir='@{build-dir}/rat-scan-results' 
-          output-dir='@{build-dir}/rat-scan' 
+          input-dir='@{output}' 
+          output-dir='@{output}' 
           src-dir='@{src}'
-          build-dir='@{build-dir}'/>
+          build-dir='@{build}'/>
       </sequential> 
     </macrodef>
 </antlib>
