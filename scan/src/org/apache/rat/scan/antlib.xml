@@ -231,16 +231,16 @@ Auditing may take a few minutes. Time for a tea...
         name='src'
         default='src'/>
       <attribute 
-        name='output'
+        name='out'
         default='target/audit'/>
       <attribute 
         name='build'
         default='target'/>
       <sequential>
-        <current:DoAudit result-dir='@{output}' host='@{host}' src-dir='@{src}'/>
+        <current:DoAudit result-dir='@{out}' host='@{host}' src-dir='@{src}'/>
         <current:PublishAuditReports 
-          input-dir='@{output}' 
-          output-dir='@{output}' 
+          input-dir='@{out}' 
+          output-dir='@{out}' 
           src-dir='@{src}'
           build-dir='@{build}'/>
       </sequential> 
