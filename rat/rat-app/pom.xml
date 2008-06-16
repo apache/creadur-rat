@@ -29,9 +29,9 @@
     <artifactId>rat</artifactId>
     <version>0.6-SNAPSHOT</version>
   </parent>
-  <artifactId>rat-lib</artifactId>
+  <artifactId>rat-app</artifactId>
   <packaging>jar</packaging>
-  <name>RAT Library</name>
+  <name>RAT Application</name>
   <description>
     This library provides upwards compatibility for projects,
     which are based on RAT versions upto 0.5: Basically, it
