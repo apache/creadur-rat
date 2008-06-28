@@ -1,0 +1,43 @@
+#########################################################################################
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#########################################################################################
+
+<blockquote cite='http://www.gutenberg.org/dirs/etext00/0ws2610.txt'
+  Ham. Let me see. Alas poore Yorick, I knew him Horatio,
+a fellow of infinite Iest; of most excellent fancy, he
+hath borne me on his backe a thousand times: And how
+abhorred my Imagination is, my gorge rises at it. Heere
+hung those lipps, that I haue kist I know not how oft.
+Where be your Iibes now? Your Gambals? Your
+Songs? Your flashes of Merriment that were wont to
+set the Table on a Rore? No one now to mock your own
+Ieering? Quite chopfalne? Now get you to my Ladies
+Chamber, and tell her, let her paint an inch thicke, to this
+fauour she must come. Make her laugh at that: prythee
+Horatio tell me one thing
+
+   Hor. What's that my Lord?
+  Ham. Dost thou thinke Alexander lookt o'this fashion
+i'th' earth?
+  Hor. E'ene so
+
+   Ham. And smelt so? Puh
+
+   Hor. E'ene so, my Lord
+
+   Ham. To what base vses we may returne Horatio.
+Why may not Imagination trace the Noble dust of Alexander,
+till he find it stopping a bunghole
+</blockquote>
+
+From Hamlet By William Shakespeare, 1564-1616

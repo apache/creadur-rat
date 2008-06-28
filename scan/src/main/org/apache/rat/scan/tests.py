@@ -18,6 +18,8 @@ import diff
 import xml.parsers.expat
 
 TEST_BASE_DIR="../../../../../test/org/apache/rat/scan/"
+SCANNER_OUT="""<?xml version='1.0'?>
+<documents basedir='../../../../../test/org/apache/rat/scan/scanner/' at='NOW'>\n <document dir='../../../../../test/org/apache/rat/scan/scanner/' name='HenryV.txt' >\n  <md5>c81f4cd3b2203ae869b8c6acea6bf73c</md5>\n  <sha512>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</sha512>\n  <ripemd160>4b0a5f9317e0d3165ea4982f90e7266a553d8353</ripemd160>\n </document>\n <document dir='../../../../../test/org/apache/rat/scan/scanner/' name='RichardIII.txt' >\n  <md5>911bade3f0bcdb652f1331fb19d7bf07</md5>\n  <sha512>3fd5d26bbbea1dfddeeab642bffd0d7fbdc6c4ed0d06faae3283e1e7b220d943200048630663c6a33e7cbd26fceab585920cd77d3481ce4dfa209b5000ccd4de</sha512>\n  <ripemd160>30ddc78d8bf08ef52ec8a7a8f7553c27931a6d0d</ripemd160>\n </document>\n <document dir='../../../../../test/org/apache/rat/scan/scanner/sub/deep' name='Hamlet.txt' >\n  <md5>1ccce242df4a39d25057aebed53be182</md5>\n  <sha512>2b92d82dcd9db3a3142f1bd1522d0a3818555edfb3fd579d80e3b7ebc67adb8fb73db0185ccdc72704294005fb3830529e8962715f2dbfa7da0bb0553abb573a</sha512>\n  <ripemd160>307a14094c28da7a46f894ed10eb732fb4d0f199</ripemd160>\n </document>\n <document dir='../../../../../test/org/apache/rat/scan/scanner/sub/deep' name='JuliusCaesar' >\n  <md5>0ef9754818b94baecca3596b43eb0753</md5>\n  <sha512>54184034009fc6b4e0dadfb0e14a1bad9c4c03791a982c4a7111dc7e4596164c1ca3dc49ec37c6081daf2bcd59d73a6c085beb1203b667066b77b58731f72460</sha512>\n  <ripemd160>0aa5485c5b892be83910fae34c304c1ac41240ec</ripemd160>\n </document>\n</documents>"""
 
 class ReadXmlTestCase(unittest.TestCase):
     
@@ -161,8 +163,9 @@ class ScanDocumentTest(unittest.TestCase):
         
         
 class ScanScannerTest(unittest.TestCase):
+
     def setUp(self):
         self.scanner = scanner.Scanner(TEST_BASE_DIR + "scanner/", "NOW")
         
     def testScan(self):
-        self.assertEquals("<?xml version='1.0'?>\n<documents basedir='../../../../../test/org/apache/rat/scan/scanner/' at='NOW'>\n <document dir='../../../../../test/org/apache/rat/scan/scanner/' name='HenryV.txt' >\n  <md5>c81f4cd3b2203ae869b8c6acea6bf73c</md5>\n  <sha512>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</sha512>\n  <ripemd160>4b0a5f9317e0d3165ea4982f90e7266a553d8353</ripemd160>\n </document>\n</documents>", self.scanner.scan())
+        self.assertEquals(SCANNER_OUT, self.scanner.scan())
