@@ -29,8 +29,11 @@ import diff
 import sys
 import os.path
 
-def addPreamble(xml):
-    return """<?xml version='1.0'?>
+def toXhtmlDocument(xml):
+    today = datetime.datetime.utcnow().date().isoformat()
+    return """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -44,7 +47,9 @@ def addPreamble(xml):
  See the License for the specific language governing permissions and
  limitations under the License.
 
--->\n""" + xml
+-->
+<head><title>Audited On """ + today + """</title></head><body>
+<p>Audit ran on <span class='created'>""" + today + "</span></p>" + xml + "</body></html>"
 
 def save(file, document):
 
@@ -91,11 +96,11 @@ if not stderr_value == '':
 print 'Ok'
 
 xml = ''
-for document in stdout_value.split("<?xml version='1.0'?>"):
-    if document.lstrip().startswith("<documents basedir='/www/www.apache.org/dist/incubator'"):
-        xml = xml + document
-    elif document.lstrip().startswith("<documents basedir='/www/archive.apache.org/dist/incubator'"):
-        xml = xml + document
+for document in stdout_value.split("<div class='audit'>"):
+    if document.count("<span class='base-dir'>/www/www.apache.org/dist/incubator</span>") > 0:
+        xml = xml + "<div class='audit'>" + document
+    elif document.count("<span class='base-dir'>/www/archive.apache.org/dist/incubator</span>") > 0:
+        xml = xml + "<div class='audit'>" + document
     else:
         print "OUTPUT (probably nothing to worry about):"
         print document
@@ -103,7 +108,7 @@ for document in stdout_value.split("<?xml version='1.0'?>"):
 if xml == "":
     print "No results returned"
 else:
-    xml = addPreamble("<audit on='" + datetime.datetime.utcnow().date().isoformat() + "'>" + xml + "</audit>")
+    xml = toXhtmlDocument(xml)
     path = save(base_file, xml)
     subprocess.Popen('gpg --armor --detach-sig ' + path, shell=True).wait()
     

@@ -84,21 +84,14 @@ class Scanner:
         self.at = at
         
     def scan(self):
-        result = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
- "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head><title>Audited On """
-
         if self.at == None:
             created = datetime.datetime.utcnow().isoformat() 
         else:
             created = self.at
-        result = result + created + """/title></head>
-<body>
+        result = """<div class='audit'>
 <p>
-Audit conducted on <span class='created'>"""
-        result = result + created + """</span> scanned directories
-root at <span class='base-dir'>"""
+At <span class='at'>"""
+        result = result + created + """</span> started to scan root <span class='base-dir'>"""
         result = result + self.basedir + """</span>
 </p><p>
 Artifacts by directory:
@@ -117,8 +110,7 @@ Artifacts by directory:
             if '.svn' in dirs:
                 dirs.remove('.svn')
         result = result + """</ul>
-</body>
-</html>"""
+</div>"""
         return result
 
 def scanIncubatorReleases():
