@@ -159,7 +159,7 @@ class ScanDocumentTest(unittest.TestCase):
         self.assertEquals("2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402", self.document.sha())
 
     def testXml(self):
-        self.assertEquals(" <document dir='../../../../../test/org/apache/rat/scan/' name='Sample.txt' >\n  <md5>c81f4cd3b2203ae869b8c6acea6bf73c</md5>\n  <sha512>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</sha512>\n  <ripemd160>4b0a5f9317e0d3165ea4982f90e7266a553d8353</ripemd160>\n </document>\n", self.document.writeXml(""))
+        self.assertEquals(" <document dir='../../../../../test/org/apache/rat/scan/' name='Sample.txt' >\n  <md5>c81f4cd3b2203ae869b8c6acea6bf73c</md5>\n  <sha512>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</sha512>\n  <ripemd160>4b0a5f9317e0d3165ea4982f90e7266a553d8353</ripemd160>\n </document>\n", self.document.toXml())
         
         
 class ScanScannerTest(unittest.TestCase):

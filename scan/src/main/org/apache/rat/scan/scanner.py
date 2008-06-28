@@ -65,8 +65,8 @@ class Document:
         self.__load()
         return self.__sha
     
-    def writeXml(self, result):
-        result = result + " <document dir='" + self.dir + "' name='" + self.name + "' >\n"
+    def toXml(self):
+        result = " <document dir='" + self.dir + "' name='" + self.name + "' >\n"
         result = result + "  <md5>" + self.md5() + "</md5>\n"
         result = result + "  <sha512>" + self.sha() + "</sha512>\n"
         result = result + "  <ripemd160>" + self.ripe() + "</ripemd160>\n"
@@ -97,7 +97,7 @@ class Scanner:
                     pass
                 elif not (ext == '.sha1' or ext == '.md5' or ext=='.sha' or ext == '.asc'):
                     document = Document(root, name)
-                    result = document.writeXml(result);
+                    result = result + document.toXml();
             if '.svn' in dirs:
                 dirs.remove('.svn')
         result = result + "</documents>"
