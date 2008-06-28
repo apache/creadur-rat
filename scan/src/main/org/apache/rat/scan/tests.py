@@ -17,6 +17,8 @@ import unittest
 import diff
 import xml.parsers.expat
 
+TEST_BASE_DIR="../../../../../test/org/apache/rat/scan/"
+
 class ReadXmlTestCase(unittest.TestCase):
     
     def testReadOne(self):
@@ -144,3 +146,23 @@ class DiffTestCase(unittest.TestCase):
         self.assertEquals(modifiedDocument, modified[0])
         self.assertEquals(newDocument, added[0])
         self.assertEquals(self.document2, removed[0])
+        
+class ScanDocumentTest(unittest.TestCase):
+    def setUp(self):
+        self.document = scanner.Document(TEST_BASE_DIR, "Sample.txt", "uri")
+    
+    def testSums(self):
+        self.assertEquals("c81f4cd3b2203ae869b8c6acea6bf73c", self.document.md5())
+        self.assertEquals("4b0a5f9317e0d3165ea4982f90e7266a553d8353", self.document.ripe())
+        self.assertEquals("2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402", self.document.sha())
+
+    def testXml(self):
+        self.assertEquals(" <document dir='../../../../../test/org/apache/rat/scan/' name='Sample.txt' >\n  <md5>c81f4cd3b2203ae869b8c6acea6bf73c</md5>\n  <sha512>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</sha512>\n  <ripemd160>4b0a5f9317e0d3165ea4982f90e7266a553d8353</ripemd160>\n </document>\n", self.document.writeXml(""))
+        
+        
+class ScanScannerTest(unittest.TestCase):
+    def setUp(self):
+        self.scanner = scanner.Scanner(TEST_BASE_DIR + "scanner/", "NOW")
+        
+    def testScan(self):
+        self.assertEquals("<?xml version='1.0'?>\n<documents basedir='../../../../../test/org/apache/rat/scan/scanner/' at='NOW'>\n <document dir='../../../../../test/org/apache/rat/scan/scanner/' name='HenryV.txt' >\n  <md5>c81f4cd3b2203ae869b8c6acea6bf73c</md5>\n  <sha512>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</sha512>\n  <ripemd160>4b0a5f9317e0d3165ea4982f90e7266a553d8353</ripemd160>\n </document>\n</documents>", self.scanner.scan())
