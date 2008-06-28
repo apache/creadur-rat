@@ -25,15 +25,15 @@ class InvalidDocument(Exception):
         return repr(self.value)
         
 class Document:
-    def __init__(self):
+    def __init__(self, dir):
         self.reset()
+        self.dir = dir
         
     def __str__(self):
-        return self.name + "," + self.dir
+        return self.name
         
     def reset(self):
         self.next = None
-        self.dir = None
         self.name = None
         self.md5 = None
         self.sha = None
@@ -57,15 +57,27 @@ class Document:
         else:
             self.ripemd = self.ripemd + value
         
+    def __setName(self, value):
+        if self.name == None:
+            self.name = value
+        else:
+            self.name = self.name + value    
+            
+    def __setDir(self, value):
+        if self.dir == None:
+            self.dir = value
+        else:
+            self.dir = self.dir + value        
+        
     def start_element(self, name, attrs):
-        if name == 'document':
-            self.name = attrs.get('name')
-            self.dir = attrs.get('dir')
-        elif name == 'md5':
+        type = attrs.get('class')
+        if type == 'resource':
+            self.next = self.__setName
+        elif type == 'md5':
             self.next = self.__setMd5
-        elif name == 'sha512':
+        elif type == 'sha':
             self.next = self.__setSha
-        elif name == 'ripemd160':
+        elif type == 'ripe':
             self.next = self.__setRipemd
         else:
             self.next = None
@@ -98,8 +110,7 @@ class Document:
         return '<document name="' + self.name + '" dir="' + self.dir + '"/>'
     
 def document(dir, name, md5, sha, ripemd):
-    result = Document()
-    result.dir = dir
+    result = Document(dir)
     result.name = name
     result.md5 = md5
     result.sha = sha
@@ -110,6 +121,8 @@ class Documents:
     def __init__(self):
         self.documents = []
         self.__current = None
+        self.__setter = None
+        self.dir = None
         
     def append(self, document):
         self.documents.append(document)
@@ -124,11 +137,27 @@ class Documents:
         parser.CharacterDataHandler = self.char_data
         parser.Parse(document)
     
+    def __setOn(self, value):
+        if self.on == None:
+            self.on = value
+        else:
+            self.on = self.on + value  
+
+    def __setDir(self, value):
+        if self.__dir == None:
+            self.__dir = value
+        else:
+            self.__dir = self.__dir + value  
+    
     def start_element(self, name, attrs):
-        if name == 'audit':
-            self.on = attrs.get('on')
-        if name == 'document':
-            self.__current = Document()
+        type = attrs.get("class")
+        if type == 'created':
+            self.__setter = self.__setOn
+        if type == 'dir':
+            self.__dir = None
+            self.__setter = self.__setDir
+        if type == 'resource':
+            self.__current = Document(self.__dir)
             self.documents.append(self.__current)
             self.__current.start_element(name, attrs)
         elif not self.__current == None:
@@ -137,12 +166,13 @@ class Documents:
     def end_element(self, name):
         if not self.__current == None:
             self.__current.end_element(name)
-        if name == 'document':
-            self.__current = None
+        self.__setter = None
         
     def char_data(self, data):
         if not self.__current == None:
             self.__current.char_data(data)
+        if not self.__setter == None:
+            self.__setter(data)
             
     def __iter__(self):
         for document in self.documents:

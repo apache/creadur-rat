@@ -18,24 +18,29 @@ import diff
 import xml.parsers.expat
 
 TEST_BASE_DIR="../../../../../test/org/apache/rat/scan/"
-SCANNER_OUT="""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">\n<head><title>Audited On NOW/title></head>\n<body>\n<p>\nAudit conducted on <span class=\'created\'>NOW</span> scanned directories\nroot at <span class=\'base-dir\'>../../../../../test/org/apache/rat/scan/scanner/</span>\n</p><p>\nArtifacts by directory:\n</p>\n<ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/</span><ul><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/HenryV.txt\' class=\'file\'>HenryV.txt</a><dl><dt>md5</dt><dd class=\'md5\'>c81f4cd3b2203ae869b8c6acea6bf73c</dd><dt>sha</dt><dd class=\'sha\'>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</dd><dt>ripe</dt><dd class=\'ripe\'>4b0a5f9317e0d3165ea4982f90e7266a553d8353</dd></dl></li><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/RichardIII.txt\' class=\'file\'>RichardIII.txt</a><dl><dt>md5</dt><dd class=\'md5\'>911bade3f0bcdb652f1331fb19d7bf07</dd><dt>sha</dt><dd class=\'sha\'>3fd5d26bbbea1dfddeeab642bffd0d7fbdc6c4ed0d06faae3283e1e7b220d943200048630663c6a33e7cbd26fceab585920cd77d3481ce4dfa209b5000ccd4de</dd><dt>ripe</dt><dd class=\'ripe\'>30ddc78d8bf08ef52ec8a7a8f7553c27931a6d0d</dd></dl></li></ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/sub</span><ul></ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/sub/deep</span><ul><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/sub/deep/Hamlet.txt\' class=\'file\'>Hamlet.txt</a><dl><dt>md5</dt><dd class=\'md5\'>1ccce242df4a39d25057aebed53be182</dd><dt>sha</dt><dd class=\'sha\'>2b92d82dcd9db3a3142f1bd1522d0a3818555edfb3fd579d80e3b7ebc67adb8fb73db0185ccdc72704294005fb3830529e8962715f2dbfa7da0bb0553abb573a</dd><dt>ripe</dt><dd class=\'ripe\'>307a14094c28da7a46f894ed10eb732fb4d0f199</dd></dl></li><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/sub/deep/JuliusCaesar\' class=\'file\'>JuliusCaesar</a><dl><dt>md5</dt><dd class=\'md5\'>0ef9754818b94baecca3596b43eb0753</dd><dt>sha</dt><dd class=\'sha\'>54184034009fc6b4e0dadfb0e14a1bad9c4c03791a982c4a7111dc7e4596164c1ca3dc49ec37c6081daf2bcd59d73a6c085beb1203b667066b77b58731f72460</dd><dt>ripe</dt><dd class=\'ripe\'>0aa5485c5b892be83910fae34c304c1ac41240ec</dd></dl></li></ul></ul>\n</body>\n</html>"""
+SCANNER_OUT="""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">\n<head><title>Audited On NOW/title></head>\n<body>\n<p>\nAudit conducted on <span class=\'created\'>NOW</span> scanned directories\nroot at <span class=\'base-dir\'>../../../../../test/org/apache/rat/scan/scanner/</span>\n</p><p>\nArtifacts by directory:\n</p>\n<ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/</span><ul><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/HenryV.txt\' class=\'resource\'>HenryV.txt</a><dl><dt>md5</dt><dd class=\'md5\'>c81f4cd3b2203ae869b8c6acea6bf73c</dd><dt>sha</dt><dd class=\'sha\'>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</dd><dt>ripe</dt><dd class=\'ripe\'>4b0a5f9317e0d3165ea4982f90e7266a553d8353</dd></dl></li><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/RichardIII.txt\' class=\'resource\'>RichardIII.txt</a><dl><dt>md5</dt><dd class=\'md5\'>911bade3f0bcdb652f1331fb19d7bf07</dd><dt>sha</dt><dd class=\'sha\'>3fd5d26bbbea1dfddeeab642bffd0d7fbdc6c4ed0d06faae3283e1e7b220d943200048630663c6a33e7cbd26fceab585920cd77d3481ce4dfa209b5000ccd4de</dd><dt>ripe</dt><dd class=\'ripe\'>30ddc78d8bf08ef52ec8a7a8f7553c27931a6d0d</dd></dl></li></ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/sub</span><ul></ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/sub/deep</span><ul><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/sub/deep/Hamlet.txt\' class=\'resource\'>Hamlet.txt</a><dl><dt>md5</dt><dd class=\'md5\'>1ccce242df4a39d25057aebed53be182</dd><dt>sha</dt><dd class=\'sha\'>2b92d82dcd9db3a3142f1bd1522d0a3818555edfb3fd579d80e3b7ebc67adb8fb73db0185ccdc72704294005fb3830529e8962715f2dbfa7da0bb0553abb573a</dd><dt>ripe</dt><dd class=\'ripe\'>307a14094c28da7a46f894ed10eb732fb4d0f199</dd></dl></li><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/sub/deep/JuliusCaesar\' class=\'resource\'>JuliusCaesar</a><dl><dt>md5</dt><dd class=\'md5\'>0ef9754818b94baecca3596b43eb0753</dd><dt>sha</dt><dd class=\'sha\'>54184034009fc6b4e0dadfb0e14a1bad9c4c03791a982c4a7111dc7e4596164c1ca3dc49ec37c6081daf2bcd59d73a6c085beb1203b667066b77b58731f72460</dd><dt>ripe</dt><dd class=\'ripe\'>0aa5485c5b892be83910fae34c304c1ac41240ec</dd></dl></li></ul></ul>\n</body>\n</html>"""
 
 class ReadXmlTestCase(unittest.TestCase):
     
     def testReadOne(self):
-        document = diff.Document()
+        document = diff.Document("a directory")
         parser = xml.parsers.expat.ParserCreate()
         parser.StartElementHandler = document.start_element
         parser.EndElementHandler = document.end_element
         parser.CharacterDataHandler = document.char_data
         parser.Parse("""<?xml version="1.0"?>
- <document dir='a directory' name='a name' >
-  <md5>MD5 SUM</md5>
-  <sha512>SHA SUM</sha512>
-  <ripemd160>RIPEMD</ripemd160>
- </document>""", 1)
+<li><a name='a directory/a name' class='resource'>a name</a>
+<dl>
+<dt>md5</dt>
+<dd class='md5'>MD5 SUM</dd>
+<dt>sha</dt>
+<dd class='sha'>SHA SUM</dd>
+<dt>ripe</dt>
+<dd class='ripe'>RIPEMD</dd>
+</dl>
+</li>
+""", 1)
         
-        self.assertEqual('a directory', document.dir)
         self.assertEqual('a name', document.name)
         self.assertEqual('MD5 SUM', document.md5)
         self.assertEqual('SHA SUM', document.sha)
@@ -43,18 +48,49 @@ class ReadXmlTestCase(unittest.TestCase):
         
     def testLoad(self):
         documents = diff.Documents()
-        documents.load("""<?xml version="1.0"?><audit on='2008-01-22'><documents>
- <document dir='a directory' name='a name' >
-  <md5>MD5 SUM</md5>
-  <sha512>SHA SUM</sha512>
-  <ripemd160>RIPEMD</ripemd160>
- </document>
-  <document dir='another directory' name='another name' >
-  <md5>ANOTHER MD5 SUM</md5>
-  <sha512>ANOTHER SHA SUM</sha512>
-  <ripemd160>ANOTHER RIPEMD</ripemd160>
- </document>
- </documents></audit>
+        documents.load("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><title>Audited On 2008-01-22</title></head>
+<body>
+<p>
+Audit conducted on <span class='created'>2008-01-22</span> scanned directories
+root at <span class='base-dir'>/www/whatever</span>
+</p><p>
+Artifacts by directory:
+</p>
+<ul>
+<li><span class='dir'>a directory</span>
+<ul>
+<li><a name='a directory/a name' class='resource'>a name</a>
+<dl>
+<dt>md5</dt>
+<dd class='md5'>MD5 SUM</dd>
+<dt>sha</dt>
+<dd class='sha'>SHA SUM</dd>
+<dt>ripe</dt>
+<dd class='ripe'>RIPEMD</dd>
+</dl>
+</li>
+</ul>
+</li>
+<li><span class='dir'>another directory</span>
+<ul>
+<li><a name='another directory/another name' class='resource'>another name</a>
+<dl>
+<dt>md5</dt>
+<dd class='md5'>ANOTHER MD5 SUM</dd>
+<dt>sha</dt>
+<dd class='sha'>ANOTHER SHA SUM</dd>
+<dt>ripe</dt>
+<dd class='ripe'>ANOTHER RIPEMD</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</body>
+</html>
  """)
         
         self.assert_(not documents.documents == None)
@@ -158,7 +194,7 @@ class ScanDocumentTest(unittest.TestCase):
         self.assertEquals("2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402", self.document.sha())
 
     def testXml(self):
-        self.assertEquals("<li><a name='../../../../../test/org/apache/rat/scan/Sample.txt' class='file'>Sample.txt</a><dl><dt>md5</dt><dd class='md5'>c81f4cd3b2203ae869b8c6acea6bf73c</dd><dt>sha</dt><dd class='sha'>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</dd><dt>ripe</dt><dd class='ripe'>4b0a5f9317e0d3165ea4982f90e7266a553d8353</dd></dl></li>", self.document.toXml())
+        self.assertEquals("<li><a name='../../../../../test/org/apache/rat/scan/Sample.txt' class='resource'>Sample.txt</a><dl><dt>md5</dt><dd class='md5'>c81f4cd3b2203ae869b8c6acea6bf73c</dd><dt>sha</dt><dd class='sha'>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</dd><dt>ripe</dt><dd class='ripe'>4b0a5f9317e0d3165ea4982f90e7266a553d8353</dd></dl></li>", self.document.toXml())
         
 class ScanScannerTest(unittest.TestCase):
 
