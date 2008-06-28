@@ -17,9 +17,10 @@
 
     
     <target name='run'>
+        <property name='src.rat' location='src/main'/>   
         <taskdef uri="antlib:org.apache.rat.scan"
-                    resource="org/apache/rat/scan/antlib.xml" classpath="src/main"/>     
-        <rat:Audit/>
+                    resource="org/apache/rat/scan/antlib.xml" classpath="${src.rat}"/>     
+        <rat:Audit src='${src.rat}'/>
     </target>   
     
     <macrodef name="SetupBuildDirs">
