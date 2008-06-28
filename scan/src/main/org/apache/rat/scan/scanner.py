@@ -66,11 +66,11 @@ class Document:
         return self.__sha
     
     def toXml(self):
-        result = " <document dir='" + self.dir + "' name='" + self.name + "' >\n"
-        result = result + "  <md5>" + self.md5() + "</md5>\n"
-        result = result + "  <sha512>" + self.sha() + "</sha512>\n"
-        result = result + "  <ripemd160>" + self.ripe() + "</ripemd160>\n"
-        result = result + " </document>\n"
+        result = "<li><a name='" + join(self.dir, self.name) + "' class='file'>" + self.name + "</a><dl>"
+        result = result + "<dt>md5</dt><dd class='md5'>" + self.md5() + "</dd>"
+        result = result + "<dt>sha</dt><dd class='sha'>" + self.sha() + "</dd>"
+        result = result + "<dt>ripe</dt><dd class='ripe'>" + self.ripe() + "</dd>"
+        result = result + "</dl></li>"
         return result
     
 class Scanner:
@@ -84,13 +84,28 @@ class Scanner:
         self.at = at
         
     def scan(self):
-        result = "<?xml version='1.0'?>\n<documents basedir='" + self.basedir + "' at='"
+        result = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><title>Audited On """
+
         if self.at == None:
-            result = result + datetime.datetime.utcnow().isoformat() 
+            created = datetime.datetime.utcnow().isoformat() 
         else:
-            result = result + self.at
-        result = result + "'>\n"
+            created = self.at
+        result = result + created + """/title></head>
+<body>
+<p>
+Audit conducted on <span class='created'>"""
+        result = result + created + """</span> scanned directories
+root at <span class='base-dir'>"""
+        result = result + self.basedir + """</span>
+</p><p>
+Artifacts by directory:
+</p>
+<ul>"""
         for root, dirs, files in os.walk(self.basedir):
+            result = result + "<li><span class='dir'>" + root + "</span><ul>"
             for name in files:
                 ext = splitext(name)[1]
                 if name == 'KEYS':
@@ -98,9 +113,12 @@ class Scanner:
                 elif not (ext == '.sha1' or ext == '.md5' or ext=='.sha' or ext == '.asc'):
                     document = Document(root, name)
                     result = result + document.toXml();
+            result = result + "</ul>"
             if '.svn' in dirs:
                 dirs.remove('.svn')
-        result = result + "</documents>"
+        result = result + """</ul>
+</body>
+</html>"""
         return result
 
 def scanIncubatorReleases():
