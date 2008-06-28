@@ -25,7 +25,7 @@
           <tstamp>
               <format property="org.apache.rat.scan.ISO_TODAY" pattern="yyyy-MM-dd" locale="en,GMT"/>
           </tstamp>
-          <property name='org.apache.rat.scan.name.data' value='@{stem}-data-${org.apache.rat.scan.ISO_TODAY}.xml'/>
+          <property name='org.apache.rat.scan.name.data' value='@{stem}-data-${org.apache.rat.scan.ISO_TODAY}.html'/>
           <property name='org.apache.rat.scan.name.diff' value='@{stem}-diff-${org.apache.rat.scan.ISO_TODAY}.xml'/>
           <property name='org.apache.rat.scan.name.anakia' value='@{stem}-report-${org.apache.rat.scan.ISO_TODAY}.xml'/>
           <property name='org.apache.rat.scan.name.txt' value='@{stem}-report-${org.apache.rat.scan.ISO_TODAY}.txt'/>
