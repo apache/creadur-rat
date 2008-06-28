@@ -18,7 +18,7 @@
     
     <target name='run'>
         <taskdef uri="antlib:org.apache.rat.scan"
-                    resource="org/apache/rat/scan/antlib.xml" classpath="src"/>     
+                    resource="org/apache/rat/scan/antlib.xml" classpath="src/main"/>     
         <rat:Audit/>
     </target>   
     
@@ -38,7 +38,7 @@
     <target 
         name='_setup'
         description=' - prepares environment (internal) '>
-        <property name='home.src' value='src'/>
+        <property name='home.src' value='src/main'/>
 
         <SetupBuildDirs/>
     </target>
@@ -73,6 +73,7 @@
                 <include name='DISCLAIMER.txt'/>   
                 <include name='NOTICE.txt'/>   
             </metainf>  
+            <exclude name="**/*.pyc"/>   
         </jar>
     </target>
 
