@@ -256,19 +256,7 @@ class Auditor:
         result = result + "<h2>Removed Resources</h2><ul class='deleted'>"
         result = result + self.toXml(removed)
         result = result + "</ul>"
-        
-#        toXml = lambda a, name: simpleElement(name, reduce(lambda b, c: b + c, map(lambda x: x.summaryXml(), a), ''))
-#        diff = toXml(added, 'added') + toXml(modified, 'modified') + toXml(removed, 'missing')
         return result + '</div>' 
-                
-def simpleElement(element, body):
-    return startTag(element) + body + endTag(element)
-                
-def startTag(element):
-    return '<' + element + '>'
- 
-def endTag(element):
-    return '</' + element + '>'
                 
 if __name__ == '__main__':
     auditor = Auditor('audit')
