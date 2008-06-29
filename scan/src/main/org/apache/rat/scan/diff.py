@@ -107,7 +107,7 @@ class Document:
                         and document.ripemd == self.ripemd)
             
     def summaryXml(self):
-        return '<document name="' + self.name + '" dir="' + self.dir + '"/>'
+        return "<li class='resource'>" + self.name + '<li/>'
     
 def document(dir, name, md5, sha, ripemd):
     result = Document(dir)
@@ -214,14 +214,14 @@ class Auditor:
         try:
             documents = Documents()
             documents.load(f.read())
-            if not documents.on == name[-14:-4]:
+            if not documents.on == name[-15:-5]:
                 raise InvalidDocument('Document date does not match file date. File: ' + file)
             return documents
         finally:
             f.close()
             
     def latest(self):
-        xmlDocuments = filter(lambda x:x.endswith('.xml') and x.startswith(self.prefix), os.listdir(self.basedir))
+        xmlDocuments = filter(lambda x:x.endswith('.html') and x.startswith(self.prefix), os.listdir(self.basedir))
         xmlDocuments.sort()
         return map(self.load, xmlDocuments[-2:])
                 
@@ -232,11 +232,34 @@ class Auditor:
         else:
             return None
         
+    def toXml(self, documents):
+        result = ""
+        for dir, documentsInDir in dict((dir, filter(lambda doc: doc.dir == dir, documents)) for dir in set([document.dir for document in documents])).iteritems():
+            result = result + "<li class='dir'>" + dir + "<ul>"
+            for document in sorted(documentsInDir):
+                result = result + "<li class='resource'>" + document.name + "</li>"
+            result = result + "</ul></li>"
+        return result
+        
     def diffs(self, one, two):
+        result = "<div class='diff'><h1>From <a href='"  + self.prefix + "-" + two.on + ".html' class='start-date'>"+ two.on + "</a> Till <a href='"  + self.prefix + "-" + one.on + ".html' class='end-date'>" + one.on + '</a></h1>'
         added, removed, modified = one.compare(two)
-        toXml = lambda a, name: simpleElement(name, reduce(lambda b, c: b + c, map(lambda x: x.summaryXml(), a), ''))
-        diff = toXml(added, 'added') + toXml(modified, 'modified') + toXml(removed, 'missing')
-        return '<changes from="' + two.on + '" to="' + one.on + '">' + diff + '</changes>' 
+        
+        result = result + "<h2>Added Resources</h2><ul class='added'>"
+        result = result + self.toXml(added)
+        result = result + "</ul>"
+        
+        result = result + "<h2>Modified Resources</h2><ul class='modified'>"
+        result = result + self.toXml(modified)
+        result = result + "</ul>"
+        
+        result = result + "<h2>Removed Resources</h2><ul class='deleted'>"
+        result = result + self.toXml(removed)
+        result = result + "</ul>"
+        
+#        toXml = lambda a, name: simpleElement(name, reduce(lambda b, c: b + c, map(lambda x: x.summaryXml(), a), ''))
+#        diff = toXml(added, 'added') + toXml(modified, 'modified') + toXml(removed, 'missing')
+        return result + '</div>' 
                 
 def simpleElement(element, body):
     return startTag(element) + body + endTag(element)

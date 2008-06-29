@@ -120,5 +120,5 @@ else:
     if latestDiffs == None:
         print "First run so skipping comparison "
     else:
-        save(diff_file, addPreamble(latestDiffs))
+        save(diff_file, toXhtmlDocument(latestDiffs))
     

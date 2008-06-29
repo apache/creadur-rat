@@ -199,3 +199,11 @@ class ScanScannerTest(unittest.TestCase):
         
     def testScan(self):
         self.assertEquals(SCANNER_OUT, self.scanner.scan())
+        
+        
+class ScanDocumentTest(unittest.TestCase):
+    def setUp(self):
+        self.auditor = diff.Auditor(TEST_BASE_DIR + "diff/", "audit")
+        
+    def testLatestDiff(self):
+        self.assertEquals("<div class='diff'><h1>From <a href='audit-2008-06-01.html' class='start-date'>2008-06-01</a> Till <a href='audit-2008-06-28.html' class='end-date'>2008-06-28</a></h1><h2>Added Resources</h2><ul class='added'><li class='dir'>scanner/sub/deep<ul><li class='resource'>HamletNot.txt</li></ul></li></ul><h2>Modified Resources</h2><ul class='modified'><li class='dir'>scanner/sub/deep<ul><li class='resource'>JuliusCaesar</li></ul></li></ul><h2>Removed Resources</h2><ul class='deleted'><li class='dir'>scanner/sub/deep<ul><li class='resource'>Hamlet.txt</li></ul></li></ul></div>", self.auditor.latestDiffs())
