@@ -16,9 +16,13 @@ import scanner
 import unittest
 import diff
 import xml.parsers.expat
+import tempfile
+import shutil
+import connect
+import os.path
 
 TEST_BASE_DIR="../../../../../test/org/apache/rat/scan/"
-SCANNER_OUT="""<div class='audit'>\n<p>\nAt <span class=\'at\'>NOW</span> started to scan root <span class=\'base-dir\'>../../../../../test/org/apache/rat/scan/scanner/</span>\n</p><p>\nArtifacts by directory:\n</p>\n<ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/</span><ul><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/HenryV.txt\' class=\'resource\'>HenryV.txt</a><dl><dt>md5</dt><dd class=\'md5\'>c81f4cd3b2203ae869b8c6acea6bf73c</dd><dt>sha</dt><dd class=\'sha\'>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</dd><dt>ripe</dt><dd class=\'ripe\'>4b0a5f9317e0d3165ea4982f90e7266a553d8353</dd></dl></li><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/RichardIII.txt\' class=\'resource\'>RichardIII.txt</a><dl><dt>md5</dt><dd class=\'md5\'>911bade3f0bcdb652f1331fb19d7bf07</dd><dt>sha</dt><dd class=\'sha\'>3fd5d26bbbea1dfddeeab642bffd0d7fbdc6c4ed0d06faae3283e1e7b220d943200048630663c6a33e7cbd26fceab585920cd77d3481ce4dfa209b5000ccd4de</dd><dt>ripe</dt><dd class=\'ripe\'>30ddc78d8bf08ef52ec8a7a8f7553c27931a6d0d</dd></dl></li></ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/sub</span><ul></ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/sub/deep</span><ul><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/sub/deep/Hamlet.txt\' class=\'resource\'>Hamlet.txt</a><dl><dt>md5</dt><dd class=\'md5\'>1ccce242df4a39d25057aebed53be182</dd><dt>sha</dt><dd class=\'sha\'>2b92d82dcd9db3a3142f1bd1522d0a3818555edfb3fd579d80e3b7ebc67adb8fb73db0185ccdc72704294005fb3830529e8962715f2dbfa7da0bb0553abb573a</dd><dt>ripe</dt><dd class=\'ripe\'>307a14094c28da7a46f894ed10eb732fb4d0f199</dd></dl></li><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/sub/deep/JuliusCaesar\' class=\'resource\'>JuliusCaesar</a><dl><dt>md5</dt><dd class=\'md5\'>0ef9754818b94baecca3596b43eb0753</dd><dt>sha</dt><dd class=\'sha\'>54184034009fc6b4e0dadfb0e14a1bad9c4c03791a982c4a7111dc7e4596164c1ca3dc49ec37c6081daf2bcd59d73a6c085beb1203b667066b77b58731f72460</dd><dt>ripe</dt><dd class=\'ripe\'>0aa5485c5b892be83910fae34c304c1ac41240ec</dd></dl></li></ul></ul>\n</div>"""
+SCANNER_OUT="""<div class='audit'>\n<p>\nAt <span class=\'at\'>NOW</span> started to scan root <span class=\'base-dir\'>../../../../../test/org/apache/rat/scan/scanner/</span>\n</p><p>\nArtifacts by directory:\n</p>\n<ul><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/</span><ul><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/HenryV.txt\' class=\'resource\'>HenryV.txt</a><dl><dt>md5</dt><dd class=\'md5\'>c81f4cd3b2203ae869b8c6acea6bf73c</dd><dt>sha</dt><dd class=\'sha\'>2ae73f5cfe7943a7d51b46e653948af7f067a6b01e61c827201c8e17b9231956f48b3e8e0da64e822ca9fdeb7a62f5af623406e2dbb9b39a8dabf569d2046402</dd><dt>ripe</dt><dd class=\'ripe\'>4b0a5f9317e0d3165ea4982f90e7266a553d8353</dd></dl></li><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/RichardIII.txt\' class=\'resource\'>RichardIII.txt</a><dl><dt>md5</dt><dd class=\'md5\'>911bade3f0bcdb652f1331fb19d7bf07</dd><dt>sha</dt><dd class=\'sha\'>3fd5d26bbbea1dfddeeab642bffd0d7fbdc6c4ed0d06faae3283e1e7b220d943200048630663c6a33e7cbd26fceab585920cd77d3481ce4dfa209b5000ccd4de</dd><dt>ripe</dt><dd class=\'ripe\'>30ddc78d8bf08ef52ec8a7a8f7553c27931a6d0d</dd></dl></li></ul></li><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/sub</span><ul></ul></li><li><span class=\'dir\'>../../../../../test/org/apache/rat/scan/scanner/sub/deep</span><ul><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/sub/deep/Hamlet.txt\' class=\'resource\'>Hamlet.txt</a><dl><dt>md5</dt><dd class=\'md5\'>1ccce242df4a39d25057aebed53be182</dd><dt>sha</dt><dd class=\'sha\'>2b92d82dcd9db3a3142f1bd1522d0a3818555edfb3fd579d80e3b7ebc67adb8fb73db0185ccdc72704294005fb3830529e8962715f2dbfa7da0bb0553abb573a</dd><dt>ripe</dt><dd class=\'ripe\'>307a14094c28da7a46f894ed10eb732fb4d0f199</dd></dl></li><li><a name=\'../../../../../test/org/apache/rat/scan/scanner/sub/deep/JuliusCaesar\' class=\'resource\'>JuliusCaesar</a><dl><dt>md5</dt><dd class=\'md5\'>0ef9754818b94baecca3596b43eb0753</dd><dt>sha</dt><dd class=\'sha\'>54184034009fc6b4e0dadfb0e14a1bad9c4c03791a982c4a7111dc7e4596164c1ca3dc49ec37c6081daf2bcd59d73a6c085beb1203b667066b77b58731f72460</dd><dt>ripe</dt><dd class=\'ripe\'>0aa5485c5b892be83910fae34c304c1ac41240ec</dd></dl></li></ul></li></ul>\n</div>"""
 
 class ReadXmlTestCase(unittest.TestCase):
     
@@ -200,6 +204,21 @@ class ScanScannerTest(unittest.TestCase):
     def testScan(self):
         self.assertEquals(SCANNER_OUT, self.scanner.scan())
         
+class RoundTripTest(unittest.TestCase):
+    def setUp(self):
+        self.working_dir = tempfile.mkdtemp()
+        self.auditor = diff.Auditor(self.working_dir, "audit")
+        self.scanner = scanner.Scanner(TEST_BASE_DIR + "scanner/")
+        
+    def tearDown(self):
+        if not self.working_dir == None:
+            shutil.rmtree(self.working_dir, True)
+        
+    def testRoundTrip(self):
+        xhtml = connect.toXhtmlDocument(self.scanner.scan())
+        name = "audit-" + connect.isoToday() + ".html"
+        connect.save(os.path.join(self.working_dir, name), xhtml)
+        self.assertNotEqual(None, self.auditor.load(name))
         
 class ScanDocumentTest(unittest.TestCase):
     def setUp(self):

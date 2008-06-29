@@ -106,7 +106,7 @@ Artifacts by directory:
                 elif not (ext == '.sha1' or ext == '.md5' or ext=='.sha' or ext == '.asc'):
                     document = Document(root, name)
                     result = result + document.toXml();
-            result = result + "</ul>"
+            result = result + "</ul></li>"
             if '.svn' in dirs:
                 dirs.remove('.svn')
         result = result + """</ul>
