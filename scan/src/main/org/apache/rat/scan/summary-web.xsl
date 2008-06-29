@@ -13,10 +13,11 @@
   limitations under the License.
 -->
 <xsl:stylesheet version="1.0"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:html="http://www.w3.org/1999/xhtml">
   <xsl:output method='xml' indent='yes' encoding='UTF-8' />
 
-  <xsl:template match='changes'>
+  <xsl:template match='html:html'>
     <xsl:comment>
       Licensed under the Apache License, Version 2.0 (the "License");
       you may not use this file except in compliance with the License.
@@ -33,23 +34,30 @@
     <document>
       <properties>
         <title>
-          Audit Report For
-          <xsl:value-of select='@to' />
+          Audit Report For <xsl:value-of select='//html:span[@class="created"]'/>
         </title>
         <atom
           url="http://mail-archives.apache.org/mod_mbox/incubator-general/?format=atom">
           general@incubator.apache.org Archives
         </atom>
         <link href="http://purl.org/DC/elements/1.0/" rel="schema.DC" />
-      </properties>
-      <body>
+        </properties>
+        <body>
+        <xsl:for-each select='//html:div[@class="diff"]'>
+          <xsl:call-template name='report'/>
+        </xsl:for-each>
+        </body>
+    </document>
+  </xsl:template>
+
+  <xsl:template name='report'>
         <section id='Overview'>
           <title>Overview</title>
           <p>
             This report audits the changes made from
-            <xsl:value-of select='@from' />
+            <xsl:value-of select='.//html:a[@class="start-date"]' />
             till
-            <xsl:value-of select='@to' />
+            <xsl:value-of select='.//html:a[@class="end-date"]' />
             in:
           </p>
           <ul>
@@ -67,71 +75,72 @@
         </section>
         <section id='summary'><title>Summary</title>
           <ul>
-          <li><xsl:value-of select='count(descendant::added/document)'/> files were <a href='#added'>added</a></li>
-          <li><xsl:value-of select='count(descendant::modified/document)'/> files were <a href='#modified'>modified</a></li>
-          <li><xsl:value-of select='count(descendant::missing/document)'/> files were <a href='#deleted'>deleted</a></li>
+          <li><xsl:value-of select='count(.//html:ul[@class="added"]//html:li[@class="resource"])'/> files were <a href='#added'>added</a></li>
+          <li><xsl:value-of select='count(.//html:ul[@class="modified"]//html:li[@class="resource"])'/> files were <a href='#modified'>modified</a></li>
+          <li><xsl:value-of select='count(.//html:ul[@class="deleted"]//html:li[@class="resource"])'/> files were <a href='#deleted'>deleted</a></li>
           </ul>
         </section>
         <section id='details'><title>Details</title>
-          <section id='added'><title>Modified</title>
+          <section id='modified'><title>Modified</title>
             <ul>
-              <xsl:for-each select='modified/document'>
-                <xsl:sort
-                  select="@dir"
-                  data-type = "text"
-                  order = "ascending"
-                  case-order = "lower-first"/>
-                <xsl:sort
-                  select="@name"
-                  data-type = "text"
-                  order = "ascending"
-                  case-order = "lower-first"/>
-                <li>
-                <strong><xsl:value-of select="@name"/></strong> in <xsl:value-of select="@dir"/>
+              <xsl:for-each select='.//html:ul[@class="modified"]/html:li[@class="dir"]'>
+                <li>In <cite><xsl:value-of select="text()"/></cite>:
+                <ul>
+                <xsl:for-each select='.//html:li[@class="resource"]'>
+                  <xsl:sort
+                    select="text()"
+                    data-type = "text"
+                    order = "ascending"
+                    case-order = "lower-first"/>
+                  <li>
+                  <strong><xsl:value-of select="text()"/></strong> 
+                  </li>
+                </xsl:for-each>
+                </ul>
                 </li>
               </xsl:for-each>
             </ul>
           </section>
           <section id='added'><title>Added</title>
             <ul>
-              <xsl:for-each select='added/document'>
-                <xsl:sort
-                  select="@dir"
-                  data-type = "text"
-                  order = "ascending"
+              <xsl:for-each select='.//html:ul[@class="added"]/html:li[@class="dir"]'>
+                <li>In <cite><xsl:value-of select="text()"/></cite>:
+                <ul>
+                <xsl:for-each select='.//html:li[@class="resource"]'>
+                  <xsl:sort
+                    select="text()"
+                    data-type = "text"
+                    order = "ascending"
                     case-order = "lower-first"/>
-                <xsl:sort
-                  select="@name"
-                  data-type = "text"
-                  order = "ascending"
-                  case-order = "lower-first"/>
-                <li>
-                <strong><xsl:value-of select="@name"/></strong> in <xsl:value-of select="@dir"/>
+                  <li>
+                  <strong><xsl:value-of select="text()"/></strong> 
+                  </li>
+                </xsl:for-each>
+                </ul>
                 </li>
               </xsl:for-each>
             </ul>
           </section>
           <section id='deleted'><title>Deleted</title>
             <ul>
-              <xsl:for-each select='missing/document'>
-              <xsl:sort
-                  select="@dir"
-                  data-type = "text"
-                  order = "ascending"
-                  case-order = "lower-first"/>
-             <xsl:sort
-                  select="@name"
-                  data-type = "text"
-                  order = "ascending"
-                  case-order = "lower-first"/>
-                <li>
-                <strong><xsl:value-of select="@name"/></strong> in <xsl:value-of select="@dir"/>
+              <xsl:for-each select='.//html:ul[@class="deleted"]/html:li[@class="dir"]'>
+                <li>In <cite><xsl:value-of select="text()"/></cite>:
+                <ul>
+                <xsl:for-each select='.//html:li[@class="resource"]'>
+                  <xsl:sort
+                    select="text()"
+                    data-type = "text"
+                    order = "ascending"
+                    case-order = "lower-first"/>
+                  <li>
+                  <strong><xsl:value-of select="text()"/></strong> 
+                  </li>
+                </xsl:for-each>
+                </ul>
                 </li>
               </xsl:for-each>
             </ul>
           </section>
         </section>
-      </body>
-    </document>
-  </xsl:template>
+  </xsl:template>  
 </xsl:stylesheet>
