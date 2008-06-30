@@ -117,7 +117,7 @@ def connectAndAudit():
         subprocess.Popen('gpg --armor --detach-sig ' + path, shell=True).wait()
         
         
-        prefix = base_file_name[0:-15]
+        prefix = base_file_name[0:-16]
         auditor = diff.Auditor(build_dir, prefix)
         auditor.printSignatureChecks()
         latestDiffs = auditor.latestDiffs()
