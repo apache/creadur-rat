@@ -13,19 +13,34 @@
   limitations under the License.
 -->
 <xsl:stylesheet version="1.0"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:output method='text' encoding='iso-8859-1' />
-
-  <xsl:template match='changes'>
-Audit Report: <xsl:value-of select='@from' /> -> <xsl:value-of select='@to' />
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:html="http://www.w3.org/1999/xhtml"><xsl:output method='text' encoding='iso-8859-1' /><xsl:template match='/'>
+Audit Report: <xsl:value-of select='//html:a[@class="start-date"]' /> -> <xsl:value-of select='//html:a[@class="end-date"]' />
 ======================================
-<xsl:choose>
-  <xsl:when test='count(descendant::added/document) + count(descendant::modified/document) + count(descendant::missing/document) > 0 '>
- * <xsl:value-of select='count(descendant::added/document)'/> files were added
- * <xsl:value-of select='count(descendant::modified/document)'/> files were modified
- * <xsl:value-of select='count(descendant::missing/document)'/> files were deleted
- 
-For details see http://incubator.apache.org/audit/changes-<xsl:value-of select='@to' />.html
+<xsl:choose><xsl:when test='count(//html:ul[@class="added"]//html:li[@class="resource"]) + count(//html:ul[@class="modified"]//html:li[@class="resource"]) + count(//html:ul[@class="deleted"]//html:li[@class="resource"]) > 0 '>
+ * <xsl:value-of select='count(//html:ul[@class="added"]//html:li[@class="resource"])'/> files were added
+ * <xsl:value-of select='count(//html:ul[@class="modified"]//html:li[@class="resource"])'/> files were modified
+ * <xsl:value-of select='count(//html:ul[@class="deleted"]//html:li[@class="resource"])'/> files were deleted
+<xsl:if test='count(//html:ul[@class="modified"]//html:li[@class="resource"])'>
+Modified
+--------<xsl:for-each select='//html:ul[@class="modified"]/html:li[@class="dir"]'><xsl:if test='count(.//html:li[@class="resource"])'>
+In <xsl:value-of select="text()"/>:<xsl:for-each select='.//html:li[@class="resource"]'><xsl:sort select="text()" data-type = "text" order = "ascending" case-order = "lower-first"/>
+ * <xsl:value-of select="text()"/>
+</xsl:for-each></xsl:if></xsl:for-each></xsl:if>
+<xsl:if test='count(//html:ul[@class="added"]//html:li[@class="resource"])'>
+
+Added
+-----<xsl:for-each select='.//html:ul[@class="added"]/html:li[@class="dir"]'><xsl:if test='count(.//html:li[@class="resource"])'>
+In <xsl:value-of select="text()"/>:<xsl:for-each select='.//html:li[@class="resource"]'><xsl:sort select="text()" data-type = "text" order = "ascending" case-order = "lower-first"/>
+ * <xsl:value-of select="text()"/>
+</xsl:for-each></xsl:if></xsl:for-each></xsl:if>
+<xsl:if test='count(//html:ul[@class="deleted"]//html:li[@class="resource"])'>
+
+Deleted
+-------<xsl:for-each select='.//html:ul[@class="deleted"]/html:li[@class="dir"]'><xsl:if test='count(.//html:li[@class="resource"])'>
+In <xsl:value-of select="text()"/>:<xsl:for-each select='.//html:li[@class="resource"]'><xsl:sort select="text()" data-type = "text" order = "ascending" case-order = "lower-first"/>
+ * <xsl:value-of select="text()"/>
+</xsl:for-each></xsl:if></xsl:for-each></xsl:if>
  </xsl:when>
   <xsl:otherwise>
 Move along! Nothing to see here!

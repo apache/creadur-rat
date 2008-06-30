@@ -14,6 +14,13 @@
 -->
 <project name="RAT Scan build" default="dist" xmlns:rat='antlib:org.apache.rat.scan'>
 
+    <target name='xsl'>
+        <property name='src.rat' location='src/main'/>    
+        <xslt 
+            style="${src.rat}/org/apache/rat/scan/summary-txt.xsl" 
+            in='${src.rat}/org/apache/rat/scan/diff.html'
+            out='summary.xml'></xslt>   
+    </target>
 
     
     <target name='run'>
