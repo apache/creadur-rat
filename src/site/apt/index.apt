@@ -63,13 +63,14 @@ Running RAT
  Run from the command line with:
 
 +------------------------------------------+
-java -jar rat-VERSION.jar
+java -jar rat-VERSION.jar --help
 +------------------------------------------+
 
  Where VERSION is replaced with the version number you are 
  working with.
  
- This will audit the project in the current directory.
+ This will output a help message detailing the command line
+options available to you.
  
 * Running with Apache Ant
   
