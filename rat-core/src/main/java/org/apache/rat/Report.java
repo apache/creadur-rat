@@ -18,19 +18,31 @@
  */ 
 package org.apache.rat;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.PrintStream;
 import java.io.Writer;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerConfigurationException;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.annotation.AbstractLicenceAppender;
+import org.apache.rat.annotation.ApacheV2LicenceAppender;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -38,31 +50,135 @@ import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 
 public class Report {
 
-	public static final void main(String args[]) throws Exception {
-		if (args == null || args.length != 1) {
-			printUsage();
+	//@SuppressWarnings("unchecked")
+  public static final void main(String args[]) throws Exception {
+	  Options opts = new Options();
+
+    Option help = new Option("h", "help", false,
+        "Print help for the RAT command line interface and exit");
+    opts.addOption(help);
+
+    Option addLicence = new Option(
+        "a",
+        "addLicence",
+        false,
+        "Add the default licence header to any file with an unknown licence that is not in the exclusion list. By default new files will be created with the licence header, to force the modification of existing files use the --force option.");
+    opts.addOption(addLicence);
+    
+    Option write = new Option(
+        "f",
+        "force",
+        false,
+        "Forces any changes in files to be written without confirmation");
+    opts.addOption(write);
+
+    Option copyright = new Option(
+        "c",
+        "copyright",
+        true,
+        "The copyright message to use in the licence headers, usually in the form of \"Copyright 2008 Foo\"");
+    opts.addOption(copyright);
+    
+    Option xml = new Option(
+        "x",
+        "xml",
+        false,
+        "Output the report in XML format");
+    opts.addOption(xml);
+    
+    PosixParser parser = new PosixParser();
+    CommandLine cl = null;
+    try {
+      cl = parser.parse(opts, args);
+    } catch (ParseException e) {
+      System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
+      System.exit(1);
+    }
+
+    if (cl.hasOption('h')) {
+      printUsage(opts);
+    }
+    
+    
+    args = cl.getArgs();
+    if (args == null || args.length != 1) {
+			printUsage(opts);
 		} else {
-			Report report = new Report(args[0]);
-			//report.report(System.out);
-            report.styleReport(System.out);
-		} 		
+      Report report = new Report(args[0]);
+      
+      if (cl.hasOption('a')) {
+        OutputStream reportOutput = new ByteArrayOutputStream();
+        PrintStream stream = new PrintStream(reportOutput, true);
+        report.report(stream);
+        
+        AbstractLicenceAppender  appender;
+        String copyrightMsg = cl.getOptionValue("c");
+        if ( copyrightMsg != null) {
+          appender = new ApacheV2LicenceAppender(copyrightMsg);
+        } else {
+          appender = new ApacheV2LicenceAppender();
+        }
+        if (cl.hasOption("f")) {
+          appender.setForce(true);
+        }
+        
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        ByteArrayInputStream xmlStream = new ByteArrayInputStream(reportOutput.toString().getBytes("UTF-8"));
+        Document doc = factory.newDocumentBuilder().parse(xmlStream);
+        
+        NodeList resourceHeaders = doc.getElementsByTagName("header-type");
+        String value = null;
+        for (int i = 0; i < resourceHeaders.getLength(); i++) {
+          Node headerType = resourceHeaders.item(i).getAttributes().getNamedItem("name");
+          if(headerType != null) {
+            value = headerType.getNodeValue();
+          } else {
+            value = null;
+          }
+          if (value != null &&value.equals("?????")) {
+            Node resource = resourceHeaders.item(i).getParentNode();
+            String filename = resource.getAttributes().getNamedItem("name").getNodeValue();
+            File document = new File(filename);
+            appender.append(document);
+          }
+        }
+      }
+      
+      if (cl.hasOption('x')) {
+			  report.report(System.out);
+		  } else {
+        report.styleReport(System.out);
+		  }		  
+		} 
 	}
 	
-	private static final void printUsage() {
-		System.out.println("Usage: <directory>");
-		System.out.println("       where ");
-        System.out.println(           "<directory> is the base directory to be audited.");
-        System.out.println("NOTE: RAT is really little more than a grep ATM");
-		System.out.println("      RAT is also rather memory hungry ATM");
-		System.out.println("      RAT is very basic ATM");
-        System.out.println("      RAT ATM runs on unpacked releases");
-        System.out.println("      RAT highlights possible issues");
-        System.out.println("      RAT reports require intepretation");
-        System.out.println("      RAT often requires some tuning before it runs well against a project");
-        System.out.println("      RAT relies on heuristics: it may miss issues");
+	private static final void printUsage(Options opts) {
+    HelpFormatter f = new HelpFormatter();
+
+    String header = "Options";
+    
+    StringBuffer footer = new StringBuffer("\n");
+    footer.append("NOTE:\n");
+    footer.append("RAT is really little more than a grep ATM\n");
+    footer.append("RAT is also rather memory hungry ATM\n");
+    footer.append("RAT is very basic ATM\n");
+    footer.append("RAT ATM runs on unpacked releases\n");
+    footer.append("RAT highlights possible issues\n");
+    footer.append("RAT reports require intepretation\n");
+    footer.append("RAT often requires some tuning before it runs well against a project\n");
+    footer.append("RAT relies on heuristics: it may miss issues\n");
+        
+    f.printHelp("java rat.report [options] [DIR]",
+        header, opts, footer.toString(), false);
+    System.exit(0);
 	}
 	
 	private final String baseDirectory;
