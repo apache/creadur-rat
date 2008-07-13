@@ -66,7 +66,7 @@ class Document:
         return self.__sha
     
     def toXml(self):
-        result = "<li><a name='" + join(self.dir, self.name) + "' class='resource'>" + self.name + "</a><dl>"
+        result = "<li><span class='resource'>" + self.name + "</span><dl>"
         result = result + "<dt>md5</dt><dd class='md5'>" + self.md5() + "</dd>"
         result = result + "<dt>sha</dt><dd class='sha'>" + self.sha() + "</dd>"
         result = result + "<dt>ripe</dt><dd class='ripe'>" + self.ripe() + "</dd>"
