@@ -51,7 +51,7 @@ def toXhtmlDocument(xml):
  limitations under the License.
 
 -->
-<head><title>Audited On """ + today + """</title></head><body>
+<head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"/><title>Audited On """ + today + """</title></head><body>
 <p>Audit ran on <span class='created'>""" + today + "</span></p>" + xml + "</body></html>"
 
 def save(file, document):
