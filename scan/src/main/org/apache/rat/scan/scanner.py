@@ -98,15 +98,21 @@ Artifacts by directory:
 </p>
 <ul>"""
         for root, dirs, files in os.walk(self.basedir):
-            result = result + "<li><span class='dir'>" + root + "</span><ul>"
+            result = result + "<li><span class='dir'>" + root + "</span>"
+            filesExist = False
             for name in files:
+                if filesExist == False:
+                    filesExist = True
+                    result = result + "<ul>"
                 ext = splitext(name)[1]
                 if name == 'KEYS':
                     pass
                 elif not (ext == '.sha1' or ext == '.md5' or ext=='.sha' or ext == '.asc'):
                     document = Document(root, name)
                     result = result + document.toXml();
-            result = result + "</ul></li>"
+            if filesExist:
+                result = result + "</ul>"
+            result = result + "</li>"
             if '.svn' in dirs:
                 dirs.remove('.svn')
         result = result + """</ul>
