@@ -232,30 +232,33 @@ class Auditor:
         else:
             return None
         
-    def toXml(self, documents):
+    def toXml(self, documents, type):
         result = ""
+        firstDocument = True
         for dir, documentsInDir in dict((dir, filter(lambda doc: doc.dir == dir, documents)) for dir in set([document.dir for document in documents])).iteritems():
+            if firstDocument:
+                result = result + "<ul class='"  + type + "'>"
+                firstDocument = False
             result = result + "<li class='dir'>" + dir + "<ul>"
             for document in sorted(documentsInDir):
                 result = result + "<li class='resource'>" + document.name + "</li>"
             result = result + "</ul></li>"
+        if not firstDocument:
+            result = result + "</ul>"
         return result
         
     def diffs(self, one, two):
         result = "<div class='diff'><h1>From <a href='"  + self.prefix + "-" + two.on + ".html' class='start-date'>"+ two.on + "</a> Till <a href='"  + self.prefix + "-" + one.on + ".html' class='end-date'>" + one.on + '</a></h1>'
         added, removed, modified = one.compare(two)
         
-        result = result + "<h2>Added Resources</h2><ul class='added'>"
-        result = result + self.toXml(added)
-        result = result + "</ul>"
+        result = result + "<h2>Added Resources</h2>"
+        result = result + self.toXml(added, "added")
         
-        result = result + "<h2>Modified Resources</h2><ul class='modified'>"
-        result = result + self.toXml(modified)
-        result = result + "</ul>"
+        result = result + "<h2>Modified Resources</h2>"
+        result = result + self.toXml(modified, 'modified')
         
-        result = result + "<h2>Removed Resources</h2><ul class='deleted'>"
-        result = result + self.toXml(removed)
-        result = result + "</ul>"
+        result = result + "<h2>Removed Resources</h2>"
+        result = result + self.toXml(removed, 'deleted')
         return result + '</div>' 
                 
 if __name__ == '__main__':
