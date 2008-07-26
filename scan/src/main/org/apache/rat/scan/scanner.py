@@ -101,13 +101,13 @@ Artifacts by directory:
             result = result + "<li><span class='dir'>" + root + "</span>"
             filesExist = False
             for name in files:
-                if filesExist == False:
-                    filesExist = True
-                    result = result + "<ul>"
                 ext = splitext(name)[1]
                 if name == 'KEYS':
                     pass
                 elif not (ext == '.sha1' or ext == '.md5' or ext=='.sha' or ext == '.asc'):
+                    if filesExist == False:
+                        filesExist = True
+                        result = result + "<ul>"
                     document = Document(root, name)
                     result = result + document.toXml();
             if filesExist:
