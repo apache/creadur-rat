@@ -39,22 +39,29 @@ Release Audit Tool (RAT)
  describes the options available. The release notes describe the current state of
  RAT.
 
+Checking Out RAT
+
+ RAT contains a number of different products. 
+ 
+ To checkout the main application run
+
++------------------------------------------+
+svn co http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/
++------------------------------------------+
+
 Building RAT
 
- Building RAT requires that you have either 
- {{{http://ant.apache.org/} Apache Ant}} or
- {{{http://maven.apache.org/} Apache Maven}} installed.
- You can then use a command such as:
+ Building RAT requires
+ {{{http://maven.apache.org/} Apache Maven}}. 
+ Read BUILD.txt or (for the impatient) do
+ 
++------------------------------------------+
+mvn install package
++------------------------------------------+
 
-+------------------------------------------+
-ant build
-+------------------------------------------+
-
- or
-
-+------------------------------------------+
-mvn install
-+------------------------------------------+
+ This should build all modules. The application jar will be 
+ rat-app/target/rat-app-X.Y-SNAPSHOT.jar where X and Y are the current
+ major and minor version numbers.
 
 Running RAT
 
@@ -63,7 +70,7 @@ Running RAT
  Run from the command line with:
 
 +------------------------------------------+
-java -jar rat-VERSION.jar --help
+java -jar rat-app-VERSION.jar --help
 +------------------------------------------+
 
  Where VERSION is replaced with the version number you are 
