@@ -1,4 +1,4 @@
-package org.codehaus.mojo.rat;
+package org.apache.rat.mp;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,14 +19,35 @@ package org.codehaus.mojo.rat;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoFailureException;
-
-public class RatCheckException extends MojoFailureException
+/**
+ * Used to specify additional license matchers. A license matcher is basically a class, which implements
+ * {@link rat.analysis.IHeaderMatcher}.
+ */
+public class HeaderMatcherSpecification
 {
-    private static final long serialVersionUID = -1720861476741779140L;
+    /**
+     * The license matchers class name.
+     */
+    private String className;
 
-    public RatCheckException( String message )
+    /**
+     * Returns the license matchers class name.
+     * 
+     * @return Class name of the license matcher.
+     */
+    public String getClassName()
     {
-        super( message );
+        return className;
+    }
+
+    /**
+     * Sets the license matchers class name. Required.
+     * 
+     * @param pClassName
+     *            Class name of the license matcher.
+     */
+    public void setClassName( String pClassName )
+    {
+        className = pClassName;
     }
 }

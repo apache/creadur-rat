@@ -38,6 +38,10 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
+import org.apache.rat.mp.AbstractRatMojo;
+import org.apache.rat.mp.RatCheckException;
+import org.apache.rat.mp.RatCheckMojo;
+import org.apache.rat.mp.RatReportMojo;
 
 
 /**

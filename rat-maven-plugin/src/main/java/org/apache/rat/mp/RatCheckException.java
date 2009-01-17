@@ -1,4 +1,4 @@
-package org.codehaus.mojo.rat;
+package org.apache.rat.mp;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,35 +19,14 @@ package org.codehaus.mojo.rat;
  * under the License.
  */
 
-/**
- * Used to specify additional license familys. A license family is basically a class, which implements
- * {@link rat.license.ILicenseFamily}.
- */
-public class LicenseFamilySpecification
+import org.apache.maven.plugin.MojoFailureException;
+
+public class RatCheckException extends MojoFailureException
 {
-    /**
-     * The license familys class name.
-     */
-    private String className;
+    private static final long serialVersionUID = -1720861476741779140L;
 
-    /**
-     * Returns the license familys class name.
-     * 
-     * @return Class name of the license family.
-     */
-    public String getClassName()
+    public RatCheckException( String message )
     {
-        return className;
-    }
-
-    /**
-     * Sets the license familys class name. Required.
-     * 
-     * @param pClassName
-     *            Class name of the license family.
-     */
-    public void setClassName( String pClassName )
-    {
-        className = pClassName;
+        super( message );
     }
 }

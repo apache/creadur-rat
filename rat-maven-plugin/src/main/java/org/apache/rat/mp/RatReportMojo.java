@@ -1,4 +1,4 @@
-package org.codehaus.mojo.rat;
+package org.apache.rat.mp;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -346,7 +346,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
      */
     private ResourceBundle getBundle( Locale locale )
     {
-        return ResourceBundle.getBundle( "org/codehaus/mojo/rat/rat-report", locale, getClass().getClassLoader() );
+        return ResourceBundle.getBundle( "org/apache/rat/mp/rat-report", locale, getClass().getClassLoader() );
     }
 
     /**

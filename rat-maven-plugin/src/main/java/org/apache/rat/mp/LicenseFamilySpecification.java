@@ -1,4 +1,4 @@
-package org.codehaus.mojo.rat;
+package org.apache.rat.mp;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,20 +20,20 @@ package org.codehaus.mojo.rat;
  */
 
 /**
- * Used to specify additional license matchers. A license matcher is basically a class, which implements
- * {@link rat.analysis.IHeaderMatcher}.
+ * Used to specify additional license familys. A license family is basically a class, which implements
+ * {@link rat.license.ILicenseFamily}.
  */
-public class HeaderMatcherSpecification
+public class LicenseFamilySpecification
 {
     /**
-     * The license matchers class name.
+     * The license familys class name.
      */
     private String className;
 
     /**
-     * Returns the license matchers class name.
+     * Returns the license familys class name.
      * 
-     * @return Class name of the license matcher.
+     * @return Class name of the license family.
      */
     public String getClassName()
     {
@@ -41,10 +41,10 @@ public class HeaderMatcherSpecification
     }
 
     /**
-     * Sets the license matchers class name. Required.
+     * Sets the license familys class name. Required.
      * 
      * @param pClassName
-     *            Class name of the license matcher.
+     *            Class name of the license family.
      */
     public void setClassName( String pClassName )
     {

@@ -1,4 +1,4 @@
-package org.codehaus.mojo.rat;
+package org.apache.rat.mp;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -70,7 +70,7 @@ public class RatCheckMojo extends AbstractRatMojo
     
     private URL getStylesheetURL()
     {
-        URL url = Thread.currentThread().getContextClassLoader().getResource( "org/codehaus/mojo/rat/identity.xsl" );
+        URL url = Thread.currentThread().getContextClassLoader().getResource( "org/apache/rat/mp/identity.xsl" );
         if ( url == null )
         {
             throw new IllegalStateException( "Failed to locate stylesheet" );
