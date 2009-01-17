@@ -48,6 +48,13 @@ public class ReportTest extends TestCase {
             "\n" + 
             "*******************************\n" + 
             "\n" + 
+            "Unapproved licenses:\n" + 
+            "\n" +
+            "  " + pElementsPath + "/Source.java\n" +
+            "  " + pElementsPath + "/sub/Empty.txt\n" +
+            "\n" +
+            "*******************************\n" + 
+            "\n" + 
             "Archives (+ indicates readable, $ unreadable): \n" + 
             "\n" + 
             " + " + pElementsPath + "/dummy.jar\n" + 

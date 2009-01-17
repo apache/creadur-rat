@@ -192,6 +192,54 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       <archive>http://mail-archives.apache.org/mod_mbox/incubator-rat-dev/</archive>
     </mailingList>
   </mailingLists>
+  <developers>
+  	<developer>
+  		<id>bodewig</id>
+  		<name>Stefan Bodewig</name>
+  		<email>bodewig@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>rdonkin</id>
+  		<name>Robert Burrell Donkin</name>
+  		<email>rdonkin@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>gnodet</id>
+  		<name>Guillaume Nodet</name>
+  		<email>gnodet@apache.org</email>
+  	</developer>
+    <developer>
+        <id>pauls</id>
+        <name>Karl Pauls</name>
+        <email>pauls@apache.org</email>
+    </developer>
+  	<developer>
+  		<id>rooneg</id>
+  		<name>Garrett Rooney</name>
+  		<email>rooneg@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>mriou</id>
+  		<name>Matthieu Riou</name>
+  		<email>mriou@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>jochen</id>
+  		<name>Jochen Wiedmann</name>
+  		<email>jochen@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>bayard</id>
+  		<name>Henri Yandell</name>
+  		<email>bayard@apache.org</email>
+  	</developer>
+  </developers>
+  <contributors>
+  	<contributor>
+  		<name>Jukka Zitting</name>
+  		<email>jukka@apache.org</email>
+  	</contributor>
+  </contributors>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/</connection>
