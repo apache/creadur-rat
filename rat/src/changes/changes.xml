@@ -8,6 +8,10 @@
           due-to="Jukka Zitting" due-to-email="jukka@apache.org">
         List all resources with unapproved licenses at the beginning of the report.
       </action>
+      <action dev="jochen" type="fix" issue="RAT-36"
+          due-to="Jukka Zitting" due-to-email="jukka@apache.org">
+        Report header incorrectly refers to an "L" license marker
+      </action>
     </release>
   </body>
 </document>
