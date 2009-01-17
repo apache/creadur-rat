@@ -262,6 +262,7 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   <modules>
     <module>rat-core</module>
     <module>rat-anttasks</module>
+    <module>rat-maven-plugin</module>
     <module>rat-app</module>
   </modules>
 </project>
