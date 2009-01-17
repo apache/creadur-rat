@@ -1,0 +1,13 @@
+<document>
+  <properties>
+    <title>Changes in RAT</title>
+  </properties>
+  <body>
+    <release version="0.6.0" date="Not yet released">
+      <action dev="jochen" type="fix" issue="RAT-37"
+          due-to="Jukka Zitting" due-to-email="jukka@apache.org">
+        List all resources with unapproved licenses at the beginning of the report.
+      </action>
+    </release>
+  </body>
+</document>

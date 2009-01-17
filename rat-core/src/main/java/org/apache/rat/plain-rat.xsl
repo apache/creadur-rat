@@ -39,6 +39,16 @@ Generated files do not required license headers
 
 *******************************
 
+Unapproved licenses:
+
+<xsl:for-each select='descendant::resource[license-approval/@name="false"]'>
+  <xsl:text>  </xsl:text>
+  <xsl:value-of select='@name'/>
+  <xsl:text>
+</xsl:text>
+</xsl:for-each>
+*******************************
+
 Archives (+ indicates readable, $ unreadable): 
 
  <xsl:for-each select='descendant::resource[type/@name="archive"]'>
