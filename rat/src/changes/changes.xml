@@ -12,6 +12,10 @@
           due-to="Jukka Zitting" due-to-email="jukka@apache.org">
         Report header incorrectly refers to an "L" license marker
       </action>
+      <action dev="jochen" type="fix" issue="RAT-33"
+          due-to="Gavin" due-to-email="gavin@16degrees.com.au">
+        Mailing list subscribe points to unsubscribe
+      </action>
     </release>
   </body>
 </document>
