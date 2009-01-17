@@ -1,0 +1,86 @@
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~  
+~~        http://www.apache.org/licenses/LICENSE-2.0
+~~  
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+
+ -----------------
+ Verify phase example
+ -----------------
+
+Verify phase example
+
+  This example demonstrates how to configure the plugin to
+  run automatically as part of the "verify" phase:
+
+------------------------------------------------------------------
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rat-maven-plugin</artifactId>
+        <version>1.0-alpha-3</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+------------------------------------------------------------------
+
+  In larger projects, the plugin may take some time to run. In
+  such cases, it may be desirable not to run the plugin with
+  every build, but only in important cases like a release build:
+
+------------------------------------------------------------------
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          ...
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>rat-maven-plugin</artifactId>
+            <version>1.0-alpha-3</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          ...
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+------------------------------------------------------------------
+
+  Note, that this is almost the same example as before, except
+  that the plugin configuration has been embedded into a profile.
+  In this case, the plugin is only executed, when the "release"
+  profile is activated by adding <<<-Prelease>>> to the command
+  line, for example like this:
+
+------------------------------------------------------------------
+  mvn -Prelease install
+------------------------------------------------------------------

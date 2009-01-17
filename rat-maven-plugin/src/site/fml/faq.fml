@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!-- 
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="what">
+      <question>What is RAT?</question>
+      <answer>
+        <p>
+          Basically, you can think of it as a tool that checks,
+          whether you're source files are carrying proper
+          license headers. Almost any non-trivial organization
+          has a policy for license headers. In the case
+          of the <a href="http://www.apache.org/">Apache Software
+          Foundation (ASF)</a>, this is the
+          <a href="http://www.apache.org/legal/src-headers.html">ASF
+          Source Header and Copyright Notice Policy</a>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="where">
+      <question>Where do I find RAT?</question>
+      <answer>
+        <p>
+          Rat can be found <a href="http://code.google.com/p/arat/">
+          http://code.google.com/p/arat/</a>. In other words, it is
+          a <a href="http://code.google.com/">code.google.com</a>
+          project, a somewhat unusual location for a project, which
+          is so closely coupled to the ASF guidelines.
+        </p>
+      </answer>
+    </faq>
+    <faq id="why">
+      <question>Why should I use the Maven plugin to run RAT?</question>
+      <answer>
+        <p>Because it makes running RAT trivial. Basically, you just
+          add the plugin to the <code>build/plugins</code> section
+          of your POM and run <code>mvn rat:check</code>. Using RAT
+          cannot be simpler.
+        </p>
+      </answer>
+    </faq>
+  </part>
+
+  <part id="Configuration">
+    <faq id="includeSubprojects">
+      <question>
+        The rat-maven-plugin creates a report for every subproject.
+        I want a single report for the whole project, which includes
+        the subprojects.
+      </question>
+      <answer>
+        <p>Set the configuration parameter "excludeSubProjects"
+          to false.</p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
