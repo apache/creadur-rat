@@ -57,7 +57,7 @@ Archives (+ indicates readable, $ unreadable):
  </xsl:text>
  </xsl:for-each>
 *****************************************************
-  Files with AL headers will be marked L
+  Files with Apache License headers will be marked AL
   Binary files (which do not require AL headers) will be marked B
   Compressed archives will be marked A
   Notices, licenses etc will be marked N

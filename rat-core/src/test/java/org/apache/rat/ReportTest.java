@@ -60,7 +60,7 @@ public class ReportTest extends TestCase {
             " + " + pElementsPath + "/dummy.jar\n" + 
             " \n" + 
             "*****************************************************\n" + 
-            "  Files with AL headers will be marked L\n" + 
+            "  Files with Apache License headers will be marked AL\n" + 
             "  Binary files (which do not require AL headers) will be marked B\n" + 
             "  Compressed archives will be marked A\n" + 
             "  Notices, licenses etc will be marked N\n" + 
