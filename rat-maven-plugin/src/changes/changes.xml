@@ -25,6 +25,10 @@
         the dependencies are guaranteed to be present, if the mojo is
         invoked from the command line.
       </action>
+      <action dev="jochen" type="fix" issue="RAT-35"
+          due-to="Jukka Zitting" due-to-email="jukka@apache.org">
+        Incorrect number of unapproved licenses reported by rat:check
+      </action>
     </release>
     <release version="1.0-alpha-3" date="2007-Aug-28">
       <action dev="jochen" type="fix">

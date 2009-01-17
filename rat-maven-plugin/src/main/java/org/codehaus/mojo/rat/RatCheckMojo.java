@@ -221,7 +221,7 @@ public class RatCheckMojo extends AbstractRatMojo
     {
         if ( numUnapprovedLicenses < statistics.getNumUnapprovedLicenses() )
         {
-            throw new RatCheckException( "Too many unapproved licenses: " + statistics.getNumApprovedLicenses() );
+            throw new RatCheckException( "Too many unapproved licenses: " + statistics.getNumUnapprovedLicenses() );
         }
     }
 }
