@@ -39,13 +39,12 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.rat.Defaults;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import rat.Defaults;
 
 /**
  * Run RAT to perform a violation check.

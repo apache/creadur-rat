@@ -51,9 +51,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.rat.Defaults;
 import org.codehaus.doxia.sink.Sink;
 
-import rat.Defaults;
 
 /**
  * Generates a report with RAT's output.
