@@ -26,13 +26,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import rat.document.IDocument;
-import rat.document.IDocumentCollection;
-import rat.document.impl.DocumentImplUtils;
-import rat.document.impl.zip.ZipDocumentFactory;
-import rat.report.IReportable;
-import rat.report.RatReport;
-import rat.report.RatReportFailedException;
+import org.apache.rat.document.IDocument;
+import org.apache.rat.document.IDocumentCollection;
+import org.apache.rat.document.impl.DocumentImplUtils;
+import org.apache.rat.document.impl.zip.ZipDocumentFactory;
+import org.apache.rat.report.IReportable;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.RatReportFailedException;
+
 
 /**
  * Implementation of IReportable that traverses over a set of files.

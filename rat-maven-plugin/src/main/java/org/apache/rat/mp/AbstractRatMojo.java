@@ -35,14 +35,15 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.rat.Defaults;
+import org.apache.rat.Report;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.report.IReportable;
+import org.apache.rat.report.RatReportFailedException;
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import rat.Defaults;
-import rat.analysis.IHeaderMatcher;
-import rat.analysis.util.HeaderMatcherMultiplexer;
-import rat.license.ILicenseFamily;
-import rat.report.IReportable;
-import rat.report.RatReportFailedException;
 
 /**
  * Abstract base class for Mojos, which are running RAT.
@@ -326,7 +327,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
         HeaderMatcherMultiplexer m = new HeaderMatcherMultiplexer( getLicenseMatchers() );
         try
         {
-            rat.Report.report( out, getResources(), style, m, getApprovedLicenseNames() );
+            Report.report( out, getResources(), style, m, getApprovedLicenseNames() );
         }
         catch ( TransformerConfigurationException e )
         {

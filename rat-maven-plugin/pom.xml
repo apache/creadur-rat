@@ -64,9 +64,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>com.google.code.p.arat</groupId>
-      <artifactId>rat-lib</artifactId>
-      <version>0.5.1</version>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>rat-core</artifactId>
+      <version>0.6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>

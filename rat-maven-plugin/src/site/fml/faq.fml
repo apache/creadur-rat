@@ -36,11 +36,10 @@
       <question>Where do I find RAT?</question>
       <answer>
         <p>
-          Rat can be found <a href="http://code.google.com/p/arat/">
-          http://code.google.com/p/arat/</a>. In other words, it is
-          a <a href="http://code.google.com/">code.google.com</a>
-          project, a somewhat unusual location for a project, which
-          is so closely coupled to the ASF guidelines.
+          Rat can be found <a href="http://incubator.apache.org/rat/">
+          http://incubator.apache.org/rat/</a>. In other words, it is
+          an incubating Apache project: Has been preliminarily accepted
+          by the ASF, but not finally.
         </p>
       </answer>
     </faq>
