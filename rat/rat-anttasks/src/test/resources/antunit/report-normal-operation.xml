@@ -20,10 +20,22 @@
 
 -->
 
-<project default="allTests"
-  xmlns:au="antlib:org.apache.ant.antunit"
-  xmlns:rat="antlib:org.apache.rat.anttasks">
+<project name='report-normal-operation'
+	default="allTests"
+  	xmlns:au="antlib:org.apache.ant.antunit"
+  	xmlns:rat="antlib:org.apache.rat.anttasks">
 
+    <taskdef uri="antlib:org.apache.ant.antunit" 
+        resource="org/apache/ant/antunit/antlib.xml" 
+        classpath="${test.classpath}" />
+
+    <taskdef uri="antlib:org.apache.rat.anttasks" resource="org/apache/rat/anttasks/antlib.xml">
+        <classpath>
+            <pathelement location="${jar.name}" />
+            <pathelement path='${test.classpath}' />
+        </classpath>
+    </taskdef>
+	
   <property name="output.dir" location="testoutput"/>
   <pathconvert dirsep="/" property="file.name">
     <path>
