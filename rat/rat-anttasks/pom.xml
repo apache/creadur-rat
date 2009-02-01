@@ -47,6 +47,14 @@
       <groupId>org.apache.ant</groupId>
       <artifactId>ant-antunit</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.ant</groupId>
+    	<artifactId>ant-testutil</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
