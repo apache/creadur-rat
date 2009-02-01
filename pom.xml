@@ -96,6 +96,7 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       	<groupId>org.apache.ant</groupId>
       	<artifactId>ant-testutil</artifactId>
       	<version>1.7.1</version>
+      	<scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
