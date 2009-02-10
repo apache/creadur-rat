@@ -64,7 +64,6 @@
   <target name="testCustomMatcher">
     <mkdir dir="${output.dir}/dest"/>
     <mkdir dir="${output.dir}/src/org/example"/>
-    <echo file="/tmp/classpath">Classpath is ${test.classpath}</echo>
   	<typedef name="exmpl" classname="org.example.Matcher"
     	classpath="${test.classpath}"/>
     <typedef name="exmpl-license" classname="org.example.LicenseFamily"
