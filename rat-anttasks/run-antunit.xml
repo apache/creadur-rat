@@ -1,0 +1,24 @@
+<project name="AntUnit Tests for RAT Ant Tasks"
+         default="antunit">
+
+  <target name="antunit">
+    <property name="jar.name" location="target/classes"/>
+    <path id="test-classpath">
+      <pathelement location="${jar.name}"/>
+      <pathelement location="../rat-core/target/classes"/>
+      <pathelement location="target/test-classes"/>
+      <pathelement location="${user.home}/.m2/repository/org/apache/ant/ant-antunit/1.1/ant-antunit-1.1.jar"/>
+      <pathelement location="${user.home}/.m2/repository/commons-lang/commons-lang/2.1/commons-lang-2.1.jar"/>
+      <pathelement location="${user.home}/.m2/repository/commons-cli/commons-cli/1.1/commons-cli-1.1.jar"/>
+      <pathelement location="${user.home}/.m2/repository/commons-collections/commons-collections/3.2/commons-collections-3.2.jar"/>
+    </path>
+    <property name="test.classpath" refid="test-classpath"/>
+
+    <subant>
+      <fileset dir="src/test/resources/antunit"
+                    includes="report-*.xml"/>
+      <property name="jar.name" value="${jar.name}"/>
+      <property name="test.classpath" value="${test.classpath}"/>
+    </subant>
+  </target>
+</project>
