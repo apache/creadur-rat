@@ -89,7 +89,7 @@ public class ReportTest extends TestCase {
             " =======================================================================\n" + 
             " ==" + pElementsPath + "/sub/Empty.txt\n" + 
             " =======================================================================\n" + 
-            "";
+            "\n";
 	}
     
     protected void setUp() throws Exception {

@@ -23,13 +23,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 
 import junit.framework.TestCase;
 
 public class TestLicenceAppender extends TestCase {
-
+  /** Used to ensure that temporary files have unq */
+  private Random random = new Random();
+    
   public void testAddLicenceToUnknownFile() throws IOException {
-    String filename = "tmp.unkownTyoe";
+    String filename = "tmp" + random.nextLong() + ".unkownTyoe";
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
     writer.append("Unkown file type\n");
