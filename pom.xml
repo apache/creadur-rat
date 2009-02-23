@@ -1,0 +1,284 @@
+<?xml version='1.0'?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one   *
+ or more contributor license agreements.  See the NOTICE file *
+ distributed with this work for additional information        *
+ regarding copyright ownership.  The ASF licenses this file   *
+ to you under the Apache License, Version 2.0 (the            *
+ "License"); you may not use this file except in compliance   *
+ with the License.  You may obtain a copy of the License at   *
+                                                              *
+   http://www.apache.org/licenses/LICENSE-2.0                 *
+                                                              *
+ Unless required by applicable law or agreed to in writing,   *
+ software distributed under the License is distributed on an  *
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ KIND, either express or implied.  See the License for the    *
+ specific language governing permissions and limitations      *
+ under the License.                                           *
+
+-->
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>4</version>
+  </parent>
+  <groupId>org.apache.rat</groupId>
+  <artifactId>rat</artifactId>
+  <packaging>pom</packaging>
+  <version>0.6-SNAPSHOT</version>
+  <name>RAT</name>
+  <url>http://incubator.apache.org/rat</url>
+  <description>
+Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
+releases. It is heuristic in nature: making guesses about possible problems. It
+will produce false positives and cannot find every possible issue with a release.
+It's reports require interpretation.
+
+In response to demands from project quality tool developers, RAT is available as a 
+library suitable for inclusion in tools. This POM describes that library.
+Note that binary compatibility is not gauranteed between 0.x releases.
+  </description>
+  <inceptionYear>2006</inceptionYear>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>rat-core</artifactId>
+        <version>0.6-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>rat-anttasks</artifactId>
+        <version>0.6-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.ant</groupId>
+        <artifactId>ant</artifactId>
+        <version>1.7.1</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.ant</groupId>
+        <artifactId>ant-antunit</artifactId>
+        <version>1.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.reporting</groupId>
+        <artifactId>maven-reporting-impl</artifactId>
+        <version>2.0.4</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.ant</groupId>
+      	<artifactId>ant-testutil</artifactId>
+      	<version>1.7.1</version>
+      	<scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>         
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>     
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <reportSets>
+             <reportSet>
+                <reports>
+                   <report>dependencies</report>
+                   <report>project-team</report>
+                   <report>mailing-list</report>
+                   <report>issue-tracking</report>
+                   <report>license</report>
+                   <report>scm</report>
+                </reports>
+             </reportSet>
+          </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>src/test/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.0.2</version>
+          <configuration>
+            <source>1.4</source>
+            <target>1.4</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.0.4</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2-beta-2</version>
+          <configuration>
+            <descriptorSourceDirectory>src/main/assembly</descriptorSourceDirectory>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.ant</groupId>
+              <artifactId>ant</artifactId>
+              <version>1.7.1</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://issues.apache.org/jira/browse/RAT</url>
+  </issueManagement>
+
+  <mailingLists>
+    <mailingList>
+      <name>RAT </name>
+      <subscribe>rat-dev-subscribe@incubator.apache.org</subscribe>
+      <unsubscribe>rat-dev-unsubscribe@incubator.apache.org</unsubscribe>
+      <post>rat-dev@incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/incubator-rat-dev/</archive>
+    </mailingList>
+  </mailingLists>
+  <developers>
+  	<developer>
+  		<id>bodewig</id>
+  		<name>Stefan Bodewig</name>
+  		<email>bodewig@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>rdonkin</id>
+  		<name>Robert Burrell Donkin</name>
+  		<email>rdonkin@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>gnodet</id>
+  		<name>Guillaume Nodet</name>
+  		<email>gnodet@apache.org</email>
+  	</developer>
+    <developer>
+        <id>pauls</id>
+        <name>Karl Pauls</name>
+        <email>pauls@apache.org</email>
+    </developer>
+  	<developer>
+  		<id>rooneg</id>
+  		<name>Garrett Rooney</name>
+  		<email>rooneg@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>mriou</id>
+  		<name>Matthieu Riou</name>
+  		<email>mriou@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>jochen</id>
+  		<name>Jochen Wiedmann</name>
+  		<email>jochen@apache.org</email>
+  	</developer>
+  	<developer>
+  		<id>bayard</id>
+  		<name>Henri Yandell</name>
+  		<email>bayard@apache.org</email>
+  	</developer>
+  </developers>
+  <contributors>
+    <contributor>
+        <name>Gavin</name>
+        <email>gavin@16degrees.com.au</email>
+    </contributor>
+  	<contributor>
+  		<name>Jukka Zitting</name>
+  		<email>jukka@apache.org</email>
+  	</contributor>
+  </contributors>
+
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/</url>
+  </scm>
+
+  <distributionManagement>
+    <site>
+      <id>org.apache.rat.incubating</id>
+      <name>Apache RAT Website</name>
+      <url>scp://people.apache.org/www/incubator.apache.org/rat/</url>
+    </site>
+  </distributionManagement>
+
+  <modules>
+    <module>rat-core</module>
+    <module>rat-maven-plugin</module>
+    <module>rat-anttasks</module>
+    <module>rat-app</module>
+  </modules>
+</project>
