@@ -30,8 +30,7 @@ RAT includes a task library for Ant 1.7. This allows RAT reports to be run again
 a wide variety of resources. See ant-task-examples.xml. To use the Ant tasks, 
 Apache Ant 1.7 is required. See http://ant.apache.org/.
 
-Projects using Maven are directed to the RAT plugin 
-http://mojo.codehaus.org/rat-maven-plugin.
+For Maven builds, the plugin is recommended.
 
 In response to demands from project quality tool developers, RAT is available as a 
 library (rat-lib jar) suitable for inclusion in tools. Note that binary compatibility 
@@ -39,20 +38,43 @@ is not gauranteed between 0.x releases. The XML output format is not yet in it's
 final form and so library users are recommended to either use the supplied 
 stylesheets or keep in close touch with the code.
 
-RAT is in Incubation at Apache: http://incubator.apache.org/rat. 
+RAT is in Incubation at Apache: http://incubator.apache.org/rat
 
 Artifacts
 =========
- rat-0.5.1.jar combines the application (java -jar rat-0.5.1.jar) and Antlib 
- rat-lib-0.5.1.jar is a library distribution aimed at tool makers
+ TODO:
 
+RAT 0.6
+===========
  * Support for TMF header
  * Comprehend PEM, CRL file endings
-
-After 0.5.1
-===========
  * Added reporting capability to recursive rat script
  * Moved to the Incubator@Apache
+ * Issues Resolved (see http://issues.apache.org/jira):
+  * Bug:
+    * RAT-3 Incorrect alignment of file contents 
+    * RAT-11 Incorrect number of unnapproved licences reported
+    * RAT-12 Incorrect SCM info in maven plugin pom 
+    * RAT-29 NPE on &quot;mvn install&quot; in rat-anttasks
+    * RAT-33 Mailing list subscribe points to unsubscribe
+    * RAT-34 No license header added for java files that do not contain project line
+    * RAT-35 Incorrect number of unapproved licenses reported by rat:check
+    * RAT-36 Report header incorrectly refers to an &quot;L&quot; license marker 
+  * Improvement:
+    * RAT-8 [PATCH] add JavaCC to GeneratedLicenseNotRequired 
+    * RAT-9 A more informative website
+    * RAT-10 A few Javadoc comments
+    * RAT-23  More details in text summary
+    * RAT-24 Include checksums on web page
+    * RAT-26 Improve web summary
+    * RAT-27 Index page
+    * RAT-37 List all resources with unapproved licenses at the beginning of the report
+  * New Feature
+    * RAT-6 RAT Source Import    
+  * Task
+    * RAT-28 Repackage maven plugin          
+  * Wish
+    * RAT-1 maven-rat-plugin and ant-rat tasks
 
 RAT 0.5.1
 =========
