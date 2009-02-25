@@ -262,9 +262,9 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   </contributors>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/</developerConnection>
-    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk/</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/</url>
   </scm>
 
   <distributionManagement>
