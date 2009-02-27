@@ -30,7 +30,7 @@
     <version>4</version>
   </parent>
   <groupId>org.apache.rat</groupId>
-  <artifactId>rat</artifactId>
+  <artifactId>apache-rat-project</artifactId>
   <packaging>pom</packaging>
   <version>0.6-SNAPSHOT</version>
   <name>RAT</name>
@@ -51,12 +51,12 @@ Note that binary compatibility is not gauranteed between 0.x releases.
     <dependencies>
       <dependency>
         <groupId>org.apache.rat</groupId>
-        <artifactId>rat-core</artifactId>
+        <artifactId>apache-rat-core</artifactId>
         <version>0.6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.rat</groupId>
-        <artifactId>rat-anttasks</artifactId>
+        <artifactId>apache-rat-tasks</artifactId>
         <version>0.6-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -276,9 +276,9 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   </distributionManagement>
 
   <modules>
-    <module>rat-core</module>
-    <module>rat-maven-plugin</module>
-    <module>rat-anttasks</module>
-    <module>rat-app</module>
+    <module>apache-rat-core</module>
+    <module>apache-rat-plugin</module>
+    <module>apache-rat-tasks</module>
+    <module>apache-rat</module>
   </modules>
 </project>
