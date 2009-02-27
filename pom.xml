@@ -175,13 +175,6 @@ Note that binary compatibility is not gauranteed between 0.x releases.
           <version>2.0.4</version>
         </plugin>
         <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.2-beta-2</version>
-          <configuration>
-            <descriptorSourceDirectory>src/main/assembly</descriptorSourceDirectory>
-          </configuration>
-        </plugin>
-        <plugin>
           <artifactId>maven-antrun-plugin</artifactId>
           <dependencies>
             <dependency>
