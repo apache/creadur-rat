@@ -1,4 +1,4 @@
-package org.codehaus.mojo.rat;
+package org.apache.mojo.rat;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
