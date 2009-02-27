@@ -167,6 +167,7 @@ Note that binary compatibility is not gauranteed between 0.x releases.
           <configuration>
             <source>1.4</source>
             <target>1.4</target>
+            <encoding>iso8859-1</encoding>
           </configuration>
         </plugin>
         <plugin>
