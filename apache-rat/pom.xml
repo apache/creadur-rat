@@ -61,6 +61,8 @@
         <includes>
           <include>DISCLAIMER.txt</include>
           <include>RELEASE_NOTES.txt</include>
+          <include>LICENCE.txt</include>
+          <include>NOTICE.txt</include>
         </includes>
       </resource>
     </resources>    
@@ -105,8 +107,9 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>**/LICENSE.txt</exclude>
-            <exclude>**/NOTICE.txt</exclude>
+            <exclude>**/LICENSE</exclude>
+            <exclude>**/NOTICE</exclude>
+            <exclude>META-INF/maven</exclude>
           </excludes>
           <archive>
             <manifestEntries>
