@@ -64,6 +64,13 @@
         <include>apache-rat*.jar</include>
       </includes>
     </fileSet>
+    <fileSet>
+      <directory>../src/python</directory>
+      <outputDirectory>/</outputDirectory>      
+      <includes>
+        <include>*.py</include>
+      </includes>
+    </fileSet>
   </fileSets>
   <dependencySets>
     <dependencySet>
