@@ -76,6 +76,20 @@
         </executions>
       </plugin>
       <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.4</version>
+          <executions>
+              <execution>
+                  <id>create-javadocs</id>
+                  <phase>package</phase>
+                  <goals>
+                      <goal>javadoc</goal>
+                      <goal>jar</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
