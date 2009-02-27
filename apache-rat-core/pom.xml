@@ -36,6 +36,24 @@
     and rat-maven-plugin.</description>
 
   <build>   
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/filtered-resources</directory>
+      </resource>
+      <resource>
+        <directory>..</directory>
+        <targetPath>META-INF</targetPath>
+        <includes>
+          <include>DISCLAIMER.txt</include>
+          <include>RELEASE_NOTES.txt</include>
+        </includes>
+      </resource>
+    </resources>
     <pluginManagement>
       <plugins>
         <plugin>

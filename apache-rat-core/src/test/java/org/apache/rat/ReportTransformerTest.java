@@ -51,7 +51,7 @@ public class ReportTransformerTest extends TestCase {
     public void testTransform() throws Exception {
         StringReader in = new StringReader(SIMPLE_CONTENT);
         ReportTransformer transformer = new ReportTransformer(writer, 
-                new BufferedReader(new FileReader(new File("src/main/java/org/apache/rat/plain-rat.xsl"))), 
+                new BufferedReader(new FileReader(new File("src/main/resources/org/apache/rat/plain-rat.xsl"))), 
                 in);
         transformer.transform();
     }
