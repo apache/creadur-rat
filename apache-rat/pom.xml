@@ -66,10 +66,27 @@
     </resources>    
     <plugins>
       <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeScope>runtime</includeScope>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <overWriteIfNewer>false</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-remote-resources-plugin</artifactId>
         <version>1.0</version>
         <executions>
           <execution>
+            <phase>compile</phase>
             <goals>
               <goal>process</goal>
             </goals>
@@ -80,22 +97,6 @@
               <properties>
                   <addLicense>true</addLicense>
               </properties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process</phase>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeScope>runtime</includeScope>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-              <overWriteIfNewer>false</overWriteIfNewer>
             </configuration>
           </execution>
         </executions>
