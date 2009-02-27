@@ -25,7 +25,7 @@
   	xmlns:au="antlib:org.apache.ant.antunit"
   	xmlns:rat="antlib:org.apache.rat.anttasks">
 
-  <property name="output.dir" location="testoutput"/>
+  <property name="output.dir" location="../../../../target/testoutput"/>
   <mkdir dir="${output.dir}/dest"/>
   <path id="all-classes-needed-for-tests">
     <pathelement location="${jar.name}" />
