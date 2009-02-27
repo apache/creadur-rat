@@ -67,7 +67,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
-      <artifactId>rat-core</artifactId>
+      <artifactId>apache-rat-core</artifactId>
       <version>0.6-SNAPSHOT</version>
     </dependency>
     <dependency>

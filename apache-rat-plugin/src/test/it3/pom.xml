@@ -19,15 +19,15 @@
     xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <groupId>org.codehaus.mojo.rat.test</groupId>
+  <groupId>org.apache.rat.test</groupId>
   <artifactId>it1</artifactId>
   <version>1.0</version>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rat-maven-plugin</artifactId>
-        <version>1.0-alpha-3-SNAPSHOT</version>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>0.6-SNAPSHOT</version>
         <configuration>
         </configuration>
       </plugin>
@@ -36,9 +36,9 @@
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rat-maven-plugin</artifactId>
-        <version>1.0-alpha-3-SNAPSHOT</version>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apche-rat-plugin</artifactId>
+        <version>0.6-SNAPSHOT</version>
         <configuration>
         </configuration>
       </plugin>
