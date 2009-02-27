@@ -66,16 +66,36 @@
     </resources>    
     <plugins>
       <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+              </resourceBundles>
+              <properties>
+                  <addLicense>true</addLicense>
+              </properties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <phase>compile</phase>
+            <phase>process</phase>
             <goals>
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
               <includeScope>runtime</includeScope>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <overWriteIfNewer>false</overWriteIfNewer>
             </configuration>
           </execution>
         </executions>
@@ -83,6 +103,10 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
+          <excludes>
+            <exclude>**/LICENSE.txt</exclude>
+            <exclude>**/NOTICE.txt</exclude>
+          </excludes>
           <archive>
             <manifestEntries>
               <Main-Class>org.apache.rat.Report</Main-Class>
