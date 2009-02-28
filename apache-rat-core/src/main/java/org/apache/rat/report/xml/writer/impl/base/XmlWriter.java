@@ -472,8 +472,8 @@ public final class XmlWriter implements IXmlWriter {
      * @return this object
      * @throws InvalidXmlException if the name is not valid for an xml attribute 
      * or if a value for the attribute has already been written
-     * @throws OperationNotAllowedException if called after {@link #content} 
-     * or {@link #closeElement() or before any call to {@link #openElement}
+     * @throws OperationNotAllowedException if called after {@link #content(CharSequence)} 
+     * or {@link #closeElement()} or before any call to {@link #openElement(CharSequence)}
      */
     public IXmlWriter attribute(CharSequence name, CharSequence value) throws IOException {
         if (elementNames.isEmpty()) {

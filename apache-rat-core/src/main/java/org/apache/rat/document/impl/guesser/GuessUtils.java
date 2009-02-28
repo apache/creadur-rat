@@ -28,8 +28,8 @@ public class GuessUtils {
     
     /**
      * Converts name to upper case and strips any path.
-     * @param name
-     * @return
+     * @param name not null
+     * @return not null
      */
     public static final String normalise(final String name) {
         String result = name.toUpperCase(Locale.US);

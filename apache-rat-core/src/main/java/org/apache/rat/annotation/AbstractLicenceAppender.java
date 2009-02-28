@@ -102,7 +102,7 @@ public abstract class AbstractLicenceAppender {
    * Detect the type of document.
    * 
    * @param document
-   * @return
+   * @return not null
    * @TODO use existing mechanism to detect the type of a file and record it in the report output, thus we will not need this duplication here.
    */
   protected int getType(File document) {
@@ -145,7 +145,7 @@ public abstract class AbstractLicenceAppender {
    * for the given type of file.
    * 
    * @param type the type of file, see the TYPE_* constants
-   * @return
+   * @return not null
    */
   protected String getFirstLine(int type) {
     switch (type) {
@@ -166,7 +166,7 @@ public abstract class AbstractLicenceAppender {
    * for the given type of file.
    * 
    * @param type the type of file, see the TYPE_* constants
-   * @return
+   * @return not null
    */
   protected String getLastLine(int type) {
     switch (type) {
@@ -188,7 +188,7 @@ public abstract class AbstractLicenceAppender {
    * 
    * @param type the type of file, see the TYPE_* constants
    * @param content the content for this line
-   * @return
+   * @return not null
    */
   protected String getLine(int type, String content) {
     switch (type) {

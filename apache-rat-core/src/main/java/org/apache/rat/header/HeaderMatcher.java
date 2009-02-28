@@ -81,7 +81,7 @@ public class HeaderMatcher {
      * </p>
      * @param pattern <code>Pattern</code> to match
      * @return true if the pattern matches,
-     * false otherwise or if {@link #read()} has not been
+     * false otherwise or if {@link #read(Reader)} has not been
      * called
      */
     public boolean matches(Pattern pattern) {

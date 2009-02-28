@@ -46,7 +46,7 @@ public class HeaderBean {
     
     /**
      * Sets the header pattern to be matched.
-     * @param <code>Patter</code>
+     * @param headerPattern <code>Patter</code>
      * or null when no match is to be made
      */
     public void setHeaderPattern(Pattern headerPattern) {
