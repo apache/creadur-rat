@@ -47,6 +47,27 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   </description>
   <inceptionYear>2006</inceptionYear>
 
+  <properties>
+    <!--
+      Website properties allow local staging of the website
+      during release operations. For example:
+      <profiles>
+        <profile>
+           <id>main</id>
+           <activation>
+              <activeByDefault>true</activeByDefault>
+           </activation>
+           <properties>
+              <rat.www>scp://localhost/www</rat.www>
+              <rat.www.id>localhost</rat.www.id>
+      ...
+    -->
+    <!-- General location for site stage -->
+    <rat.www>scp://people.apache.org/www/incubator.apache.org/rat/</rat.www>
+    <!-- Overridding this value allows single set of loopback settings to be maintained -->
+    <rat.www.id>org.apache.rat.incubating</rat.www.id>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -263,9 +284,9 @@ Note that binary compatibility is not gauranteed between 0.x releases.
 
   <distributionManagement>
     <site>
-      <id>org.apache.rat.incubating</id>
+      <id>${rat.www.id}</id>
       <name>Apache RAT Website</name>
-      <url>scp://people.apache.org/www/incubator.apache.org/rat/</url>
+      <url>${rat.www}</url>
     </site>
   </distributionManagement>
 
