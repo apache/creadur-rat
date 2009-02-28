@@ -35,7 +35,7 @@ public class TestLicenceAppender extends TestCase {
     String filename = "tmp" + random.nextLong() + ".unkownTyoe";
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
-    writer.append("Unkown file type\n");
+    writer.write("Unkown file type\n");
     writer.close();
     
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
@@ -52,10 +52,10 @@ public class TestLicenceAppender extends TestCase {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
-    writer.append(firstLine + "\n");
-    writer.append("\n");
-    writer.append("public class test {\n");
-    writer.append("}\n");
+    writer.write(firstLine + "\n");
+    writer.write("\n");
+    writer.write("public class test {\n");
+    writer.write("}\n");
     writer.close();
     
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
@@ -79,10 +79,10 @@ public class TestLicenceAppender extends TestCase {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
-    writer.append(firstLine + "\n");
-    writer.append("\n");
-    writer.append("<xml>\n");
-    writer.append("</xml>\n");
+    writer.write(firstLine + "\n");
+    writer.write("\n");
+    writer.write("<xml>\n");
+    writer.write("</xml>\n");
     writer.close();
     
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
@@ -105,9 +105,9 @@ public class TestLicenceAppender extends TestCase {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
-    writer.append("<html>\n");
-    writer.append("\n");
-    writer.append("</html>\n");
+    writer.write("<html>\n");
+    writer.write("\n");
+    writer.write("</html>\n");
     writer.close();
     
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
@@ -129,9 +129,9 @@ public class TestLicenceAppender extends TestCase {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
-    writer.append(".class {\n");
-    writer.append(" background-color: red;");
-    writer.append("}\n");
+    writer.write(".class {\n");
+    writer.write(" background-color: red;");
+    writer.write("}\n");
     writer.close();
     
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
@@ -153,9 +153,9 @@ public class TestLicenceAppender extends TestCase {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
-    writer.append("if (a ==b) {>\n");
-    writer.append(" alert(\"how useful!\");");
-    writer.append("}\n");
+    writer.write("if (a ==b) {>\n");
+    writer.write(" alert(\"how useful!\");");
+    writer.write("}\n");
     writer.close();
     
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
@@ -177,9 +177,9 @@ public class TestLicenceAppender extends TestCase {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
-    writer.append("A Simple APT file");
-    writer.append(" This file contains nothing\n");
-    writer.append(" of any importance\n");
+    writer.write("A Simple APT file");
+    writer.write(" This file contains nothing\n");
+    writer.write(" of any importance\n");
     writer.close();
     
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
@@ -201,9 +201,9 @@ public class TestLicenceAppender extends TestCase {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
-    writer.append("property = value\n");
-    writer.append("fun = true\n");
-    writer.append("cool = true\n");
+    writer.write("property = value\n");
+    writer.write("fun = true\n");
+    writer.write("cool = true\n");
     writer.close();
     
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();

@@ -69,21 +69,21 @@ public abstract class AbstractLicenceAppender {
         || type == TYPE_APT 
         || type == TYPE_PROPERTIES
         || type == TYPE_HTML) {
-      writer.append(getLicenceHeader(document));
-      writer.append("\n");
+      writer.write(getLicenceHeader(document));
+      writer.write('\n');
     }
   
     String line;
     while ((line = br.readLine()) != null) {
-      writer.append(line);
-      writer.append("\n");
+      writer.write(line);
+      writer.write('\n');
       if (type == TYPE_JAVA && line.startsWith("package ")) {
-        writer.append(getLicenceHeader(document));
-        writer.append("\n");
+        writer.write(getLicenceHeader(document));
+        writer.write('\n');
       }
       if (type == TYPE_XML && line.startsWith("<?xml ")) {
-        writer.append(getLicenceHeader(document));
-        writer.append("\n");
+        writer.write(getLicenceHeader(document));
+        writer.write('\n');
       }
     }
     br.close();
