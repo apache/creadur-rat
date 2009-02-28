@@ -1,3 +1,4 @@
+<?xml version='1.0'?>
 <project name="antunit" default="all"
      xmlns:au="antlib:org.apache.ant.antunit"
     xmlns:rat="antlib:org.apache.rat.anttasks">
