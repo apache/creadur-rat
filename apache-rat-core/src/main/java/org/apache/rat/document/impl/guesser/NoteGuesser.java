@@ -28,8 +28,8 @@ public class NoteGuesser implements IDocumentMatcher {
 
 
     public static final String[] NOTE_FILE_NAMES = {
-    "NOTICE", "LICENSE",
-        "LICENSE.TXT", "NOTICE.TXT", 
+        "NOTICE", "LICENSE",
+        "LICENSE.TXT", "NOTICE.TXT",
         "INSTALL", "INSTALL.TXT",
         "README", "README.TXT", 
         "NEWS", "NEWS.TXT",
@@ -45,6 +45,7 @@ public class NoteGuesser implements IDocumentMatcher {
         "THIRD_PARTY_NOTICES", "THIRD_PARTY_NOTICES.TXT",
         "COPYRIGHT", "COPYRIGHT.TXT",
         "BUILDING", "BUILDING.TXT",
+        "BUILD", "BUILT.TXT",
     };
     public static final String[] NOTE_FILE_EXTENSIONS = {
         "LICENSE", "LICENSE.TXT",
