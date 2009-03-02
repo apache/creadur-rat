@@ -81,7 +81,11 @@ public class ReportTest extends TestCase {
             " ==" + pElementsPath + "/Source.java\n" + 
             " =======================================================================\n" + 
             "package elements;\n" + 
-            "\n" + 
+            "\n" +
+            "/*\n" +
+            " * This file does intentionally *NOT* contain an ASL license header,\n" +
+            " * because it is used in the test suite.\n" +
+            " */\n" +
             "public class Source {\n" + 
             "\n" + 
             "}\n" + 
