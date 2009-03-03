@@ -17,29 +17,37 @@
 
 <project default="javasources" name="Ant task examples">
   <description>
-    A few examples of using the Ant task, for more examples see the AntUnit tests
+    A few examples of using the Ant task, for more examples see the
+    AntUnit tests
   </description>
 
+  <property name="src-dir" location="apache-rat-core/src/main/java"/>
+  <property name="version" value="0.6-SNAPSHOT"/>
+  <property name="core-jar"
+            location="apache-rat-core/target/apache-rat-core-${version}.jar"/>
+  <property name="src-jar"
+            location="apache-rat-core/target/apache-rat-core-${version}-sources.jar"/>
+
   <target name="javasources" depends="-taskdef"
-    description="runs the tasks over src/java excluding the license directory">
+    description="runs the tasks over RAT's source tree excluding the license directory">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
-      <fileset dir="src/java">
+      <fileset dir="${src-dir}">
         <exclude name="rat/license/"/>
       </fileset>
     </rat:report>
   </target>
 
   <target name="jar" depends="-taskdef"
-    description="runs the task over rat-0.3.jar">
+    description="runs the task over RAT's source tree">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
-      <zipfileset src="rat-0.3.jar"/>
+      <zipfileset src="${src-jar}"/>
     </rat:report>
   </target>
 
   <target name="tarball" depends="-taskdef"
-    description="creates a tarball of rat's source tree and runs the task over the tarball">
+    description="creates a tarball of RAT's source tree and runs the task over the tarball">
     <tar destfile="ratsrc.tar.gz" compression="gzip">
-      <fileset dir="src/java"/>
+      <fileset dir="${src-dir}"/>
     </tar>
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <tarfileset>
@@ -52,10 +60,10 @@
   </target>
 
   <target name="javasources-w3c" depends="-taskdef"
-    description="runs the tasks over src/java accepting only the W3C license">
+    description="runs the tasks over RAT's source tree accepting only the W3C license">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
       addDefaultLicenseMatchers="false">
-      <fileset dir="src/java"/>
+      <fileset dir="${src-dir}"/>
 
       <rat:w3c/>
 
@@ -64,21 +72,24 @@
 
   <target name="url" depends="-taskdef"
     description="runs the task on the ASF's homepage">
-    <rat:report xmlns:rat="antlib:rat.anttasks">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <url url="http://www.apache.org/"/>
     </rat:report>
   </target>
 
   <target name="run-on-rat" depends="-taskdef">
-    <rat:report xmlns:rat="antlib:rat.anttasks">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <fileset dir="."/>
     </rat:report>
   </target>
 
   <target name="-taskdef">
-    <typedef resource="rat/anttasks/antlib.xml" uri="antlib:rat.anttasks">
+    <typedef resource="org/apache/rat/anttasks/antlib.xml" uri="antlib:rat.anttasks">
       <classpath>
-        <fileset dir="." includes="rat*.jar"/>
+        <fileset dir=".">
+           <include name="**/apache-rat*.jar"/>
+           <include name="**/commons-*.jar"/>
+        </fileset>
       </classpath>
     </typedef>
   </target>
