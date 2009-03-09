@@ -26,22 +26,12 @@
   <packaging>maven-plugin</packaging>
   <name>RAT Maven Plugin</name>
   <description>Maven 2 plugin for running RAT, the Release Audit Tool.</description>
-  <url>http://incubator.apache.org/rat/</url>
+  <inceptionYear>2007</inceptionYear>
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>
-  <inceptionYear>2007</inceptionYear>
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <organization>
-    <name>Apache Software Foundation</name>
-    <url>http://www.apache.org/</url>
-  </organization>
+  <url>http://incubator.apache.org/rat</url>
+
   <build>
     <resources>
       <resource>
@@ -62,97 +52,28 @@
       </resource>
     </resources>
     <plugins>
-    <!-- Comment out once this plugin has been released 
       <plugin>
         <groupId>org.apache.rat</groupId>
-        <artifactId>rat-maven-plugin</artifactId>
+        <artifactId>apache-rat-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>target/**/*</exclude>
-            <exclude>.settings/**/*</exclude>
-            <exclude>.project</exclude>
-            <exclude>.classpath</exclude>
-            <exclude>.cvsignore</exclude>
+            <exclude>src/test/it2/src.txt</exclude>
           </excludes>
-        </configuration>
-      </plugin>
-     -->
-     <!--
-      <plugin>
-        <artifactId>maven-docck-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      -->
-      <plugin>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.4</version>
-          <executions>
-              <execution>
-                  <id>create-javadocs</id>
-                  <phase>package</phase>
-                  <goals>
-                      <goal>javadoc</goal>
-                      <goal>jar</goal>
-                  </goals>
-              </execution>
-          </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.0.4</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <configuration>
-              <resourceBundles>
-                <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
-              </resourceBundles>
-              <properties>
-                  <addLicense>true</addLicense>
-              </properties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-            </manifest>
-          </archive>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
@@ -179,25 +100,18 @@
       <version>2.0.4</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>1.0-beta-1</version>
     </dependency>
   </dependencies>
+
   <reporting>
     <plugins>
-      <!-- Need to release this first! 
       <plugin>
         <groupId>org.apache.rat</groupId>
-        <artifactId>rat-maven-plugin</artifactId>
+        <artifactId>apache-rat-plugin</artifactId>
       </plugin>
-      -->
       <plugin>
         <artifactId>maven-changes-plugin</artifactId>
         <version>2.0-beta-2</version>
@@ -211,6 +125,7 @@
       </plugin>
     </plugins>
   </reporting>
+
   <developers>
     <developer>
       <id>jochen</id>
@@ -218,6 +133,7 @@
       <email>jochen.wiedmann@gmail.com</email>
     </developer>
   </developers>
+
   <contributors>
     <contributor>
       <name>Bernd Bohmann</name>
@@ -232,4 +148,42 @@
       <email>jukka@apache.org</email>
     </contributor>
   </contributors>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-docck-plugin</artifactId>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>check</goal>
+                  </goals>
+                </execution>
+              </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <version>0.6-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <exclude>src/test/it2/src.txt</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

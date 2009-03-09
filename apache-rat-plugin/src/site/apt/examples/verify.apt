@@ -27,9 +27,9 @@ Verify phase example
     <plugins>
       ...
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rat-maven-plugin</artifactId>
-        <version>1.0-alpha-3</version>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>0.6</version>
         <executions>
           <execution>
             <phase>verify</phase>
@@ -56,9 +56,9 @@ Verify phase example
         <plugins>
           ...
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>rat-maven-plugin</artifactId>
-            <version>1.0-alpha-3</version>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <version>0.6</version>
             <executions>
               <execution>
                 <phase>verify</phase>

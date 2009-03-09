@@ -139,8 +139,8 @@ public abstract class AbstractRatMojo extends AbstractMojo
     private boolean useIdeaDefaultExcludes;
 
     /**
-     * Whether to exclude subprojects. This is recommended, if you want a separate rat-maven-plugin report for each
-     * subproject.
+     * Whether to exclude subprojects. This is recommended, if you want a
+     * separate apache-rat-plugin report for each subproject.
      * 
      * @parameter expression="${rat.excludeSubprojects}" default-value="true"
      */
@@ -304,6 +304,17 @@ public abstract class AbstractRatMojo extends AbstractMojo
             }
         }
         final List excludeList = excludeList1;
+        if ( excludes == null  ||  excludes.length == 0 )
+        {
+            getLog().info( "No excludes" );
+        }
+        else
+        {
+            for ( int i = 0;  i < excludes.length;  i++ )
+            {
+                getLog().info( "Exclude: " + excludes[i] );
+            }
+        }
         add( excludeList, excludes );
         if ( !excludeList.isEmpty() )
         {

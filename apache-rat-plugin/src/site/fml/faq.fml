@@ -58,7 +58,7 @@
   <part id="Configuration">
     <faq id="includeSubprojects">
       <question>
-        The rat-maven-plugin creates a report for every subproject.
+        The apache-rat-plugin creates a report for every subproject.
         I want a single report for the whole project, which includes
         the subprojects.
       </question>

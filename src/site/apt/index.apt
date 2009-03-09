@@ -90,5 +90,6 @@ options available to you.
  
 * Running with Apache Maven
 
- Projects using Maven are directed to the 
- {{{http://mojo.codehaus.org/rat-maven-plugin} RAT plugin}}.
+ RAT includes a plugin for Maven 2. This allows RAT reports to be run against
+ a wide variety of resources. Details can be found in the
+ {{{http://incubator.apache.org/rat/apache-rat-plugin} plugin documentation}}.

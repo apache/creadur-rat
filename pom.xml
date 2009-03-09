@@ -40,6 +40,10 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   </description>
   <inceptionYear>2006</inceptionYear>
 
+  <prerequisites>
+    <maven>2.0.4</maven>
+  </prerequisites>
+
   <properties>
     <!--
       Website properties allow local staging of the website
@@ -154,7 +158,7 @@ Note that binary compatibility is not gauranteed between 0.x releases.
 <!--
   		<plugin>
   		    <groupId>org.apache.rat</groupId>
-  			<artifactId>rat-maven-plugin</artifactId>
+  			<artifactId>apache-rat-plugin</artifactId>
   		</plugin>
 -->
     </plugins>
@@ -181,34 +185,6 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       </testResource>
     </testResources>
 
-    <plugins>
-<!--
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>rat-maven-plugin</artifactId>
-        <version>0.6-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <excludes>
-                <exclude>BUILD.txt</exclude>
-                <exclude>RELEASE_NOTES.txt</exclude>
-                <exclude>LICENSE.txt</exclude>
-                <exclude>NOTICE.txt</exclude>
-                <exclude>DISCLAIMER.txt</exclude>
-                <exclude>target/**/*</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
--->
-    </plugins>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -233,6 +209,18 @@ Note that binary compatibility is not gauranteed between 0.x releases.
               <version>1.7.1</version>
             </dependency>
           </dependencies>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.2</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              </manifest>
+            </archive>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -331,6 +319,25 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       <id>release</id>
       <build>
         <plugins>
+          <plugin>
+            <artifactId>maven-remote-resources-plugin</artifactId>
+            <version>1.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>process</goal>
+                </goals>
+                <configuration>
+                  <resourceBundles>
+                    <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+                  </resourceBundles>
+                  <properties>
+                    <addLicense>true</addLicense>
+                  </properties>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
             <version>2.4</version>

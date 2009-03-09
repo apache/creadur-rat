@@ -25,8 +25,8 @@
   <artifactId>apache-rat-core</artifactId>
   <packaging>jar</packaging>
   <name>RAT Core</name>
-  <description>The core functionality of RAT, shared by rat-anttasks,
-    and rat-maven-plugin.</description>
+  <description>The core functionality of RAT, shared by the Ant tasks,
+    and the Maven plugin.</description>
 
   <build>   
     <resources>
@@ -47,38 +47,6 @@
         </includes>
       </resource>
     </resources>
-    <plugins>
-        <plugin>
-        <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <configuration>
-              <resourceBundles>
-                <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
-              </resourceBundles>
-              <properties>
-                  <addLicense>true</addLicense>
-              </properties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
   </build>
 
   <dependencies>
