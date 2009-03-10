@@ -30,7 +30,6 @@
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>
-  <url>http://incubator.apache.org/rat</url>
 
   <build>
     <resources>
