@@ -19,11 +19,13 @@
     <menu name="RAT">
       <item name="Home" href="/index.html"/>
     </menu>
+
     <menu name="Modules">
-      <item name="RAT Core" href="/rat-core/index.html"/>
-      <item name="RAT Library" href="/rat-lib/index.html"/>
-      <item name="RAT ANT Tasks" href="/rat/anttasks/index.html"/>
+      <item name="RAT Core" href="apache-rat-core/index.html"/>
+      <item name="RAT ANT Tasks" href="apache-rat-tasks/index.html"/>
+      <item name="RAT Maven Plugin" href="apache-rat-plugin/index.html"/>
     </menu>
+
     <menu ref="reports"/>
   </body>
 </project>
