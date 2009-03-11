@@ -25,6 +25,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.license.OASISLicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.ISubject;
 
 /**
  * Looks for documents contain the OASIS copyright claim plus derivative work clause.
@@ -48,7 +49,7 @@ public class OASISLicense extends BaseLicense implements IHeaderMatcher {
         super(Claims.OASIS_CODE, OASISLicenseFamily.OASIS_OPEN_LICENSE_NAME, "No modifications allowed");
     }
 
-    public boolean match(String subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(ISubject subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         boolean result = false;
         if (copyrightMatch) {
             line = line.toLowerCase();

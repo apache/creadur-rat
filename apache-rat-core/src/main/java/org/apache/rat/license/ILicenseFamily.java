@@ -18,6 +18,8 @@
  */ 
 package org.apache.rat.license;
 
+import org.apache.rat.report.claim.LicenseFamilyName;
+
 public interface ILicenseFamily {
-    public String getFamilyName();
+    public LicenseFamilyName getFamilyName();
 }

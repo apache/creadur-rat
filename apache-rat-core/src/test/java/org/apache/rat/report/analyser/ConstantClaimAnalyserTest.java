@@ -19,14 +19,17 @@
 package org.apache.rat.report.analyser;
 
 import junit.framework.TestCase;
+
 import org.apache.rat.document.MockDocument;
+import org.apache.rat.report.claim.BasePredicate;
+import org.apache.rat.report.claim.HeaderTypeObject;
+import org.apache.rat.report.claim.IPredicate;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter.Claim;
 
 public class ConstantClaimAnalyserTest extends TestCase {
-
-    private static final String OBJECT = "OBJECT";
-    private static final String PREDICATE = "PREDICATE";
+    private static final HeaderTypeObject OBJECT = new HeaderTypeObject("OBJECT");
+    private static final IPredicate PREDICATE = new BasePredicate("PREDICATE");
     MockClaimReporter reporter;
     AbstractSingleClaimAnalyser analyser;
     
@@ -45,7 +48,7 @@ public class ConstantClaimAnalyserTest extends TestCase {
         analyser.analyse(document);
         assertEquals("One claim per document", 1, reporter.claims.size());
         Claim claim = reporter.getClaim(0);
-        assertEquals("Subject is name", document.name, claim.subject);
+        assertEquals("Subject is name", document.name, claim.subject.getName());
         assertEquals("Object is constant", OBJECT, claim.object);
         assertEquals("Predicate is constant", PREDICATE, claim.predicate);
         assertTrue("Constantly literal", claim.isLiteral);
@@ -53,7 +56,7 @@ public class ConstantClaimAnalyserTest extends TestCase {
         analyser.analyse(document);
         assertEquals("One claim per document", 2, reporter.claims.size());
         claim = reporter.getClaim(1);
-        assertEquals("Subject is name", document.name, claim.subject);
+        assertEquals("Subject is name", document.name, claim.subject.getName());
         assertEquals("Object is constant", OBJECT, claim.object);
         assertEquals("Predicate is consant", PREDICATE, claim.predicate);
         assertTrue("Constantly literal", claim.isLiteral);
@@ -65,7 +68,7 @@ public class ConstantClaimAnalyserTest extends TestCase {
         analyser.analyse(document);
         assertEquals("One claim per document", 1, reporter.claims.size());
         Claim claim = reporter.getClaim(0);
-        assertEquals("Subject is name", document.name, claim.subject);
+        assertEquals("Subject is name", document.name, claim.subject.getName());
         assertEquals("Object is constant", OBJECT, claim.object);
         assertEquals("Predicate is constant", PREDICATE, claim.predicate);
         assertFalse("Constantly not literal", claim.isLiteral);
@@ -73,7 +76,7 @@ public class ConstantClaimAnalyserTest extends TestCase {
         analyser.analyse(document);
         assertEquals("One claim per document", 2, reporter.claims.size());
         claim = reporter.getClaim(1);
-        assertEquals("Subject is name", document.name, claim.subject);
+        assertEquals("Subject is name", document.name, claim.subject.getName());
         assertEquals("Object is constant", OBJECT, claim.object);
         assertEquals("Predicate is consant", PREDICATE, claim.predicate);
         assertFalse("Constantly not literal", claim.isLiteral);

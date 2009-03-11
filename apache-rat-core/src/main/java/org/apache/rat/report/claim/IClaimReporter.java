@@ -30,6 +30,6 @@ public interface IClaimReporter {
      * @param isLiteral <code>true</code> is the object of this claim is a literal,
      * <code>false</code> if the object of this claim is an identifier
      */
-    public void claim(CharSequence subject, CharSequence predicate, CharSequence object, boolean isLiteral)
+    public void claim(ISubject subject, IPredicate predicate, IObject object, boolean isLiteral)
         throws RatReportFailedException;
 }

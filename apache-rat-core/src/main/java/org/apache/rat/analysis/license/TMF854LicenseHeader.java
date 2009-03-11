@@ -23,6 +23,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.license.ModifiedBSDLicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.ISubject;
 
 
 public class TMF854LicenseHeader extends BaseLicense implements IHeaderMatcher {
@@ -41,7 +42,7 @@ public class TMF854LicenseHeader extends BaseLicense implements IHeaderMatcher {
 
     }
 
-    public boolean match(String subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(ISubject subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         final boolean result = matches(line);
         if (result) {
             reportOnLicense(subject, reporter);

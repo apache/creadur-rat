@@ -26,7 +26,9 @@ import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.report.claim.BaseSubject;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.ISubject;
 
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
@@ -44,9 +46,9 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
         Reader reader = null;
         try {
             reader = document.reader();
-            final String name = document.getName();
+            final ISubject subject = new BaseSubject(document);
             // TODO: worker function should be moved into this class
-            HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher, reporter, name);
+            HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher, reporter, subject);
             worker.read();
         } catch (IOException e) {
             throw new RatDocumentAnalysisException("Cannot read header", e);

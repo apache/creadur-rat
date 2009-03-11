@@ -19,52 +19,56 @@
 package org.apache.rat.analysis;
 
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.BaseObject;
+import org.apache.rat.report.claim.BasePredicate;
+import org.apache.rat.report.claim.HeaderTypeObject;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.IPredicate;
+import org.apache.rat.report.claim.ISubject;
+import org.apache.rat.report.claim.LicenseApprovalObject;
+import org.apache.rat.report.claim.LicenseFamilyCode;
+import org.apache.rat.report.claim.LicenseFamilyName;
 
 public class Claims {
-
-    public static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
-    public static final String LICENSE_FAMILY_PREDICATE = "license-family";
-    public static final String HEADER_SAMPLE_PREDICATE = "header-sample";
-    public static final String HEADER_TYPE_PREDICATE = "header-type";
+    public static final IPredicate TYPE_PREDICATE = new BasePredicate("type");
+    public static final IPredicate ARCHIVE_TYPE_PREDICATE = new BasePredicate("archive-type");
+    public static final IPredicate LICENSE_APPROVAL_PREDICATE = new BasePredicate("license-approval");
+    public static final IPredicate LICENSE_FAMILY_PREDICATE = new BasePredicate("license-family");
+    public static final IPredicate HEADER_SAMPLE_PREDICATE = new BasePredicate("header-sample");
+    public static final IPredicate HEADER_TYPE_PREDICATE = new BasePredicate("header-type");
     
-    public static void reportHeaderSampleClaim(final String sample, final String subject, IClaimReporter reporter) throws RatReportFailedException {
-        reporter.claim(subject, HEADER_SAMPLE_PREDICATE, sample, true);
+    public static void reportHeaderSampleClaim(final String sample, final ISubject subject, IClaimReporter reporter) throws RatReportFailedException {
+        reporter.claim(subject, HEADER_SAMPLE_PREDICATE, new BaseObject(sample), true);
     }
     
-    public static void reportGeneratedHeaderTypeClaim(final String subject, IClaimReporter reporter) throws RatReportFailedException {
-        reportHeaderTypeClaim("GEN  ", subject, reporter);
+    public static void reportGeneratedHeaderTypeClaim(final ISubject subject, IClaimReporter reporter) throws RatReportFailedException {
+        reportHeaderTypeClaim(HeaderTypeObject.GENERATED, subject, reporter);
     }
     
-    public static void reportHeaderTypeClaim(final String type, final String subject, IClaimReporter reporter) throws RatReportFailedException {
+    public static void reportHeaderTypeClaim(final HeaderTypeObject type, final ISubject subject, IClaimReporter reporter) throws RatReportFailedException {
         reporter.claim(subject, HEADER_TYPE_PREDICATE, type, false);
     }
     
-    public static void reportGeneratedClaims(final String subject, final String notes, final IClaimReporter reporter) throws RatReportFailedException {
+    public static void reportGeneratedClaims(final ISubject subject, final String notes, final IClaimReporter reporter) throws RatReportFailedException {
         Claims.reportHeaderSampleClaim(notes, subject, reporter);
         Claims.reportGeneratedHeaderTypeClaim(subject, reporter);
     }
     
-    public static void reportStandardClaims(final String subject, final String notes, final String code, final String name, final IClaimReporter reporter) throws RatReportFailedException {
+    public static void reportStandardClaims(final ISubject subject, final String notes, final HeaderTypeObject code, final LicenseFamilyName name, final IClaimReporter reporter) throws RatReportFailedException {
         Claims.reportHeaderTypeClaim(code, subject, reporter);
         Claims.reportHeaderSampleClaim(notes, subject, reporter);
-
         reporter.claim(subject, LICENSE_FAMILY_PREDICATE, name, false);
     }
     
-    public static void reportLicenseApprovalClaim(final CharSequence subject, final boolean isAcceptable, final IClaimReporter reporter) throws RatReportFailedException {
-        // TODO: replace with more finely grained system
-        final String approvalValue = Boolean.toString(isAcceptable);
-        // TODO: not very readable; 
-        // TODO: replace when license approval factored into separate phase
-        // TODO: probably name='ASF'
-        reporter.claim(subject, LICENSE_APPROVAL_PREDICATE, approvalValue, false);
+    public static void reportLicenseApprovalClaim(final ISubject subject, final boolean isAcceptable, final IClaimReporter reporter) throws RatReportFailedException {
+        final LicenseApprovalObject object = isAcceptable ? LicenseApprovalObject.TRUE : LicenseApprovalObject.FALSE;
+        reporter.claim(subject, LICENSE_APPROVAL_PREDICATE, object, false);
     }
 
-    public static final String ASL_CODE = "AL   ";
-    public static final String OASIS_CODE = "OASIS";
-    public static final String W3CD_CODE = "W3CD ";
-    public static final String W3C_CODE = "W3C  ";
-    public static final String DOJO = "DOJO ";
-    public static final String TMF854 = "TMF  ";
+    public static final LicenseFamilyCode ASL_CODE = new LicenseFamilyCode("AL   ");
+    public static final LicenseFamilyCode OASIS_CODE = new LicenseFamilyCode("OASIS");
+    public static final LicenseFamilyCode W3CD_CODE = new LicenseFamilyCode("W3CD ");
+    public static final LicenseFamilyCode W3C_CODE = new LicenseFamilyCode("W3C  ");
+    public static final LicenseFamilyCode DOJO = new LicenseFamilyCode("DOJO ");
+    public static final LicenseFamilyCode TMF854 = new LicenseFamilyCode("TMF  ");
 }

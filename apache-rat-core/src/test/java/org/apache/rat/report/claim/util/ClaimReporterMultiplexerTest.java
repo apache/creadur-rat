@@ -18,9 +18,16 @@
  */ 
 package org.apache.rat.report.claim.util;
 
-import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import junit.framework.TestCase;
+
+import org.apache.rat.report.claim.BaseObject;
+import org.apache.rat.report.claim.BasePredicate;
+import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.IObject;
+import org.apache.rat.report.claim.IPredicate;
+import org.apache.rat.report.claim.ISubject;
+import org.apache.rat.report.claim.MockSubject;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class ClaimReporterMultiplexerTest extends TestCase {
     
@@ -43,23 +50,27 @@ public class ClaimReporterMultiplexerTest extends TestCase {
     }
 
     public void testClaim() throws Exception {
-        multiplexer.claim("subject", "predicate", "object", true);        
-        MockClaimReporter.Claim claimOne = new MockClaimReporter.Claim("subject", "predicate", "object", true);
+        final ISubject subject = new MockSubject("subject");
+        final IPredicate predicate = new BasePredicate("predicate");
+        final ISubject otherSubject = new MockSubject("another subject");
+        final IPredicate otherPredicate = new BasePredicate("another predicate");
+        final IObject object = new BaseObject("object");
+        final IObject otherObject = new BaseObject("another object");
+        multiplexer.claim(subject, predicate, object, true);
+        MockClaimReporter.Claim claimOne = new MockClaimReporter.Claim(subject, predicate, object, true);
         assertEquals("Claim reported", 1 , reporterOne.claims.size());
         assertEquals("Claim reported", claimOne, reporterOne.claims.get(0));
         assertEquals("Claim reported", 1 , reporterTwo.claims.size());
         assertEquals("Claim reported", claimOne, reporterTwo.claims.get(0));
         assertEquals("Claim reported", 1 , reporterThree.claims.size());
         assertEquals("Claim reported", claimOne, reporterThree.claims.get(0));
-        multiplexer.claim("another subject", "another predicate", "another object", false);
-        MockClaimReporter.Claim claimTwo = new MockClaimReporter.Claim("another subject", "another predicate", "another object", false);
+        multiplexer.claim(otherSubject, otherPredicate, otherObject, false);
+        MockClaimReporter.Claim claimTwo = new MockClaimReporter.Claim(otherSubject, otherPredicate, otherObject, false);
         assertEquals("Claim reported", 2, reporterOne.claims.size());
         assertEquals("Claim reported", claimTwo, reporterOne.claims.get(1));
         assertEquals("Claim reported", 2, reporterTwo.claims.size());
         assertEquals("Claim reported", claimTwo, reporterTwo.claims.get(1));
         assertEquals("Claim reported", 2, reporterThree.claims.size());
         assertEquals("Claim reported", claimTwo, reporterThree.claims.get(1));
-
     }
-
 }

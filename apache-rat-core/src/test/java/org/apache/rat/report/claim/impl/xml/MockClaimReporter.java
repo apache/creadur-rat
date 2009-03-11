@@ -23,13 +23,16 @@ import java.util.List;
 
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.IObject;
+import org.apache.rat.report.claim.IPredicate;
+import org.apache.rat.report.claim.ISubject;
 
 public class MockClaimReporter implements IClaimReporter {
 
     public List claims = new ArrayList();
     
-    public void claim(CharSequence subject, CharSequence predicate,
-            CharSequence object, boolean isLiteral)
+    public void claim(ISubject subject, IPredicate predicate,
+            IObject object, boolean isLiteral)
             throws RatReportFailedException {
         claims.add(new Claim(subject, predicate, object, isLiteral));
     }
@@ -39,12 +42,12 @@ public class MockClaimReporter implements IClaimReporter {
     }
     
     public static class Claim {
-        public final CharSequence subject;
-        public final CharSequence predicate;
-        public final CharSequence object;
+        public final ISubject subject;
+        public final IPredicate predicate;
+        public final IObject object;
         public final boolean isLiteral;
-        public Claim(final CharSequence subject, final CharSequence predicate, final CharSequence object, final boolean isLiteral) {
-            super();
+
+        public Claim(final ISubject subject, final IPredicate predicate, final IObject object, final boolean isLiteral) {
             this.subject = subject;
             this.predicate = predicate;
             this.object = object;

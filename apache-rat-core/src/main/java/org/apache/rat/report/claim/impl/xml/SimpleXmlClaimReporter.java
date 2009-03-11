@@ -22,31 +22,34 @@ import java.io.IOException;
 
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.IObject;
+import org.apache.rat.report.claim.IPredicate;
+import org.apache.rat.report.claim.ISubject;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class SimpleXmlClaimReporter implements IClaimReporter {
 
     private static final String NAME = "name";
     private final IXmlWriter writer;
-    private CharSequence lastSubject;
+    private ISubject lastSubject;
     
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
         this.writer = writer;
     }
     
-    public void claim(CharSequence subject, CharSequence predicate,
-            CharSequence object, boolean isLiteral) throws RatReportFailedException {
+    public void claim(ISubject subject, IPredicate predicate,
+            IObject object, boolean isLiteral) throws RatReportFailedException {
         try {
             if (!(subject.equals(lastSubject))) {
                 if (lastSubject != null) {
                     writer.closeElement();
                 }
-                writer.openElement("resource").attribute(NAME, subject);
+                writer.openElement("resource").attribute(NAME, subject.getName());
             }
             if (isLiteral) {
-                writer.openElement(predicate).content(object).closeElement();
+                writer.openElement(predicate.getName()).content(object.getValue()).closeElement();
             } else {
-                writer.openElement(predicate).attribute(NAME, object).closeElement();
+                writer.openElement(predicate.getName()).attribute(NAME, object.getValue()).closeElement();
             }
             lastSubject = subject;
         } catch (IOException e) {

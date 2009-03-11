@@ -21,12 +21,15 @@ package org.apache.rat.analysis.license;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.rat.report.claim.LicenseFamilyCode;
+import org.apache.rat.report.claim.LicenseFamilyName;
+
 
 public class MockStandardLicense extends BaseLicense {
 
     public List visitors = new ArrayList();
     
     public MockStandardLicense() {
-        super("", "", "");
+        super(new LicenseFamilyCode(""), new LicenseFamilyName(""), "");
     }
 }

@@ -20,22 +20,24 @@ package org.apache.rat.report.analyser;
 
 import java.io.IOException;
 
+import org.apache.rat.analysis.Claims;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentCollection;
 import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.report.claim.BaseObject;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.IObject;
 
 public final class ReadableArchiveAnalyser extends AbstractSingleClaimAnalyser {
-
-    public static final String READABLE_ARCHIVE_VALUE = "readable";
-    public static final String UNREADABLE_ARCHIVE_VALUE = "unreadable";
+    public static final IObject READABLE_ARCHIVE_VALUE = new BaseObject("readable");
+    public static final IObject UNREADABLE_ARCHIVE_VALUE = new BaseObject("unreadable");
     
     
     public ReadableArchiveAnalyser(IClaimReporter reporter) {
-        super(reporter, "archive-type", false);
+        super(reporter, Claims.ARCHIVE_TYPE_PREDICATE, false);
     }
 
-    protected CharSequence toObject(IDocument document) throws RatDocumentAnalysisException {
+    protected IObject toObject(IDocument document) throws RatDocumentAnalysisException {
         boolean readable = false;
         try {
             final IDocumentCollection contents = document.readArchive();
@@ -45,11 +47,9 @@ public final class ReadableArchiveAnalyser extends AbstractSingleClaimAnalyser {
         } catch (IOException e) {
             readable = false;
         }
-        String result = UNREADABLE_ARCHIVE_VALUE;
         if (readable) {
-            result = READABLE_ARCHIVE_VALUE;
+            return READABLE_ARCHIVE_VALUE;
         }
-        return result;
+        return UNREADABLE_ARCHIVE_VALUE;
     }
-
 }

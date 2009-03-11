@@ -18,13 +18,22 @@
  */ 
 package org.apache.rat.policy;
 
+import junit.framework.TestCase;
+
 import org.apache.rat.analysis.Claims;
 import org.apache.rat.license.Apache20LicenseFamily;
 import org.apache.rat.license.OASISLicenseFamily;
 import org.apache.rat.license.W3CDocumentLicenseFamily;
 import org.apache.rat.license.W3CSoftwareLicenseFamily;
+import org.apache.rat.report.claim.BaseObject;
+import org.apache.rat.report.claim.BasePredicate;
+import org.apache.rat.report.claim.IObject;
+import org.apache.rat.report.claim.IPredicate;
+import org.apache.rat.report.claim.ISubject;
+import org.apache.rat.report.claim.LicenseApprovalObject;
+import org.apache.rat.report.claim.LicenseFamilyName;
+import org.apache.rat.report.claim.MockSubject;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import junit.framework.TestCase;
 
 public class DefaultPolicyTest extends TestCase {
 
@@ -42,56 +51,65 @@ public class DefaultPolicyTest extends TestCase {
     }
 
     public void testOtherPredicate() throws Exception {
-        policy.claim("subject", "predicate", "object", true);
+        final ISubject subject = new MockSubject("subject");
+        final IPredicate predicate = new BasePredicate("predicate");
+        final IObject object = new BaseObject("object");
+        policy.claim(subject, predicate, object, true);
         assertEquals("No claim", 0, reporter.claims.size());
     }
 
     public void testASLFamily() throws Exception {
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, true);
+        final ISubject subject = new MockSubject("subject");
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, true);
         assertEquals("Approved claim", 1, reporter.claims.size());
-        assertEquals("Approved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "true", false), reporter.claims.get(0));
+        assertEquals("Approved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.TRUE, false), reporter.claims.get(0));
     }
     
     public void testOASISFamily() throws Exception {
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, OASISLicenseFamily.OASIS_OPEN_LICENSE_NAME, true);
+        final ISubject subject = new MockSubject("subject");
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, OASISLicenseFamily.OASIS_OPEN_LICENSE_NAME, true);
         assertEquals("Approved claim", 1, reporter.claims.size());
-        assertEquals("Approved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "true", false), reporter.claims.get(0));
+        assertEquals("Approved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.TRUE, false), reporter.claims.get(0));
     }
     
     public void testW3CFamily() throws Exception {
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, true);
+        final ISubject subject = new MockSubject("subject");
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, true);
         assertEquals("Approved claim", 1, reporter.claims.size());
-        assertEquals("Approved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "true", false), reporter.claims.get(0));
+        assertEquals("Approved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.TRUE, false), reporter.claims.get(0));
     }
     
     public void testW3CDocFamily() throws Exception {
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, true);
+        final ISubject subject = new MockSubject("subject");
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, true);
         assertEquals("Approved claim", 1, reporter.claims.size());
-        assertEquals("Approved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "true", false), reporter.claims.get(0));
+        assertEquals("Approved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.TRUE, false), reporter.claims.get(0));
     }
     
     public void testUnknownFamily() throws Exception {
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, "?????", true);
+        final ISubject subject = new MockSubject("subject");
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, true);
         assertEquals("Approved claim", 1, reporter.claims.size());
-        assertEquals("Approved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "false", false), reporter.claims.get(0));
+        assertEquals("Approved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.FALSE, false), reporter.claims.get(0));
     }
     
     public void testCustomNames() throws Exception {
         reporter = new MockClaimReporter();
-        String[] custom = {"Example"};
+        LicenseFamilyName[] custom = {new LicenseFamilyName("Example")};
         policy = new DefaultPolicy(reporter, custom);
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, "?????", true);
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, true);
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, true);
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, true);
+        final ISubject subject = new MockSubject("subject");
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, true);
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, true);
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, true);
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, true);
         assertEquals("Four unapproved claims", 4, reporter.claims.size());
-        assertEquals("Four unapproved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "false", false), reporter.claims.get(0));
-        assertEquals("Four unapproved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "false", false), reporter.claims.get(1));
-        assertEquals("Four unapproved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "false", false), reporter.claims.get(2));
-        assertEquals("Four unapproved claim", new MockClaimReporter.Claim("subject", Claims.LICENSE_APPROVAL_PREDICATE, "false", false), reporter.claims.get(3));
-        policy.claim("subject", Claims.LICENSE_FAMILY_PREDICATE, "Example", true);
+        assertEquals("Four unapproved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.FALSE, false), reporter.claims.get(0));
+        assertEquals("Four unapproved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.FALSE, false), reporter.claims.get(1));
+        assertEquals("Four unapproved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.FALSE, false), reporter.claims.get(2));
+        assertEquals("Four unapproved claim", new MockClaimReporter.Claim(subject, Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.FALSE, false), reporter.claims.get(3));
+        policy.claim(subject, Claims.LICENSE_FAMILY_PREDICATE, custom[0], true);
         assertEquals("Approved claim", 5, reporter.claims.size());
-        assertEquals("Approved claim", new MockClaimReporter.Claim("subject", 
-                Claims.LICENSE_APPROVAL_PREDICATE, "true", false), reporter.claims.get(4));
+        assertEquals("Approved claim", new MockClaimReporter.Claim(subject, 
+                Claims.LICENSE_APPROVAL_PREDICATE, LicenseApprovalObject.TRUE, false), reporter.claims.get(4));
     }
 }

@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.report.analyser;
 
+import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.IDocumentMatcher;
@@ -28,6 +29,7 @@ import org.apache.rat.document.impl.util.ConditionalAnalyser;
 import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
 import org.apache.rat.document.impl.util.DocumentMatcherMultiplexer;
 import org.apache.rat.document.impl.util.MatchNegator;
+import org.apache.rat.report.claim.HeaderTypeObject;
 import org.apache.rat.report.claim.IClaimReporter;
 
 /**
@@ -37,22 +39,22 @@ import org.apache.rat.report.claim.IClaimReporter;
 public class DefaultAnalyserFactory {
     
     public static final IDocumentAnalyser createArchiveTypeAnalyser(final IClaimReporter reporter) {
-        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, "type", "archive", false);
+        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, Claims.TYPE_PREDICATE, HeaderTypeObject.ARCHIVE, false);
         return constantClaimAnalyser;
     }
     
     public static final IDocumentAnalyser createNoticeTypeAnalyser(final IClaimReporter reporter) {
-        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, "type", "notice", false);
+        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, Claims.TYPE_PREDICATE, HeaderTypeObject.NOTICE, false);
         return constantClaimAnalyser;
     }
     
     public static final IDocumentAnalyser createBinaryTypeAnalyser(final IClaimReporter reporter) {
-        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, "type", "binary", false);
+        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, Claims.TYPE_PREDICATE, HeaderTypeObject.BINARY, false);
         return constantClaimAnalyser;
     }
     
     public static final IDocumentAnalyser createStandardTypeAnalyser(final IClaimReporter reporter) {
-        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, "type", "standard", false);
+        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, Claims.TYPE_PREDICATE, HeaderTypeObject.STANDARD, false);
         return constantClaimAnalyser;
     }
     

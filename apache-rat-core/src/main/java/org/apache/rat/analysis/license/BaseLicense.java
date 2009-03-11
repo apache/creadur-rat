@@ -22,22 +22,25 @@ import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.ISubject;
+import org.apache.rat.report.claim.LicenseFamilyCode;
+import org.apache.rat.report.claim.LicenseFamilyName;
 
 public class BaseLicense {
-	private final String code;
-	private final String name;
+	private final LicenseFamilyCode code;
+	private final LicenseFamilyName name;
 	private final String notes;
 	
-	public BaseLicense(final String code, final String name, final String notes)
+	public BaseLicense(final LicenseFamilyCode code, final LicenseFamilyName name, final String notes)
 	{
 		this.code = code;
 		this.name = name;
 		this.notes = notes;
 	}
     
-    public final void reportOnLicense(String subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
-        final String name = getName();
-        final String code = getCode();
+    public final void reportOnLicense(ISubject subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+        final LicenseFamilyName name = getName();
+        final LicenseFamilyCode code = getCode();
         final String notes = getNotes();
         try {
             Claims.reportStandardClaims(subject, notes, code, name, reporter);
@@ -48,11 +51,11 @@ public class BaseLicense {
         }
     }
 
-    public String getCode() {
+    public LicenseFamilyCode getCode() {
 		return code;
 	}
 
-	public String getName() {
+	public LicenseFamilyName getName() {
 		return name;
 	}
 

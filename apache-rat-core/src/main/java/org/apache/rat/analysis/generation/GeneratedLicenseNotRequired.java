@@ -25,6 +25,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.ISubject;
 
 public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 
@@ -64,7 +65,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
         this.numberOfPatterns = linePatterns.length;
     }
 
-    public boolean match(String subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(ISubject subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         boolean result = false;
         for (int i=0;i<numberOfPatterns;i++) {
             if (linePatterns[i].matcher(line).matches()) {
@@ -76,7 +77,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
         return result;
     }
 
-    private void reportOnLicense(String subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    private void reportOnLicense(ISubject subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
         try {
             Claims.reportGeneratedClaims(subject, "Generated files do not required license headers", reporter);
         } catch (RatReportFailedException e) {

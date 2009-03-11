@@ -20,19 +20,21 @@ package org.apache.rat.report.analyser;
 
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.report.claim.HeaderTypeObject;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.IObject;
+import org.apache.rat.report.claim.IPredicate;
 
 public class ConstantClaimAnalyser extends AbstractSingleClaimAnalyser {
+    private final HeaderTypeObject object;
 
-    private final CharSequence object;
-    public ConstantClaimAnalyser(final IClaimReporter reporter, final CharSequence predicate, 
-            final CharSequence object, final boolean isLiteral) {
+    public ConstantClaimAnalyser(final IClaimReporter reporter, final IPredicate predicate, 
+            final HeaderTypeObject object, final boolean isLiteral) {
         super(reporter, predicate, isLiteral);
         this.object = object;
     }
 
-    protected CharSequence toObject(IDocument document) throws RatDocumentAnalysisException {
+    protected IObject toObject(IDocument document) throws RatDocumentAnalysisException {
         return object;
     }
-
 }
