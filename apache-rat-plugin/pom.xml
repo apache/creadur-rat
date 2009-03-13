@@ -153,6 +153,7 @@
       <id>release</id>
       <build>
         <plugins>
+<!-- 
           <plugin>
             <artifactId>maven-docck-plugin</artifactId>
               <executions>
@@ -163,6 +164,7 @@
                 </execution>
               </executions>
           </plugin>
+ -->
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
