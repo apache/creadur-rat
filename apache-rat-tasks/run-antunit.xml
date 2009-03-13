@@ -26,7 +26,7 @@
     <property name="jar.name" location="target/classes"/>
     <path id="test-classpath">
       <pathelement location="${jar.name}"/>
-      <pathelement location="../rat-core/target/classes"/>
+      <pathelement location="../apache-rat-core/target/classes"/>
       <pathelement location="target/test-classes"/>
       <pathelement location="${user.home}/.m2/repository/org/apache/ant/ant-antunit/1.1/ant-antunit-1.1.jar"/>
       <pathelement location="${user.home}/.m2/repository/commons-lang/commons-lang/2.1/commons-lang-2.1.jar"/>
