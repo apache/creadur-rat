@@ -19,7 +19,7 @@
   <parent>
     <artifactId>apache-rat-project</artifactId>
     <groupId>org.apache.rat</groupId>
-    <version>0.6</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>apache-rat-plugin</artifactId>
@@ -164,7 +164,6 @@
                 </execution>
               </executions>
           </plugin>
- -->
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
@@ -183,14 +182,15 @@
               </execution>
             </executions>
           </plugin>
+ -->
         </plugins>
       </build>
     </profile>
   </profiles>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6/apache-rat-plugin</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6/apache-rat-plugin</developerConnection>
-    <url>http://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6/apache-rat-plugin</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat-plugin</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat-plugin</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat-plugin</url>
   </scm>
 </project>

@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.rat</groupId>
     <artifactId>apache-rat-project</artifactId>
-    <version>0.6</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <artifactId>apache-rat-tasks</artifactId>
   <packaging>jar</packaging>
@@ -119,8 +119,8 @@
   </build>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6/apache-rat-tasks</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6/apache-rat-tasks</developerConnection>
-    <url>http://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6/apache-rat-tasks</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat-tasks</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat-tasks</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat-tasks</url>
   </scm>
 </project>
