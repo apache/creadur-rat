@@ -147,4 +147,10 @@
       </build>
     </profile>
   </profiles>
+
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat</url>
+  </scm>
 </project>
