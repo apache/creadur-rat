@@ -25,7 +25,7 @@
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
   <packaging>pom</packaging>
-  <version>0.6</version>
+  <version>0.7-SNAPSHOT</version>
   <name>RAT</name>
   <url>http://incubator.apache.org/rat</url>
   <description>
@@ -306,9 +306,9 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   </contributors>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6</developerConnection>
-    <url>http://svn.apache.org/repos/asf/incubator/rat/main/tags/apache-rat-project-0.6</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk</developerConnection>
+    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk</url>
   </scm>
 
   <distributionManagement>
