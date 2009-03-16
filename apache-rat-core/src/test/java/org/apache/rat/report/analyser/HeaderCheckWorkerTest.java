@@ -24,9 +24,8 @@ import java.io.StringReader;
 import junit.framework.TestCase;
 
 import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
-import org.apache.rat.report.analyser.HeaderCheckWorker;
-import org.apache.rat.report.claim.ISubject;
-import org.apache.rat.report.claim.MockSubject;
+import org.apache.rat.document.IResource;
+import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class HeaderCheckWorkerTest extends TestCase {
@@ -42,7 +41,7 @@ public class HeaderCheckWorkerTest extends TestCase {
 	}
 	
 	public void testIsFinished() throws Exception {
-        final ISubject subject = new MockSubject("subject");
+        final IResource subject = new MockLocation("subject");
 		HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), new ApacheSoftwareLicense20(), reporter, subject);
 		assertFalse(worker.isFinished());
 		worker.read();

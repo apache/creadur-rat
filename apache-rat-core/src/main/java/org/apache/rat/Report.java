@@ -47,6 +47,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
@@ -161,24 +162,23 @@ public class Report {
 	}
 	
 	private static final void printUsage(Options opts) {
-    HelpFormatter f = new HelpFormatter();
-
-    String header = "Options";
+	    HelpFormatter f = new HelpFormatter();
+	    String header = "Options";
     
-    StringBuffer footer = new StringBuffer("\n");
-    footer.append("NOTE:\n");
-    footer.append("RAT is really little more than a grep ATM\n");
-    footer.append("RAT is also rather memory hungry ATM\n");
-    footer.append("RAT is very basic ATM\n");
-    footer.append("RAT ATM runs on unpacked releases\n");
-    footer.append("RAT highlights possible issues\n");
-    footer.append("RAT reports require intepretation\n");
-    footer.append("RAT often requires some tuning before it runs well against a project\n");
-    footer.append("RAT relies on heuristics: it may miss issues\n");
-        
-    f.printHelp("java rat.report [options] [DIR]",
-        header, opts, footer.toString(), false);
-    System.exit(0);
+	    StringBuffer footer = new StringBuffer("\n");
+	    footer.append("NOTE:\n");
+	    footer.append("RAT is really little more than a grep ATM\n");
+	    footer.append("RAT is also rather memory hungry ATM\n");
+	    footer.append("RAT is very basic ATM\n");
+	    footer.append("RAT ATM runs on unpacked releases\n");
+	    footer.append("RAT highlights possible issues\n");
+	    footer.append("RAT reports require intepretation\n");
+	    footer.append("RAT often requires some tuning before it runs well against a project\n");
+	    footer.append("RAT relies on heuristics: it may miss issues\n");
+
+	    f.printHelp("java rat.report [options] [DIR]",
+	            header, opts, footer.toString(), false);
+	    System.exit(0);
 	}
 	
 	private final String baseDirectory;
@@ -187,11 +187,12 @@ public class Report {
 		this.baseDirectory = baseDirectory;
 	}
 	
-	public void report(PrintStream out) throws Exception {
+	public ClaimStatistic report(PrintStream out) throws Exception {
         DirectoryWalker base = getDirectory(out);
         if (base != null) {
-            report(base, new OutputStreamWriter(out), Defaults.createDefaultMatcher(), null);
+            return report(base, new OutputStreamWriter(out), Defaults.createDefaultMatcher(), null);
         }
+        return null;
 	}
     
     private DirectoryWalker getDirectory(PrintStream out) {
@@ -261,7 +262,7 @@ public class Report {
      * @throws InterruptedException
      * @throws RatReportFailedException
      */
-    public static void report(Writer out, IReportable base, final InputStream style, 
+    public static ClaimStatistic report(Writer out, IReportable base, final InputStream style, 
             final IHeaderMatcher matcher, final ILicenseFamily[] approvedLicenseNames) 
                 throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatReportFailedException {
         PipedReader reader = new PipedReader();
@@ -269,10 +270,11 @@ public class Report {
         ReportTransformer transformer = new ReportTransformer(out, style, reader);
         Thread transformerThread = new Thread(transformer);
         transformerThread.start();
-        report(base, writer, matcher, approvedLicenseNames);
+        final ClaimStatistic statistic = report(base, writer, matcher, approvedLicenseNames);
         writer.flush();
         writer.close();
         transformerThread.join();
+        return statistic;
     }
     
     /**
@@ -284,13 +286,15 @@ public class Report {
      * @throws IOException
      * @throws RatReportFailedException
      */
-    public static void report(final IReportable container, final Writer out, final IHeaderMatcher matcher,
+    public static ClaimStatistic report(final IReportable container, final Writer out, final IHeaderMatcher matcher,
              final ILicenseFamily[] approvedLicenseNames) throws IOException, RatReportFailedException {
         IXmlWriter writer = new XmlWriter(out);
-        RatReport report = XmlReportFactory.createStandardReport(writer, matcher, approvedLicenseNames);  
+        final ClaimStatistic statistic = new ClaimStatistic();
+        RatReport report = XmlReportFactory.createStandardReport(writer, matcher, approvedLicenseNames, statistic);  
         report.startReport();
         container.run(report);
         report.endReport();
         writer.closeDocument();
+        return statistic;
     }
 }

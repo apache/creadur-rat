@@ -18,13 +18,13 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IResource;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.ISubject;
 import org.apache.rat.report.claim.LicenseFamilyCode;
 import org.apache.rat.report.claim.LicenseFamilyName;
+import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
 public class BaseLicense {
 	private final LicenseFamilyCode code;
@@ -38,13 +38,12 @@ public class BaseLicense {
 		this.notes = notes;
 	}
     
-    public final void reportOnLicense(ISubject subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public final void reportOnLicense(IResource subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
         final LicenseFamilyName name = getName();
         final LicenseFamilyCode code = getCode();
         final String notes = getNotes();
         try {
-            Claims.reportStandardClaims(subject, notes, code, name, reporter);
-
+            reporter.claim(new LicenseFamilyClaim(subject, name, code, notes));
         } catch (RatReportFailedException e) {
             // Cannot recover
             throw new RatHeaderAnalysisException("Cannot report on license information", e);

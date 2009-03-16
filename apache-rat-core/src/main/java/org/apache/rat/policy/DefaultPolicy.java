@@ -29,11 +29,10 @@ import org.apache.rat.license.OASISLicenseFamily;
 import org.apache.rat.license.W3CDocumentLicenseFamily;
 import org.apache.rat.license.W3CSoftwareLicenseFamily;
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.IObject;
-import org.apache.rat.report.claim.IPredicate;
-import org.apache.rat.report.claim.ISubject;
 import org.apache.rat.report.claim.LicenseFamilyName;
+import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
 public class DefaultPolicy implements IClaimReporter {
     private static final LicenseFamilyName[] APPROVED_LICENSES = {
@@ -67,7 +66,7 @@ public class DefaultPolicy implements IClaimReporter {
 
     private static final Comparator licenseFamilyComparator = new Comparator(){
         public int compare(Object arg0, Object arg1) {
-            return ((LicenseFamilyName) arg0).getValue().compareTo(((LicenseFamilyName) arg1).getValue());
+            return ((LicenseFamilyName) arg0).getName().compareTo(((LicenseFamilyName) arg1).getName());
         }
     };
     
@@ -83,13 +82,12 @@ public class DefaultPolicy implements IClaimReporter {
         Arrays.sort(this.approvedLicenseNames, licenseFamilyComparator);
     }
 
-    public void claim(ISubject subject, IPredicate predicate,
-            IObject object, boolean isLiteral)
+    public void claim(IClaim pClaim)
             throws RatReportFailedException {
-        if (Claims.LICENSE_FAMILY_PREDICATE.equals(predicate)) {
-            final boolean isApproved = Arrays.binarySearch(approvedLicenseNames, object, licenseFamilyComparator) >= 0;
-            Claims.reportLicenseApprovalClaim(subject, isApproved, reporter);
+        if (pClaim instanceof LicenseFamilyClaim) {
+            final LicenseFamilyClaim lfc = (LicenseFamilyClaim) pClaim;
+            final boolean isApproved = Arrays.binarySearch(approvedLicenseNames, lfc.getLicenseFamilyName(), licenseFamilyComparator) >= 0;
+            Claims.reportLicenseApprovalClaim(pClaim.getSubject(), isApproved, reporter);
         }
     }
-
 }

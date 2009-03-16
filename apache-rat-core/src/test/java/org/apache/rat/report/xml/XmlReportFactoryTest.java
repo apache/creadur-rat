@@ -27,6 +27,8 @@ import junit.framework.TestCase;
 import org.apache.rat.DirectoryWalker;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.claim.FileType;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -58,7 +60,8 @@ public class XmlReportFactoryTest extends TestCase {
     	final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
-        RatReport report = XmlReportFactory.createStandardReport(writer, mockLicenseMatcher);
+        final ClaimStatistic statistic = new ClaimStatistic();
+        RatReport report = XmlReportFactory.createStandardReport(writer, mockLicenseMatcher, statistic);
         report.startReport();
         report(directory, report);
         report.endReport();
@@ -79,5 +82,9 @@ public class XmlReportFactoryTest extends TestCase {
                 "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/><archive-type name='readable'/></resource>" +
                 "</rat-report>", output);
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
+        assertEquals("Binary files", new Integer(1), statistic.getFileTypeMap().get(FileType.BINARY));
+        assertEquals("Notice files", new Integer(2), statistic.getFileTypeMap().get(FileType.NOTICE));
+        assertEquals("Standard files", new Integer(3), statistic.getFileTypeMap().get(FileType.STANDARD));
+        assertEquals("Archives", new Integer(1), statistic.getFileTypeMap().get(FileType.ARCHIVE));
     }
 }

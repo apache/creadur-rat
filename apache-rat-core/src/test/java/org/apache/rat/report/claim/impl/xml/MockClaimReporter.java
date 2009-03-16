@@ -22,48 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.IObject;
-import org.apache.rat.report.claim.IPredicate;
-import org.apache.rat.report.claim.ISubject;
 
 public class MockClaimReporter implements IClaimReporter {
 
     public List claims = new ArrayList();
     
-    public void claim(ISubject subject, IPredicate predicate,
-            IObject object, boolean isLiteral)
+    public void claim(IClaim pClaim)
             throws RatReportFailedException {
-        claims.add(new Claim(subject, predicate, object, isLiteral));
+        claims.add(pClaim);
     }
 
-    public Claim getClaim(int index) {
-        return (Claim) claims.get(index);
-    }
-    
-    public static class Claim {
-        public final ISubject subject;
-        public final IPredicate predicate;
-        public final IObject object;
-        public final boolean isLiteral;
-
-        public Claim(final ISubject subject, final IPredicate predicate, final IObject object, final boolean isLiteral) {
-            this.subject = subject;
-            this.predicate = predicate;
-            this.object = object;
-            this.isLiteral = isLiteral;
-        }
-        
-        public boolean equals(Object obj) {
-            boolean result = false;
-            if (obj instanceof Claim) {
-                Claim claim = (Claim) obj;
-                result = subject.equals(claim.subject) && predicate.equals(claim.predicate) 
-                && object.equals(claim.object) && isLiteral == claim.isLiteral;
-            }
-            return result;
-        }
-        
-        
+    public CustomClaim getClaim(int index) {
+        return (CustomClaim) claims.get(index);
     }
 }

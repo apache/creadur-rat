@@ -24,8 +24,8 @@ import java.io.FileReader;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.report.claim.ISubject;
-import org.apache.rat.report.claim.MockSubject;
+import org.apache.rat.document.IResource;
+import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.test.utils.Resources;
 
@@ -64,7 +64,7 @@ public class JavaDocLicenseNotRequiredTest extends TestCase {
         boolean result = false;
         BufferedReader in = new BufferedReader(new FileReader(file));
         String line = in.readLine();
-        final ISubject subject = new MockSubject("subject");
+        final IResource subject = new MockLocation("subject");
         while (line != null && !result) {
             result = license.match(subject, line, reporter);
             line = in.readLine();

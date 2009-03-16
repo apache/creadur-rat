@@ -21,9 +21,9 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IResource;
 import org.apache.rat.license.W3CSoftwareLicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.ISubject;
 
 public class W3CLicense extends BaseLicense implements IHeaderMatcher {
 
@@ -37,7 +37,7 @@ public class W3CLicense extends BaseLicense implements IHeaderMatcher {
         
     }
 
-    public boolean match(ISubject subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         boolean result = line != null && line.indexOf(COPYRIGHT_URL) != -1;
         if (result) {
             reportOnLicense(subject, reporter);

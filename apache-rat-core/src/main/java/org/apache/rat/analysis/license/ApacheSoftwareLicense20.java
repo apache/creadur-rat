@@ -21,9 +21,9 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IResource;
 import org.apache.rat.license.Apache20LicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.ISubject;
 
 /**
  * Matches Apache Software License, Version 2.0
@@ -39,7 +39,7 @@ public final class ApacheSoftwareLicense20 extends BaseLicense implements
 		super(Claims.ASL_CODE, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, "");
 	}
 	
-	public boolean match(ISubject subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+	public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         final boolean result = matches(line);
 		if (result) {
 			reportOnLicense(subject, reporter);
