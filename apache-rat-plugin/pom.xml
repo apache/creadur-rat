@@ -50,6 +50,7 @@
         </includes>
       </resource>
     </resources>
+<!-- 
     <plugins>
       <plugin>
         <groupId>org.apache.rat</groupId>
@@ -61,6 +62,7 @@
         </configuration>
       </plugin>
     </plugins>
+ -->
   </build>
 
   <dependencies>
@@ -107,10 +109,12 @@
 
   <reporting>
     <plugins>
+<!-- 
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
       </plugin>
+ -->
       <plugin>
         <artifactId>maven-changes-plugin</artifactId>
         <version>2.0-beta-2</version>
