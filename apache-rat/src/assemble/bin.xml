@@ -31,7 +31,9 @@
       <directory>${project.basedir}/..</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
+        <include>LICENSE</include>
         <include>LICENSE.*</include>
+        <include>NOTICE</include>
         <include>NOTICE.*</include>
         <include>RELEASE_NOTES.txt</include>
         <include>DISCLAIMER.txt</include>
@@ -57,6 +59,9 @@
       <includes>
         <include>apache-rat*.jar</include>
       </includes>
+      <excludes>
+        <exclude>apache-rat-*-source.jar</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
       <directory>target</directory>

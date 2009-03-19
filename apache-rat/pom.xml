@@ -61,6 +61,12 @@
     </resources>    
     <plugins>
       <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <configuration>
+          <attach>false</attach>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
@@ -72,26 +78,7 @@
               <includeScope>runtime</includeScope>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
               <overWriteIfNewer>false</overWriteIfNewer>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <configuration>
-              <resourceBundles>
-                <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
-              </resourceBundles>
-              <properties>
-                  <addLicense>true</addLicense>
-              </properties>
+              <excludes>META-INF/LICENSE,META-INF/NOTICE,META-INF/LICENSE.*,META-INF/NOTICE.*</excludes>
             </configuration>
           </execution>
         </executions>
@@ -100,8 +87,6 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>**/LICENSE</exclude>
-            <exclude>**/NOTICE</exclude>
             <exclude>META-INF/maven</exclude>
           </excludes>
           <archive>
@@ -129,16 +114,17 @@
         <plugins>
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.2-beta-2</version>
+            <version>2.2-beta-3</version>
             <configuration>
               <descriptorSourceDirectory>${basedir}/src/assemble/</descriptorSourceDirectory>
+              <tarLongFileMode>gnu</tarLongFileMode>
             </configuration>
             <executions>
               <execution>
                 <id>make-assembly</id>
                   <phase>package</phase> <!-- append to the packaging phase. -->
                   <goals>
-                    <goal>attached</goal>
+                    <goal>single</goal>
                   </goals>
               </execution>
             </executions>
