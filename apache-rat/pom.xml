@@ -54,8 +54,8 @@
         <includes>
           <include>DISCLAIMER.txt</include>
           <include>RELEASE_NOTES.txt</include>
-          <include>LICENCE.txt</include>
-          <include>NOTICE.txt</include>
+          <include>LICENCE</include>
+          <include>NOTICE</include>
         </includes>
       </resource>
     </resources>    
