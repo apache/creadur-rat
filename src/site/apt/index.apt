@@ -46,7 +46,7 @@ Checking Out RAT
  To checkout the main application run
 
 +------------------------------------------+
-svn co http://svn.apache.org/repos/asf/incubator/rat/main/trunk/rat/
+svn co http://svn.apache.org/repos/asf/incubator/rat/main/trunk/
 +------------------------------------------+
 
 Building RAT

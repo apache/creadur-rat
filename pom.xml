@@ -303,6 +303,10 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   		<name>Jukka Zitting</name>
   		<email>jukka@apache.org</email>
   	</contributor>
+  	<contributor>
+  		<name>Todd Volkert</name>
+  		<email>tvolkert+apache@gmail.com</email>
+  	</contributor>
   </contributors>
 
   <scm>
