@@ -18,9 +18,7 @@
  */ 
 package org.apache.rat.report;
 
-import org.apache.commons.lang.exception.NestableException;
-
-public class RatReportFailedException extends NestableException {
+public class RatReportFailedException extends Exception {
 
     private static final long serialVersionUID = 4940711222435919034L;
 

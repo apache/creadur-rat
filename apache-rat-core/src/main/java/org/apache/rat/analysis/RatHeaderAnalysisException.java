@@ -18,13 +18,11 @@
  */ 
 package org.apache.rat.analysis;
 
-import org.apache.commons.lang.exception.NestableException;
-
 /**
  * Indicates exceptional condition during header analysis.
  *
  */
-public class RatHeaderAnalysisException extends NestableException {
+public class RatHeaderAnalysisException extends Exception {
 
     private static final long serialVersionUID = 7613577476983281387L;
 

@@ -18,9 +18,7 @@
  */ 
 package org.apache.rat.document;
 
-import org.apache.commons.lang.exception.NestableException;
-
-public class RatDocumentAnalysisException extends NestableException {
+public class RatDocumentAnalysisException extends Exception {
 
     private static final long serialVersionUID = 2339068944003517510L;
 
