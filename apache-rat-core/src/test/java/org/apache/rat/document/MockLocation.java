@@ -27,6 +27,10 @@ public class MockLocation implements IResource {
         this("name", "url");
     }
     
+    public MockLocation(String name) {
+        this(name, "url");
+    }
+
     public MockLocation(String name, String url) {
         super();
         this.name = name;

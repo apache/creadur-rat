@@ -22,11 +22,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IResource;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.LicenseFamilyCode;
+import org.apache.rat.report.claim.LicenseFamilyName;
+import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
 /**
  * <p>Reads from a stream to check license.</p>
@@ -40,7 +43,7 @@ class HeaderCheckWorker {
 	private final BufferedReader reader;
 	private final IHeaderMatcher matcher;
 	private final IClaimReporter reporter;
-    private final String name;
+    private final IResource name;
     
 	private boolean match = false;
 	
@@ -48,7 +51,7 @@ class HeaderCheckWorker {
 	private boolean finished = false;
 
 	public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine, 
-            final IHeaderMatcher matcher, final IClaimReporter reporter, final String name) {
+            final IHeaderMatcher matcher, final IClaimReporter reporter, final IResource name) {
 		this(new BufferedReader(reader), numberOfRetainedHeaderLine, matcher, reporter, name);
 	}
 	
@@ -59,24 +62,24 @@ class HeaderCheckWorker {
 	 * @param name the name of the checked content, possibly null
 	 * @param reader a <code>Reader</code> for the content, not null
 	 */
-	public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher, final IClaimReporter reporter, final String name) {
+	public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher, final IClaimReporter reporter, final IResource name) {
 		this(new BufferedReader(reader), matcher, reporter, name);
 	}
 	
 	public HeaderCheckWorker(BufferedReader reader, final IHeaderMatcher matcher,
-            final IClaimReporter reporter, final String name) {
+            final IClaimReporter reporter, final IResource name) {
 		this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, matcher, reporter, name);
 	}
 	
 	public HeaderCheckWorker(BufferedReader reader, int numberOfRetainedHeaderLine, final IHeaderMatcher matcher,
-            final IClaimReporter reporter, final String name) {
+            final IClaimReporter reporter, final IResource name) {
 		this.reader = reader;
 		this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
 		this.matcher = matcher;
         this.reporter = reporter;
         this.name = name;
-	}	
-	
+	}
+
 	public boolean isFinished() {
 		return finished;
 	}
@@ -89,8 +92,7 @@ class HeaderCheckWorker {
 				while(readLine(headers));
 				if (!match) {
 					final String notes = headers.toString();
-                    // TODO: this should be factored into a header matcher
-                    Claims.reportStandardClaims(name, notes, "?????", "UNKNOWN", reporter);
+					reporter.claim(new LicenseFamilyClaim(name, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, LicenseFamilyCode.UNKNOWN, notes));
 				}
 			} catch (IOException e) {
                 throw new RatHeaderAnalysisException("Cannot read header for " + name, e);

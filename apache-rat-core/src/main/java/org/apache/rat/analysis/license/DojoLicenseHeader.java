@@ -21,6 +21,7 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IResource;
 import org.apache.rat.license.ModifiedBSDLicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
 
@@ -49,7 +50,7 @@ public class DojoLicenseHeader extends BaseLicense implements IHeaderMatcher {
 
     }
 
-    public boolean match(String subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         final boolean result = matches(line);
         if (result) {
             reportOnLicense(subject, reporter);

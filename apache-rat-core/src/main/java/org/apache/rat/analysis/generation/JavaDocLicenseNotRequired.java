@@ -20,11 +20,13 @@ package org.apache.rat.analysis.generation;
 
 import java.util.regex.Pattern;
 
-import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IResource;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.LicenseFamilyCode;
+import org.apache.rat.report.claim.impl.LicenseHeaderClaim;
 
 /**
  * JavaDocs are generated and so no license is required.
@@ -36,7 +38,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
     
     private static final Pattern JAVADOC_REGEX = Pattern.compile(JAVADOC_REGEX_DEFN);
     
-    public boolean match(String subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         boolean result = JAVADOC_REGEX.matcher(line).matches();
         if (result) {
             reportOnLicense(subject, reporter);
@@ -44,9 +46,10 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
         return result;
     }
 
-    private void reportOnLicense(String subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    private void reportOnLicense(IResource subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
         try {
-            Claims.reportGeneratedClaims(subject, "JavaDocs are generated and so license header is optional", reporter);
+            reporter.claim(new LicenseHeaderClaim(subject, LicenseFamilyCode.GENERATED,
+                    "JavaDocs are generated and so license header is optional"));
         } catch (RatReportFailedException e) {
             throw new RatHeaderAnalysisException("Cannot write claims", e);
         }

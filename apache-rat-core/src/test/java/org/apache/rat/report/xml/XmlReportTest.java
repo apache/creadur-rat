@@ -78,7 +78,7 @@ public class XmlReportTest extends TestCase {
                     "<resource name='" + elementsPath + "/Source.java'><type name='standard'/></resource>" +
                     "<resource name='" + elementsPath + "/Text.txt'><type name='standard'/></resource>" +
                     "<resource name='" + elementsPath + "/Xml.xml'><type name='standard'/></resource>" +
-                    "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
+                    "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/><archive-type name='readable'/></resource>" +
                     "<resource name='" + elementsPath + "/sub/Empty.txt'><type name='standard'/></resource>" +
                 "</rat-report>", output);
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));

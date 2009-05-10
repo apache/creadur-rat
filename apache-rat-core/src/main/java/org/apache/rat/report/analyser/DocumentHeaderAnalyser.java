@@ -44,9 +44,8 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
         Reader reader = null;
         try {
             reader = document.reader();
-            final String name = document.getName();
             // TODO: worker function should be moved into this class
-            HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher, reporter, name);
+            HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher, reporter, document);
             worker.read();
         } catch (IOException e) {
             throw new RatDocumentAnalysisException("Cannot read header", e);

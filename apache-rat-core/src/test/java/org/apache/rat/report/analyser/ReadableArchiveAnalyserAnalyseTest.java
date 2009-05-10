@@ -23,6 +23,7 @@ import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
+import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.zip.ZipFileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
@@ -30,40 +31,33 @@ import org.apache.rat.test.utils.Resources;
 
 public class ReadableArchiveAnalyserAnalyseTest extends TestCase {
 
-    StringWriter out;
-    ReadableArchiveAnalyser analyser;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        out = new StringWriter();
-        XmlWriter writer = new XmlWriter(out);
-        analyser = new ReadableArchiveAnalyser(new SimpleXmlClaimReporter(writer));
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     public void testVisitReadableArchive() throws Exception {
-    	final File dummyJar = Resources.getResourceFile("elements/dummy.jar");
+        final StringWriter out = new StringWriter();
+        final IDocumentAnalyser analyser = newAnalyser(out);
+        final File dummyJar = Resources.getResourceFile("elements/dummy.jar");
         ZipFileDocument document = new ZipFileDocument(dummyJar);
         analyser.analyse(document);
         assertEquals("Readable attribute set",
                      "<resource name='"
                      + dummyJar.getPath().replace('/', File.separatorChar)
-                     + "'><archive-type name='readable'/>", out.toString());
+                     + "'><type name='archive'/><archive-type name='readable'/>", out.toString());
+    }
+
+    private IDocumentAnalyser newAnalyser(final StringWriter out) {
+        final XmlWriter writer = new XmlWriter(out);
+        final SimpleXmlClaimReporter reporter = new SimpleXmlClaimReporter(writer);
+        return DefaultAnalyserFactory.createArchiveTypeAnalyser(reporter);
     }
 
     public void testVisitUnreadableArchive() throws Exception {
+        final StringWriter out = new StringWriter();
+        final IDocumentAnalyser analyser = newAnalyser(out);
         String name = "src/test/artifacts/dummy.tar.gz";
         ZipFileDocument document = new ZipFileDocument((new File(name)));
         analyser.analyse(document);
         assertEquals("Readable attribute unset",
                      "<resource name='"
                      + name.replace('/', File.separatorChar)
-                     + "'><archive-type name='unreadable'/>", out.toString());
-
+                     + "'><type name='archive'/><archive-type name='unreadable'/>", out.toString());
     }
-
-
 }

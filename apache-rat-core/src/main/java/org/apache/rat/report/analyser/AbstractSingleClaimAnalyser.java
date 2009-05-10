@@ -22,31 +22,23 @@ import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 
 public abstract class AbstractSingleClaimAnalyser implements IDocumentAnalyser {
-
     private final IClaimReporter reporter;
-    private final CharSequence predicate;
-    private final boolean isLiteral;
     
-    public AbstractSingleClaimAnalyser(final IClaimReporter reporter, final CharSequence predicate, 
-            final boolean isLiteral) {
-        super();
+    public AbstractSingleClaimAnalyser(final IClaimReporter reporter) {
         this.reporter = reporter;
-        this.predicate = predicate;
-        this.isLiteral = isLiteral;
     }
 
     public void analyse(IDocument document) throws RatDocumentAnalysisException {
-        final String name = document.getName();
         try {
-            final CharSequence object = toObject(document);
-            reporter.claim(name, predicate, object, isLiteral);
+            reporter.claim(toClaim(document));
         } catch (RatReportFailedException e) {
             throw new RatReportAnalysisResultException(e);
         }
     }
     
-    protected abstract CharSequence toObject(final IDocument document) throws RatDocumentAnalysisException;
+    protected abstract IClaim toClaim(final IDocument document) throws RatDocumentAnalysisException;
 }

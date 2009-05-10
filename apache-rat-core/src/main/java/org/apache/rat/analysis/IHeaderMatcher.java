@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.analysis;
 
+import org.apache.rat.document.IResource;
 import org.apache.rat.report.claim.IClaimReporter;
 
 /**
@@ -40,6 +41,5 @@ public interface IHeaderMatcher {
 	 * @param reporter TODO
 	 * @return TODO
 	 */
-	public boolean match(String subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException;
-	
+	public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException;
 }

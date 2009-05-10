@@ -18,36 +18,32 @@
  */ 
 package org.apache.rat.report.analyser;
 
+import junit.framework.TestCase;
+
 import org.apache.rat.document.MockArchiveDocument;
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.MockDocumentCollection;
+import org.apache.rat.report.claim.IClaim;
+import org.apache.rat.report.claim.impl.ArchiveFileTypeClaim;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import junit.framework.TestCase;
 
 public class ReadableArchiveAnalyserTest extends TestCase {
-
-    MockClaimReporter reporter;
-    ReadableArchiveAnalyser analyser;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        reporter = new MockClaimReporter();
-        analyser = new ReadableArchiveAnalyser(reporter);
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    private final AbstractSingleClaimAnalyser newAnalyser() {
+        final MockClaimReporter reporter = new MockClaimReporter();
+        return (AbstractSingleClaimAnalyser) DefaultAnalyserFactory.createArchiveTypeAnalyser(reporter);
     }
 
     public void testUnreadableArchiveToObject() throws Exception {
         MockDocument document = new MockDocument();
-        assertEquals("Document is unreadable", ReadableArchiveAnalyser.UNREADABLE_ARCHIVE_VALUE, 
-                analyser.toObject(document));
+        final IClaim claim = newAnalyser().toClaim(document);
+        assertTrue("Expected ArchiveFileTypeClaim", claim instanceof ArchiveFileTypeClaim);
+        assertFalse("Expected unreadable archive", ((ArchiveFileTypeClaim) claim).isReadable());
     }
 
     public void testReadableArchiveToObject() throws Exception {
         MockArchiveDocument document = new MockArchiveDocument("whatever", new MockDocumentCollection());
-        assertEquals("Document is readable", ReadableArchiveAnalyser.READABLE_ARCHIVE_VALUE, 
-                analyser.toObject(document));
+        final IClaim claim = newAnalyser().toClaim(document);
+        assertTrue("Expected ArchiveFileTypeClaim", claim instanceof ArchiveFileTypeClaim);
+        assertTrue("Expected readable archive", ((ArchiveFileTypeClaim) claim).isReadable());
     }
 }

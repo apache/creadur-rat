@@ -19,6 +19,7 @@
 package org.apache.rat.report.claim.util;
 
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 
 public class ClaimReporterMultiplexer implements IClaimReporter {
@@ -30,12 +31,11 @@ public class ClaimReporterMultiplexer implements IClaimReporter {
         this.reporters = reporters;
     }
 
-    public void claim(CharSequence subject, CharSequence predicate,
-            CharSequence object, boolean isLiteral)
+    public void claim(IClaim pClaim)
             throws RatReportFailedException {
         final int length = reporters.length;
         for (int i=0;i<length;i++) {
-            reporters[i].claim(subject, predicate, object, isLiteral);
+            reporters[i].claim(pClaim);
         }
     }
 

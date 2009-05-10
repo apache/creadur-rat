@@ -20,6 +20,7 @@ package org.apache.rat.analysis.util;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IResource;
 import org.apache.rat.report.claim.IClaimReporter;
 
 /**
@@ -36,7 +37,7 @@ public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 		numberOfMatchers = matchers.length;
 	}
 	
-	public boolean match(String subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+	public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         boolean result = false;
 		for (int i=0;i<numberOfMatchers;i++) {
 			result = matchers[i].match(subject, line, reporter);

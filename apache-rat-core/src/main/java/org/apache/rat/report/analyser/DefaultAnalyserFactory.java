@@ -18,9 +18,14 @@
  */ 
 package org.apache.rat.report.analyser;
 
+import java.io.IOException;
+
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.IDocumentCollection;
 import org.apache.rat.document.IDocumentMatcher;
+import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
@@ -28,7 +33,11 @@ import org.apache.rat.document.impl.util.ConditionalAnalyser;
 import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
 import org.apache.rat.document.impl.util.DocumentMatcherMultiplexer;
 import org.apache.rat.document.impl.util.MatchNegator;
+import org.apache.rat.report.claim.FileType;
+import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.impl.ArchiveFileTypeClaim;
+import org.apache.rat.report.claim.impl.FileTypeClaim;
 
 /**
  * Creates default analysers.
@@ -37,23 +46,48 @@ import org.apache.rat.report.claim.IClaimReporter;
 public class DefaultAnalyserFactory {
     
     public static final IDocumentAnalyser createArchiveTypeAnalyser(final IClaimReporter reporter) {
-        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, "type", "archive", false);
-        return constantClaimAnalyser;
+        return new AbstractSingleClaimAnalyser(reporter){
+            protected IClaim toClaim(IDocument pDocument)
+                    throws RatDocumentAnalysisException {
+                boolean readable = false;
+                try {
+                    final IDocumentCollection contents = pDocument.readArchive();
+                    if (contents != null) {
+                        readable = true;
+                    }
+                } catch (IOException e) {
+                    readable = false;
+                }
+                return new ArchiveFileTypeClaim(pDocument, readable);
+            }
+        };
     }
     
     public static final IDocumentAnalyser createNoticeTypeAnalyser(final IClaimReporter reporter) {
-        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, "type", "notice", false);
-        return constantClaimAnalyser;
+        return new AbstractSingleClaimAnalyser(reporter){
+            protected IClaim toClaim(IDocument pDocument)
+                    throws RatDocumentAnalysisException {
+                return new FileTypeClaim(pDocument, FileType.NOTICE);
+            }
+        };
     }
     
     public static final IDocumentAnalyser createBinaryTypeAnalyser(final IClaimReporter reporter) {
-        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, "type", "binary", false);
-        return constantClaimAnalyser;
+        return new AbstractSingleClaimAnalyser(reporter){
+            protected IClaim toClaim(IDocument pDocument)
+                    throws RatDocumentAnalysisException {
+                return new FileTypeClaim(pDocument, FileType.BINARY);
+            }
+        };
     }
     
     public static final IDocumentAnalyser createStandardTypeAnalyser(final IClaimReporter reporter) {
-        final AbstractSingleClaimAnalyser constantClaimAnalyser = new ConstantClaimAnalyser(reporter, "type", "standard", false);
-        return constantClaimAnalyser;
+        return new AbstractSingleClaimAnalyser(reporter){
+            protected IClaim toClaim(IDocument pDocument)
+                    throws RatDocumentAnalysisException {
+                return new FileTypeClaim(pDocument, FileType.STANDARD);
+            }
+        };
     }
     
     public static final IDocumentAnalyser createDefaultBinaryAnalyser(final IClaimReporter reporter) {
@@ -67,12 +101,7 @@ public class DefaultAnalyserFactory {
     }
     
     public static final IDocumentAnalyser createDefaultArchiveAnalyser(final IClaimReporter reporter) {
-        final IDocumentAnalyser[] components = {
-                createArchiveTypeAnalyser(reporter),
-                new ReadableArchiveAnalyser(reporter)
-        };
-        final DocumentAnalyserMultiplexer result = new DocumentAnalyserMultiplexer(components);
-        return result;
+        return createArchiveTypeAnalyser(reporter);
     }
     
     public static final IDocumentAnalyser createDefaultStandardAnalyser(final IClaimReporter reporter, 

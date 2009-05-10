@@ -19,6 +19,9 @@
 package org.apache.rat.report.claim.impl.xml;
 
 import junit.framework.TestCase;
+
+import org.apache.rat.document.IResource;
+import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.xml.MockXmlWriter;
 
 public class SimpleXmlClaimReporterTest extends TestCase {
@@ -37,19 +40,19 @@ public class SimpleXmlClaimReporterTest extends TestCase {
     }
 
     public void testClaimsAboutOneResource() throws Exception {
-        final String subject = "subject";
+        final IResource subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
-        reporter.claim(subject, predicate, object, false);
+        reporter.claim(new CustomClaim(subject, predicate, object, false));
         assertEquals("Five calls made", 5, mockWriter.calls.size());
         assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
-        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject, 1));
+        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject.getName(), 1));
         assertTrue("Third call is predicate element", mockWriter.isOpenElement(predicate, 2));
         assertTrue("Forth call is object attribute", mockWriter.isAttribute("name", object, 3));    
         assertTrue("Fifth call is close element", mockWriter.isCloseElement(4));    
         final String predicateTwo = "another-predicate";
         final String objectTwo = "another-object";
-        reporter.claim(subject, predicateTwo, objectTwo, false);
+        reporter.claim(new CustomClaim(subject, predicateTwo, objectTwo, false));
         assertEquals("Another three calls made", 8, mockWriter.calls.size());
         assertTrue("Sixth call is predicate element", mockWriter.isOpenElement(predicateTwo, 5));
         assertTrue("Seventh call is object attribute", mockWriter.isAttribute("name", objectTwo, 6));    
@@ -57,35 +60,35 @@ public class SimpleXmlClaimReporterTest extends TestCase {
     }
 
     public void testClaimsAboutTwoResource() throws Exception {
-        final String subject = "subject";
+        final IResource subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
-        reporter.claim(subject, predicate, object, false);
+        reporter.claim(new CustomClaim(subject, predicate, object, false));
         assertEquals("Five calls made", 5, mockWriter.calls.size());
         assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
-        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject, 1));
+        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject.getName(), 1));
         assertTrue("Third call is predicate element", mockWriter.isOpenElement(predicate, 2));
         assertTrue("Forth call is object attribute", mockWriter.isAttribute("name", object, 3));    
         assertTrue("Fifth call is close element", mockWriter.isCloseElement(4));    
-        final String subjectTwo = "another-subject";
-        reporter.claim(subjectTwo, predicate, object, false);
+        final IResource subjectTwo = new MockLocation("another-subject");
+        reporter.claim(new CustomClaim(subjectTwo, predicate, object, false));
         assertEquals("Another found calls made", 11, mockWriter.calls.size());
         assertTrue("Sixth call is close element", mockWriter.isCloseElement(5));  
         assertTrue("Seventh call is open element 'resource'", mockWriter.isOpenElement("resource", 6));
-        assertTrue("Eighth call is name attribute", mockWriter.isAttribute("name", subjectTwo, 7));
+        assertTrue("Eighth call is name attribute", mockWriter.isAttribute("name", subjectTwo.getName(), 7));
         assertTrue("Nineth call is predicate element", mockWriter.isOpenElement(predicate, 8));
         assertTrue("Tenth call is object attribute", mockWriter.isAttribute("name", object, 9));    
         assertTrue("Eleventh call is close element", mockWriter.isCloseElement(10));
     }
 
     public void testLiteralClaim() throws Exception {
-        final String subject = "subject";
+        final IResource subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
-        reporter.claim(subject, predicate, object, true);
+        reporter.claim(new CustomClaim(subject, predicate, object, true));
         assertEquals("Five calls made", 5, mockWriter.calls.size());
         assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
-        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject, 1));
+        assertTrue("Second call is name attribute", mockWriter.isAttribute("name", subject.getName(), 1));
         assertTrue("Third call is predicate element", mockWriter.isOpenElement(predicate, 2));
         assertTrue("Forth call is object content", mockWriter.isContent(object, 3));    
         assertTrue("Fifth call is close element", mockWriter.isCloseElement(4));  

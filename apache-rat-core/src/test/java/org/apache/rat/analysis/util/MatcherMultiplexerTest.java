@@ -19,9 +19,11 @@
 package org.apache.rat.analysis.util;
 
 import junit.framework.TestCase;
+
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.MockLicenseMatcher;
-import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.document.IResource;
+import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class MatcherMultiplexerTest extends TestCase {
@@ -51,12 +53,13 @@ public class MatcherMultiplexerTest extends TestCase {
 	public void testMatcherLine() throws Exception {
         matcherOne.result = false;
         matcherTwo.result = false;
-		multiplexer.match("subject", LINE_ONE, reporter);
+        final IResource subject = new MockLocation("subject");
+		multiplexer.match(subject, LINE_ONE, reporter);
 		assertEquals("One line", 1, matcherOne.lines.size());
 		assertEquals("Same as line passed", LINE_ONE, matcherOne.lines.get(0));
 		assertEquals("One line", 1, matcherTwo.lines.size());
 		assertEquals("Same as line passed", LINE_ONE, matcherTwo.lines.get(0));
-		multiplexer.match("subject", LINE_TWO, reporter);
+		multiplexer.match(subject, LINE_TWO, reporter);
 		assertEquals("One line", 2, matcherOne.lines.size());
 		assertEquals("Same as line passed", LINE_TWO, matcherOne.lines.get(1));
 		assertEquals("One line", 2, matcherTwo.lines.size());

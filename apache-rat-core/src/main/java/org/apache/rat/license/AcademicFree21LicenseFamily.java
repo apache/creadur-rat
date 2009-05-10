@@ -18,11 +18,12 @@
  */ 
 package org.apache.rat.license;
 
+import org.apache.rat.report.claim.LicenseFamilyName;
+
 public class AcademicFree21LicenseFamily implements ILicenseFamily {
+    public static final LicenseFamilyName ACADEMIC_FREE_LICENSE_FAMILY = new LicenseFamilyName("Academic Free License, Version 2.1");
 
-    public static final String ACADEMIC_FREE_LICENSE_FAMILY = "Academic Free License, Version 2.1";
-
-    public String getFamilyName() {
+    public LicenseFamilyName getFamilyName() {
         return ACADEMIC_FREE_LICENSE_FAMILY;
     }
 }

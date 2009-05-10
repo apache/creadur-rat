@@ -23,6 +23,8 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 
+import org.apache.rat.document.IResource;
+import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.test.utils.Resources;
 
@@ -66,13 +68,14 @@ public class OASISLicenseTest extends TestCase {
         BufferedReader in = new BufferedReader(new StringReader(LICENSE));
         String line = in.readLine();
         boolean result = false;
+        final IResource subject = new MockLocation("subject");
         while (line != null) {
-            result = license.match("subject", line, reporter);
+            result = license.match(subject, line, reporter);
             line = in.readLine();
         }
         assertTrue("OASIS license should be matched", result);
         license.reset();
-        result = license.match("subject", "New line", reporter);
+        result = license.match(subject, "New line", reporter);
         assertFalse("After reset, content should build up again", result);
     }
 
@@ -80,8 +83,9 @@ public class OASISLicenseTest extends TestCase {
         BufferedReader in = Resources.getBufferedResourceReader("elements/Source.java");
         String line = in.readLine();
         boolean result = false;
+        final IResource subject = new MockLocation("subject");
         while (line != null) {
-            result = license.match("subject", line, reporter);
+            result = license.match(subject, line, reporter);
             line = in.readLine();
         }
         assertFalse("OASIS license should not be matched", result);

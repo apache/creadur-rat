@@ -22,7 +22,7 @@ package org.apache.rat.mp;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +42,7 @@ import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 
@@ -333,12 +334,12 @@ public abstract class AbstractRatMojo extends AbstractMojo
      * @throws MojoExecutionException
      *             Another error occurred while creating the report.
      */
-    protected void createReport( PrintWriter out, InputStream style ) throws MojoExecutionException, MojoFailureException
+    protected ClaimStatistic createReport( Writer out, InputStream style ) throws MojoExecutionException, MojoFailureException
     {
         HeaderMatcherMultiplexer m = new HeaderMatcherMultiplexer( getLicenseMatchers() );
         try
         {
-            Report.report( out, getResources(), style, m, getApprovedLicenseNames() );
+            return Report.report( out, getResources(), style, m, getApprovedLicenseNames() );
         }
         catch ( TransformerConfigurationException e )
         {

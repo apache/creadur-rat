@@ -21,15 +21,9 @@ package org.apache.rat.report.claim;
 import org.apache.rat.report.RatReportFailedException;
 
 public interface IClaimReporter {
-
     /**
      * States a claim.
-     * @param subject subject of this claim, not null
-     * @param predicate predicate claimed, not null
-     * @param object object of this claim, not null
-     * @param isLiteral <code>true</code> is the object of this claim is a literal,
-     * <code>false</code> if the object of this claim is an identifier
+     * @param pClaim The claim to state.
      */
-    public void claim(CharSequence subject, CharSequence predicate, CharSequence object, boolean isLiteral)
-        throws RatReportFailedException;
+    void claim(IClaim pClaim) throws RatReportFailedException;
 }

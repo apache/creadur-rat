@@ -22,45 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 
 public class MockClaimReporter implements IClaimReporter {
 
     public List claims = new ArrayList();
     
-    public void claim(CharSequence subject, CharSequence predicate,
-            CharSequence object, boolean isLiteral)
+    public void claim(IClaim pClaim)
             throws RatReportFailedException {
-        claims.add(new Claim(subject, predicate, object, isLiteral));
+        claims.add(pClaim);
     }
 
-    public Claim getClaim(int index) {
-        return (Claim) claims.get(index);
-    }
-    
-    public static class Claim {
-        public final CharSequence subject;
-        public final CharSequence predicate;
-        public final CharSequence object;
-        public final boolean isLiteral;
-        public Claim(final CharSequence subject, final CharSequence predicate, final CharSequence object, final boolean isLiteral) {
-            super();
-            this.subject = subject;
-            this.predicate = predicate;
-            this.object = object;
-            this.isLiteral = isLiteral;
-        }
-        
-        public boolean equals(Object obj) {
-            boolean result = false;
-            if (obj instanceof Claim) {
-                Claim claim = (Claim) obj;
-                result = subject.equals(claim.subject) && predicate.equals(claim.predicate) 
-                && object.equals(claim.object) && isLiteral == claim.isLiteral;
-            }
-            return result;
-        }
-        
-        
+    public CustomClaim getClaim(int index) {
+        return (CustomClaim) claims.get(index);
     }
 }

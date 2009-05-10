@@ -69,6 +69,6 @@ public class AnalyserFactoryTest extends TestCase {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/Dummy.jar"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createArchiveTypeAnalyser(reporter);
         analyser.analyse(document);
-        assertEquals("Open note element", "<resource name='src/test/elements/Dummy.jar'><type name='archive'/>", out.toString());
+        assertEquals("Open note element", "<resource name='src/test/elements/Dummy.jar'><type name='archive'/><archive-type name='unreadable'/>", out.toString());
     }
 }

@@ -187,18 +187,6 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
     }
 
     /**
-     * Creates a new instance of {@link RatReportMojo}.
-     * @param pDir The directory where to read the POM file.
-     * @return The configured Mojo.
-     * @throws Exception An error occurred while creating the Mojo.
-     */
-    private RatReportMojo newRatReportMojo( String pDir )
-            throws Exception
-    {
-        return (RatReportMojo) newRatMojo( pDir, "rat" );
-    }
-
-    /**
      * Reads the location of the rat text file from the Mojo.
      * @param pMojo The configured Mojo.
      * @return Value of the "reportFile" property.
