@@ -18,7 +18,6 @@
  */ 
 package org.apache.rat.document;
 
-import java.util.Iterator;
 
 /**
  * Collects documents.
@@ -26,15 +25,4 @@ import java.util.Iterator;
  */
 public interface IDocumentCollection extends IResource {
 
-	/**
-	 * Iterates <code>IDocument</code>'s contained.
-	 * @return <code>Iterator</code>, not null
-	 */
-	public Iterator documentIterator();
-	
-	/**
-	 * Iterates <code>IDocumentCollection</code>'s contained.
-	 * @return <code>Iterator</code>, not null
-	 */
-	public Iterator subcollectionIterator();
 }

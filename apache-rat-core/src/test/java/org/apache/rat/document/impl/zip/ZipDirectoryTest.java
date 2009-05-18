@@ -59,26 +59,6 @@ public class ZipDirectoryTest extends TestCase {
         super.tearDown();
     }
 
-    public void testDocumentIterator() {
-        Iterator iterator = directory.documentIterator();
-        assertNotNull("Iterator should be not null", iterator);
-        assertTrue("Iteration has two elements", iterator.hasNext());
-        assertEquals("Iteration returned in order", documentOne, iterator.next());
-        assertTrue("Iteration has two elements", iterator.hasNext());
-        assertEquals("Iteration returned in order", documentTwo, iterator.next()); 
-        assertFalse("Iteration has two elements", iterator.hasNext());
-    }
-
-    public void testSubcollectionIterator() {
-        Iterator iterator = directory.subcollectionIterator();
-        assertNotNull("Iterator should be not null", iterator);
-        assertTrue("Iteration has two elements", iterator.hasNext());
-        assertEquals("Iteration returned in order", subcollectionOne, iterator.next());
-        assertTrue("Iteration has two elements", iterator.hasNext());
-        assertEquals("Iteration returned in order", subcollectionTwo, iterator.next()); 
-        assertFalse("Iteration has two elements", iterator.hasNext());
-    }
-
     public void testGetName() {
         assertEquals(NAME, directory.getName());
     }
