@@ -20,22 +20,29 @@ package org.apache.rat.document.impl.zip;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 
+import org.apache.rat.document.CompositeDocumentException;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentCollection;
-import org.apache.rat.document.impl.CompositeDocument;
 
 /**
  * Document which is a zip file.
  *
  */
-public class ZipFileDocument extends CompositeDocument {
+public class ZipFileDocument implements IDocument {
 
     private final File file;
     private IDocumentCollection contents;
+    private final String name;
     
     public ZipFileDocument(final File file) {
-        super(file.getPath());
         this.file = file;
+        this.name = file.getPath();
+    }
+
+    public Reader reader() throws IOException {
+        throw new CompositeDocumentException();
     }
     
     public synchronized IDocumentCollection readArchive() throws IOException {
@@ -43,5 +50,9 @@ public class ZipFileDocument extends CompositeDocument {
             contents = ZipDocumentFactory.load(file);
         }
         return contents;
+    }
+
+    public String getName() {
+        return name;
     }
 }
