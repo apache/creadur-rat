@@ -33,7 +33,6 @@ import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentCollection;
 import org.apache.rat.document.UnreadableArchiveException;
 import org.apache.rat.document.impl.DocumentImplUtils;
-import org.apache.rat.document.impl.zip.ZipDocumentFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.RatReportFailedException;
@@ -96,7 +95,7 @@ class ResourceCollectionContainer implements IReportable {
             if (resource instanceof FileResource) {
                 final FileResource fileResource = (FileResource) resource;
                 final File file = fileResource.getFile();
-                return ZipDocumentFactory.isZip(file);
+                return DocumentImplUtils.isZip(file);
             }
             return false;
         }

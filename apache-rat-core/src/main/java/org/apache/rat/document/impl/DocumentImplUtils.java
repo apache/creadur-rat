@@ -19,6 +19,9 @@
 package org.apache.rat.document.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 public class DocumentImplUtils {
 
@@ -26,6 +29,27 @@ public class DocumentImplUtils {
         String path = file.getPath();
         String normalisedPath = path.replace('\\', '/');
         return normalisedPath;
+    }
+
+    public static final boolean isZip(File file) {
+        ZipFile zip = null;
+        try {
+            zip = new ZipFile(file);
+            zip.entries();
+            return true;
+        } catch (ZipException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
+        } finally {
+            if (zip != null) {
+                try {
+                    zip.close();
+                } catch (Throwable t) {
+                    // Swallow
+                }
+            }
+        }
     }
 
 }

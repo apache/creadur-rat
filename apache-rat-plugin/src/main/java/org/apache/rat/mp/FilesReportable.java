@@ -29,7 +29,6 @@ import java.io.Reader;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentCollection;
 import org.apache.rat.document.impl.DocumentImplUtils;
-import org.apache.rat.document.impl.zip.ZipDocumentFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.RatReportFailedException;
@@ -80,7 +79,7 @@ class FilesReportable implements IReportable
         }
 
         public boolean isComposite() {
-            return ZipDocumentFactory.isZip(file);
+            return DocumentImplUtils.isZip(file);
         }
 
         public Reader reader() throws IOException

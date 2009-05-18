@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.impl.zip.ZipDocumentFactory;
 
 /**
  * Document wrapping a file of undetermined composition.
@@ -42,7 +41,7 @@ public class FileDocument implements IDocument {
     }
 
     public boolean isComposite() {
-        return ZipDocumentFactory.isZip(file);
+        return DocumentImplUtils.isZip(file);
     }
 
     public Reader reader() throws IOException {
