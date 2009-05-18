@@ -42,12 +42,7 @@ public class FileDocument implements IDocument {
     }
 
     public boolean isComposite() {
-        try {
-            ZipDocumentFactory.load(file);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+        return ZipDocumentFactory.isZip(file);
     }
 
     public Reader reader() throws IOException {

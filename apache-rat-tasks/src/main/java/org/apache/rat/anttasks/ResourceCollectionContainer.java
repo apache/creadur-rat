@@ -96,11 +96,7 @@ class ResourceCollectionContainer implements IReportable {
             if (resource instanceof FileResource) {
                 final FileResource fileResource = (FileResource) resource;
                 final File file = fileResource.getFile();
-                try {
-                    return ZipDocumentFactory.load(file) != null;
-                } catch (IOException e) {
-                    return false;
-                }
+                return ZipDocumentFactory.isZip(file);
             }
             return false;
         }
