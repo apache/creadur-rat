@@ -24,8 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.IDocumentCollection;
-import org.apache.rat.document.IFileUnarchiver;
+import org.apache.rat.document.impl.zip.ZipDocumentFactory;
 
 /**
  * Document wrapping a file of undetermined composition.
@@ -35,18 +34,16 @@ public class FileDocument implements IDocument {
 
     private final File file;
     private final String name;
-    private IFileUnarchiver unarchiver;
     
-    public FileDocument(final File file, IFileUnarchiver unarchiver) {
+    public FileDocument(final File file) {
         super();
         this.file = file;
-        this.unarchiver = unarchiver;
         name = DocumentImplUtils.toName(file);
     }
 
     public boolean isComposite() {
         try {
-            unarchiver.unarchive(file);
+            ZipDocumentFactory.load(file);
             return true;
         } catch (IOException e) {
             return false;

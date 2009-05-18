@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.impl.FileDocument;
-import org.apache.rat.document.impl.zip.ZipFileUnarchiver;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.RatReportFailedException;
@@ -35,7 +34,6 @@ import org.apache.rat.report.RatReportFailedException;
  */
 public class DirectoryWalker implements IReportable {
 
-    private static final ZipFileUnarchiver UNARCHIVER = new ZipFileUnarchiver();
     private static final FileNameComparator COMPARATOR = new FileNameComparator();
     
     protected final File file;
@@ -164,7 +162,7 @@ public class DirectoryWalker implements IReportable {
      */
     private void report(final RatReport report, File file) throws RatReportFailedException {
 
-        IDocument document = new FileDocument(file, UNARCHIVER);
+        IDocument document = new FileDocument(file);
         report.report(document);
 
     }
