@@ -26,16 +26,16 @@ import junit.framework.TestCase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IteratorUtils;
 
-import org.apache.rat.document.DocumentUtils;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentCollection;
+import org.apache.rat.document.ToNameTransformer;
 
 public abstract class RATCase extends TestCase {
 
     protected void checkDummyJar(IDocumentCollection collection) {
         assertNotNull(collection);
         Collection documents = IteratorUtils.toList(collection.documentIterator());
-        CollectionUtils.transform(documents, DocumentUtils.toNameTransformer());
+        CollectionUtils.transform(documents, ToNameTransformer.toNameTransformer());
         assertEquals("Six documents in the jar", 6, documents.size());
         assertTrue("Document names", documents.contains("Image.png"));
         assertTrue("Document names", documents.contains("LICENSE"));

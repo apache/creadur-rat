@@ -20,8 +20,14 @@ package org.apache.rat.document;
 
 import org.apache.commons.collections.Transformer;
 
-class ToNameTransformer implements Transformer {
+public class ToNameTransformer implements Transformer {
 
+    private static final Transformer TO_NAME_TRANSFORMER = new ToNameTransformer();
+    
+    public static final Transformer toNameTransformer() {
+        return TO_NAME_TRANSFORMER;
+    }
+    
     public Object transform(Object subject) {
         Object result = null;
         if (subject != null && subject instanceof IResource) {
