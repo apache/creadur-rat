@@ -72,21 +72,7 @@ class ResourceCollectionContainer implements IReportable {
         public void setResource(Resource resource) {
             this.resource = resource;
         }
-
-        public IDocumentCollection readArchive() throws IOException {
-            IDocumentCollection results = null;
-            if (resource instanceof FileResource) {
-                final FileResource fileResource = (FileResource) resource;
-                final File file = fileResource.getFile();
-                results = ZipDocumentFactory.load(file);
-            }
-            else
-            {
-                throw new UnreadableArchiveException();
-            }
-            return results;
-        }
-
+        
         public Reader reader() throws IOException {
             final InputStream in = resource.getInputStream();
             final Reader result = new InputStreamReader(in);
@@ -104,6 +90,19 @@ class ResourceCollectionContainer implements IReportable {
                 result = resource.getName();
             }
             return result;
+        }
+
+        public boolean isComposite() {
+            if (resource instanceof FileResource) {
+                final FileResource fileResource = (FileResource) resource;
+                final File file = fileResource.getFile();
+                try {
+                    return ZipDocumentFactory.load(file) != null;
+                } catch (IOException e) {
+                    return false;
+                }
+            }
+            return false;
         }
     }
 }

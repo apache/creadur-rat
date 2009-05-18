@@ -42,15 +42,6 @@ public class SingularFileDocumentTest extends TestCase {
         super.tearDown();
     }
 
-    public void testReadArchive() throws Exception {
-        try {
-            document.readArchive();
-            fail("Source is not archive: Exception should have been thrown");
-        } catch (UnreadableArchiveException e) {
-            // expected
-        }
-    }
-
     public void testReader() throws Exception {
         Reader reader = document.reader();
         assertNotNull("Reader should be returned", reader);

@@ -18,11 +18,7 @@
  */ 
 package org.apache.rat.document.impl;
 
-import java.io.IOException;
-
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.IDocumentCollection;
-import org.apache.rat.document.UnreadableArchiveException;
 
 
 /**
@@ -35,11 +31,11 @@ public abstract class AbstractMonolithicDocument implements IDocument {
 		name = pName;
 	}
 
-	public IDocumentCollection readArchive() throws IOException {
-        throw new UnreadableArchiveException("This file is not an archive");
+	public boolean isComposite() {
+        return false;
     }
 
-	public String getName() {
+    public String getName() {
 		return name;
 	}
 }

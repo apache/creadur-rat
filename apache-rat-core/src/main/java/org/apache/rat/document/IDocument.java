@@ -33,11 +33,8 @@ public interface IDocument extends IResource {
 	public Reader reader() throws IOException;
     
     /**
-     * Reads contents of composite document.
-     * @return <code>IDocumentCollection</code>, not null
-     * @throws IOException if the document cannot be read
-     * @throws UnreadableArchiveException if this document is not an archive
-     * or if this document is unreadable
+     * Is this a composite document?
+     * @return true if composite, false otherwise
      */
-    public IDocumentCollection readArchive() throws IOException;
+    public boolean isComposite();
 }

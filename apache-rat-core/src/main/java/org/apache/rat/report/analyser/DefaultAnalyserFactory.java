@@ -18,12 +18,9 @@
  */ 
 package org.apache.rat.report.analyser;
 
-import java.io.IOException;
-
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.IDocumentCollection;
 import org.apache.rat.document.IDocumentMatcher;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
@@ -49,16 +46,7 @@ public class DefaultAnalyserFactory {
         return new AbstractSingleClaimAnalyser(reporter){
             protected IClaim toClaim(IDocument pDocument)
                     throws RatDocumentAnalysisException {
-                boolean readable = false;
-                try {
-                    final IDocumentCollection contents = pDocument.readArchive();
-                    if (contents != null) {
-                        readable = true;
-                    }
-                } catch (IOException e) {
-                    readable = false;
-                }
-                return new ArchiveFileTypeClaim(pDocument, readable);
+                return new ArchiveFileTypeClaim(pDocument, pDocument.isComposite());
             }
         };
     }

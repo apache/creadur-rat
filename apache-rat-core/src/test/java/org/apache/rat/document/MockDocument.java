@@ -52,4 +52,8 @@ public class MockDocument implements IDocument {
     public IDocumentCollection readArchive() throws IOException {
         return documentCollection;
     }
+
+    public boolean isComposite() {
+        return documentCollection != null;
+    }
 }

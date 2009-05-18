@@ -79,9 +79,13 @@ class FilesReportable implements IReportable
             this.file = file;
         }
 
-        public IDocumentCollection readArchive() throws IOException
-        {
-            return ZipDocumentFactory.load( file );
+        public boolean isComposite() {
+            try {
+                ZipDocumentFactory.load( file );
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
         }
 
         public Reader reader() throws IOException

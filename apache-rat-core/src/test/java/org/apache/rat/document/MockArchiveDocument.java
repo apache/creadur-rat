@@ -48,5 +48,9 @@ public class MockArchiveDocument implements IDocument {
     public String getName() {
         return name;
     }
+    
+    public boolean isComposite() {
+        return contents != null;
+    }
 
 }

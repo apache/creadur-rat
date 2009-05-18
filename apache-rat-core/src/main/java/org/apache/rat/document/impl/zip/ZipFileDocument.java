@@ -33,7 +33,6 @@ import org.apache.rat.document.IDocumentCollection;
 public class ZipFileDocument implements IDocument {
 
     private final File file;
-    private IDocumentCollection contents;
     private final String name;
     
     public ZipFileDocument(final File file) {
@@ -45,14 +44,20 @@ public class ZipFileDocument implements IDocument {
         throw new CompositeDocumentException();
     }
     
-    public synchronized IDocumentCollection readArchive() throws IOException {
-        if (contents == null) {
-            contents = ZipDocumentFactory.load(file);
+    
+    
+    public boolean isComposite() {
+        try {
+            ZipDocumentFactory.load(file);
+            return true;
+        } catch (IOException e) {
+            return false;
         }
-        return contents;
     }
 
     public String getName() {
         return name;
     }
+    
+    
 }

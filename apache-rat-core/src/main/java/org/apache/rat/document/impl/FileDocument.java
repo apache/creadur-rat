@@ -44,9 +44,13 @@ public class FileDocument implements IDocument {
         name = DocumentImplUtils.toName(file);
     }
 
-    public IDocumentCollection readArchive() throws IOException {
-        final IDocumentCollection result = unarchiver.unarchive(file);
-        return result;
+    public boolean isComposite() {
+        try {
+            unarchiver.unarchive(file);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     public Reader reader() throws IOException {

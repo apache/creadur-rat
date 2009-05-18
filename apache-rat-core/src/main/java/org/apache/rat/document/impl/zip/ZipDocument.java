@@ -61,7 +61,7 @@ class ZipDocument implements IDocument {
         return buffer.toString();
     }
 
-    public IDocumentCollection readArchive() throws IOException {
-        throw new UnreadableArchiveException();
+    public boolean isComposite() {
+        return false;
     }
 }
