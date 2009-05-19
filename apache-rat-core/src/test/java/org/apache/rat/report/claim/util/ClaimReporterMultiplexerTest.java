@@ -20,7 +20,7 @@ package org.apache.rat.report.claim.util;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.impl.xml.CustomClaim;
@@ -47,9 +47,9 @@ public class ClaimReporterMultiplexerTest extends TestCase {
     }
 
     public void testClaim() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
-        final IResource otherSubject = new MockLocation("another subject");
+        final IDocument otherSubject = new MockLocation("another subject");
         final String otherPredicate = "another predicate";
         final String object = "object";
         final String otherObject = "another object";

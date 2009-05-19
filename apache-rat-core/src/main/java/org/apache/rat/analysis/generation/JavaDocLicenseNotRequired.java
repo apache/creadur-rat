@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.LicenseFamilyCode;
@@ -38,7 +38,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
     
     private static final Pattern JAVADOC_REGEX = Pattern.compile(JAVADOC_REGEX_DEFN);
     
-    public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(IDocument subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         boolean result = JAVADOC_REGEX.matcher(line).matches();
         if (result) {
             reportOnLicense(subject, reporter);
@@ -46,7 +46,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
         return result;
     }
 
-    private void reportOnLicense(IResource subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    private void reportOnLicense(IDocument subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
         try {
             reporter.claim(new LicenseHeaderClaim(subject, LicenseFamilyCode.GENERATED,
                     "JavaDocs are generated and so license header is optional"));

@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.analysis;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.LicenseFamilyCode;
@@ -26,7 +26,7 @@ import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
 
 
 public class Claims {
-    public static void reportLicenseApprovalClaim(final IResource subject, final boolean isAcceptable, final IClaimReporter reporter) throws RatReportFailedException {
+    public static void reportLicenseApprovalClaim(final IDocument subject, final boolean isAcceptable, final IClaimReporter reporter) throws RatReportFailedException {
         reporter.claim(new LicenseApprovalClaim(subject, isAcceptable));
     }
 

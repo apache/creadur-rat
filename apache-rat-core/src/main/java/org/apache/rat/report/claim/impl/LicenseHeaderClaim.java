@@ -1,6 +1,6 @@
 package org.apache.rat.report.claim.impl;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.LicenseFamilyCode;
 
@@ -18,7 +18,7 @@ public class LicenseHeaderClaim extends AbstractClaim {
      * Creates a new instance with the given subject, license
      * family code, and header sample.
      */
-    public LicenseHeaderClaim(IResource pSubject, LicenseFamilyCode pCode, String pHeaderSample) {
+    public LicenseHeaderClaim(IDocument pSubject, LicenseFamilyCode pCode, String pHeaderSample) {
         super(pSubject);
         licenseFamilyCode = pCode;
         headerSample = pHeaderSample;

@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.license.OASISLicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
 
@@ -49,7 +49,7 @@ public class OASISLicense extends BaseLicense implements IHeaderMatcher {
         super(Claims.OASIS_CODE, OASISLicenseFamily.OASIS_OPEN_LICENSE_NAME, "No modifications allowed");
     }
 
-    public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(IDocument subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         boolean result = false;
         if (copyrightMatch) {
             line = line.toLowerCase();

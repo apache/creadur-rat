@@ -21,8 +21,10 @@ package org.apache.rat.document;
 import java.io.IOException;
 import java.io.Reader;
 
-public interface IDocument extends IResource {
+public interface IDocument {
 
+    public String getName();
+    
     /**
      * Reads the content of this document.
      * @return <code>Reader</code> not null

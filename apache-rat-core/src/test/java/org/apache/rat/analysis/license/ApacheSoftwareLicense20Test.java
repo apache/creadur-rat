@@ -20,7 +20,7 @@ package org.apache.rat.analysis.license;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
@@ -53,7 +53,7 @@ public class ApacheSoftwareLicense20Test extends TestCase {
 	
 	public void testMatch() throws Exception {
 		ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
-		final IResource subject = new MockLocation("subject");
+		final IDocument subject = new MockLocation("subject");
 		assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE, reporter));
         assertTrue(worker.match(subject, "    Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));
         assertTrue(worker.match(subject, "Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));

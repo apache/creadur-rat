@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.MockLicenseMatcher;
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
@@ -53,7 +53,7 @@ public class MatcherMultiplexerTest extends TestCase {
 	public void testMatcherLine() throws Exception {
         matcherOne.result = false;
         matcherTwo.result = false;
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
 		multiplexer.match(subject, LINE_ONE, reporter);
 		assertEquals("One line", 1, matcherOne.lines.size());
 		assertEquals("Same as line passed", LINE_ONE, matcherOne.lines.get(0));

@@ -1,6 +1,6 @@
 package org.apache.rat.report.claim.impl;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.claim.FileType;
 
 
@@ -14,7 +14,7 @@ public class ArchiveFileTypeClaim extends FileTypeClaim {
     /**
      * Creates a new instance with the given subject.
      */
-    public ArchiveFileTypeClaim(IResource pSubject, boolean pReadable) {
+    public ArchiveFileTypeClaim(IDocument pSubject, boolean pReadable) {
         super(pSubject, FileType.ARCHIVE);
         readable = pReadable;
     }

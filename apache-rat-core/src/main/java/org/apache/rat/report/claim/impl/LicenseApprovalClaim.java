@@ -1,6 +1,6 @@
 package org.apache.rat.report.claim.impl;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.claim.IClaim;
 
 
@@ -16,7 +16,7 @@ public class LicenseApprovalClaim extends AbstractClaim {
      * which indicates whether a license was approved or
      * not.
      */
-    public LicenseApprovalClaim(IResource pSubject, boolean pApproved) {
+    public LicenseApprovalClaim(IDocument pSubject, boolean pApproved) {
         super(pSubject);
         approved = pApproved;
     }

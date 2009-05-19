@@ -1,6 +1,6 @@
 package org.apache.rat.report.claim.impl;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.claim.FileType;
 import org.apache.rat.report.claim.IClaim;
 
@@ -15,7 +15,7 @@ public class FileTypeClaim extends AbstractClaim {
     /**
      * Creates a new instance with the given file type.
      */
-    public FileTypeClaim(IResource pSubject, FileType pType) {
+    public FileTypeClaim(IDocument pSubject, FileType pType) {
         super(pSubject);
         type = pType;
     }

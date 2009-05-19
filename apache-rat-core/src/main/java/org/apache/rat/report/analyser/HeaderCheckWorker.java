@@ -24,7 +24,7 @@ import java.io.Reader;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.LicenseFamilyCode;
@@ -43,7 +43,7 @@ class HeaderCheckWorker {
 	private final BufferedReader reader;
 	private final IHeaderMatcher matcher;
 	private final IClaimReporter reporter;
-    private final IResource name;
+    private final IDocument name;
     
 	private boolean match = false;
 	
@@ -51,7 +51,7 @@ class HeaderCheckWorker {
 	private boolean finished = false;
 
 	public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine, 
-            final IHeaderMatcher matcher, final IClaimReporter reporter, final IResource name) {
+            final IHeaderMatcher matcher, final IClaimReporter reporter, final IDocument name) {
 		this(new BufferedReader(reader), numberOfRetainedHeaderLine, matcher, reporter, name);
 	}
 	
@@ -62,17 +62,17 @@ class HeaderCheckWorker {
 	 * @param name the name of the checked content, possibly null
 	 * @param reader a <code>Reader</code> for the content, not null
 	 */
-	public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher, final IClaimReporter reporter, final IResource name) {
+	public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher, final IClaimReporter reporter, final IDocument name) {
 		this(new BufferedReader(reader), matcher, reporter, name);
 	}
 	
 	public HeaderCheckWorker(BufferedReader reader, final IHeaderMatcher matcher,
-            final IClaimReporter reporter, final IResource name) {
+            final IClaimReporter reporter, final IDocument name) {
 		this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, matcher, reporter, name);
 	}
 	
 	public HeaderCheckWorker(BufferedReader reader, int numberOfRetainedHeaderLine, final IHeaderMatcher matcher,
-            final IClaimReporter reporter, final IResource name) {
+            final IClaimReporter reporter, final IDocument name) {
 		this.reader = reader;
 		this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
 		this.matcher = matcher;

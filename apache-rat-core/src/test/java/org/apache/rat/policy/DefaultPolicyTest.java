@@ -21,7 +21,7 @@ package org.apache.rat.policy;
 import junit.framework.TestCase;
 
 import org.apache.rat.analysis.Claims;
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.license.Apache20LicenseFamily;
 import org.apache.rat.license.OASISLicenseFamily;
@@ -52,7 +52,7 @@ public class DefaultPolicyTest extends TestCase {
     }
 
     public void testOtherPredicate() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
         policy.claim(new CustomClaim(subject, predicate, object, true));
@@ -60,7 +60,7 @@ public class DefaultPolicyTest extends TestCase {
     }
 
     public void testASLFamily() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         policy.claim(new LicenseFamilyClaim(subject, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, Claims.ASL_CODE, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
@@ -81,28 +81,28 @@ public class DefaultPolicyTest extends TestCase {
     }
     
     public void testOASISFamily() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         policy.claim(new LicenseFamilyClaim(subject, OASISLicenseFamily.OASIS_OPEN_LICENSE_NAME, Claims.OASIS_CODE, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testW3CFamily() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         policy.claim(new LicenseFamilyClaim(subject, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, Claims.W3C_CODE, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testW3CDocFamily() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         policy.claim(new LicenseFamilyClaim(subject, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, Claims.W3CD_CODE, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testUnknownFamily() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, LicenseFamilyCode.UNKNOWN, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(false);
@@ -112,7 +112,7 @@ public class DefaultPolicyTest extends TestCase {
         reporter = new MockClaimReporter();
         LicenseFamilyName[] custom = {new LicenseFamilyName("Example")};
         policy = new DefaultPolicy(reporter, custom);
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, LicenseFamilyCode.UNKNOWN, ""));
         policy.claim(new LicenseFamilyClaim(subject, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, Claims.W3CD_CODE, ""));
         policy.claim(new LicenseFamilyClaim(subject, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, Claims.W3C_CODE, ""));

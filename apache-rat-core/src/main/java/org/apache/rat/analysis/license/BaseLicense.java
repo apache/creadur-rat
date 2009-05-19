@@ -19,7 +19,7 @@
 package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.LicenseFamilyCode;
@@ -38,7 +38,7 @@ public class BaseLicense {
 		this.notes = notes;
 	}
     
-    public final void reportOnLicense(IResource subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public final void reportOnLicense(IDocument subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
         final LicenseFamilyName name = getName();
         final LicenseFamilyCode code = getCode();
         final String notes = getNotes();

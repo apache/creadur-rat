@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
@@ -43,7 +43,7 @@ public class GeneratedLicenseNotRequiredTest extends TestCase {
     }
 
     public void testMatch() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         assertFalse("Does not match regex", license.match(subject, "Not at all", reporter));
         assertTrue("Matches regex", license.match(subject, "This is Generated", reporter));
     }

@@ -18,7 +18,10 @@
  */ 
 package org.apache.rat.document;
 
-public class MockLocation implements IResource {
+import java.io.IOException;
+import java.io.Reader;
+
+public class MockLocation implements IDocument {
 
     public String name;
     public String url;
@@ -43,6 +46,15 @@ public class MockLocation implements IResource {
 
     public String getURL() {
         return url;
+    }
+
+    public boolean isComposite() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public Reader reader() throws IOException {
+        throw new UnsupportedOperationException();
     }
 
 }

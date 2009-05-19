@@ -20,7 +20,7 @@ package org.apache.rat.report.claim.impl.xml;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.xml.MockXmlWriter;
 
@@ -40,7 +40,7 @@ public class SimpleXmlClaimReporterTest extends TestCase {
     }
 
     public void testClaimsAboutOneResource() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
         reporter.claim(new CustomClaim(subject, predicate, object, false));
@@ -60,7 +60,7 @@ public class SimpleXmlClaimReporterTest extends TestCase {
     }
 
     public void testClaimsAboutTwoResource() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
         reporter.claim(new CustomClaim(subject, predicate, object, false));
@@ -70,7 +70,7 @@ public class SimpleXmlClaimReporterTest extends TestCase {
         assertTrue("Third call is predicate element", mockWriter.isOpenElement(predicate, 2));
         assertTrue("Forth call is object attribute", mockWriter.isAttribute("name", object, 3));    
         assertTrue("Fifth call is close element", mockWriter.isCloseElement(4));    
-        final IResource subjectTwo = new MockLocation("another-subject");
+        final IDocument subjectTwo = new MockLocation("another-subject");
         reporter.claim(new CustomClaim(subjectTwo, predicate, object, false));
         assertEquals("Another found calls made", 11, mockWriter.calls.size());
         assertTrue("Sixth call is close element", mockWriter.isCloseElement(5));  
@@ -82,7 +82,7 @@ public class SimpleXmlClaimReporterTest extends TestCase {
     }
 
     public void testLiteralClaim() throws Exception {
-        final IResource subject = new MockLocation("subject");
+        final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
         reporter.claim(new CustomClaim(subject, predicate, object, true));

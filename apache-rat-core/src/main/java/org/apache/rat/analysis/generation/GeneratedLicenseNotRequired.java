@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.LicenseFamilyCode;
@@ -66,7 +66,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
         this.numberOfPatterns = linePatterns.length;
     }
 
-    public boolean match(IResource subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(IDocument subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
         boolean result = false;
         for (int i=0;i<numberOfPatterns;i++) {
             if (linePatterns[i].matcher(line).matches()) {
@@ -78,7 +78,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
         return result;
     }
 
-    private void reportOnLicense(IResource subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    private void reportOnLicense(IDocument subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
         try {
             reporter.claim(new LicenseHeaderClaim(subject, LicenseFamilyCode.GENERATED,
                     "Generated files do not required license headers"));

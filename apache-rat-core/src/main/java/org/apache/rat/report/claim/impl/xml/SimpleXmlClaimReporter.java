@@ -20,7 +20,7 @@ package org.apache.rat.report.claim.impl.xml;
 
 import java.io.IOException;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
@@ -43,7 +43,7 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
 
     private static final String NAME = "name";
     private final IXmlWriter writer;
-    private IResource lastSubject;
+    private IDocument lastSubject;
     
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
         this.writer = writer;
@@ -119,7 +119,7 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     }
 
     public void claim(IClaim pClaim) throws RatReportFailedException {
-        final IResource subject = pClaim.getSubject();
+        final IDocument subject = pClaim.getSubject();
         try {
             if (!(subject.equals(lastSubject))) {
                 if (lastSubject != null) {

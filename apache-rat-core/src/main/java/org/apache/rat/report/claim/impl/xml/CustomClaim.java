@@ -3,7 +3,7 @@
  */
 package org.apache.rat.report.claim.impl.xml;
 
-import org.apache.rat.document.IResource;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.claim.IClaim;
 
 
@@ -12,12 +12,12 @@ import org.apache.rat.report.claim.IClaim;
  * suite and possibly not so useful otherwise.
  */
 public class CustomClaim implements IClaim {
-    private final IResource subject;
+    private final IDocument subject;
     private final String predicate;
     private final String object;
     private final boolean isLiteral;
 
-    public CustomClaim(final IResource subject, final String predicate, final String object, final boolean isLiteral) {
+    public CustomClaim(final IDocument subject, final String predicate, final String object, final boolean isLiteral) {
         this.subject = subject;
         this.predicate = predicate;
         this.object = object;
@@ -34,7 +34,7 @@ public class CustomClaim implements IClaim {
         return result;
     }
     
-    public IResource getSubject() {
+    public IDocument getSubject() {
         return subject;
     }
 
