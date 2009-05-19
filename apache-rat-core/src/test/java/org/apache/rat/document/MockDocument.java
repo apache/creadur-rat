@@ -25,7 +25,6 @@ public class MockDocument implements IDocument {
 
     public Reader reader;
     public String name;
-    public IDocumentCollection documentCollection;
 
     public MockDocument() {
         this(null, "name");
@@ -49,11 +48,7 @@ public class MockDocument implements IDocument {
         return name;
     }
 
-    public IDocumentCollection readArchive() throws IOException {
-        return documentCollection;
-    }
-
     public boolean isComposite() {
-        return documentCollection != null;
+        return false;
     }
 }

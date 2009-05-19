@@ -27,7 +27,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.IDocumentCollection;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;

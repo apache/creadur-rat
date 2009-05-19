@@ -25,7 +25,6 @@ import java.io.Reader;
 import junit.framework.TestCase;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.UnreadableArchiveException;
 import org.apache.rat.test.utils.Resources;
 
 public class SingularFileDocumentTest extends TestCase {

@@ -26,8 +26,6 @@ import java.io.Reader;
 import java.net.URL;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.IDocumentCollection;
-import org.apache.rat.document.UnreadableArchiveException;
 
 
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
@@ -52,10 +50,6 @@ public class MonolithicFileDocument extends AbstractMonolithicDocument {
     public MonolithicFileDocument(final File file) {
     	super(DocumentImplUtils.toName(file));
         this.file = file;
-    }
-
-    public IDocumentCollection readArchive() throws IOException {
-        throw new UnreadableArchiveException("This file is not an archive");
     }
 
     public Reader reader() throws IOException {
