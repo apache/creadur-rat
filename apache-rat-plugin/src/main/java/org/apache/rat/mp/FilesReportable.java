@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.apache.rat.document.IDocument;
+import org.apache.rat.document.MetaData;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -71,7 +72,8 @@ class FilesReportable implements IReportable
     private class FileDocument implements IDocument
     {
         private File file;
-
+        private final MetaData metaData = new MetaData();
+        
         void setFile( File file )
         {
             this.file = file;
@@ -90,6 +92,10 @@ class FilesReportable implements IReportable
         public String getName()
         {
             return DocumentImplUtils.toName( file );
+        }
+
+        public MetaData getMetaData() {
+            return metaData;
         }
     }
 }

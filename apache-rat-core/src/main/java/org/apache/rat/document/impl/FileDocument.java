@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.rat.document.IDocument;
+import org.apache.rat.document.MetaData;
 
 /**
  * Document wrapping a file of undetermined composition.
@@ -33,6 +34,7 @@ public class FileDocument implements IDocument {
 
     private final File file;
     private final String name;
+    private final MetaData metaData = new MetaData();
     
     public FileDocument(final File file) {
         super();
@@ -52,5 +54,7 @@ public class FileDocument implements IDocument {
         return name;
     }
 
-    
+    public MetaData getMetaData() {
+        return metaData;
+    }    
 }

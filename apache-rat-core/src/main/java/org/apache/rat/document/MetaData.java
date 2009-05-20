@@ -15,34 +15,38 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
-import java.io.IOException;
-import java.io.Reader;
+/**
+ * Data about the subject.
+ */
+public class MetaData {
 
-public interface IDocument {
-
-    public String getName();
+    private ContentType contentType;
+    
+    public MetaData() {
+        this(null);
+    }
+    
+    public MetaData(final ContentType contentType) {
+        this.contentType = contentType;
+    }
     
     /**
-     * Reads the content of this document.
-     * @return <code>Reader</code> not null
-     * @throws IOException if this document cannot be read
-     * @throws CompositeDocumentException if this document can only be read as
-     * a composite archive
+     * Gets the content type for the subject.
+     * @return or null when the type is unknown
      */
-	public Reader reader() throws IOException;
-
-    /**
-     * Gets data describing this resource.
-     * @return not null
-     */
-    public MetaData getMetaData();
+    public ContentType getContentType() {
+        return contentType;
+    }
     
     /**
-     * Is this a composite document?
-     * @return true if composite, false otherwise
+     * Sets the content type for this subject.
+     * @param contentType <code>ContentType</code>,
+     * or null when the content type is unknown
      */
-    public boolean isComposite();
+    public void setContentType(final ContentType contentType) {
+        this.contentType = contentType;
+    }
 }

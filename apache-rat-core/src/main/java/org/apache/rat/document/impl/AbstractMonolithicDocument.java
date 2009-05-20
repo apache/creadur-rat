@@ -19,6 +19,7 @@
 package org.apache.rat.document.impl;
 
 import org.apache.rat.document.IDocument;
+import org.apache.rat.document.MetaData;
 
 
 /**
@@ -26,9 +27,11 @@ import org.apache.rat.document.IDocument;
  */
 public abstract class AbstractMonolithicDocument implements IDocument {
 	private final String name;
+	private final MetaData metaData;
 
 	public AbstractMonolithicDocument(String pName) {
 		name = pName;
+        this.metaData = new MetaData();
 	}
 
 	public boolean isComposite() {
@@ -38,4 +41,8 @@ public abstract class AbstractMonolithicDocument implements IDocument {
     public String getName() {
 		return name;
 	}
+
+    public MetaData getMetaData() {
+        return metaData;
+    }
 }

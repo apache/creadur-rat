@@ -25,6 +25,7 @@ public class MockLocation implements IDocument {
 
     public String name;
     public String url;
+    private final MetaData metaData = new MetaData();
     
     public MockLocation() {
         this("name", "url");
@@ -57,4 +58,7 @@ public class MockLocation implements IDocument {
         throw new UnsupportedOperationException();
     }
 
+    public MetaData getMetaData() {
+        return metaData;
+    }
 }

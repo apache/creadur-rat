@@ -25,6 +25,7 @@ public class MockDocument implements IDocument {
 
     public Reader reader;
     public String name;
+    private final MetaData metaData = new MetaData();
 
     public MockDocument() {
         this(null, "name");
@@ -50,5 +51,9 @@ public class MockDocument implements IDocument {
 
     public boolean isComposite() {
         return false;
+    }
+    
+    public MetaData getMetaData() {
+        return metaData;
     }
 }

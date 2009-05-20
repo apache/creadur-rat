@@ -26,6 +26,7 @@ import java.io.Reader;
 import java.util.Iterator;
 
 import org.apache.rat.document.IDocument;
+import org.apache.rat.document.MetaData;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -60,6 +61,7 @@ class ResourceCollectionContainer implements IReportable {
     private class ResourceDocument implements IDocument {
 
         private Resource resource;
+        private final MetaData metaData = new MetaData();
         
         public Resource getResource() {
             return resource;
@@ -95,6 +97,10 @@ class ResourceCollectionContainer implements IReportable {
                 return DocumentImplUtils.isZip(file);
             }
             return false;
+        }
+        
+        public MetaData getMetaData() {
+            return metaData;
         }
     }
 }
