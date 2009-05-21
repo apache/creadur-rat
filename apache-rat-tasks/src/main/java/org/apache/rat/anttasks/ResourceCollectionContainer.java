@@ -25,8 +25,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Iterator;
 
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.MetaData;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;

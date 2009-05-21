@@ -16,7 +16,8 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.document;
+package org.apache.rat.api;
+
 
 /**
  * Data about the subject.

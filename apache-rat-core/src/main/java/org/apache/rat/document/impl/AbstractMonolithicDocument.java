@@ -18,8 +18,8 @@
  */ 
 package org.apache.rat.document.impl;
 
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.MetaData;
 
 
 /**

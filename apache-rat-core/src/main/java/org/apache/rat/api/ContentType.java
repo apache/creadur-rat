@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.document;
+package org.apache.rat.api;
 
 import java.util.HashMap;
 import java.util.Iterator;

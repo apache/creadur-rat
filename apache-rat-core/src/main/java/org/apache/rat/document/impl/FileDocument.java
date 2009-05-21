@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.MetaData;
 
 /**
  * Document wrapping a file of undetermined composition.
