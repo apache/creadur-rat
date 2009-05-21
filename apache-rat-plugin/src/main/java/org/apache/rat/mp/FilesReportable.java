@@ -97,5 +97,9 @@ class FilesReportable implements IReportable
         public MetaData getMetaData() {
             return metaData;
         }
+        
+        public InputStream inputStream() throws IOException {
+            return new FileInputStream(file);
+        }
     }
 }

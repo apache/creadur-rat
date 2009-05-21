@@ -19,8 +19,10 @@
 package org.apache.rat.document.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
@@ -42,8 +44,12 @@ public class MonolithicFileDocument extends AbstractMonolithicDocument {
     	}
     	return new AbstractMonolithicDocument(url.toExternalForm()){
 			public Reader reader() throws IOException {
-				return new InputStreamReader(url.openStream(), "UTF-8");
+				return new InputStreamReader(inputStream(), "UTF-8");
 			}
+
+            public InputStream inputStream() throws IOException {
+                return url.openStream();
+            }
     	};
     }
 
@@ -54,5 +60,9 @@ public class MonolithicFileDocument extends AbstractMonolithicDocument {
 
     public Reader reader() throws IOException {
         return new FileReader(file);
+    }
+
+    public InputStream inputStream() throws IOException {
+        return new FileInputStream(file);
     }
 }

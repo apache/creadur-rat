@@ -19,6 +19,7 @@
 package org.apache.rat.document;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 
 public class MockLocation implements IDocument {
@@ -50,7 +51,6 @@ public class MockLocation implements IDocument {
     }
 
     public boolean isComposite() {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -60,5 +60,10 @@ public class MockLocation implements IDocument {
 
     public MetaData getMetaData() {
         return metaData;
+    }
+    
+
+    public InputStream inputStream() throws IOException {
+        throw new UnsupportedOperationException();
     }
 }

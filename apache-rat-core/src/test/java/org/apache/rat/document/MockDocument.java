@@ -19,6 +19,7 @@
 package org.apache.rat.document;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 
 public class MockDocument implements IDocument {
@@ -55,5 +56,10 @@ public class MockDocument implements IDocument {
     
     public MetaData getMetaData() {
         return metaData;
+    }
+    
+
+    public InputStream inputStream() throws IOException {
+        throw new UnsupportedOperationException();
     }
 }

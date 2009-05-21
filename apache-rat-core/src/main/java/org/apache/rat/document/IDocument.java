@@ -19,6 +19,7 @@
 package org.apache.rat.document;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 
 public interface IDocument {
@@ -33,6 +34,13 @@ public interface IDocument {
      * a composite archive
      */
 	public Reader reader() throws IOException;
+    
+    /**
+     * Streams the document's contents.
+     * @return not null
+     * @throws IOException when stream could not be opened
+     */
+    public InputStream inputStream() throws IOException;
 
     /**
      * Gets data describing this resource.

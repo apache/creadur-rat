@@ -19,8 +19,10 @@
 package org.apache.rat.document.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 
 import org.apache.rat.document.IDocument;
@@ -57,4 +59,8 @@ public class FileDocument implements IDocument {
     public MetaData getMetaData() {
         return metaData;
     }    
+    
+    public InputStream inputStream() throws IOException {
+        return new FileInputStream(file);
+    }
 }
