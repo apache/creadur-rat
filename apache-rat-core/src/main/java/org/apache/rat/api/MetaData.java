@@ -18,6 +18,13 @@
  */
 package org.apache.rat.api;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+
 
 /**
  * Data about the subject.
@@ -25,6 +32,11 @@ package org.apache.rat.api;
 public class MetaData {
 
     private ContentType contentType;
+    /** 
+     * Only likely to be a small quantity of data 
+     * so trade some performance for simplicity.
+     */
+    private final List/*<Datum>*/ data;
     
     public MetaData() {
         this(null);
@@ -32,6 +44,7 @@ public class MetaData {
     
     public MetaData(final ContentType contentType) {
         this.contentType = contentType;
+        this.data = new ArrayList/*<Datum>*/(16);
     }
     
     /**
@@ -49,5 +62,101 @@ public class MetaData {
      */
     public void setContentType(final ContentType contentType) {
         this.contentType = contentType;
+    }
+    
+    /**
+     * Gets all data.
+     * @return unmodifiable view of the meta data.
+     */
+    public Collection getData() {
+        return Collections.unmodifiableCollection(data);
+    }
+    
+    /**
+     * Adds a new datum.
+     * Existing data with the same name are not replaced.
+     * @param datum
+     * @see #put(org.apache.rat.api.MetaData.Datum)
+     */
+    public void add(final Datum datum) {
+       data.add(datum); 
+    }
+    
+    /**
+     * Puts in a new datum replacing any existing data.
+     * Any current data matching the name are removed.
+     * @param datum not null
+     * @see #add(org.apache.rat.api.MetaData.Datum)
+     */
+    public void put(final Datum datum) {
+       clear(datum.getName()); 
+    }
+    
+    /**
+     * Removes all data matching the given name.
+     * @param name not null
+     * @return true if any data match, false otherwise
+     */
+    public boolean clear(final String name) {
+        boolean dataRemoved = false;
+        for (final Iterator it=data.iterator();it.hasNext();) {
+            final Datum datum = (Datum) it.next();
+            if (datum.getName().equals(name)) {
+                it.remove();
+                dataRemoved = true;
+            }
+        }
+        return dataRemoved;
+    }
+    
+    /**
+     * A datum.
+     */
+    public static final class Datum {
+        private final String name;
+        private final String value;
+        
+        /**
+         * Constructs a datum.
+         * @param name not null
+         * @param value not null
+         */
+        public Datum(final String name, final String value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        
+        /**
+         * Gets the name of the data type.
+         * To avoid collisions, it is recommended that URLs are used.
+         * @return not null
+         */
+        public String getName() {
+            return name;
+        }
+     
+        /**
+         * Data type value.
+         * @return not null
+         */
+        public String getValue() {
+            return value;
+        }
+
+        /**
+         * Constructs a <code>String</code> with all attributes
+         * in name = value format.
+         *
+         * @return a <code>String</code> representation 
+         * of this object.
+         */
+        public String toString()
+        {
+            return "Datum [ "
+                + "name ='" + this.name + "',"
+                + "value ='" + this.value + " "
+                + "']";
+        }
     }
 }
