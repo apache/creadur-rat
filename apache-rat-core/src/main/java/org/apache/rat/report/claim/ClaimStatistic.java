@@ -2,8 +2,6 @@ package org.apache.rat.report.claim;
 
 import java.util.Map;
 
-import org.apache.rat.report.claim.impl.xml.CustomClaim;
-
 
 /**
  * This class provides a numerical overview about
@@ -11,7 +9,7 @@ import org.apache.rat.report.claim.impl.xml.CustomClaim;
  */
 public class ClaimStatistic {
     private Map documentCategoryMap, licenseFamilyCodeMap, licenseFamilyNameMap;
-    private int numApproved, numUnApproved, numGenerated, numUnknown, numCustom;
+    private int numApproved, numUnApproved, numGenerated, numUnknown;
 
     /**
      * Returns the number of files with approved licenses.
@@ -75,22 +73,6 @@ public class ClaimStatistic {
      */
     public void setNumUnknown(int pNumUnknown) {
         numUnknown = pNumUnknown;
-    }
-
-    /**
-     * Returns the number of custom claims.
-     * @see CustomClaim
-     */
-    public int getNumCustom() {
-        return numCustom;
-    }
-
-    /**
-     * Sets the number of custom claims.
-     * @see CustomClaim
-     */
-    public void setNumCustom(int pNumCustom) {
-        numCustom = pNumCustom;
     }
 
     /**

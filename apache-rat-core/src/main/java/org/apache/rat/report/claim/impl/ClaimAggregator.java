@@ -9,7 +9,6 @@ import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.impl.xml.CustomClaim;
 
 
 /**
@@ -21,14 +20,10 @@ public class ClaimAggregator extends AbstractClaimReporter {
     private final Map numsByLicenseFamilyName = new HashMap();
     private final Map numsByLicenseFamilyCode = new HashMap();
     private final Map numsByFileType = new HashMap();
-    private int numApproved, numUnApproved, numGenerated, numCustom, numUnknown;
+    private int numApproved, numUnApproved, numGenerated, numUnknown;
 
     public ClaimAggregator(IClaimReporter pReporter) {
         reporter = pReporter;
-    }
-    
-    protected void handleClaim(CustomClaim pClaim) {
-        ++numCustom;
     }
 
     private void incMapValue(Map pMap, Object pKey) {
@@ -74,7 +69,6 @@ public class ClaimAggregator extends AbstractClaimReporter {
         pStatistic.setLicenseFileCodeMap(numsByLicenseFamilyCode);
         pStatistic.setLicenseFileNameMap(numsByLicenseFamilyName);
         pStatistic.setNumApproved(numApproved);
-        pStatistic.setNumCustom(numCustom);
         pStatistic.setNumGenerated(numGenerated);
         pStatistic.setNumUnApproved(numUnApproved);
         pStatistic.setNumUnknown(numUnknown);

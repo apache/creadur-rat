@@ -5,7 +5,6 @@ import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.impl.xml.CustomClaim;
 
 
 /**
@@ -31,16 +30,8 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
         // Does nothing
     }
 
-    protected void handleClaim(CustomClaim pClaim) {
-        // Does nothing
-    }
-
     protected void handleClaim(IClaim pClaim) {
-        if (pClaim instanceof CustomClaim) {
-            handleClaim((CustomClaim) pClaim);
-        } else {
-            throw new IllegalStateException("Unsupported type of claim: " + pClaim.getClass().getName());
-        }
+        throw new IllegalStateException("Unsupported type of claim: " + pClaim.getClass().getName());
     }
     
     public void claim(IClaim pClaim) throws RatReportFailedException {

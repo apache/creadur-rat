@@ -35,10 +35,6 @@ public class MockClaimReporter implements IClaimReporter {
         claims.add(pClaim);
     }
 
-    public CustomClaim getClaim(int index) {
-        return (CustomClaim) claims.get(index);
-    }
-
     public void report(IDocument document) throws RatReportFailedException {
     }
 }

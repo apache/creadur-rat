@@ -45,10 +45,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
         this.writer = writer;
     }
 
-    protected void handleClaim(CustomClaim pClaim)
-    throws IOException, RatReportFailedException {
-        writeClaim(pClaim.getPredicate(), pClaim.getObject(), pClaim.isLiteral());
-    }
 
     /**
      * Writes a single claim to the XML file.
@@ -69,11 +65,7 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     }
 
     protected void handleClaim(IClaim pClaim) throws IOException, RatReportFailedException {
-        if (pClaim instanceof CustomClaim) {
-            handleClaim((CustomClaim) pClaim);
-        } else {
-            throw new IllegalStateException("Invalid claim type: " + pClaim.getClass().getName());
-        }
+        throw new IllegalStateException("Invalid claim type: " + pClaim.getClass().getName());
     }
 
     public void claim(IClaim pClaim) throws RatReportFailedException {
