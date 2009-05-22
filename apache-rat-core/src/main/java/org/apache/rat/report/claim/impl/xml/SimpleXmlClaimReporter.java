@@ -26,7 +26,6 @@ import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.impl.FileTypeClaim;
-import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class SimpleXmlClaimReporter implements IClaimReporter {
@@ -52,11 +51,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     protected void handleClaim(FileTypeClaim pClaim)
             throws IOException, RatReportFailedException {
         writeClaim(FILE_TYPE_PREDICATE, pClaim.getType().getName(), false);
-    }
-
-    protected void handleClaim(LicenseApprovalClaim pClaim)
-            throws IOException, RatReportFailedException {
-        writeClaim(LICENSE_APPROVAL_PREDICATE, Boolean.toString(pClaim.isApproved()), false);
     }
 
 
@@ -86,8 +80,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     protected void handleClaim(IClaim pClaim) throws IOException, RatReportFailedException {
         if (pClaim instanceof FileTypeClaim) {
             handleClaim((FileTypeClaim) pClaim);
-        } else if (pClaim instanceof LicenseApprovalClaim) {
-            handleClaim((LicenseApprovalClaim) pClaim);
         } else if (pClaim instanceof CustomClaim) {
             handleClaim((CustomClaim) pClaim);
         } else {
@@ -135,6 +127,18 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
         writeLicenseFamilyCategory(metaData);
         writeHeaderCategory(metaData);
         writeLicenseFamilyName(metaData);
+        writeApprovedLicense(metaData);
+        
+    }
+
+    private void writeApprovedLicense(final MetaData metaData) throws IOException, RatReportFailedException {
+        final MetaData.Datum approvedLicenseDatum = metaData.get(MetaData.RAT_URL_APPROVED_LICENSE);
+        if (approvedLicenseDatum != null) {
+            final String approvedLicense = approvedLicenseDatum.getValue();
+            if (approvedLicense != null) {
+                writeClaim(LICENSE_APPROVAL_PREDICATE, approvedLicense, false);
+            }
+        }
     }
 
     private void writeLicenseFamilyName(final MetaData metaData) throws IOException, RatReportFailedException {

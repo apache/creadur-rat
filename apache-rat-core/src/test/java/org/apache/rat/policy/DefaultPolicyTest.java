@@ -23,8 +23,6 @@ import junit.framework.TestCase;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.IClaim;
-import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
 import org.apache.rat.report.claim.impl.xml.CustomClaim;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
@@ -33,11 +31,13 @@ public class DefaultPolicyTest extends TestCase {
 
     MockClaimReporter reporter;
     DefaultPolicy policy;
+    private IDocument subject;
     
     protected void setUp() throws Exception {
         super.setUp();
         reporter = new MockClaimReporter();
-        policy = new DefaultPolicy(reporter);
+        policy = new DefaultPolicy();
+        subject = new MockLocation("subject");
     }
 
     protected void tearDown() throws Exception {
@@ -45,7 +45,6 @@ public class DefaultPolicyTest extends TestCase {
     }
 
     public void testOtherPredicate() throws Exception {
-        final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
         policy.claim(new CustomClaim(subject, predicate, object, true));
@@ -53,61 +52,41 @@ public class DefaultPolicyTest extends TestCase {
     }
 
     public void testASLFamily() throws Exception {
-        final IDocument subject = new MockLocation("subject");
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0);
         policy.report(subject);
         policy.claim(null);
-        assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
 
     private void assertApproval(boolean pApproved) {
-        final IClaim claim = (IClaim) reporter.claims.get(0);
-        assertApproval(pApproved, claim);
+        assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(subject.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
     }
 
-    private void assertApproval(boolean pApproved, final IClaim claim) {
-        assertTrue("Expected LicenseApprovalClaim, got " + claim.getClass().getName(), claim instanceof LicenseApprovalClaim);
-        if (pApproved) {
-            assertTrue("Expected Approval", ((LicenseApprovalClaim) claim).isApproved());
-        } else {
-            assertFalse("Expected Decline", ((LicenseApprovalClaim) claim).isApproved());
-        }
-    }
-    
     public void testOASISFamily() throws Exception {
-        final IDocument subject = new MockLocation("subject");
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE);
         policy.report(subject);
         policy.claim(null);
-        assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testW3CFamily() throws Exception {
-        final IDocument subject = new MockLocation("subject");
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT);
         policy.report(subject);
         policy.claim(null);
-        assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testW3CDocFamily() throws Exception {
-        final IDocument subject = new MockLocation("subject");
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT);
         policy.report(subject);
         policy.claim(null);
-        assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testUnknownFamily() throws Exception {
-        final IDocument subject = new MockLocation("subject");
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
         policy.report(subject);
         policy.claim(null);
-        assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(false);
     }
 }

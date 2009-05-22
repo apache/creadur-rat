@@ -54,8 +54,8 @@ public class XmlReportFactory {
         } else {
             reporter = new ClaimAggregator(new SimpleXmlClaimReporter(writer));
         }
-        final DefaultPolicy policy = new DefaultPolicy(reporter, approvedLicenses);
-        final IClaimReporter[] reporters = {reporter, policy};
+        final DefaultPolicy policy = new DefaultPolicy(approvedLicenses);
+        final IClaimReporter[] reporters = {policy, reporter};
         final ClaimReporterMultiplexer multiplexer = new ClaimReporterMultiplexer(reporters);
         
         final IDocumentAnalyser analyser = 

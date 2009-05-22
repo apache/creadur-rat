@@ -22,7 +22,7 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
         // Does nothing
     }
 
-    protected void handleClaim(LicenseApprovalClaim pClaim) {
+    protected void handleApprovedLicenseClaim(String licenseApproved) {
         // Does nothing
     }
 
@@ -42,8 +42,6 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
         writeDocumentClaimsWhenNecessary(subject);
         if (pClaim instanceof FileTypeClaim) {
             handleClaim((FileTypeClaim) pClaim);
-        } else if (pClaim instanceof LicenseApprovalClaim) {
-            handleClaim((LicenseApprovalClaim) pClaim);
         } else if (pClaim instanceof CustomClaim) {
             handleClaim((CustomClaim) pClaim);
         } else {
@@ -56,14 +54,30 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
     }
 
     private void writeDocumentClaim(IDocument subject)  {
-        final MetaData.Datum headerCategoryDatum = subject.getMetaData().get(MetaData.RAT_URL_HEADER_CATEGORY);
+        final MetaData metaData = subject.getMetaData();
+        writeHeaderCategory(metaData);
+        writeLicenseFamilyName(metaData);
+        final MetaData.Datum approvedLicenseDatum = metaData.get(MetaData.RAT_URL_APPROVED_LICENSE);
+        if (approvedLicenseDatum != null) {
+            final String approvedLicense = approvedLicenseDatum.getValue();
+            if (approvedLicense != null) {
+                handleApprovedLicenseClaim(approvedLicense);
+            }
+        }
+    }
+
+    private void writeHeaderCategory(final MetaData metaData) {
+        final MetaData.Datum headerCategoryDatum = metaData.get(MetaData.RAT_URL_HEADER_CATEGORY);
         if (headerCategoryDatum != null) {
             final String headerCategory = headerCategoryDatum.getValue();
             if (headerCategory != null) {
                 handleHeaderCategoryClaim(headerCategory);
             }
         }
-        final MetaData.Datum licenseFamilyNameDatum = subject.getMetaData().get(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
+    }
+
+    private void writeLicenseFamilyName(final MetaData metaData) {
+        final MetaData.Datum licenseFamilyNameDatum = metaData.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
         if (licenseFamilyNameDatum != null) {
             final String licenseFamilyName = licenseFamilyNameDatum.getName();
             if (licenseFamilyName != null) {

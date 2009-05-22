@@ -19,15 +19,14 @@
 package org.apache.rat.policy;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.apache.rat.api.MetaData;
+import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
 
 public class DefaultPolicy implements IClaimReporter {
     private static final String[] APPROVED_LICENSES = {
@@ -49,22 +48,20 @@ public class DefaultPolicy implements IClaimReporter {
         }
         return results;
     }
-    
-    private final IClaimReporter reporter;
+    ;
     private final String[] approvedLicenseNames;
     private IDocument subject;
     private boolean testedDocument = false;
     
-    public DefaultPolicy(final IClaimReporter reporter) {
-        this(reporter, APPROVED_LICENSES);
+    public DefaultPolicy() {
+        this(APPROVED_LICENSES);
     }
     
-    public DefaultPolicy(final IClaimReporter reporter, final ILicenseFamily[] approvedLicenses) {
-        this(reporter, toNames(approvedLicenses));
+    public DefaultPolicy(final ILicenseFamily[] approvedLicenses) {
+        this(toNames(approvedLicenses));
     }
 
-    public DefaultPolicy(final IClaimReporter reporter, final String[] approvedLicenseNames) {
-        this.reporter = reporter;
+    public DefaultPolicy(final String[] approvedLicenseNames) {
         if (approvedLicenseNames == null) {
             this.approvedLicenseNames = APPROVED_LICENSES;
         } else {
@@ -86,14 +83,20 @@ public class DefaultPolicy implements IClaimReporter {
             if (nameDatum != null) {
                 final String name = nameDatum.getValue();
                 final boolean isApproved = Arrays.binarySearch(approvedLicenseNames, name) >= 0;
-                reportLicenseApprovalClaim(subject, isApproved, reporter);
+                reportLicenseApprovalClaim(subject, isApproved);
             }
             testedDocument = true;
         }
     }
 
-    public void reportLicenseApprovalClaim(final IDocument subject, final boolean isAcceptable, final IClaimReporter reporter) throws RatReportFailedException {
-        reporter.claim(new LicenseApprovalClaim(subject, isAcceptable));
+    public void reportLicenseApprovalClaim(final IDocument subject, final boolean isAcceptable) throws RatReportFailedException {
+        final Datum datum;
+        if (isAcceptable) {
+            datum = MetaData.RAT_APPROVED_LICENSE_DATIM_TRUE;
+        } else {
+            datum = MetaData.RAT_APPROVED_LICENSE_DATIM_FALSE;
+        }
+        subject.getMetaData().set(datum);
     }
     
     

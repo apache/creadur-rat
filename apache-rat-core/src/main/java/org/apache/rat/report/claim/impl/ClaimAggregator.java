@@ -46,8 +46,8 @@ public class ClaimAggregator extends AbstractClaimReporter {
         incMapValue(numsByFileType, pClaim.getType());
     }
 
-    protected void handleClaim(LicenseApprovalClaim pClaim) {
-        if (pClaim.isApproved()) {
+    protected void handleApprovedLicenseClaim(String licenseApproved) {
+        if (MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(licenseApproved)) {
             numApproved++;
         } else {
             numUnApproved++;

@@ -43,7 +43,7 @@ public class MetaData {
     public static final String RAT_URL_DOCUMENT_CATEGORY = RAT_BASE_URL + "#FileCategory";
     
     // Header Categories
-    public static final String RAT_URL_HEADER_CATEGORY= RAT_BASE_URL + "#HeaderCategory";
+    public static final String RAT_URL_HEADER_CATEGORY = RAT_BASE_URL + "#HeaderCategory";
     
     // License Family Categories
     public static final String RAT_URL_LICENSE_FAMILY_CATEGORY= RAT_BASE_URL + "#LicenseFamilyCategory";
@@ -89,7 +89,14 @@ public class MetaData {
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN); 
     
     // Header sample
-    public static final String RAT_URL_HEADER_SAMPLE = RAT_BASE_URL + "HeaderSample";
+    public static final String RAT_URL_HEADER_SAMPLE = RAT_BASE_URL + "#HeaderSample";
+    
+    // License Approval
+    public static final String RAT_URL_APPROVED_LICENSE = RAT_BASE_URL + "#ApprovedLicense";
+    public static final String RAT_APPROVED_LICENSE_VALUE_TRUE = Boolean.TRUE.toString();
+    public static final String RAT_APPROVED_LICENSE_VALUE_FALSE = Boolean.FALSE.toString();
+    public static final Datum RAT_APPROVED_LICENSE_DATIM_TRUE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_TRUE);
+    public static final Datum RAT_APPROVED_LICENSE_DATIM_FALSE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_FALSE);
     
     private ContentType contentType;
     /** 
@@ -167,6 +174,23 @@ public class MetaData {
                 result = next;
                 break;
             }
+        }
+        return result;
+    }
+    
+    /**
+     * Gets the value of the first datum matching the given name.
+     * @param name not null
+     * @return the value of the matchin datum first added when there is any matching data,
+     * null otherwise
+     */
+    public String value(final String name) {
+        final Datum datum = get(name);
+        final String result;
+        if (datum == null) {
+            result = null;
+        } else {
+            result = datum.getValue();
         }
         return result;
     }
