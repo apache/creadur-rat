@@ -26,12 +26,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.RatReportFailedException;
 
 
 /**
@@ -59,7 +59,7 @@ class FilesReportable implements IReportable
         this.files = files;
     }
 
-    public void run( RatReport report ) throws RatReportFailedException
+    public void run( RatReport report ) throws RatException
     {
         FileDocument document = new FileDocument();
         for ( int i = 0; i < files.length; i++ )
@@ -70,7 +70,7 @@ class FilesReportable implements IReportable
         }
     }
 
-    private class FileDocument implements IDocument
+    private class FileDocument implements Document
     {
         private File file;
         private final MetaData metaData = new MetaData();

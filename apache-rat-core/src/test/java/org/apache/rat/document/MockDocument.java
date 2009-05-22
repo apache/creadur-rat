@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
-public class MockDocument implements IDocument {
+public class MockDocument implements Document {
 
     public Reader reader;
     public String name;

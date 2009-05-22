@@ -20,9 +20,9 @@ package org.apache.rat.policy;
 
 import java.util.Arrays;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
-import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicenseFamily;
@@ -69,7 +69,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
         Arrays.sort(this.approvedLicenseNames);
     }
 
-    public void reportLicenseApprovalClaim(final IDocument subject, final boolean isAcceptable) {
+    public void reportLicenseApprovalClaim(final Document subject, final boolean isAcceptable) {
         final Datum datum;
         if (isAcceptable) {
             datum = MetaData.RAT_APPROVED_LICENSE_DATIM_TRUE;
@@ -79,7 +79,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
         subject.getMetaData().set(datum);
     }
     
-    public void analyse(final IDocument subject) throws RatDocumentAnalysisException {
+    public void analyse(final Document subject) throws RatDocumentAnalysisException {
         if (subject != null) {
             final String name = subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
             if (name != null) {

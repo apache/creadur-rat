@@ -3,11 +3,11 @@ package org.apache.rat.report.claim.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.claim.IClaimReporter;
 
 
 /**
@@ -15,13 +15,13 @@ import org.apache.rat.report.claim.IClaimReporter;
  * of claims.
  */
 public class ClaimAggregator extends AbstractClaimReporter {
-    private final IClaimReporter reporter;
+    private final Reporter reporter;
     private final Map numsByLicenseFamilyName = new HashMap();
     private final Map numsByLicenseFamilyCode = new HashMap();
     private final Map numsByFileType = new HashMap();
     private int numApproved, numUnApproved, numGenerated, numUnknown;
 
-    public ClaimAggregator(IClaimReporter pReporter) {
+    public ClaimAggregator(Reporter pReporter) {
         reporter = pReporter;
     }
 
@@ -74,7 +74,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
     }
 
 
-    public void report(IDocument document) throws RatReportFailedException {
+    public void report(Document document) throws RatException {
         super.report(document);
         if (reporter != null) {
             reporter.report(document);

@@ -18,20 +18,20 @@
  */ 
 package org.apache.rat.report.claim.util;
 
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.api.Reporter;
 
-public class ClaimReporterMultiplexer implements IClaimReporter {
+public class ClaimReporterMultiplexer implements Reporter {
 
-    private final IClaimReporter[] reporters;
+    private final Reporter[] reporters;
         
-    public ClaimReporterMultiplexer(final IClaimReporter[] reporters) {
+    public ClaimReporterMultiplexer(final Reporter[] reporters) {
         super();
         this.reporters = reporters;
     }
 
-    public void report(IDocument document) throws RatReportFailedException {
+    public void report(Document document) throws RatException {
         final int length = reporters.length;
         for (int i=0;i<length;i++) {
             reporters[i].report(document);

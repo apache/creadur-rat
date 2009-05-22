@@ -18,12 +18,12 @@
  */ 
 package org.apache.rat.report.claim.impl.xml;
 
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.api.Reporter;
 
-public class MockClaimReporter implements IClaimReporter {
+public class MockClaimReporter implements Reporter {
 
-    public void report(IDocument document) throws RatReportFailedException {
+    public void report(Document document) throws RatException {
     }
 }

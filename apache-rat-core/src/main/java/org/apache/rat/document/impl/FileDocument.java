@@ -25,14 +25,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
 
 /**
  * Document wrapping a file of undetermined composition.
  *
  */
-public class FileDocument implements IDocument {
+public class FileDocument implements Document {
 
     private final File file;
     private final String name;

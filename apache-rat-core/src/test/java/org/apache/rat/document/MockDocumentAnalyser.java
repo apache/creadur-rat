@@ -21,11 +21,13 @@ package org.apache.rat.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.rat.api.Document;
+
 public class MockDocumentAnalyser implements IDocumentAnalyser {
 
     public List matches = new ArrayList();
     
-    public void analyse(IDocument document) throws RatDocumentAnalysisException {
+    public void analyse(Document document) throws RatDocumentAnalysisException {
         matches.add(document);
     }
 

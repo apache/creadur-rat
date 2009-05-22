@@ -20,7 +20,7 @@ package org.apache.rat.document.impl.guesser;
 
 import java.util.Locale;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
 
 public class ArchiveGuesser {
     
@@ -31,7 +31,7 @@ public class ArchiveGuesser {
         "rar", "war",
     };
 
-    public static final boolean isArchive(final IDocument document) {
+    public static final boolean isArchive(final Document document) {
         
         final String name = document.getName();
         final boolean result = isArchive(name);

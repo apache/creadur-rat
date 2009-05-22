@@ -20,13 +20,13 @@ package org.apache.rat.report.claim.impl.xml;
 
 import java.io.IOException;
 
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
-public class SimpleXmlClaimReporter implements IClaimReporter {
+public class SimpleXmlClaimReporter implements Reporter {
     public static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
     public static final String LICENSE_FAMILY_PREDICATE = "license-family";
     public static final String HEADER_SAMPLE_PREDICATE = "header-sample";
@@ -52,10 +52,10 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
      * @param pLiteral Whether to write the object as an element (true),
      *   or an attribute (false).
      * @throws IOException An I/O error occurred while writing the claim.
-     * @throws RatReportFailedException Another error occurred while writing the claim.
+     * @throws RatException Another error occurred while writing the claim.
      */
     protected void writeClaim(String pPredicate, String pObject, boolean pLiteral)
-    throws IOException, RatReportFailedException {
+    throws IOException, RatException {
         if (pLiteral) {
             writer.openElement(pPredicate).content(pObject).closeElement();
         } else {
@@ -63,7 +63,7 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
         }
     }
 
-    public void report(final IDocument subject) throws RatReportFailedException {
+    public void report(final Document subject) throws RatException {
         try {
             if (firstTime) {
                 firstTime = false;
@@ -73,12 +73,12 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
             writer.openElement("resource").attribute(NAME, subject.getName());
             writeDocumentClaims(subject);
         } catch (IOException e) {
-            throw new RatReportFailedException("XML writing failure: " + e.getMessage()
+            throw new RatException("XML writing failure: " + e.getMessage()
                     + " subject: " + subject, e);
         }
     }
 
-    private void writeDocumentClaims(final IDocument subject) throws IOException, RatReportFailedException {
+    private void writeDocumentClaims(final Document subject) throws IOException, RatException {
         final MetaData metaData = subject.getMetaData();
         writeHeaderSample(metaData);
         writeLicenseFamilyCategory(metaData);
@@ -88,42 +88,42 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
         writeDocumentCategory(metaData);
     }
 
-    private void writeApprovedLicense(final MetaData metaData) throws IOException, RatReportFailedException {
+    private void writeApprovedLicense(final MetaData metaData) throws IOException, RatException {
         final String approvedLicense = metaData.value(MetaData.RAT_URL_APPROVED_LICENSE);
         if (approvedLicense != null) {
             writeClaim(LICENSE_APPROVAL_PREDICATE, approvedLicense, false);
         }
     }
 
-    private void writeLicenseFamilyName(final MetaData metaData) throws IOException, RatReportFailedException {
+    private void writeLicenseFamilyName(final MetaData metaData) throws IOException, RatException {
         final String licenseFamilyName = metaData.value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
         if (licenseFamilyName != null) {
             writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyName, false);
         }
     }
 
-    private void writeHeaderCategory(final MetaData metaData) throws IOException, RatReportFailedException {
+    private void writeHeaderCategory(final MetaData metaData) throws IOException, RatException {
         final String headerCategory = metaData.value(MetaData.RAT_URL_HEADER_CATEGORY);
         if (headerCategory != null) {
             writeClaim(HEADER_TYPE_PREDICATE, headerCategory, false);
         }
     }
 
-    private void writeLicenseFamilyCategory(final MetaData metaData) throws IOException, RatReportFailedException {
+    private void writeLicenseFamilyCategory(final MetaData metaData) throws IOException, RatException {
         final String licenseFamilyCategory = metaData.value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
         if (licenseFamilyCategory != null) {
             writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyCategory, false);
         }
     }
 
-    private void writeHeaderSample(final MetaData metaData) throws IOException, RatReportFailedException {
+    private void writeHeaderSample(final MetaData metaData) throws IOException, RatException {
         final String sample = metaData.value(MetaData.RAT_URL_HEADER_SAMPLE);
         if (sample != null) {
             writeClaim(HEADER_SAMPLE_PREDICATE, sample, true);
         }
     }
 
-    private void writeDocumentCategory(final MetaData metaData) throws IOException, RatReportFailedException {
+    private void writeDocumentCategory(final MetaData metaData) throws IOException, RatException {
         final String documentCategory = metaData.value(MetaData.RAT_URL_DOCUMENT_CATEGORY);
         if (documentCategory != null) {
             writeClaim(FILE_TYPE_PREDICATE, documentCategory, false);

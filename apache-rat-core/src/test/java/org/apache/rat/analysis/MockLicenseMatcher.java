@@ -21,8 +21,8 @@ package org.apache.rat.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.Reporter;
 
 public class MockLicenseMatcher implements IHeaderMatcher {
 
@@ -30,7 +30,7 @@ public class MockLicenseMatcher implements IHeaderMatcher {
 	public int resets = 0;
     public boolean result = true;
 	
-	public boolean match(IDocument subject, String line, IClaimReporter reporter) {
+	public boolean match(Document subject, String line, Reporter reporter) {
 		lines.add(line);
 		return result;  
 	}

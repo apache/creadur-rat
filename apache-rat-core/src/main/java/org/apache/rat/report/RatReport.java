@@ -18,13 +18,14 @@
  */ 
 package org.apache.rat.report;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
 
 public interface RatReport {
 
-    public void startReport() throws RatReportFailedException;
+    public void startReport() throws RatException;
     
-    public void report(IDocument document) throws RatReportFailedException;
+    public void report(Document document) throws RatException;
     
-    public void endReport() throws RatReportFailedException;
+    public void endReport() throws RatException;
 }

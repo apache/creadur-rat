@@ -19,14 +19,14 @@
 package org.apache.rat.report.analyser;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
-import org.apache.rat.report.claim.IClaimReporter;
 
 /**
  * Creates default analysers.
@@ -34,7 +34,7 @@ import org.apache.rat.report.claim.IClaimReporter;
  */
 public class DefaultAnalyserFactory {
   
-    public static final IDocumentAnalyser createDefaultAnalyser(final IClaimReporter reporter, 
+    public static final IDocumentAnalyser createDefaultAnalyser(final Reporter reporter, 
             final IHeaderMatcher matcher) {
         
         return new DefaultAnalyser(reporter, matcher);
@@ -42,16 +42,16 @@ public class DefaultAnalyserFactory {
     
     private final static class DefaultAnalyser implements IDocumentAnalyser {
 
-        private final IClaimReporter reporter;
+        private final Reporter reporter;
         private final IHeaderMatcher matcher;
         
-        public DefaultAnalyser(final IClaimReporter reporter, final IHeaderMatcher matcher) {
+        public DefaultAnalyser(final Reporter reporter, final IHeaderMatcher matcher) {
             super();
             this.reporter = reporter;
             this.matcher = matcher;
         }
 
-        public void analyse(IDocument subject) throws RatDocumentAnalysisException {
+        public void analyse(Document subject) throws RatDocumentAnalysisException {
             final MetaData.Datum documentCategory;
             if (NoteGuesser.isNote(subject)) {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;

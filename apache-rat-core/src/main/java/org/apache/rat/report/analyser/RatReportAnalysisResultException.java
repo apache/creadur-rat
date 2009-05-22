@@ -18,8 +18,8 @@
  */ 
 package org.apache.rat.report.analyser;
 
+import org.apache.rat.api.RatException;
 import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.report.RatReportFailedException;
 
 public class RatReportAnalysisResultException extends RatDocumentAnalysisException {
     
@@ -30,11 +30,11 @@ public class RatReportAnalysisResultException extends RatDocumentAnalysisExcepti
         super(MESSAGE);
     }
 
-    public RatReportAnalysisResultException(RatReportFailedException cause) {
+    public RatReportAnalysisResultException(RatException cause) {
         super(MESSAGE, cause);
     }
 
-    public RatReportAnalysisResultException(String msg, RatReportFailedException cause) {
+    public RatReportAnalysisResultException(String msg, RatException cause) {
         super(msg, cause);
     }
 }

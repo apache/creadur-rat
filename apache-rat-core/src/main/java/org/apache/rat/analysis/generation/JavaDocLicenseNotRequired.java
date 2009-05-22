@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.claim.IClaimReporter;
 
 /**
  * JavaDocs are generated and so no license is required.
@@ -36,7 +36,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
     
     private static final Pattern JAVADOC_REGEX = Pattern.compile(JAVADOC_REGEX_DEFN);
     
-    public boolean match(IDocument subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException {
         boolean result = JAVADOC_REGEX.matcher(line).matches();
         if (result) {
             reportOnLicense(subject, reporter);
@@ -44,7 +44,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
         return result;
     }
 
-    private void reportOnLicense(IDocument subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    private void reportOnLicense(Document subject, Reporter reporter) throws RatHeaderAnalysisException {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN);
     }
     

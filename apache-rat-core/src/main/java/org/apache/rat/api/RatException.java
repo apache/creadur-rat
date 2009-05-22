@@ -16,18 +16,25 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.report.claim;
+package org.apache.rat.api;
 
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
+public class RatException extends Exception {
 
-public interface IClaimReporter {
-    
-    /**
-     * Starts a report on the given document.
-     * All claims concern this document until this is called next.
-     * @param subject not null
-     * @throws RatReportFailedException
-     */
-    void report(IDocument subject) throws RatReportFailedException;
+    private static final long serialVersionUID = 4940711222435919034L;
+
+    public RatException() {
+        super();
+    }
+
+    public RatException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public RatException(String message) {
+        super(message);
+    }
+
+    public RatException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -27,7 +27,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
 
 
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
@@ -37,7 +37,7 @@ public class MonolithicFileDocument extends AbstractMonolithicDocument {
      * Creates a new instance. The document is read from the
      * given URL.
      */
-    public static IDocument newInstance(final URL url) {
+    public static Document newInstance(final URL url) {
     	if ("file".equals(url.getProtocol())) {
     		final File f = new File(url.getFile());
     		return new MonolithicFileDocument(f);

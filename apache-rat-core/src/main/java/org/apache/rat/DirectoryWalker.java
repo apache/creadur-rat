@@ -23,11 +23,11 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.RatReportFailedException;
 
 /**
  * Walks directories.
@@ -79,9 +79,9 @@ public class DirectoryWalker implements IReportable {
 	   * 
 	   * @param report The report to process the directory with
 	   * @param file the directory to process
-	   * @throws RatReportFailedException
+	   * @throws RatException
 	   */
-    private void processDirectory(RatReport  report, final File file) throws RatReportFailedException {
+    private void processDirectory(RatReport  report, final File file) throws RatException {
         if (!isRestricted(file)) {
             process(report, file);
         }
@@ -94,7 +94,7 @@ public class DirectoryWalker implements IReportable {
      * @param report the defined RatReport to run on this Directory walker.
      * 
      */
-    public void run(final RatReport report) throws RatReportFailedException {
+    public void run(final RatReport report) throws RatException {
         process(report, file);
     }
 
@@ -103,9 +103,9 @@ public class DirectoryWalker implements IReportable {
      * 
      * @param report the report to use in processing
      * @param file the run the report against
-     * @throws RatReportFailedException
+     * @throws RatException
      */
-    private void process(final RatReport report, final File file) throws RatReportFailedException {
+    private void process(final RatReport report, final File file) throws RatException {
         final File[] files = file.listFiles();
         Arrays.sort(files, COMPARATOR);
         if (files != null) {
@@ -120,9 +120,9 @@ public class DirectoryWalker implements IReportable {
      * 
      * @param report the report to use in processing
      * @param files the files to process (only directories will be processed)
-     * @throws RatReportFailedException
+     * @throws RatException
      */
-    private void processDirectories(final RatReport report, final File[] files) throws RatReportFailedException {
+    private void processDirectories(final RatReport report, final File[] files) throws RatException {
         for (int i = 0; i < files.length; i++) {
             final File file = files[i];
             final String name = file.getName();
@@ -139,9 +139,9 @@ public class DirectoryWalker implements IReportable {
      * 
      * @param report the report to use in processing
      * @param files the files to process (only files will be processed)
-     * @throws RatReportFailedException
+     * @throws RatException
      */
-    private void processNonDirectories(final RatReport report, final File[] files) throws RatReportFailedException {
+    private void processNonDirectories(final RatReport report, final File[] files) throws RatException {
         for (int i = 0; i < files.length; i++) {
             final File file = files[i];
             final String name = file.getName();
@@ -158,11 +158,11 @@ public class DirectoryWalker implements IReportable {
      * 
      * @param report the report to process the file with
      * @param file the file to be reported on
-     * @throws RatReportFailedException
+     * @throws RatException
      */
-    private void report(final RatReport report, File file) throws RatReportFailedException {
+    private void report(final RatReport report, File file) throws RatException {
 
-        IDocument document = new FileDocument(file);
+        Document document = new FileDocument(file);
         report.report(document);
 
     }

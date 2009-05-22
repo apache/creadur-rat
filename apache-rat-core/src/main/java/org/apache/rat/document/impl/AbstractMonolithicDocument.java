@@ -18,14 +18,14 @@
  */ 
 package org.apache.rat.document.impl;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
 
 
 /**
  * Abstract base class for monolithic documents.
  */
-public abstract class AbstractMonolithicDocument implements IDocument {
+public abstract class AbstractMonolithicDocument implements Document {
 	private final String name;
 	private final MetaData metaData;
 

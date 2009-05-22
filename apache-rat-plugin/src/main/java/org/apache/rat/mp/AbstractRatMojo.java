@@ -39,9 +39,9 @@ import org.apache.rat.Defaults;
 import org.apache.rat.Report;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.api.RatException;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
-import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.codehaus.plexus.util.DirectoryScanner;
 
@@ -353,7 +353,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
-        catch ( RatReportFailedException e )
+        catch ( RatException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }

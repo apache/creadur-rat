@@ -1,17 +1,17 @@
 package org.apache.rat.report.claim.impl;
 
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaimReporter;
 
 
 /**
- * Abstract base implementation of {@link IClaimReporter}.
+ * Abstract base implementation of {@link Reporter}.
  * It is strongly suggested, that implementations derive from
  * this class.
  */
-public abstract class AbstractClaimReporter implements IClaimReporter {
+public abstract class AbstractClaimReporter implements Reporter {
     
     protected void handleDocumentCategoryClaim(String documentCategoryName) {
         // Does nothing
@@ -29,7 +29,7 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
         // Does nothing
     }
 
-    private void writeDocumentClaim(IDocument subject)  {
+    private void writeDocumentClaim(Document subject)  {
         final MetaData metaData = subject.getMetaData();
         writeHeaderCategory(metaData);
         writeLicenseFamilyName(metaData);
@@ -77,7 +77,7 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
         }
     }
     
-    public void report(IDocument subject) throws RatReportFailedException {
+    public void report(Document subject) throws RatException {
         writeDocumentClaim(subject);
     }
 }

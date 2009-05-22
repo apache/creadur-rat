@@ -19,6 +19,7 @@
 package org.apache.rat.document;
 
 import org.apache.commons.collections.Transformer;
+import org.apache.rat.api.Document;
 
 public class ToNameTransformer implements Transformer {
 
@@ -30,8 +31,8 @@ public class ToNameTransformer implements Transformer {
     
     public Object transform(Object subject) {
         Object result = null;
-        if (subject != null && subject instanceof IDocument) {
-            IDocument location = (IDocument) subject;
+        if (subject != null && subject instanceof Document) {
+            Document location = (Document) subject;
             result = location.getName();
         }
         return result;

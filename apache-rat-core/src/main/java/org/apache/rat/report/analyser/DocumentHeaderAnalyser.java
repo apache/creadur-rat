@@ -23,24 +23,24 @@ import java.io.Reader;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.report.claim.IClaimReporter;
 
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
     private final IHeaderMatcher matcher;
     // TODO: coupling to unknown license should be replaced
-    private final IClaimReporter reporter;
+    private final Reporter reporter;
     
-    public DocumentHeaderAnalyser(final IHeaderMatcher matcher, final IClaimReporter reporter) {
+    public DocumentHeaderAnalyser(final IHeaderMatcher matcher, final Reporter reporter) {
         super();
         this.matcher = matcher;
         this.reporter = reporter;
     }
 
-    public void analyse(IDocument document) throws RatDocumentAnalysisException {
+    public void analyse(Document document) throws RatDocumentAnalysisException {
         Reader reader = null;
         try {
             reader = document.reader();

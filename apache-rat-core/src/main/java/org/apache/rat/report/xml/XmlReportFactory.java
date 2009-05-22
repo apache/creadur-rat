@@ -19,16 +19,16 @@
 package org.apache.rat.report.xml;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.analyser.DefaultAnalyserFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.impl.ClaimAggregator;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -48,7 +48,7 @@ public class XmlReportFactory {
             final ClaimStatistic pStatistic) {
         // TODO: this isn't very elegant :-/
         // TODO: should really pass in analysers but this means injecting reporter
-        final IClaimReporter reporter;
+        final Reporter reporter;
         if (pStatistic == null) {
             reporter = new SimpleXmlClaimReporter(writer);
         } else {
@@ -66,15 +66,15 @@ public class XmlReportFactory {
             return result;
         }
         return new RatReport(){
-            public void endReport() throws RatReportFailedException {
+            public void endReport() throws RatException {
                 result.endReport();
                 ((ClaimAggregator) reporter).fillClaimStatistic(pStatistic);
             }
-            public void report(IDocument pDocument)
-                    throws RatReportFailedException {
+            public void report(Document pDocument)
+                    throws RatException {
                 result.report(pDocument);
             }
-            public void startReport() throws RatReportFailedException {
+            public void startReport() throws RatException {
                 result.startReport();
             }
         };

@@ -24,11 +24,11 @@ import java.io.Reader;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
 import org.apache.rat.test.utils.Resources;
 
 public class SingularFileDocumentTest extends TestCase {
-	private IDocument document;
+	private Document document;
 	private File file;
     
     protected void setUp() throws Exception {

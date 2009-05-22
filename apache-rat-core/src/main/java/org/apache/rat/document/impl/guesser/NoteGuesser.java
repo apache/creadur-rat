@@ -21,7 +21,7 @@ package org.apache.rat.document.impl.guesser;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
 
 public class NoteGuesser {
 
@@ -67,7 +67,7 @@ public class NoteGuesser {
         return result;
     }
 
-    public static final boolean isNote(final IDocument document) {
+    public static final boolean isNote(final Document document) {
         final String name = document.getName();
         final boolean result = isNote(name);
         return result;

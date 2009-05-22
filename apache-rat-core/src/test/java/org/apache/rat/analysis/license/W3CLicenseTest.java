@@ -20,7 +20,7 @@ package org.apache.rat.analysis.license;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
@@ -49,7 +49,7 @@ public class W3CLicenseTest extends TestCase {
     }
 
     public void testMatch() throws Exception {
-        final IDocument subject = new MockLocation("subject");
+        final Document subject = new MockLocation("subject");
         assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL, reporter));
         assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_COMMENTED, reporter));
         assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_XML, reporter));

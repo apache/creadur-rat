@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
-public class MockLocation implements IDocument {
+public class MockLocation implements Document {
 
     public String name;
     public String url;

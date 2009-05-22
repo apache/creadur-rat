@@ -38,8 +38,8 @@ import org.apache.tools.ant.util.FileUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.api.RatException;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.report.RatReportFailedException;
 
 /**
  * A basic Ant task that generates a report on all files specified by
@@ -129,7 +129,7 @@ public class Report extends Task {
             throw new BuildException(e);
         } catch (InterruptedException e) {
             throw new BuildException(e);
-        } catch (RatReportFailedException e) {
+        } catch (RatException e) {
             throw new BuildException(e);
         } finally {
             if (reportFile != null) {
@@ -156,9 +156,9 @@ public class Report extends Task {
      * Writes the report to the given stream.
      * @throws InterruptedException 
      * @throws TransformerException 
-     * @throws RatReportFailedException 
+     * @throws RatException 
      */
-    private void createReport(PrintWriter out) throws IOException, TransformerException, InterruptedException, RatReportFailedException {
+    private void createReport(PrintWriter out) throws IOException, TransformerException, InterruptedException, RatException {
         HeaderMatcherMultiplexer m = new HeaderMatcherMultiplexer(getLicenseMatchers());
         ResourceCollectionContainer rcElement =
             new ResourceCollectionContainer(nestedResources);

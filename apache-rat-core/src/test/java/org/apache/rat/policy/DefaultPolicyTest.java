@@ -20,8 +20,8 @@ package org.apache.rat.policy;
 
 import junit.framework.TestCase;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
@@ -30,7 +30,7 @@ public class DefaultPolicyTest extends TestCase {
 
     MockClaimReporter reporter;
     DefaultPolicy policy;
-    private IDocument subject;
+    private Document subject;
     
     protected void setUp() throws Exception {
         super.setUp();

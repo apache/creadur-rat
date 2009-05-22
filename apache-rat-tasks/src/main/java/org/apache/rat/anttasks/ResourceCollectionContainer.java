@@ -25,12 +25,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Iterator;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.RatReportFailedException;
 import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;
@@ -46,7 +46,7 @@ class ResourceCollectionContainer implements IReportable {
         this.rc = rc;
     }
 
-    public void run(RatReport report) throws RatReportFailedException {
+    public void run(RatReport report) throws RatException {
         ResourceDocument document = new ResourceDocument();
         for (Iterator iter = rc.iterator(); iter.hasNext(); ) {
             Resource r = (Resource) iter.next();
@@ -59,7 +59,7 @@ class ResourceCollectionContainer implements IReportable {
             }
         }
     }
-    private class ResourceDocument implements IDocument {
+    private class ResourceDocument implements Document {
 
         private Resource resource;
         private final MetaData metaData = new MetaData();

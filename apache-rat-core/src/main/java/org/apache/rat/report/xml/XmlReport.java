@@ -20,39 +20,39 @@ package org.apache.rat.report.xml;
 
 import java.io.IOException;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 class XmlReport implements RatReport {
    
     private final IDocumentAnalyser analyser;
     private final IXmlWriter writer;
-    private final IClaimReporter reporter;
+    private final Reporter reporter;
     
-    public XmlReport(final IXmlWriter writer, IDocumentAnalyser analyser, final IClaimReporter reporter) {
+    public XmlReport(final IXmlWriter writer, IDocumentAnalyser analyser, final Reporter reporter) {
         this.analyser = analyser;
         this.writer = writer;
         this.reporter = reporter;
     }
 
-    public void startReport() throws RatReportFailedException {
+    public void startReport() throws RatException {
         try {
             writer.openElement("rat-report");
         } catch (IOException e) {
-            throw new RatReportFailedException("Cannot open start element", e);
+            throw new RatException("Cannot open start element", e);
         }
     }
 
-    public void endReport() throws RatReportFailedException {
+    public void endReport() throws RatException {
         try {
             writer.closeDocument();
         } catch (IOException e) {
-            throw new RatReportFailedException("Cannot close last element", e);
+            throw new RatException("Cannot close last element", e);
         }
     }
 
@@ -62,12 +62,12 @@ class XmlReport implements RatReport {
      * 
      * @param document the document to report on.
      */
-    public void report(IDocument subject) throws RatReportFailedException {
+    public void report(Document subject) throws RatException {
         try {
             analyser.analyse(subject);
             reporter.report(subject);
         } catch (RatDocumentAnalysisException e) {
-            throw new RatReportFailedException("Analysis failed", e);
+            throw new RatException("Analysis failed", e);
         }
     }    
 }

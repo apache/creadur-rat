@@ -23,7 +23,7 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.document.IDocument;
+import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.test.utils.Resources;
@@ -68,7 +68,7 @@ public class OASISLicenseTest extends TestCase {
         BufferedReader in = new BufferedReader(new StringReader(LICENSE));
         String line = in.readLine();
         boolean result = false;
-        final IDocument subject = new MockLocation("subject");
+        final Document subject = new MockLocation("subject");
         while (line != null) {
             result = license.match(subject, line, reporter);
             line = in.readLine();
@@ -83,7 +83,7 @@ public class OASISLicenseTest extends TestCase {
         BufferedReader in = Resources.getBufferedResourceReader("elements/Source.java");
         String line = in.readLine();
         boolean result = false;
-        final IDocument subject = new MockLocation("subject");
+        final Document subject = new MockLocation("subject");
         while (line != null) {
             result = license.match(subject, line, reporter);
             line = in.readLine();

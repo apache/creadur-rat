@@ -18,8 +18,10 @@
  */ 
 package org.apache.rat.document;
 
+import org.apache.rat.api.Document;
+
 
 public interface IDocumentAnalyser {
 
-    public void analyse(IDocument document) throws RatDocumentAnalysisException;
+    public void analyse(Document document) throws RatDocumentAnalysisException;
 }

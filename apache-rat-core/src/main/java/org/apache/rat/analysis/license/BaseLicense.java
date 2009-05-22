@@ -19,9 +19,9 @@
 package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.claim.IClaimReporter;
 
 public class BaseLicense {
 	private final MetaData.Datum licenseFamilyCategory;
@@ -35,7 +35,7 @@ public class BaseLicense {
 		this.notes = notes;
 	}
     
-    public final void reportOnLicense(IDocument subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
+    public final void reportOnLicense(Document subject, Reporter reporter) throws RatHeaderAnalysisException {
         final MetaData metaData = subject.getMetaData();
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY,licenseFamilyCategory.getValue()));

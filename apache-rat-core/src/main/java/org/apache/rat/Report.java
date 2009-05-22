@@ -43,10 +43,10 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.annotation.AbstractLicenceAppender;
 import org.apache.rat.annotation.ApacheV2LicenceAppender;
+import org.apache.rat.api.RatException;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -238,12 +238,12 @@ public class Report {
      * @throws IOException
      * @throws TransformerConfigurationException
      * @throws InterruptedException
-     * @throws RatReportFailedException
+     * @throws RatException
      */
     public static void report(PrintStream out, IReportable base, final InputStream style, final IHeaderMatcher matcher,
             final ILicenseFamily[] approvedLicenseNames) 
            throws IOException, TransformerConfigurationException, 
-           InterruptedException, RatReportFailedException {
+           InterruptedException, RatException {
         report(new OutputStreamWriter(out), base, style, matcher, approvedLicenseNames);
     }
 
@@ -260,11 +260,11 @@ public class Report {
      * @throws TransformerConfigurationException
      * @throws FileNotFoundException
      * @throws InterruptedException
-     * @throws RatReportFailedException
+     * @throws RatException
      */
     public static ClaimStatistic report(Writer out, IReportable base, final InputStream style, 
             final IHeaderMatcher matcher, final ILicenseFamily[] approvedLicenseNames) 
-                throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatReportFailedException {
+                throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatException {
         PipedReader reader = new PipedReader();
         PipedWriter writer = new PipedWriter(reader);
         ReportTransformer transformer = new ReportTransformer(out, style, reader);
@@ -284,10 +284,10 @@ public class Report {
      * @param matcher the header matcher for matching licence headers
      * @param approvedLicenseNames a list of licence families that are approved for use in the project
      * @throws IOException
-     * @throws RatReportFailedException
+     * @throws RatException
      */
     public static ClaimStatistic report(final IReportable container, final Writer out, final IHeaderMatcher matcher,
-             final ILicenseFamily[] approvedLicenseNames) throws IOException, RatReportFailedException {
+             final ILicenseFamily[] approvedLicenseNames) throws IOException, RatException {
         IXmlWriter writer = new XmlWriter(out);
         final ClaimStatistic statistic = new ClaimStatistic();
         RatReport report = XmlReportFactory.createStandardReport(writer, matcher, approvedLicenseNames, statistic);  

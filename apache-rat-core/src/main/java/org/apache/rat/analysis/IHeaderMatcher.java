@@ -18,8 +18,8 @@
  */ 
 package org.apache.rat.analysis;
 
-import org.apache.rat.document.IDocument;
-import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.Reporter;
 
 /**
  * Matches text headers to known licenses.
@@ -41,5 +41,5 @@ public interface IHeaderMatcher {
 	 * @param reporter TODO
 	 * @return TODO
 	 */
-	public boolean match(IDocument subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException;
+	public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException;
 }

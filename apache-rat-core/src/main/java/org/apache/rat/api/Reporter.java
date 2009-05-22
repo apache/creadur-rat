@@ -16,43 +16,16 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.document;
+package org.apache.rat.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 
-import org.apache.rat.api.MetaData;
-
-public interface IDocument {
-
-    public String getName();
+public interface Reporter {
     
     /**
-     * Reads the content of this document.
-     * @return <code>Reader</code> not null
-     * @throws IOException if this document cannot be read
-     * @throws CompositeDocumentException if this document can only be read as
-     * a composite archive
+     * Starts a report on the given document.
+     * All claims concern this document until this is called next.
+     * @param subject not null
+     * @throws RatReportFailedException
      */
-	public Reader reader() throws IOException;
-    
-    /**
-     * Streams the document's contents.
-     * @return not null
-     * @throws IOException when stream could not be opened
-     */
-    public InputStream inputStream() throws IOException;
-
-    /**
-     * Gets data describing this resource.
-     * @return not null
-     */
-    public MetaData getMetaData();
-    
-    /**
-     * Is this a composite document?
-     * @return true if composite, false otherwise
-     */
-    public boolean isComposite();
+    void report(Document subject) throws RatException;
 }
