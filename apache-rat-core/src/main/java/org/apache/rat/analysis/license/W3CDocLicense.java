@@ -20,9 +20,9 @@ package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyCode;
 import org.apache.rat.report.claim.LicenseFamilyName;
 
 public class W3CDocLicense extends BaseLicense implements IHeaderMatcher {
@@ -33,7 +33,7 @@ public class W3CDocLicense extends BaseLicense implements IHeaderMatcher {
     = "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231";
     
     public W3CDocLicense() {
-        super(LicenseFamilyCode.W3CD_CODE, LicenseFamilyName.W3C_DOCUMENT_COPYRIGHT_NAME,  NOTES);
+        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3CD, LicenseFamilyName.W3C_DOCUMENT_COPYRIGHT_NAME,  NOTES);
         
     }
 

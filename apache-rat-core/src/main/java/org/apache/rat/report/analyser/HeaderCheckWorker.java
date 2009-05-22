@@ -28,7 +28,6 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyCode;
 import org.apache.rat.report.claim.LicenseFamilyName;
 import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
@@ -95,7 +94,7 @@ class HeaderCheckWorker {
 					final String notes = headers.toString();
                     subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
                     subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
-					reporter.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, LicenseFamilyCode.UNKNOWN));
+					reporter.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY));
 				}
 			} catch (IOException e) {
                 throw new RatHeaderAnalysisException("Cannot read header for " + subject, e);

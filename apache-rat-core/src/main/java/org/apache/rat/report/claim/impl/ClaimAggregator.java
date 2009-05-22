@@ -9,7 +9,6 @@ import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyCode;
 import org.apache.rat.report.claim.impl.xml.CustomClaim;
 
 
@@ -64,10 +63,10 @@ public class ClaimAggregator extends AbstractClaimReporter {
         
         if (MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN.equals(headerCategory)) {
             numGenerated++;
-            incMapValue(numsByLicenseFamilyCode, LicenseFamilyCode.GENERATED);
+            incMapValue(numsByLicenseFamilyCode, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN);
         } else if (MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN.equals(headerCategory)) {
             numUnknown++;
-            incMapValue(numsByLicenseFamilyCode, LicenseFamilyCode.UNKNOWN);
+            incMapValue(numsByLicenseFamilyCode, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN);
         }
     }
 

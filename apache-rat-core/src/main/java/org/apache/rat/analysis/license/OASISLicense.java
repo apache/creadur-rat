@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyCode;
 import org.apache.rat.report.claim.LicenseFamilyName;
 
 /**
@@ -46,7 +46,7 @@ public class OASISLicense extends BaseLicense implements IHeaderMatcher {
     final StringBuffer buffer = new StringBuffer();
     
     public OASISLicense() {
-        super(LicenseFamilyCode.OASIS_CODE, LicenseFamilyName.OASIS_OPEN_LICENSE_NAME, "No modifications allowed");
+        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_OASIS, LicenseFamilyName.OASIS_OPEN_LICENSE_NAME, "No modifications allowed");
     }
 
     public boolean match(IDocument subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {

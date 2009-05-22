@@ -23,39 +23,34 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyCode;
 import org.apache.rat.report.claim.LicenseFamilyName;
 import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
 public class BaseLicense {
-	private final LicenseFamilyCode code;
+	private final MetaData.Datum licenseFamilyCategory;
 	private final LicenseFamilyName name;
 	private final String notes;
 	
-	public BaseLicense(final LicenseFamilyCode code, final LicenseFamilyName name, final String notes)
+	public BaseLicense(final MetaData.Datum licenseFamilyCategory, final LicenseFamilyName name, final String notes)
 	{
-		this.code = code;
+		this.licenseFamilyCategory = licenseFamilyCategory;
 		this.name = name;
 		this.notes = notes;
 	}
     
     public final void reportOnLicense(IDocument subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
         final LicenseFamilyName name = getName();
-        final LicenseFamilyCode code = getCode();
         final String notes = getNotes();
         subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-        subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, code.getName()));
+        subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY,licenseFamilyCategory.getValue()));
+        subject.getMetaData().set(licenseFamilyCategory);
         try {
-            reporter.claim(new LicenseFamilyClaim(subject, name, code));
+            reporter.claim(new LicenseFamilyClaim(subject, name));
         } catch (RatReportFailedException e) {
             // Cannot recover
             throw new RatHeaderAnalysisException("Cannot report on license information", e);
         }
     }
-
-    public LicenseFamilyCode getCode() {
-		return code;
-	}
 
 	public LicenseFamilyName getName() {
 		return name;
