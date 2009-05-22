@@ -7,7 +7,6 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 
 
@@ -74,12 +73,6 @@ public class ClaimAggregator extends AbstractClaimReporter {
         pStatistic.setNumUnknown(numUnknown);
     }
 
-    public void claim(IClaim pClaim) throws RatReportFailedException {
-        super.claim(pClaim);
-        if (reporter != null) {
-            reporter.claim(pClaim);
-        }
-    }
 
     public void report(IDocument document) throws RatReportFailedException {
         super.report(document);

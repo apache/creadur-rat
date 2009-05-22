@@ -23,7 +23,6 @@ import java.io.IOException;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
@@ -61,20 +60,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
             writer.openElement(pPredicate).content(pObject).closeElement();
         } else {
             writer.openElement(pPredicate).attribute(NAME, pObject).closeElement();
-        }
-    }
-
-    protected void handleClaim(IClaim pClaim) throws IOException, RatReportFailedException {
-        throw new IllegalStateException("Invalid claim type: " + pClaim.getClass().getName());
-    }
-
-    public void claim(IClaim pClaim) throws RatReportFailedException {
-        try {
-            handleClaim(pClaim);
-        } catch (IOException e) {
-            throw new RatReportFailedException("XML writing failure: " + e.getMessage()
-                    + " claim type: "
-                    + pClaim.getClass().getName(), e);
         }
     }
 

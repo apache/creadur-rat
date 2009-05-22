@@ -3,7 +3,6 @@ package org.apache.rat.report.claim.impl;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 
 
@@ -28,14 +27,6 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
 
     protected void handleHeaderCategoryClaim(String headerCategory) {
         // Does nothing
-    }
-
-    protected void handleClaim(IClaim pClaim) {
-        throw new IllegalStateException("Unsupported type of claim: " + pClaim.getClass().getName());
-    }
-    
-    public void claim(IClaim pClaim) throws RatReportFailedException {
-        handleClaim(pClaim);
     }
 
     private void writeDocumentClaim(IDocument subject)  {

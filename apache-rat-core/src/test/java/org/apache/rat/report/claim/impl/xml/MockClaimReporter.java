@@ -18,22 +18,11 @@
  */ 
 package org.apache.rat.report.claim.impl.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 
 public class MockClaimReporter implements IClaimReporter {
-
-    public List claims = new ArrayList();
-    
-    public void claim(IClaim pClaim)
-            throws RatReportFailedException {
-        claims.add(pClaim);
-    }
 
     public void report(IDocument document) throws RatReportFailedException {
     }

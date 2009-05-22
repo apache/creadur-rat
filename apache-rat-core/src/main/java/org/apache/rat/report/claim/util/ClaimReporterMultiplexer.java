@@ -20,7 +20,6 @@ package org.apache.rat.report.claim.util;
 
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 
 public class ClaimReporterMultiplexer implements IClaimReporter {
@@ -30,14 +29,6 @@ public class ClaimReporterMultiplexer implements IClaimReporter {
     public ClaimReporterMultiplexer(final IClaimReporter[] reporters) {
         super();
         this.reporters = reporters;
-    }
-
-    public void claim(IClaim pClaim)
-            throws RatReportFailedException {
-        final int length = reporters.length;
-        for (int i=0;i<length;i++) {
-            reporters[i].claim(pClaim);
-        }
     }
 
     public void report(IDocument document) throws RatReportFailedException {

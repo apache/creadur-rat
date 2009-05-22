@@ -30,10 +30,4 @@ public interface IClaimReporter {
      * @throws RatReportFailedException
      */
     void report(IDocument subject) throws RatReportFailedException;
-    
-    /**
-     * States a claim.
-     * @param pClaim The claim to state.
-     */
-    void claim(IClaim pClaim) throws RatReportFailedException;
 }
