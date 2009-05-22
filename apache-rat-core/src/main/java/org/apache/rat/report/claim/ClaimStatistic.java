@@ -10,7 +10,7 @@ import org.apache.rat.report.claim.impl.xml.CustomClaim;
  * the report.
  */
 public class ClaimStatistic {
-    private Map fileTypeMap, licenseFamilyCodeMap, licenseFamilyNameMap;
+    private Map documentCategoryMap, licenseFamilyCodeMap, licenseFamilyNameMap;
     private int numApproved, numUnApproved, numGenerated, numUnknown, numCustom;
 
     /**
@@ -95,22 +95,22 @@ public class ClaimStatistic {
 
     /**
      * Sets a map with the file types. The map keys
-     * are instances of {@link FileType} and the map values
+     * are file type names and the map values
      * are integers with the number of resources matching
      * the file type.
      */
-    public void setFileTypeMap(Map pFileTypeMap) {
-        fileTypeMap = pFileTypeMap;
+    public void setDocumentCategoryMap(Map pDocumentCategoryMap) {
+        documentCategoryMap = pDocumentCategoryMap;
     }
 
     /**
      * Returns a map with the file types. The map keys
-     * are instances of {@link FileType} and the map values
+     * are file type names and the map values
      * are integers with the number of resources matching
      * the file type.
      */
-    public Map getFileTypeMap() {
-        return fileTypeMap;
+    public Map getDocumentCategoryMap() {
+        return documentCategoryMap;
     }
 
     /**

@@ -34,13 +34,19 @@ public class MetaData {
     public static final String RAT_BASE_URL = "http://org/apache/rat/meta-data";
     
     // Document Categories
+    public static final String RAT_URL_DOCUMENT_CATEGORY = RAT_BASE_URL + "#FileCategory";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_GENERATED = "GEN  ";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_UNKNOWN = "?????";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE = "archive";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_NOTICE = "notice";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_BINARY = "binary";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_STANDARD = "standard";
-    public static final String RAT_URL_DOCUMENT_CATEGORY = RAT_BASE_URL + "#FileCategory";
+    public static final Datum RAT_DOCUMENT_CATEGORY_DATUM_GENERATED = new Datum(RAT_URL_DOCUMENT_CATEGORY, RAT_DOCUMENT_CATEGORY_VALUE_GENERATED);
+    public static final Datum RAT_DOCUMENT_CATEGORY_DATUM_UNKNOWN = new Datum(RAT_URL_DOCUMENT_CATEGORY, RAT_DOCUMENT_CATEGORY_VALUE_UNKNOWN);
+    public static final Datum RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE = new Datum(RAT_URL_DOCUMENT_CATEGORY, RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE);
+    public static final Datum RAT_DOCUMENT_CATEGORY_DATUM_NOTICE = new Datum(RAT_URL_DOCUMENT_CATEGORY, RAT_DOCUMENT_CATEGORY_VALUE_NOTICE);
+    public static final Datum RAT_DOCUMENT_CATEGORY_DATUM_BINARY = new Datum(RAT_URL_DOCUMENT_CATEGORY, RAT_DOCUMENT_CATEGORY_VALUE_BINARY);
+    public static final Datum RAT_DOCUMENT_CATEGORY_DATUM_STANDARD = new Datum(RAT_URL_DOCUMENT_CATEGORY, RAT_DOCUMENT_CATEGORY_VALUE_STANDARD);
     
     // Header Categories
     public static final String RAT_URL_HEADER_CATEGORY = RAT_BASE_URL + "#HeaderCategory";
@@ -210,6 +216,14 @@ public class MetaData {
             }
         }
         return dataRemoved;
+    }
+    
+    /**
+     * Clears all data.
+     */
+    public void clear() {
+        data.clear();
+        this.contentType = null;
     }
     
     /**

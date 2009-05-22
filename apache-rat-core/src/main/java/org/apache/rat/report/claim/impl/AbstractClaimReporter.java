@@ -14,11 +14,8 @@ import org.apache.rat.report.claim.impl.xml.CustomClaim;
  * this class.
  */
 public abstract class AbstractClaimReporter implements IClaimReporter {
-
-    private IDocument subject;
-    private boolean writtenDocumentClaims = false;
     
-    protected void handleClaim(FileTypeClaim pClaim) {
+    protected void handleDocumentCategoryClaim(String documentCategoryName) {
         // Does nothing
     }
 
@@ -39,10 +36,7 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
     }
 
     protected void handleClaim(IClaim pClaim) {
-        writeDocumentClaimsWhenNecessary(subject);
-        if (pClaim instanceof FileTypeClaim) {
-            handleClaim((FileTypeClaim) pClaim);
-        } else if (pClaim instanceof CustomClaim) {
+        if (pClaim instanceof CustomClaim) {
             handleClaim((CustomClaim) pClaim);
         } else {
             throw new IllegalStateException("Unsupported type of claim: " + pClaim.getClass().getName());
@@ -57,6 +51,11 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
         final MetaData metaData = subject.getMetaData();
         writeHeaderCategory(metaData);
         writeLicenseFamilyName(metaData);
+        writeDocumentCategory(metaData);
+        writeApprovedLicenseClaim(metaData);
+    }
+
+    private void writeApprovedLicenseClaim(final MetaData metaData) {
         final MetaData.Datum approvedLicenseDatum = metaData.get(MetaData.RAT_URL_APPROVED_LICENSE);
         if (approvedLicenseDatum != null) {
             final String approvedLicense = approvedLicenseDatum.getValue();
@@ -79,23 +78,24 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
     private void writeLicenseFamilyName(final MetaData metaData) {
         final MetaData.Datum licenseFamilyNameDatum = metaData.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
         if (licenseFamilyNameDatum != null) {
-            final String licenseFamilyName = licenseFamilyNameDatum.getName();
+            final String licenseFamilyName = licenseFamilyNameDatum.getValue();
             if (licenseFamilyName != null) {
                 handleLicenseFamilyNameClaim(licenseFamilyName);
             }
         }
     }
     
-    public void report(IDocument subject) throws RatReportFailedException {
-        writeDocumentClaimsWhenNecessary(subject);
-        this.subject = subject;
-        writtenDocumentClaims = false;
-    }
-
-    private void writeDocumentClaimsWhenNecessary(IDocument subject) {
-        if (!writtenDocumentClaims && subject != null) {
-            writeDocumentClaim(subject);
-            writtenDocumentClaims = true;
+    private void writeDocumentCategory(final MetaData metaData) {
+        final MetaData.Datum documentCategoryDatum = metaData.get(MetaData.RAT_URL_DOCUMENT_CATEGORY);
+        if (documentCategoryDatum != null) {
+            final String documentCategory = documentCategoryDatum.getValue();
+            if (documentCategory != null) {
+                handleDocumentCategoryClaim(documentCategory);
+            }
         }
+    }
+    
+    public void report(IDocument subject) throws RatReportFailedException {
+        writeDocumentClaim(subject);
     }
 }

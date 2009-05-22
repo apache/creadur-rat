@@ -26,9 +26,9 @@ import junit.framework.TestCase;
 
 import org.apache.rat.DirectoryWalker;
 import org.apache.rat.analysis.MockLicenseMatcher;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.claim.FileType;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -82,9 +82,9 @@ public class XmlReportFactoryTest extends TestCase {
                 "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
                 "</rat-report>", output);
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
-        assertEquals("Binary files", new Integer(1), statistic.getFileTypeMap().get(FileType.BINARY));
-        assertEquals("Notice files", new Integer(2), statistic.getFileTypeMap().get(FileType.NOTICE));
-        assertEquals("Standard files", new Integer(3), statistic.getFileTypeMap().get(FileType.STANDARD));
-        assertEquals("Archives", new Integer(1), statistic.getFileTypeMap().get(FileType.ARCHIVE));
+        assertEquals("Binary files", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
+        assertEquals("Notice files", new Integer(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
+        assertEquals("Standard files", new Integer(3), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
+        assertEquals("Archives", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
     }
 }

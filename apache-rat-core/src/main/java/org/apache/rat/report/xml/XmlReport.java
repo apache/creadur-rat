@@ -25,16 +25,19 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.RatReportFailedException;
+import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 class XmlReport implements RatReport {
    
     private final IDocumentAnalyser analyser;
     private final IXmlWriter writer;
+    private final IClaimReporter reporter;
     
-    public XmlReport(final IXmlWriter writer, IDocumentAnalyser analyser) {
+    public XmlReport(final IXmlWriter writer, IDocumentAnalyser analyser, final IClaimReporter reporter) {
         this.analyser = analyser;
         this.writer = writer;
+        this.reporter = reporter;
     }
 
     public void startReport() throws RatReportFailedException {
@@ -59,9 +62,10 @@ class XmlReport implements RatReport {
      * 
      * @param document the document to report on.
      */
-    public void report(IDocument document) throws RatReportFailedException {
+    public void report(IDocument subject) throws RatReportFailedException {
         try {
-            analyser.analyse(document);
+            analyser.analyse(subject);
+            reporter.report(subject);
         } catch (RatDocumentAnalysisException e) {
             throw new RatReportFailedException("Analysis failed", e);
         }

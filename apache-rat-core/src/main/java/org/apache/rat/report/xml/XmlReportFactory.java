@@ -21,6 +21,7 @@ package org.apache.rat.report.xml;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
@@ -30,7 +31,6 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.impl.ClaimAggregator;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
@@ -55,13 +55,13 @@ public class XmlReportFactory {
             reporter = new ClaimAggregator(new SimpleXmlClaimReporter(writer));
         }
         final DefaultPolicy policy = new DefaultPolicy(approvedLicenses);
-        final IClaimReporter[] reporters = {policy, reporter};
-        final ClaimReporterMultiplexer multiplexer = new ClaimReporterMultiplexer(reporters);
         
         final IDocumentAnalyser analyser = 
-            DefaultAnalyserFactory.createDefaultAnalyser(multiplexer, matcher);
-
-        final RatReport result = new XmlReport(writer, analyser);
+            DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcher);
+        final IDocumentAnalyser[] analysers = {analyser, policy};
+        DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);
+        
+        final RatReport result = new XmlReport(writer, analysisMultiplexer, reporter);
         if (pStatistic == null) {
             return result;
         }

@@ -54,6 +54,7 @@ class ResourceCollectionContainer implements IReportable {
                 // do nothing
             } else {
                 document.setResource(r);
+                document.getMetaData().clear();
                 report.report(document);
             }
         }

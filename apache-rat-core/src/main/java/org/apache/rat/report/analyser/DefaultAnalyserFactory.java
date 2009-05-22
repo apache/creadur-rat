@@ -19,16 +19,14 @@
 package org.apache.rat.report.analyser;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
-import org.apache.rat.report.RatReportFailedException;
-import org.apache.rat.report.claim.FileType;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.impl.FileTypeClaim;
 
 /**
  * Creates default analysers.
@@ -53,25 +51,20 @@ public class DefaultAnalyserFactory {
             this.matcher = matcher;
         }
 
-        public void analyse(IDocument document) throws RatDocumentAnalysisException {
-            try {
-                reporter.report(document);
-                final FileType type;
-                if (NoteGuesser.isNote(document)) {
-                    type = FileType.NOTICE;
-                } else if (ArchiveGuesser.isArchive(document)) {
-                    type = FileType.ARCHIVE;
-                } else if (BinaryGuesser.isBinary(document)) {
-                    type = FileType.BINARY;
-                } else {
-                    type = FileType.STANDARD;
-                    final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher, reporter);
-                    headerAnalyser.analyse(document);
-                }
-                reporter.claim(new FileTypeClaim(document, type));
-            } catch (RatReportFailedException e) {
-                throw new RatReportAnalysisResultException(e);
+        public void analyse(IDocument subject) throws RatDocumentAnalysisException {
+            final MetaData.Datum documentCategory;
+            if (NoteGuesser.isNote(subject)) {
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
+            } else if (ArchiveGuesser.isArchive(subject)) {
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
+            } else if (BinaryGuesser.isBinary(subject)) {
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
+            } else {
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
+                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher, reporter);
+                headerAnalyser.analyse(subject);
             }
+            subject.getMetaData().set(documentCategory);
         }        
     }
 }

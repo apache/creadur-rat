@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.CustomClaim;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 
@@ -44,17 +43,9 @@ public class DefaultPolicyTest extends TestCase {
         super.tearDown();
     }
 
-    public void testOtherPredicate() throws Exception {
-        final String predicate = "predicate";
-        final String object = "object";
-        policy.claim(new CustomClaim(subject, predicate, object, true));
-        assertEquals("No claim", 0, reporter.claims.size());
-    }
-
     public void testASLFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0);
-        policy.report(subject);
-        policy.claim(null);
+        policy.analyse(subject);
         assertApproval(true);
     }
 
@@ -64,29 +55,25 @@ public class DefaultPolicyTest extends TestCase {
 
     public void testOASISFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE);
-        policy.report(subject);
-        policy.claim(null);
+        policy.analyse(subject);
         assertApproval(true);
     }
     
     public void testW3CFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT);
-        policy.report(subject);
-        policy.claim(null);
+        policy.analyse(subject);
         assertApproval(true);
     }
     
     public void testW3CDocFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT);
-        policy.report(subject);
-        policy.claim(null);
+        policy.analyse(subject);
         assertApproval(true);
     }
     
     public void testUnknownFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
-        policy.report(subject);
-        policy.claim(null);
+        policy.analyse(subject);
         assertApproval(false);
     }
 }

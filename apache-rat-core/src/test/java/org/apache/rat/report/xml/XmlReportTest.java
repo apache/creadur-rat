@@ -59,7 +59,7 @@ public class XmlReportTest extends TestCase {
             }            
         };
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcher);
-        report = new XmlReport(writer, analyser);
+        report = new XmlReport(writer, analyser, reporter);
     }
 
     protected void tearDown() throws Exception {

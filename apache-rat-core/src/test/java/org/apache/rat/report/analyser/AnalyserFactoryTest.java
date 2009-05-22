@@ -63,6 +63,7 @@ public class AnalyserFactoryTest extends TestCase {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/resources/elements/Text.txt"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcherStub);
         analyser.analyse(document);
+        reporter.report(document);
         assertEquals("Open standard element", "<resource name='src/test/resources/elements/Text.txt'><header-sample>/*\n" +
                 " * Licensed to the Apache Software Foundation (ASF) under one\n" +
                 " * or more contributor license agreements.  See the NOTICE file\n" +
@@ -90,6 +91,7 @@ public class AnalyserFactoryTest extends TestCase {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/LICENSE"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcherStub);
         analyser.analyse(document);
+        reporter.report(document);
         assertEquals("Open note element", "<resource name='src/test/elements/LICENSE'><type name='notice'/>", out.toString());
     }
 
@@ -97,6 +99,7 @@ public class AnalyserFactoryTest extends TestCase {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/Image.png"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcherStub);
         analyser.analyse(document);
+        reporter.report(document);
         assertEquals("Open binary element", "<resource name='src/test/elements/Image.png'><type name='binary'/>", out.toString());
     }
 
@@ -104,6 +107,7 @@ public class AnalyserFactoryTest extends TestCase {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/Dummy.jar"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcherStub);
         analyser.analyse(document);
+        reporter.report(document);
         assertEquals("Open archive element", "<resource name='src/test/elements/Dummy.jar'><type name='archive'/>", out.toString());
     }
 }

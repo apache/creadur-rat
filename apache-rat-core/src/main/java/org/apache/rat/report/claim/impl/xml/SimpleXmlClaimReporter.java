@@ -25,7 +25,6 @@ import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.impl.FileTypeClaim;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class SimpleXmlClaimReporter implements IClaimReporter {
@@ -40,22 +39,14 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
 
     private static final String NAME = "name";
     private final IXmlWriter writer;
-    private IDocument lastSubject;
-    private IDocument subject;
-    private boolean writtenDocumentClaims = false;
-    
+    private boolean firstTime = true;
+
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
         this.writer = writer;
     }
 
-    protected void handleClaim(FileTypeClaim pClaim)
-            throws IOException, RatReportFailedException {
-        writeClaim(FILE_TYPE_PREDICATE, pClaim.getType().getName(), false);
-    }
-
-
     protected void handleClaim(CustomClaim pClaim)
-            throws IOException, RatReportFailedException {
+    throws IOException, RatReportFailedException {
         writeClaim(pClaim.getPredicate(), pClaim.getObject(), pClaim.isLiteral());
     }
 
@@ -69,18 +60,16 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
      * @throws RatReportFailedException Another error occurred while writing the claim.
      */
     protected void writeClaim(String pPredicate, String pObject, boolean pLiteral)
-            throws IOException, RatReportFailedException {
+    throws IOException, RatReportFailedException {
         if (pLiteral) {
             writer.openElement(pPredicate).content(pObject).closeElement();
         } else {
             writer.openElement(pPredicate).attribute(NAME, pObject).closeElement();
         }
     }
-    
+
     protected void handleClaim(IClaim pClaim) throws IOException, RatReportFailedException {
-        if (pClaim instanceof FileTypeClaim) {
-            handleClaim((FileTypeClaim) pClaim);
-        } else if (pClaim instanceof CustomClaim) {
+        if (pClaim instanceof CustomClaim) {
             handleClaim((CustomClaim) pClaim);
         } else {
             throw new IllegalStateException("Invalid claim type: " + pClaim.getClass().getName());
@@ -89,32 +78,23 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
 
     public void claim(IClaim pClaim) throws RatReportFailedException {
         try {
-            if(!writtenDocumentClaims) {
-                writeDocumentClaims(subject);
-                writtenDocumentClaims = true;
-            }
             handleClaim(pClaim);
         } catch (IOException e) {
             throw new RatReportFailedException("XML writing failure: " + e.getMessage()
-                    + " subject: " + subject + " claim type: "
+                    + " claim type: "
                     + pClaim.getClass().getName(), e);
         }
     }
 
     public void report(final IDocument subject) throws RatReportFailedException {
-        this.subject = subject;
         try {
-            if (!(subject.equals(lastSubject))) {
-                if (lastSubject != null) {
-                    writer.closeElement();
-                    if(!writtenDocumentClaims) {
-                        writeDocumentClaims(lastSubject);
-                    }
-                }
-                writer.openElement("resource").attribute(NAME, subject.getName());
+            if (firstTime) {
+                firstTime = false;
+            } else {
+                writer.closeElement();
             }
-            lastSubject = subject;
-            writtenDocumentClaims = false;
+            writer.openElement("resource").attribute(NAME, subject.getName());
+            writeDocumentClaims(subject);
         } catch (IOException e) {
             throw new RatReportFailedException("XML writing failure: " + e.getMessage()
                     + " subject: " + subject, e);
@@ -128,53 +108,48 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
         writeHeaderCategory(metaData);
         writeLicenseFamilyName(metaData);
         writeApprovedLicense(metaData);
-        
+        writeDocumentCategory(metaData);
     }
 
     private void writeApprovedLicense(final MetaData metaData) throws IOException, RatReportFailedException {
-        final MetaData.Datum approvedLicenseDatum = metaData.get(MetaData.RAT_URL_APPROVED_LICENSE);
-        if (approvedLicenseDatum != null) {
-            final String approvedLicense = approvedLicenseDatum.getValue();
-            if (approvedLicense != null) {
-                writeClaim(LICENSE_APPROVAL_PREDICATE, approvedLicense, false);
-            }
+        final String approvedLicense = metaData.value(MetaData.RAT_URL_APPROVED_LICENSE);
+        if (approvedLicense != null) {
+            writeClaim(LICENSE_APPROVAL_PREDICATE, approvedLicense, false);
         }
     }
 
     private void writeLicenseFamilyName(final MetaData metaData) throws IOException, RatReportFailedException {
-        final MetaData.Datum licenseFamilyNameDatum = metaData.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
-        if (licenseFamilyNameDatum != null) {
-            final String licenseFamilyName = licenseFamilyNameDatum.getValue();
-            if (licenseFamilyName != null) {
-                writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyName, false);
-            }
+        final String licenseFamilyName = metaData.value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
+        if (licenseFamilyName != null) {
+            writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyName, false);
         }
     }
 
     private void writeHeaderCategory(final MetaData metaData) throws IOException, RatReportFailedException {
-        final MetaData.Datum headerCategoryDatum = metaData.get(MetaData.RAT_URL_HEADER_CATEGORY);
-        if (headerCategoryDatum != null) {
-            final String headerCategory = headerCategoryDatum.getValue();
+        final String headerCategory = metaData.value(MetaData.RAT_URL_HEADER_CATEGORY);
+        if (headerCategory != null) {
             writeClaim(HEADER_TYPE_PREDICATE, headerCategory, false);
         }
     }
 
     private void writeLicenseFamilyCategory(final MetaData metaData) throws IOException, RatReportFailedException {
-        final MetaData.Datum licenseFamilyCategoryDatum = metaData.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
-        if (licenseFamilyCategoryDatum != null) {
-            final String licenseFamilyCategory = licenseFamilyCategoryDatum.getValue();
+        final String licenseFamilyCategory = metaData.value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
+        if (licenseFamilyCategory != null) {
             writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyCategory, false);
         }
     }
 
     private void writeHeaderSample(final MetaData metaData) throws IOException, RatReportFailedException {
-        final MetaData.Datum sampleDatum = metaData.get(MetaData.RAT_URL_HEADER_SAMPLE);
-        if (sampleDatum != null) {
-            final String sample = sampleDatum.getValue();
-            if (sample != null) {
-                writeClaim(HEADER_SAMPLE_PREDICATE, sample, true);
-            }
+        final String sample = metaData.value(MetaData.RAT_URL_HEADER_SAMPLE);
+        if (sample != null) {
+            writeClaim(HEADER_SAMPLE_PREDICATE, sample, true);
         }
     }
 
+    private void writeDocumentCategory(final MetaData metaData) throws IOException, RatReportFailedException {
+        final String documentCategory = metaData.value(MetaData.RAT_URL_DOCUMENT_CATEGORY);
+        if (documentCategory != null) {
+            writeClaim(FILE_TYPE_PREDICATE, documentCategory, false);
+        }
+    }
 }

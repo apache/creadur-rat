@@ -42,8 +42,8 @@ public class ClaimAggregator extends AbstractClaimReporter {
         pMap.put(pKey, new Integer(newNum));
     }
     
-    protected void handleClaim(FileTypeClaim pClaim) {
-        incMapValue(numsByFileType, pClaim.getType());
+    protected void handleDocumentCategoryClaim(String documentCategoryName) {
+        incMapValue(numsByFileType, documentCategoryName);
     }
 
     protected void handleApprovedLicenseClaim(String licenseApproved) {
@@ -70,7 +70,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
     }
 
     public void fillClaimStatistic(ClaimStatistic pStatistic) {
-        pStatistic.setFileTypeMap(numsByFileType);
+        pStatistic.setDocumentCategoryMap(numsByFileType);
         pStatistic.setLicenseFileCodeMap(numsByLicenseFamilyCode);
         pStatistic.setLicenseFileNameMap(numsByLicenseFamilyName);
         pStatistic.setNumApproved(numApproved);

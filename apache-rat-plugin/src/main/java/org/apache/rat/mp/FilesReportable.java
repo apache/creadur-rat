@@ -65,6 +65,7 @@ class FilesReportable implements IReportable
         for ( int i = 0; i < files.length; i++ )
         {
             document.setFile( new File( basedir, files[i] ) );
+            document.getMetaData().clear();
             report.report( document );
         }
     }
