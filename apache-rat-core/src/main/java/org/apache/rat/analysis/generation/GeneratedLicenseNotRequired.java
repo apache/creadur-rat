@@ -22,11 +22,9 @@ import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyCode;
-import org.apache.rat.report.claim.impl.LicenseHeaderClaim;
 
 public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 
@@ -79,11 +77,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
     }
 
     private void reportOnLicense(IDocument subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
-        try {
-            reporter.claim(new LicenseHeaderClaim(subject, LicenseFamilyCode.GENERATED));
-        } catch (RatReportFailedException e) {
-            throw new RatHeaderAnalysisException("Cannot write claims", e);
-        }
+        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN);
     }
 
     public void reset() {

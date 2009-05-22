@@ -153,6 +153,11 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
             if (sample != null) {
                 writeClaim(HEADER_SAMPLE_PREDICATE, sample, true);
             }
+            final MetaData.Datum licenseFamilyCategoryDatum = metaData.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
+            if (licenseFamilyCategoryDatum != null) {
+                final String licenseFamilyCategory = licenseFamilyCategoryDatum.getValue();
+                writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyCategory, false);
+            }
         }
     }
 
