@@ -17,13 +17,10 @@
 package org.example;
 
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.report.claim.LicenseFamilyName;
 
 
 public class LicenseFamily implements ILicenseFamily {
-    private static final LicenseFamilyName LICENSE_FAMILY_NAME = new LicenseFamilyName("Example License");
-
-    public LicenseFamilyName getFamilyName() {
-    	return LICENSE_FAMILY_NAME;
+    public String getFamilyName() {
+    	return "Example License";
    	}
 }

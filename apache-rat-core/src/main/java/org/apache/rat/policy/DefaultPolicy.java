@@ -21,27 +21,28 @@ package org.apache.rat.policy;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyName;
 import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
-import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
 public class DefaultPolicy implements IClaimReporter {
-    private static final LicenseFamilyName[] APPROVED_LICENSES = {
-        LicenseFamilyName.APACHE_SOFTWARE_LICENSE_NAME, LicenseFamilyName.OASIS_OPEN_LICENSE_NAME, 
-        LicenseFamilyName.W3C_SOFTWARE_COPYRIGHT_NAME, LicenseFamilyName.W3C_DOCUMENT_COPYRIGHT_NAME,
-        LicenseFamilyName.MODIFIED_BSD_LICENSE_NAME
+    private static final String[] APPROVED_LICENSES = {
+        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0,
+        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE,
+        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT,
+        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT,
+        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE
     };
     
-    private static final LicenseFamilyName[] toNames(final ILicenseFamily[] approvedLicenses) {
-        LicenseFamilyName[] results = null;
+    private static final String[] toNames(final ILicenseFamily[] approvedLicenses) {
+        String[] results = null;
         if (approvedLicenses != null) {
             final int length = approvedLicenses.length;
-            results = new LicenseFamilyName[length];
+            results = new String[length];
             for (int i=0;i<length;i++) {
                 results[i] = approvedLicenses[i].getFamilyName();
             }
@@ -50,8 +51,9 @@ public class DefaultPolicy implements IClaimReporter {
     }
     
     private final IClaimReporter reporter;
-    private final LicenseFamilyName[] approvedLicenseNames;
+    private final String[] approvedLicenseNames;
     private IDocument subject;
+    private boolean testedDocument = false;
     
     public DefaultPolicy(final IClaimReporter reporter) {
         this(reporter, APPROVED_LICENSES);
@@ -61,30 +63,32 @@ public class DefaultPolicy implements IClaimReporter {
         this(reporter, toNames(approvedLicenses));
     }
 
-    private static final Comparator licenseFamilyComparator = new Comparator(){
-        public int compare(Object arg0, Object arg1) {
-            return ((LicenseFamilyName) arg0).getName().compareTo(((LicenseFamilyName) arg1).getName());
-        }
-    };
-    
-    public DefaultPolicy(final IClaimReporter reporter, final LicenseFamilyName[] approvedLicenseNames) {
+    public DefaultPolicy(final IClaimReporter reporter, final String[] approvedLicenseNames) {
         this.reporter = reporter;
         if (approvedLicenseNames == null) {
             this.approvedLicenseNames = APPROVED_LICENSES;
         } else {
             final int length = approvedLicenseNames.length;
-            this.approvedLicenseNames = new LicenseFamilyName[length];
+            this.approvedLicenseNames = new String[length];
             System.arraycopy(approvedLicenseNames, 0, this.approvedLicenseNames, 0, length);
         }
-        Arrays.sort(this.approvedLicenseNames, licenseFamilyComparator);
+        Arrays.sort(this.approvedLicenseNames);
     }
 
     public void claim(IClaim pClaim)
             throws RatReportFailedException {
-        if (pClaim instanceof LicenseFamilyClaim) {
-            final LicenseFamilyClaim lfc = (LicenseFamilyClaim) pClaim;
-            final boolean isApproved = Arrays.binarySearch(approvedLicenseNames, lfc.getLicenseFamilyName(), licenseFamilyComparator) >= 0;
-            reportLicenseApprovalClaim(subject, isApproved, reporter);
+        testDocumentWhenNecessary(subject);
+    }
+
+    private void testDocumentWhenNecessary(final IDocument subject) throws RatReportFailedException {
+        if (!testedDocument && subject != null) {
+            final MetaData.Datum nameDatum = subject.getMetaData().get(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
+            if (nameDatum != null) {
+                final String name = nameDatum.getValue();
+                final boolean isApproved = Arrays.binarySearch(approvedLicenseNames, name) >= 0;
+                reportLicenseApprovalClaim(subject, isApproved, reporter);
+            }
+            testedDocument = true;
         }
     }
 
@@ -92,7 +96,10 @@ public class DefaultPolicy implements IClaimReporter {
         reporter.claim(new LicenseApprovalClaim(subject, isAcceptable));
     }
     
+    
     public void report(final IDocument subject) throws RatReportFailedException {
+        testDocumentWhenNecessary(this.subject);
         this.subject = subject;
+        testedDocument = false;
     }
 }

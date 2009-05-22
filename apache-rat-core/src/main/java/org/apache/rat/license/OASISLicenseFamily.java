@@ -18,11 +18,11 @@
  */ 
 package org.apache.rat.license;
 
-import org.apache.rat.report.claim.LicenseFamilyName;
+import org.apache.rat.api.MetaData;
 
 public final class OASISLicenseFamily implements ILicenseFamily {
-    public LicenseFamilyName getFamilyName() {
-        return LicenseFamilyName.OASIS_OPEN_LICENSE_NAME;
+    public String getFamilyName() {
+        return MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE;
     }
 
 }

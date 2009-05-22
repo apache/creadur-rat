@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.rat.api.MetaData;
-import org.apache.rat.report.claim.LicenseFamilyName;
 
 
 public class MockStandardLicense extends BaseLicense {
@@ -30,6 +29,7 @@ public class MockStandardLicense extends BaseLicense {
     public List visitors = new ArrayList();
     
     public MockStandardLicense() {
-        super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, ""), new LicenseFamilyName(""), "");
+        super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, ""), 
+                new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, ""), "");
     }
 }

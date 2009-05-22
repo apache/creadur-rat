@@ -26,7 +26,7 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
         // Does nothing
     }
 
-    protected void handleClaim(LicenseFamilyClaim pClaim) {
+    protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
         // Does Nothing
     }
 
@@ -44,8 +44,6 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
             handleClaim((FileTypeClaim) pClaim);
         } else if (pClaim instanceof LicenseApprovalClaim) {
             handleClaim((LicenseApprovalClaim) pClaim);
-        } else if (pClaim instanceof LicenseFamilyClaim) {
-            handleClaim((LicenseFamilyClaim) pClaim);
         } else if (pClaim instanceof CustomClaim) {
             handleClaim((CustomClaim) pClaim);
         } else {
@@ -63,6 +61,13 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
             final String headerCategory = headerCategoryDatum.getValue();
             if (headerCategory != null) {
                 handleHeaderCategoryClaim(headerCategory);
+            }
+        }
+        final MetaData.Datum licenseFamilyNameDatum = subject.getMetaData().get(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
+        if (licenseFamilyNameDatum != null) {
+            final String licenseFamilyName = licenseFamilyNameDatum.getName();
+            if (licenseFamilyName != null) {
+                handleLicenseFamilyNameClaim(licenseFamilyName);
             }
         }
     }

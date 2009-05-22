@@ -20,12 +20,11 @@ package org.apache.rat.policy;
 
 import junit.framework.TestCase;
 
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.IClaim;
-import org.apache.rat.report.claim.LicenseFamilyName;
 import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
-import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 import org.apache.rat.report.claim.impl.xml.CustomClaim;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
@@ -55,7 +54,9 @@ public class DefaultPolicyTest extends TestCase {
 
     public void testASLFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.APACHE_SOFTWARE_LICENSE_NAME));
+        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0);
+        policy.report(subject);
+        policy.claim(null);
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
@@ -76,48 +77,37 @@ public class DefaultPolicyTest extends TestCase {
     
     public void testOASISFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.OASIS_OPEN_LICENSE_NAME));
+        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE);
+        policy.report(subject);
+        policy.claim(null);
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testW3CFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.W3C_SOFTWARE_COPYRIGHT_NAME));
+        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT);
+        policy.report(subject);
+        policy.claim(null);
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testW3CDocFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.W3C_DOCUMENT_COPYRIGHT_NAME));
+        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT);
+        policy.report(subject);
+        policy.claim(null);
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testUnknownFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY));
+        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
+        policy.report(subject);
+        policy.claim(null);
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(false);
-    }
-    
-    public void testCustomNames() throws Exception {
-        reporter = new MockClaimReporter();
-        LicenseFamilyName[] custom = {new LicenseFamilyName("Example")};
-        policy = new DefaultPolicy(reporter, custom);
-        final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY));
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.W3C_DOCUMENT_COPYRIGHT_NAME));
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.W3C_SOFTWARE_COPYRIGHT_NAME));
-        policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.APACHE_SOFTWARE_LICENSE_NAME));
-        assertEquals("Four unapproved claims", 4, reporter.claims.size());
-        assertApproval(false, (IClaim) reporter.claims.get(0));
-        assertApproval(false, (IClaim) reporter.claims.get(1));
-        assertApproval(false, (IClaim) reporter.claims.get(2));
-        assertApproval(false, (IClaim) reporter.claims.get(3));
-        policy.claim(new LicenseFamilyClaim(subject, custom[0]));
-        assertEquals("Approved claim", 5, reporter.claims.size());
-        assertApproval(true, (IClaim) reporter.claims.get(4));
     }
 }

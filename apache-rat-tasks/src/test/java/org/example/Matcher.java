@@ -22,12 +22,12 @@ import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyName;
 
 
 public class Matcher extends BaseLicense implements IHeaderMatcher {
     public Matcher() {
-    	super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"), new LicenseFamilyName("Example License"), "");
+    	super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"), 
+                new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, "Example License"), "");
     }
     public void reset() {}
     

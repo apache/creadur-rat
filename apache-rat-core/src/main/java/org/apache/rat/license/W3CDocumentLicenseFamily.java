@@ -18,11 +18,11 @@
  */ 
 package org.apache.rat.license;
 
-import org.apache.rat.report.claim.LicenseFamilyName;
+import org.apache.rat.api.MetaData;
 
 public class W3CDocumentLicenseFamily implements ILicenseFamily {
-    public LicenseFamilyName getFamilyName() {
-        return LicenseFamilyName.W3C_DOCUMENT_COPYRIGHT_NAME;
+    public String getFamilyName() {
+        return MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT;
     }
 
 }

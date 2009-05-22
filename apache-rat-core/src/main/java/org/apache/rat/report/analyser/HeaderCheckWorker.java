@@ -26,10 +26,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyName;
-import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
 /**
  * <p>Reads from a stream to check license.</p>
@@ -92,14 +89,13 @@ class HeaderCheckWorker {
 				while(readLine(headers));
 				if (!match) {
 					final String notes = headers.toString();
-                    subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-                    subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
-					reporter.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY));
+                    final MetaData metaData = subject.getMetaData();
+                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
+                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
+                    metaData.set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
 				}
 			} catch (IOException e) {
                 throw new RatHeaderAnalysisException("Cannot read header for " + subject, e);
-			} catch (RatReportFailedException e) {
-                throw new RatHeaderAnalysisException("Cannot write claim for " + subject, e);
             }
 			try {
 				reader.close();

@@ -54,9 +54,8 @@ public class ClaimAggregator extends AbstractClaimReporter {
         }
     }
 
-    protected void handleClaim(LicenseFamilyClaim pClaim) {
-        super.handleClaim(pClaim);
-        incMapValue(numsByLicenseFamilyName, pClaim.getLicenseFamilyName());
+    protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
+        incMapValue(numsByLicenseFamilyName, licenseFamilyName);
     }
 
     protected void handleHeaderCategoryClaim(String headerCategory) {

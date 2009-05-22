@@ -43,10 +43,10 @@ public class MetaData {
     public static final String RAT_URL_DOCUMENT_CATEGORY = RAT_BASE_URL + "#FileCategory";
     
     // Header Categories
-    public static final String RAT_URL_HEADER_CATEGORY= RAT_BASE_URL + "HeaderCategory";
+    public static final String RAT_URL_HEADER_CATEGORY= RAT_BASE_URL + "#HeaderCategory";
     
     // License Family Categories
-    public static final String RAT_URL_LICENSE_FAMILY_CATEGORY= RAT_BASE_URL + "LicenseFamilyCategory";
+    public static final String RAT_URL_LICENSE_FAMILY_CATEGORY= RAT_BASE_URL + "#LicenseFamilyCategory";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN = "?????";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL = "AL   ";
@@ -65,6 +65,7 @@ public class MetaData {
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_TMF = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF);
 
     // License Family Standard Names
+    public static final String RAT_URL_LICENSE_FAMILY_NAME= RAT_BASE_URL + "#LicenseFamilyName";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT = "W3C Software Copyright";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT = "W3C Document Copyright";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE = "OASIS Open License";
@@ -72,7 +73,20 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0 = "Apache License Version 2.0";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1 = "Academic Free License, Version 2.1";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN = "?????";
-    public static final String RAT_URL_LICENSE_FAMILY_NAME= RAT_BASE_URL + "LicenseFamilyName";
+    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT 
+        = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT);
+    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT 
+        = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT);
+    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE 
+        = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE);
+    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE 
+        = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE);
+    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0
+        = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0);
+    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_ACADEMIC_FREE_LICENSE_VERSION_2_1
+        = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1);
+    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN
+        = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN); 
     
     // Header sample
     public static final String RAT_URL_HEADER_SAMPLE = RAT_BASE_URL + "HeaderSample";

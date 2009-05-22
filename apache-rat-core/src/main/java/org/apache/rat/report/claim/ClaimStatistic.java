@@ -135,7 +135,7 @@ public class ClaimStatistic {
 
     /**
      * Returns a map with the license family codes. The map
-     * keys are instances of {@link LicenseFamilyName} and
+     * keys are the names of the license families and
      * the map values are integers with the number of resources
      * matching the license family name.
      */
@@ -145,7 +145,7 @@ public class ClaimStatistic {
 
     /**
      * Returns a map with the license family codes. The map
-     * keys are instances of {@link LicenseFamilyName} and
+     * keys are the name of the license families and
      * the map values are integers with the number of resources
      * matching the license family name.
      */

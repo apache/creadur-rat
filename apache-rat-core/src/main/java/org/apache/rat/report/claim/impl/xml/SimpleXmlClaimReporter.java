@@ -27,7 +27,6 @@ import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.impl.FileTypeClaim;
 import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
-import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class SimpleXmlClaimReporter implements IClaimReporter {
@@ -60,11 +59,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
         writeClaim(LICENSE_APPROVAL_PREDICATE, Boolean.toString(pClaim.isApproved()), false);
     }
 
-    protected void handleClaim(LicenseFamilyClaim pClaim)
-            throws IOException, RatReportFailedException {
-        writeClaim(LICENSE_FAMILY_PREDICATE, pClaim.getLicenseFamilyName().getName(), false);
-    }
-
 
     protected void handleClaim(CustomClaim pClaim)
             throws IOException, RatReportFailedException {
@@ -94,8 +88,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
             handleClaim((FileTypeClaim) pClaim);
         } else if (pClaim instanceof LicenseApprovalClaim) {
             handleClaim((LicenseApprovalClaim) pClaim);
-        } else if (pClaim instanceof LicenseFamilyClaim) {
-            handleClaim((LicenseFamilyClaim) pClaim);
         } else if (pClaim instanceof CustomClaim) {
             handleClaim((CustomClaim) pClaim);
         } else {
@@ -139,21 +131,44 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
 
     private void writeDocumentClaims(final IDocument subject) throws IOException, RatReportFailedException {
         final MetaData metaData = subject.getMetaData();
+        writeHeaderSample(metaData);
+        writeLicenseFamilyCategory(metaData);
+        writeHeaderCategory(metaData);
+        writeLicenseFamilyName(metaData);
+    }
+
+    private void writeLicenseFamilyName(final MetaData metaData) throws IOException, RatReportFailedException {
+        final MetaData.Datum licenseFamilyNameDatum = metaData.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
+        if (licenseFamilyNameDatum != null) {
+            final String licenseFamilyName = licenseFamilyNameDatum.getValue();
+            if (licenseFamilyName != null) {
+                writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyName, false);
+            }
+        }
+    }
+
+    private void writeHeaderCategory(final MetaData metaData) throws IOException, RatReportFailedException {
+        final MetaData.Datum headerCategoryDatum = metaData.get(MetaData.RAT_URL_HEADER_CATEGORY);
+        if (headerCategoryDatum != null) {
+            final String headerCategory = headerCategoryDatum.getValue();
+            writeClaim(HEADER_TYPE_PREDICATE, headerCategory, false);
+        }
+    }
+
+    private void writeLicenseFamilyCategory(final MetaData metaData) throws IOException, RatReportFailedException {
+        final MetaData.Datum licenseFamilyCategoryDatum = metaData.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
+        if (licenseFamilyCategoryDatum != null) {
+            final String licenseFamilyCategory = licenseFamilyCategoryDatum.getValue();
+            writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyCategory, false);
+        }
+    }
+
+    private void writeHeaderSample(final MetaData metaData) throws IOException, RatReportFailedException {
         final MetaData.Datum sampleDatum = metaData.get(MetaData.RAT_URL_HEADER_SAMPLE);
         if (sampleDatum != null) {
             final String sample = sampleDatum.getValue();
             if (sample != null) {
                 writeClaim(HEADER_SAMPLE_PREDICATE, sample, true);
-            }
-            final MetaData.Datum licenseFamilyCategoryDatum = metaData.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
-            if (licenseFamilyCategoryDatum != null) {
-                final String licenseFamilyCategory = licenseFamilyCategoryDatum.getValue();
-                writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyCategory, false);
-            }
-            final MetaData.Datum headerCategoryDatum = metaData.get(MetaData.RAT_URL_HEADER_CATEGORY);
-            if (headerCategoryDatum != null) {
-                final String headerCategory = headerCategoryDatum.getValue();
-                writeClaim(HEADER_TYPE_PREDICATE, headerCategory, false);
             }
         }
     }
