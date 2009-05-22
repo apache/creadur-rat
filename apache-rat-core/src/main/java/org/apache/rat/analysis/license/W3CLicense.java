@@ -21,9 +21,9 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.document.IDocument;
-import org.apache.rat.license.W3CSoftwareLicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.LicenseFamilyCode;
+import org.apache.rat.report.claim.LicenseFamilyName;
 
 public class W3CLicense extends BaseLicense implements IHeaderMatcher {
 
@@ -33,7 +33,7 @@ public class W3CLicense extends BaseLicense implements IHeaderMatcher {
     = "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
     
     public W3CLicense() {
-        super(LicenseFamilyCode.W3C_CODE, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME,  NOTES);
+        super(LicenseFamilyCode.W3C_CODE, LicenseFamilyName.W3C_SOFTWARE_COPYRIGHT_NAME,  NOTES);
         
     }
 

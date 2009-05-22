@@ -21,10 +21,8 @@ package org.apache.rat.license;
 import org.apache.rat.report.claim.LicenseFamilyName;
 
 public final class Apache20LicenseFamily implements ILicenseFamily {
-    public static final LicenseFamilyName APACHE_SOFTWARE_LICENSE_NAME = new LicenseFamilyName("Apache License Version 2.0");
-
     public LicenseFamilyName getFamilyName() {
-        return APACHE_SOFTWARE_LICENSE_NAME;
+        return LicenseFamilyName.APACHE_SOFTWARE_LICENSE_NAME;
     }
 
 }

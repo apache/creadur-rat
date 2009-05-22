@@ -22,12 +22,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.license.Apache20LicenseFamily;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.ModifiedBSDLicenseFamily;
-import org.apache.rat.license.OASISLicenseFamily;
-import org.apache.rat.license.W3CDocumentLicenseFamily;
-import org.apache.rat.license.W3CSoftwareLicenseFamily;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
@@ -37,9 +32,9 @@ import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
 public class DefaultPolicy implements IClaimReporter {
     private static final LicenseFamilyName[] APPROVED_LICENSES = {
-        Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, OASISLicenseFamily.OASIS_OPEN_LICENSE_NAME, 
-        W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME,
-        ModifiedBSDLicenseFamily.MODIFIED_BSD_LICENSE_NAME
+        LicenseFamilyName.APACHE_SOFTWARE_LICENSE_NAME, LicenseFamilyName.OASIS_OPEN_LICENSE_NAME, 
+        LicenseFamilyName.W3C_SOFTWARE_COPYRIGHT_NAME, LicenseFamilyName.W3C_DOCUMENT_COPYRIGHT_NAME,
+        LicenseFamilyName.MODIFIED_BSD_LICENSE_NAME
     };
     
     private static final LicenseFamilyName[] toNames(final ILicenseFamily[] approvedLicenses) {

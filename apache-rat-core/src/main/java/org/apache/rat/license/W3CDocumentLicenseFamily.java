@@ -21,10 +21,8 @@ package org.apache.rat.license;
 import org.apache.rat.report.claim.LicenseFamilyName;
 
 public class W3CDocumentLicenseFamily implements ILicenseFamily {
-    public static final LicenseFamilyName W3C_DOCUMENT_COPYRIGHT_NAME = new LicenseFamilyName("W3C Document Copyright");
-
     public LicenseFamilyName getFamilyName() {
-        return W3C_DOCUMENT_COPYRIGHT_NAME;
+        return LicenseFamilyName.W3C_DOCUMENT_COPYRIGHT_NAME;
     }
 
 }

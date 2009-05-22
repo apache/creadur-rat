@@ -21,9 +21,7 @@ package org.apache.rat.license;
 import org.apache.rat.report.claim.LicenseFamilyName;
 
 public class ModifiedBSDLicenseFamily implements ILicenseFamily {
-    public static final LicenseFamilyName MODIFIED_BSD_LICENSE_NAME = new LicenseFamilyName("Modified BSD License");
-
     public LicenseFamilyName getFamilyName() {
-        return MODIFIED_BSD_LICENSE_NAME;
+        return LicenseFamilyName.MODIFIED_BSD_LICENSE_NAME;
     }
 }

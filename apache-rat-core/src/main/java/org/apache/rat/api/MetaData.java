@@ -31,13 +31,37 @@ import java.util.List;
  */
 public class MetaData {
 
+    public static final String RAT_BASE_URL = "http://org/apache/rat/meta-data";
+    
+    // Document Categories
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_GENERATED = "GEN  ";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_UNKNOWN = "?????";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE = "archive";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_NOTICE = "notice";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_BINARY = "binary";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_STANDARD = "standard";
-    public static final String RAT_DOCUMENT_CATEGORY_URL ="http://org/apache/rat/meta-data#FileCategory";
+    public static final String RAT_DOCUMENT_CATEGORY_URL = RAT_BASE_URL + "#FileCategory";
+    
+    // License Family Categories
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN = "?????";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL = "AL   ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_OASIS = "OASIS";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3CD = "W3CD ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C = "W3C  ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO = "DOJO ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF = "TMF  ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_URL= RAT_BASE_URL + "LicenseFamilyCategory";
+
+    // License Family Standard Names
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT = "W3C Software Copyright";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT = "W3C Document Copyright";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE = "OASIS Open License";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE = "Modified BSD License";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0 = "Apache License Version 2.0";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1 = "Academic Free License, Version 2.1";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN = "?????";
+    public static final String RAT_LICENSE_FAMILY_NAME_URL= RAT_BASE_URL + "LicenseFamilyName";
     
     private ContentType contentType;
     /** 
@@ -45,13 +69,7 @@ public class MetaData {
      * so trade some performance for simplicity.
      */
     private final List/*<Datum>*/ data;
-    public static final String RAT_LICENSE_FAMILY_VALUE_ASL = "AL   ";
-    public static final String RAT_LICENSE_FAMILY_VALUE_OASIS = "OASIS";
-    public static final String RAT_LICENSE_FAMILY_VALUE_W3CD = "W3CD ";
-    public static final String RAT_LICENSE_FAMILY_VALUE_W3C = "W3C  ";
-    public static final String RAT_LICENSE_FAMILY_VALUE_DOJO = "DOJO ";
-    public static final String RAT_LICENSE_FAMILY_VALUE_TMF = "TMF  ";
-    
+
     public MetaData() {
         this(null);
     }

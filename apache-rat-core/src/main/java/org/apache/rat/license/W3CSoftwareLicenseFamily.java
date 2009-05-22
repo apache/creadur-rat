@@ -21,9 +21,7 @@ package org.apache.rat.license;
 import org.apache.rat.report.claim.LicenseFamilyName;
 
 public class W3CSoftwareLicenseFamily implements ILicenseFamily {
-    public static final LicenseFamilyName W3C_SOFTWARE_COPYRIGHT_NAME = new LicenseFamilyName("W3C Software Copyright");
-
     public LicenseFamilyName getFamilyName() {
-        return W3C_SOFTWARE_COPYRIGHT_NAME;
+        return LicenseFamilyName.W3C_SOFTWARE_COPYRIGHT_NAME;
     }
 }

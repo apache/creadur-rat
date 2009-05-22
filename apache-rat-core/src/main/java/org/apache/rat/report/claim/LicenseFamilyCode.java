@@ -8,14 +8,19 @@ import org.apache.rat.api.MetaData;
  * codes.
  */
 public class LicenseFamilyCode {
-    private final String name;
-    public static final LicenseFamilyCode TMF854 = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_VALUE_TMF);
-    public static final LicenseFamilyCode DOJO = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_VALUE_DOJO);
-    public static final LicenseFamilyCode W3C_CODE = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_VALUE_W3C);
-    public static final LicenseFamilyCode W3CD_CODE = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_VALUE_W3CD);
-    public static final LicenseFamilyCode OASIS_CODE = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_VALUE_OASIS);
-    public static final LicenseFamilyCode ASL_CODE = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_VALUE_ASL);
+    
+    public static final LicenseFamilyCode TMF854 = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF);
+    public static final LicenseFamilyCode DOJO = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO);
+    public static final LicenseFamilyCode W3C_CODE = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C);
+    public static final LicenseFamilyCode W3CD_CODE = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3CD);
+    public static final LicenseFamilyCode OASIS_CODE = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_OASIS);
+    public static final LicenseFamilyCode ASL_CODE = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL);
 
+    public static final LicenseFamilyCode GENERATED = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN);
+    public static final LicenseFamilyCode UNKNOWN = new LicenseFamilyCode(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN);
+    
+    private final String name;
+    
     /**
      * Creates a new instance with the given family code.
      */
@@ -40,7 +45,4 @@ public class LicenseFamilyCode {
         }
         return getName().equals(((LicenseFamilyCode) pOther).getName());
     }
-
-    public static final LicenseFamilyCode GENERATED = new LicenseFamilyCode("GEN  ");
-    public static final LicenseFamilyCode UNKNOWN = new LicenseFamilyCode("?????");
 }

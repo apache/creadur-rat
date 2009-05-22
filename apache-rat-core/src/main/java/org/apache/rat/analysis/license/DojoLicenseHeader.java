@@ -21,9 +21,9 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.document.IDocument;
-import org.apache.rat.license.ModifiedBSDLicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.LicenseFamilyCode;
+import org.apache.rat.report.claim.LicenseFamilyName;
 
 
 public class DojoLicenseHeader extends BaseLicense implements IHeaderMatcher {
@@ -42,7 +42,7 @@ public class DojoLicenseHeader extends BaseLicense implements IHeaderMatcher {
     public DojoLicenseHeader() {
         // TODO: support for dual licensing
         // TODO: support for or higher clauses
-        super(LicenseFamilyCode.DOJO, ModifiedBSDLicenseFamily.MODIFIED_BSD_LICENSE_NAME, "Dual license AFL/BSD");
+        super(LicenseFamilyCode.DOJO, LicenseFamilyName.MODIFIED_BSD_LICENSE_NAME, "Dual license AFL/BSD");
     }
 
 
