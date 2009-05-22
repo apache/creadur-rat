@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.report.analyser;
+package org.apache.rat.analysis;
 
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.RatDocumentAnalysisException;

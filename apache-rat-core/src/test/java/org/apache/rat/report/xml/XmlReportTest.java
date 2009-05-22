@@ -25,11 +25,11 @@ import java.util.regex.Pattern;
 import junit.framework.TestCase;
 
 import org.apache.rat.DirectoryWalker;
+import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.report.analyser.DefaultAnalyserFactory;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;

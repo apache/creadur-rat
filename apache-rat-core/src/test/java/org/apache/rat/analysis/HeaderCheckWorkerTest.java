@@ -17,23 +17,22 @@
  * under the License.                                           *
  */ 
 
-package org.apache.rat.report.analyser;
+package org.apache.rat.analysis;
 
 import java.io.StringReader;
 
 import junit.framework.TestCase;
 
+import org.apache.rat.analysis.HeaderCheckWorker;
 import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class HeaderCheckWorkerTest extends TestCase {
-	MockClaimReporter reporter;
     
 	protected void setUp() throws Exception {
 		super.setUp();
-        reporter = new MockClaimReporter();
 	}
 
 	protected void tearDown() throws Exception {

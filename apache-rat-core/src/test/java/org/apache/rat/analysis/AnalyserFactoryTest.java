@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.report.analyser;
+package org.apache.rat.analysis;
 
 import java.io.File;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
+import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;

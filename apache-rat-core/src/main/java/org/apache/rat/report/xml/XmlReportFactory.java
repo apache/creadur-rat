@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.report.xml;
 
+import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
@@ -27,7 +28,6 @@ import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.analyser.DefaultAnalyserFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.impl.ClaimAggregator;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
