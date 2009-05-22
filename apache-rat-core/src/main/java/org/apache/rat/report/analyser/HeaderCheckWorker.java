@@ -115,7 +115,7 @@ class HeaderCheckWorker {
 				headers.append(line);
 				headers.append('\n');
 			}
-            match = matcher.match(subject, line, reporter);
+            match = matcher.match(subject, line);
 			result = !match;
 		}
 		return result;

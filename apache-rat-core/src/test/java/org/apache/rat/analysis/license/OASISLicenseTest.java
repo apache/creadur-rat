@@ -70,12 +70,12 @@ public class OASISLicenseTest extends TestCase {
         boolean result = false;
         final Document subject = new MockLocation("subject");
         while (line != null) {
-            result = license.match(subject, line, reporter);
+            result = license.match(subject, line);
             line = in.readLine();
         }
         assertTrue("OASIS license should be matched", result);
         license.reset();
-        result = license.match(subject, "New line", reporter);
+        result = license.match(subject, "New line");
         assertFalse("After reset, content should build up again", result);
     }
 
@@ -85,7 +85,7 @@ public class OASISLicenseTest extends TestCase {
         boolean result = false;
         final Document subject = new MockLocation("subject");
         while (line != null) {
-            result = license.match(subject, line, reporter);
+            result = license.match(subject, line);
             line = in.readLine();
         }
         assertFalse("OASIS license should not be matched", result);

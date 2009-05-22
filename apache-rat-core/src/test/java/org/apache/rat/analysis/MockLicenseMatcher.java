@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 
 public class MockLicenseMatcher implements IHeaderMatcher {
 
@@ -30,7 +29,7 @@ public class MockLicenseMatcher implements IHeaderMatcher {
 	public int resets = 0;
     public boolean result = true;
 	
-	public boolean match(Document subject, String line, Reporter reporter) {
+	public boolean match(Document subject, String line) {
 		lines.add(line);
 		return result;  
 	}

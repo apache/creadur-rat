@@ -54,16 +54,16 @@ public class ApacheSoftwareLicense20Test extends TestCase {
 	public void testMatch() throws Exception {
 		ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
 		final Document subject = new MockLocation("subject");
-		assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE, reporter));
-        assertTrue(worker.match(subject, "    Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));
-        assertTrue(worker.match(subject, "Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));
-        assertTrue(worker.match(subject, " * Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));
-        assertTrue(worker.match(subject, " // Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));
-        assertTrue(worker.match(subject, " /* Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));
-        assertTrue(worker.match(subject, "    Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));
-        assertTrue(worker.match(subject, " ## Licensed under the Apache License, Version 2.0 (the \"License\");", reporter));
-        assertTrue(worker.match(subject, " ## Licensed under the Apache License, Version 2.0 (the \"License\") ##);", reporter));
-        assertFalse(worker.match(subject, "'Behold, Telemachus! (nor fear the sight,)", reporter));
+		assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
+        assertTrue(worker.match(subject, "    Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.match(subject, "Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.match(subject, " * Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.match(subject, " // Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.match(subject, " /* Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.match(subject, "    Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.match(subject, " ## Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.match(subject, " ## Licensed under the Apache License, Version 2.0 (the \"License\") ##);"));
+        assertFalse(worker.match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
 	}
     
 }

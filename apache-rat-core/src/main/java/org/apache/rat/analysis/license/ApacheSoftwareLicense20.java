@@ -21,7 +21,6 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 
 /**
@@ -38,10 +37,10 @@ public final class ApacheSoftwareLicense20 extends BaseLicense implements
 		super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0, "");
 	}
 	
-	public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException {
+	public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         final boolean result = matches(line);
 		if (result) {
-			reportOnLicense(subject, reporter);
+			reportOnLicense(subject);
 		}
         return result;
 	}

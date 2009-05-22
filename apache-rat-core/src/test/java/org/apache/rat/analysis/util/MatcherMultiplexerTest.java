@@ -54,12 +54,12 @@ public class MatcherMultiplexerTest extends TestCase {
         matcherOne.result = false;
         matcherTwo.result = false;
         final Document subject = new MockLocation("subject");
-		multiplexer.match(subject, LINE_ONE, reporter);
+		multiplexer.match(subject, LINE_ONE);
 		assertEquals("One line", 1, matcherOne.lines.size());
 		assertEquals("Same as line passed", LINE_ONE, matcherOne.lines.get(0));
 		assertEquals("One line", 1, matcherTwo.lines.size());
 		assertEquals("Same as line passed", LINE_ONE, matcherTwo.lines.get(0));
-		multiplexer.match(subject, LINE_TWO, reporter);
+		multiplexer.match(subject, LINE_TWO);
 		assertEquals("One line", 2, matcherOne.lines.size());
 		assertEquals("Same as line passed", LINE_TWO, matcherOne.lines.get(1));
 		assertEquals("One line", 2, matcherTwo.lines.size());

@@ -20,7 +20,6 @@ package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 
 public class BaseLicense {
@@ -35,7 +34,7 @@ public class BaseLicense {
 		this.notes = notes;
 	}
     
-    public final void reportOnLicense(Document subject, Reporter reporter) throws RatHeaderAnalysisException {
+    public final void reportOnLicense(Document subject) throws RatHeaderAnalysisException {
         final MetaData metaData = subject.getMetaData();
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY,licenseFamilyCategory.getValue()));

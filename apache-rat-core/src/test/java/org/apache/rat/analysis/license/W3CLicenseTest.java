@@ -50,9 +50,9 @@ public class W3CLicenseTest extends TestCase {
 
     public void testMatch() throws Exception {
         final Document subject = new MockLocation("subject");
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL, reporter));
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_COMMENTED, reporter));
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_XML, reporter));
-        assertFalse("Return null if the license isn't matched", license.match(subject, "Bogus", reporter));
+        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL));
+        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_COMMENTED));
+        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_XML));
+        assertFalse("Return null if the license isn't matched", license.match(subject, "Bogus"));
     }
 }

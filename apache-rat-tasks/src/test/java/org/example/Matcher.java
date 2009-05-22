@@ -20,7 +20,6 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 
 
@@ -31,8 +30,8 @@ public class Matcher extends BaseLicense implements IHeaderMatcher {
     }
     public void reset() {}
     
-    public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException {
-    	reportOnLicense(subject, reporter);
+    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+    	reportOnLicense(subject);
     	return true;
     }
 }

@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
@@ -45,7 +44,7 @@ public class AnalyserFactoryTest extends TestCase {
         reporter = new SimpleXmlClaimReporter(writer);
         matcherStub = new IHeaderMatcher() {
 
-            public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException {
+            public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
                 return false;
             }
 

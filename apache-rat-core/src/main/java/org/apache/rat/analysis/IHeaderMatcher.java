@@ -19,7 +19,6 @@
 package org.apache.rat.analysis;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 
 /**
  * Matches text headers to known licenses.
@@ -38,8 +37,7 @@ public interface IHeaderMatcher {
      * TODO probably a poor design choice - hope to fix later
 	 * @param subject TODO
 	 * @param line next line of text, not null
-	 * @param reporter TODO
 	 * @return TODO
 	 */
-	public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException;
+	public boolean match(Document subject, String line) throws RatHeaderAnalysisException;
 }

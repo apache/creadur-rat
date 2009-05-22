@@ -21,7 +21,6 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 
 public class W3CDocLicense extends BaseLicense implements IHeaderMatcher {
@@ -37,10 +36,10 @@ public class W3CDocLicense extends BaseLicense implements IHeaderMatcher {
         
     }
 
-    public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         boolean result = line != null && line.indexOf(COPYRIGHT_URL) != -1;
         if (result) {
-            reportOnLicense(subject, reporter);
+            reportOnLicense(subject);
         }
         return result;
     }

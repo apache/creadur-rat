@@ -21,7 +21,6 @@ package org.apache.rat.analysis.util;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 
 /**
  * Delegates to an ordered set of matchers.
@@ -37,10 +36,10 @@ public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 		numberOfMatchers = matchers.length;
 	}
 	
-	public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException {
+	public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         boolean result = false;
 		for (int i=0;i<numberOfMatchers;i++) {
-			result = matchers[i].match(subject, line, reporter);
+			result = matchers[i].match(subject, line);
             if (result) {
                 break;
             }

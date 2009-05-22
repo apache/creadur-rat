@@ -66,7 +66,7 @@ public class JavaDocLicenseNotRequiredTest extends TestCase {
         String line = in.readLine();
         final Document subject = new MockLocation("subject");
         while (line != null && !result) {
-            result = license.match(subject, line, reporter);
+            result = license.match(subject, line);
             line = in.readLine();
         }
         return result;

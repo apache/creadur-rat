@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 
 /**
@@ -48,7 +47,7 @@ public class OASISLicense extends BaseLicense implements IHeaderMatcher {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_OASIS, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE, "No modifications allowed");
     }
 
-    public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         boolean result = false;
         if (copyrightMatch) {
             line = line.toLowerCase();
@@ -57,7 +56,7 @@ public class OASISLicense extends BaseLicense implements IHeaderMatcher {
             final boolean clauseMatch = CLAUSE_PATTERN.matcher(buffer).matches();
             if (clauseMatch) {
                 result = true;
-                reportOnLicense(subject, reporter);
+                reportOnLicense(subject);
             }
             
         } else {

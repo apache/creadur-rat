@@ -44,7 +44,7 @@ public class GeneratedLicenseNotRequiredTest extends TestCase {
 
     public void testMatch() throws Exception {
         final Document subject = new MockLocation("subject");
-        assertFalse("Does not match regex", license.match(subject, "Not at all", reporter));
-        assertTrue("Matches regex", license.match(subject, "This is Generated", reporter));
+        assertFalse("Does not match regex", license.match(subject, "Not at all"));
+        assertTrue("Matches regex", license.match(subject, "This is Generated"));
     }
 }

@@ -64,19 +64,19 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
         this.numberOfPatterns = linePatterns.length;
     }
 
-    public boolean match(Document subject, String line, Reporter reporter) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         boolean result = false;
         for (int i=0;i<numberOfPatterns;i++) {
             if (linePatterns[i].matcher(line).matches()) {
                 result = true;
-                reportOnLicense(subject, reporter);
+                reportOnLicense(subject);
                 break;
             }
         }
         return result;
     }
 
-    private void reportOnLicense(Document subject, Reporter reporter) throws RatHeaderAnalysisException {
+    private void reportOnLicense(Document subject) throws RatHeaderAnalysisException {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN);
     }
 
