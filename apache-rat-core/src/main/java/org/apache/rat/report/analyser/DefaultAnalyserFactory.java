@@ -54,20 +54,20 @@ public class DefaultAnalyserFactory {
         }
 
         public void analyse(IDocument document) throws RatDocumentAnalysisException {
-            final FileType type;
-            if (NoteGuesser.isNote(document)) {
-                type = FileType.NOTICE;
-            } else if (ArchiveGuesser.isArchive(document)) {
-                type = FileType.ARCHIVE;
-            } else if (BinaryGuesser.isBinary(document)) {
-                type = FileType.BINARY;
-            } else {
-                type = FileType.STANDARD;
-                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher, reporter);
-                headerAnalyser.analyse(document);
-            }
-            
             try {
+                reporter.report(document);
+                final FileType type;
+                if (NoteGuesser.isNote(document)) {
+                    type = FileType.NOTICE;
+                } else if (ArchiveGuesser.isArchive(document)) {
+                    type = FileType.ARCHIVE;
+                } else if (BinaryGuesser.isBinary(document)) {
+                    type = FileType.BINARY;
+                } else {
+                    type = FileType.STANDARD;
+                    final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher, reporter);
+                    headerAnalyser.analyse(document);
+                }
                 reporter.claim(new FileTypeClaim(document, type));
             } catch (RatReportFailedException e) {
                 throw new RatReportAnalysisResultException(e);

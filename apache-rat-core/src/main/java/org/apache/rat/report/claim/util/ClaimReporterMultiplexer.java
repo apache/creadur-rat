@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.report.claim.util;
 
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
@@ -39,4 +40,10 @@ public class ClaimReporterMultiplexer implements IClaimReporter {
         }
     }
 
+    public void report(IDocument document) throws RatReportFailedException {
+        final int length = reporters.length;
+        for (int i=0;i<length;i++) {
+            reporters[i].report(document);
+        } 
+    }
 }

@@ -18,9 +18,19 @@
  */ 
 package org.apache.rat.report.claim;
 
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 
 public interface IClaimReporter {
+    
+    /**
+     * Starts a report on the given document.
+     * All claims concern this document until this is called next.
+     * @param subject not null
+     * @throws RatReportFailedException
+     */
+    void report(IDocument subject) throws RatReportFailedException;
+    
     /**
      * States a claim.
      * @param pClaim The claim to state.

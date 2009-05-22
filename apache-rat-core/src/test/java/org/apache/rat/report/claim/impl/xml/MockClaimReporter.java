@@ -21,6 +21,7 @@ package org.apache.rat.report.claim.impl.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
@@ -36,5 +37,8 @@ public class MockClaimReporter implements IClaimReporter {
 
     public CustomClaim getClaim(int index) {
         return (CustomClaim) claims.get(index);
+    }
+
+    public void report(IDocument document) throws RatReportFailedException {
     }
 }

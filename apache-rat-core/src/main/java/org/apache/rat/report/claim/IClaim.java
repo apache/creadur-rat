@@ -1,6 +1,5 @@
 package org.apache.rat.report.claim;
 
-import org.apache.rat.document.IDocument;
 
 
 
@@ -10,8 +9,4 @@ import org.apache.rat.document.IDocument;
  * subject.
  */
 public interface IClaim {
-    /**
-     * Returns the claims subject.
-     */
-    IDocument getSubject();
 }

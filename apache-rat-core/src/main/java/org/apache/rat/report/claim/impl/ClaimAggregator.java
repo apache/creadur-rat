@@ -3,6 +3,7 @@ package org.apache.rat.report.claim.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.IClaim;
@@ -82,6 +83,13 @@ public class ClaimAggregator extends AbstractClaimReporter {
         super.claim(pClaim);
         if (reporter != null) {
             reporter.claim(pClaim);
+        }
+    }
+
+    public void report(IDocument document) throws RatReportFailedException {
+        super.report(document);
+        if (reporter != null) {
+            reporter.report(document);
         }
     }
 }

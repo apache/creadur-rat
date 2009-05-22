@@ -1,5 +1,6 @@
 package org.apache.rat.report.claim.impl;
 
+import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
@@ -52,4 +53,6 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
     public void claim(IClaim pClaim) throws RatReportFailedException {
         handleClaim(pClaim);
     }
+
+    public void report(IDocument document) throws RatReportFailedException {}
 }

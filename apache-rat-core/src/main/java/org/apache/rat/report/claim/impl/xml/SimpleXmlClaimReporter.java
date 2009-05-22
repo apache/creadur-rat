@@ -43,6 +43,7 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     private static final String NAME = "name";
     private final IXmlWriter writer;
     private IDocument lastSubject;
+    private IDocument subject;
     
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
         this.writer = writer;
@@ -110,7 +111,17 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     }
 
     public void claim(IClaim pClaim) throws RatReportFailedException {
-        final IDocument subject = pClaim.getSubject();
+        try {
+            handleClaim(pClaim);
+        } catch (IOException e) {
+            throw new RatReportFailedException("XML writing failure: " + e.getMessage()
+                    + " subject: " + subject + " claim type: "
+                    + pClaim.getClass().getName(), e);
+        }
+    }
+
+    public void report(final IDocument subject) throws RatReportFailedException {
+        this.subject = subject;
         try {
             if (!(subject.equals(lastSubject))) {
                 if (lastSubject != null) {
@@ -118,12 +129,10 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
                 }
                 writer.openElement("resource").attribute(NAME, subject.getName());
             }
-            handleClaim(pClaim);
             lastSubject = subject;
         } catch (IOException e) {
             throw new RatReportFailedException("XML writing failure: " + e.getMessage()
-                    + " subject: " + subject + " claim type: "
-                    + pClaim.getClass().getName(), e);
+                    + " subject: " + subject, e);
         }
     }
 

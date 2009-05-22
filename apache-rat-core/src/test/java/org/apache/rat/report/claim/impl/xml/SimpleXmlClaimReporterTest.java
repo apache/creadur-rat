@@ -43,6 +43,7 @@ public class SimpleXmlClaimReporterTest extends TestCase {
         final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
+        reporter.report(subject);
         reporter.claim(new CustomClaim(subject, predicate, object, false));
         assertEquals("Five calls made", 5, mockWriter.calls.size());
         assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
@@ -63,6 +64,7 @@ public class SimpleXmlClaimReporterTest extends TestCase {
         final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
+        reporter.report(subject);
         reporter.claim(new CustomClaim(subject, predicate, object, false));
         assertEquals("Five calls made", 5, mockWriter.calls.size());
         assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
@@ -71,6 +73,7 @@ public class SimpleXmlClaimReporterTest extends TestCase {
         assertTrue("Forth call is object attribute", mockWriter.isAttribute("name", object, 3));    
         assertTrue("Fifth call is close element", mockWriter.isCloseElement(4));    
         final IDocument subjectTwo = new MockLocation("another-subject");
+        reporter.report(subjectTwo);
         reporter.claim(new CustomClaim(subjectTwo, predicate, object, false));
         assertEquals("Another found calls made", 11, mockWriter.calls.size());
         assertTrue("Sixth call is close element", mockWriter.isCloseElement(5));  
@@ -85,6 +88,7 @@ public class SimpleXmlClaimReporterTest extends TestCase {
         final IDocument subject = new MockLocation("subject");
         final String predicate = "predicate";
         final String object = "object";
+        reporter.report(subject);
         reporter.claim(new CustomClaim(subject, predicate, object, true));
         assertEquals("Five calls made", 5, mockWriter.calls.size());
         assertTrue("First call is open element 'resource'", mockWriter.isOpenElement("resource", 0));
