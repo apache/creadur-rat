@@ -24,7 +24,6 @@ import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.impl.ArchiveFileTypeClaim;
 import org.apache.rat.report.claim.impl.FileTypeClaim;
 import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
 import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
@@ -47,12 +46,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
         this.writer = writer;
-    }
-
-    protected void handleClaim(ArchiveFileTypeClaim pClaim)
-            throws IOException, RatReportFailedException {
-        handleClaim((FileTypeClaim) pClaim);
-        writeClaim(ARCHIVE_TYPE_PREDICATE, pClaim.isReadable() ? ARCHIVE_TYPE_READABLE : ARCHIVE_TYPE_UNREADABLE, false);
     }
 
     protected void handleClaim(FileTypeClaim pClaim)
@@ -101,9 +94,7 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     }
     
     protected void handleClaim(IClaim pClaim) throws IOException, RatReportFailedException {
-        if (pClaim instanceof ArchiveFileTypeClaim) {
-            handleClaim((ArchiveFileTypeClaim) pClaim);
-        } else if (pClaim instanceof FileTypeClaim) {
+        if (pClaim instanceof FileTypeClaim) {
             handleClaim((FileTypeClaim) pClaim);
         } else if (pClaim instanceof LicenseApprovalClaim) {
             handleClaim((LicenseApprovalClaim) pClaim);

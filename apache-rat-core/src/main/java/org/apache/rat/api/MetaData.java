@@ -31,6 +31,14 @@ import java.util.List;
  */
 public class MetaData {
 
+    public static final String RAT_DOCUMENT_CATEGORY_VALUE_GENERATED = "GEN  ";
+    public static final String RAT_DOCUMENT_CATEGORY_VALUE_UNKNOWN = "?????";
+    public static final String RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE = "archive";
+    public static final String RAT_DOCUMENT_CATEGORY_VALUE_NOTICE = "notice";
+    public static final String RAT_DOCUMENT_CATEGORY_VALUE_BINARY = "binary";
+    public static final String RAT_DOCUMENT_CATEGORY_VALUE_STANDARD = "standard";
+    public static final String RAT_DOCUMENT_CATEGORY_URL ="http://org/apache/rat/meta-data#FileCategory";
+    
     private ContentType contentType;
     /** 
      * Only likely to be a small quantity of data 

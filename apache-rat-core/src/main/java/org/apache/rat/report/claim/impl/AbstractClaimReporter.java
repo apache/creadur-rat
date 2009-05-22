@@ -12,9 +12,6 @@ import org.apache.rat.report.claim.impl.xml.CustomClaim;
  * this class.
  */
 public abstract class AbstractClaimReporter implements IClaimReporter {
-    protected void handleClaim(ArchiveFileTypeClaim pClaim) {
-        handleClaim((FileTypeClaim) pClaim);
-    }
 
     protected void handleClaim(FileTypeClaim pClaim) {
         // Does nothing
@@ -37,9 +34,7 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
     }
 
     protected void handleClaim(IClaim pClaim) {
-        if (pClaim instanceof ArchiveFileTypeClaim) {
-            handleClaim((ArchiveFileTypeClaim) pClaim);
-        } else if (pClaim instanceof FileTypeClaim) {
+        if (pClaim instanceof FileTypeClaim) {
             handleClaim((FileTypeClaim) pClaim);
         } else if (pClaim instanceof LicenseApprovalClaim) {
             handleClaim((LicenseApprovalClaim) pClaim);
