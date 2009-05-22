@@ -35,18 +35,18 @@ public class BinaryGuesserTest extends TestCase {
     }
     
     public void testMatches() {
-        assertTrue(guesser.matches(new MockDocument("image.png")));
-        assertTrue(guesser.matches(new MockDocument("image.pdf")));
-        assertTrue(guesser.matches(new MockDocument("image.gif")));
-        assertTrue(guesser.matches(new MockDocument("image.giff")));
-        assertTrue(guesser.matches(new MockDocument("image.tif")));
-        assertTrue(guesser.matches(new MockDocument("image.tiff")));
-        assertTrue(guesser.matches(new MockDocument("image.jpg")));
-        assertTrue(guesser.matches(new MockDocument("image.jpeg")));
-        assertTrue(guesser.matches(new MockDocument("image.exe")));
-        assertTrue(guesser.matches(new MockDocument("Whatever.class")));
-        assertTrue(guesser.matches(new MockDocument("data.dat")));
-        assertTrue(guesser.matches(new MockDocument("libicudata.so.34.")));
+        assertTrue(guesser.isBinary(new MockDocument("image.png")));
+        assertTrue(guesser.isBinary(new MockDocument("image.pdf")));
+        assertTrue(guesser.isBinary(new MockDocument("image.gif")));
+        assertTrue(guesser.isBinary(new MockDocument("image.giff")));
+        assertTrue(guesser.isBinary(new MockDocument("image.tif")));
+        assertTrue(guesser.isBinary(new MockDocument("image.tiff")));
+        assertTrue(guesser.isBinary(new MockDocument("image.jpg")));
+        assertTrue(guesser.isBinary(new MockDocument("image.jpeg")));
+        assertTrue(guesser.isBinary(new MockDocument("image.exe")));
+        assertTrue(guesser.isBinary(new MockDocument("Whatever.class")));
+        assertTrue(guesser.isBinary(new MockDocument("data.dat")));
+        assertTrue(guesser.isBinary(new MockDocument("libicudata.so.34.")));
     }
 
     public void testIsBinary() {

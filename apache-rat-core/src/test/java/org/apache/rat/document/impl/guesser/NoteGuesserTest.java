@@ -35,12 +35,12 @@ public class NoteGuesserTest extends TestCase {
     }
 
     public void testMatches() {
-        assertTrue(guesser.matches(new MockDocument("LICENSE")));
-        assertTrue(guesser.matches(new MockDocument("LICENSE.txt")));
-        assertTrue(guesser.matches(new MockDocument("NOTICE")));
-        assertTrue(guesser.matches(new MockDocument("NOTICE.txt")));
-        assertTrue(guesser.matches(new MockDocument("README")));
-        assertTrue(guesser.matches(new MockDocument("README.txt")));
+        assertTrue(guesser.isNote(new MockDocument("LICENSE")));
+        assertTrue(guesser.isNote(new MockDocument("LICENSE.txt")));
+        assertTrue(guesser.isNote(new MockDocument("NOTICE")));
+        assertTrue(guesser.isNote(new MockDocument("NOTICE.txt")));
+        assertTrue(guesser.isNote(new MockDocument("README")));
+        assertTrue(guesser.isNote(new MockDocument("README.txt")));
     }
 
     public void testIsNote() {

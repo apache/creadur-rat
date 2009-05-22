@@ -23,14 +23,13 @@ import java.io.Reader;
 import java.util.Locale;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.IDocumentMatcher;
 
 /**
  * TODO: factor into MIME guesser and MIME->binary guesser
  */
-public class BinaryGuesser implements IDocumentMatcher {
+public class BinaryGuesser {
 
-    private static boolean isBinary(IDocument document) {
+    private static boolean isBinaryDocument(IDocument document) {
         boolean result = false;
         Reader reader = null;
         try
@@ -268,7 +267,7 @@ public class BinaryGuesser implements IDocumentMatcher {
     public static final int NON_ASCII_THREASHOLD = 256;
     public static final int ASCII_CHAR_THREASHOLD = 8;
 
-    public boolean matches(final IDocument document) {
+    public static final boolean isBinary(final IDocument document) {
         // TODO: reimplement the binary test algorithm?
         // TODO: more efficient to move into standard analysis
         // TODO: then use binary as default
@@ -277,7 +276,7 @@ public class BinaryGuesser implements IDocumentMatcher {
         if (!result)
         {
             // try a taste
-            result = isBinary(document);
+            result = isBinaryDocument(document);
         }
         return result;
     }

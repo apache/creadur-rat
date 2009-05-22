@@ -79,7 +79,7 @@ public class XmlReportFactoryTest extends TestCase {
                 "</resource>" +
                 "<resource name='" + elementsPath + "/Xml.xml'><type name='standard'/>" +
                 "</resource>" +
-                "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/><archive-type name='readable'/></resource>" +
+                "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
                 "</rat-report>", output);
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
         assertEquals("Binary files", new Integer(1), statistic.getFileTypeMap().get(FileType.BINARY));

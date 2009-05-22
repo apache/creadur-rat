@@ -21,9 +21,8 @@ package org.apache.rat.document.impl.guesser;
 import java.util.Locale;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.IDocumentMatcher;
 
-public class ArchiveGuesser implements IDocumentMatcher {
+public class ArchiveGuesser {
     
     public static final String[] ARCHIVE_EXTENSIONS = {
         "jar", "gz",
@@ -32,7 +31,7 @@ public class ArchiveGuesser implements IDocumentMatcher {
         "rar", "war",
     };
 
-    public boolean matches(final IDocument document) {
+    public static final boolean isArchive(final IDocument document) {
         
         final String name = document.getName();
         final boolean result = isArchive(name);

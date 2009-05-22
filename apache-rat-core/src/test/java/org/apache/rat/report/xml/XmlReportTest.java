@@ -25,8 +25,12 @@ import java.util.regex.Pattern;
 import junit.framework.TestCase;
 
 import org.apache.rat.DirectoryWalker;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.report.analyser.DefaultAnalyserFactory;
+import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
@@ -45,11 +49,16 @@ public class XmlReportTest extends TestCase {
         writer = new XmlWriter(out);
         writer.startDocument();
         final SimpleXmlClaimReporter reporter = new SimpleXmlClaimReporter(writer);
-        IDocumentAnalyser archiveAnalyser = DefaultAnalyserFactory.createArchiveTypeAnalyser(reporter);
-        IDocumentAnalyser binaryAnalyser = DefaultAnalyserFactory.createBinaryTypeAnalyser(reporter);
-        IDocumentAnalyser noticeAnalyser = DefaultAnalyserFactory.createNoticeTypeAnalyser(reporter);
-        IDocumentAnalyser standardAnalyser = DefaultAnalyserFactory.createStandardTypeAnalyser(reporter);
-        IDocumentAnalyser analyser =DefaultAnalyserFactory.createDefaultAnalyser(binaryAnalyser, archiveAnalyser, noticeAnalyser, standardAnalyser);
+        final IHeaderMatcher matcher = new IHeaderMatcher() {
+
+            public boolean match(IDocument subject, String line, IClaimReporter reporter) throws RatHeaderAnalysisException {
+                return false;
+            }
+
+            public void reset() {
+            }            
+        };
+        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcher);
         report = new XmlReport(writer, analyser);
     }
 
@@ -75,11 +84,59 @@ public class XmlReportTest extends TestCase {
                     "<resource name='" + elementsPath + "/Image.png'><type name='binary'/></resource>" +
                     "<resource name='" + elementsPath + "/LICENSE'><type name='notice'/></resource>" +
                     "<resource name='" + elementsPath + "/NOTICE'><type name='notice'/></resource>" +
-                    "<resource name='" + elementsPath + "/Source.java'><type name='standard'/></resource>" +
-                    "<resource name='" + elementsPath + "/Text.txt'><type name='standard'/></resource>" +
-                    "<resource name='" + elementsPath + "/Xml.xml'><type name='standard'/></resource>" +
-                    "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/><archive-type name='readable'/></resource>" +
-                    "<resource name='" + elementsPath + "/sub/Empty.txt'><type name='standard'/></resource>" +
+                    "<resource name='" + elementsPath + "/Source.java'><header-sample>package elements;\n" +
+"\n" +
+"/*\n" +
+" * This file does intentionally *NOT* contain an ASL license header,\n" +
+" * because it is used in the test suite.\n" +
+" */\n" +
+"public class Source {\n" +
+"\n" +
+"}\n" + "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
+                    "<resource name='" + elementsPath + "/Text.txt'><header-sample>/*\n" +
+" * Licensed to the Apache Software Foundation (ASF) under one\n" +
+" * or more contributor license agreements.  See the NOTICE file\n" +
+" * distributed with this work for additional information\n" +
+" * regarding copyright ownership.  The ASF licenses this file\n" +
+" * to you under the Apache License, Version 2.0 (the \"License\");\n" +
+" * you may not use this file except in compliance with the License.\n" +
+" * You may obtain a copy of the License at\n" +
+" *\n" +
+" *    http://www.apache.org/licenses/LICENSE-2.0\n" +
+" *\n" +
+" * Unless required by applicable law or agreed to in writing,\n" +
+" * software distributed under the License is distributed on an\n" +
+" * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n" +
+" * KIND, either express or implied.  See the License for the\n" +
+" * specific language governing permissions and limitations\n" +
+" * under the License.    \n" +
+" */\n" +
+"\n" +
+"            \n" +
+"</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
+                    "<resource name='" + elementsPath + "/Xml.xml'><header-sample>&lt;?xml version='1.0'?&gt;\n" +
+"&lt;!--\n" +
+" Licensed to the Apache Software Foundation (ASF) under one   *\n" +
+" or more contributor license agreements.  See the NOTICE file *\n" +
+" distributed with this work for additional information        *\n" +
+" regarding copyright ownership.  The ASF licenses this file   *\n" +
+" to you under the Apache License, Version 2.0 (the            *\n" +
+" \"License\"); you may not use this file except in compliance   *\n" +
+" with the License.  You may obtain a copy of the License at   *\n" +
+"                                                              *\n" +
+"   http://www.apache.org/licenses/LICENSE-2.0                 *\n" +
+"                                                              *\n" +
+" Unless required by applicable law or agreed to in writing,   *\n" +
+" software distributed under the License is distributed on an  *\n" +
+" \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *\n" +
+" KIND, either express or implied.  See the License for the    *\n" +
+" specific language governing permissions and limitations      *\n" +
+" under the License.                                           *\n" +
+"--&gt;\n" +
+"&lt;document/&gt;\n" +
+"</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
+                    "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
+                    "<resource name='" + elementsPath + "/sub/Empty.txt'><header-sample>\n</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
                 "</rat-report>", output);
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
     }

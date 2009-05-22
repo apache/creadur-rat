@@ -22,9 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.rat.document.IDocument;
-import org.apache.rat.document.IDocumentMatcher;
 
-public class NoteGuesser implements IDocumentMatcher {
+public class NoteGuesser {
 
 
     public static final String[] NOTE_FILE_NAMES = {
@@ -68,7 +67,7 @@ public class NoteGuesser implements IDocumentMatcher {
         return result;
     }
 
-    public boolean matches(final IDocument document) {
+    public static final boolean isNote(final IDocument document) {
         final String name = document.getName();
         final boolean result = isNote(name);
         return result;

@@ -63,4 +63,20 @@ public class FileDocument implements IDocument {
     public InputStream inputStream() throws IOException {
         return new FileInputStream(file);
     }
+
+    /**
+     * Representations suitable for logging.
+     * @return a <code>String</code> representation 
+     * of this object.
+     */
+    public String toString()
+    {
+        return "FileDocument ( "
+            + "file = " + this.file + " "
+            + "name = " + this.name + " "
+            + "metaData = " + this.metaData + " "
+            + " )";
+    }
+    
+    
 }

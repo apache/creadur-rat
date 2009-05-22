@@ -21,19 +21,13 @@ package org.apache.rat.report.analyser;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.IDocumentMatcher;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
-import org.apache.rat.document.impl.util.ConditionalAnalyser;
-import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
-import org.apache.rat.document.impl.util.DocumentMatcherMultiplexer;
-import org.apache.rat.document.impl.util.MatchNegator;
+import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.FileType;
-import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.impl.ArchiveFileTypeClaim;
 import org.apache.rat.report.claim.impl.FileTypeClaim;
 
 /**
@@ -41,95 +35,43 @@ import org.apache.rat.report.claim.impl.FileTypeClaim;
  *
  */
 public class DefaultAnalyserFactory {
-    
-    public static final IDocumentAnalyser createArchiveTypeAnalyser(final IClaimReporter reporter) {
-        return new AbstractSingleClaimAnalyser(reporter){
-            protected IClaim toClaim(IDocument pDocument)
-                    throws RatDocumentAnalysisException {
-                return new ArchiveFileTypeClaim(pDocument, pDocument.isComposite());
-            }
-        };
-    }
-    
-    public static final IDocumentAnalyser createNoticeTypeAnalyser(final IClaimReporter reporter) {
-        return new AbstractSingleClaimAnalyser(reporter){
-            protected IClaim toClaim(IDocument pDocument)
-                    throws RatDocumentAnalysisException {
-                return new FileTypeClaim(pDocument, FileType.NOTICE);
-            }
-        };
-    }
-    
-    public static final IDocumentAnalyser createBinaryTypeAnalyser(final IClaimReporter reporter) {
-        return new AbstractSingleClaimAnalyser(reporter){
-            protected IClaim toClaim(IDocument pDocument)
-                    throws RatDocumentAnalysisException {
-                return new FileTypeClaim(pDocument, FileType.BINARY);
-            }
-        };
-    }
-    
-    public static final IDocumentAnalyser createStandardTypeAnalyser(final IClaimReporter reporter) {
-        return new AbstractSingleClaimAnalyser(reporter){
-            protected IClaim toClaim(IDocument pDocument)
-                    throws RatDocumentAnalysisException {
-                return new FileTypeClaim(pDocument, FileType.STANDARD);
-            }
-        };
-    }
-    
-    public static final IDocumentAnalyser createDefaultBinaryAnalyser(final IClaimReporter reporter) {
-        final IDocumentAnalyser result = createBinaryTypeAnalyser(reporter);
-        return result;
-    }
-    
-    public static final IDocumentAnalyser createDefaultNoticeAnalyser(final IClaimReporter reporter) {
-        final IDocumentAnalyser result = createNoticeTypeAnalyser(reporter);
-        return result;
-    }
-    
-    public static final IDocumentAnalyser createDefaultArchiveAnalyser(final IClaimReporter reporter) {
-        return createArchiveTypeAnalyser(reporter);
-    }
-    
-    public static final IDocumentAnalyser createDefaultStandardAnalyser(final IClaimReporter reporter, 
-            final IHeaderMatcher matcher) {
-        final IDocumentAnalyser[] components = {
-                createStandardTypeAnalyser(reporter),
-                new DocumentHeaderAnalyser(matcher, reporter)
-        };
-        final DocumentAnalyserMultiplexer result = new DocumentAnalyserMultiplexer(components);
-        return result;
-    }
-    
+  
     public static final IDocumentAnalyser createDefaultAnalyser(final IClaimReporter reporter, 
             final IHeaderMatcher matcher) {
         
-        final IDocumentAnalyser binaryAnalyser = createDefaultBinaryAnalyser(reporter);
-        final IDocumentAnalyser archiveAnalyser = createDefaultArchiveAnalyser(reporter);
-        final IDocumentAnalyser noticeAnalyser = createDefaultNoticeAnalyser(reporter);
-        final IDocumentAnalyser standardAnalyser = createDefaultStandardAnalyser(reporter, matcher);
-        
-        return createDefaultAnalyser(binaryAnalyser, archiveAnalyser, noticeAnalyser, standardAnalyser);
+        return new DefaultAnalyser(reporter, matcher);
     }
+    
+    private final static class DefaultAnalyser implements IDocumentAnalyser {
 
-    public static IDocumentAnalyser createDefaultAnalyser(final IDocumentAnalyser binaryAnalyser, final IDocumentAnalyser archiveAnalyser, final IDocumentAnalyser noticeAnalyser, final IDocumentAnalyser standardAnalyser) {
-        final IDocumentMatcher binaryGuesser = new BinaryGuesser();
-        final IDocumentMatcher archiveGuesser = new ArchiveGuesser();
-        final IDocumentMatcher noteGuesser = new NoteGuesser();
+        private final IClaimReporter reporter;
+        private final IHeaderMatcher matcher;
         
-        return createDefaultAnalyser(binaryAnalyser, archiveAnalyser, noticeAnalyser, standardAnalyser, binaryGuesser, archiveGuesser, noteGuesser);
-    }
+        public DefaultAnalyser(final IClaimReporter reporter, final IHeaderMatcher matcher) {
+            super();
+            this.reporter = reporter;
+            this.matcher = matcher;
+        }
 
-    public static IDocumentAnalyser createDefaultAnalyser(final IDocumentAnalyser binaryAnalyser, final IDocumentAnalyser archiveAnalyser, final IDocumentAnalyser noticeAnalyser, final IDocumentAnalyser standardAnalyser, final IDocumentMatcher binaryGuesser, final IDocumentMatcher archiveGuesser, final IDocumentMatcher noteGuesser) {
-        final IDocumentMatcher binaryMatcher = new ConditionalAnalyser(binaryGuesser, binaryAnalyser);
-        final IDocumentMatcher noticeMatcher = new ConditionalAnalyser(noteGuesser, noticeAnalyser);
-        final IDocumentMatcher archiveMatcher = new ConditionalAnalyser(archiveGuesser, archiveAnalyser);
-        final IDocumentMatcher[] matchers = {noticeMatcher, archiveMatcher, binaryMatcher};
-        final IDocumentMatcher specialDocumentMatcher = new DocumentMatcherMultiplexer(matchers);
-        final IDocumentMatcher documentMatcher = new MatchNegator(specialDocumentMatcher);
-        
-        final ConditionalAnalyser result = new ConditionalAnalyser(documentMatcher, standardAnalyser);
-        return result;
+        public void analyse(IDocument document) throws RatDocumentAnalysisException {
+            final FileType type;
+            if (NoteGuesser.isNote(document)) {
+                type = FileType.NOTICE;
+            } else if (ArchiveGuesser.isArchive(document)) {
+                type = FileType.ARCHIVE;
+            } else if (BinaryGuesser.isBinary(document)) {
+                type = FileType.BINARY;
+            } else {
+                type = FileType.STANDARD;
+                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher, reporter);
+                headerAnalyser.analyse(document);
+            }
+            
+            try {
+                reporter.claim(new FileTypeClaim(document, type));
+            } catch (RatReportFailedException e) {
+                throw new RatReportAnalysisResultException(e);
+            }
+        }        
     }
 }

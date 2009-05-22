@@ -36,12 +36,12 @@ public class ArchiveGuesserTest extends TestCase {
     
 
     public void testMatches() {
-        assertTrue(guesser.matches(new MockDocument("42.jar")));
-        assertTrue(guesser.matches(new MockDocument("42.tar.gz")));
-        assertTrue(guesser.matches(new MockDocument("42.zip")));
-        assertTrue(guesser.matches(new MockDocument("42.tar")));
-        assertTrue(guesser.matches(new MockDocument("42.bz")));
-        assertTrue(guesser.matches(new MockDocument("42.bz2")));
+        assertTrue(guesser.isArchive(new MockDocument("42.jar")));
+        assertTrue(guesser.isArchive(new MockDocument("42.tar.gz")));
+        assertTrue(guesser.isArchive(new MockDocument("42.zip")));
+        assertTrue(guesser.isArchive(new MockDocument("42.tar")));
+        assertTrue(guesser.isArchive(new MockDocument("42.bz")));
+        assertTrue(guesser.isArchive(new MockDocument("42.bz2")));
     }
     
     public void testIsArchive() {
