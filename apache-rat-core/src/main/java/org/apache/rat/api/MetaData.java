@@ -45,6 +45,12 @@ public class MetaData {
      * so trade some performance for simplicity.
      */
     private final List/*<Datum>*/ data;
+    public static final String RAT_LICENSE_FAMILY_VALUE_ASL = "AL   ";
+    public static final String RAT_LICENSE_FAMILY_VALUE_OASIS = "OASIS";
+    public static final String RAT_LICENSE_FAMILY_VALUE_W3CD = "W3CD ";
+    public static final String RAT_LICENSE_FAMILY_VALUE_W3C = "W3C  ";
+    public static final String RAT_LICENSE_FAMILY_VALUE_DOJO = "DOJO ";
+    public static final String RAT_LICENSE_FAMILY_VALUE_TMF = "TMF  ";
     
     public MetaData() {
         this(null);

@@ -20,7 +20,6 @@ package org.apache.rat.policy;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.analysis.Claims;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.license.Apache20LicenseFamily;
@@ -61,7 +60,7 @@ public class DefaultPolicyTest extends TestCase {
 
     public void testASLFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, Claims.ASL_CODE, ""));
+        policy.claim(new LicenseFamilyClaim(subject, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, LicenseFamilyCode.ASL_CODE, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
@@ -82,21 +81,21 @@ public class DefaultPolicyTest extends TestCase {
     
     public void testOASISFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, OASISLicenseFamily.OASIS_OPEN_LICENSE_NAME, Claims.OASIS_CODE, ""));
+        policy.claim(new LicenseFamilyClaim(subject, OASISLicenseFamily.OASIS_OPEN_LICENSE_NAME, LicenseFamilyCode.OASIS_CODE, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testW3CFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, Claims.W3C_CODE, ""));
+        policy.claim(new LicenseFamilyClaim(subject, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, LicenseFamilyCode.W3C_CODE, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
     
     public void testW3CDocFamily() throws Exception {
         final IDocument subject = new MockLocation("subject");
-        policy.claim(new LicenseFamilyClaim(subject, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, Claims.W3CD_CODE, ""));
+        policy.claim(new LicenseFamilyClaim(subject, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, LicenseFamilyCode.W3CD_CODE, ""));
         assertEquals("Approved claim", 1, reporter.claims.size());
         assertApproval(true);
     }
@@ -114,9 +113,9 @@ public class DefaultPolicyTest extends TestCase {
         policy = new DefaultPolicy(reporter, custom);
         final IDocument subject = new MockLocation("subject");
         policy.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, LicenseFamilyCode.UNKNOWN, ""));
-        policy.claim(new LicenseFamilyClaim(subject, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, Claims.W3CD_CODE, ""));
-        policy.claim(new LicenseFamilyClaim(subject, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, Claims.W3C_CODE, ""));
-        policy.claim(new LicenseFamilyClaim(subject, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, Claims.ASL_CODE, ""));
+        policy.claim(new LicenseFamilyClaim(subject, W3CDocumentLicenseFamily.W3C_DOCUMENT_COPYRIGHT_NAME, LicenseFamilyCode.W3CD_CODE, ""));
+        policy.claim(new LicenseFamilyClaim(subject, W3CSoftwareLicenseFamily.W3C_SOFTWARE_COPYRIGHT_NAME, LicenseFamilyCode.W3C_CODE, ""));
+        policy.claim(new LicenseFamilyClaim(subject, Apache20LicenseFamily.APACHE_SOFTWARE_LICENSE_NAME, LicenseFamilyCode.ASL_CODE, ""));
         assertEquals("Four unapproved claims", 4, reporter.claims.size());
         assertApproval(false, (IClaim) reporter.claims.get(0));
         assertApproval(false, (IClaim) reporter.claims.get(1));

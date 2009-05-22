@@ -21,7 +21,6 @@ package org.apache.rat.policy;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.rat.analysis.Claims;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.license.Apache20LicenseFamily;
 import org.apache.rat.license.ILicenseFamily;
@@ -33,6 +32,7 @@ import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
 import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.LicenseFamilyName;
+import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
 import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
 
 public class DefaultPolicy implements IClaimReporter {
@@ -89,10 +89,14 @@ public class DefaultPolicy implements IClaimReporter {
         if (pClaim instanceof LicenseFamilyClaim) {
             final LicenseFamilyClaim lfc = (LicenseFamilyClaim) pClaim;
             final boolean isApproved = Arrays.binarySearch(approvedLicenseNames, lfc.getLicenseFamilyName(), licenseFamilyComparator) >= 0;
-            Claims.reportLicenseApprovalClaim(subject, isApproved, reporter);
+            reportLicenseApprovalClaim(subject, isApproved, reporter);
         }
     }
 
+    public void reportLicenseApprovalClaim(final IDocument subject, final boolean isAcceptable, final IClaimReporter reporter) throws RatReportFailedException {
+        reporter.claim(new LicenseApprovalClaim(subject, isAcceptable));
+    }
+    
     public void report(final IDocument subject) throws RatReportFailedException {
         this.subject = subject;
     }

@@ -18,12 +18,12 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.Claims;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.license.ModifiedBSDLicenseFamily;
 import org.apache.rat.report.claim.IClaimReporter;
+import org.apache.rat.report.claim.LicenseFamilyCode;
 
 
 public class TMF854LicenseHeader extends BaseLicense implements IHeaderMatcher {
@@ -34,7 +34,7 @@ public class TMF854LicenseHeader extends BaseLicense implements IHeaderMatcher {
     //  TMF854 Version 1.0 - Copyright TeleManagement Forum 
 
     public TMF854LicenseHeader() {
-        super(Claims.TMF854, ModifiedBSDLicenseFamily.MODIFIED_BSD_LICENSE_NAME, "BSD");
+        super(LicenseFamilyCode.TMF854, ModifiedBSDLicenseFamily.MODIFIED_BSD_LICENSE_NAME, "BSD");
     }
 
 
