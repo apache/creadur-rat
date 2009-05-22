@@ -42,7 +42,7 @@ public class HeaderCheckWorkerTest extends TestCase {
 	
 	public void testIsFinished() throws Exception {
         final Document subject = new MockLocation("subject");
-		HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), new ApacheSoftwareLicense20(), reporter, subject);
+		HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), new ApacheSoftwareLicense20(), subject);
 		assertFalse(worker.isFinished());
 		worker.read();
 		assertTrue(worker.isFinished());

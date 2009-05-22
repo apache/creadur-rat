@@ -25,7 +25,6 @@ import java.io.Reader;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 
 /**
@@ -39,7 +38,6 @@ class HeaderCheckWorker {
 	private final int numberOfRetainedHeaderLines;
 	private final BufferedReader reader;
 	private final IHeaderMatcher matcher;
-	private final Reporter reporter;
     private final Document subject;
     
 	private boolean match = false;
@@ -48,32 +46,31 @@ class HeaderCheckWorker {
 	private boolean finished = false;
 
 	public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine, 
-            final IHeaderMatcher matcher, final Reporter reporter, final Document name) {
-		this(new BufferedReader(reader), numberOfRetainedHeaderLine, matcher, reporter, name);
+            final IHeaderMatcher matcher, final Document name) {
+		this(new BufferedReader(reader), numberOfRetainedHeaderLine, matcher, name);
 	}
 	
 	
 	/**
 	 * Convenience constructor wraps given <code>Reader</code> 
 	 * in a <code>BufferedReader</code>.
-	 * @param name the name of the checked content, possibly null
 	 * @param reader a <code>Reader</code> for the content, not null
+	 * @param name the name of the checked content, possibly null
 	 */
-	public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher, final Reporter reporter, final Document name) {
-		this(new BufferedReader(reader), matcher, reporter, name);
+	public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher, final Document name) {
+		this(new BufferedReader(reader), matcher, name);
 	}
 	
 	public HeaderCheckWorker(BufferedReader reader, final IHeaderMatcher matcher,
-            final Reporter reporter, final Document name) {
-		this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, matcher, reporter, name);
+            final Document name) {
+		this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, matcher, name);
 	}
 	
 	public HeaderCheckWorker(BufferedReader reader, int numberOfRetainedHeaderLine, final IHeaderMatcher matcher,
-            final Reporter reporter, final Document name) {
+            final Document name) {
 		this.reader = reader;
 		this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
 		this.matcher = matcher;
-        this.reporter = reporter;
         this.subject = name;
 	}
 

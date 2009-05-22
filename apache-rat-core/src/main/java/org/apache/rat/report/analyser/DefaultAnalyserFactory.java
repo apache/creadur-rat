@@ -20,7 +20,6 @@ package org.apache.rat.report.analyser;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
@@ -34,20 +33,17 @@ import org.apache.rat.document.impl.guesser.NoteGuesser;
  */
 public class DefaultAnalyserFactory {
   
-    public static final IDocumentAnalyser createDefaultAnalyser(final Reporter reporter, 
-            final IHeaderMatcher matcher) {
+    public static final IDocumentAnalyser createDefaultAnalyser(final IHeaderMatcher matcher) {
         
-        return new DefaultAnalyser(reporter, matcher);
+        return new DefaultAnalyser(matcher);
     }
     
     private final static class DefaultAnalyser implements IDocumentAnalyser {
 
-        private final Reporter reporter;
         private final IHeaderMatcher matcher;
         
-        public DefaultAnalyser(final Reporter reporter, final IHeaderMatcher matcher) {
+        public DefaultAnalyser(final IHeaderMatcher matcher) {
             super();
-            this.reporter = reporter;
             this.matcher = matcher;
         }
 
@@ -61,7 +57,7 @@ public class DefaultAnalyserFactory {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
             } else {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher, reporter);
+                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher);
                 headerAnalyser.analyse(subject);
             }
             subject.getMetaData().set(documentCategory);

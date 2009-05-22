@@ -24,20 +24,16 @@ import java.io.Reader;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
     private final IHeaderMatcher matcher;
-    // TODO: coupling to unknown license should be replaced
-    private final Reporter reporter;
     
-    public DocumentHeaderAnalyser(final IHeaderMatcher matcher, final Reporter reporter) {
+    public DocumentHeaderAnalyser(final IHeaderMatcher matcher) {
         super();
         this.matcher = matcher;
-        this.reporter = reporter;
     }
 
     public void analyse(Document document) throws RatDocumentAnalysisException {
@@ -45,7 +41,7 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
         try {
             reader = document.reader();
             // TODO: worker function should be moved into this class
-            HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher, reporter, document);
+            HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher, document);
             worker.read();
         } catch (IOException e) {
             throw new RatDocumentAnalysisException("Cannot read header", e);

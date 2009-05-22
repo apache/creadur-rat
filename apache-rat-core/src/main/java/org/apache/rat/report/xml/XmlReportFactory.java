@@ -57,7 +57,7 @@ public class XmlReportFactory {
         final DefaultPolicy policy = new DefaultPolicy(approvedLicenses);
         
         final IDocumentAnalyser analyser = 
-            DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcher);
+            DefaultAnalyserFactory.createDefaultAnalyser(matcher);
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);
         

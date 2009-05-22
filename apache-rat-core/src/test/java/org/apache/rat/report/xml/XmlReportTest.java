@@ -57,7 +57,7 @@ public class XmlReportTest extends TestCase {
             public void reset() {
             }            
         };
-        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(reporter, matcher);
+        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcher);
         report = new XmlReport(writer, analyser, reporter);
     }
 
