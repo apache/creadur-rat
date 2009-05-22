@@ -49,10 +49,9 @@ Unapproved licenses:
 </xsl:for-each>
 *******************************
 
-Archives (+ indicates readable, $ unreadable): 
-
- <xsl:for-each select='descendant::resource[type/@name="archive"]'>
- <xsl:choose><xsl:when test='archive-type/@name="readable"'>+ </xsl:when><xsl:otherwise>$ </xsl:otherwise></xsl:choose><xsl:value-of select='@name'/>
+Archives:
+<xsl:for-each select='descendant::resource[type/@name="archive"]'>
+ + <xsl:value-of select='@name'/>
  <xsl:text>
  </xsl:text>
  </xsl:for-each>

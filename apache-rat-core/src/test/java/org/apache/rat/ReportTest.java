@@ -55,7 +55,7 @@ public class ReportTest extends TestCase {
             "\n" +
             "*******************************\n" + 
             "\n" + 
-            "Archives (+ indicates readable, $ unreadable): \n" + 
+            "Archives:\n" + 
             "\n" + 
             " + " + pElementsPath + "/dummy.jar\n" + 
             " \n" + 
