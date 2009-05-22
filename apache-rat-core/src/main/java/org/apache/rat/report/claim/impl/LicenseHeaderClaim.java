@@ -12,16 +12,14 @@ import org.apache.rat.report.claim.LicenseFamilyCode;
  */
 public class LicenseHeaderClaim extends AbstractClaim {
     private final LicenseFamilyCode licenseFamilyCode;
-    private final String headerSample;
 
     /**
      * Creates a new instance with the given subject, license
      * family code, and header sample.
      */
-    public LicenseHeaderClaim(IDocument pSubject, LicenseFamilyCode pCode, String pHeaderSample) {
+    public LicenseHeaderClaim(IDocument pSubject, LicenseFamilyCode pCode) {
         super(pSubject);
         licenseFamilyCode = pCode;
-        headerSample = pHeaderSample;
     }
 
     /**
@@ -29,12 +27,5 @@ public class LicenseHeaderClaim extends AbstractClaim {
      */
     public LicenseFamilyCode getLicenseFamilyCode() {
         return licenseFamilyCode;
-    }
-
-    /**
-     * Returns the header sample.
-     */
-    public String getHeaderSample() {
-        return headerSample;
     }
 }

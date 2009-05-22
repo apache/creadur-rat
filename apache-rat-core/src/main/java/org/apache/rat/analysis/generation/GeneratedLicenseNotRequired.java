@@ -80,8 +80,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 
     private void reportOnLicense(IDocument subject, IClaimReporter reporter) throws RatHeaderAnalysisException {
         try {
-            reporter.claim(new LicenseHeaderClaim(subject, LicenseFamilyCode.GENERATED,
-                    "Generated files do not required license headers"));
+            reporter.claim(new LicenseHeaderClaim(subject, LicenseFamilyCode.GENERATED));
         } catch (RatReportFailedException e) {
             throw new RatHeaderAnalysisException("Cannot write claims", e);
         }

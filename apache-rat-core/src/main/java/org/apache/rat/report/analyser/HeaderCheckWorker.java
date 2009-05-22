@@ -24,6 +24,7 @@ import java.io.Reader;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
@@ -43,7 +44,7 @@ class HeaderCheckWorker {
 	private final BufferedReader reader;
 	private final IHeaderMatcher matcher;
 	private final IClaimReporter reporter;
-    private final IDocument name;
+    private final IDocument subject;
     
 	private boolean match = false;
 	
@@ -77,7 +78,7 @@ class HeaderCheckWorker {
 		this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
 		this.matcher = matcher;
         this.reporter = reporter;
-        this.name = name;
+        this.subject = name;
 	}
 
 	public boolean isFinished() {
@@ -92,12 +93,13 @@ class HeaderCheckWorker {
 				while(readLine(headers));
 				if (!match) {
 					final String notes = headers.toString();
-					reporter.claim(new LicenseFamilyClaim(name, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, LicenseFamilyCode.UNKNOWN, notes));
+                    subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
+					reporter.claim(new LicenseFamilyClaim(subject, LicenseFamilyName.UNKNOWN_LICENSE_FAMILY, LicenseFamilyCode.UNKNOWN));
 				}
 			} catch (IOException e) {
-                throw new RatHeaderAnalysisException("Cannot read header for " + name, e);
+                throw new RatHeaderAnalysisException("Cannot read header for " + subject, e);
 			} catch (RatReportFailedException e) {
-                throw new RatHeaderAnalysisException("Cannot write claim for " + name, e);
+                throw new RatHeaderAnalysisException("Cannot write claim for " + subject, e);
             }
 			try {
 				reader.close();
@@ -117,7 +119,7 @@ class HeaderCheckWorker {
 				headers.append(line);
 				headers.append('\n');
 			}
-            match = matcher.match(name, line, reporter);
+            match = matcher.match(subject, line, reporter);
 			result = !match;
 		}
 		return result;

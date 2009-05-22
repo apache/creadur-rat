@@ -17,8 +17,8 @@ public class LicenseFamilyClaim extends LicenseHeaderClaim {
      * the given license family name.
      */
     public LicenseFamilyClaim(IDocument pSubject, LicenseFamilyName pName,
-            LicenseFamilyCode pCode, String pHeaderSample) {
-        super(pSubject, pCode, pHeaderSample);
+            LicenseFamilyCode pCode) {
+        super(pSubject, pCode);
         licenseFamilyName = pName;
     }
 

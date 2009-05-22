@@ -20,6 +20,7 @@ package org.apache.rat.report.claim.impl.xml;
 
 import java.io.IOException;
 
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
@@ -44,6 +45,7 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
     private final IXmlWriter writer;
     private IDocument lastSubject;
     private IDocument subject;
+    private boolean writtenDocumentClaims = false;
     
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
         this.writer = writer;
@@ -67,7 +69,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
 
     protected void handleClaim(LicenseHeaderClaim pClaim)
             throws IOException, RatReportFailedException {
-        writeClaim(HEADER_SAMPLE_PREDICATE, pClaim.getHeaderSample(), true);
         writeClaim(HEADER_TYPE_PREDICATE, pClaim.getLicenseFamilyCode().getName(), false);
     }
 
@@ -112,6 +113,10 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
 
     public void claim(IClaim pClaim) throws RatReportFailedException {
         try {
+            if(!writtenDocumentClaims) {
+                writeDocumentClaims(subject);
+                writtenDocumentClaims = true;
+            }
             handleClaim(pClaim);
         } catch (IOException e) {
             throw new RatReportFailedException("XML writing failure: " + e.getMessage()
@@ -126,13 +131,28 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
             if (!(subject.equals(lastSubject))) {
                 if (lastSubject != null) {
                     writer.closeElement();
+                    if(!writtenDocumentClaims) {
+                        writeDocumentClaims(lastSubject);
+                    }
                 }
                 writer.openElement("resource").attribute(NAME, subject.getName());
+                writtenDocumentClaims = false;
             }
             lastSubject = subject;
         } catch (IOException e) {
             throw new RatReportFailedException("XML writing failure: " + e.getMessage()
                     + " subject: " + subject, e);
+        }
+    }
+
+    private void writeDocumentClaims(final IDocument subject) throws IOException, RatReportFailedException {
+        final MetaData metaData = subject.getMetaData();
+        final MetaData.Datum sampleDatum = metaData.get(MetaData.RAT_URL_HEADER_SAMPLE);
+        if (sampleDatum != null) {
+            final String sample = sampleDatum.getValue();
+            if (sample != null) {
+                writeClaim(HEADER_SAMPLE_PREDICATE, sample, true);
+            }
         }
     }
 

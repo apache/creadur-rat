@@ -19,6 +19,7 @@
 package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
@@ -42,8 +43,9 @@ public class BaseLicense {
         final LicenseFamilyName name = getName();
         final LicenseFamilyCode code = getCode();
         final String notes = getNotes();
+        subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
         try {
-            reporter.claim(new LicenseFamilyClaim(subject, name, code, notes));
+            reporter.claim(new LicenseFamilyClaim(subject, name, code));
         } catch (RatReportFailedException e) {
             // Cannot recover
             throw new RatHeaderAnalysisException("Cannot report on license information", e);

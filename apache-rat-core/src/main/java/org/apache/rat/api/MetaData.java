@@ -40,7 +40,7 @@ public class MetaData {
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_NOTICE = "notice";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_BINARY = "binary";
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_STANDARD = "standard";
-    public static final String RAT_DOCUMENT_CATEGORY_URL = RAT_BASE_URL + "#FileCategory";
+    public static final String RAT_URL_DOCUMENT_CATEGORY = RAT_BASE_URL + "#FileCategory";
     
     // License Family Categories
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";
@@ -51,7 +51,7 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C = "W3C  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO = "DOJO ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF = "TMF  ";
-    public static final String RAT_LICENSE_FAMILY_CATEGORY_URL= RAT_BASE_URL + "LicenseFamilyCategory";
+    public static final String RAT_URL_LICENSE_FAMILY_CATEGORY= RAT_BASE_URL + "LicenseFamilyCategory";
 
     // License Family Standard Names
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT = "W3C Software Copyright";
@@ -61,7 +61,10 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0 = "Apache License Version 2.0";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1 = "Academic Free License, Version 2.1";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN = "?????";
-    public static final String RAT_LICENSE_FAMILY_NAME_URL= RAT_BASE_URL + "LicenseFamilyName";
+    public static final String RAT_URL_LICENSE_FAMILY_NAME= RAT_BASE_URL + "LicenseFamilyName";
+    
+    // Header sample
+    public static final String RAT_URL_HEADER_SAMPLE = RAT_BASE_URL + "HeaderSample";
     
     private ContentType contentType;
     /** 
@@ -108,7 +111,7 @@ public class MetaData {
      * Adds a new datum.
      * Existing data with the same name are not replaced.
      * @param datum
-     * @see #put(org.apache.rat.api.MetaData.Datum)
+     * @see #set(org.apache.rat.api.MetaData.Datum)
      */
     public void add(final Datum datum) {
        data.add(datum); 
@@ -120,8 +123,27 @@ public class MetaData {
      * @param datum not null
      * @see #add(org.apache.rat.api.MetaData.Datum)
      */
-    public void put(final Datum datum) {
+    public void set(final Datum datum) {
        clear(datum.getName()); 
+       add(datum);
+    }
+    
+    /**
+     * Gets the first datum matching the given name.
+     * @param name not null
+     * @return the matching datum first added when there is any matching data,
+     * null otherwise
+     */
+    public Datum get(final String name) {
+        Datum result = null;
+        for (final Iterator/*<Datum>*/ it=data.iterator();it.hasNext();) {
+            final Datum next = (Datum) it.next();
+            if (name.equals(next.getName())) {
+                result = next;
+                break;
+            }
+        }
+        return result;
     }
     
     /**
