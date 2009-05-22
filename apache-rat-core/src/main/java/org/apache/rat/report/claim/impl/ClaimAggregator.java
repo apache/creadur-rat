@@ -3,6 +3,7 @@ package org.apache.rat.report.claim.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.ClaimStatistic;
@@ -59,12 +60,14 @@ public class ClaimAggregator extends AbstractClaimReporter {
         incMapValue(numsByLicenseFamilyName, pClaim.getLicenseFamilyName());
     }
 
-    protected void handleClaim(LicenseHeaderClaim pClaim) {
-        incMapValue(numsByLicenseFamilyCode, pClaim.getLicenseFamilyCode());
-        if (pClaim.getLicenseFamilyCode().equals(LicenseFamilyCode.GENERATED)) {
+    protected void handleHeaderCategoryClaim(String headerCategory) {
+        
+        if (MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN.equals(headerCategory)) {
             numGenerated++;
-        } else if (pClaim.getLicenseFamilyCode().equals(LicenseFamilyCode.UNKNOWN)) {
+            incMapValue(numsByLicenseFamilyCode, LicenseFamilyCode.GENERATED);
+        } else if (MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN.equals(headerCategory)) {
             numUnknown++;
+            incMapValue(numsByLicenseFamilyCode, LicenseFamilyCode.UNKNOWN);
         }
     }
 

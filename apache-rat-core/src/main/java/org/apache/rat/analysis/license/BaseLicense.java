@@ -44,6 +44,7 @@ public class BaseLicense {
         final LicenseFamilyCode code = getCode();
         final String notes = getNotes();
         subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
+        subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, code.getName()));
         try {
             reporter.claim(new LicenseFamilyClaim(subject, name, code));
         } catch (RatReportFailedException e) {

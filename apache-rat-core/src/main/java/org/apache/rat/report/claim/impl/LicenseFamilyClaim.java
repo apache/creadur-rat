@@ -9,8 +9,9 @@ import org.apache.rat.report.claim.LicenseFamilyName;
  * Implementation of claim, which is used to report that
  * the subjects header indicate a particular license family.
  */
-public class LicenseFamilyClaim extends LicenseHeaderClaim {
+public class LicenseFamilyClaim extends AbstractClaim {
     private final LicenseFamilyName licenseFamilyName;
+    private final LicenseFamilyCode code;
 
     /**
      * Creates a new instance with the given subject and
@@ -18,10 +19,15 @@ public class LicenseFamilyClaim extends LicenseHeaderClaim {
      */
     public LicenseFamilyClaim(IDocument pSubject, LicenseFamilyName pName,
             LicenseFamilyCode pCode) {
-        super(pSubject, pCode);
+        super(pSubject);
         licenseFamilyName = pName;
+        this.code = pCode;
     }
 
+    public LicenseFamilyCode getCode() {
+        return code;
+    }
+    
     /**
      * Returns the license family name.
      */

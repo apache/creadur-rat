@@ -28,7 +28,6 @@ import org.apache.rat.report.claim.IClaimReporter;
 import org.apache.rat.report.claim.impl.FileTypeClaim;
 import org.apache.rat.report.claim.impl.LicenseApprovalClaim;
 import org.apache.rat.report.claim.impl.LicenseFamilyClaim;
-import org.apache.rat.report.claim.impl.LicenseHeaderClaim;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class SimpleXmlClaimReporter implements IClaimReporter {
@@ -63,14 +62,9 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
 
     protected void handleClaim(LicenseFamilyClaim pClaim)
             throws IOException, RatReportFailedException {
-        handleClaim((LicenseHeaderClaim) pClaim);
         writeClaim(LICENSE_FAMILY_PREDICATE, pClaim.getLicenseFamilyName().getName(), false);
     }
 
-    protected void handleClaim(LicenseHeaderClaim pClaim)
-            throws IOException, RatReportFailedException {
-        writeClaim(HEADER_TYPE_PREDICATE, pClaim.getLicenseFamilyCode().getName(), false);
-    }
 
     protected void handleClaim(CustomClaim pClaim)
             throws IOException, RatReportFailedException {
@@ -102,8 +96,6 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
             handleClaim((LicenseApprovalClaim) pClaim);
         } else if (pClaim instanceof LicenseFamilyClaim) {
             handleClaim((LicenseFamilyClaim) pClaim);
-        } else if (pClaim instanceof LicenseHeaderClaim) {
-            handleClaim((LicenseHeaderClaim) pClaim);
         } else if (pClaim instanceof CustomClaim) {
             handleClaim((CustomClaim) pClaim);
         } else {
@@ -136,9 +128,9 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
                     }
                 }
                 writer.openElement("resource").attribute(NAME, subject.getName());
-                writtenDocumentClaims = false;
             }
             lastSubject = subject;
+            writtenDocumentClaims = false;
         } catch (IOException e) {
             throw new RatReportFailedException("XML writing failure: " + e.getMessage()
                     + " subject: " + subject, e);
@@ -157,6 +149,11 @@ public class SimpleXmlClaimReporter implements IClaimReporter {
             if (licenseFamilyCategoryDatum != null) {
                 final String licenseFamilyCategory = licenseFamilyCategoryDatum.getValue();
                 writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyCategory, false);
+            }
+            final MetaData.Datum headerCategoryDatum = metaData.get(MetaData.RAT_URL_HEADER_CATEGORY);
+            if (headerCategoryDatum != null) {
+                final String headerCategory = headerCategoryDatum.getValue();
+                writeClaim(HEADER_TYPE_PREDICATE, headerCategory, false);
             }
         }
     }

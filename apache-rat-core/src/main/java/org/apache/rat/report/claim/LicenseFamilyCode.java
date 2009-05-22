@@ -45,4 +45,8 @@ public class LicenseFamilyCode {
         }
         return getName().equals(((LicenseFamilyCode) pOther).getName());
     }
+    
+    public String toString() {
+        return "LicenseFamilyCode:" + name;
+    }
 }

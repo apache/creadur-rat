@@ -42,6 +42,9 @@ public class MetaData {
     public static final String RAT_DOCUMENT_CATEGORY_VALUE_STANDARD = "standard";
     public static final String RAT_URL_DOCUMENT_CATEGORY = RAT_BASE_URL + "#FileCategory";
     
+    // Header Categories
+    public static final String RAT_URL_HEADER_CATEGORY= RAT_BASE_URL + "HeaderCategory";
+    
     // License Family Categories
     public static final String RAT_URL_LICENSE_FAMILY_CATEGORY= RAT_BASE_URL + "LicenseFamilyCategory";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";

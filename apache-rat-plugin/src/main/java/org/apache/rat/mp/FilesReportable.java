@@ -101,5 +101,9 @@ class FilesReportable implements IReportable
         public InputStream inputStream() throws IOException {
             return new FileInputStream(file);
         }
+        
+        public String toString() {
+            return "File:" + file.getAbsolutePath();
+        }
     }
 }

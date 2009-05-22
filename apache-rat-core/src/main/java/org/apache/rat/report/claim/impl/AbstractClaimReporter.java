@@ -1,5 +1,6 @@
 package org.apache.rat.report.claim.impl;
 
+import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
 import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaim;
@@ -14,6 +15,9 @@ import org.apache.rat.report.claim.impl.xml.CustomClaim;
  */
 public abstract class AbstractClaimReporter implements IClaimReporter {
 
+    private IDocument subject;
+    private boolean writtenDocumentClaims = false;
+    
     protected void handleClaim(FileTypeClaim pClaim) {
         // Does nothing
     }
@@ -23,10 +27,10 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
     }
 
     protected void handleClaim(LicenseFamilyClaim pClaim) {
-        handleClaim((LicenseHeaderClaim) pClaim);
+        // Does Nothing
     }
 
-    protected void handleClaim(LicenseHeaderClaim pClaim) {
+    protected void handleHeaderCategoryClaim(String headerCategory) {
         // Does nothing
     }
 
@@ -35,24 +39,44 @@ public abstract class AbstractClaimReporter implements IClaimReporter {
     }
 
     protected void handleClaim(IClaim pClaim) {
+        writeDocumentClaimsWhenNecessary(subject);
         if (pClaim instanceof FileTypeClaim) {
             handleClaim((FileTypeClaim) pClaim);
         } else if (pClaim instanceof LicenseApprovalClaim) {
             handleClaim((LicenseApprovalClaim) pClaim);
         } else if (pClaim instanceof LicenseFamilyClaim) {
             handleClaim((LicenseFamilyClaim) pClaim);
-        } else if (pClaim instanceof LicenseHeaderClaim) {
-            handleClaim((LicenseHeaderClaim) pClaim);
         } else if (pClaim instanceof CustomClaim) {
             handleClaim((CustomClaim) pClaim);
         } else {
             throw new IllegalStateException("Unsupported type of claim: " + pClaim.getClass().getName());
         }
     }
-
+    
     public void claim(IClaim pClaim) throws RatReportFailedException {
         handleClaim(pClaim);
     }
 
-    public void report(IDocument document) throws RatReportFailedException {}
+    private void writeDocumentClaim(IDocument subject)  {
+        final MetaData.Datum headerCategoryDatum = subject.getMetaData().get(MetaData.RAT_URL_HEADER_CATEGORY);
+        if (headerCategoryDatum != null) {
+            final String headerCategory = headerCategoryDatum.getValue();
+            if (headerCategory != null) {
+                handleHeaderCategoryClaim(headerCategory);
+            }
+        }
+    }
+    
+    public void report(IDocument subject) throws RatReportFailedException {
+        writeDocumentClaimsWhenNecessary(subject);
+        this.subject = subject;
+        writtenDocumentClaims = false;
+    }
+
+    private void writeDocumentClaimsWhenNecessary(IDocument subject) {
+        if (!writtenDocumentClaims && subject != null) {
+            writeDocumentClaim(subject);
+            writtenDocumentClaims = true;
+        }
+    }
 }

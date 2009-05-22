@@ -24,10 +24,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocument;
-import org.apache.rat.report.RatReportFailedException;
 import org.apache.rat.report.claim.IClaimReporter;
-import org.apache.rat.report.claim.LicenseFamilyCode;
-import org.apache.rat.report.claim.impl.LicenseHeaderClaim;
 
 /**
  * JavaDocs are generated and so no license is required.
