@@ -30,17 +30,23 @@ import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.io.filefilter.AndFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.annotation.AbstractLicenceAppender;
 import org.apache.rat.annotation.ApacheV2LicenceAppender;
@@ -55,12 +61,57 @@ import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 
 public class Report {
 
+    private static final char EXCLUDE_CLI = 'e';
+
     //@SuppressWarnings("unchecked")
     public static final void main(String args[]) throws Exception {
+        Options opts = buildOptions();
+        
+        PosixParser parser = new PosixParser();
+        CommandLine cl = null;
+        try {
+            cl = parser.parse(opts, args);
+        } catch (ParseException e) {
+            System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
+            System.exit(1);
+        }
+
+        if (cl.hasOption('h')) {
+            printUsage(opts);
+        }
+
+        args = cl.getArgs();
+        if (args == null || args.length != 1) {
+            printUsage(opts);
+        } else {
+            Report report = new Report(args[0]);
+
+            if (cl.hasOption('a')) {
+                configureForAddLicense(cl, report);
+            }
+
+            if (cl.hasOption(EXCLUDE_CLI)) {
+                String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
+                if (excludes != null) {
+                    final FilenameFilter filter = new NotFileFilter(new WildcardFileFilter(excludes));
+                    report.setInputFileFilter(filter);
+                }
+            }
+            
+            if (cl.hasOption('x')) {
+                report.report(System.out);
+            } else {
+                report.styleReport(System.out);
+            }	
+        } 
+    }
+
+    private static Options buildOptions() {
         Options opts = new Options();
 
         Option help = new Option("h", "help", false,
@@ -87,7 +138,7 @@ public class Report {
                 true,
         "The copyright message to use in the licence headers, usually in the form of \"Copyright 2008 Foo\"");
         opts.addOption(copyright);
-
+        
         Option xml = new Option(
                 "x",
                 "xml",
@@ -95,71 +146,63 @@ public class Report {
         "Output the report in XML format");
         opts.addOption(xml);
 
-        PosixParser parser = new PosixParser();
-        CommandLine cl = null;
-        try {
-            cl = parser.parse(opts, args);
-        } catch (ParseException e) {
-            System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
-            System.exit(1);
-        }
+        final Option exclude = OptionBuilder
+                            .withArgName("expression")
+                            .withLongOpt("exclude")
+                            .hasArgs()
+                            .withDescription("Excludes files matching <expression>. " +
+                                    "Note that --dir is required when using this parameter. " +
+                                    "Allows multiple arguments.")
+                            .create(EXCLUDE_CLI);
+        opts.addOption(exclude);
+        
+        Option dir = new Option(
+                "d",
+                "dir",
+                false,
+        "Used to indicate source when using --exclude");
+        opts.addOption(dir);
+        
+        return opts;
+    }
 
-        if (cl.hasOption('h')) {
-            printUsage(opts);
-        }
+    private static void configureForAddLicense(CommandLine cl, Report report) throws Exception, UnsupportedEncodingException, SAXException, IOException, ParserConfigurationException {
+        OutputStream reportOutput = new ByteArrayOutputStream();
+        PrintStream stream = new PrintStream(reportOutput, true);
+        report.report(stream);
 
-
-        args = cl.getArgs();
-        if (args == null || args.length != 1) {
-            printUsage(opts);
+        AbstractLicenceAppender  appender;
+        String copyrightMsg = cl.getOptionValue("c");
+        if ( copyrightMsg != null) {
+            appender = new ApacheV2LicenceAppender(copyrightMsg);
         } else {
-            Report report = new Report(args[0]);
+            appender = new ApacheV2LicenceAppender();
+        }
+        if (cl.hasOption("f")) {
+            appender.setForce(true);
+        }
 
-            if (cl.hasOption('a')) {
-                OutputStream reportOutput = new ByteArrayOutputStream();
-                PrintStream stream = new PrintStream(reportOutput, true);
-                report.report(stream);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        ByteArrayInputStream xmlStream = new ByteArrayInputStream(reportOutput.toString().getBytes("UTF-8"));
+        Document doc = factory.newDocumentBuilder().parse(xmlStream);
 
-                AbstractLicenceAppender  appender;
-                String copyrightMsg = cl.getOptionValue("c");
-                if ( copyrightMsg != null) {
-                    appender = new ApacheV2LicenceAppender(copyrightMsg);
-                } else {
-                    appender = new ApacheV2LicenceAppender();
-                }
-                if (cl.hasOption("f")) {
-                    appender.setForce(true);
-                }
-
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setValidating(false);
-                ByteArrayInputStream xmlStream = new ByteArrayInputStream(reportOutput.toString().getBytes("UTF-8"));
-                Document doc = factory.newDocumentBuilder().parse(xmlStream);
-
-                NodeList resourceHeaders = doc.getElementsByTagName("header-type");
-                String value = null;
-                for (int i = 0; i < resourceHeaders.getLength(); i++) {
-                    Node headerType = resourceHeaders.item(i).getAttributes().getNamedItem("name");
-                    if(headerType != null) {
-                        value = headerType.getNodeValue();
-                    } else {
-                        value = null;
-                    }
-                    if (value != null &&value.equals("?????")) {
-                        Node resource = resourceHeaders.item(i).getParentNode();
-                        String filename = resource.getAttributes().getNamedItem("name").getNodeValue();
-                        File document = new File(filename);
-                        appender.append(document);
-                    }
-                }
-            }
-
-            if (cl.hasOption('x')) {
-                report.report(System.out);
+        NodeList resourceHeaders = doc.getElementsByTagName("header-type");
+        String value = null;
+        for (int i = 0; i < resourceHeaders.getLength(); i++) {
+            Node headerType = resourceHeaders.item(i).getAttributes().getNamedItem("name");
+            if(headerType != null) {
+                value = headerType.getNodeValue();
             } else {
-                report.styleReport(System.out);
-            }		  
-        } 
+                value = null;
+            }
+            if (value != null &&value.equals("?????")) {
+                Node resource = resourceHeaders.item(i).getParentNode();
+                String filename = resource.getAttributes().getNamedItem("name").getNodeValue();
+                File document = new File(filename);
+                appender.append(document);
+            }
+        }
     }
 
     private static final void printUsage(Options opts) {
