@@ -20,6 +20,7 @@
 package org.apache.rat;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -34,35 +35,61 @@ import org.apache.rat.report.RatReport;
  */
 public class DirectoryWalker implements IReportable {
 
+    private static FilenameFilter regexFilter(final Pattern pattern) {
+        return new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                final boolean result;
+                if (pattern == null) {
+                    result = true;
+                } else {
+                    result = !pattern.matcher(name).matches();
+                }
+                return result;
+            }
+        };
+    }
+    
     private static final FileNameComparator COMPARATOR = new FileNameComparator();
     
     protected final File file;
     protected final String name;
 
-    private final Pattern ignoreNameRegex;;
+    private final FilenameFilter filter;
     
 	public DirectoryWalker(File file) {
-            this(file, null);
+	    this(file, (FilenameFilter) null);
 	}
 	
+    /**
+     * Constructs a walker.
+     * @param file not null
+     * @param filter filters input files (optional), 
+     * or null when no filtering should be performed
+     */
+    public DirectoryWalker(File file, final FilenameFilter filter) {
+        this(file.getPath(), file, filter);
+    }
+    
     public DirectoryWalker(File file, final Pattern ignoreNameRegex) {
-        this(file.getPath(), file, ignoreNameRegex);
+        this(file.getPath(), file, regexFilter(ignoreNameRegex));
     }
 
-    private DirectoryWalker(final String name, final File file, final Pattern ignoreNameRegex) {
+    private DirectoryWalker(final String name, final File file, final FilenameFilter filter) {
         this.name = name;
         this.file = file;
-        this.ignoreNameRegex = ignoreNameRegex;
+        this.filter = filter;
     }
 	
     public boolean isRestricted() {
         return false;
     }
 
-    protected final boolean ignored(final String name) {
+    protected final boolean ignored(final File file) {
         boolean result = false;
-        if (ignoreNameRegex != null) {
-            result = ignoreNameRegex.matcher(name).matches();
+        final String name = file.getName();
+        final File dir = file.getParentFile();
+        if (filter != null) {
+            result = !filter.accept(dir, name);
         }
         return result;
     }
@@ -125,8 +152,7 @@ public class DirectoryWalker implements IReportable {
     private void processDirectories(final RatReport report, final File[] files) throws RatException {
         for (int i = 0; i < files.length; i++) {
             final File file = files[i];
-            final String name = file.getName();
-            if (!ignored(name)) {
+            if (!ignored(file)) {
                 if (file.isDirectory()) {
                     processDirectory(report, file);
                 }
@@ -144,8 +170,7 @@ public class DirectoryWalker implements IReportable {
     private void processNonDirectories(final RatReport report, final File[] files) throws RatException {
         for (int i = 0; i < files.length; i++) {
             final File file = files[i];
-            final String name = file.getName();
-            if (!ignored(name)) {
+            if (!ignored(file)) {
                 if (!file.isDirectory()) {
                     report(report, file);
                 }

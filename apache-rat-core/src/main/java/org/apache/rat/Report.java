@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -182,13 +183,31 @@ public class Report {
     }
 
     private final String baseDirectory;
+    
+    private FilenameFilter inputFileFilter = null;
 
     private Report(String baseDirectory) {
         this.baseDirectory = baseDirectory;
     }
+    
+    /**
+     * Gets the current filter used to select files.
+     * @return current file filter, or null when no filter has been set
+     */
+    public FilenameFilter getInputFileFilter() {
+        return inputFileFilter;
+    }
+
+    /**
+     * Sets the current filter used to select files.
+     * @param inputFileFilter filter, or null when no filter has been set
+     */
+    public void setInputFileFilter(FilenameFilter inputFileFilter) {
+        this.inputFileFilter = inputFileFilter;
+    }
 
     public ClaimStatistic report(PrintStream out) throws Exception {
-        DirectoryWalker base = getDirectory(out);
+        final DirectoryWalker base = getDirectory(out);
         if (base != null) {
             return report(base, new OutputStreamWriter(out), Defaults.createDefaultMatcher(), null);
         }
@@ -207,7 +226,7 @@ public class Report {
             out.print(baseDirectory);
             out.print(" must be a directory.\n");
         } else {
-            result = new DirectoryWalker(base);
+            result = new DirectoryWalker(base, inputFileFilter);
         }
         return result;
     }
@@ -220,7 +239,7 @@ public class Report {
      * @throws Exception
      */
     public void styleReport(PrintStream out) throws Exception {
-        DirectoryWalker base = getDirectory(out);
+        final DirectoryWalker base = getDirectory(out);
         if (base != null) {
             InputStream style = Defaults.getDefaultStyleSheet();
             report(out, base, style, Defaults.createDefaultMatcher(), null);
