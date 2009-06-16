@@ -58,143 +58,143 @@ import org.w3c.dom.NodeList;
 
 public class Report {
 
-	//@SuppressWarnings("unchecked")
-  public static final void main(String args[]) throws Exception {
-	  Options opts = new Options();
+    //@SuppressWarnings("unchecked")
+    public static final void main(String args[]) throws Exception {
+        Options opts = new Options();
 
-    Option help = new Option("h", "help", false,
+        Option help = new Option("h", "help", false,
         "Print help for the RAT command line interface and exit");
-    opts.addOption(help);
+        opts.addOption(help);
 
-    Option addLicence = new Option(
-        "a",
-        "addLicence",
-        false,
+        Option addLicence = new Option(
+                "a",
+                "addLicence",
+                false,
         "Add the default licence header to any file with an unknown licence that is not in the exclusion list. By default new files will be created with the licence header, to force the modification of existing files use the --force option.");
-    opts.addOption(addLicence);
-    
-    Option write = new Option(
-        "f",
-        "force",
-        false,
+        opts.addOption(addLicence);
+
+        Option write = new Option(
+                "f",
+                "force",
+                false,
         "Forces any changes in files to be written without confirmation");
-    opts.addOption(write);
+        opts.addOption(write);
 
-    Option copyright = new Option(
-        "c",
-        "copyright",
-        true,
+        Option copyright = new Option(
+                "c",
+                "copyright",
+                true,
         "The copyright message to use in the licence headers, usually in the form of \"Copyright 2008 Foo\"");
-    opts.addOption(copyright);
-    
-    Option xml = new Option(
-        "x",
-        "xml",
-        false,
+        opts.addOption(copyright);
+
+        Option xml = new Option(
+                "x",
+                "xml",
+                false,
         "Output the report in XML format");
-    opts.addOption(xml);
-    
-    PosixParser parser = new PosixParser();
-    CommandLine cl = null;
-    try {
-      cl = parser.parse(opts, args);
-    } catch (ParseException e) {
-      System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
-      System.exit(1);
-    }
+        opts.addOption(xml);
 
-    if (cl.hasOption('h')) {
-      printUsage(opts);
-    }
-    
-    
-    args = cl.getArgs();
-    if (args == null || args.length != 1) {
-			printUsage(opts);
-		} else {
-      Report report = new Report(args[0]);
-      
-      if (cl.hasOption('a')) {
-        OutputStream reportOutput = new ByteArrayOutputStream();
-        PrintStream stream = new PrintStream(reportOutput, true);
-        report.report(stream);
-        
-        AbstractLicenceAppender  appender;
-        String copyrightMsg = cl.getOptionValue("c");
-        if ( copyrightMsg != null) {
-          appender = new ApacheV2LicenceAppender(copyrightMsg);
+        PosixParser parser = new PosixParser();
+        CommandLine cl = null;
+        try {
+            cl = parser.parse(opts, args);
+        } catch (ParseException e) {
+            System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
+            System.exit(1);
+        }
+
+        if (cl.hasOption('h')) {
+            printUsage(opts);
+        }
+
+
+        args = cl.getArgs();
+        if (args == null || args.length != 1) {
+            printUsage(opts);
         } else {
-          appender = new ApacheV2LicenceAppender();
-        }
-        if (cl.hasOption("f")) {
-          appender.setForce(true);
-        }
-        
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setValidating(false);
-        ByteArrayInputStream xmlStream = new ByteArrayInputStream(reportOutput.toString().getBytes("UTF-8"));
-        Document doc = factory.newDocumentBuilder().parse(xmlStream);
-        
-        NodeList resourceHeaders = doc.getElementsByTagName("header-type");
-        String value = null;
-        for (int i = 0; i < resourceHeaders.getLength(); i++) {
-          Node headerType = resourceHeaders.item(i).getAttributes().getNamedItem("name");
-          if(headerType != null) {
-            value = headerType.getNodeValue();
-          } else {
-            value = null;
-          }
-          if (value != null &&value.equals("?????")) {
-            Node resource = resourceHeaders.item(i).getParentNode();
-            String filename = resource.getAttributes().getNamedItem("name").getNodeValue();
-            File document = new File(filename);
-            appender.append(document);
-          }
-        }
-      }
-      
-      if (cl.hasOption('x')) {
-			  report.report(System.out);
-		  } else {
-        report.styleReport(System.out);
-		  }		  
-		} 
-	}
-	
-	private static final void printUsage(Options opts) {
-	    HelpFormatter f = new HelpFormatter();
-	    String header = "Options";
-    
-	    StringBuffer footer = new StringBuffer("\n");
-	    footer.append("NOTE:\n");
-	    footer.append("RAT is really little more than a grep ATM\n");
-	    footer.append("RAT is also rather memory hungry ATM\n");
-	    footer.append("RAT is very basic ATM\n");
-	    footer.append("RAT ATM runs on unpacked releases\n");
-	    footer.append("RAT highlights possible issues\n");
-	    footer.append("RAT reports require intepretation\n");
-	    footer.append("RAT often requires some tuning before it runs well against a project\n");
-	    footer.append("RAT relies on heuristics: it may miss issues\n");
+            Report report = new Report(args[0]);
 
-	    f.printHelp("java rat.report [options] [DIR]",
-	            header, opts, footer.toString(), false);
-	    System.exit(0);
-	}
-	
-	private final String baseDirectory;
-	
-	private Report(String baseDirectory) {
-		this.baseDirectory = baseDirectory;
-	}
-	
-	public ClaimStatistic report(PrintStream out) throws Exception {
+            if (cl.hasOption('a')) {
+                OutputStream reportOutput = new ByteArrayOutputStream();
+                PrintStream stream = new PrintStream(reportOutput, true);
+                report.report(stream);
+
+                AbstractLicenceAppender  appender;
+                String copyrightMsg = cl.getOptionValue("c");
+                if ( copyrightMsg != null) {
+                    appender = new ApacheV2LicenceAppender(copyrightMsg);
+                } else {
+                    appender = new ApacheV2LicenceAppender();
+                }
+                if (cl.hasOption("f")) {
+                    appender.setForce(true);
+                }
+
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setValidating(false);
+                ByteArrayInputStream xmlStream = new ByteArrayInputStream(reportOutput.toString().getBytes("UTF-8"));
+                Document doc = factory.newDocumentBuilder().parse(xmlStream);
+
+                NodeList resourceHeaders = doc.getElementsByTagName("header-type");
+                String value = null;
+                for (int i = 0; i < resourceHeaders.getLength(); i++) {
+                    Node headerType = resourceHeaders.item(i).getAttributes().getNamedItem("name");
+                    if(headerType != null) {
+                        value = headerType.getNodeValue();
+                    } else {
+                        value = null;
+                    }
+                    if (value != null &&value.equals("?????")) {
+                        Node resource = resourceHeaders.item(i).getParentNode();
+                        String filename = resource.getAttributes().getNamedItem("name").getNodeValue();
+                        File document = new File(filename);
+                        appender.append(document);
+                    }
+                }
+            }
+
+            if (cl.hasOption('x')) {
+                report.report(System.out);
+            } else {
+                report.styleReport(System.out);
+            }		  
+        } 
+    }
+
+    private static final void printUsage(Options opts) {
+        HelpFormatter f = new HelpFormatter();
+        String header = "Options";
+
+        StringBuffer footer = new StringBuffer("\n");
+        footer.append("NOTE:\n");
+        footer.append("RAT is really little more than a grep ATM\n");
+        footer.append("RAT is also rather memory hungry ATM\n");
+        footer.append("RAT is very basic ATM\n");
+        footer.append("RAT ATM runs on unpacked releases\n");
+        footer.append("RAT highlights possible issues\n");
+        footer.append("RAT reports require intepretation\n");
+        footer.append("RAT often requires some tuning before it runs well against a project\n");
+        footer.append("RAT relies on heuristics: it may miss issues\n");
+
+        f.printHelp("java rat.report [options] [DIR]",
+                header, opts, footer.toString(), false);
+        System.exit(0);
+    }
+
+    private final String baseDirectory;
+
+    private Report(String baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
+
+    public ClaimStatistic report(PrintStream out) throws Exception {
         DirectoryWalker base = getDirectory(out);
         if (base != null) {
             return report(base, new OutputStreamWriter(out), Defaults.createDefaultMatcher(), null);
         }
         return null;
-	}
-    
+    }
+
     private DirectoryWalker getDirectory(PrintStream out) {
         DirectoryWalker result = null;
         File base = new File(baseDirectory);
@@ -211,7 +211,7 @@ public class Report {
         }
         return result;
     }
-    
+
     /**
      * Output a report in the default style and default licence
      * header matcher. 
@@ -242,8 +242,8 @@ public class Report {
      */
     public static void report(PrintStream out, IReportable base, final InputStream style, final IHeaderMatcher matcher,
             final ILicenseFamily[] approvedLicenseNames) 
-           throws IOException, TransformerConfigurationException, 
-           InterruptedException, RatException {
+    throws IOException, TransformerConfigurationException, 
+    InterruptedException, RatException {
         report(new OutputStreamWriter(out), base, style, matcher, approvedLicenseNames);
     }
 
@@ -264,7 +264,7 @@ public class Report {
      */
     public static ClaimStatistic report(Writer out, IReportable base, final InputStream style, 
             final IHeaderMatcher matcher, final ILicenseFamily[] approvedLicenseNames) 
-                throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatException {
+    throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatException {
         PipedReader reader = new PipedReader();
         PipedWriter writer = new PipedWriter(reader);
         ReportTransformer transformer = new ReportTransformer(out, style, reader);
@@ -276,7 +276,7 @@ public class Report {
         transformerThread.join();
         return statistic;
     }
-    
+
     /**
      * 
      * @param container the files or directories to report on
@@ -287,7 +287,7 @@ public class Report {
      * @throws RatException
      */
     public static ClaimStatistic report(final IReportable container, final Writer out, final IHeaderMatcher matcher,
-             final ILicenseFamily[] approvedLicenseNames) throws IOException, RatException {
+            final ILicenseFamily[] approvedLicenseNames) throws IOException, RatException {
         IXmlWriter writer = new XmlWriter(out);
         final ClaimStatistic statistic = new ClaimStatistic();
         RatReport report = XmlReportFactory.createStandardReport(writer, matcher, approvedLicenseNames, statistic);  
