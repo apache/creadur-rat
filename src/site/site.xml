@@ -21,9 +21,9 @@
     </menu>
 
     <menu name="Modules">
-      <item name="RAT Core" href="apache-rat-core/index.html"/>
-      <item name="RAT ANT Tasks" href="apache-rat-tasks/index.html"/>
-      <item name="RAT Maven Plugin" href="apache-rat-plugin/index.html"/>
+      <item name="RAT Core" href="/apache-rat-core/index.html"/>
+      <item name="RAT ANT Tasks" href="/apache-rat-tasks/index.html"/>
+      <item name="RAT Maven Plugin" href="/apache-rat-plugin/index.html"/>
     </menu>
 
     <menu ref="reports"/>
