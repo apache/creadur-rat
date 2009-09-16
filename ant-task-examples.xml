@@ -84,7 +84,8 @@
   </target>
 
   <target name="-taskdef">
-    <typedef resource="org/apache/rat/anttasks/antlib.xml" uri="antlib:rat.anttasks">
+    <typedef resource="org/apache/rat/anttasks/antlib.xml"
+             uri="antlib:org.apache.rat.anttasks">
       <classpath>
         <fileset dir=".">
            <include name="**/apache-rat*.jar"/>
