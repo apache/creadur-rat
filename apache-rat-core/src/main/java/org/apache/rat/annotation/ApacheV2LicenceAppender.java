@@ -79,7 +79,7 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
     } else {
       sb.append(getFirstLine(type));
       sb.append(getLine(type, ""));
-      sb.append(copyright);
+      sb.append(getLine(type, copyright));
       sb.append(getLine(type, ""));
       sb.append(getLine(type, "Licensed under the Apache License, Version 2.0 (the \"License\");"));
       sb.append(getLine(type, "you may not use this file except in compliance with the License."));

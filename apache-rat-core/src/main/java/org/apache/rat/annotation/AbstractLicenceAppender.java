@@ -145,6 +145,8 @@ public abstract class AbstractLicenceAppender {
       return TYPE_XML;
     } else if (document.getPath().endsWith(".html") || document.getPath().endsWith(".htm")) {
       return TYPE_HTML;
+    } else if (document.getPath().endsWith(".rdf") || document.getPath().endsWith(".xsl")) {
+        return TYPE_XML;
     } else if (document.getPath().endsWith(".css")) {
       return TYPE_CSS;
     } else if (document.getPath().endsWith(".js")) {
