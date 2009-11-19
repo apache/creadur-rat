@@ -40,6 +40,11 @@ public abstract class AbstractLicenceAppender {
   private static final int TYPE_JAVASCRIPT = 5;
   private static final int TYPE_APT = 6;
   private static final int TYPE_PROPERTIES = 7;
+  private static final int TYPE_PYTHON = 8;
+  private static final int TYPE_C      = 9;
+  private static final int TYPE_H      = 10;
+  private static final int TYPE_SH     = 11;
+  private static final int TYPE_BAT    = 12;
   private boolean isForced;
 
   public AbstractLicenceAppender() {
@@ -68,15 +73,27 @@ public abstract class AbstractLicenceAppender {
         || type == TYPE_JAVASCRIPT 
         || type == TYPE_APT 
         || type == TYPE_PROPERTIES
+        || type == TYPE_C
+        || type == TYPE_H
         || type == TYPE_HTML) {
       writer.write(getLicenceHeader(document));
       writer.write('\n');
     }
   
     String line;
+    boolean first = true;
     while ((line = br.readLine()) != null) {
-      writer.write(line);
-      writer.write('\n');
+      if (first && type == TYPE_PYTHON) {
+        doFirstLine(document, writer, line, "#!/usr/bin");
+      } else if (first && type == TYPE_BAT) {
+        doFirstLine(document, writer, line, "@echo off");
+      } else if (first && type == TYPE_SH) {
+        doFirstLine(document, writer, line, "#!/bin");
+      } else {
+        writer.write(line);
+        writer.write('\n');
+      }
+
       if (type == TYPE_JAVA && line.startsWith("package ")) {
         writer.write(getLicenceHeader(document));
         writer.write('\n');
@@ -85,6 +102,7 @@ public abstract class AbstractLicenceAppender {
         writer.write(getLicenceHeader(document));
         writer.write('\n');
       }
+      first = false;
     }
     br.close();
     writer.close();
@@ -95,6 +113,21 @@ public abstract class AbstractLicenceAppender {
       if (!renamed) {
         System.err.println("Failed to rename new file, original file remains unchanged.");
       }
+    }
+  }
+
+  /**
+   * Check first line for specified text and process.
+   */
+  private void doFirstLine(File document, FileWriter writer, String line, String lookfor) throws IOException  {
+    if (line.startsWith(lookfor)) {
+        writer.write(line);
+        writer.write('\n');
+        writer.write(getLicenceHeader(document));
+    } else {
+        writer.write(getLicenceHeader(document));
+        writer.write(line);
+        writer.write('\n');
     }
   }
 
@@ -120,6 +153,16 @@ public abstract class AbstractLicenceAppender {
       return TYPE_APT;
     } else if (document.getPath().endsWith(".properties")) {
       return TYPE_PROPERTIES;
+    } else if (document.getPath().endsWith(".py")) {
+      return TYPE_PYTHON;
+    } else if (document.getPath().endsWith(".c")) {
+      return TYPE_C;
+    } else if (document.getPath().endsWith(".h")) {
+      return TYPE_H;
+    } else if (document.getPath().endsWith(".sh")) {
+      return TYPE_SH;
+    } else if (document.getPath().endsWith(".bat")) {
+      return TYPE_BAT;
     }
     return TYPE_UNKNOWN;
   }
@@ -150,12 +193,17 @@ public abstract class AbstractLicenceAppender {
   protected String getFirstLine(int type) {
     switch (type) {
       case TYPE_JAVA: return "/*\n";
+      case TYPE_C:    return "/*\n";
+      case TYPE_H:    return "/*\n";
       case TYPE_XML: return "<!--\n";
       case TYPE_HTML: return "<!--\n";
       case TYPE_CSS: return "/*\n";
       case TYPE_JAVASCRIPT: return "/*\n";
       case TYPE_APT: return "~~\n";
       case TYPE_PROPERTIES: return "#\n";
+      case TYPE_PYTHON:     return "#\n";
+      case TYPE_SH:         return "#\n";
+      case TYPE_BAT:        return "rem\n";
       default: return "";
     }
   }
@@ -171,12 +219,17 @@ public abstract class AbstractLicenceAppender {
   protected String getLastLine(int type) {
     switch (type) {
       case TYPE_JAVA: return " */\n";
+      case TYPE_C:    return " */\n";
+      case TYPE_H:    return " */\n";
       case TYPE_XML: return "-->\n";
       case TYPE_HTML: return "-->\n";
       case TYPE_CSS: return " */\n";
       case TYPE_JAVASCRIPT: return " */\n";
       case TYPE_APT: return "~~\n";
       case TYPE_PROPERTIES: return "#\n";
+      case TYPE_PYTHON:     return "#\n";
+      case TYPE_SH:         return "#\n";
+      case TYPE_BAT:        return "rem\n";
       default: return "";
     }
   }
@@ -191,14 +244,22 @@ public abstract class AbstractLicenceAppender {
    * @return not null
    */
   protected String getLine(int type, String content) {
+    if (content != null && content.length() > 0) {
+        content = " " + content;
+    }
     switch (type) {
-      case TYPE_JAVA: return " * " + content + "\n";
-      case TYPE_XML: return " " + content + "\n";
-      case TYPE_HTML: return " " + content + "\n";
-      case TYPE_CSS: return " * " + content + "\n";
-      case TYPE_JAVASCRIPT: return " * " + content + "\n";
-      case TYPE_APT: return "~~ " + content + "\n";
-      case TYPE_PROPERTIES: return "# " + content + "\n";
+      case TYPE_JAVA: return " *" + content + "\n";
+      case TYPE_C:    return " *" + content + "\n";
+      case TYPE_H:    return " *" + content + "\n";
+      case TYPE_XML: return         content + "\n";
+      case TYPE_HTML: return        content + "\n";
+      case TYPE_CSS: return " *"  + content + "\n";
+      case TYPE_JAVASCRIPT: return " *" + content + "\n";
+      case TYPE_APT: return "~~" + content + "\n";
+      case TYPE_PROPERTIES: return "#" + content + "\n";
+      case TYPE_PYTHON:     return "#" + content + "\n";
+      case TYPE_SH:         return "#" + content + "\n";
+      case TYPE_BAT:        return "rem" + content + "\n";
       default: return "";
     }
   }
