@@ -129,7 +129,7 @@ public class Report {
                 "f",
                 "force",
                 false,
-        "Forces any changes in files to be written without confirmation");
+        "Forces any changes in files to be written directly to the source files (i.e. new files are not created)");
         opts.addOption(write);
 
         Option copyright = new Option(
@@ -220,7 +220,7 @@ public class Report {
         footer.append("RAT often requires some tuning before it runs well against a project\n");
         footer.append("RAT relies on heuristics: it may miss issues\n");
 
-        f.printHelp("java rat.report [options] [DIR]",
+        f.printHelp("java org.apache.org.rat.report [options] [DIR]",
                 header, opts, footer.toString(), false);
         System.exit(0);
     }
