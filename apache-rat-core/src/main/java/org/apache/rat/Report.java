@@ -44,7 +44,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -58,6 +57,8 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.walker.DirectoryWalker;
+import org.apache.rat.walker.GZIPWalker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -250,28 +251,34 @@ public class Report {
     }
 
     public ClaimStatistic report(PrintStream out) throws Exception {
-        final DirectoryWalker base = getDirectory(out);
+        final IReportable base = getDirectory(out);
         if (base != null) {
             return report(base, new OutputStreamWriter(out), Defaults.createDefaultMatcher(), null);
         }
         return null;
     }
 
-    private DirectoryWalker getDirectory(PrintStream out) {
-        DirectoryWalker result = null;
+    private IReportable getDirectory(PrintStream out) {
         File base = new File(baseDirectory);
         if (!base.exists()) {
             out.print("ERROR: ");
             out.print(baseDirectory);
             out.print(" does not exist.\n");
-        } else if (!base.isDirectory()) {
+            return null;
+        } 
+        
+        if (base.isDirectory()) {
+            return new DirectoryWalker(base, inputFileFilter);
+        }
+        
+        try {
+        	return new GZIPWalker(base, inputFileFilter);
+        } catch (IOException ex) {
             out.print("ERROR: ");
             out.print(baseDirectory);
-            out.print(" must be a directory.\n");
-        } else {
-            result = new DirectoryWalker(base, inputFileFilter);
+            out.print(" is not valid gzip data.\n");
+            return null;
         }
-        return result;
     }
 
     /**
@@ -282,7 +289,7 @@ public class Report {
      * @throws Exception
      */
     public void styleReport(PrintStream out) throws Exception {
-        final DirectoryWalker base = getDirectory(out);
+        final IReportable base = getDirectory(out);
         if (base != null) {
             InputStream style = Defaults.getDefaultStyleSheet();
             report(out, base, style, Defaults.createDefaultMatcher(), null);

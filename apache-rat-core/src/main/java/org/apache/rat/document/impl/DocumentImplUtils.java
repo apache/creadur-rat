@@ -19,9 +19,11 @@
 package org.apache.rat.document.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class DocumentImplUtils {
 
@@ -30,18 +32,17 @@ public class DocumentImplUtils {
         String normalisedPath = path.replace('\\', '/');
         return normalisedPath;
     }
-
-    public static final boolean isZip(File file) {
-        ZipFile zip = null;
-        try {
-            zip = new ZipFile(file);
-            zip.entries();
-            return true;
+    
+    public static final boolean isZipStream(InputStream stream) {
+    	ZipInputStream zip = new ZipInputStream(stream);
+    	try {
+			zip.getNextEntry();
+			return true;
         } catch (ZipException e) {
             return false;
-        } catch (IOException e) {
-            return false;
-        } finally {
+		} catch (IOException e) {
+			return false;
+		} finally {
             if (zip != null) {
                 try {
                     zip.close();
@@ -49,6 +50,14 @@ public class DocumentImplUtils {
                     // Swallow
                 }
             }
+		}
+    }
+
+    public static final boolean isZip(File file) {
+        try {
+        	return isZipStream(new FileInputStream(file));
+        } catch (IOException e) {
+            return false;
         }
     }
 

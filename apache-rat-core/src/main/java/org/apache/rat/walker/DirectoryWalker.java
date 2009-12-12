@@ -17,7 +17,7 @@
  * under the License.                                           *
  */
 
-package org.apache.rat;
+package org.apache.rat.walker;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -33,29 +33,10 @@ import org.apache.rat.report.RatReport;
 /**
  * Walks directories.
  */
-public class DirectoryWalker implements IReportable {
+public class DirectoryWalker extends Walker implements IReportable {
 
-    private static FilenameFilter regexFilter(final Pattern pattern) {
-        return new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                final boolean result;
-                if (pattern == null) {
-                    result = true;
-                } else {
-                    result = !pattern.matcher(name).matches();
-                }
-                return result;
-            }
-        };
-    }
-    
-    private static final FileNameComparator COMPARATOR = new FileNameComparator();
-    
-    protected final File file;
-    protected final String name;
-
-    private final FilenameFilter filter;
-    
+    protected static final FileNameComparator COMPARATOR = new FileNameComparator();
+	
 	public DirectoryWalker(File file) {
 	    this(file, (FilenameFilter) null);
 	}
@@ -67,40 +48,17 @@ public class DirectoryWalker implements IReportable {
      * or null when no filtering should be performed
      */
     public DirectoryWalker(File file, final FilenameFilter filter) {
-        this(file.getPath(), file, filter);
+        super(file.getPath(), file, filter);
     }
     
     public DirectoryWalker(File file, final Pattern ignoreNameRegex) {
-        this(file.getPath(), file, regexFilter(ignoreNameRegex));
-    }
-
-    private DirectoryWalker(final String name, final File file, final FilenameFilter filter) {
-        this.name = name;
-        this.file = file;
-        this.filter = filter;
+        super(file.getPath(), file, regexFilter(ignoreNameRegex));
     }
 	
     public boolean isRestricted() {
         return false;
     }
-
-    protected final boolean ignored(final File file) {
-        boolean result = false;
-        final String name = file.getName();
-        final File dir = file.getParentFile();
-        if (filter != null) {
-            result = !filter.accept(dir, name);
-        }
-        return result;
-    }
-
-	
-	boolean isRestricted(File file) {
-		String name = file.getName();
-		boolean result = name.startsWith(".");
-		return result;
-	}
-    
+   
 	  /**
 	   * Process a directory, restricted directories will be ignored.
 	   * 
