@@ -58,7 +58,7 @@ import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.walker.DirectoryWalker;
-import org.apache.rat.walker.GZIPWalker;
+import org.apache.rat.walker.ArchiveWalker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -215,13 +215,12 @@ public class Report {
         footer.append("RAT is really little more than a grep ATM\n");
         footer.append("RAT is also rather memory hungry ATM\n");
         footer.append("RAT is very basic ATM\n");
-        footer.append("RAT ATM runs on unpacked releases\n");
         footer.append("RAT highlights possible issues\n");
         footer.append("RAT reports require intepretation\n");
         footer.append("RAT often requires some tuning before it runs well against a project\n");
         footer.append("RAT relies on heuristics: it may miss issues\n");
 
-        f.printHelp("java org.apache.org.rat.report [options] [DIR]",
+        f.printHelp("java rat.report [options] [DIR|TARBALL]",
                 header, opts, footer.toString(), false);
         System.exit(0);
     }
@@ -272,7 +271,7 @@ public class Report {
         }
         
         try {
-        	return new GZIPWalker(base, inputFileFilter);
+        	return new ArchiveWalker(base, inputFileFilter);
         } catch (IOException ex) {
             out.print("ERROR: ");
             out.print(baseDirectory);

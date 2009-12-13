@@ -24,11 +24,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.ArchiveEntryDocument;
@@ -36,9 +38,9 @@ import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 
 /**
- * Walks .tar.gz files
+ * Walks various kinds of archives files
  */
-public class GZIPWalker extends Walker implements IReportable {
+public class ArchiveWalker extends Walker implements IReportable {
 	
     /**
      * Constructs a walker.
@@ -48,7 +50,7 @@ public class GZIPWalker extends Walker implements IReportable {
      * @throws IOException 
      * @throws FileNotFoundException 
      */
-    public GZIPWalker(File file, final FilenameFilter filter) throws FileNotFoundException {
+    public ArchiveWalker(File file, final FilenameFilter filter) throws FileNotFoundException {
         super(file, filter);
     }
     
@@ -62,7 +64,19 @@ public class GZIPWalker extends Walker implements IReportable {
     public void run(final RatReport report) throws RatException {
     	
 		try {
-	        ArchiveInputStream input = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
+			ArchiveInputStream input;
+		
+            /* I am really sad that classes aren't first-class objects in
+               Java :'( */
+			try {
+				input = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(file)));
+			} catch (IOException e) {
+				try {
+					input = new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
+				} catch (IOException e2) {
+					input = new ZipArchiveInputStream(new FileInputStream(file));
+				}
+			}
 
 			ArchiveEntry entry = input.getNextEntry();
     	    while (entry != null) {
