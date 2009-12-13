@@ -150,6 +150,7 @@ public class BinaryGuesser {
         "SUO", "XCF",
         "RAJ", "CERT",
         "KS", "TS",
+        "ODP",
     };
     public static final String[] EXE_EXTENSIONS = {
         "EXE", "DLL",
@@ -164,7 +165,7 @@ public class BinaryGuesser {
         "GIF", "GIFF",
         "TIF", "TIFF",
         "JPG", "JPEG",
-        "ICO",
+        "ICO", "ICNS",
     };
     public static final String[] BYTECODE_EXTENSIONS = {
         "CLASS", "PYD",
