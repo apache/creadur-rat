@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.DirectoryWalker;
+import org.apache.rat.walker.DirectoryWalker;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;

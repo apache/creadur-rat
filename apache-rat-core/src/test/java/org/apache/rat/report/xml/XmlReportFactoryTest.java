@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.DirectoryWalker;
+import org.apache.rat.walker.DirectoryWalker;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.report.RatReport;

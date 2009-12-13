@@ -23,6 +23,7 @@ import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
+import org.apache.rat.walker.DirectoryWalker;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.test.utils.Resources;
 
