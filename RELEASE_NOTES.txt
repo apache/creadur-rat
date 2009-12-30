@@ -114,3 +114,5 @@ RAT 0.3 Notes
    The new XML reporting code is present but is not yet the default.
  * RAT 0.3 is the first release with release notes. All previous releases are
    now consigned to Ancient History. No record of them will be found here.
+
+
