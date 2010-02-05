@@ -61,12 +61,14 @@
     </resources>    
     <plugins>
       <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <configuration>
           <attach>false</attach>
         </configuration>
       </plugin>
       <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
@@ -84,6 +86,7 @@
         </executions>
       </plugin>
       <plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <excludes>
@@ -113,8 +116,8 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.2-beta-3</version>
             <configuration>
               <descriptorSourceDirectory>${basedir}/src/assemble/</descriptorSourceDirectory>
               <tarLongFileMode>gnu</tarLongFileMode>
@@ -133,10 +136,4 @@
       </build>
     </profile>
   </profiles>
-
-  <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat</developerConnection>
-    <url>http://svn.apache.org/repos/asf/incubator/rat/main/trunk/apache-rat</url>
-  </scm>
 </project>
