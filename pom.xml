@@ -59,10 +59,8 @@ Note that binary compatibility is not gauranteed between 0.x releases.
               <rat.www.id>localhost</rat.www.id>
       ...
     -->
-    <!-- General location for site stage -->
-    <rat.www>dav:http://repository.sonatype.org/content/sites/site-test/</rat.www>
-    <!-- Overridding this value allows single set of loopback settings to be maintained -->
-    <rat.www.id>Nexus</rat.www.id>
+    <rat.www>scp://people.apache.org/www/incubator.apache.org/rat/</rat.www>
+    <rat.www.id>org.apache.rat.incubating</rat.www.id>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
