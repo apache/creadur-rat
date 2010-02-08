@@ -324,6 +324,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
         }
         sink.verbatim_();
         sink.paragraph_();
+        sink.section1_();	
         sink.body_();
     }
 
