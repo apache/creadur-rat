@@ -29,7 +29,7 @@ Verify phase example
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <version>0.6</version>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>verify</phase>
@@ -58,7 +58,7 @@ Verify phase example
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
-            <version>0.6</version>
+            <version>${currentVersion}</version>
             <executions>
               <execution>
                 <phase>verify</phase>

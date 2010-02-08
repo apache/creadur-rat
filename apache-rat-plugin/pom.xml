@@ -31,6 +31,10 @@
     <maven>2.0.4</maven>
   </prerequisites>
 
+  <properties>
+    <currentVersion>${pom.version}</currentVersion>
+  </properties>
+  
   <build>
     <resources>
       <resource>
