@@ -264,11 +264,17 @@ Note that binary compatibility is not gauranteed between 0.x releases.
 
   <mailingLists>
     <mailingList>
-      <name>RAT </name>
+      <name>RAT Dev</name>
       <subscribe>rat-dev-subscribe@incubator.apache.org</subscribe>
       <unsubscribe>rat-dev-unsubscribe@incubator.apache.org</unsubscribe>
       <post>rat-dev@incubator.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/incubator-rat-dev/</archive>
+    </mailingList>
+    <mailingList>
+      <name>RAT Commits</name>
+      <subscribe>rat-commits-subscribe@incubator.apache.org</subscribe>
+      <unsubscribe>rat-commits-unsubscribe@incubator.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/incubator-rat-commits/</archive>
     </mailingList>
   </mailingLists>
   <developers>
@@ -311,13 +317,19 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   		<id>bayard</id>
   		<name>Henri Yandell</name>
   		<email>bayard@apache.org</email>
-  	</developer>
+        </developer>
+        <developer>
+                <id>gmcdonald</id>
+                <name>Gavin</name>
+                <email>gmcdonald@apache.org</email>
+        </developer>
+        <developer>
+                <id>brianf</id>
+                <name>Brian Fox</name>
+                <email>brianf@apache.org</email>
+        </developer>
   </developers>
   <contributors>
-    <contributor>
-        <name>Gavin</name>
-        <email>gavin@16degrees.com.au</email>
-    </contributor>
   	<contributor>
   		<name>Jukka Zitting</name>
   		<email>jukka@apache.org</email>
