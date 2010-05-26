@@ -83,6 +83,14 @@
     </rat:report>
   </target>
 
+  <target name="run-on-rat-output-xml" depends="-taskdef"
+          description="Runs RAT on its own source tree and creates an XML report">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
+                format="xml" reportFile="rat-report.xml">
+      <fileset dir="."/>
+    </rat:report>
+  </target>
+
   <target name="-taskdef">
     <typedef resource="org/apache/rat/anttasks/antlib.xml"
              uri="antlib:org.apache.rat.anttasks">

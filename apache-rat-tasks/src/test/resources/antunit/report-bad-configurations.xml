@@ -58,4 +58,19 @@
     </au:expectfailure>
   </target>
 
+  <target name="testNoStylesheet">
+    <au:expectfailure expectedMessage="must specify a stylesheet">
+      <rat:report format="styled">
+        <file file="${ant.file}"/>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testUnusedStylesheet">
+    <rat:report stylesheet="${ant.file}">
+      <file file="${ant.file}"/>
+    </rat:report>
+    <au:assertLogContains text="Ignoring stylesheet"/>
+  </target>
+
 </project>

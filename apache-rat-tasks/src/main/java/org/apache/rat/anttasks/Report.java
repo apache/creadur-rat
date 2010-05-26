@@ -21,6 +21,7 @@ package org.apache.rat.anttasks;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
+import org.apache.tools.ant.types.EnumeratedAttribute;
+import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 import org.apache.tools.ant.util.FileUtils;
@@ -46,6 +49,17 @@ import org.apache.rat.license.ILicenseFamily;
  * the nested resource collection(s).
  *
  * <p>ILicenseMatcher(s) can be specified as nested elements as well.</p>
+ *
+ * <p>The attribute <code>format</code> defines the output format and
+ * can take the values
+ * <ul>
+ *   <li>xml - RAT's native XML output.</li>
+ *   <li>styled - transforms the XML output using the given
+ *   stylesheet.  The stylesheet attribute must be set as well if this
+ *   attribute is used.</li>
+ *   <li>plain - plain text using RAT's built-in stylesheet.  This is
+ *   the default.</li>
+ * </ul>
  */
 public class Report extends Task {
 
@@ -57,9 +71,9 @@ public class Report extends Task {
      * The licenses we want to match on.
      */
     private ArrayList licenseMatchers = new ArrayList();
-    
+
     private ArrayList licenseNames = new ArrayList();
-    
+
     /**
      * Whether to add the default list of license matchers.
      */
@@ -68,6 +82,14 @@ public class Report extends Task {
      * Where to send the report.
      */
     private File reportFile;
+    /**
+     * Which format to use.
+     */
+    private Format format = Format.PLAIN;
+    /**
+     * Which stylesheet to use.
+     */
+    private Resource stylesheet;
 
     /**
      * Adds resources that will be checked.
@@ -85,7 +107,7 @@ public class Report extends Task {
     public void add(IHeaderMatcher matcher) {
         licenseMatchers.add(matcher);
     }
-    
+
     public void add(ILicenseFamily license) {
         licenseNames.add(license);
     }
@@ -102,6 +124,23 @@ public class Report extends Task {
      */
     public void setReportFile(File f) {
         reportFile = f;
+    }
+
+    /**
+     * Which format to use.
+     */
+    public void setFormat(Format f) {
+        if (f == null) {
+            throw new IllegalArgumentException("format must not be null");
+        }
+        format = f;
+    }
+
+    /**
+     * Which stylesheet to use (only meaningful with format='styled').
+     */
+    public void setStylesheet(Resource r) {
+        stylesheet = r;
     }
 
     /**
@@ -150,6 +189,19 @@ public class Report extends Task {
             throw new BuildException("You must specify at least one license"
                                      + " matcher");
         }
+        if (format.getValue().equals(Format.STYLED_KEY)) {
+            if (stylesheet == null) {
+                throw new BuildException("You must specify a stylesheet when"
+                                         + " using the 'styled' format");
+            }
+            if (!stylesheet.isExists()) {
+                throw new BuildException("Cannot find specified stylesheet '"
+                                         + stylesheet + "'");
+            }
+        } else if (stylesheet != null) {
+            log("Ignoring stylesheet '" + stylesheet + "' when using format '"
+                + format.getValue() + "'", Project.MSG_WARN);
+        }
     }
 
     /**
@@ -162,7 +214,26 @@ public class Report extends Task {
         HeaderMatcherMultiplexer m = new HeaderMatcherMultiplexer(getLicenseMatchers());
         ResourceCollectionContainer rcElement =
             new ResourceCollectionContainer(nestedResources);
-        org.apache.rat.Report.report(out, rcElement, Defaults.getDefaultStyleSheet(), m, getApprovedLicenseNames());
+        if (format.getValue().equals(Format.XML_KEY)) {
+            org.apache.rat.Report.report(rcElement, out, m,
+                                         getApprovedLicenseNames());
+        } else {
+            InputStream style = null;
+            try {
+                if (format.getValue().equals(Format.PLAIN_KEY)) {
+                    style = Defaults.getPlainStyleSheet();
+                } else if (format.getValue().equals(Format.STYLED_KEY)) {
+                    style = stylesheet.getInputStream();
+                } else {
+                    throw new BuildException("unsupported format '"
+                                             + format.getValue() + "'");
+                }
+                org.apache.rat.Report.report(out, rcElement, style,
+                                             m, getApprovedLicenseNames());
+            } finally {
+                FileUtils.close(style);
+            }
+        }
     }
 
     /**
@@ -188,7 +259,7 @@ public class Report extends Task {
         }
         return matchers;
     }
-    
+
     private ILicenseFamily[] getApprovedLicenseNames() {
         // TODO: add support for adding default licenses
         ILicenseFamily[] results = null;
@@ -196,5 +267,29 @@ public class Report extends Task {
             results = (ILicenseFamily[]) licenseNames.toArray(new ILicenseFamily[0]);
         }
         return results;
+    }
+
+    /**
+     * Type for the format attribute.
+     */
+    public static class Format extends EnumeratedAttribute {
+        static final String XML_KEY = "xml";
+        static final String STYLED_KEY = "styled";
+        static final String PLAIN_KEY = "plain";
+
+        static final Format PLAIN = new Format(PLAIN_KEY);
+
+        public Format() { super(); }
+
+        private Format(String s) {
+            this();
+            setValue(s);
+        }
+
+        public String[] getValues() {
+            return new String[] {
+                XML_KEY, STYLED_KEY, PLAIN_KEY
+            };
+        }
     }
 }

@@ -50,6 +50,8 @@
       </path>
     </pathconvert>
     <property name="expectedOutput" value=" AL    ${file.name}"/>
+    <property name="expectedOutputXML" value="&lt;resource name='${file.name}'"/>
+    <property name="expectedOutputXML2" value="&lt;header-type name='AL   '"/>
   </target>
 
   <target name="allTests">
@@ -82,6 +84,19 @@
     <au:assertLogDoesntContain text="${expectedOutput}"/>
     <au:assertFileExists file="${report.file}"/>
     <assertReportContains text="${expectedOutput}"/>
+  </target>
+
+  <target name="testXMLReportSentToFile" depends="fileReportTest">
+    <rat:report reportFile="${report.file}.xml" format="xml">
+      <file file="${ant.file}"/>
+    </rat:report>
+    <au:assertLogDoesntContain text="${expectedOutputXML}"/>
+    <au:assertLogDoesntContain text="${expectedOutputXML2}"/>
+    <au:assertFileExists file="${report.file}.xml"/>
+    <assertReportContains text="${expectedOutputXML}"
+                          file="${report.file}.xml"/>
+    <assertReportContains text="${expectedOutputXML2}"
+                          file="${report.file}.xml"/>
   </target>
 
   <target name="xtestWithASLUnknown">
@@ -130,8 +145,9 @@
     <au:assertFileDoesntExist file="${report.file}"/>
     <macrodef name="assertReportContains">
       <attribute name="text"/>
+      <attribute name="file" default="${report.file}"/>
       <sequential>
-        <loadfile srcFile="${report.file}" property="report"/>
+        <loadfile srcFile="@{file}" property="report"/>
         <au:assertTrue message="expected report to contain '@{text}' but was '${report}'">
           <contains string="${report}" substring="@{text}"/>
         </au:assertTrue>
