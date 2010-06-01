@@ -42,6 +42,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
@@ -160,13 +161,6 @@ public class Report {
         "The copyright message to use in the licence headers, usually in the form of \"Copyright 2008 Foo\"");
         opts.addOption(copyright);
 
-        Option xml = new Option(
-                "x",
-                "xml",
-                false,
-        "Output the report in XML format");
-        opts.addOption(xml);
-
         final Option exclude = OptionBuilder
                             .withArgName("expression")
                             .withLongOpt("exclude")
@@ -184,12 +178,23 @@ public class Report {
         "Used to indicate source when using --exclude");
         opts.addOption(dir);
 
+        OptionGroup outputType = new OptionGroup();
+
+        Option xml = new Option(
+                "x",
+                "xml",
+                false,
+                "Output the report in raw XML format.  Not compatible with -s");
+        outputType.addOption(xml);
+
         Option xslt = new Option(String.valueOf(STYLESHEET_CLI),
                                  "stylesheet",
                                  true,
                                  "XSLT stylesheet to use when creating the"
-                                 + " report");
-        opts.addOption(xslt);
+                                 + " report.  Not compatible with -x");
+        outputType.addOption(xslt);
+        opts.addOptionGroup(outputType);
+
         return opts;
     }
 
