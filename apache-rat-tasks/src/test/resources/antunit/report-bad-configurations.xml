@@ -67,7 +67,10 @@
   </target>
 
   <target name="testUnusedStylesheet">
-    <rat:report stylesheet="${ant.file}">
+    <rat:report>
+      <stylesheet>
+        <file file="${ant.file}"/>
+      </stylesheet>
       <file file="${ant.file}"/>
     </rat:report>
     <au:assertLogContains text="Ignoring stylesheet"/>

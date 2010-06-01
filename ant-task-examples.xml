@@ -91,6 +91,17 @@
     </rat:report>
   </target>
 
+  <target name="run-on-rat-output-styled" depends="-taskdef"
+          description="Runs RAT on its own source tree and creates a report using XSLT">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
+                format="styled" reportFile="rat-report.txt">
+      <stylesheet>
+        <file file="apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl"/>
+      </stylesheet>
+      <fileset dir="."/>
+    </rat:report>
+  </target>
+
   <target name="-taskdef">
     <typedef resource="org/apache/rat/anttasks/antlib.xml"
              uri="antlib:org.apache.rat.anttasks">

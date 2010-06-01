@@ -139,8 +139,12 @@ public class Report extends Task {
     /**
      * Which stylesheet to use (only meaningful with format='styled').
      */
-    public void setStylesheet(Resource r) {
-        stylesheet = r;
+    public void addConfiguredStylesheet(Union u) {
+        if (stylesheet != null || u.size() != 1) {
+            throw new BuildException("You must not specify more than one"
+                                     + " stylesheet.");
+        }
+        stylesheet = (Resource) u.iterator().next();
     }
 
     /**
