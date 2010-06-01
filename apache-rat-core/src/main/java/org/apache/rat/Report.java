@@ -21,6 +21,7 @@ package org.apache.rat;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -68,6 +69,7 @@ import org.xml.sax.SAXException;
 public class Report {
 
     private static final char EXCLUDE_CLI = 'e';
+    private static final char STYLESHEET_CLI = 's';
 
     //@SuppressWarnings("unchecked")
     public static final void main(String args[]) throws Exception {
@@ -107,9 +109,27 @@ public class Report {
             if (cl.hasOption('x')) {
                 report.report(System.out);
             } else {
-                report.styleReport(System.out);
+                if (!cl.hasOption(STYLESHEET_CLI)) {
+                    report.styleReport(System.out);
+                } else {
+                    String[] style = cl.getOptionValues(STYLESHEET_CLI);
+                    if (style.length != 1) {
+                        System.err.println("please specify a single stylesheet");
+                        System.exit(1);
+                    }
+                    try {
+                        report.report(System.out,
+                                      report.getDirectory(System.out),
+                                      new FileInputStream(style[0]),
+                                      Defaults.createDefaultMatcher(), null);
+                    } catch (FileNotFoundException fnfe) {
+                        System.err.println("stylesheet " + style[0]
+                                           + " doesn't exist");
+                        System.exit(1);
+                    }
+                }
             }
-        } 
+        }
     }
 
     private static Options buildOptions() {
@@ -164,6 +184,12 @@ public class Report {
         "Used to indicate source when using --exclude");
         opts.addOption(dir);
 
+        Option xslt = new Option(String.valueOf(STYLESHEET_CLI),
+                                 "stylesheet",
+                                 true,
+                                 "XSLT stylesheet to use when creating the"
+                                 + " report");
+        opts.addOption(xslt);
         return opts;
     }
 
