@@ -72,7 +72,7 @@ public class Report {
     //@SuppressWarnings("unchecked")
     public static final void main(String args[]) throws Exception {
         Options opts = buildOptions();
-        
+
         PosixParser parser = new PosixParser();
         CommandLine cl = null;
         try {
@@ -103,12 +103,12 @@ public class Report {
                     report.setInputFileFilter(filter);
                 }
             }
-            
+
             if (cl.hasOption('x')) {
                 report.report(System.out);
             } else {
                 report.styleReport(System.out);
-            }	
+            }
         } 
     }
 
@@ -139,7 +139,7 @@ public class Report {
                 true,
         "The copyright message to use in the licence headers, usually in the form of \"Copyright 2008 Foo\"");
         opts.addOption(copyright);
-        
+
         Option xml = new Option(
                 "x",
                 "xml",
@@ -156,14 +156,14 @@ public class Report {
                                     "Allows multiple arguments.")
                             .create(EXCLUDE_CLI);
         opts.addOption(exclude);
-        
+
         Option dir = new Option(
                 "d",
                 "dir",
                 false,
         "Used to indicate source when using --exclude");
         opts.addOption(dir);
-        
+
         return opts;
     }
 
@@ -226,13 +226,13 @@ public class Report {
     }
 
     private final String baseDirectory;
-    
+
     private FilenameFilter inputFileFilter = null;
 
     private Report(String baseDirectory) {
         this.baseDirectory = baseDirectory;
     }
-    
+
     /**
      * Gets the current filter used to select files.
      * @return current file filter, or null when no filter has been set
@@ -265,13 +265,13 @@ public class Report {
             out.print(" does not exist.\n");
             return null;
         } 
-        
+
         if (base.isDirectory()) {
             return new DirectoryWalker(base, inputFileFilter);
         }
-        
+
         try {
-        	return new ArchiveWalker(base, inputFileFilter);
+                return new ArchiveWalker(base, inputFileFilter);
         } catch (IOException ex) {
             out.print("ERROR: ");
             out.print(baseDirectory);
@@ -358,7 +358,7 @@ public class Report {
             final ILicenseFamily[] approvedLicenseNames) throws IOException, RatException {
         IXmlWriter writer = new XmlWriter(out);
         final ClaimStatistic statistic = new ClaimStatistic();
-        RatReport report = XmlReportFactory.createStandardReport(writer, matcher, approvedLicenseNames, statistic);  
+        RatReport report = XmlReportFactory.createStandardReport(writer, matcher, approvedLicenseNames, statistic);
         report.startReport();
         container.run(report);
         report.endReport();
