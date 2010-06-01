@@ -20,8 +20,11 @@ package org.apache.rat.mp;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -44,6 +47,16 @@ public class RatCheckMojo extends AbstractRatMojo
     private File reportFile;
 
     /**
+     * Output style of the report. Use "plain" (the default) for a plain text
+     * report or "xml" for the raw XML report. Alternatively you can give the
+     * path of an XSL transformation that will be applied on the raw XML to
+     * produce the report written to the output file. 
+     * 
+     * @parameter expression="${rat.outputStyle}" default-value="plain"
+     */
+    private String reportStyle;
+
+    /**
      * Maximum number of files with unapproved licenses.
      * @parameter expression="${rat.numUnapprovedLicenses}" default-value="0"
      */
@@ -56,7 +69,7 @@ public class RatCheckMojo extends AbstractRatMojo
         try
         {
             fw = new FileWriter( reportFile );
-            final ClaimStatistic statistic = createReport( fw, Defaults.getDefaultStyleSheet() );
+            final ClaimStatistic statistic = createReport( fw, getStyleSheet() );
             fw.close();
             fw = null;
             return statistic;
@@ -77,6 +90,36 @@ public class RatCheckMojo extends AbstractRatMojo
                 {
                     /* Ignore me */
                 }
+            }
+        }
+    }
+
+    /**
+     * Returns the XSL stylesheet to be used for formatting the report.
+     *
+     * @see #reportStyle
+     * @return report stylesheet, or <code>null</code> for raw XML
+     * @throws MojoExecutionException if the stylesheet can not be found
+     */
+    private InputStream getStyleSheet() throws MojoExecutionException {
+        if ( reportStyle == null || reportStyle.equals( "plain" ) )
+        {
+            return Defaults.getPlainStyleSheet();
+        }
+        else if ( reportStyle.equals( "xml" ) )
+        {
+            return null;
+        }
+        else
+        {
+            try
+            {
+                return new FileInputStream( reportStyle );
+            }
+            catch ( FileNotFoundException e )
+            {
+                throw new MojoExecutionException(
+                        "Unable to find report stylesheet: " + reportStyle, e );
             }
         }
     }

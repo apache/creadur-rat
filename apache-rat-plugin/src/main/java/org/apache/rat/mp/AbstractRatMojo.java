@@ -328,7 +328,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
      * Writes the report to the given stream.
      * 
      * @param out The target writer, to which the report is being written.
-     * @param style The stylesheet to use
+     * @param style The stylesheet to use, or <code>null</code> for raw XML
      * @throws MojoFailureException
      *             An error in the plugin configuration was detected.
      * @throws MojoExecutionException
@@ -339,7 +339,11 @@ public abstract class AbstractRatMojo extends AbstractMojo
         HeaderMatcherMultiplexer m = new HeaderMatcherMultiplexer( getLicenseMatchers() );
         try
         {
-            return Report.report( out, getResources(), style, m, getApprovedLicenseNames() );
+            if (style != null) {
+                return Report.report( out, getResources(), style, m, getApprovedLicenseNames() );
+            } else {
+                return Report.report( getResources(), out, m, getApprovedLicenseNames() );
+            }
         }
         catch ( TransformerConfigurationException e )
         {
