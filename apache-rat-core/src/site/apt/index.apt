@@ -22,3 +22,36 @@ Release Audit Tool (RAT)
  releases. It is heuristic in nature: making guesses about possible problems. It
  will produce false positives and cannot find every possible issue with a release.
  It's reports require interpretation.
+
+* Running from the Command Line
+ 
+ Run from the command line with:
+
++------------------------------------------+
+java -jar rat-VERSION.jar --help
++------------------------------------------+
+
+ Where VERSION is replaced with the version number you are 
+ working with.
+ 
+ This will output a help message detailing the command line
+options available to you.
+
+* Adding licence headers
+
+RAT can be used to automatically add licence headers to 
+files that do not currently have them. Only files that
+are not excluded by the RAT configurations will be affected.
+
+To add licence headers use a command such as:
+
++------------------------------------------+
+java -jar rat-VERSION.jar --addLicence 
+  --copyright "Copyright 2008 Foo" 
+  /path/to/project
++------------------------------------------+
+
+This command will add the licence header directly to the
+source files. If you prefer to see which files will be
+changed and how then remove the "--force" option. 
+
