@@ -54,19 +54,6 @@
         </includes>
       </resource>
     </resources>
-<!-- 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>src/test/it2/src.txt</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
- -->
   </build>
 
   <dependencies>
@@ -113,12 +100,6 @@
 
   <reporting>
     <plugins>
-<!-- 
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-      </plugin>
- -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -179,7 +160,6 @@
       <id>release</id>
       <build>
         <plugins>
-<!-- 
           <plugin>
             <artifactId>maven-docck-plugin</artifactId>
               <executions>
@@ -190,25 +170,6 @@
                 </execution>
               </executions>
           </plugin>
-          <plugin>
-            <groupId>org.apache.rat</groupId>
-            <artifactId>apache-rat-plugin</artifactId>
-            <version>0.7-SNAPSHOT</version>
-            <executions>
-              <execution>
-                <phase>verify</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-                <configuration>
-                  <excludes>
-                    <exclude>src/test/it2/src.txt</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
- -->
         </plugins>
       </build>
     </profile>
