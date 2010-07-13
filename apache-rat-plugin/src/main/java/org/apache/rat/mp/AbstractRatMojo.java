@@ -55,7 +55,10 @@ public abstract class AbstractRatMojo extends AbstractMojo
     /**
      * The Maven specific default excludes.
      */
-    public static final String[] MAVEN_DEFAULT_EXCLUDES = new String[] { "target/**/*", "cobertura.ser" };
+    public static final String[] MAVEN_DEFAULT_EXCLUDES = new String[] {
+        "target/**/*", "cobertura.ser", "release.properties",
+        "pom.xml.releaseBackup"
+    };
 
     /**
      * The Eclipse specific default excludes.
