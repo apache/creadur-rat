@@ -109,8 +109,10 @@ public class ReportTest extends TestCase {
         StringWriter out = new StringWriter();
         HeaderMatcherMultiplexer matcherMultiplexer = new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setHeaderMatcher(matcherMultiplexer);
         Report.report(out, new DirectoryWalker(new File(elementsPath)),
-                Defaults.getPlainStyleSheet(), matcherMultiplexer, null);
+                Defaults.getPlainStyleSheet(), configuration);
         String result = out.getBuffer().toString();
         final String elementsReports = getElementsReports(elementsPath);
         assertEquals("Report created",

@@ -20,9 +20,9 @@
 package org.apache.rat.report.claim.impl;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.api.RatException;
+import org.apache.rat.report.AbstractReport;
 
 
 /**
@@ -30,8 +30,7 @@ import org.apache.rat.api.MetaData;
  * It is strongly suggested, that implementations derive from
  * this class.
  */
-public abstract class AbstractClaimReporter implements Reporter {
-    
+public abstract class AbstractClaimReporter extends AbstractReport {
     protected void handleDocumentCategoryClaim(String documentCategoryName) {
         // Does nothing
     }

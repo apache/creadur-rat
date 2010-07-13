@@ -29,6 +29,7 @@ import java.io.InputStream;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.rat.Defaults;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 /**
@@ -61,6 +62,23 @@ public class RatCheckMojo extends AbstractRatMojo
      * @parameter expression="${rat.numUnapprovedLicenses}" default-value="0"
      */
     private int numUnapprovedLicenses;
+
+    /**
+     * Whether to add license headers; possible values are
+     * {@code forced}, {@code true}, and {@code false} (default).
+     *
+     * @parameter expression="${rat.addLicenseHeaders}" default-value="false"
+     */
+    private String addLicenseHeaders;
+
+    /**
+     * Copyright message to add to license headers. This option is
+     * ignored, unless {@code addLicenseHeaders} is set to {@code true},
+     * or {@code forced}.
+     *
+     * @parameter expression="${rat.copyrightMessage}"
+     */
+    private String copyrightMessage;
 
     private ClaimStatistic getRawReport()
         throws MojoExecutionException, MojoFailureException
@@ -148,5 +166,24 @@ public class RatCheckMojo extends AbstractRatMojo
         {
             throw new RatCheckException( "Too many unapproved licenses: " + statistics.getNumUnApproved() );
         }
+    }
+
+    protected ReportConfiguration getConfiguration()
+            throws MojoFailureException, MojoExecutionException {
+        final ReportConfiguration configuration = super.getConfiguration();
+        if ("forced".equals(addLicenseHeaders)) {
+            configuration.setAddingLicenses(true);
+            configuration.setAddingLicensesForced(true);
+            configuration.setCopyrightMessage(copyrightMessage);
+        } else if ("true".equals(addLicenseHeaders)) {
+            configuration.setAddingLicenses(true);
+            configuration.setCopyrightMessage(copyrightMessage);
+        } else if ("false".equals(addLicenseHeaders)) {
+            // Nothing to do
+        } else {
+            throw new MojoFailureException("Invalid value for addLicenseHeaders: Expected forced|true|false, got "
+                    + addLicenseHeaders);
+        }
+        return configuration;
     }
 }

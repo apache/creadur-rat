@@ -39,6 +39,7 @@ import org.apache.tools.ant.types.resources.Union;
 import org.apache.tools.ant.util.FileUtils;
 
 import org.apache.rat.Defaults;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.api.RatException;
@@ -90,6 +91,14 @@ public class Report extends Task {
      * Which stylesheet to use.
      */
     private Resource stylesheet;
+    /**
+     * Whether to add license headers.
+     */
+    private AddLicenseHeaders addLicenseHeaders = new AddLicenseHeaders(AddLicenseHeaders.FALSE);
+    /**
+     * The copyright message.
+     */
+    private String copyrightMessage;
 
     /**
      * Adds resources that will be checked.
@@ -136,6 +145,23 @@ public class Report extends Task {
         format = f;
     }
 
+    /**
+     * Wether to add license headers.
+     */
+    public void setAddLicenseHeaders(AddLicenseHeaders pAdd) {
+        if (pAdd == null) {
+            throw new IllegalArgumentException("addLicenseHeaders must not be null");
+        }
+        addLicenseHeaders = pAdd;
+    }
+
+    /**
+     * Sets the copyright message.
+     */
+    public void setCopyrightMessage(String pMessage) {
+        copyrightMessage = pMessage;
+    }
+    
     /**
      * Which stylesheet to use (only meaningful with format='styled').
      */
@@ -215,12 +241,24 @@ public class Report extends Task {
      * @throws RatException 
      */
     private void createReport(PrintWriter out) throws IOException, TransformerException, InterruptedException, RatException {
-        HeaderMatcherMultiplexer m = new HeaderMatcherMultiplexer(getLicenseMatchers());
-        ResourceCollectionContainer rcElement =
-            new ResourceCollectionContainer(nestedResources);
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setHeaderMatcher(new HeaderMatcherMultiplexer(getLicenseMatchers()));
+        configuration.setApprovedLicenseNames(getApprovedLicenseNames());
+        if (AddLicenseHeaders.FALSE.equalsIgnoreCase(addLicenseHeaders.getValue())) {
+            // Nothing to do
+        } else if (AddLicenseHeaders.FORCED.equalsIgnoreCase(addLicenseHeaders.getValue())) {
+            configuration.setAddingLicenses(true);
+            configuration.setAddingLicensesForced(true);
+            configuration.setCopyrightMessage(copyrightMessage);
+        } else if (AddLicenseHeaders.TRUE.equalsIgnoreCase(addLicenseHeaders.getValue())) {
+            configuration.setAddingLicenses(true);
+            configuration.setCopyrightMessage(copyrightMessage);
+        } else {
+            throw new BuildException("Invalid value for addLicenseHeaders: " + addLicenseHeaders.getValue());
+        }
+        ResourceCollectionContainer rcElement = new ResourceCollectionContainer(nestedResources);
         if (format.getValue().equals(Format.XML_KEY)) {
-            org.apache.rat.Report.report(rcElement, out, m,
-                                         getApprovedLicenseNames());
+            org.apache.rat.Report.report(rcElement, out, configuration);
         } else {
             InputStream style = null;
             try {
@@ -233,7 +271,7 @@ public class Report extends Task {
                                              + format.getValue() + "'");
                 }
                 org.apache.rat.Report.report(out, rcElement, style,
-                                             m, getApprovedLicenseNames());
+                                             configuration);
             } finally {
                 FileUtils.close(style);
             }
@@ -293,6 +331,27 @@ public class Report extends Task {
         public String[] getValues() {
             return new String[] {
                 XML_KEY, STYLED_KEY, PLAIN_KEY
+            };
+        }
+    }
+
+    /**
+     * Type for the addLicenseHeaders attribute.
+     */
+    public static class AddLicenseHeaders extends EnumeratedAttribute {
+        static final String TRUE = "true";
+        static final String FALSE = "false";
+        static final String FORCED = "forced";
+
+        public AddLicenseHeaders() {}
+        public AddLicenseHeaders(String s) {
+            setValue(s);
+        }
+        
+        
+        public String[] getValues() {
+            return new String[] {
+                TRUE, FALSE, FORCED
             };
         }
     }
