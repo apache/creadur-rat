@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
-import org.apache.rat.walker.DirectoryWalker;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.report.RatReport;
@@ -32,6 +32,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.walker.DirectoryWalker;
 
 public class XmlReportFactoryTest extends TestCase {
 
@@ -61,7 +62,9 @@ public class XmlReportFactoryTest extends TestCase {
         final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
         final ClaimStatistic statistic = new ClaimStatistic();
-        RatReport report = XmlReportFactory.createStandardReport(writer, mockLicenseMatcher, statistic);
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setHeaderMatcher(mockLicenseMatcher);
+        RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
         report(directory, report);
         report.endReport();

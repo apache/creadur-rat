@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 
 public class GeneratedLicenseNotRequired implements IHeaderMatcher {

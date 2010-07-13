@@ -20,7 +20,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <groupId>org.apache.rat.test</groupId>
-  <artifactId>it1</artifactId>
+  <artifactId>it3</artifactId>
   <version>1.0</version>
   <build>
     <plugins>
@@ -33,15 +33,4 @@
       </plugin>
     </plugins>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apche-rat-plugin</artifactId>
-        <version>0.7-SNAPSHOT</version>
-        <configuration>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

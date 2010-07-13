@@ -18,12 +18,7 @@
  */ 
 package org.apache.rat.report.claim.impl.xml;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
-import org.apache.rat.api.Reporter;
+import org.apache.rat.report.AbstractReport;
 
-public class MockClaimReporter implements Reporter {
-
-    public void report(Document document) throws RatException {
-    }
+public class MockClaimReporter extends AbstractReport {
 }

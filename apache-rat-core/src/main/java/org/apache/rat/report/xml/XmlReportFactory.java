@@ -18,19 +18,20 @@
  */ 
 package org.apache.rat.report.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
-import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.impl.ClaimAggregator;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
+import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
+import org.apache.rat.report.claim.util.LicenseAddingReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
@@ -38,45 +39,21 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
  *
  */
 public class XmlReportFactory {
-    public static final RatReport createStandardReport(final IXmlWriter writer, 
-            final IHeaderMatcher matcher, ClaimStatistic pStatistic) {
-        return createStandardReport(writer, matcher, null, pStatistic);
-    }
-    
-    public static final RatReport createStandardReport(final IXmlWriter writer, 
-            final IHeaderMatcher matcher, final ILicenseFamily[] approvedLicenses,
-            final ClaimStatistic pStatistic) {
-        // TODO: this isn't very elegant :-/
-        // TODO: should really pass in analysers but this means injecting reporter
-        final Reporter reporter;
-        if (pStatistic == null) {
-            reporter = new SimpleXmlClaimReporter(writer);
-        } else {
-            reporter = new ClaimAggregator(new SimpleXmlClaimReporter(writer));
+    public static final RatReport createStandardReport(IXmlWriter writer,
+            final ClaimStatistic pStatistic, ReportConfiguration pConfiguration) {
+        final List reporters = new ArrayList();
+        if (pStatistic != null) {
+            reporters.add(new ClaimAggregator(pStatistic));
         }
-        final DefaultPolicy policy = new DefaultPolicy(approvedLicenses);
-        
+        if (pConfiguration.isAddingLicenses()) {
+            reporters.add(new LicenseAddingReport(pConfiguration.getCopyrightMessage(), pConfiguration.isAddingLicensesForced()));
+        }
+        reporters.add(new SimpleXmlClaimReporter(writer));
         final IDocumentAnalyser analyser = 
-            DefaultAnalyserFactory.createDefaultAnalyser(matcher);
+            DefaultAnalyserFactory.createDefaultAnalyser(pConfiguration.getHeaderMatcher());
+        final DefaultPolicy policy = new DefaultPolicy(pConfiguration.getApprovedLicenseNames());
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);
-        
-        final RatReport result = new XmlReport(writer, analysisMultiplexer, reporter);
-        if (pStatistic == null) {
-            return result;
-        }
-        return new RatReport(){
-            public void endReport() throws RatException {
-                result.endReport();
-                ((ClaimAggregator) reporter).fillClaimStatistic(pStatistic);
-            }
-            public void report(Document pDocument)
-                    throws RatException {
-                result.report(pDocument);
-            }
-            public void startReport() throws RatException {
-                result.startReport();
-            }
-        };
+        return new ClaimReporterMultiplexer(analysisMultiplexer, reporters);
     }
 }

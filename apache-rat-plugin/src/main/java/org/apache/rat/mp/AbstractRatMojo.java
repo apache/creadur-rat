@@ -37,6 +37,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.rat.Defaults;
 import org.apache.rat.Report;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.api.RatException;
@@ -54,7 +55,10 @@ public abstract class AbstractRatMojo extends AbstractMojo
     /**
      * The Maven specific default excludes.
      */
-    public static final String[] MAVEN_DEFAULT_EXCLUDES = new String[] { "target/**/*", "cobertura.ser" };
+    public static final String[] MAVEN_DEFAULT_EXCLUDES = new String[] {
+        "target/**/*", "cobertura.ser", "release.properties",
+        "pom.xml.releaseBackup"
+    };
 
     /**
      * The Eclipse specific default excludes.
@@ -146,7 +150,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
      * @parameter expression="${rat.excludeSubprojects}" default-value="true"
      */
     private boolean excludeSubProjects;
-
+    
     /**
      * @parameter default-value="${project}"
      * @required
@@ -336,13 +340,13 @@ public abstract class AbstractRatMojo extends AbstractMojo
      */
     protected ClaimStatistic createReport( Writer out, InputStream style ) throws MojoExecutionException, MojoFailureException
     {
-        HeaderMatcherMultiplexer m = new HeaderMatcherMultiplexer( getLicenseMatchers() );
+        final ReportConfiguration configuration = getConfiguration();
         try
         {
             if (style != null) {
-                return Report.report( out, getResources(), style, m, getApprovedLicenseNames() );
+                return Report.report( out, getResources(), style, configuration );
             } else {
-                return Report.report( getResources(), out, m, getApprovedLicenseNames() );
+                return Report.report( getResources(), out, configuration );
             }
         }
         catch ( TransformerConfigurationException e )
@@ -361,6 +365,14 @@ public abstract class AbstractRatMojo extends AbstractMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+    }
+
+    protected ReportConfiguration getConfiguration() throws MojoFailureException,
+            MojoExecutionException {
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setHeaderMatcher( new HeaderMatcherMultiplexer( getLicenseMatchers() ) );
+        configuration.setApprovedLicenseNames(getApprovedLicenseNames());
+        return configuration;
     }
 
     private ILicenseFamily[] getApprovedLicenseNames() throws MojoExecutionException, MojoFailureException

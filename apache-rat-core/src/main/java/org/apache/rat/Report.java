@@ -18,24 +18,18 @@
  */ 
 package org.apache.rat;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.commons.cli.CommandLine;
@@ -48,32 +42,24 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.annotation.AbstractLicenceAppender;
-import org.apache.rat.annotation.ApacheV2LicenceAppender;
 import org.apache.rat.api.RatException;
-import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
-import org.apache.rat.walker.DirectoryWalker;
 import org.apache.rat.walker.ArchiveWalker;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.apache.rat.walker.DirectoryWalker;
 
 
 public class Report {
-
     private static final char EXCLUDE_CLI = 'e';
     private static final char STYLESHEET_CLI = 's';
 
     //@SuppressWarnings("unchecked")
     public static final void main(String args[]) throws Exception {
+        final ReportConfiguration configuration = new ReportConfiguration();
         Options opts = buildOptions();
 
         PosixParser parser = new PosixParser();
@@ -96,7 +82,9 @@ public class Report {
             Report report = new Report(args[0]);
 
             if (cl.hasOption('a')) {
-                configureForAddLicense(cl, report);
+                configuration.setAddingLicenses(true);
+                configuration.setAddingLicensesForced(cl.hasOption('f'));
+                configuration.setCopyrightMessage(cl.getOptionValue("c"));
             }
 
             if (cl.hasOption(EXCLUDE_CLI)) {
@@ -119,10 +107,11 @@ public class Report {
                         System.exit(1);
                     }
                     try {
-                        report.report(System.out,
-                                      report.getDirectory(System.out),
-                                      new FileInputStream(style[0]),
-                                      Defaults.createDefaultMatcher(), null);
+                        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+                        report(System.out,
+                                report.getDirectory(System.out),
+                                new FileInputStream(style[0]),
+                                configuration);
                     } catch (FileNotFoundException fnfe) {
                         System.err.println("stylesheet " + style[0]
                                            + " doesn't exist");
@@ -198,45 +187,6 @@ public class Report {
         return opts;
     }
 
-    private static void configureForAddLicense(CommandLine cl, Report report) throws Exception, UnsupportedEncodingException, SAXException, IOException, ParserConfigurationException {
-        OutputStream reportOutput = new ByteArrayOutputStream();
-        PrintStream stream = new PrintStream(reportOutput, true);
-        report.report(stream);
-
-        AbstractLicenceAppender  appender;
-        String copyrightMsg = cl.getOptionValue("c");
-        if ( copyrightMsg != null) {
-            appender = new ApacheV2LicenceAppender(copyrightMsg);
-        } else {
-            appender = new ApacheV2LicenceAppender();
-        }
-        if (cl.hasOption("f")) {
-            appender.setForce(true);
-        }
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setValidating(false);
-        ByteArrayInputStream xmlStream = new ByteArrayInputStream(reportOutput.toString().getBytes("UTF-8"));
-        Document doc = factory.newDocumentBuilder().parse(xmlStream);
-
-        NodeList resourceHeaders = doc.getElementsByTagName("header-type");
-        String value = null;
-        for (int i = 0; i < resourceHeaders.getLength(); i++) {
-            Node headerType = resourceHeaders.item(i).getAttributes().getNamedItem("name");
-            if(headerType != null) {
-                value = headerType.getNodeValue();
-            } else {
-                value = null;
-            }
-            if (value != null &&value.equals("?????")) {
-                Node resource = resourceHeaders.item(i).getParentNode();
-                String filename = resource.getAttributes().getNamedItem("name").getNodeValue();
-                File document = new File(filename);
-                appender.append(document);
-            }
-        }
-    }
-
     private static final void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
         String header = "Options";
@@ -283,7 +233,9 @@ public class Report {
     public ClaimStatistic report(PrintStream out) throws Exception {
         final IReportable base = getDirectory(out);
         if (base != null) {
-            return report(base, new OutputStreamWriter(out), Defaults.createDefaultMatcher(), null);
+            final ReportConfiguration configuration = new ReportConfiguration();
+            configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+            return report(base, new OutputStreamWriter(out), configuration);
         }
         return null;
     }
@@ -322,7 +274,9 @@ public class Report {
         final IReportable base = getDirectory(out);
         if (base != null) {
             InputStream style = Defaults.getDefaultStyleSheet();
-            report(out, base, style, Defaults.createDefaultMatcher(), null);
+            final ReportConfiguration configuration = new ReportConfiguration();
+            configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+            report(out, base, style, configuration);
         }
     }
 
@@ -339,11 +293,10 @@ public class Report {
      * @throws InterruptedException
      * @throws RatException
      */
-    public static void report(PrintStream out, IReportable base, final InputStream style, final IHeaderMatcher matcher,
-            final ILicenseFamily[] approvedLicenseNames) 
-    throws IOException, TransformerConfigurationException, 
-    InterruptedException, RatException {
-        report(new OutputStreamWriter(out), base, style, matcher, approvedLicenseNames);
+    public static void report(PrintStream out, IReportable base, final InputStream style,
+                              ReportConfiguration pConfiguration) 
+            throws IOException, TransformerConfigurationException,  InterruptedException, RatException {
+        report(new OutputStreamWriter(out), base, style, pConfiguration);
     }
 
     /**
@@ -362,14 +315,14 @@ public class Report {
      * @throws RatException
      */
     public static ClaimStatistic report(Writer out, IReportable base, final InputStream style, 
-            final IHeaderMatcher matcher, final ILicenseFamily[] approvedLicenseNames) 
+            ReportConfiguration pConfiguration) 
     throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatException {
         PipedReader reader = new PipedReader();
         PipedWriter writer = new PipedWriter(reader);
         ReportTransformer transformer = new ReportTransformer(out, style, reader);
         Thread transformerThread = new Thread(transformer);
         transformerThread.start();
-        final ClaimStatistic statistic = report(base, writer, matcher, approvedLicenseNames);
+        final ClaimStatistic statistic = report(base, writer, pConfiguration);
         writer.flush();
         writer.close();
         transformerThread.join();
@@ -385,11 +338,11 @@ public class Report {
      * @throws IOException
      * @throws RatException
      */
-    public static ClaimStatistic report(final IReportable container, final Writer out, final IHeaderMatcher matcher,
-            final ILicenseFamily[] approvedLicenseNames) throws IOException, RatException {
+    public static ClaimStatistic report(final IReportable container, final Writer out,
+            ReportConfiguration pConfiguration) throws IOException, RatException {
         IXmlWriter writer = new XmlWriter(out);
         final ClaimStatistic statistic = new ClaimStatistic();
-        RatReport report = XmlReportFactory.createStandardReport(writer, matcher, approvedLicenseNames, statistic);
+        RatReport report = XmlReportFactory.createStandardReport(writer, statistic, pConfiguration);
         report.startReport();
         container.run(report);
         report.endReport();

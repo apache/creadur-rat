@@ -20,6 +20,8 @@ package org.apache.rat.report.xml;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
@@ -30,7 +32,9 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
+import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -40,7 +44,7 @@ public class XmlReportTest extends TestCase {
     private static final Pattern IGNORE = Pattern.compile(".svn");
     StringWriter out;
     IXmlWriter writer;
-    XmlReport report;
+    RatReport report;
     
     protected void setUp() throws Exception {
         super.setUp();
@@ -58,7 +62,9 @@ public class XmlReportTest extends TestCase {
             }            
         };
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcher);
-        report = new XmlReport(writer, analyser, reporter);
+        final List reporters = new ArrayList();
+        reporters.add(reporter);
+        report = new ClaimReporterMultiplexer(analyser, reporters); 
     }
 
     protected void tearDown() throws Exception {
