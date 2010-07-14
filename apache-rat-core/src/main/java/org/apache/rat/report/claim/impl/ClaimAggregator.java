@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.report.claim.ClaimStatistic;
 
@@ -34,16 +33,16 @@ import org.apache.rat.report.claim.ClaimStatistic;
  * of claims.
  */
 public class ClaimAggregator extends AbstractClaimReporter {
-    private final Reporter reporter;
+    private final ClaimStatistic statistic;
     private final Map numsByLicenseFamilyName = new HashMap();
     private final Map numsByLicenseFamilyCode = new HashMap();
     private final Map numsByFileType = new HashMap();
     private int numApproved, numUnApproved, numGenerated, numUnknown;
 
-    public ClaimAggregator(Reporter pReporter) {
-        reporter = pReporter;
+    public ClaimAggregator(ClaimStatistic pStatistic) {
+        statistic = pStatistic;
     }
-
+    
     private void incMapValue(Map pMap, Object pKey) {
         final Integer num = (Integer) pMap.get(pKey);
         final int newNum;
@@ -92,11 +91,8 @@ public class ClaimAggregator extends AbstractClaimReporter {
         pStatistic.setNumUnknown(numUnknown);
     }
 
-
-    public void report(Document document) throws RatException {
-        super.report(document);
-        if (reporter != null) {
-            reporter.report(document);
-        }
+    public void endReport() throws RatException {
+        super.endReport();
+        fillClaimStatistic(statistic);
     }
 }

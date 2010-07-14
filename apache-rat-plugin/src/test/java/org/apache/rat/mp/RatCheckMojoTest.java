@@ -19,8 +19,11 @@ package org.apache.rat.mp;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -42,6 +45,7 @@ import org.apache.rat.mp.AbstractRatMojo;
 import org.apache.rat.mp.RatCheckException;
 import org.apache.rat.mp.RatCheckMojo;
 import org.apache.rat.mp.RatReportMojo;
+import org.codehaus.plexus.util.DirectoryScanner;
 
 
 /**
@@ -138,7 +142,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
     private RatCheckMojo newRatCheckMojo( String pDir )
             throws Exception
     {
-        return (RatCheckMojo) newRatMojo( pDir, "check" );
+        return (RatCheckMojo) newRatMojo( pDir, "check", false );
     }
 
     /**
@@ -148,11 +152,11 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
      * @return The configured Mojo.
      * @throws Exception An error occurred while creating the Mojo.
      */
-    private AbstractRatMojo newRatMojo( String pDir, String pGoal )
+    private AbstractRatMojo newRatMojo( String pDir, String pGoal, boolean pCreateCopy )
             throws Exception
     {
         final File baseDir = new File( getBasedir() );
-        final File testBaseDir = new File( new File( baseDir, "src/test" ), pDir );
+        final File testBaseDir = getSourceDirectory(pDir, pCreateCopy, baseDir);
         File testPom = new File( testBaseDir, "pom.xml" );
         AbstractRatMojo mojo = (AbstractRatMojo) lookupMojo( pGoal, testPom );
         assertNotNull( mojo );
@@ -162,6 +166,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
         setVariableValueToObject( mojo, "useDefaultExcludes", Boolean.TRUE );
         setVariableValueToObject( mojo, "useMavenDefaultExcludes", Boolean.TRUE );
         setVariableValueToObject( mojo, "useEclipseDefaultExcludes", Boolean.TRUE );
+        setVariableValueToObject( mojo, "addLicenseHeaders", "false" );
         final Build build = new Build();
         build.setDirectory( buildDirectory.getPath() );
         final MavenProjectStub project = new MavenProjectStub(){
@@ -184,6 +189,99 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
             setVariableValueToObject( mojo, "reportFile", ratTxtFile );
         }
         return mojo;
+    }
+
+    private File getSourceDirectory(String pDir, boolean pCreateCopy,
+            final File baseDir) throws IOException {
+        return makeSourceDirectory( new File( new File( baseDir, "src/test" ), pDir ), pDir, pCreateCopy );
+    }
+
+    private void remove( File pDir ) throws IOException {
+        if ( pDir.isFile() )
+        {
+            if ( ! pDir.delete() )
+            {
+                throw new IOException( "Unable to delete file: " + pDir );
+            }
+        }
+        else if ( pDir.isDirectory() )
+        {
+            final File[] files = pDir.listFiles();
+            for ( int i = 0;  i < files.length;  i++ )
+            {
+                remove( files[i] );
+            }
+            if ( ! pDir.delete() )
+            {
+                throw new IOException( "Unable to delete directory: " + pDir );
+            }
+        }
+        else if ( pDir.exists() )
+        {
+            throw new IOException( "Unable to delete unknown object " + pDir );
+        }
+    }
+
+    private void copy( File pSource, File pTarget ) throws IOException
+    {
+        if ( pSource.isDirectory() )
+        {
+            if ( !pTarget.isDirectory()  &&  !pTarget.mkdirs() ) {
+                throw new IOException("Unable to create directory: " + pTarget);
+            }
+            final DirectoryScanner scanner = new DirectoryScanner();
+            scanner.setBasedir(pSource);
+            scanner.addDefaultExcludes();
+            scanner.setIncludes(new String[]{"*"});
+            scanner.scan();
+            final String[] dirs = scanner.getIncludedDirectories();
+            
+            for (int i = 0;  i < dirs.length;  i++) {
+                final String dir = dirs[i];
+                if (!"".equals(dir)) {
+                    copy( new File(pSource, dir), new File(pTarget, dir));
+                }
+            }
+            final String[] files = scanner.getIncludedFiles();
+            for (int i = 0;  i < files.length;  i++) {
+                copy( new File(pSource, files[i]), new File(pTarget, files[i]));
+            }
+        }
+        else if ( pSource.isFile() )
+        {
+            final FileInputStream fis = new FileInputStream( pSource );
+            final FileOutputStream fos = new FileOutputStream( pTarget );
+            final byte[] buffer = new byte[8192];
+            for ( ;; )
+            {
+                int res = fis.read(buffer);
+                if (res == -1) {
+                    break;
+                }
+                if (res > 0) {
+                    fos.write(buffer, 0, res);
+                }
+            }
+            fos.close();
+            fis.close();
+        }
+        else
+        {
+            throw new IOException( "Unable to copy unknown object " + pSource );
+        }
+    }
+    
+    private File makeSourceDirectory(File pFile, String pDir, boolean pCreateCopy) throws IOException {
+        if ( ! pCreateCopy )
+        {
+            return pFile;
+        }
+
+        final File baseDir = new File( getBasedir() );
+        final File targetDir = new File( new File( baseDir, "target/it-source" ), pDir );
+        remove( targetDir );
+        copy( pFile, targetDir );
+        return targetDir;
     }
 
     /**
@@ -266,12 +364,33 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
         checkResult( ratTxtFile, 1, 1 );
     }
 
-//    /**
-//     * Runs a report, which should detect no problems.
-//     * @throws Exception The test failed.
-//     */
-//    public void testIt3() throws Exception {
-//        final RatReportMojo mojo = newRatReportMojo( "it3" );
-//        mojo.execute();
-//    }
+    private String getFirstLine(File pFile) throws IOException {
+        final FileInputStream fis = new FileInputStream(pFile);
+        final InputStreamReader reader = new InputStreamReader(fis, "UTF8");
+        final BufferedReader breader = new BufferedReader(reader);
+        final String result = breader.readLine();
+        breader.close();
+        return result;
+    }
+    
+    /**
+     * Tests adding license headers.
+     */
+    public void testIt3() throws Exception {
+        final RatCheckMojo mojo = (RatCheckMojo) newRatMojo( "it3", "check", true );
+        setVariableValueToObject( mojo, "addLicenseHeaders", "true" );
+        setVariableValueToObject( mojo, "numUnapprovedLicenses", new Integer(1));
+        mojo.execute();
+        final File ratTxtFile = getRatTxtFile( mojo );
+        checkResult( ratTxtFile, 1, 1 );
+
+        final File baseDir = new File( getBasedir() );
+        final File sourcesDir = new File( new File( baseDir, "target/it-source" ), "it3" );
+        final String firstLineOrig = getFirstLine(new File(sourcesDir, "src.apt"));
+        assertTrue(firstLineOrig.indexOf("--") != -1);
+        assertTrue(firstLineOrig.indexOf("~~") == -1);
+        final String firstLineModified = getFirstLine(new File(sourcesDir, "src.apt.new"));
+        assertTrue(firstLineModified.indexOf("--") == -1);
+        assertTrue(firstLineModified.indexOf("~~") != -1);
+    }
 }

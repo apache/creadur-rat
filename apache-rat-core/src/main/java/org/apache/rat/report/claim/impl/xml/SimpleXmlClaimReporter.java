@@ -21,12 +21,12 @@ package org.apache.rat.report.claim.impl.xml;
 import java.io.IOException;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
-import org.apache.rat.api.Reporter;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.api.RatException;
+import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
-public class SimpleXmlClaimReporter implements Reporter {
+public class SimpleXmlClaimReporter extends AbstractReport {
     public static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
     public static final String LICENSE_FAMILY_PREDICATE = "license-family";
     public static final String HEADER_SAMPLE_PREDICATE = "header-sample";
@@ -127,6 +127,22 @@ public class SimpleXmlClaimReporter implements Reporter {
         final String documentCategory = metaData.value(MetaData.RAT_URL_DOCUMENT_CATEGORY);
         if (documentCategory != null) {
             writeClaim(FILE_TYPE_PREDICATE, documentCategory, false);
+        }
+    }
+
+    public void startReport() throws RatException {
+        try {
+            writer.openElement("rat-report");
+        } catch (IOException e) {
+            throw new RatException("Cannot open start element", e);
+        }
+    }
+
+    public void endReport() throws RatException {
+        try {
+            writer.closeDocument();
+        } catch (IOException e) {
+            throw new RatException("Cannot close last element", e);
         }
     }
 }

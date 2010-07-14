@@ -84,4 +84,13 @@
       <file file="${ant.file}"/>
 	</rat:report>
   </target>
+
+  <target name="testAddLicenseHeaders">
+  	<delete dir="${output.dir}/it-sources"/>
+    <mkdir dir="${output.dir}/it-sources"/>
+  	<copy file="src/test/resources/antunit/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
+    <rat:report addLicenseHeaders="true">
+       <file file="${output.dir}/it-sources/index.apt"/>
+    </rat:report>
+  </target>
 </project>

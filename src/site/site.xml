@@ -18,6 +18,7 @@
   <body>    
     <menu name="RAT">
       <item name="Home" href="/index.html"/>
+      <item name="Downloads" href="/downloads.html"/>
     </menu>
 
     <menu ref="modules"/>

@@ -16,8 +16,11 @@
  */
 package org.apache.rat.anttasks;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import org.apache.tools.ant.BuildException;
 
@@ -84,5 +87,27 @@ public class ReportTest extends AbstractRatAntTaskTest {
 
     private String getAntFileName() {
         return getAntFile().getPath().replace('\\', '/');
+    }
+
+    private String getFirstLine(File pFile) throws IOException {
+        final FileInputStream fis = new FileInputStream(pFile);
+        final InputStreamReader reader = new InputStreamReader(fis, "UTF8");
+        final BufferedReader breader = new BufferedReader(reader);
+        final String result = breader.readLine();
+        breader.close();
+        return result;
+    }
+
+    public void testAddLicenseHeaders() throws Exception {
+        executeTarget("testAddLicenseHeaders");
+
+        final File origFile = new File("target/anttasks/it-sources/index.apt");
+        final String origFirstLine = getFirstLine(origFile);
+        assertTrue(origFirstLine.indexOf("--") != -1);
+        assertTrue(origFirstLine.indexOf("~~") == -1);
+        final File modifiedFile = new File("target/anttasks/it-sources/index.apt.new");
+        final String modifiedFirstLine = getFirstLine(modifiedFile);
+        assertTrue(modifiedFirstLine.indexOf("--") == -1);
+        assertTrue(modifiedFirstLine.indexOf("~~") != -1);
     }
 }
