@@ -1,3 +1,10 @@
+RAT 0.8
+=======
+ * Issues Resolved (see http://issues.apache.org/jira):
+  * Improvement:
+    * RAT-79 Support automatic addition of license headers to Velocity
+      templates
+
 RAT 0.7
 =======
  * some website fixes

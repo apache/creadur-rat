@@ -45,6 +45,7 @@ public abstract class AbstractLicenceAppender {
   private static final int TYPE_H      = 10;
   private static final int TYPE_SH     = 11;
   private static final int TYPE_BAT    = 12;
+  private static final int TYPE_VM     = 13;
   private boolean isForced;
 
   public AbstractLicenceAppender() {
@@ -75,7 +76,8 @@ public abstract class AbstractLicenceAppender {
         || type == TYPE_PROPERTIES
         || type == TYPE_C
         || type == TYPE_H
-        || type == TYPE_HTML) {
+        || type == TYPE_HTML
+        || type == TYPE_VM) {
       writer.write(getLicenceHeader(document));
       writer.write('\n');
     }
@@ -165,6 +167,8 @@ public abstract class AbstractLicenceAppender {
       return TYPE_SH;
     } else if (document.getPath().endsWith(".bat")) {
       return TYPE_BAT;
+    } else if (document.getPath().endsWith(".vm")) {
+      return TYPE_VM;
     }
     return TYPE_UNKNOWN;
   }
@@ -262,6 +266,7 @@ public abstract class AbstractLicenceAppender {
       case TYPE_PYTHON:     return "#" + content + "\n";
       case TYPE_SH:         return "#" + content + "\n";
       case TYPE_BAT:        return "rem" + content + "\n";
+      case TYPE_VM:         return "##" + content + "\n";
       default: return "";
     }
   }
