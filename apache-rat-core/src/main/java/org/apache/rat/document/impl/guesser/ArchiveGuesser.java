@@ -32,10 +32,7 @@ public class ArchiveGuesser {
     };
 
     public static final boolean isArchive(final Document document) {
-        
-        final String name = document.getName();
-        final boolean result = isArchive(name);
-        return result;
+        return isArchive(document.getName());
     }
 
     /**
@@ -44,11 +41,12 @@ public class ArchiveGuesser {
     public static final boolean isArchive(final String name) {
         if (name == null) {return false;}
         String nameToLower = name.toLowerCase(Locale.US);
-        boolean result = false;
-        for (int i = 0; !result && i < ArchiveGuesser.ARCHIVE_EXTENSIONS.length; i++) {
-            result = nameToLower.endsWith("." + ArchiveGuesser.ARCHIVE_EXTENSIONS[i]);
+        for (int i = 0; i < ArchiveGuesser.ARCHIVE_EXTENSIONS.length; i++) {
+            if (nameToLower.endsWith("." + ArchiveGuesser.ARCHIVE_EXTENSIONS[i])) {
+                return true;
+            }
         }
-        return result;
+        return false;
     }
 
 }

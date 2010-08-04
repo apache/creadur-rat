@@ -62,7 +62,6 @@ public class BinaryGuesser {
      * Do the first few bytes of the stream hint at a binary file?
      */
     public static boolean isBinary(Reader in) {
-        boolean result = false;
         char[] taste = new char[100];
         try {
             int bytesRead = in.read(taste);
@@ -76,13 +75,13 @@ public class BinaryGuesser {
                 }
                 if (highBytes * BinaryGuesser.HIGH_BYTES_RATIO
                     > bytesRead * BinaryGuesser.TOTAL_READ_RATIO) {
-                    result = true;
+                    return true;
                 }
             }
         } catch (IOException e) {
             // SWALLOW 
         }
-        return result;
+        return false;
     }
 
     public static final boolean isBinaryData(final String name) {
@@ -105,20 +104,22 @@ public class BinaryGuesser {
 
     public static boolean containsExtension(final String name,
                                              final String[] exts) {
-        boolean result = false;
-        for (int i = 0; !result && i < exts.length; i++) {
-            result = name.indexOf("." + exts[i] + ".") >= 0;
+        for (int i = 0; i < exts.length; i++) {
+            if (name.indexOf("." + exts[i] + ".") >= 0) {
+                return true;
+            }
         }
-        return result;
+        return false;
     }
 
     public static boolean extensionMatches(final String name,
                                             final String[] exts) {
-        boolean result = false;
-        for (int i = 0; !result && i < exts.length; i++) {
-            result = name.endsWith("." + exts[i]);
+        for (int i = 0; i < exts.length; i++) {
+            if (name.endsWith("." + exts[i])) {
+                return true;
+            }
         }
-        return result;
+        return false;
     }
 
     public static boolean isBytecode(final String name) {
@@ -272,14 +273,10 @@ public class BinaryGuesser {
         // TODO: reimplement the binary test algorithm?
         // TODO: more efficient to move into standard analysis
         // TODO: then use binary as default
-        final String name = document.getName();
-        boolean result = isBinary(name);
-        if (!result)
-        {
+        return isBinary(document.getName())
+            ||
             // try a taste
-            result = isBinaryDocument(document);
-        }
-        return result;
+            isBinaryDocument(document);
     }
 
 

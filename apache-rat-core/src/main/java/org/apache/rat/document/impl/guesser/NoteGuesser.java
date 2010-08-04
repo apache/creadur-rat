@@ -60,17 +60,21 @@ public class NoteGuesser {
         List l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
         String normalisedName = GuessUtils.normalise(name);
         
-        boolean result = l.contains(name) || l.contains(normalisedName);
-        for (int i = 0; !result && i < NoteGuesser.NOTE_FILE_EXTENSIONS.length; i++) {
-            result = normalisedName.endsWith("." + NoteGuesser.NOTE_FILE_EXTENSIONS[i]);
+        if (l.contains(name) || l.contains(normalisedName)) {
+            return true;
         }
-        return result;
+
+        for (int i = 0; i < NoteGuesser.NOTE_FILE_EXTENSIONS.length; i++) {
+            if (normalisedName.endsWith("." + NoteGuesser.NOTE_FILE_EXTENSIONS[i])) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public static final boolean isNote(final Document document) {
-        final String name = document.getName();
-        final boolean result = isNote(name);
-        return result;
+        return isNote(document.getName());
     }
 
 }
