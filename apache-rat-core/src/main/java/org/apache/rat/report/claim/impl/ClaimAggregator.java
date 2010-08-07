@@ -22,7 +22,6 @@ package org.apache.rat.report.claim.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.report.claim.ClaimStatistic;

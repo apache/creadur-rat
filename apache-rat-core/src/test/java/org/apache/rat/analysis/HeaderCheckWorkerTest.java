@@ -27,7 +27,6 @@ import org.apache.rat.analysis.HeaderCheckWorker;
 import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
 public class HeaderCheckWorkerTest extends TestCase {
     
