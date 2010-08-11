@@ -63,12 +63,8 @@ class ResourceCollectionContainer implements IReportable {
 
         private Resource resource;
         private final MetaData metaData = new MetaData();
-        
-        public Resource getResource() {
-            return resource;
-        }
 
-        public void setResource(Resource resource) {
+        private void setResource(Resource resource) {
             this.resource = resource;
         }
         
