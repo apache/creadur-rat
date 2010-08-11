@@ -14,6 +14,7 @@ RAT 0.7
     * RAT-63 ant-task-examples.xml has an wrong uri in the -typedef ant target
     * RAT-70 Missing closing html tag in generated report by
   * Improvement:
+    * RAT-17 Support the use of archives as input
     * RAT-30 / RAT-76 Support automatic addition of license headers
     * RAT-52 Merge In Rat Output Semantics
     * RAT-56 Commons IO Wildcard Excludes
