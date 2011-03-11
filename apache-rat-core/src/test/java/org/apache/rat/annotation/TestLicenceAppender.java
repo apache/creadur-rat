@@ -218,4 +218,37 @@ public class TestLicenceAppender extends TestCase {
     file.delete();
     newFile.delete();
   }
+
+  public void testAddLicenceToScala() throws IOException {
+    String filename = "tmp.scala";
+    String firstLine = "package foo {";
+    String newFirstLine = "/*";
+    
+    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
+    FileWriter writer = new FileWriter(file);
+    writer.write(firstLine + "\n");
+    writer.write("\n");
+    writer.write("    object X { val x = 1; }\n");
+    writer.write("}\n");
+    writer.close();
+    
+    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
+    appender.append(file);
+    
+    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
+    BufferedReader reader = new BufferedReader(new FileReader(newFile));
+    String line = reader.readLine();
+    assertEquals("First line is incorrect", newFirstLine, line);
+    while ((line = reader.readLine()) != null) {
+        if (line.length() == 0) {
+            line = reader.readLine();
+            break;
+        }
+    }
+    assertEquals("Package line is incorrect", firstLine, line);
+    
+    file.delete();
+    newFile.delete();
+  }
+  
 }

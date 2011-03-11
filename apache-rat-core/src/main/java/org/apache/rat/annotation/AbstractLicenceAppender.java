@@ -46,6 +46,8 @@ public abstract class AbstractLicenceAppender {
     private static final int TYPE_SH     = 11;
     private static final int TYPE_BAT    = 12;
     private static final int TYPE_VM     = 13;
+    private static final int TYPE_SCALA = 14;
+
     private boolean isForced;
 
     public AbstractLicenceAppender() {
@@ -77,7 +79,8 @@ public abstract class AbstractLicenceAppender {
             || type == TYPE_C
             || type == TYPE_H
             || type == TYPE_HTML
-            || type == TYPE_VM) {
+            || type == TYPE_VM
+            || type == TYPE_SCALA) {
             writer.write(getLicenceHeader(document));
             writer.write('\n');
         }
@@ -169,6 +172,8 @@ public abstract class AbstractLicenceAppender {
             return TYPE_BAT;
         } else if (document.getPath().endsWith(".vm")) {
             return TYPE_VM;
+        } else if (document.getPath().endsWith(".scala")) {
+            return TYPE_SCALA;
         }
         return TYPE_UNKNOWN;
     }
@@ -210,6 +215,7 @@ public abstract class AbstractLicenceAppender {
         case TYPE_PYTHON:     return "#\n";
         case TYPE_SH:         return "#\n";
         case TYPE_BAT:        return "rem\n";
+        case TYPE_SCALA: return "/*\n";
         default: return "";
         }
     }
@@ -236,6 +242,7 @@ public abstract class AbstractLicenceAppender {
         case TYPE_PYTHON:     return "#\n";
         case TYPE_SH:         return "#\n";
         case TYPE_BAT:        return "rem\n";
+        case TYPE_SCALA: return " */\n";
         default: return "";
         }
     }
@@ -267,6 +274,7 @@ public abstract class AbstractLicenceAppender {
         case TYPE_SH:         return "#" + content + "\n";
         case TYPE_BAT:        return "rem" + content + "\n";
         case TYPE_VM:         return "##" + content + "\n";
+        case TYPE_SCALA: return " *" + content + "\n";
         default: return "";
         }
     }
