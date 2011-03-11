@@ -96,10 +96,10 @@ public class Report {
             }
 
             if (cl.hasOption('x')) {
-                report.report(System.out);
+                report.report(System.out, configuration);
             } else {
                 if (!cl.hasOption(STYLESHEET_CLI)) {
-                    report.styleReport(System.out);
+                    report.styleReport(System.out, configuration);
                 } else {
                     String[] style = cl.getOptionValues(STYLESHEET_CLI);
                     if (style.length != 1) {
@@ -230,11 +230,23 @@ public class Report {
         this.inputFileFilter = inputFileFilter;
     }
 
+    /**
+     * @deprecated use the two-arg version instead
+     */
     public ClaimStatistic report(PrintStream out) throws Exception {
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+        return report(out, configuration);
+    }
+
+    /**
+     * @since RAT 0.8
+     */
+    public ClaimStatistic report(PrintStream out,
+                                 ReportConfiguration configuration)
+        throws Exception {
         final IReportable base = getDirectory(out);
         if (base != null) {
-            final ReportConfiguration configuration = new ReportConfiguration();
-            configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
             return report(base, new OutputStreamWriter(out), configuration);
         }
         return null;
@@ -269,13 +281,29 @@ public class Report {
      * 
      * @param out - the output stream to recieve the styled report
      * @throws Exception
+     * @deprecated use the two-arg version instead
      */
     public void styleReport(PrintStream out) throws Exception {
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+        styleReport(out, configuration);
+    }
+
+    /**
+     * Output a report in the default style and default licence
+     * header matcher. 
+     * 
+     * @param out - the output stream to recieve the styled report
+     * @param configuration the configuration to use
+     * @throws Exception
+     * @since RAT 0.8
+     */
+    public void styleReport(PrintStream out,
+                            ReportConfiguration configuration)
+        throws Exception {
         final IReportable base = getDirectory(out);
         if (base != null) {
             InputStream style = Defaults.getDefaultStyleSheet();
-            final ReportConfiguration configuration = new ReportConfiguration();
-            configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
             report(out, base, style, configuration);
         }
     }
