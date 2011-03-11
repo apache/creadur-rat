@@ -49,7 +49,7 @@ import org.apache.rat.license.ILicenseFamily;
  * A basic Ant task that generates a report on all files specified by
  * the nested resource collection(s).
  *
- * <p>ILicenseMatcher(s) can be specified as nested elements as well.</p>
+ * <p>IHeaderMatcher(s) can be specified as nested elements as well.</p>
  *
  * <p>The attribute <code>format</code> defines the output format and
  * can take the values

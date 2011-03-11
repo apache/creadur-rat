@@ -36,7 +36,7 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;
 
 /**
- * Implementation of IElement that traverses over a resource
+ * Implementation of IReportable that traverses over a resource
  * collection internally.
  */
 class ResourceCollectionContainer implements IReportable {
