@@ -32,7 +32,7 @@ public class TestLicenceAppender extends TestCase {
   private Random random = new Random();
     
   public void testAddLicenceToUnknownFile() throws IOException {
-    String filename = "tmp" + random.nextLong() + ".unkownTyoe";
+    String filename = "tmp" + random.nextLong() + ".unkownType";
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
     FileWriter writer = new FileWriter(file);
     writer.write("Unkown file type\n");
