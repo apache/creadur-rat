@@ -140,6 +140,51 @@ public class XmlReportTest extends TestCase {
 "--&gt;\n" +
 "&lt;document/&gt;\n" +
 "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
+                    "<resource name='" + elementsPath + "/buildr.rb'><header-sample># Licensed to the Apache Software Foundation (ASF) under one or more\n" +
+"# contributor license agreements.  See the NOTICE file distributed with this\n" +
+"# work for additional information regarding copyright ownership.  The ASF\n" +
+"# licenses this file to you under the Apache License, Version 2.0 (the\n" +
+"# \"License\"); you may not use this file except in compliance with the License.\n" +
+"# You may obtain a copy of the License at\n" +
+"#\n" +
+"#    http://www.apache.org/licenses/LICENSE-2.0\n" +
+"#\n" +
+"# Unless required by applicable law or agreed to in writing, software\n" +
+"# distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT\n" +
+"# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the\n" +
+"# License for the specific language governing permissions and limitations under\n" +
+"# the License.\n" +
+"\n" +
+"unless defined?(Buildr::VERSION)\n" +
+"  require 'buildr/version'\n" +
+"end\n" +
+"\n" +
+"require 'buildr/core'\n" +
+"require 'buildr/packaging'\n" +
+"require 'buildr/java'\n" +
+"require 'buildr/ide'\n" +
+"require 'buildr/shell'\n" +
+"require 'buildr/run'\n" +
+"\n" +
+"# Methods defined in Buildr are both instance methods (e.g. when included in Project)\n" +
+"# and class methods when invoked like Buildr.artifacts().\n" +
+"module Buildr ; extend self ; end\n" +
+"\n" +
+"# The Buildfile object (self) has access to all the Buildr methods and constants.\n" +
+"class &lt;&lt; self ; include Buildr ; end\n" +
+"\n" +
+"# All modules defined under Buildr::* can be referenced without Buildr:: prefix\n" +
+"# unless a conflict exists (e.g.  Buildr::RSpec vs ::RSpec)\n" +
+"class Object #:nodoc:\n" +
+"  Buildr.constants.each do |name|\n" +
+"    const = Buildr.const_get(name)\n" +
+"    if const.is_a?(Module)\n" +
+"      const_set name, const unless const_defined?(name)\n" +
+"    end\n" +
+"  end\n" +
+"end\n" +
+"\n" +
+                "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
                     "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
                     "<resource name='" + elementsPath + "/sub/Empty.txt'><header-sample>\n</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
                 "</rat-report>", output);

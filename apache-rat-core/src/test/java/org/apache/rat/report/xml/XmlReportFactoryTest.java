@@ -82,12 +82,14 @@ public class XmlReportFactoryTest extends TestCase {
                 "</resource>" +
                 "<resource name='" + elementsPath + "/Xml.xml'><type name='standard'/>" +
                 "</resource>" +
+                "<resource name='" + elementsPath + "/buildr.rb'><type name='standard'/>" +
+                "</resource>" +
                 "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
                 "</rat-report>", output);
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
         assertEquals("Binary files", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
         assertEquals("Notice files", new Integer(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
-        assertEquals("Standard files", new Integer(3), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
+        assertEquals("Standard files", new Integer(4), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
         assertEquals("Archives", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
     }
 }

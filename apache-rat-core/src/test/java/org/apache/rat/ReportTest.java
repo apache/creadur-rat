@@ -37,9 +37,9 @@ public class ReportTest extends TestCase {
             "Notes: 2\n" + 
             "Binaries: 1\n" + 
             "Archives: 1\n" + 
-            "Standards: 4\n" + 
+            "Standards: 5\n" + 
             "\n" + 
-            "Apache Licensed: 2\n" + 
+            "Apache Licensed: 3\n" + 
             "Generated Documents: 0\n" + 
             "\n" + 
             "JavaDocs are generated and so license header is optional\n" + 
@@ -71,6 +71,7 @@ public class ReportTest extends TestCase {
             " !????? " + pElementsPath + "/Source.java\n" + 
             "  AL    " + pElementsPath + "/Text.txt\n" + 
             "  AL    " + pElementsPath + "/Xml.xml\n" + 
+            "  AL    " + pElementsPath + "/buildr.rb\n" + 
             "  A     " + pElementsPath + "/dummy.jar\n" + 
             " !????? " + pElementsPath + "/sub/Empty.txt\n" + 
             " \n" + 
