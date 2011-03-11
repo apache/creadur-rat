@@ -1,6 +1,9 @@
 RAT 0.8
 =======
  * Issues Resolved (see http://issues.apache.org/jira):
+  * Bug:
+    * RAT-86 CLI doesn't allow adding of licenses unless a custom
+      stylesheet has been specified
   * Improvement:
     * RAT-79 Support automatic addition of license headers to Velocity
       templates
