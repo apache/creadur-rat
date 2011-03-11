@@ -9,6 +9,8 @@ RAT 0.8
       templates
     * RAT-83 Support automatic addition of license headers to Scala
       source files
+    * RAT-84 Support automatic addition of license headers to Ruby
+      source files
 
 RAT 0.7
 =======

@@ -251,4 +251,53 @@ public class TestLicenceAppender extends TestCase {
     newFile.delete();
   }
   
+  public void testAddLicenseToRubyWithoutHashBang() throws IOException {
+    String filename = "tmp.rb";
+    String firstLine = "#";
+    
+    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
+    FileWriter writer = new FileWriter(file);
+    writer.write("class Foo\n");
+    writer.write("end\n");
+    writer.close();
+    
+    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
+    appender.append(file);
+    
+    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
+    
+    BufferedReader reader = new BufferedReader(new FileReader(newFile));
+    String line = reader.readLine();
+    assertEquals("First line is incorrect", firstLine, line);
+    
+    file.delete();
+    newFile.delete();
+  }
+
+  public void testAddLicenseToRubyWithHashBang() throws IOException {
+    String filename = "tmp.rb";
+    String firstLine = "#!/usr/bin/env ruby";
+    String secondLine = "#";
+    
+    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
+    FileWriter writer = new FileWriter(file);
+    writer.write(firstLine + "\n");
+    writer.write("class Foo\n");
+    writer.write("end\n");
+    writer.close();
+    
+    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
+    appender.append(file);
+    
+    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
+    
+    BufferedReader reader = new BufferedReader(new FileReader(newFile));
+    String line = reader.readLine();
+    assertEquals("First line is incorrect", firstLine, line);
+    line = reader.readLine();
+    assertEquals("Second line is incorrect", secondLine, line);
+    
+    file.delete();
+    newFile.delete();
+  }
 }

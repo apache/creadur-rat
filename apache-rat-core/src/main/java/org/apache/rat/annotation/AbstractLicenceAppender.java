@@ -47,6 +47,7 @@ public abstract class AbstractLicenceAppender {
     private static final int TYPE_BAT    = 12;
     private static final int TYPE_VM     = 13;
     private static final int TYPE_SCALA = 14;
+    private static final int TYPE_RUBY = 15;
 
     private boolean isForced;
 
@@ -88,7 +89,7 @@ public abstract class AbstractLicenceAppender {
         String line;
         boolean first = true;
         while ((line = br.readLine()) != null) {
-            if (first && type == TYPE_PYTHON) {
+            if (first && (type == TYPE_PYTHON || type == TYPE_RUBY)) {
                 doFirstLine(document, writer, line, "#!/usr/bin");
             } else if (first && type == TYPE_BAT) {
                 doFirstLine(document, writer, line, "@echo off");
@@ -174,6 +175,8 @@ public abstract class AbstractLicenceAppender {
             return TYPE_VM;
         } else if (document.getPath().endsWith(".scala")) {
             return TYPE_SCALA;
+        } else if (document.getPath().endsWith(".rb")) {
+            return TYPE_RUBY;
         }
         return TYPE_UNKNOWN;
     }
@@ -216,6 +219,7 @@ public abstract class AbstractLicenceAppender {
         case TYPE_SH:         return "#\n";
         case TYPE_BAT:        return "rem\n";
         case TYPE_SCALA: return "/*\n";
+        case TYPE_RUBY:     return "#\n";
         default: return "";
         }
     }
@@ -243,6 +247,7 @@ public abstract class AbstractLicenceAppender {
         case TYPE_SH:         return "#\n";
         case TYPE_BAT:        return "rem\n";
         case TYPE_SCALA: return " */\n";
+        case TYPE_RUBY:     return "#\n";
         default: return "";
         }
     }
@@ -275,6 +280,7 @@ public abstract class AbstractLicenceAppender {
         case TYPE_BAT:        return "rem" + content + "\n";
         case TYPE_VM:         return "##" + content + "\n";
         case TYPE_SCALA: return " *" + content + "\n";
+        case TYPE_RUBY:     return "#" + content + "\n";
         default: return "";
         }
     }
