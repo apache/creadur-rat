@@ -60,6 +60,7 @@ public class Report {
     //@SuppressWarnings("unchecked")
     public static final void main(String args[]) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
         Options opts = buildOptions();
 
         PosixParser parser = new PosixParser();
@@ -107,7 +108,6 @@ public class Report {
                         System.exit(1);
                     }
                     try {
-                        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
                         report(System.out,
                                 report.getDirectory(System.out),
                                 new FileInputStream(style[0]),
@@ -266,7 +266,7 @@ public class Report {
         }
 
         try {
-                return new ArchiveWalker(base, inputFileFilter);
+            return new ArchiveWalker(base, inputFileFilter);
         } catch (IOException ex) {
             out.print("ERROR: ");
             out.print(baseDirectory);
