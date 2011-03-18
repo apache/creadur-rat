@@ -109,17 +109,31 @@ public class TestLicenceAppender extends TestCase {
     }
 
   public void testAddLicenceToUnknownFile() throws IOException {
-    String filename = "tmp" + random.nextLong() + ".unknownType";
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+    String filename = qualify("tmp" + random.nextLong() + ".unknownType");
+    File file = null;
+    File newFile = null;
+    try {
+        createTestFile(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
     writer.write("Unkown file type\n");
-    writer.close();
+                }
+            });
     
+        file = new File(filename);
     ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
     appender.append(file);
     
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
+    newFile = new File(filename + ".new");
     assertFalse("No new file should have been written", newFile.exists());
+    } finally {
+        if (file.exists() && !file.delete()) {
+            file.deleteOnExit();
+        }
+        if (newFile.exists() && !newFile.delete()) {
+            newFile.deleteOnExit();
+        }
+    }
   }
   
   public void testAddLicenceToJava() throws IOException {
