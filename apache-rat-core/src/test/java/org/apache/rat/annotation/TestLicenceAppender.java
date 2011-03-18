@@ -59,6 +59,12 @@ public class TestLicenceAppender extends TestCase {
         }
     }
 
+    private static void tryToDelete(File f) throws IOException {
+        if (f != null && f.exists() && !f.delete()) {
+            f.deleteOnExit();
+        }
+    }
+
     private static void commonTestTemplate(String relativeName,
                                            FileCreator creator,
                                            NewFileReader reader)
@@ -81,14 +87,8 @@ public class TestLicenceAppender extends TestCase {
                 }
             }
         } finally {
-            File f = new File(name);
-            if (f.exists() && !f.delete()) {
-                f.deleteOnExit();
-            }
-            f = new File(name + ".new");
-            if (f.exists() && !f.delete()) {
-                f.deleteOnExit();
-            }
+            tryToDelete(new File(name));
+            tryToDelete(new File(name + ".new"));
         }
     }
 
@@ -127,12 +127,8 @@ public class TestLicenceAppender extends TestCase {
     newFile = new File(filename + ".new");
     assertFalse("No new file should have been written", newFile.exists());
     } finally {
-        if (file.exists() && !file.delete()) {
-            file.deleteOnExit();
-        }
-        if (newFile.exists() && !newFile.delete()) {
-            newFile.deleteOnExit();
-        }
+        tryToDelete(file);
+        tryToDelete(newFile);
     }
   }
   
