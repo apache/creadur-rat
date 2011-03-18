@@ -134,196 +134,128 @@ public class TestLicenceAppender extends TestCase {
   
   public void testAddLicenceToJava() throws IOException {
     String filename = "tmp.java";
-    String firstLine = "package foo;";
+    final String firstLine = "package foo;";
     String secondLine = "/*";
-    
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write(firstLine + "\n");
     writer.write("\n");
     writer.write("public class test {\n");
     writer.write("}\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", firstLine, line);
-    line = reader.readLine();
-    assertEquals("Second line is incorrect", secondLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(firstLine, secondLine));
   }
   
   public void testAddLicenceToXML() throws IOException {
     String filename = "tmp.xml";
-    String firstLine = "<?xml version='1.0'?>";
-    String secondLine = "<!--";
+    final String firstLine = "<?xml version='1.0'?>";
+    final String secondLine = "<!--";
     
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write(firstLine + "\n");
     writer.write("\n");
     writer.write("<xml>\n");
     writer.write("</xml>\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", firstLine, line);
-    line = reader.readLine();
-    assertEquals("Second line is incorrect", secondLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(firstLine, secondLine));
   }
   public void testAddLicenceToHTML() throws IOException {
     String filename = "tmp.html";
     String commentLine = "<!--";
     
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write("<html>\n");
     writer.write("\n");
     writer.write("</html>\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", commentLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(commentLine, null));
   }
   
   public void testAddLicenceToCSS() throws IOException {
     String filename = "tmp.css";
     String firstLine = "/*";
     
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write(".class {\n");
     writer.write(" background-color: red;");
     writer.write("}\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", firstLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(firstLine, null));
   }
   
   public void testAddLicenceToJavascript() throws IOException {
     String filename = "tmp.js";
     String firstLine = "/*";
     
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write("if (a ==b) {>\n");
     writer.write(" alert(\"how useful!\");");
     writer.write("}\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", firstLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(firstLine, null));
   }
   
   public void testAddLicenceToAPT() throws IOException {
     String filename = "tmp.apt";
     String firstLine = "~~";
     
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write("A Simple APT file");
     writer.write(" This file contains nothing\n");
     writer.write(" of any importance\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", firstLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(firstLine, null));
   }
   
   public void testAddLicenceToProperties() throws IOException {
     String filename = "tmp.properties";
     String firstLine = "#";
-    
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+        
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write("property = value\n");
     writer.write("fun = true\n");
     writer.write("cool = true\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", firstLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(firstLine, null));
   }
 
   public void testAddLicenceToScala() throws IOException {
     String filename = "tmp.scala";
-    String firstLine = "package foo {";
-    String newFirstLine = "/*";
-    
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+    final String firstLine = "package foo {";
+    final String newFirstLine = "/*";
+        
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write(firstLine + "\n");
     writer.write("\n");
     writer.write("    object X { val x = 1; }\n");
     writer.write("}\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
+            }
+        },
+        new NewFileReader() {
+            public void readFile(BufferedReader reader)
+                throws IOException {
     String line = reader.readLine();
     assertEquals("First line is incorrect", newFirstLine, line);
     while ((line = reader.readLine()) != null) {
@@ -333,58 +265,37 @@ public class TestLicenceAppender extends TestCase {
         }
     }
     assertEquals("Package line is incorrect", firstLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        });
   }
   
   public void testAddLicenseToRubyWithoutHashBang() throws IOException {
     String filename = "tmp.rb";
     String firstLine = "#";
-    
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+        
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write("class Foo\n");
     writer.write("end\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", firstLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(firstLine, null));
   }
 
   public void testAddLicenseToRubyWithHashBang() throws IOException {
     String filename = "tmp.rb";
-    String firstLine = "#!/usr/bin/env ruby";
+    final String firstLine = "#!/usr/bin/env ruby";
     String secondLine = "#";
-    
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-    FileWriter writer = new FileWriter(file);
+        
+    commonTestTemplate(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                throws IOException {
     writer.write(firstLine + "\n");
     writer.write("class Foo\n");
     writer.write("end\n");
-    writer.close();
-    
-    ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-    appender.append(file);
-    
-    File newFile = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + ".new");
-    
-    BufferedReader reader = new BufferedReader(new FileReader(newFile));
-    String line = reader.readLine();
-    assertEquals("First line is incorrect", firstLine, line);
-    line = reader.readLine();
-    assertEquals("Second line is incorrect", secondLine, line);
-    
-    file.delete();
-    newFile.delete();
+            }
+        },
+        checkLines(firstLine, secondLine));
   }
 }
