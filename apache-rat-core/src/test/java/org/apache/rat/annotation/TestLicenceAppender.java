@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Random;
 
 import junit.framework.TestCase;
@@ -31,6 +32,82 @@ public class TestLicenceAppender extends TestCase {
   /** Used to ensure that temporary files have unq */
   private Random random = new Random();
     
+    private interface FileCreator {
+        void createFile(Writer w) throws IOException;
+    }
+
+    private interface NewFileReader {
+        void readFile(BufferedReader r) throws IOException;
+    }
+
+    private static String qualify(String fileName) {
+        return new File(new File(System.getProperty("java.io.tmpdir")),
+                        fileName)
+            .getAbsolutePath();
+    }
+
+    private static void createTestFile(String fileName,
+                                       FileCreator creator)
+        throws IOException {
+        FileWriter w = null;
+        try {
+            creator.createFile(w = new FileWriter(fileName));
+        } finally {
+            if (w != null) {
+                w.close();
+            }
+        }
+    }
+
+    private static void commonTestTemplate(String relativeName,
+                                           FileCreator creator,
+                                           NewFileReader reader)
+        throws IOException {
+        String name = qualify(relativeName);
+        try {
+            createTestFile(name, creator);
+
+            ApacheV2LicenceAppender appender =
+                new ApacheV2LicenceAppender();
+            appender.append(new File(name));
+
+            BufferedReader r = null;
+            try {
+                r = new BufferedReader(new FileReader(name + ".new"));
+                reader.readFile(r);
+            } finally {
+                if (r != null) {
+                    r.close();
+                }
+            }
+        } finally {
+            File f = new File(name);
+            if (f.exists() && !f.delete()) {
+                f.deleteOnExit();
+            }
+            f = new File(name + ".new");
+            if (f.exists() && !f.delete()) {
+                f.deleteOnExit();
+            }
+        }
+    }
+
+    private static NewFileReader checkLines(final String firstLine,
+                                            final String secondLine) {
+        return new NewFileReader() {
+            public void readFile(BufferedReader r) throws IOException {
+                String line = r.readLine();
+                assertEquals("First line is incorrect",
+                             firstLine, line);
+                if (secondLine != null) {
+                    line = r.readLine();
+                    assertEquals("Second line is incorrect",
+                                 secondLine, line);
+                }
+            }
+        };
+    }
+
   public void testAddLicenceToUnknownFile() throws IOException {
     String filename = "tmp" + random.nextLong() + ".unknownType";
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
