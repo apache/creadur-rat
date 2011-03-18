@@ -4,6 +4,7 @@ RAT 0.8
   * Bug:
     * RAT-86 CLI doesn't allow adding of licenses unless a custom
       stylesheet has been specified
+    * RAT-87 Tests could leave temporary files around.
   * Improvement:
     * RAT-79 Support automatic addition of license headers to Velocity
       templates
