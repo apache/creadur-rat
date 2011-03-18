@@ -116,7 +116,7 @@ public class TestLicenceAppender extends TestCase {
         createTestFile(filename, new FileCreator() {
                 public void createFile(Writer writer)
                     throws IOException {
-    writer.write("Unkown file type\n");
+    writer.write("Unknown file type\n");
                 }
             });
     
