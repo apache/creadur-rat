@@ -58,10 +58,11 @@ Note that binary compatibility is not gauranteed between 0.x releases.
             <activation>
               <activeByDefault>true</activeByDefault>
             </activation>
-          <properties>
-            <rat.site.url>file:///C:/temp/my.rat.site</rat.site.url>
-            ...
-          </properties>
+            <properties>
+              <rat.site.url>file:///C:/temp/my.rat.site</rat.site.url>
+              ...
+            </properties>
+          </profile>
         </profiles>
     -->
     <rat.site.url>scp://people.apache.org/www/incubator.apache.org/rat/</rat.site.url>
