@@ -32,7 +32,7 @@
   </prerequisites>
 
   <properties>
-    <currentVersion>${pom.version}</currentVersion>
+    <currentVersion>${project.version}</currentVersion>
   </properties>
   
   <build>
