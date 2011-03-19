@@ -21,7 +21,7 @@
 The Rat Maven Plugin
 
   This plugin may be used to run RAT, the
-  {{{http://incubator.apache.org/rat/}Release Audit Tool}}. It
+  {{{../index.html}Release Audit Tool}}. It
   verifies, whether your source code matches standards like the
   {{{http://www.apache.org/legal/src-headers.html}ASF Source Header
   and Copyright Notice Policy}}.

@@ -92,4 +92,4 @@ java -jar apache-rat-VERSION.jar --help
 
  RAT includes a plugin for Maven 2. This allows RAT reports to be run against
  a wide variety of resources. Details can be found in the
- {{{http://incubator.apache.org/rat/apache-rat-plugin} plugin documentation}}.
+ {{{apache-rat-plugin/index.html} plugin documentation}}.
