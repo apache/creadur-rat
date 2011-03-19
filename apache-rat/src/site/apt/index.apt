@@ -36,15 +36,15 @@ java -jar rat-VERSION.jar --help
  working with.
  
  This will output a help message detailing the command line
-options available to you.
+ options available to you.
 
 * Adding licence headers
 
-RAT can be used to automatically add licence headers to 
-files that do not currently have them. Only files that
-are not excluded by the RAT configurations will be affected.
+ RAT can be used to automatically add licence headers to
+ files that do not currently have them. Only files that
+ are not excluded by the RAT configurations will be affected.
 
-To add licence headers use a command such as:
+ To add licence headers use a command such as:
 
 +------------------------------------------+
 java -jar rat-VERSION.jar --addLicence 
@@ -52,7 +52,7 @@ java -jar rat-VERSION.jar --addLicence
   /path/to/project
 +------------------------------------------+
 
-This command will add the licence header directly to the
-source files. If you prefer to see which files will be
-changed and how then remove the "--force" option. 
+ This command will add the licence header directly to the
+ source files. If you prefer to see which files will be
+ changed and how then remove the "--force" option.
 
