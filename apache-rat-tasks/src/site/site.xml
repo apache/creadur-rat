@@ -14,7 +14,7 @@
  limitations under the License.
 
 -->
-<project name="Apache Rat (Incubating) Tasks">
+<project name="Apache RAT (Incubating) Tasks">
   <body>    
     <menu ref="parent"/>
     <menu ref="reports"/>

@@ -18,7 +18,7 @@
  ------
 
 
-The Rat Maven Plugin
+The RAT Maven Plugin
 
   This plugin may be used to run RAT, the
   {{{../index.html}Release Audit Tool}}. It
@@ -38,11 +38,11 @@ The Rat Maven Plugin
 
 * Usage
 
-  Instructions on how to use the Rat Maven Plugin can be found on the {{{usage.html}usage page}}.
+  Instructions on how to use the RAT Maven Plugin can be found on the {{{usage.html}usage page}}.
 
 * Examples
 
-  To provide you with better understanding of some usages of the Rat Maven Plugin,
+  To provide you with better understanding of some usages of the RAT Maven Plugin,
   you can take a look into the following examples:
 
   * {{{examples/basic.html}Basic use}} of the rat:check goal.

@@ -36,7 +36,7 @@
       <question>Where do I find RAT?</question>
       <answer>
         <p>
-          Rat can be found <a href="http://incubator.apache.org/rat/">
+          RAT can be found <a href="http://incubator.apache.org/rat/">
           http://incubator.apache.org/rat/</a>. In other words, it is
           an incubating Apache project: Has been preliminarily accepted
           by the ASF, but not finally.
