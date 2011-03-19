@@ -312,8 +312,8 @@ Note that binary compatibility is not gauranteed between 0.x releases.
   <distributionManagement>
     <site>
       <id>${rat.site.id}</id>
-      <name>Apache RAT Website</name>
-      <url>${rat.www}</url>
+      <name>${rat.site.name}</name>
+      <url>${rat.site.url}</url>
     </site>
  
     <repository>
