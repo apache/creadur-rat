@@ -56,11 +56,11 @@ Building RAT
  Read BUILD.txt or (for the impatient) do
  
 +------------------------------------------+
-mvn install package
+mvn install
 +------------------------------------------+
 
- This should build all modules. The application jar will be 
- rat-app/target/rat-app-X.Y-SNAPSHOT.jar where X and Y are the current
+ This should build all modules. The application JAR will be
+ <<<apache-rat/target/apache-rat-X.Y-SNAPSHOT.jar>>> where X and Y are the current
  major and minor version numbers.
 
 Running RAT
@@ -70,14 +70,14 @@ Running RAT
  Run from the command line with:
 
 +------------------------------------------+
-java -jar rat-app-VERSION.jar --help
+java -jar apache-rat-VERSION.jar --help
 +------------------------------------------+
 
  Where VERSION is replaced with the version number you are 
  working with.
  
  This will output a help message detailing the command line
-options available to you.
+ options available to you.
  
 * Running with Apache Ant
   
