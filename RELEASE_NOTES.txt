@@ -1,5 +1,6 @@
 RAT 0.8
 =======
+ * Some website fixes
  * Issues Resolved (see http://issues.apache.org/jira):
   * Bug:
     * RAT-86 CLI doesn't allow adding of licenses unless a custom
@@ -15,7 +16,7 @@ RAT 0.8
 
 RAT 0.7
 =======
- * some website fixes
+ * Some website fixes
  * Issues Resolved (see http://issues.apache.org/jira):
   * Bug:
     * RAT-62 Some of RATs own files missing License Headers

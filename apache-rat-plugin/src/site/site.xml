@@ -24,7 +24,6 @@
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
-      <item name="Changes" href="changes-report.html"/>
     </menu>
     <menu name="Examples">
       <item name="Basic use" href="examples/basic.html"/>
