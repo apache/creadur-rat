@@ -18,6 +18,7 @@
 <project>
   <body>
     <menu ref="parent"/>
+
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
@@ -30,5 +31,7 @@
       <item name="Running the plugin automatically" href="examples/verify.html"/>
       <item name="Adding a report to the site" href="examples/site.html"/>
     </menu>
+
+    <menu ref="reports"/>
   </body>
 </project>
