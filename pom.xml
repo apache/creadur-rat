@@ -317,16 +317,16 @@ Note that binary compatibility is not gauranteed between 0.x releases.
     </site>
  
     <repository>
-     <id>${rat.releases.id}</id>
-     <name>${rat.releases.name}</name>
-     <url>${rat.releases.url}</url>
-   </repository>
+      <id>${rat.releases.id}</id>
+      <name>${rat.releases.name}</name>
+      <url>${rat.releases.url}</url>
+    </repository>
 
-   <snapshotRepository>
-     <id>${rat.snapshots.id}</id>
-     <name>${rat.snapshots.name}</name>
-     <url>${rat.snapshots.url}</url>
-   </snapshotRepository>
+    <snapshotRepository>
+      <id>${rat.snapshots.id}</id>
+      <name>${rat.snapshots.name}</name>
+      <url>${rat.snapshots.url}</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <modules>

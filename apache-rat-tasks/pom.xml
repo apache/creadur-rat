@@ -41,12 +41,12 @@
       <artifactId>ant-antunit</artifactId>
     </dependency>
     <dependency>
-    	<groupId>junit</groupId>
-    	<artifactId>junit</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
     </dependency>
     <dependency>
-    	<groupId>org.apache.ant</groupId>
-    	<artifactId>ant-testutil</artifactId>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant-testutil</artifactId>
     </dependency>
   </dependencies>
 
@@ -71,7 +71,7 @@
     </resources>
     <plugins>
       <plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
@@ -88,7 +88,7 @@
         </executions>
       </plugin>
       <plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
@@ -103,14 +103,14 @@
                   <property name="base.dir" location="${basedir}" />
                   <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar" />
                   <property name="test.skipped" value="${maven.test.skip}" />
-				  <property name="test.classpath" refid="maven.test.classpath" />
+                  <property name="test.classpath" refid="maven.test.classpath" />
                 </ant>
-				<ant antfile="src/test/resources/antunit/report-normal-operation.xml" inheritAll="false" inheritRefs="false">
+                <ant antfile="src/test/resources/antunit/report-normal-operation.xml" inheritAll="false" inheritRefs="false">
                   <property name="jar.name" location="${project.build.outputDirectory}" />
                   <property name="base.dir" location="${basedir}" />
                   <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar" />
                   <property name="test.skipped" value="${maven.test.skip}" />
-				  <property name="test.classpath" refid="maven.test.classpath" />
+                  <property name="test.classpath" refid="maven.test.classpath" />
                 </ant>
               </tasks>
             </configuration>
