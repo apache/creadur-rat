@@ -28,8 +28,8 @@
   <description>
     This library provides upwards compatibility for projects,
     which are based on RAT versions upto 0.5: Basically, it
-    provides a jar file, which is the combination of
-    rat-core, rat-anttasks, and its dependencies.
+    provides a JAR file, which is the combination of
+    rat-core, rat-tasks, and its dependencies.
   </description>
 
   <dependencies>
