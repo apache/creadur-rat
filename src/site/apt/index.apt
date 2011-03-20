@@ -39,7 +39,7 @@ Release Audit Tool (RAT)
  describes the options available. The release notes describe the current state of
  RAT.
 
-Checking Out RAT
+* Checking Out RAT
 
  RAT contains a number of different products. 
  
@@ -49,7 +49,7 @@ Checking Out RAT
 svn co http://svn.apache.org/repos/asf/incubator/rat/main/trunk/
 +------------------------------------------+
 
-Building RAT
+* Building RAT
 
  Building RAT requires
  {{{http://maven.apache.org/} Apache Maven}}. 
@@ -63,9 +63,9 @@ mvn install
  <<<apache-rat/target/apache-rat-X.Y-SNAPSHOT.jar>>> where X and Y are the current
  major and minor version numbers.
 
-Running RAT
+* Running RAT
 
-* Running from the Command Line
+** Running from the Command Line
  
  Run from the command line with:
 
@@ -79,7 +79,7 @@ java -jar apache-rat-VERSION.jar --help
  This will output a help message detailing the command line
  options available to you.
  
-* Running with Apache Ant
+** Running with Apache Ant
   
  RAT includes a task library for Ant 1.7. This allows RAT reports to be run against
  a wide variety of resources. See the file ant-task-examples.xml in
@@ -88,7 +88,7 @@ java -jar apache-rat-VERSION.jar --help
  To use the Ant tasks,
  {{{http://ant.apache.org/} Apache Ant 1.7}} is required.
  
-* Running with Apache Maven
+** Running with Apache Maven
 
  RAT includes a plugin for Maven 2. This allows RAT reports to be run against
  a wide variety of resources. Details can be found in the
