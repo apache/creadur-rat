@@ -27,7 +27,7 @@ How to publish the RAT website
 
    * Happy with changes and ready to go live?
 
-     Do 'mvn site-deploy' from your local machine in the root of your RAT checkout, this will scp the site file to 
+     Do 'mvn site' then if successful do 'mvn site-deploy' from your local machine in the root of your RAT checkout, this will scp the site file to 
      /www/incubator.apache.org/rat/ on minotaur (people.apache.org).
 
    * Wait for the hourly site sync to our www machines and the updated site will be live.
