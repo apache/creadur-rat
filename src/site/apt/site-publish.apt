@@ -1,0 +1,29 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~ 
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~ 
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   --------------------
+   Publishing this site
+   --------------------
+
+How to publish the RAT website
+
+  1. Make your changes to the site xml and/or .apt files and commit.
+  2. Buildbot automatically notices the commit and creates a staging site to look at -
+   See {{{http://ci.apache.org/projects/rat} http://ci.apache.org/projects/rat/}} which is always upto date within a minute of any commit.
+  3. Need to make changes, no problem, go back to 1 and 2 as often as you like.
+  4. Happy with changes and ready to go live?
+   Do 'mvn site-deploy' from your local machine in the root of your RAT checkout, this will scp the site file to 
+   /www/incubator.apache.org/rat/ on minotaur (people.apache.org).
+  5. Wait for the hourly site sync to our www machines and the updated site will be live.
+
+

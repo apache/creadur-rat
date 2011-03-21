@@ -22,6 +22,10 @@
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
 
+    <menu name="Committer Info">
+      <item name="Publish this site" href="site-publish.html"/>
+    </menu>
+
     <menu ref="modules"/>
     <menu ref="reports"/>
   </body>
