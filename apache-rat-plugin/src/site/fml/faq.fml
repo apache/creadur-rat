@@ -67,5 +67,11 @@
           to false.</p>
       </answer>
     </faq>
+    <faq id="customLicense">
+      <question>Can I use Rat to validate against a custom license header?</question>
+      <answer>
+        <p>See <a href="examples/custom-license.html">this example</a> to see how.</p>
+      </answer>
+    </faq>
   </part>
 </faqs>

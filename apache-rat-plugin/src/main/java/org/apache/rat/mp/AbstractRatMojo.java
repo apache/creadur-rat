@@ -79,17 +79,34 @@ public abstract class AbstractRatMojo extends AbstractMojo
     protected File basedir;
 
     /**
-     * The licenses we want to match on.
+     * Specifies the licenses to accept. Deprecated, use {@link #licenses} instead.
      * 
      * @parameter
+     * @deprecated Use {@link #licenses} instead.
      */
     private HeaderMatcherSpecification[] licenseMatchers;
 
     /**
+     * Specifies the licenses to accept. By default, these are added to the default
+     * licenses, unless you set {@link #addDefaultLicenseMatchers} to true.
+     * @parameter
+     * @since 0.8
+     */
+    private IHeaderMatcher[] licenses;
+
+    /**
      * The set of approved license family names.
+     * @deprecated Use {@link #licenseFamilies} instead.
      */
     private LicenseFamilySpecification[] licenseFamilyNames;
 
+    /**
+     * Specifies the license families to accept.
+     * @parameter
+     * @since 0.8
+     */
+    private ILicenseFamily[] licenseFamilies;
+    
     /**
      * Whether to add the default list of license matchers.
      * 
@@ -178,6 +195,11 @@ public abstract class AbstractRatMojo extends AbstractMojo
     protected IHeaderMatcher[] getLicenseMatchers() throws MojoFailureException, MojoExecutionException
     {
         final List list = new ArrayList();
+        if ( licenses != null )
+        {
+            list.addAll( Arrays.asList( licenses ) );
+        }
+
         if ( licenseMatchers != null )
         {
             for ( int i = 0; i < licenseMatchers.length; i++ )
@@ -377,17 +399,24 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     private ILicenseFamily[] getApprovedLicenseNames() throws MojoExecutionException, MojoFailureException
     {
-        if ( licenseFamilyNames == null || licenseFamilyNames.length == 0 )
+        final List list = new ArrayList();
+        if ( licenseFamilies != null )
+        {
+            list.addAll( Arrays.asList( licenseFamilies ) );
+        }
+        if ( licenseFamilyNames != null)
+        {
+            for ( int i = 0; i < licenseFamilyNames.length; i++ )
+            {
+                LicenseFamilySpecification spec = licenseFamilyNames[i];
+                list.add( newInstance( ILicenseFamily.class, spec.getClassName() ) );
+            }
+        }
+
+        if ( list.isEmpty() )
         {
             return null;
         }
-        ILicenseFamily[] results = new ILicenseFamily[licenseFamilyNames.length];
-        for ( int i = 0; i < licenseFamilyNames.length; i++ )
-        {
-            LicenseFamilySpecification spec = licenseFamilyNames[i];
-            ILicenseFamily licenseFamily = (ILicenseFamily) newInstance( ILicenseFamily.class, spec.getClassName() );
-            results[i] = licenseFamily;
-        }
-        return results;
+        return (ILicenseFamily[]) list.toArray( new ILicenseFamily[ list.size() ] );
     }
 }

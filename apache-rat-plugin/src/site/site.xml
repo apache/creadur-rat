@@ -29,6 +29,7 @@
       <item name="Basic use" href="examples/basic.html"/>
       <item name="Running the plugin automatically" href="examples/verify.html"/>
       <item name="Adding a report to the site" href="examples/site.html"/>
+      <item name="Custom license" href="examples/custom-license.html"/>
     </menu>
 
     <menu ref="reports"/>

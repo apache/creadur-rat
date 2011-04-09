@@ -18,12 +18,9 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
-public class W3CDocLicense extends BaseLicense implements IHeaderMatcher {
+public class W3CDocLicense extends SimplePatternBasedLicense {
 
     private static final String NOTES 
         = "Note that W3CD does not allow modifications. See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.";
@@ -32,20 +29,7 @@ public class W3CDocLicense extends BaseLicense implements IHeaderMatcher {
     
     public W3CDocLicense() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3CD, 
-                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT,  NOTES);
-        
+                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT,  NOTES,
+                new String[]{COPYRIGHT_URL});
     }
-
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        boolean result = line != null && line.indexOf(COPYRIGHT_URL) != -1;
-        if (result) {
-            reportOnLicense(subject);
-        }
-        return result;
-    }
-
-    public void reset() {
-        // Matcher is not stateful 
-    }
-
 }

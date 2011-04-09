@@ -51,3 +51,5 @@ The RAT Maven Plugin
     when the project is built.
 
   * Adding the report to the {{{examples/site.html}generated site}}.
+
+  * Applying a {{{examples/custom-license.html}custom license}}.

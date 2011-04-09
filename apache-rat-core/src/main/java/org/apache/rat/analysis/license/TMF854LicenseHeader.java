@@ -18,40 +18,18 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 
-public class TMF854LicenseHeader extends BaseLicense implements IHeaderMatcher {
+public class TMF854LicenseHeader extends SimplePatternBasedLicense {
     
-    private static final String COPYRIGHT_HEADER 
-    = "TMF854 Version 1.0 - Copyright TeleManagement Forum";
+    private static final String COPYRIGHT_HEADER = "TMF854 Version 1.0 - Copyright TeleManagement Forum";
     
     //  TMF854 Version 1.0 - Copyright TeleManagement Forum 
 
     public TMF854LicenseHeader() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_TMF, 
-                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE, "BSD");
+                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE, "BSD",
+                new String[]{COPYRIGHT_HEADER});
     }
-
-
-    public void reset() {
-
-    }
-
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        final boolean result = matches(line);
-        if (result) {
-            reportOnLicense(subject);
-        }
-        return result;
-    }
-
-    boolean matches(String line) {
-        boolean result = (line != null && line.indexOf(COPYRIGHT_HEADER) != -1);
-        return result;
-    }
-    
 }

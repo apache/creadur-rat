@@ -33,7 +33,7 @@ public class BaseLicense {
 		this.licenseFamilyName = licenseFamilyName;
 		this.notes = notes;
 	}
-    
+
     public final void reportOnLicense(Document subject) throws RatHeaderAnalysisException {
         final MetaData metaData = subject.getMetaData();
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));

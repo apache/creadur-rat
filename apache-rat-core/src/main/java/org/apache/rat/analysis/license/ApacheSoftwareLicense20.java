@@ -18,38 +18,18 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 /**
  * Matches Apache Software License, Version 2.0
  *
  */
-public final class ApacheSoftwareLicense20 extends BaseLicense implements
-		IHeaderMatcher {
-
+public final class ApacheSoftwareLicense20 extends SimplePatternBasedLicense {
 	public static final String FIRST_LICENSE_LINE = "Licensed under the Apache License, Version 2.0 (the \"License\")";
 	public static final String LICENSE_REFERENCE_LINE = "http://www.apache.org/licenses/LICENSE-2.0";
 	
 	public ApacheSoftwareLicense20() {
-		super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0, "");
-	}
-	
-	public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        final boolean result = matches(line);
-		if (result) {
-			reportOnLicense(subject);
-		}
-        return result;
-	}
-
-	boolean matches(String line) {
-		return line.indexOf(FIRST_LICENSE_LINE, 0) >= 0 
-		|| line.indexOf(LICENSE_REFERENCE_LINE, 0) >= 0;
-	}
-	
-	public void reset() {	
+		super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,
+		        "", new String[]{FIRST_LICENSE_LINE, LICENSE_REFERENCE_LINE});
 	}
 }

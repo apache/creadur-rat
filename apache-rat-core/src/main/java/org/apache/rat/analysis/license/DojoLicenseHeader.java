@@ -18,16 +18,11 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 
-public class DojoLicenseHeader extends BaseLicense implements IHeaderMatcher {
-    
-    private static final String LICENSE_URL 
-    = "http://dojotoolkit.org/community/licensing.shtml";
+public class DojoLicenseHeader extends SimplePatternBasedLicense {
+    private static final String LICENSE_URL  = "http://dojotoolkit.org/community/licensing.shtml";
     
     //  Copyright (c) 2004-2006, The Dojo Foundation
     // All Rights Reserved.
@@ -40,25 +35,7 @@ public class DojoLicenseHeader extends BaseLicense implements IHeaderMatcher {
     public DojoLicenseHeader() {
         // TODO: support for dual licensing
         // TODO: support for or higher clauses
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_DOJO, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE, "Dual license AFL/BSD");
+        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_DOJO, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE, "Dual license AFL/BSD",
+                new String[]{LICENSE_URL});
     }
-
-
-    public void reset() {
-
-    }
-
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        final boolean result = matches(line);
-        if (result) {
-            reportOnLicense(subject);
-        }
-        return result;
-    }
-
-    boolean matches(String line) {
-        boolean result = (line != null && line.indexOf(LICENSE_URL) != -1);
-        return result;
-    }
-    
 }
