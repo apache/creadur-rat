@@ -69,6 +69,18 @@ public abstract class AbstractLicenceAppender {
     private static final int[] FAMILY_VELOCITY = new int[] {
         TYPE_VM,
     };
+    private static final int[] EXPECTS_HASH_PLING = new int[] {
+        TYPE_PYTHON, TYPE_SH, TYPE_RUBY,
+    };
+    private static final int[] EXPECTS_AT_ECHO = new int[] {
+        TYPE_BAT,
+    };
+    private static final int[] EXPECTS_PACKAGE = new int[] {
+        TYPE_JAVA,
+    };
+    private static final int[] EXPECTS_XML_DECL = new int[] {
+        TYPE_XML,
+    };
 
     static {
         // these arrays are used in Arrays.binarySearch so they must
@@ -79,6 +91,11 @@ public abstract class AbstractLicenceAppender {
         Arrays.sort(FAMILY_BAT);
         Arrays.sort(FAMILY_APT);
         Arrays.sort(FAMILY_VELOCITY);
+
+        Arrays.sort(EXPECTS_HASH_PLING);
+        Arrays.sort(EXPECTS_AT_ECHO);
+        Arrays.sort(EXPECTS_PACKAGE);
+        Arrays.sort(EXPECTS_XML_DECL);
     }
 
     private boolean isForced;
@@ -105,15 +122,15 @@ public abstract class AbstractLicenceAppender {
         FileReader fr = new FileReader(document);
         BufferedReader br = new BufferedReader(fr);
 
-        if (type == TYPE_CSS 
-            || type == TYPE_JAVASCRIPT 
-            || type == TYPE_APT 
-            || type == TYPE_PROPERTIES
-            || type == TYPE_C
-            || type == TYPE_H
-            || type == TYPE_HTML
-            || type == TYPE_VM
-            || type == TYPE_SCALA) {
+        boolean expectsHashPling = expectsHashPling(type);
+        boolean expectsAtEcho = expectsAtEcho(type);
+        boolean expectsPackage = expectsPackage(type);
+        boolean expectsXMLDecl = expectsXMLDecl(type);
+
+        if (!expectsHashPling
+            && !expectsAtEcho
+            && !expectsPackage
+            && !expectsXMLDecl) {
             writer.write(getLicenceHeader(document));
             writer.write('\n');
         }
@@ -121,22 +138,20 @@ public abstract class AbstractLicenceAppender {
         String line;
         boolean first = true;
         while ((line = br.readLine()) != null) {
-            if (first && (type == TYPE_PYTHON || type == TYPE_RUBY)) {
-                doFirstLine(document, writer, line, "#!/usr/bin");
-            } else if (first && type == TYPE_BAT) {
-                doFirstLine(document, writer, line, "@echo off");
-            } else if (first && type == TYPE_SH) {
-                doFirstLine(document, writer, line, "#!/bin");
+            if (first && expectsHashPling) {
+                doFirstLine(document, writer, line, "#!");
+            } else if (first && expectsAtEcho) {
+                doFirstLine(document, writer, line, "@echo");
             } else {
                 writer.write(line);
                 writer.write('\n');
             }
 
-            if (type == TYPE_JAVA && line.startsWith("package ")) {
+            if (expectsPackage && line.startsWith("package ")) {
                 writer.write(getLicenceHeader(document));
                 writer.write('\n');
             }
-            if (type == TYPE_XML && line.startsWith("<?xml ")) {
+            if (expectsXMLDecl && line.startsWith("<?xml ")) {
                 writer.write(getLicenceHeader(document));
                 writer.write('\n');
             }
@@ -320,6 +335,18 @@ public abstract class AbstractLicenceAppender {
     }
     private static boolean isFamilyVelocity(int type) {
         return isIn(FAMILY_VELOCITY, type);
+    }
+    private static boolean expectsHashPling(int type) {
+        return isIn(EXPECTS_HASH_PLING, type);
+    }
+    private static boolean expectsAtEcho(int type) {
+        return isIn(EXPECTS_AT_ECHO, type);
+    }
+    private static boolean expectsPackage(int type) {
+        return isIn(EXPECTS_PACKAGE, type);
+    }
+    private static boolean expectsXMLDecl(int type) {
+        return isIn(EXPECTS_XML_DECL, type);
     }
     private static boolean isIn(int[] arr, int key) {
         return Arrays.binarySearch(arr, key) >= 0;
