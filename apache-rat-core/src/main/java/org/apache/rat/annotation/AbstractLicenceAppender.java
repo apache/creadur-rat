@@ -24,6 +24,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Add a licence header to a document. This appender does not check for the
@@ -82,6 +84,8 @@ public abstract class AbstractLicenceAppender {
         TYPE_XML,
     };
 
+    private static final Map/*<String, Integer>*/ EXT2TYPE = new HashMap();
+
     static {
         // these arrays are used in Arrays.binarySearch so they must
         // be sorted
@@ -96,6 +100,25 @@ public abstract class AbstractLicenceAppender {
         Arrays.sort(EXPECTS_AT_ECHO);
         Arrays.sort(EXPECTS_PACKAGE);
         Arrays.sort(EXPECTS_XML_DECL);
+
+        EXT2TYPE.put("apt", Integer.valueOf(TYPE_APT));
+        EXT2TYPE.put("bat", Integer.valueOf(TYPE_BAT));
+        EXT2TYPE.put("c", Integer.valueOf(TYPE_C));
+        EXT2TYPE.put("css", Integer.valueOf(TYPE_CSS));
+        EXT2TYPE.put("h", Integer.valueOf(TYPE_H));
+        EXT2TYPE.put("htm", Integer.valueOf(TYPE_HTML));
+        EXT2TYPE.put("html", Integer.valueOf(TYPE_HTML));
+        EXT2TYPE.put("java", Integer.valueOf(TYPE_JAVA));
+        EXT2TYPE.put("js", Integer.valueOf(TYPE_JAVASCRIPT));
+        EXT2TYPE.put("properties", Integer.valueOf(TYPE_PROPERTIES));
+        EXT2TYPE.put("py", Integer.valueOf(TYPE_PYTHON));
+        EXT2TYPE.put("rb", Integer.valueOf(TYPE_RUBY));
+        EXT2TYPE.put("rdf", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("scala", Integer.valueOf(TYPE_SCALA));
+        EXT2TYPE.put("sh", Integer.valueOf(TYPE_SH));
+        EXT2TYPE.put("vm", Integer.valueOf(TYPE_VM));
+        EXT2TYPE.put("xml", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("xsl", Integer.valueOf(TYPE_XML));
     }
 
     private boolean isForced;
@@ -192,38 +215,14 @@ public abstract class AbstractLicenceAppender {
      * @TODO use existing mechanism to detect the type of a file and record it in the report output, thus we will not need this duplication here.
      */
     protected int getType(File document) {
-        if (document.getPath().endsWith(".java")) {
-            return TYPE_JAVA;
-        } else if (document.getPath().endsWith(".xml") || document.getPath().endsWith(".xsl")) {
-            return TYPE_XML;
-        } else if (document.getPath().endsWith(".html") || document.getPath().endsWith(".htm")) {
-            return TYPE_HTML;
-        } else if (document.getPath().endsWith(".rdf") || document.getPath().endsWith(".xsl")) {
-            return TYPE_XML;
-        } else if (document.getPath().endsWith(".css")) {
-            return TYPE_CSS;
-        } else if (document.getPath().endsWith(".js")) {
-            return TYPE_JAVASCRIPT;
-        } else if (document.getPath().endsWith(".apt")) {
-            return TYPE_APT;
-        } else if (document.getPath().endsWith(".properties")) {
-            return TYPE_PROPERTIES;
-        } else if (document.getPath().endsWith(".py")) {
-            return TYPE_PYTHON;
-        } else if (document.getPath().endsWith(".c")) {
-            return TYPE_C;
-        } else if (document.getPath().endsWith(".h")) {
-            return TYPE_H;
-        } else if (document.getPath().endsWith(".sh")) {
-            return TYPE_SH;
-        } else if (document.getPath().endsWith(".bat")) {
-            return TYPE_BAT;
-        } else if (document.getPath().endsWith(".vm")) {
-            return TYPE_VM;
-        } else if (document.getPath().endsWith(".scala")) {
-            return TYPE_SCALA;
-        } else if (document.getPath().endsWith(".rb")) {
-            return TYPE_RUBY;
+        String path = document.getPath();
+        int lastDot = path.lastIndexOf(".");
+        if (lastDot >= 0 && lastDot < path.length() - 1) {
+            String ext = path.substring(lastDot + 1);
+            Object type = EXT2TYPE.get(ext);
+            if (type instanceof Integer) {
+                return ((Integer) type).intValue();
+            }
         }
         return TYPE_UNKNOWN;
     }
