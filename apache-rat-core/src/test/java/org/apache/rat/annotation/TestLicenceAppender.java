@@ -304,4 +304,111 @@ public class TestLicenceAppender extends TestCase {
             },
             checkLines(firstLine, secondLine));
     }
+
+    public void testAddLicenseToPerlWithoutHashBang()
+        throws IOException {
+        String filename = "tmp.pl";
+        String firstLine = "#";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write("print \"Hello world\"\n");
+                }
+            },
+            checkLines(firstLine, null));
+    }
+
+    public void testAddLicenseToPerlWithHashBang() throws IOException {
+        String filename = "tmp.pl";
+        final String firstLine = "#!/usr/bin/env perl";
+        String secondLine = "#";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write(firstLine + "\n");
+                    writer.write("print \"Hello world\"\n");
+                }
+            },
+            checkLines(firstLine, secondLine));
+    }
+
+    public void testAddLicenseToTclWithoutHashBang()
+        throws IOException {
+        String filename = "tmp.tcl";
+        String firstLine = "#";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write("puts \"Hello world\"\n");
+                }
+            },
+            checkLines(firstLine, null));
+    }
+
+    public void testAddLicenseToTclWithHashBang() throws IOException {
+        String filename = "tmp.tcl";
+        final String firstLine = "#!/usr/bin/env tcl";
+        String secondLine = "#";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write(firstLine + "\n");
+                    writer.write("puts \"Hello world\"\n");
+                }
+            },
+            checkLines(firstLine, secondLine));
+    }
+
+    public void testAddLicenceToPHP() throws IOException {
+        String filename = "tmp.php";
+        final String firstLine = "<?php";
+        String secondLine = "/*";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write(firstLine + "\n");
+                    writer.write("echo 'Hello World'\n");
+                    writer.write("?>\n");
+                }
+            },
+            checkLines(firstLine, secondLine));
+    }
+
+    public void testAddLicenceToCSharp() throws IOException {
+        String filename = "tmp.cs";
+        String firstLine = "/*";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write("namespace org.example {\n");
+                    writer.write("    public class Foo {\n");
+                    writer.write("    }\n");
+                    writer.write("}\n");
+                }
+            },
+            checkLines(firstLine, null));
+    }
+
+    public void testAddLicenceToCPlusPlus() throws IOException {
+        String filename = "tmp.cpp";
+        String firstLine = "/*";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write("namespace org.example {\n");
+                    writer.write("    public class Foo {\n");
+                    writer.write("    }\n");
+                    writer.write("}\n");
+                }
+            },
+            checkLines(firstLine, null));
+    }
+
 }

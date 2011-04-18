@@ -51,16 +51,22 @@ public abstract class AbstractLicenceAppender {
     private static final int TYPE_VM = 13;
     private static final int TYPE_SCALA = 14;
     private static final int TYPE_RUBY = 15;
+    private static final int TYPE_PERL = 16;
+    private static final int TYPE_TCL = 17;
+    private static final int TYPE_CPP = 18;
+    private static final int TYPE_CSHARP = 19;
+    private static final int TYPE_PHP = 20;
 
     private static final int[] FAMILY_C = new int[] {
         TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
-        TYPE_CSS,
+        TYPE_CSS, TYPE_CPP, TYPE_CSHARP, TYPE_PHP,
     };
     private static final int[] FAMILY_SGML = new int[] {
         TYPE_XML, TYPE_HTML,
     };
     private static final int[] FAMILY_SH = new int[] {
-        TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY,
+        TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
+        TYPE_TCL,
     };
     private static final int[] FAMILY_BAT = new int[] {
         TYPE_BAT,
@@ -72,7 +78,7 @@ public abstract class AbstractLicenceAppender {
         TYPE_VM,
     };
     private static final int[] EXPECTS_HASH_PLING = new int[] {
-        TYPE_PYTHON, TYPE_SH, TYPE_RUBY,
+        TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL
     };
     private static final int[] EXPECTS_AT_ECHO = new int[] {
         TYPE_BAT,
@@ -82,6 +88,9 @@ public abstract class AbstractLicenceAppender {
     };
     private static final int[] EXPECTS_XML_DECL = new int[] {
         TYPE_XML,
+    };
+    private static final int[] EXPECTS_PHP_PI = new int[] {
+        TYPE_PHP,
     };
 
     private static final Map/*<String, Integer>*/ EXT2TYPE = new HashMap();
@@ -104,18 +113,26 @@ public abstract class AbstractLicenceAppender {
         EXT2TYPE.put("apt", Integer.valueOf(TYPE_APT));
         EXT2TYPE.put("bat", Integer.valueOf(TYPE_BAT));
         EXT2TYPE.put("c", Integer.valueOf(TYPE_C));
+        EXT2TYPE.put("cc", Integer.valueOf(TYPE_CPP));
+        EXT2TYPE.put("cpp", Integer.valueOf(TYPE_CPP));
+        EXT2TYPE.put("cs", Integer.valueOf(TYPE_CSHARP));
         EXT2TYPE.put("css", Integer.valueOf(TYPE_CSS));
         EXT2TYPE.put("h", Integer.valueOf(TYPE_H));
+        EXT2TYPE.put("hh", Integer.valueOf(TYPE_H));
+        EXT2TYPE.put("hpp", Integer.valueOf(TYPE_H));
         EXT2TYPE.put("htm", Integer.valueOf(TYPE_HTML));
         EXT2TYPE.put("html", Integer.valueOf(TYPE_HTML));
         EXT2TYPE.put("java", Integer.valueOf(TYPE_JAVA));
         EXT2TYPE.put("js", Integer.valueOf(TYPE_JAVASCRIPT));
+        EXT2TYPE.put("php", Integer.valueOf(TYPE_PHP));
+        EXT2TYPE.put("pl", Integer.valueOf(TYPE_PERL));
         EXT2TYPE.put("properties", Integer.valueOf(TYPE_PROPERTIES));
         EXT2TYPE.put("py", Integer.valueOf(TYPE_PYTHON));
         EXT2TYPE.put("rb", Integer.valueOf(TYPE_RUBY));
         EXT2TYPE.put("rdf", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("scala", Integer.valueOf(TYPE_SCALA));
         EXT2TYPE.put("sh", Integer.valueOf(TYPE_SH));
+        EXT2TYPE.put("tcl", Integer.valueOf(TYPE_TCL));
         EXT2TYPE.put("vm", Integer.valueOf(TYPE_VM));
         EXT2TYPE.put("xml", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("xsl", Integer.valueOf(TYPE_XML));
@@ -149,11 +166,13 @@ public abstract class AbstractLicenceAppender {
         boolean expectsAtEcho = expectsAtEcho(type);
         boolean expectsPackage = expectsPackage(type);
         boolean expectsXMLDecl = expectsXMLDecl(type);
+        boolean expectsPhpPI = expectsPhpPI(type);
 
         if (!expectsHashPling
             && !expectsAtEcho
             && !expectsPackage
-            && !expectsXMLDecl) {
+            && !expectsXMLDecl
+            && !expectsPhpPI) {
             writer.write(getLicenceHeader(document));
             writer.write('\n');
         }
@@ -173,8 +192,10 @@ public abstract class AbstractLicenceAppender {
             if (expectsPackage && line.startsWith("package ")) {
                 writer.write(getLicenceHeader(document));
                 writer.write('\n');
-            }
-            if (expectsXMLDecl && line.startsWith("<?xml ")) {
+            } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
+                writer.write(getLicenceHeader(document));
+                writer.write('\n');
+            } else if (expectsPhpPI && line.startsWith("<?php")) {
                 writer.write(getLicenceHeader(document));
                 writer.write('\n');
             }
@@ -346,6 +367,9 @@ public abstract class AbstractLicenceAppender {
     }
     private static boolean expectsXMLDecl(int type) {
         return isIn(EXPECTS_XML_DECL, type);
+    }
+    private static boolean expectsPhpPI(int type) {
+        return isIn(EXPECTS_PHP_PI, type);
     }
     private static boolean isIn(int[] arr, int key) {
         return Arrays.binarySearch(arr, key) >= 0;
