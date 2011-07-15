@@ -17,6 +17,8 @@ RAT 0.8
       TCL, C++, C# and PHP source files
     * RAT-91 Support automatic addition of license headers to Groovy
       source files
+    * RAT-85 Allow --addLicense as an alias for --addLicence for
+      people used to the US spelling.
 
 RAT 0.7
 =======

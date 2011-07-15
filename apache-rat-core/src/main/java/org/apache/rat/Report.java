@@ -82,7 +82,7 @@ public class Report {
         } else {
             Report report = new Report(args[0]);
 
-            if (cl.hasOption('a')) {
+            if (cl.hasOption('a') || cl.hasOption('A')) {
                 configuration.setAddingLicenses(true);
                 configuration.setAddingLicensesForced(cl.hasOption('f'));
                 configuration.setCopyrightMessage(cl.getOptionValue("c"));
@@ -129,12 +129,22 @@ public class Report {
         "Print help for the RAT command line interface and exit");
         opts.addOption(help);
 
+        OptionGroup addLicenceGroup = new OptionGroup();
+        String addLicenceDesc = "Add the default licence header to any file with an unknown licence that is not in the exclusion list. By default new files will be created with the licence header, to force the modification of existing files use the --force option.";
+
         Option addLicence = new Option(
                 "a",
                 "addLicence",
                 false,
-        "Add the default licence header to any file with an unknown licence that is not in the exclusion list. By default new files will be created with the licence header, to force the modification of existing files use the --force option.");
-        opts.addOption(addLicence);
+                addLicenceDesc);
+        addLicenceGroup.addOption(addLicence);
+        Option addLicense = new Option(
+                "A",
+                "addLicense",
+                false,
+                addLicenceDesc);
+        addLicenceGroup.addOption(addLicense);
+        opts.addOptionGroup(addLicenceGroup);
 
         Option write = new Option(
                 "f",
