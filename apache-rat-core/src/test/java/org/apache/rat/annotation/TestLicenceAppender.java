@@ -394,6 +394,21 @@ public class TestLicenceAppender extends TestCase {
             },
             checkLines(firstLine, null));
     }
+    
+    public void testAddLicenceToGroovy() throws IOException {
+        String filename = "tmp.groovy";
+        String firstLine = "/*";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write("package org.example \n");
+                    writer.write("    class Foo {\n");
+                    writer.write("    }\n");
+                }
+            },
+            checkLines(firstLine, null));
+    }
 
     public void testAddLicenceToCPlusPlus() throws IOException {
         String filename = "tmp.cpp";

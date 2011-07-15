@@ -56,10 +56,11 @@ public abstract class AbstractLicenceAppender {
     private static final int TYPE_CPP = 18;
     private static final int TYPE_CSHARP = 19;
     private static final int TYPE_PHP = 20;
+    private static final int TYPE_GROOVY = 21;
 
     private static final int[] FAMILY_C = new int[] {
         TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
-        TYPE_CSS, TYPE_CPP, TYPE_CSHARP, TYPE_PHP,
+        TYPE_CSS, TYPE_CPP, TYPE_CSHARP, TYPE_PHP, TYPE_GROOVY,
     };
     private static final int[] FAMILY_SGML = new int[] {
         TYPE_XML, TYPE_HTML,
@@ -117,6 +118,7 @@ public abstract class AbstractLicenceAppender {
         EXT2TYPE.put("cpp", Integer.valueOf(TYPE_CPP));
         EXT2TYPE.put("cs", Integer.valueOf(TYPE_CSHARP));
         EXT2TYPE.put("css", Integer.valueOf(TYPE_CSS));
+        EXT2TYPE.put("groovy", Integer.valueOf(TYPE_GROOVY));
         EXT2TYPE.put("h", Integer.valueOf(TYPE_H));
         EXT2TYPE.put("hh", Integer.valueOf(TYPE_H));
         EXT2TYPE.put("hpp", Integer.valueOf(TYPE_H));
