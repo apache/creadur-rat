@@ -18,6 +18,10 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.document.MockDocument;
 import junit.framework.TestCase;
 
@@ -62,5 +66,38 @@ public class BinaryGuesserTest extends TestCase {
         assertTrue(BinaryGuesser.isBinary("Whatever.class"));
         assertTrue(BinaryGuesser.isBinary("data.dat"));
         assertTrue(BinaryGuesser.isBinary("libicudata.so.34."));
+    }
+
+    /**
+     * Used to swallow a MalformedInputException and return false
+     * because the encoding of the stream was different from the
+     * platform's default encoding.
+     *
+     * @see RAT-81
+     */
+    public void testBinaryWithMalformedInput() throws Throwable {
+        FileDocument doc = new FileDocument(new File("src/test/resources/binaries/UTF16_with_signature.xml"));
+        Reader r = null;
+        try {
+            char[] dummy = new char[100];
+            r = doc.reader();
+            r.read(dummy);
+            // if we get here, the UTF-16 encoded file didn't throw
+            // any exception, try the UTF-8 encoded one
+            r.close();
+            doc = new FileDocument(new File("src/test/resources/binaries/UTF8_with_signature.xml"));
+            r = doc.reader();
+            r.read(dummy);
+            // still here?  can't test on this platform
+            System.err.println("Skipping testBinaryWithMalformedInput");
+        } catch (IOException e) {
+            r.close();
+            r = null;
+            assertTrue(guesser.isBinary(doc));
+        } finally {
+            if (r != null) {
+                r.close();
+            }
+        }
     }
 }

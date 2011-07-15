@@ -35,7 +35,7 @@ public interface Document {
      * @throws CompositeDocumentException if this document can only be read as
      * a composite archive
      */
-	public Reader reader() throws IOException;
+    public Reader reader() throws IOException;
     
     /**
      * Streams the document's contents.
