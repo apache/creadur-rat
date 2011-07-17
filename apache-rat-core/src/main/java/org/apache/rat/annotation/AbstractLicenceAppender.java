@@ -158,11 +158,6 @@ public abstract class AbstractLicenceAppender {
         if (type == TYPE_UNKNOWN) {
             return;
         }
-        File newDocument = new File(document.getAbsolutePath() + ".new");
-        FileWriter writer = new FileWriter(newDocument);
-
-        FileReader fr = new FileReader(document);
-        BufferedReader br = new BufferedReader(fr);
 
         boolean expectsHashPling = expectsHashPling(type);
         boolean expectsAtEcho = expectsAtEcho(type);
@@ -170,41 +165,57 @@ public abstract class AbstractLicenceAppender {
         boolean expectsXMLDecl = expectsXMLDecl(type);
         boolean expectsPhpPI = expectsPhpPI(type);
 
-        if (!expectsHashPling
-            && !expectsAtEcho
-            && !expectsPackage
-            && !expectsXMLDecl
-            && !expectsPhpPI) {
-            writer.write(getLicenceHeader(document));
-            writer.write('\n');
-        }
+        File newDocument = new File(document.getAbsolutePath() + ".new");
+        FileWriter writer = new FileWriter(newDocument);
 
-        String line;
-        boolean first = true;
-        while ((line = br.readLine()) != null) {
-            if (first && expectsHashPling) {
-                doFirstLine(document, writer, line, "#!");
-            } else if (first && expectsAtEcho) {
-                doFirstLine(document, writer, line, "@echo");
-            } else {
-                writer.write(line);
-                writer.write('\n');
-            }
+        try {
+            FileReader fr = new FileReader(document);
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(fr);
 
-            if (expectsPackage && line.startsWith("package ")) {
-                writer.write(getLicenceHeader(document));
-                writer.write('\n');
-            } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
-                writer.write(getLicenceHeader(document));
-                writer.write('\n');
-            } else if (expectsPhpPI && line.startsWith("<?php")) {
-                writer.write(getLicenceHeader(document));
-                writer.write('\n');
+                if (!expectsHashPling
+                    && !expectsAtEcho
+                    && !expectsPackage
+                    && !expectsXMLDecl
+                    && !expectsPhpPI) {
+                    writer.write(getLicenceHeader(document));
+                    writer.write('\n');
+                }
+
+                String line;
+                boolean first = true;
+                while ((line = br.readLine()) != null) {
+                    if (first && expectsHashPling) {
+                        doFirstLine(document, writer, line, "#!");
+                    } else if (first && expectsAtEcho) {
+                        doFirstLine(document, writer, line, "@echo");
+                    } else {
+                        writer.write(line);
+                        writer.write('\n');
+                    }
+
+                    if (expectsPackage && line.startsWith("package ")) {
+                        writer.write(getLicenceHeader(document));
+                        writer.write('\n');
+                    } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
+                        writer.write(getLicenceHeader(document));
+                        writer.write('\n');
+                    } else if (expectsPhpPI && line.startsWith("<?php")) {
+                        writer.write(getLicenceHeader(document));
+                        writer.write('\n');
+                    }
+                    first = false;
+                }
+            } finally {
+                if (br != null) {
+                    br.close();
+                }
+                fr.close();
             }
-            first = false;
+        } finally {
+            writer.close();
         }
-        br.close();
-        writer.close();
 
         if (isForced) {
             document.delete();
