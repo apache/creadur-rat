@@ -19,6 +19,9 @@ RAT 0.8
       source files
     * RAT-85 Allow --addLicense as an alias for --addLicence for
       people used to the US spelling.
+    * RAT-34 --addLicense will add the license to the top of Java
+      files without a package line or XML files without an XML
+      declaration now - it used to not add anything.
 
 RAT 0.7
 =======

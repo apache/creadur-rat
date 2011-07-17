@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -167,7 +168,49 @@ public abstract class AbstractLicenceAppender {
 
         File newDocument = new File(document.getAbsolutePath() + ".new");
         FileWriter writer = new FileWriter(newDocument);
+        if (!attachLicense(new FileWriter(newDocument), document,
+                           expectsHashPling, expectsAtEcho, expectsPackage,
+                           expectsXMLDecl, expectsPhpPI)) {
+            // Java File without package, XML file without decl or PHP
+            // file without PI
+            // for Java just place the license at the front, for XML add
+            // an XML decl first - don't know how to handle PHP
+            if (expectsPackage || expectsXMLDecl) {
+                writer = new FileWriter(newDocument);
+                try {
+                    if (expectsXMLDecl) {
+                        writer.write("<?xml version='1.0'?>\n");
+                    }
+                    attachLicense(writer, document,
+                                  false, false, false, false, false);
+                } finally {
+                    writer.close();
+                }
+            }
+        }
 
+        if (isForced) {
+            document.delete();
+            boolean renamed = newDocument.renameTo(document.getAbsoluteFile());
+            if (!renamed) {
+                System.err.println("Failed to rename new file, original file remains unchanged.");
+            }
+        }
+    }
+
+    /**
+     * Write document's content to writer attaching the license using
+     * the given flags as hints for where to put it.
+     * @return whether the license has actually been written
+     */
+    private boolean attachLicense(Writer writer, File document,
+                                  boolean expectsHashPling,
+                                  boolean expectsAtEcho,
+                                  boolean expectsPackage,
+                                  boolean expectsXMLDecl,
+                                  boolean expectsPhpPI)
+        throws IOException {
+        boolean written = false;
         try {
             FileReader fr = new FileReader(document);
             BufferedReader br = null;
@@ -179,6 +222,7 @@ public abstract class AbstractLicenceAppender {
                     && !expectsPackage
                     && !expectsXMLDecl
                     && !expectsPhpPI) {
+                    written = true;
                     writer.write(getLicenceHeader(document));
                     writer.write('\n');
                 }
@@ -187,8 +231,10 @@ public abstract class AbstractLicenceAppender {
                 boolean first = true;
                 while ((line = br.readLine()) != null) {
                     if (first && expectsHashPling) {
+                        written = true;
                         doFirstLine(document, writer, line, "#!");
                     } else if (first && expectsAtEcho) {
+                        written = true;
                         doFirstLine(document, writer, line, "@echo");
                     } else {
                         writer.write(line);
@@ -196,12 +242,15 @@ public abstract class AbstractLicenceAppender {
                     }
 
                     if (expectsPackage && line.startsWith("package ")) {
+                        written = true;
                         writer.write(getLicenceHeader(document));
                         writer.write('\n');
                     } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
+                        written = true;
                         writer.write(getLicenceHeader(document));
                         writer.write('\n');
                     } else if (expectsPhpPI && line.startsWith("<?php")) {
+                        written = true;
                         writer.write(getLicenceHeader(document));
                         writer.write('\n');
                     }
@@ -216,20 +265,13 @@ public abstract class AbstractLicenceAppender {
         } finally {
             writer.close();
         }
-
-        if (isForced) {
-            document.delete();
-            boolean renamed = newDocument.renameTo(document.getAbsoluteFile());
-            if (!renamed) {
-                System.err.println("Failed to rename new file, original file remains unchanged.");
-            }
-        }
+        return written;
     }
 
     /**
      * Check first line for specified text and process.
      */
-    private void doFirstLine(File document, FileWriter writer, String line, String lookfor) throws IOException  {
+    private void doFirstLine(File document, Writer writer, String line, String lookfor) throws IOException  {
         if (line.startsWith(lookfor)) {
             writer.write(line);
             writer.write('\n');

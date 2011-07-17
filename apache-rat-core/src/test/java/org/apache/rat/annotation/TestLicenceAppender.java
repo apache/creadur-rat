@@ -151,6 +151,19 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
+    public void testAddLicenceToJavaWithoutPackage() throws IOException {
+        String filename = "tmp.java";
+        String commentLine = "/*";
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write("public class test {\n");
+                    writer.write("}\n");
+                }
+            },
+            checkLines(commentLine, null));
+    }
+
     public void testAddLicenceToXML() throws IOException {
         String filename = "tmp.xml";
         final String firstLine = "<?xml version='1.0'?>";
@@ -167,6 +180,22 @@ public class TestLicenceAppender extends TestCase {
             },
             checkLines(firstLine, secondLine));
     }
+
+    public void testAddLicenceToXMLWithoutDecl() throws IOException {
+        String filename = "tmp.xml";
+        final String firstLine = "<?xml version='1.0'?>";
+        final String secondLine = "<!--";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write("<xml>\n");
+                    writer.write("</xml>\n");
+                }
+            },
+            checkLines(firstLine, secondLine));
+    }
+
     public void testAddLicenceToHTML() throws IOException {
         String filename = "tmp.html";
         String commentLine = "<!--";
