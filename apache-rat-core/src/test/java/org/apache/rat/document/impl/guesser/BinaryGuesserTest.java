@@ -100,4 +100,8 @@ public class BinaryGuesserTest extends TestCase {
             }
         }
     }
+
+    public void testRealBinaryContent() {
+        assertTrue(guesser.isBinary(new FileDocument(new File("src/test/resources/binaries/Image-png.not"))));
+    }
 }
