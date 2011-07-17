@@ -31,11 +31,11 @@ public class BinaryGuesser {
 
     private static boolean isBinaryDocument(Document document) {
         boolean result = false;
-        InputStream stream = null;
+        Reader reader = null;
         try
         {
-            stream = document.inputStream();
-            result = isBinary(stream);
+            reader = document.reader();
+            result = isBinary(reader);
         }
         catch (IOException e)
         {
@@ -45,9 +45,9 @@ public class BinaryGuesser {
         {
             try
             {
-                if (stream != null)
+                if (reader != null)
                 {
-                    stream.close();
+                    reader.close();
                 }
             }
             catch (IOException e)
@@ -60,51 +60,9 @@ public class BinaryGuesser {
     
     /**
      * Do the first few bytes of the stream hint at a binary file?
-     *
-     * <p>Any IOException is swallowed internally and the test returns
-     * false.</p>
-     *
-     * <p>This method may lead to false negatives if the reader throws
-     * an exception because it can't read characters according to the
-     * reader's encoding from the underlying stream.</p>
      */
     public static boolean isBinary(Reader in) {
         char[] taste = new char[100];
-        try {
-            int bytesRead = in.read(taste);
-            if (bytesRead > 0) {
-                int highBytes = 0;
-                for (int i=0;i<bytesRead;i++) {
-                    if (taste[i] > BinaryGuesser.NON_ASCII_THREASHOLD
-                        || taste[i] <= BinaryGuesser.ASCII_CHAR_THREASHOLD) {
-                        highBytes++;
-                    }
-                }
-                if (highBytes * BinaryGuesser.HIGH_BYTES_RATIO
-                    > bytesRead * BinaryGuesser.TOTAL_READ_RATIO) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // SWALLOW 
-        }
-        return false;
-    }
-
-    /**
-     * Do the first few bytes of the stream hint at a binary file?
-     *
-     * <p>Any IOException is swallowed internally and the test returns
-     * false.</p>
-     *
-     * <p>This method will try to read bytes from the stream and
-     * translate them to characters according to the platform's
-     * default encoding.  If any bytes can not be translated to
-     * characters it will assume the original data must be binary and
-     * return true.</p>
-     */
-    public static boolean isBinary(InputStream in) {
-        byte[] taste = new byte[200];
         try {
             int bytesRead = in.read(taste);
             if (bytesRead > 0) {
