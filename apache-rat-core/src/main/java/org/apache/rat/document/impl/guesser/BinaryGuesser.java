@@ -19,7 +19,14 @@
 package org.apache.rat.document.impl.guesser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
+import java.nio.charset.CodingErrorAction;
 import java.util.Locale;
 
 import org.apache.rat.api.Document;
@@ -31,11 +38,11 @@ public class BinaryGuesser {
 
     private static boolean isBinaryDocument(Document document) {
         boolean result = false;
-        Reader reader = null;
+        InputStream stream = null;
         try
         {
-            reader = document.reader();
-            result = isBinary(reader);
+            stream = document.inputStream();
+            result = isBinary(stream);
         }
         catch (IOException e)
         {
@@ -45,9 +52,9 @@ public class BinaryGuesser {
         {
             try
             {
-                if (reader != null)
+                if (stream != null)
                 {
-                    reader.close();
+                    stream.close();
                 }
             }
             catch (IOException e)
@@ -58,25 +65,82 @@ public class BinaryGuesser {
         return result;
     }
     
+    private static boolean isBinary(CharSequence taste) {
+        int highBytes = 0;
+        final int length = taste.length();
+        for (int i = 0; i < length; i++) {
+            char c = taste.charAt(i);
+            if (c > BinaryGuesser.NON_ASCII_THREASHOLD
+                || c <= BinaryGuesser.ASCII_CHAR_THREASHOLD) {
+                highBytes++;
+            }
+        }
+        return highBytes * BinaryGuesser.HIGH_BYTES_RATIO
+            > length * BinaryGuesser.TOTAL_READ_RATIO;
+    }
+
     /**
      * Do the first few bytes of the stream hint at a binary file?
+     *
+     * <p>Any IOException is swallowed internally and the test returns
+     * false.</p>
+     *
+     * <p>This method may lead to false negatives if the reader throws
+     * an exception because it can't read characters according to the
+     * reader's encoding from the underlying stream.</p>
      */
     public static boolean isBinary(Reader in) {
         char[] taste = new char[100];
         try {
             int bytesRead = in.read(taste);
             if (bytesRead > 0) {
-                int highBytes = 0;
-                for (int i=0;i<bytesRead;i++) {
-                    if (taste[i] > BinaryGuesser.NON_ASCII_THREASHOLD
-                        || taste[i] <= BinaryGuesser.ASCII_CHAR_THREASHOLD) {
-                        highBytes++;
+                return isBinary(new String(taste, 0, bytesRead));
+            }
+        } catch (IOException e) {
+            // SWALLOW 
+        }
+        return false;
+    }
+
+    /**
+     * Do the first few bytes of the stream hint at a binary file?
+     *
+     * <p>Any IOException is swallowed internally and the test returns
+     * false.</p>
+     *
+     * <p>This method will try to read bytes from the stream and
+     * translate them to characters according to the platform's
+     * default encoding.  If any bytes can not be translated to
+     * characters it will assume the original data must be binary and
+     * return true.</p>
+     */
+    public static boolean isBinary(InputStream in) {
+        try {
+            byte[] taste = new byte[200];
+            int bytesRead = in.read(taste);
+            if (bytesRead > 0) {
+                ByteBuffer bytes = ByteBuffer.wrap(taste, 0, bytesRead);
+                CharBuffer chars = CharBuffer.allocate(2 * bytesRead);
+                Charset cs = Charset.forName(System.getProperty("file.encoding"));
+                CharsetDecoder cd = cs.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT);
+                while (bytes.remaining() > 0) {
+                    CoderResult res = cd.decode(bytes, chars, true);
+                    if (res.isMalformed() || res.isUnmappable()) {
+                        return true;
+                    } else if (res.isOverflow()) {
+                        chars.limit(chars.position());
+                        chars.rewind();
+                        int c = chars.capacity() * 2;
+                        CharBuffer on = CharBuffer.allocate(c);
+                        on.put(chars);
+                        chars = on;
                     }
                 }
-                if (highBytes * BinaryGuesser.HIGH_BYTES_RATIO
-                    > bytesRead * BinaryGuesser.TOTAL_READ_RATIO) {
-                    return true;
-                }
+                chars.limit(chars.position());
+                chars.rewind();
+                return isBinary(chars);
             }
         } catch (IOException e) {
             // SWALLOW 
