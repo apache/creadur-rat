@@ -70,9 +70,11 @@ public class XmlReportFactoryTest extends TestCase {
         report.endReport();
         writer.closeDocument();
         final String output = out.toString();
-        assertEquals(
-                "<?xml version='1.0'?>" +
-                "<rat-report>" +
+        assertTrue("Preamble and document element are OK",
+                   output.startsWith("<?xml version='1.0'?>" +
+                "<rat-report timestamp="));
+        assertTrue("Part after timestamp attribute is OK",
+                   output.endsWith(">" +
                 "<resource name='" + elementsPath + "/Image.png'><type name='binary'/></resource>" +
                 "<resource name='" + elementsPath + "/LICENSE'><type name='notice'/></resource>" +
                 "<resource name='" + elementsPath + "/NOTICE'><type name='notice'/></resource>" +
@@ -85,7 +87,7 @@ public class XmlReportFactoryTest extends TestCase {
                 "<resource name='" + elementsPath + "/buildr.rb'><type name='standard'/>" +
                 "</resource>" +
                 "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
-                "</rat-report>", output);
+                                   "</rat-report>"));
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
         assertEquals("Binary files", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
         assertEquals("Notice files", new Integer(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));

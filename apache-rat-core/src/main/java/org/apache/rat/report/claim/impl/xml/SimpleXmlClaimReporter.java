@@ -19,6 +19,9 @@
 package org.apache.rat.report.claim.impl.xml;
 
 import java.io.IOException;
+import java.util.Calendar;
+
+import org.apache.commons.lang.time.DateFormatUtils;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -132,7 +135,10 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 
     public void startReport() throws RatException {
         try {
-            writer.openElement("rat-report");
+            writer.openElement("rat-report")
+                .attribute("timestamp",
+                           DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT
+                           .format(Calendar.getInstance()));
         } catch (IOException e) {
             throw new RatException("Cannot open start element", e);
         }

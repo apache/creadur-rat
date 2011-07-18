@@ -24,6 +24,7 @@
 *****************************************************
 Summary
 -------
+Generated at: <xsl:value-of select='rat-report/@timestamp'/>
 Notes: <xsl:value-of select='count(descendant::type[attribute::name="notice"])'/>
 Binaries: <xsl:value-of select='count(descendant::type[attribute::name="binary"])'/>
 Archives: <xsl:value-of select='count(descendant::type[attribute::name="archive"])'/>

@@ -22,6 +22,8 @@ RAT 0.8
     * RAT-34 --addLicense will add the license to the top of Java
       files without a package line or XML files without an XML
       declaration now - it used to not add anything.
+    * RAT-67 The XML and standard plain text reports now contain a
+      timestamp with the time the report has been generated.
 
 RAT 0.7
 =======

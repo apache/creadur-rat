@@ -83,9 +83,11 @@ public class XmlReportTest extends TestCase {
         report.endReport();
         writer.closeDocument();
         final String output = out.toString();;
-        assertEquals(
-                "<?xml version='1.0'?>" +
-                "<rat-report>" +
+        assertTrue("Preamble and document element are OK",
+                   output.startsWith("<?xml version='1.0'?>" +
+                "<rat-report timestamp="));
+        assertTrue("Part after timestamp attribute is OK",
+                   output.endsWith(">" +
                     "<resource name='" + elementsPath + "/Image.png'><type name='binary'/></resource>" +
                     "<resource name='" + elementsPath + "/LICENSE'><type name='notice'/></resource>" +
                     "<resource name='" + elementsPath + "/NOTICE'><type name='notice'/></resource>" +
@@ -187,7 +189,7 @@ public class XmlReportTest extends TestCase {
                 "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
                     "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
                     "<resource name='" + elementsPath + "/sub/Empty.txt'><header-sample>\n</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
-                "</rat-report>", output);
+                    "</rat-report>"));
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
     }
 

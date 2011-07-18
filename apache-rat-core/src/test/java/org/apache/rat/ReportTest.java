@@ -28,12 +28,15 @@ import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.test.utils.Resources;
 
 public class ReportTest extends TestCase {
-	private static String getElementsReports(String pElementsPath) {
-		return
+    private static final String HEADER =
             "\n" + 
             "*****************************************************\n" + 
             "Summary\n" + 
             "-------\n" + 
+            "Generated at: ";
+
+	private static String getElementsReports(String pElementsPath) {
+		return
             "Notes: 2\n" + 
             "Binaries: 1\n" + 
             "Archives: 1\n" + 
@@ -115,10 +118,13 @@ public class ReportTest extends TestCase {
         Report.report(out, new DirectoryWalker(new File(elementsPath)),
                 Defaults.getPlainStyleSheet(), configuration);
         String result = out.getBuffer().toString();
+        final String nl = System.getProperty("line.separator");
+        assertTrue("'Generated at' is present in " + result,
+                   result.startsWith(HEADER.replaceAll("\n", nl)));
+        final int generatedAtLineEnd = result.indexOf(nl, HEADER.length());
         final String elementsReports = getElementsReports(elementsPath);
         assertEquals("Report created",
-                     elementsReports.replaceAll("\n",
-                                                 System.getProperty("line.separator")),
-                     result);
+                     elementsReports.replaceAll("\n", nl),
+                     result.substring(generatedAtLineEnd + nl.length()));
     }
 }
