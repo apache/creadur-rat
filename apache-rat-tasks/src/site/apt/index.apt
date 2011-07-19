@@ -40,49 +40,49 @@ Installation
     * The traditional way:
 
 -------
-          <taskdef 
-            resource="org/apache/rat/anttasks/antlib.xml">
-            <classpath>
-              <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
-              <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
-              ... other dependencies ...
-            </classpath>
-          </taskdef>
+<taskdef 
+    resource="org/apache/rat/anttasks/antlib.xml">
+    <classpath>
+        <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
+        <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
+        ... other dependencies ...
+    </classpath>
+</taskdef>
 -------
 
-        With this you can use the tasks like plain Ant tasks, they'll
-        live in the default namespace.  I.e. if you can run <<<exec>>>
-        without any namespace prefix, you can do so for <<<report>>>
-        as well.
+      With this you can use the repprt tasks like plain Ant tasks,
+      they'll live in the default namespace.  I.e. if you can run
+      <<<exec>>> without any namespace prefix, you can do so for
+      <<<report>>> as well.
 
     * Similar, but assigning a namespace URI
 
 -------
-          <taskdef 
-            uri="antlib:org.apache.rat.anttasks"
-            resource="org/apache/rat/anttasks/antlib.xml">
-            <classpath>
-              <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
-              <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
-              ... other dependencies ...
-            </classpath>
-          </taskdef>
+<taskdef 
+    uri="antlib:org.apache.rat.anttasks"
+    resource="org/apache/rat/anttasks/antlib.xml">
+    <classpath>
+        <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
+        <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
+        ... other dependencies ...
+    </classpath>
+</taskdef>
 -------
 
-        This puts your task into a separate namespace than Ant's
-        namespace.  You would use the tasks like
+      This puts your task into a separate namespace than Ant's
+      namespace.  You would use the tasks like
 
 -------
-          <project
-            xmlns:rat="antlib:org.apache.rat.anttasks"
-            xmlns="antlib:org.apache.tools.ant">
-            ...
-            <rat:report>
-              <fileset dir="src"/>
-            </rat:report>
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <fileset dir="src"/>
+    </rat:report>
 -------
 
-        or a variation thereof.
+      or a variation thereof.
 
     * Using Ant's autodiscovery.  Place <<<apache-rat-tasks.jar>>> and
       all dependencies into a directory and use <<<ant -lib
@@ -91,10 +91,10 @@ Installation
       <<<project>>> tag:
 
 -------
-          <project
-            xmlns:rat="antlib:org.apache.rat.anttasks"
-            xmlns="antlib:org.apache.tools.ant">
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
 -------
 
-        And all tasks of this library will automatically be available
-        in the <<<rat>>> namespace without any <<<taskdef>>>.
+      And all tasks of this library will automatically be available in
+      the <<<rat>>> namespace without any <<<taskdef>>>.

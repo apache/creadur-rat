@@ -23,10 +23,11 @@ Custom Types
  implementation as an Ant type.  This example will show how to use a
  custom license matcher.
 
- To be suitable as an Ant type your class must provide a no-arg
- constructor.  If you want to support configuration of your instance
- via XML attributes or nested elements your type must provide methods
- that follow Ant's method naming conventions.  For details see the
+ To be suitable as an Ant type your class must provide a public no-arg
+ constructor (or no constructor at all).  If you want to support
+ configuration of your instance via XML attributes or nested elements
+ your type must provide methods that follow Ant's method naming
+ conventions.  For details see the
  {{{http://ant.apache.org/manual/develop.html#writingowntask} Writing
  Your Own Task}} section in Ant's manual.
 
@@ -59,8 +60,9 @@ import org.apache.rat.api.MetaData.Datum;
 public class YASLMatcher implements IHeaderMatcher {
     private final String MATCH = "Yet Another Software License, ";
     private final String FAMILY = "YASL";
-    private String matchWithVersion = MATCH + "1.0";
-    private String familyWithVersion = FAMILY + "1.0";
+    private final String ONE = "1.0";
+    private String matchWithVersion = MATCH + ONE;
+    private String familyWithVersion = FAMILY + ONE;
 
     /** becomes the version attribute */
     public void setVersion(String v) {
@@ -104,38 +106,39 @@ public class YASLMatcher implements IHeaderMatcher {
 
  Since you will be using classes from RAT's core in both the Report
  task and your implementation you must ensure they get loaded via the
- same classloader.  If you are using the -lib command line switch or
- the RAT core will be part of Ant's core classloader and you don't
- need to reference it in the typedef for <<<yasl>>> at all.
+ same classloader.  If you are using the <<<-lib>>> command line
+ switchRAT's core will be part of Ant's core classloader and you don't
+ need to reference it in the <<<typedef>>> for <<<yasl>>> at all.
 
  If you define the RAT Antlib via a <<<taskdef>>> task with a nested
- <<<classpath>>> the use the same <<<classpath>>> when defining your
- custom matcher as well and set loaderRef to the same name.  I.e.
+ <<<classpath>>> then you just use the same <<<classpath>>> when
+ defining your custom matcher as well and set <<<loaderRef>>> to the
+ same name.  I.e.
 
 -------
 <path id="rat-classpath">
-  <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
-  <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
-  ... other dependencies ...
-  <pathelement location="YOUR-PATH-TO/yasl-matcher.jar"/>
+    <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
+    <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
+    ... other dependencies ...
+    <pathelement location="YOUR-PATH-TO/yasl-matcher.jar"/>
 </path>
 <taskdef
-  classpathref="rat-classpath"
-  loaderref="rat-classloader"
-  resource="org/apache/rat/anttasks/antlib.xml">
+    classpathref="rat-classpath"
+    loaderref="rat-classloader"
+    resource="org/apache/rat/anttasks/antlib.xml">
 </taskdef>
 <componentdef name="yasl"
-  classpathref="rat-classpath"
-  loaderref="rat-classloader"
-  classname="org.example.YASLMatcher"/>
+    classpathref="rat-classpath"
+    loaderref="rat-classloader"
+    classname="org.example.YASLMatcher"/>
 -------
 
  With a definition like this you can use your matcher as in
 
 ------
 <report>
-  <fileset dir="src"/>
-  <yasl/>
+    <fileset dir="src"/>
+    <yasl/>
 </report>
 -----
 
@@ -143,8 +146,8 @@ public class YASLMatcher implements IHeaderMatcher {
 
 ------
 <report>
-  <fileset dir="src"/>
-  <yasl version="2.0"/>
+    <fileset dir="src"/>
+    <yasl version="2.0"/>
 </report>
 -----
 

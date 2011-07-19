@@ -27,7 +27,7 @@ Examples
 
 ---
 <rat:report>
-  <fileset dir="src"/>
+    <fileset dir="src"/>
 </rat:report>
 ---
 
@@ -41,6 +41,15 @@ java -jar apache-rat-VERSION.jar src
 
   except that Ant's default excludes will be applied when looking for
   documents to check.
+
+* Run RAT on multiple directories
+
+---
+<rat:report>
+    <fileset dir="module1/src/main"/>
+    <fileset dir="module2/src/test"/>
+</rat:report>
+---
 
 * Adding licence headers
 
@@ -57,7 +66,7 @@ java -jar apache-rat-VERSION.jar --addLicence
 ---
 <rat:report addLicenseHeaders="true"
             coprightMessage="Copyright 2008 Foo">
-  <fileset dir="/path/to/project"/>
+    <fileset dir="/path/to/project"/>
 </rat:report>
 ---
 
@@ -65,10 +74,10 @@ java -jar apache-rat-VERSION.jar --addLicence
 
 ---
 <rat:report format="styled" reportFile="rat.html">
-  <fileset dir="src"/>
-  <stylesheet>
-    <file file="my/rat-xml-2-html.xslt"/>
-  </stylesheet>
+    <fileset dir="src"/>
+    <stylesheet>
+        <file file="my/rat-xml-2-html.xslt"/>
+    </stylesheet>
 </rat:report>
 ---
 
@@ -76,11 +85,11 @@ java -jar apache-rat-VERSION.jar --addLicence
 
 ---
 <rat:report>
-  <tarfileset>
-    <gzipresource>
-      <url url="http://example.org/some.tar.gz"/>
-    </gzipresource>
-  </tarfileset>
+    <tarfileset>
+        <gzipresource>
+            <url url="http://example.org/some.tar.gz"/>
+        </gzipresource>
+    </tarfileset>
 </rat:report>
 ---
 
@@ -89,8 +98,8 @@ java -jar apache-rat-VERSION.jar --addLicence
 
 --- 
 <rat:report addDefaultLicenseMatchers="false">
-  <fileset dir="src"/>
-  <asl20/>
+    <fileset dir="src"/>
+    <asl20/>
 </rat:report>
 ---
 
@@ -99,9 +108,9 @@ java -jar apache-rat-VERSION.jar --addLicence
 --- 
 <tstamp/>
 <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
-  <restrict>
-    <fileset dir="src"/>
-    <date when="after" datetime="${DSTAMP}" pattern="yyyyMMdd"/>
-  </restrict>
+    <restrict>
+        <fileset dir="src"/>
+        <date when="after" datetime="${DSTAMP}" pattern="yyyyMMdd"/>
+    </restrict>
 </rat:report>
 ---
