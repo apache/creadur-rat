@@ -38,6 +38,8 @@ Built-In Types
 *-------*---------+-------------+
 | asl20 | Apache License 2.0 | <<<org.apache.rat.analysis.license.ApacheSoftwareLicense20>>>
 *-------*---------+-------------+
+| dojo | {{{http://dojotoolkit.org/community/licensing.shtml}License of the Dojo Toolkit}} | <<<org.apache.rat.analysis.license.DojoLicenseHeader>>>
+*-------*---------+-------------+
 | generated | Generated documents that don't need a license | <<<org.apache.rat.analysis.generation.GeneratedLicenseNotRequired>>>
 *-------*---------+-------------+
 | javadoc | Javadocs that don't need a license | <<<org.apache.rat.analysis.generation.JavaDocLicenseNotRequired>>>
@@ -59,7 +61,12 @@ Built-In Types
 *-------*---------+-------------+
 | Typename | License Family | Corresponding class |
 *-------*---------+-------------+
+*-------*---------+-------------+
+| academic-free-21 | Academic Free License 2.1 | <<<org.apache.rat.license.AcademicFree21LicenseFamily>>>
+*-------*---------+-------------+
 | apache20-license | Apache License 2.0 | <<<org.apache.rat.license.Apache20LicenseFamily>>>
+*-------*---------+-------------+
+| modified-bsd | Modified BSD License | <<<org.apache.rat.license.ModifiedBSDLicenseFamily>>>
 *-------*---------+-------------+
 | oasis-license | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.license.OASISLicenseFamily>>>
 *-------*---------+-------------+
