@@ -12,13 +12,89 @@
 ~~ limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-                   --------------------------
-                   Apache RAT Ant Tasks Module
-                   --------------------------
+                        -----
+                        Introduction
+                        -----
 
-Release Audit Tool (RAT)
+Apache RAT Ant Task Library
 
- Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
- releases. It is heuristic in nature: making guesses about possible problems. It
- will produce false positives and cannot find every possible issue with a release.
- It's reports require interpretation.
+ The Ant Task Library provides a single Ant task and a few supporting
+ Ant types to run RAT, the {{{../index.html}Release Audit Tool}} from
+ inside {{{http://ant.apache.org/}Apache Ant}}.
+
+ Using Ant's resource abstraction the task can be used to check files
+ on disk as well as tarballs or even URLs directly.
+
+Requirements
+
+ The RAT Ant Task Library requires Apache Ant 1.7.1 or higher (it
+ works well with 1.8.x), Apache RAT core and transitively all
+ dependencies of Apache RAT core.
+
+ In order to use the tasks Java 1.4 is required.
+
+Installation
+
+    There are several ways to use the Antlib:
+
+    * The traditional way:
+
+-------
+          <taskdef 
+            resource="org/apache/rat/anttasks/antlib.xml">
+            <classpath>
+              <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
+              <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
+              ... other dependencies ...
+            </classpath>
+          </taskdef>
+-------
+
+        With this you can use the tasks like plain Ant tasks, they'll
+        live in the default namespace.  I.e. if you can run <<<exec>>>
+        without any namespace prefix, you can do so for <<<report>>>
+        as well.
+
+    * Similar, but assigning a namespace URI
+
+-------
+          <taskdef 
+            uri="antlib:org.apache.rat.anttasks"
+            resource="org/apache/rat/anttasks/antlib.xml">
+            <classpath>
+              <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
+              <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
+              ... other dependencies ...
+            </classpath>
+          </taskdef>
+-------
+
+        This puts your task into a separate namespace than Ant's
+        namespace.  You would use the tasks like
+
+-------
+          <project
+            xmlns:rat="antlib:org.apache.rat.anttasks"
+            xmlns="antlib:org.apache.tools.ant">
+            ...
+            <rat:report>
+              <fileset dir="src"/>
+            </rat:report>
+-------
+
+        or a variation thereof.
+
+    * Using Ant's autodiscovery.  Place <<<apache-rat-tasks.jar>>> and
+      all dependencies into a directory and use <<<ant -lib
+      DIR-CONTAINING-THE-JAR>>> or copy it into <<<ANT_HOME/lib>>> -
+      and then in your build file, simply declare the namespace on the
+      <<<project>>> tag:
+
+-------
+          <project
+            xmlns:rat="antlib:org.apache.rat.anttasks"
+            xmlns="antlib:org.apache.tools.ant">
+-------
+
+        And all tasks of this library will automatically be available
+        in the <<<rat>>> namespace without any <<<taskdef>>>.

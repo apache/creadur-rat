@@ -14,9 +14,12 @@
  limitations under the License.
 
 -->
-<project name="Apache RAT (Incubating) Tasks">
+<project name="Apache RAT (Incubating) Ant Task Library">
   <body>    
     <menu ref="parent"/>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+    </menu>
     <menu ref="reports"/>
   </body>
 </project>
