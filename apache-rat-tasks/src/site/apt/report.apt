@@ -52,6 +52,8 @@ Attributes of the Task
 | | Choices are <<<true>>>, <<<false>>> and <<<forced>>> where <<<forced>>> would add a license even if RAT already found one.
 | | Defaults to <<<false>>>|
 *-------------------------*-------------------------------+
+| copyrightMessage | If RAT is adding license headers: Sets the optional copyright message. This value is ignored, if no license headers are added.
+*-------------------------*-------------------------------+
 
 Nested Elements
 
