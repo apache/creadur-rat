@@ -27,7 +27,7 @@ Report Task
   restrict things even further.
 
   Reports can use RAT's internal XML or plain text format or be styled
-  by a custon XSLT stylesheet.
+  by a custom XSLT stylesheet.
 
   It is possible to define custom matchers for licenses not directly supported
   by RAT via nested elements to the Report task.
@@ -97,7 +97,8 @@ Nested Elements
 
   The Ant library already contains
   {{{types.html#License Matchers}types for the built-in license
-  matchers}} but you can define your own classes for custom matchers.
+  matchers}} but you can define your own classes for
+  {{{examples/custom.html}custom matchers}}.
 
   There are two scenarios where you'd use a nested element to define
   license matchers to RAT.  The more common one would be if you wanted
@@ -125,4 +126,5 @@ Nested Elements
 
   The Ant library already contains
   {{{types.html#License Matchers}types for the built-in license
-  families}} but you can define your own classes for custom families.
+  families}} but you can define your own classes for
+  {{{examples/custom.html}custom families}}.

@@ -24,6 +24,7 @@
     </menu>
     <menu name="Examples">
       <item name="Basic Usage" href="examples/basic.html"/>
+      <item name="Custom Types" href="examples/custom.html"/>
     </menu>
     <menu ref="reports"/>
   </body>
