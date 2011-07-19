@@ -29,7 +29,7 @@ Report Task
   Reports can be RAT's internal XML or plain text format or be styled
   by a custon XSLT stylesheet.
 
-  It is possible to define custom matchers for licenses not supported
+  It is possible to define custom matchers for licenses not directly supported
   by RAT via nested elements to the Report task.
 
 Attributes of the Task
@@ -92,9 +92,29 @@ Nested Elements
 
   Any defined Ant type that implements the <<<IHeaderMatcher>>>
   interface can be used as nested element to provide a matcher to RAT.
+  License matchers are the pieces that make RAT identify the license
+  of a document.
 
   The Ant library already contains types for the built-in license
   matchers but you can define your own classes for custom matchers.
+
+  There are two scenarios where you'd use a nested element to define
+  license matchers to RAT.  The more common one would be if you wanted
+  RAT to detect and identify a license that isn't supported out of the
+  box - in this case you will want to write a custom matcher.
+
+  The second case would be if you want to only detect a subset of
+  licenses known to RAT for some reason.  For example if the only
+  license you want to detect was the Apache License 2.0 you'd first
+  disable the built-in matchers by setting
+  <<<addDefaultLicenseMatchers>>> to false and then explicitly add the
+  built-in <<<asl20>>> matcher
+
+--- 
+<rat:report addDefaultLicenseMatchers="false">
+  <asl20/>
+</rat:report>
+---
 
 * License Families
 
