@@ -95,8 +95,9 @@ Nested Elements
   License matchers are the pieces that make RAT identify the license
   of a document.
 
-  The Ant library already contains types for the built-in license
-  matchers but you can define your own classes for custom matchers.
+  The Ant library already contains
+  {{{types.html#License Matchers}types for the built-in license
+  matchers}} but you can define your own classes for custom matchers.
 
   There are two scenarios where you'd use a nested element to define
   license matchers to RAT.  The more common one would be if you wanted
@@ -122,5 +123,6 @@ Nested Elements
   interface can be used as nested element to provide a license family
   to RAT.
 
-  The Ant library already contains types for the built-in license
-  families but you can define your own classes for custom families.
+  The Ant library already contains
+  {{{types.html#License Matchers}types for the built-in license
+  families}} but you can define your own classes for custom families.

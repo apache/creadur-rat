@@ -1,0 +1,73 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~ 
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~ 
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                -----
+                Built-In Types
+                -----
+
+Built-In Types
+
+ The RAT Antlib defines a few Ant types that can be used as nested
+ elements to the {{{report.html} Report Task}} as license matchers or
+ license families.
+
+ In order to stay compatible with Ant 1.7.1 these types are defined
+ via {{{http://ant.apache.org/manual/Tasks/typedef.html}
+ <<<typedef>>>}} rather than
+ {{{http://ant.apache.org/manual/Tasks/componentdef.html}
+ <<<componentdef>>>}} which means they can be defined outside of the
+ Report task as well - but they will be completely useless there.
+
+{License Matchers}
+
+ The following types correspond to the built-in license matchers of RAT:
+
+*-------*---------+-------------+
+| Typename | Detected License | Corresponding class |
+*-------*---------+-------------+
+| asl20 | Apache License 2.0 | <<<org.apache.rat.analysis.license.ApacheSoftwareLicense20>>>
+*-------*---------+-------------+
+| generated | Generated documents that don't need a license | <<<org.apache.rat.analysis.generation.GeneratedLicenseNotRequired>>>
+*-------*---------+-------------+
+| javadoc | Javadocs that don't need a license | <<<org.apache.rat.analysis.generation.JavaDocLicenseNotRequired>>>
+*-------*---------+-------------+
+| oasis | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.analysis.license.OASISLicense>>>
+*-------*---------+-------------+
+| w3c | {{{http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231}W3C Software License}} | <<<org.apache.rat.analysis.license.W3CLicense>>>
+*-------*---------+-------------+
+| w3c-doc | {{{http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231}W3C Document License}} | <<<org.apache.rat.analysis.license.W3CDocLicense>>>
+*-------*---------+-------------+
+
+ While these types may technically provide attributes or nested
+ elements you should use them as sole tags.
+
+{License Families}
+
+ The following types correspond to the built-in license families of RAT:
+
+*-------*---------+-------------+
+| Typename | License Family | Corresponding class |
+*-------*---------+-------------+
+| apache20-license | Apache License 2.0 | <<<org.apache.rat.license.Apache20LicenseFamily>>>
+*-------*---------+-------------+
+| oasis-license | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.license.OASISLicenseFamily>>>
+*-------*---------+-------------+
+| w3c-doc-license | {{{http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231}W3C Document License}} | <<<org.apache.rat.license.W3CDocumentLicenseFamily>>>
+*-------*---------+-------------+
+| w3c-soft-license | {{{http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231}W3C Software License}} | <<<org.apache.rat.license.W3CSoftwareLicenseFamily>>>
+*-------*---------+-------------+
+
+ While these types may technically provide attributes or nested
+ elements you should use them as sole tags.
+

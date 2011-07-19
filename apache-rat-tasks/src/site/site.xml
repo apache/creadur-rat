@@ -20,6 +20,7 @@
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Report Task" href="report.html"/>
+      <item name="Types" href="types.html"/>
     </menu>
     <menu ref="reports"/>
   </body>
