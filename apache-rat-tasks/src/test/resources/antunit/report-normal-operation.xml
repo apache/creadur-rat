@@ -140,6 +140,44 @@
     <assertReportContains text=" EXMPL ${file.name}"/>
   </target>
 
+  <target name="testSubstringMatcherSentToFile"
+          depends="fileReportTest">
+    <rat:report reportFile="${report.file}"
+                addDefaultLicenseMatchers="false">
+      <file file="${ant.file}"/>
+      <rat:substringMatcher
+          licenseFamilyCategory="YASL1"
+          licenseFamilyName="Yet Another Software License (YASL) 1.0"
+          notes="Interesting License">
+        <pattern substring="exmpl"/>
+      </rat:substringMatcher>
+    </rat:report>
+    <au:assertLogDoesntContain text="${expectedOutput}"/>
+    <au:assertLogDoesntContain text=" YASL1 ${file.name}"/>
+    <assertReportContains text=" YASL1 ${file.name}"/>
+  </target>
+
+  <target name="testSubstringMatcherSentToFileNoMatch"
+          depends="fileReportTest">
+    <rat:report reportFile="${report.file}"
+                addDefaultLicenseMatchers="false">
+      <file file="${ant.file}"/>
+      <rat:substringMatcher
+          licenseFamilyCategory="YASL1"
+          licenseFamilyName="Yet Another Software License (YASL) 1.0"
+          notes="Interesting License">
+        <!-- abusing XML attribute whitespace normalization to create
+             a substring that is not contained inside the build file
+             itself -->
+        <pattern substring="exmpl
+"/>
+      </rat:substringMatcher>
+    </rat:report>
+    <au:assertLogDoesntContain text="${expectedOutput}"/>
+    <au:assertLogDoesntContain text=" YASL1 ${file.name}"/>
+    <assertReportDoesntContain text=" YASL1 ${file.name}"/>
+  </target>
+
   <target name="fileReportTest" depends="setUp">
     <property name="report.file" location="${output.dir}/selftest.report"/>
     <au:assertFileDoesntExist file="${report.file}"/>
@@ -151,6 +189,16 @@
         <au:assertTrue message="expected report to contain '@{text}' but was '${report}'">
           <contains string="${report}" substring="@{text}"/>
         </au:assertTrue>
+      </sequential>
+    </macrodef>
+    <macrodef name="assertReportDoesntContain">
+      <attribute name="text"/>
+      <attribute name="file" default="${report.file}"/>
+      <sequential>
+        <loadfile srcFile="@{file}" property="report"/>
+        <au:assertFalse message="expected report to not contain '@{text}' but was '${report}'">
+          <contains string="${report}" substring="@{text}"/>
+        </au:assertFalse>
       </sequential>
     </macrodef>
   </target>

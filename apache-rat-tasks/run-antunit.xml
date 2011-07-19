@@ -51,4 +51,11 @@
       <property name="test.classpath" value="${test.classpath}"/>
     </ant>
   </target>
+
+  <target name="run-single-test">
+    <ant antfile="src/test/resources/antunit/${file}" target="${target}">
+      <property name="jar.name" value="${jar.name}"/>
+      <property name="test.classpath" value="${test.classpath}"/>
+    </ant>
+  </target>
 </project>

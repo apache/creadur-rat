@@ -23,6 +23,9 @@
 <antlib>
   <taskdef name="report" classname="org.apache.rat.anttasks.Report"/>
 
+  <typedef name="substringMatcher"
+           classname="org.apache.rat.anttasks.SubstringLicenseMatcher"/>
+
   <!-- typedef the built-in license matchers -->
   <typedef name="asl20"
     classname="org.apache.rat.analysis.license.ApacheSoftwareLicense20"/>
