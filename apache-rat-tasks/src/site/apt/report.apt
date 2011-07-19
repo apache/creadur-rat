@@ -118,13 +118,14 @@ Nested Elements
 </rat:report>
 ---
 
-* License Families
+* Approved License Families
 
   Any defined Ant type that implements the <<<ILicenseFamily>>>
   interface can be used as nested element to provide a license family
-  to RAT.
+  as an approved license to RAT.
 
   The Ant library already contains
   {{{types.html#License Matchers}types for the built-in license
   families}} but you can define your own classes for
   {{{examples/custom.html}custom families}}.
+
