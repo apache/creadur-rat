@@ -244,16 +244,15 @@ public class Report extends Task {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(new HeaderMatcherMultiplexer(getLicenseMatchers()));
         configuration.setApprovedLicenseNames(getApprovedLicenseNames());
-        if (AddLicenseHeaders.FALSE.equalsIgnoreCase(addLicenseHeaders.getValue())) {
-            // Nothing to do
-        } else if (AddLicenseHeaders.FORCED.equalsIgnoreCase(addLicenseHeaders.getValue())) {
+        
+        if (AddLicenseHeaders.FORCED.equalsIgnoreCase(addLicenseHeaders.getValue())) {
             configuration.setAddingLicenses(true);
             configuration.setAddingLicensesForced(true);
             configuration.setCopyrightMessage(copyrightMessage);
         } else if (AddLicenseHeaders.TRUE.equalsIgnoreCase(addLicenseHeaders.getValue())) {
             configuration.setAddingLicenses(true);
             configuration.setCopyrightMessage(copyrightMessage);
-        } else {
+        } else if (!AddLicenseHeaders.FALSE.equalsIgnoreCase(addLicenseHeaders.getValue())) {
             throw new BuildException("Invalid value for addLicenseHeaders: " + addLicenseHeaders.getValue());
         }
         ResourceCollectionContainer rcElement = new ResourceCollectionContainer(nestedResources);

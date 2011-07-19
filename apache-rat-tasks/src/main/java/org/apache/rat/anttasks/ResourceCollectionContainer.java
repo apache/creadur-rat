@@ -50,9 +50,7 @@ class ResourceCollectionContainer implements IReportable {
         ResourceDocument document = new ResourceDocument();
         for (Iterator iter = rc.iterator(); iter.hasNext(); ) {
             Resource r = (Resource) iter.next();
-            if (r.isDirectory()) {
-                // do nothing
-            } else {
+            if (!r.isDirectory()) {
                 document.setResource(r);
                 document.getMetaData().clear();
                 report.report(document);
