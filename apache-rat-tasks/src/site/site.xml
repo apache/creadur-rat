@@ -19,6 +19,7 @@
     <menu ref="parent"/>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
+      <item name="Report Task" href="report.html"/>
     </menu>
     <menu ref="reports"/>
   </body>

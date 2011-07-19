@@ -146,7 +146,7 @@ public class Report extends Task {
     }
 
     /**
-     * Wether to add license headers.
+     * Whether to add license headers.
      */
     public void setAddLicenseHeaders(AddLicenseHeaders pAdd) {
         if (pAdd == null) {
