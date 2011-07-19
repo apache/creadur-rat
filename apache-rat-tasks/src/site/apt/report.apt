@@ -23,7 +23,7 @@ Report Task
 
   The task can work on any Ant
   {{{http://ant.apache.org/manual/Types/resources.html}resource or
-  resource collection}} and the usual Ant selector can be applied to
+  resource collection}} and the usual Ant selectors can be applied to
   restrict things even further.
 
   Reports can be RAT's internal XML or plain text format or be styled
