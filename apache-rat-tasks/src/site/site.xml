@@ -22,6 +22,9 @@
       <item name="Report Task" href="report.html"/>
       <item name="Types" href="types.html"/>
     </menu>
+    <menu name="Examples">
+      <item name="Basic Usage" href="examples/basic.html"/>
+    </menu>
     <menu ref="reports"/>
   </body>
 </project>

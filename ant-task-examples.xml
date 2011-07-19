@@ -102,6 +102,17 @@
     </rat:report>
   </target>
 
+  <target name="restrict" depends="-taskdef"
+          description="Run RAT on all files in this source tree that have been modified today">
+    <tstamp/>
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+      <restrict>
+        <fileset dir="."/>
+        <date when="after" datetime="${DSTAMP}" pattern="yyyyMMdd"/>
+      </restrict>
+    </rat:report>
+  </target>
+
   <target name="-taskdef">
     <typedef resource="org/apache/rat/anttasks/antlib.xml"
              uri="antlib:org.apache.rat.anttasks">

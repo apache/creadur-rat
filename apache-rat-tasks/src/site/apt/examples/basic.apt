@@ -1,0 +1,107 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~ 
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~ 
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                        ----
+                        Basic Usage Examples
+                        ----
+
+Examples
+
+  These examples assume you have installed the RAT Antlib in a way
+  that provides the Report task in the XML namespace associated with
+  the prefix <<<rat>>>.
+
+* Run RAT in default configuration on all files in directory
+  <<<src>>>.
+
+---
+<rat:report>
+  <fileset dir="src"/>
+</rat:report>
+---
+
+  The report will be written to Ant's logging system.
+
+  This corresponds to the command line
+
+---
+java -jar apache-rat-VERSION.jar src
+---
+
+  except that Ant's default excludes will be applied when looking for
+  documents to check.
+
+* Adding licence headers
+
+  The equivalent of
+
++------------------------------------------+
+java -jar apache-rat-VERSION.jar --addLicence
+  --copyright "Copyright 2008 Foo" 
+  /path/to/project
++------------------------------------------+
+
+  is
+
+---
+<rat:report addLicenseHeaders="true"
+            coprightMessage="Copyright 2008 Foo">
+  <fileset dir="/path/to/project"/>
+</rat:report>
+---
+
+* Create a styled HTML report
+
+---
+<rat:report format="styled" reportFile="rat.html">
+  <fileset dir="src"/>
+  <stylesheet>
+    <file file="my/rat-xml-2-html.xslt"/>
+  </stylesheet>
+</rat:report>
+---
+
+* Run RAT on a tarball located on a webserver
+
+---
+<rat:report>
+  <tarfileset>
+    <gzipresource>
+      <url url="http://example.org/some.tar.gz"/>
+    </gzipresource>
+  </tarfileset>
+</rat:report>
+---
+
+* Run RAT but make the Apache License Version 2.0 the only one
+  accepted
+
+--- 
+<rat:report addDefaultLicenseMatchers="false">
+  <fileset dir="src"/>
+  <asl20/>
+</rat:report>
+---
+
+* Run RAT on all files in <<<src>>> that have been modified today
+
+--- 
+<tstamp/>
+<rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+  <restrict>
+    <fileset dir="src"/>
+    <date when="after" datetime="${DSTAMP}" pattern="yyyyMMdd"/>
+  </restrict>
+</rat:report>
+---
