@@ -124,8 +124,10 @@ Nested Elements
   interface can be used as nested element to provide a license family
   as an approved license to RAT.
 
-  The Ant library already contains
-  {{{types.html#License Matchers}types for the built-in license
-  families}} but you can define your own classes for
-  {{{examples/custom.html}custom families}}.
+  The Ant library already contains {{{types.html#License
+  Matchers}types for the built-in license families}} but you can
+  define your own classes for {{{examples/custom.html}custom
+  families}}.  In most cases
+  {{{types.html#approvedLicense}<<<approvedLicense>>>}} should be
+  sufficient, though.
 

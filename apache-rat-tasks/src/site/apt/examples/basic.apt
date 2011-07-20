@@ -114,3 +114,18 @@ java -jar apache-rat-VERSION.jar --addLicence
     </restrict>
 </rat:report>
 ---
+
+* Make RAT only detect your custom license and mark this license
+  approved.
+
+---
+<rat:report addDefaultLicenseMatchers="false">
+    <fileset dir="src"/>
+    <rat:substringMatcher licenseFamilyCategory="YASL1"
+             licenseFamilyName="Yet Another Software License, Version 1.0">
+        <pattern substring="Yet Another Software License, 1.0"/>
+    </rat:substringMatcher>
+    <rat:approvedLicense
+             familyName="Yet Another Software License, Version 1.0"/>
+</rat:report>
+---
