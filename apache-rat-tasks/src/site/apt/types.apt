@@ -39,12 +39,14 @@ Built-In Types
 | asl20 | Apache License 2.0 | <<<org.apache.rat.analysis.license.ApacheSoftwareLicense20>>>
 *-------*---------+-------------+
 | dojo | {{{http://dojotoolkit.org/community/licensing.shtml}License of the Dojo Toolkit}} | <<<org.apache.rat.analysis.license.DojoLicenseHeader>>>
+| <since RAT Antlib 0.8> | |
 *-------*---------+-------------+
 | generated | Generated documents that don't need a license | <<<org.apache.rat.analysis.generation.GeneratedLicenseNotRequired>>>
 *-------*---------+-------------+
 | javadoc | Javadocs that don't need a license | <<<org.apache.rat.analysis.generation.JavaDocLicenseNotRequired>>>
 *-------*---------+-------------+
 | oasis | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.analysis.license.OASISLicense>>>
+| <since RAT Antlib 0.8> | |
 *-------*---------+-------------+
 | w3c | {{{http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231}W3C Software License}} | <<<org.apache.rat.analysis.license.W3CLicense>>>
 *-------*---------+-------------+
@@ -55,6 +57,8 @@ Built-In Types
  elements you should use them as sole tags.
 
 * {<<<substringMatcher>>>}
+
+ <since RAT Antlib 0.8>
 
  For the simple case where a license can be detected by searching for
  a given string - in fact this is what all built-in implementations do
@@ -120,12 +124,15 @@ Built-In Types
 *-------*---------+-------------+
 *-------*---------+-------------+
 | academic-free-21 | Academic Free License 2.1 | <<<org.apache.rat.license.AcademicFree21LicenseFamily>>>
+| <since RAT Antlib 0.8> | |
 *-------*---------+-------------+
 | apache20-license | Apache License 2.0 | <<<org.apache.rat.license.Apache20LicenseFamily>>>
 *-------*---------+-------------+
 | modified-bsd | Modified BSD License | <<<org.apache.rat.license.ModifiedBSDLicenseFamily>>>
+| <since RAT Antlib 0.8> | |
 *-------*---------+-------------+
 | oasis-license | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.license.OASISLicenseFamily>>>
+| <since RAT Antlib 0.8> | |
 *-------*---------+-------------+
 | w3c-doc-license | {{{http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231}W3C Document License}} | <<<org.apache.rat.license.W3CDocumentLicenseFamily>>>
 *-------*---------+-------------+
@@ -136,6 +143,8 @@ Built-In Types
  elements you should use them as sole tags.
 
 * {<<<approvedLicense>>>}
+
+ <since RAT Antlib 0.8>
 
  This wrapper type makes it easy to specify a license name for new
  approved licenses.  The type has a single attribute <<<familyName>>>

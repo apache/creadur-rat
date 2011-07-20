@@ -25,6 +25,9 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 
 
+/**
+ * @since RAT 0.8
+ */
 public class SimplePatternBasedLicense implements IHeaderMatcher {
     private String licenseFamilyCategory;
     private String licenseFamilyName;

@@ -1,6 +1,8 @@
 RAT 0.8
 =======
  * Some website fixes
+ * The Antlib and Maven plugins now provider simpler ways to detect
+   licenses not directly supported by RAT.
  * Issues Resolved (see http://issues.apache.org/jira):
   * Bug:
     * RAT-86 CLI doesn't allow adding of licenses unless a custom
