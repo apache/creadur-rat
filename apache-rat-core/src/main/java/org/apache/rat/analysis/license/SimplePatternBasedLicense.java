@@ -88,6 +88,7 @@ public class SimplePatternBasedLicense implements IHeaderMatcher {
         final String licFamilyCategory = getLicenseFamilyCategory();
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, licFamilyCategory));
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, licFamilyCategory));
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, getLicenseFamilyName()));
     }
 
     protected boolean matches(String pLine) {
