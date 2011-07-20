@@ -20,8 +20,8 @@ package org.apache.rat.license;
 
 import org.apache.rat.api.MetaData;
 
-public class ModifiedBSDLicenseFamily implements ILicenseFamily {
-    public String getFamilyName() {
-        return MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE;
+public class ModifiedBSDLicenseFamily extends SimpleLicenseFamily {
+    public ModifiedBSDLicenseFamily() {
+        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE);
     }
 }

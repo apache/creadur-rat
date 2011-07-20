@@ -20,8 +20,8 @@ package org.apache.rat.license;
 
 import org.apache.rat.api.MetaData;
 
-public class AcademicFree21LicenseFamily implements ILicenseFamily {
-    public String getFamilyName() {
-        return MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1;
+public class AcademicFree21LicenseFamily extends SimpleLicenseFamily {
+    public AcademicFree21LicenseFamily() {
+        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1);
     }
 }

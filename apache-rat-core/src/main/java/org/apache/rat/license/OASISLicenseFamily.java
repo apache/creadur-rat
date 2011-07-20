@@ -20,9 +20,8 @@ package org.apache.rat.license;
 
 import org.apache.rat.api.MetaData;
 
-public final class OASISLicenseFamily implements ILicenseFamily {
-    public String getFamilyName() {
-        return MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE;
+public final class OASISLicenseFamily extends SimpleLicenseFamily {
+    public OASISLicenseFamily() {
+        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE);
     }
-
 }
