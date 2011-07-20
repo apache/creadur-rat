@@ -54,6 +54,63 @@ Built-In Types
  While these types may technically provide attributes or nested
  elements you should use them as sole tags.
 
+* {<<<substringMatcher>>>}
+
+ For the simple case where a license can be detected by searching for
+ a given string - in fact this is what all built-in implementations do
+ - you can use the <<<substringMatcher>>> type.
+
+**  Attributes of the Type
+
+*-------------------------*-------------------------------+
+|Name                     |Description                    |
+*-------------------------*-------------------------------+
+| licenseFamilyCategory | Short name of the detected license.  Should be five characters long if you want to keep the layout of the plain text report.
+| | This will be printed next to to the checked file inside the plain text report and creates <<<header-type>>> and <<<license-family>>> elements inside the XML report.
+| | <<REQUIRED>>
+*-------------------------*-------------------------------+
+| licenseFamilyName | Long name of the detected license.  The value is checked against the list of approved licenses.
+| | This will not appear inside the plain text report and creates <<<license-family>>> elements inside the XML report.
+| | <<REQUIRED>>
+*-------------------------*-------------------------------+
+| notes | Additional notes you want to provide.
+| | This will not appear inside the plain text report and creates <<<header-sample>>> elements inside the XML report.
+*-------------------------*-------------------------------+
+
+**  Nested Elements Supported by the Type
+
+ The substring(s) to look for are specified as nested <<<pattern>>>
+ elements with a substring attribute.  You can specifiy multiple
+ <<<pattern>>> elements and the <<<substringMatcher>>> will claim the
+ license matches if at least one substring can be found.
+
+ At least one pattern is required.
+
+** Example
+
+ Taking the example of {{{examples/custom.html}the custom types page}}
+ in order to detect
+
+------------------------------------------------------------------
+  /**
+   * Yet Another Software License, 1.0
+   *
+   * Lots of text, specifying the users rights, and whatever ...
+   */
+------------------------------------------------------------------
+
+  you could use
+
+------------------------------------------------------------------
+<rat:report>
+    <fileset dir="src"/>
+    <rat:substringMatcher licenseFamilyCategory="YASL1"
+             licenseFamilyName="Yet Another Software License, Version 1.0">
+        <pattern substring="Yet Another Software License, 1.0"/>
+    </rat:substringMatcher>
+</rat:report>
+------------------------------------------------------------------
+
 {License Families}
 
  The following types correspond to the built-in license families of RAT:

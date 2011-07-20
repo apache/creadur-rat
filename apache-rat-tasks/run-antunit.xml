@@ -23,6 +23,8 @@
          default="antunit">
 
   <property name="jar.name" location="target/classes"/>
+  <property name="antunit.dir"
+            location="src/test/resources/antunit"/>
   <path id="test-classpath">
     <pathelement location="${jar.name}"/>
     <pathelement location="../apache-rat-core/target/classes"/>
@@ -37,7 +39,7 @@
 
   <target name="antunit">
     <subant>
-      <fileset dir="src/test/resources/antunit"
+      <fileset dir="${antunit.dir}"
                     includes="report-*.xml"/>
       <property name="jar.name" value="${jar.name}"/>
       <property name="test.classpath" value="${test.classpath}"/>
@@ -53,7 +55,9 @@
   </target>
 
   <target name="run-single-test">
-    <ant antfile="src/test/resources/antunit/${file}" target="${target}">
+    <ant antfile="${antunit.dir}/${file}"
+         dir="${antunit.dir}"
+         target="${target}">
       <property name="jar.name" value="${jar.name}"/>
       <property name="test.classpath" value="${test.classpath}"/>
     </ant>

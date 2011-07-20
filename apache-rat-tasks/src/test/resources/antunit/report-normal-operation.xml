@@ -140,7 +140,7 @@
     <assertReportContains text=" EXMPL ${file.name}"/>
   </target>
 
-  <target name="testSubstringMatcherSentToFile"
+  <target name="testSubstringMatcherNotApprovedSentToFile"
           depends="fileReportTest">
     <rat:report reportFile="${report.file}"
                 addDefaultLicenseMatchers="false">
@@ -152,9 +152,8 @@
         <pattern substring="exmpl"/>
       </rat:substringMatcher>
     </rat:report>
-    <au:assertLogDoesntContain text="${expectedOutput}"/>
-    <au:assertLogDoesntContain text=" YASL1 ${file.name}"/>
-    <assertReportContains text=" YASL1 ${file.name}"/>
+    <assertReportContains text="!YASL1 ${file.name}"/>
+    <assertReportDoesntContain text=" YASL1 ${file.name}"/>
   </target>
 
   <target name="testSubstringMatcherSentToFileNoMatch"
@@ -173,8 +172,7 @@
 "/>
       </rat:substringMatcher>
     </rat:report>
-    <au:assertLogDoesntContain text="${expectedOutput}"/>
-    <au:assertLogDoesntContain text=" YASL1 ${file.name}"/>
+    <assertReportDoesntContain text="!YASL1 ${file.name}"/>
     <assertReportDoesntContain text=" YASL1 ${file.name}"/>
   </target>
 

@@ -87,8 +87,10 @@ public class YASLMatcher implements IHeaderMatcher {
 }
 ------------------------------------------------------------------
 
- Actually it would be easier to use RAT's <<<SimplePatternBasedLicense>>>
- implementation, but this is just an example.
+ Actually it would be easier to use RAT's
+ <<<SimplePatternBasedLicense>>> implementation or the built-in
+ {{{../types.html#substringMatcher}<<<substringMatcher>>>}}, but this
+ is just an example.
 
  In order to use your matcher it has to be defined as an Ant type.
  You do so by either using
