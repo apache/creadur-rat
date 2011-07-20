@@ -99,7 +99,7 @@ java -jar apache-rat-VERSION.jar --addLicence
 --- 
 <rat:report addDefaultLicenseMatchers="false">
     <fileset dir="src"/>
-    <asl20/>
+    <rat:asl20/>
 </rat:report>
 ---
 

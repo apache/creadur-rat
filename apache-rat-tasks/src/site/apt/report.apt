@@ -114,7 +114,7 @@ Nested Elements
 
 --- 
 <rat:report addDefaultLicenseMatchers="false">
-    <asl20/>
+    <rat:asl20/>
 </rat:report>
 ---
 
