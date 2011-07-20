@@ -21,6 +21,7 @@ package org.apache.rat.anttasks;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.rat.analysis.license.SimplePatternBasedLicense;
+import org.apache.tools.ant.BuildException;
 
 /**
  * Adapts {@link SimplePatternBasedLicense SimplePatternBasedLicense}
@@ -29,6 +30,7 @@ import org.apache.rat.analysis.license.SimplePatternBasedLicense;
  */
 public class SubstringLicenseMatcher extends SimplePatternBasedLicense {
     private List/*<String>*/ patterns = new ArrayList();
+    private boolean validated = false;
 
     public void addConfiguredPattern(Pattern p) {
         patterns.add(p.getSubstring());
@@ -36,7 +38,26 @@ public class SubstringLicenseMatcher extends SimplePatternBasedLicense {
 
     // @Override
     public String[] getPatterns() {
+        validate();
         return (String[]) patterns.toArray(new String[0]);
+    }
+
+    private void validate() {
+        if (!validated) {
+            validated  = true;
+            if (patterns.size() == 0) {
+                throw new BuildException("You must specify at least one nested"
+                                         + " pattern.");
+            }
+            if (getLicenseFamilyCategory() == null) {
+                throw new BuildException("The licenseFamilyCategory attribute"
+                                         + " is required.");
+            }
+            if (getLicenseFamilyName() == null) {
+                throw new BuildException("The licenseFamilyName attribute"
+                                         + " is required.");
+            }
+        }
     }
 
     /**

@@ -76,4 +76,45 @@
     <au:assertLogContains text="Ignoring stylesheet"/>
   </target>
 
+  <target name="testSubstringMatcherRequiresFamilyName">
+    <au:expectfailure
+        expectedMessage="The licenseFamilyName attribute is required.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:substringMatcher
+            licenseFamilyCategory="YASL1"
+            notes="Interesting License">
+          <pattern substring="exmpl"/>
+        </rat:substringMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testSubstringMatcherRequiresFamilyCategory">
+    <au:expectfailure
+        expectedMessage="The licenseFamilyCategory attribute is required.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:substringMatcher
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License">
+          <pattern substring="exmpl"/>
+        </rat:substringMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testSubstringMatcherRequiresPattern">
+    <au:expectfailure
+        expectedMessage="You must specify at least one nested pattern.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:substringMatcher
+            licenseFamilyCategory="YASL1"
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License">
+        </rat:substringMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
 </project>
