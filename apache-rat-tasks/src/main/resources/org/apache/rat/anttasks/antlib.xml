@@ -55,5 +55,7 @@
     classname="org.apache.rat.license.AcademicFree21LicenseFamily"/> 
   <typedef name="modified-bsd"
     classname="org.apache.rat.license.ModifiedBSDLicenseFamily"/> 
+  <typedef name="approvedLicense"
+           classname="org.apache.rat.license.SimpleLicenseFamily"/> 
     
 </antlib>

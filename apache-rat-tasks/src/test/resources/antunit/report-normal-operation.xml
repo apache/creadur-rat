@@ -156,6 +156,24 @@
     <assertReportDoesntContain text=" YASL1 ${file.name}"/>
   </target>
 
+  <target name="testSubstringMatcherApprovedSentToFile"
+          depends="fileReportTest">
+    <rat:report reportFile="${report.file}"
+                addDefaultLicenseMatchers="false">
+      <file file="${ant.file}"/>
+      <rat:substringMatcher
+          licenseFamilyCategory="YASL1"
+          licenseFamilyName="Yet Another Software License (YASL) 1.0"
+          notes="Interesting License">
+        <pattern substring="exmpl"/>
+      </rat:substringMatcher>
+      <rat:approvedLicense
+          familyName="Yet Another Software License (YASL) 1.0"/>
+    </rat:report>
+    <assertReportContains text=" YASL1 ${file.name}"/>
+    <assertReportDoesntContain text="!YASL1 ${file.name}"/>
+  </target>
+
   <target name="testSubstringMatcherSentToFileNoMatch"
           depends="fileReportTest">
     <rat:report reportFile="${report.file}"

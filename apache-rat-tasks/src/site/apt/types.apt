@@ -135,3 +135,26 @@ Built-In Types
  While these types may technically provide attributes or nested
  elements you should use them as sole tags.
 
+* {<<<approvedLicense>>>}
+
+ This wrapper type makes it easy to specify a license name for new
+ approved licenses.  The type has a single attribute <<<familyName>>>
+ that must match the license family name returned by the license
+ matcher to make a license approved.
+
+** Example
+
+ To make the YASL license of the {{substringMatcher}} Example approved
+ you'd use
+
+------------------------------------------------------------------
+<rat:report>
+    <fileset dir="src"/>
+    <rat:substringMatcher licenseFamilyCategory="YASL1"
+             licenseFamilyName="Yet Another Software License, Version 1.0">
+        <pattern substring="Yet Another Software License, 1.0"/>
+    </rat:substringMatcher>
+    <rat:approvedLicense
+             familyName="Yet Another Software License, Version 1.0"/>
+</rat:report>
+------------------------------------------------------------------
