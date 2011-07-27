@@ -40,6 +40,11 @@
               </patterns>
             </license>
           </licenses>
+          <licenseFamilies>
+            <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
+              <familyName>Yet Another Software License</familyName>
+            </licenseFamily>
+          </licenseFamilies>
           <includes>
             <include>src.apt</include>
           </includes>
