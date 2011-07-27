@@ -80,3 +80,54 @@ Custom License Matchers
 | patterns              | Specifies a set of patterns being searched. The source file is assumed to contain the
 |                       | license header, if at least one of these patterns is found.
 *-----------------------+-----------+
+
+Approved License Families
+
+  Detecting the license is not enough in many cases as the "new"
+  license may not be considered approved by RAT.  In order to make a
+  license approved you provide a custom implementation of
+  <<<org.apache.rat.license.ILicenseFamily>>>.  Usually all you need
+  to provide the name of the license, in which case the built-in
+  <<<SimpleLicenseFamily>>> will do.
+
+  To continue the example, in order to make the YASL1 license approved
+  you'd use
+
+------------------------------------------------------------------
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>${currentVersion}</version>
+        <configuration>
+          <licenses>
+            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
+              <licenseFamilyCategory>YASL1</licenseFamilyCategory>
+              <licenseFamilyName>Yet Another Software License (YASL) 1.0</licenseFamilyName>
+              <notes></notes>
+              <patterns>
+                <pattern>Yet Another Software License, 1.0</pattern>
+              </patterns>
+            </license>
+          </licenses>
+          <licenseFamilies>
+            <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
+              <familyName>Yet Another Software License</familyName>
+            </licenseFamily>
+          </licenseFamilies>
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+------------------------------------------------------------------
+
+  The following terms are used in the example:
+
+*-----------------------+-----------+
+| familyName            | The name of the license family name that is approved.
+|                       | This should match <<<licenseFamilyName>>> of your <<<licenseMatcher>>>
+*-----------------------+-----------+
+
