@@ -70,7 +70,7 @@ Built-In Types
 |Name                     |Description                    |
 *-------------------------*-------------------------------+
 | licenseFamilyCategory | Short name of the detected license.  Should be five characters long if you want to keep the layout of the plain text report.
-| | This will be printed next to to the checked file inside the plain text report and creates <<<header-type>>> and <<<license-family>>> elements inside the XML report.
+| | This will be printed next to to the checked file inside the plain text report and creates <<<header-type>>> elements inside the XML report.
 | | <<REQUIRED>>
 *-------------------------*-------------------------------+
 | licenseFamilyName | Long name of the detected license.  The value is checked against the list of approved licenses.
