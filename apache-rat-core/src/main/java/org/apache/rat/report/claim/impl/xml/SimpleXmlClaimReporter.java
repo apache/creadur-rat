@@ -84,7 +84,6 @@ public class SimpleXmlClaimReporter extends AbstractReport {
     private void writeDocumentClaims(final Document subject) throws IOException, RatException {
         final MetaData metaData = subject.getMetaData();
         writeHeaderSample(metaData);
-        writeLicenseFamilyCategory(metaData);
         writeHeaderCategory(metaData);
         writeLicenseFamilyName(metaData);
         writeApprovedLicense(metaData);
@@ -109,13 +108,6 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         final String headerCategory = metaData.value(MetaData.RAT_URL_HEADER_CATEGORY);
         if (headerCategory != null) {
             writeClaim(HEADER_TYPE_PREDICATE, headerCategory, false);
-        }
-    }
-
-    private void writeLicenseFamilyCategory(final MetaData metaData) throws IOException, RatException {
-        final String licenseFamilyCategory = metaData.value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
-        if (licenseFamilyCategory != null) {
-            writeClaim(LICENSE_FAMILY_PREDICATE, licenseFamilyCategory, false);
         }
     }
 
