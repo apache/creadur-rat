@@ -10,6 +10,8 @@ RAT 0.8
     * RAT-87 Tests could leave temporary files around.
     * RAT-92 When adding licenses RAT used \n instead of the platform
       dependent line--end character(s)
+    * RAT-94 Streams were not always closed immediately when adding
+      licenses.
   * Improvement:
     * RAT-79 Support automatic addition of license headers to Velocity
       templates

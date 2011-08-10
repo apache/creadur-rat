@@ -171,7 +171,8 @@ public abstract class AbstractLicenceAppender {
 
         File newDocument = new File(document.getAbsolutePath() + ".new");
         FileWriter writer = new FileWriter(newDocument);
-        if (!attachLicense(new FileWriter(newDocument), document,
+        try {
+        if (!attachLicense(writer, document,
                            expectsHashPling, expectsAtEcho, expectsPackage,
                            expectsXMLDecl, expectsPhpPI)) {
             // Java File without package, XML file without decl or PHP
@@ -180,16 +181,17 @@ public abstract class AbstractLicenceAppender {
             // an XML decl first - don't know how to handle PHP
             if (expectsPackage || expectsXMLDecl) {
                 writer = new FileWriter(newDocument);
-                try {
                     if (expectsXMLDecl) {
                         writer.write("<?xml version='1.0'?>");
                         writer.write(LINE_SEP);
                     }
                     attachLicense(writer, document,
                                   false, false, false, false, false);
-                } finally {
-                    writer.close();
-                }
+            }
+        }
+        } finally {
+            if (writer != null) {
+                writer.close();
             }
         }
 
