@@ -172,23 +172,23 @@ public abstract class AbstractLicenceAppender {
         File newDocument = new File(document.getAbsolutePath() + ".new");
         FileWriter writer = new FileWriter(newDocument);
         try {
-        if (!attachLicense(writer, document,
-                           expectsHashPling, expectsAtEcho, expectsPackage,
-                           expectsXMLDecl, expectsPhpPI)) {
-            // Java File without package, XML file without decl or PHP
-            // file without PI
-            // for Java just place the license at the front, for XML add
-            // an XML decl first - don't know how to handle PHP
-            if (expectsPackage || expectsXMLDecl) {
-                writer = new FileWriter(newDocument);
+            if (!attachLicense(writer, document,
+                               expectsHashPling, expectsAtEcho, expectsPackage,
+                               expectsXMLDecl, expectsPhpPI)) {
+                // Java File without package, XML file without decl or PHP
+                // file without PI
+                // for Java just place the license at the front, for XML add
+                // an XML decl first - don't know how to handle PHP
+                if (expectsPackage || expectsXMLDecl) {
+                    writer = new FileWriter(newDocument);
                     if (expectsXMLDecl) {
                         writer.write("<?xml version='1.0'?>");
                         writer.write(LINE_SEP);
                     }
                     attachLicense(writer, document,
                                   false, false, false, false, false);
+                }
             }
-        }
         } finally {
             if (writer != null) {
                 writer.close();
