@@ -28,6 +28,8 @@ import java.util.Random;
 
 import junit.framework.TestCase;
 
+import org.apache.rat.test.utils.Resources;
+
 public class TestLicenceAppender extends TestCase {
     /** Used to ensure that temporary files have unq */
     private Random random = new Random();
@@ -423,7 +425,7 @@ public class TestLicenceAppender extends TestCase {
             },
             checkLines(firstLine, null));
     }
-    
+
     public void testAddLicenceToGroovy() throws IOException {
         String filename = "tmp.groovy";
         String firstLine = "/*";
@@ -455,4 +457,32 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
+    public void testFileWithBOM() throws IOException {
+        File f = Resources.getResourceFile("violations/FilterTest.cs");
+        try {
+            ApacheV2LicenceAppender appender =
+                new ApacheV2LicenceAppender();
+            appender.append(f);
+
+            BufferedReader r = null;
+            try {
+                r = new BufferedReader(new FileReader(f.getAbsolutePath()
+                                                      + ".new"));
+                assertEquals("/*", r.readLine());
+                String line = null;
+                while ((line = r.readLine()) != null) {
+                    if (line.trim().length() == 0) {
+                        break;
+                    }
+                }
+                assertEquals("#if NET_2_0", r.readLine());
+            } finally {
+                if (r != null) {
+                    r.close();
+                }
+            }
+        } finally {
+            tryToDelete(new File(f.getAbsolutePath() + ".new"));
+        }
+    }
 }

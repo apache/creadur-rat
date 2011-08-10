@@ -20,9 +20,12 @@ package org.apache.rat.annotation;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -218,10 +221,10 @@ public abstract class AbstractLicenceAppender {
         throws IOException {
         boolean written = false;
         try {
-            FileReader fr = new FileReader(document);
+            FileInputStream fis = new FileInputStream(document);
             BufferedReader br = null;
             try {
-                br = new BufferedReader(fr);
+                br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis)));
 
                 if (!expectsHashPling
                     && !expectsAtEcho
@@ -266,7 +269,7 @@ public abstract class AbstractLicenceAppender {
                 if (br != null) {
                     br.close();
                 }
-                fr.close();
+                fis.close();
             }
         } finally {
             writer.close();
@@ -435,4 +438,118 @@ public abstract class AbstractLicenceAppender {
     private static boolean isIn(int[] arr, int key) {
         return Arrays.binarySearch(arr, key) >= 0;
     }
+}
+
+/**
+ * Stripped down version of Commons IO 2.0's BOMInputStream.
+ */
+class BOMInputStream extends FilterInputStream {
+    private int[] firstBytes;
+    private int fbLength, fbIndex, markFbIndex;
+    private boolean markedAtStart;
+    private static final int[][] BOMS = {
+        new int[] { 0xEF, 0xBB, 0xBF }, // UTF-8
+        new int[] { 0xFE, 0xFF }, // UTF-16BE
+        new int[] { 0xFF, 0xFE }, // UTF-16LE
+    };
+
+    BOMInputStream(InputStream s) {
+        super(s);
+    }
+
+    public int read() throws IOException {
+        int b = readFirstBytes();
+        return (b >= 0) ? b : in.read();
+    }
+
+    public int read(byte[] buf, int off, int len) throws IOException {
+        int firstCount = 0;
+        int b = 0;
+        while ((len > 0) && (b >= 0)) {
+            b = readFirstBytes();
+            if (b >= 0) {
+                buf[off++] = (byte) (b & 0xFF);
+                len--;
+                firstCount++;
+            }
+        }
+        int secondCount = in.read(buf, off, len);
+        return (secondCount < 0)
+            ? (firstCount > 0 ? firstCount : -1) : firstCount + secondCount;
+    }
+
+    public int read(byte[] buf) throws IOException {
+        return read(buf, 0, buf.length);
+    }
+
+    private int readFirstBytes() throws IOException {
+        getBOM();
+        return (fbIndex < fbLength) ? firstBytes[fbIndex++] : -1;
+    }
+
+    private void getBOM() throws IOException {
+        if (firstBytes == null) {
+            int max = 0;
+            for (int i = 0; i < BOMS.length; i++) {
+                max = Math.max(max, BOMS[i].length);
+            }
+            firstBytes = new int[max];
+            for (int i = 0; i < firstBytes.length; i++) {
+                firstBytes[i] = in.read();
+                fbLength++;
+                if (firstBytes[i] < 0) {
+                    break;
+                }
+
+                boolean found = find();
+                if (found) {
+                    fbLength = 0;
+                    break;
+                }
+            }
+        }
+    }
+    public synchronized void mark(int readlimit) {
+        markFbIndex = fbIndex;
+        markedAtStart = (firstBytes == null);
+        in.mark(readlimit);
+    }
+
+    public synchronized void reset() throws IOException {
+        fbIndex = markFbIndex;
+        if (markedAtStart) {
+            firstBytes = null;
+        }
+
+        in.reset();
+    }
+
+    public long skip(long n) throws IOException {
+        while ((n > 0) && (readFirstBytes() >= 0)) {
+            n--;
+        }
+        return in.skip(n);
+    }
+
+    private boolean find() {
+        for (int i = 0; i < BOMS.length; i++) {
+            if (matches(BOMS[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean matches(int[] bom) {
+        if (bom.length != fbLength) {
+            return false;
+        }
+        for (int i = 0; i < bom.length; i++) {
+            if (bom[i] != firstBytes[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
