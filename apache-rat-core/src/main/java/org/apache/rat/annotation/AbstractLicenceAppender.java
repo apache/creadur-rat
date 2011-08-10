@@ -59,6 +59,9 @@ public abstract class AbstractLicenceAppender {
     private static final int TYPE_PHP = 20;
     private static final int TYPE_GROOVY = 21;
 
+    /** the line separator for this OS */
+    private static final String LINE_SEP = System.getProperty("line.separator");
+
     private static final int[] FAMILY_C = new int[] {
         TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
         TYPE_CSS, TYPE_CPP, TYPE_CSHARP, TYPE_PHP, TYPE_GROOVY,
@@ -179,7 +182,8 @@ public abstract class AbstractLicenceAppender {
                 writer = new FileWriter(newDocument);
                 try {
                     if (expectsXMLDecl) {
-                        writer.write("<?xml version='1.0'?>\n");
+                        writer.write("<?xml version='1.0'?>");
+                        writer.write(LINE_SEP);
                     }
                     attachLicense(writer, document,
                                   false, false, false, false, false);
@@ -224,7 +228,7 @@ public abstract class AbstractLicenceAppender {
                     && !expectsPhpPI) {
                     written = true;
                     writer.write(getLicenceHeader(document));
-                    writer.write('\n');
+                    writer.write(LINE_SEP);
                 }
 
                 String line;
@@ -238,21 +242,21 @@ public abstract class AbstractLicenceAppender {
                         doFirstLine(document, writer, line, "@echo");
                     } else {
                         writer.write(line);
-                        writer.write('\n');
+                        writer.write(LINE_SEP);
                     }
 
                     if (expectsPackage && line.startsWith("package ")) {
                         written = true;
                         writer.write(getLicenceHeader(document));
-                        writer.write('\n');
+                        writer.write(LINE_SEP);
                     } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
                         written = true;
                         writer.write(getLicenceHeader(document));
-                        writer.write('\n');
+                        writer.write(LINE_SEP);
                     } else if (expectsPhpPI && line.startsWith("<?php")) {
                         written = true;
                         writer.write(getLicenceHeader(document));
-                        writer.write('\n');
+                        writer.write(LINE_SEP);
                     }
                     first = false;
                 }
@@ -274,12 +278,12 @@ public abstract class AbstractLicenceAppender {
     private void doFirstLine(File document, Writer writer, String line, String lookfor) throws IOException  {
         if (line.startsWith(lookfor)) {
             writer.write(line);
-            writer.write('\n');
+            writer.write(LINE_SEP);
             writer.write(getLicenceHeader(document));
         } else {
             writer.write(getLicenceHeader(document));
             writer.write(line);
-            writer.write('\n');
+            writer.write(LINE_SEP);
         }
     }
 
@@ -328,15 +332,15 @@ public abstract class AbstractLicenceAppender {
      */
     protected String getFirstLine(int type) {
         if (isFamilyC(type)) {
-            return "/*\n";
+            return "/*" + LINE_SEP;
         } else if (isFamilySGML(type)) {
-            return "<!--\n";
+            return "<!--" + LINE_SEP;
         } else if (isFamilyAPT(type)) {
-            return "~~\n";
+            return "~~" + LINE_SEP;
         } else if (isFamilySH(type)) {
-            return "#\n";
+            return "#" + LINE_SEP;
         } else if (isFamilyBAT(type)) {
-            return "rem\n";
+            return "rem" + LINE_SEP;
         }
         return "";
     }
@@ -351,15 +355,15 @@ public abstract class AbstractLicenceAppender {
      */
     protected String getLastLine(int type) {
         if (isFamilyC(type)) {
-            return "*/\n";
+            return "*/" + LINE_SEP;
         } else if (isFamilySGML(type)) {
-            return "-->\n";
+            return "-->" + LINE_SEP;
         } else if (isFamilyAPT(type)) {
-            return "~~\n";
+            return "~~" + LINE_SEP;
         } else if (isFamilySH(type)) {
-            return "#\n";
+            return "#" + LINE_SEP;
         } else if (isFamilyBAT(type)) {
-            return "rem\n";
+            return "rem" + LINE_SEP;
         }
         return "";
     }
@@ -378,17 +382,17 @@ public abstract class AbstractLicenceAppender {
             content = " " + content;
         }
         if (isFamilyC(type)) {
-            return " *" + content + "\n";
+            return " *" + content + LINE_SEP;
         } else if (isFamilySGML(type)) {
-            return content + "\n";
+            return content + LINE_SEP;
         } else if (isFamilyAPT(type)) {
-            return "~~" + content + "\n";
+            return "~~" + content + LINE_SEP;
         } else if (isFamilySH(type)) {
-            return "#" + content + "\n";
+            return "#" + content + LINE_SEP;
         } else if (isFamilyBAT(type)) {
-            return "rem" + content + "\n";
+            return "rem" + content + LINE_SEP;
         } else if (isFamilyVelocity(type)) {
-            return "##" + content + "\n";
+            return "##" + content + LINE_SEP;
         }
         return "";
     }
