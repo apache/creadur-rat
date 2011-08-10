@@ -61,6 +61,7 @@ public abstract class AbstractLicenceAppender {
     private static final int TYPE_CSHARP = 19;
     private static final int TYPE_PHP = 20;
     private static final int TYPE_GROOVY = 21;
+    private static final int TYPE_VISUAL_STUDIO_SOLUTION = 22;
 
     /** the line separator for this OS */
     private static final String LINE_SEP = System.getProperty("line.separator");
@@ -74,7 +75,7 @@ public abstract class AbstractLicenceAppender {
     };
     private static final int[] FAMILY_SH = new int[] {
         TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
-        TYPE_TCL,
+        TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION,
     };
     private static final int[] FAMILY_BAT = new int[] {
         TYPE_BAT,
@@ -100,6 +101,9 @@ public abstract class AbstractLicenceAppender {
     private static final int[] EXPECTS_PHP_PI = new int[] {
         TYPE_PHP,
     };
+    private static final int[] EXPECTS_MSVSSF_HEADER = new int[] {
+        TYPE_VISUAL_STUDIO_SOLUTION,
+    };
 
     private static final Map/*<String, Integer>*/ EXT2TYPE = new HashMap();
 
@@ -117,13 +121,21 @@ public abstract class AbstractLicenceAppender {
         Arrays.sort(EXPECTS_AT_ECHO);
         Arrays.sort(EXPECTS_PACKAGE);
         Arrays.sort(EXPECTS_XML_DECL);
+        Arrays.sort(EXPECTS_MSVSSF_HEADER);
 
         EXT2TYPE.put("apt", Integer.valueOf(TYPE_APT));
+        EXT2TYPE.put("asax", Integer.valueOf(TYPE_HTML));
+        EXT2TYPE.put("ascx", Integer.valueOf(TYPE_HTML));
+        EXT2TYPE.put("aspx", Integer.valueOf(TYPE_HTML));
         EXT2TYPE.put("bat", Integer.valueOf(TYPE_BAT));
         EXT2TYPE.put("c", Integer.valueOf(TYPE_C));
         EXT2TYPE.put("cc", Integer.valueOf(TYPE_CPP));
+        EXT2TYPE.put("cmd", Integer.valueOf(TYPE_BAT));
+        EXT2TYPE.put("config", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("cpp", Integer.valueOf(TYPE_CPP));
         EXT2TYPE.put("cs", Integer.valueOf(TYPE_CSHARP));
+        EXT2TYPE.put("csdproj", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("csproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("css", Integer.valueOf(TYPE_CSS));
         EXT2TYPE.put("groovy", Integer.valueOf(TYPE_GROOVY));
         EXT2TYPE.put("h", Integer.valueOf(TYPE_H));
@@ -133,16 +145,24 @@ public abstract class AbstractLicenceAppender {
         EXT2TYPE.put("html", Integer.valueOf(TYPE_HTML));
         EXT2TYPE.put("java", Integer.valueOf(TYPE_JAVA));
         EXT2TYPE.put("js", Integer.valueOf(TYPE_JAVASCRIPT));
+        EXT2TYPE.put("ndoc", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("php", Integer.valueOf(TYPE_PHP));
         EXT2TYPE.put("pl", Integer.valueOf(TYPE_PERL));
         EXT2TYPE.put("properties", Integer.valueOf(TYPE_PROPERTIES));
         EXT2TYPE.put("py", Integer.valueOf(TYPE_PYTHON));
         EXT2TYPE.put("rb", Integer.valueOf(TYPE_RUBY));
         EXT2TYPE.put("rdf", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("resx", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("scala", Integer.valueOf(TYPE_SCALA));
         EXT2TYPE.put("sh", Integer.valueOf(TYPE_SH));
+        EXT2TYPE.put("sln", Integer.valueOf(TYPE_VISUAL_STUDIO_SOLUTION));
         EXT2TYPE.put("tcl", Integer.valueOf(TYPE_TCL));
+        EXT2TYPE.put("vbdproj", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("vbproj", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("vcproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("vm", Integer.valueOf(TYPE_VM));
+        EXT2TYPE.put("vsdisco", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("webinfo", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("xml", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("xsl", Integer.valueOf(TYPE_XML));
     }
@@ -171,13 +191,14 @@ public abstract class AbstractLicenceAppender {
         boolean expectsPackage = expectsPackage(type);
         boolean expectsXMLDecl = expectsXMLDecl(type);
         boolean expectsPhpPI = expectsPhpPI(type);
+        boolean expectsMSVSSF = expectsMSVisualStudioSolutionFileHeader(type);
 
         File newDocument = new File(document.getAbsolutePath() + ".new");
         FileWriter writer = new FileWriter(newDocument);
         try {
             if (!attachLicense(writer, document,
                                expectsHashPling, expectsAtEcho, expectsPackage,
-                               expectsXMLDecl, expectsPhpPI)) {
+                               expectsXMLDecl, expectsPhpPI, expectsMSVSSF)) {
                 // Java File without package, XML file without decl or PHP
                 // file without PI
                 // for Java just place the license at the front, for XML add
@@ -189,7 +210,7 @@ public abstract class AbstractLicenceAppender {
                         writer.write(LINE_SEP);
                     }
                     attachLicense(writer, document,
-                                  false, false, false, false, false);
+                                  false, false, false, false, false, false);
                 }
             }
         } finally {
@@ -217,7 +238,8 @@ public abstract class AbstractLicenceAppender {
                                   boolean expectsAtEcho,
                                   boolean expectsPackage,
                                   boolean expectsXMLDecl,
-                                  boolean expectsPhpPI)
+                                  boolean expectsPhpPI,
+                                  boolean expectsMSVSSF)
         throws IOException {
         boolean written = false;
         try {
@@ -230,7 +252,8 @@ public abstract class AbstractLicenceAppender {
                     && !expectsAtEcho
                     && !expectsPackage
                     && !expectsXMLDecl
-                    && !expectsPhpPI) {
+                    && !expectsPhpPI
+                    && !expectsMSVSSF) {
                     written = true;
                     writer.write(getLicenceHeader(document));
                     writer.write(LINE_SEP);
@@ -245,6 +268,18 @@ public abstract class AbstractLicenceAppender {
                     } else if (first && expectsAtEcho) {
                         written = true;
                         doFirstLine(document, writer, line, "@echo");
+                    } else if (first && expectsMSVSSF) {
+                        written = true;
+                        if (line.startsWith("Microsoft Visual Studio Solution"
+                                            + " File")) {
+                            writer.write(line);
+                            writer.write(LINE_SEP);
+                            line = br.readLine();
+                            if (line == null) {
+                                line = "";
+                            }
+                        }
+                        doFirstLine(document, writer, line, "# Visual ");
                     } else {
                         writer.write(line);
                         writer.write(LINE_SEP);
@@ -434,6 +469,9 @@ public abstract class AbstractLicenceAppender {
     }
     private static boolean expectsPhpPI(int type) {
         return isIn(EXPECTS_PHP_PI, type);
+    }
+    private static boolean expectsMSVisualStudioSolutionFileHeader(int type) {
+        return isIn(EXPECTS_MSVSSF_HEADER, type);
     }
     private static boolean isIn(int[] arr, int key) {
         return Arrays.binarySearch(arr, key) >= 0;

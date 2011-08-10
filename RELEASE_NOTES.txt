@@ -31,6 +31,8 @@ RAT 0.8
     * RAT-67 The XML and standard plain text reports now contain a
       timestamp with the time the report has been generated.
     * RAT-95 When adding licenses RAT will now remove any BOM from the file.
+    * RAT-93 --addLicense now supports more .NET specific files like
+      MS Visual Studio project and solution files
 
 RAT 0.7
 =======

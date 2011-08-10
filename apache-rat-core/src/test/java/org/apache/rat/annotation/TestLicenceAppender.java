@@ -485,4 +485,61 @@ public class TestLicenceAppender extends TestCase {
             tryToDelete(new File(f.getAbsolutePath() + ".new"));
         }
     }
+
+    public void testAddLicenceToVS2003solution() throws IOException {
+        String filename = "tmp.sln";
+        final String firstLine = "Microsoft Visual Studio Solution File,"
+            + " Format Version 8.0";
+        String secondLine = "#";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write(firstLine + "\n");
+                    writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
+                    writer.write("	ProjectSection(WebsiteProperties) = preProject\n");
+                    writer.write("		Debug.AspNetCompiler.Debug = \"True\"\n");
+                    writer.write("		Release.AspNetCompiler.Debug = \"False\"\n");
+                    writer.write("	EndProjectSection\n");
+                    writer.write("EndProject\n");
+                }
+            },
+            checkLines(firstLine, secondLine));
+    }
+
+    public void testAddLicenceToVS2005solution() throws IOException {
+        String filename = "tmp.sln";
+        final String firstLine = "Microsoft Visual Studio Solution File,"
+            + " Format Version 9.0";
+        final String secondLine = "# Visual Studio 2005";
+        final String thirdLine = "#";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write(firstLine + "\n");
+                    writer.write(secondLine + "\n");
+                    writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
+                    writer.write("	ProjectSection(WebsiteProperties) = preProject\n");
+                    writer.write("		Debug.AspNetCompiler.Debug = \"True\"\n");
+                    writer.write("		Release.AspNetCompiler.Debug = \"False\"\n");
+                    writer.write("	EndProjectSection\n");
+                    writer.write("EndProject\n");
+                }
+            },
+            new NewFileReader() {
+                public void readFile(BufferedReader r) throws IOException {
+                    String line = r.readLine();
+                    assertEquals("First line is incorrect",
+                                 firstLine, line);
+                    line = r.readLine();
+                    assertEquals("Second line is incorrect",
+                                 secondLine, line);
+                    line = r.readLine();
+                    assertEquals("Third line is incorrect",
+                                 thirdLine, line);
+                }
+            });
+    }
+
 }
