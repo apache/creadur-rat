@@ -44,8 +44,8 @@ mvn site-deploy
 
      If you have issues with 'mvn site' failing try running 'mvn clean' then 'mvn install package' before going back and running 'mvn site' again.
 
-     If you experience an Out of Memory error <<java.lang.OutOfMemoryError: Java heap space>> when running 'mvn site' try setting 'export MAVEN_OPTS=-512m' 
-     or for windows 'set MAVEN_OPTS=-512m' first on the command line (or in your profile) and then try 'mvn site' again. Only when 'mvn site' is successful 
+     If you experience an Out of Memory error <<java.lang.OutOfMemoryError: Java heap space>> when running 'mvn site' try setting 'export MAVEN_OPTS=-Xmx512m' 
+     or for windows 'set MAVEN_OPTS=-Xmx512m' first on the command line (or in your profile) and then try 'mvn site' again. Only when 'mvn site' is successful 
      should you then 'mvn site-deploy'
 
    * Wait for the hourly site sync to our www machines and the updated site will be live.
