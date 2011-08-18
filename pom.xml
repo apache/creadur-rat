@@ -285,34 +285,9 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       <email>rdonkin@apache.org</email>
     </developer>
     <developer>
-      <id>gnodet</id>
-      <name>Guillaume Nodet</name>
-      <email>gnodet@apache.org</email>
-    </developer>
-    <developer>
-      <id>pauls</id>
-      <name>Karl Pauls</name>
-      <email>pauls@apache.org</email>
-    </developer>
-    <developer>
-      <id>mriou</id>
-      <name>Matthieu Riou</name>
-      <email>mriou@apache.org</email>
-    </developer>
-    <developer>
-      <id>rooneg</id>
-      <name>Garrett Rooney</name>
-      <email>rooneg@apache.org</email>
-    </developer>
-    <developer>
       <id>jochen</id>
       <name>Jochen Wiedmann</name>
       <email>jochen@apache.org</email>
-    </developer>
-    <developer>
-      <id>bayard</id>
-      <name>Henri Yandell</name>
-      <email>bayard@apache.org</email>
     </developer>
     <developer>
       <id>gmcdonald</id>
@@ -324,6 +299,16 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       <name>Brian Fox</name>
       <email>brianf@apache.org</email>
     </developer>
+    <developer>
+      <id>dennisl</id>
+      <name>Dennis Lundberg</name>
+      <email>dennisl@apache.org</email>
+    </developer>
+    <developer>
+      <id>rgardler</id>
+      <name>Ross Gardler</name>
+      <email>rgardler@apache.org</email>
+    </developer>
   </developers>
   <contributors>
     <contributor>
@@ -333,6 +318,26 @@ Note that binary compatibility is not gauranteed between 0.x releases.
     <contributor>
       <name>Todd Volkert</name>
       <email>tvolkert+apache@gmail.com</email>
+    </contributor>
+    <contributor>
+      <name>Henri Yandell</name>
+      <email>bayard@apache.org</email>
+    </contributor>
+    <contributor>
+      <name>Guillaume Nodet</name>
+      <email>gnodet@apache.org</email>
+    </contributor>
+    <contributor>
+      <name>Karl Pauls</name>
+      <email>pauls@apache.org</email>
+    </contributor>
+    <contributor>
+      <name>Matthieu Riou</name>
+      <email>mriou@apache.org</email>
+    </contributor>
+    <contributor>
+      <name>Garrett Rooney</name>
+      <email>rooneg@apache.org</email>
     </contributor>
   </contributors>
 
