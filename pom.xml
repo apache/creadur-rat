@@ -309,6 +309,11 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       <name>Ross Gardler</name>
       <email>rgardler@apache.org</email>
     </developer>
+    <developer>
+      <id>crossley</id>
+      <name>David Crossley</name>
+      <email>crossley@apache.org</email>
+    </developer>
   </developers>
   <contributors>
     <contributor>
