@@ -314,6 +314,11 @@ Note that binary compatibility is not gauranteed between 0.x releases.
       <name>David Crossley</name>
       <email>crossley@apache.org</email>
     </developer>
+    <developer>
+      <id>dblevins</id>
+      <name>David Blevins</name>
+      <email>dblevins@apache.org</email>
+    </developer>
   </developers>
   <contributors>
     <contributor>
