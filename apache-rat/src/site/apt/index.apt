@@ -56,3 +56,16 @@ java -jar apache-rat-VERSION.jar --addLicence
  source files. If you prefer to see which files will be
  changed and how then remove the "--force" option.
 
+* Using multiple excludes from a file
+
+It is common to use the RAT with the maven or ant plugins and specify
+a series of files to exclude (such as a README or version control
+files).  If you are using the RAT application instead of a plugin you
+can specify a series of regex excludes in a file and specify that with
+the -E option.
+
++------------------------------------------+
+java -jar apache-rat-VERSION.jar -E
+ -E /path/to/project/.rat-excludes
+ -d /path/to/project
++------------------------------------------+

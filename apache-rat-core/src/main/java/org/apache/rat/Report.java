@@ -29,6 +29,7 @@ import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.util.List;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -40,7 +41,10 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.IReportable;
@@ -55,6 +59,7 @@ import org.apache.rat.walker.DirectoryWalker;
 
 public class Report {
     private static final char EXCLUDE_CLI = 'e';
+    private static final char EXCLUDE_FILE_CLI = 'E';
     private static final char STYLESHEET_CLI = 's';
 
     //@SuppressWarnings("unchecked")
@@ -95,7 +100,18 @@ public class Report {
                     report.setInputFileFilter(filter);
                 }
             }
-
+            else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
+                String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
+                if (excludeFileName != null) {
+                    List excludes = FileUtils.readLines(new File(excludeFileName));
+                    final OrFileFilter orFilter = new OrFileFilter();
+                    for (int i=0; i< excludes.size(); i++) {
+                        orFilter.addFileFilter(new RegexFileFilter((String)excludes.get(i)));
+                    }
+                    final FilenameFilter filter = new NotFileFilter(orFilter);
+                    report.setInputFileFilter(filter);
+                }
+            }
             if (cl.hasOption('x')) {
                 report.report(System.out, configuration);
             } else {
@@ -164,11 +180,20 @@ public class Report {
                             .withArgName("expression")
                             .withLongOpt("exclude")
                             .hasArgs()
-                            .withDescription("Excludes files matching <expression>. " +
+                            .withDescription("Excludes files matching wildcard <expression>. " +
                                     "Note that --dir is required when using this parameter. " +
                                     "Allows multiple arguments.")
                             .create(EXCLUDE_CLI);
         opts.addOption(exclude);
+
+        final Option excludeFile = OptionBuilder
+                            .withArgName("fileName")
+                            .withLongOpt("exclude-file")
+                            .hasArgs()
+                            .withDescription("Excludes files matching regular expression in <file> " +
+                                    "Note that --dir is required when using this parameter. " )
+                            .create(EXCLUDE_FILE_CLI);
+        opts.addOption(excludeFile);
 
         Option dir = new Option(
                 "d",
