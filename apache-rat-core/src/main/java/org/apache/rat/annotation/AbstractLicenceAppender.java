@@ -270,14 +270,12 @@ public abstract class AbstractLicenceAppender {
                         doFirstLine(document, writer, line, "@echo");
                     } else if (first && expectsMSVSSF) {
                         written = true;
+                        if ("".equals(line)) {
+                            line = passThroughReadNext(writer, line, br);
+                        }
                         if (line.startsWith("Microsoft Visual Studio Solution"
                                             + " File")) {
-                            writer.write(line);
-                            writer.write(LINE_SEP);
-                            line = br.readLine();
-                            if (line == null) {
-                                line = "";
-                            }
+                            line = passThroughReadNext(writer, line, br);
                         }
                         doFirstLine(document, writer, line, "# Visual ");
                     } else {
@@ -475,6 +473,14 @@ public abstract class AbstractLicenceAppender {
     }
     private static boolean isIn(int[] arr, int key) {
         return Arrays.binarySearch(arr, key) >= 0;
+    }
+
+    private String passThroughReadNext(Writer writer, String line,
+                                       BufferedReader br) throws IOException {
+        writer.write(line);
+        writer.write(LINE_SEP);
+        String l = br.readLine();
+        return l == null ? "" : l;
     }
 }
 

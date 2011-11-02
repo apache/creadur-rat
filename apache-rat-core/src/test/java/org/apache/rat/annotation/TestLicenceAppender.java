@@ -542,4 +542,112 @@ public class TestLicenceAppender extends TestCase {
             });
     }
 
+    public void testAddLicenceToVS2010ExpressSolution() throws IOException {
+        String filename = "tmp.sln";
+        final String firstLine = "Microsoft Visual Studio Solution File, "
+            + "Format Version 11.00";
+        final String secondLine = "# Visual C# Express 2010";
+        final String thirdLine = "#";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write(firstLine + "\n");
+                    writer.write(secondLine + "\n");
+                    writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Lucene.Net\", \"..\\..\\..\\src\\core\\Lucene.Net.csproj\", \"{5D4AD9BE-1FFB-41AB-9943-25737971BF57}\"\n");
+                    writer.write("EndProject\n");
+                    writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Contrib.Highlighter\", \"..\\..\\..\\src\\contrib\\Highlighter\\Contrib.Highlighter.csproj\", \"{901D5415-383C-4AA6-A256-879558841BEA}\"\n");
+                    writer.write("EndProject\n");
+                    writer.write("Global\n");
+                    writer.write("GlobalSection(SolutionConfigurationPlatforms) = preSolution\n");
+                    writer.write("Debug|Any CPU = Debug|Any CPU\n");
+                    writer.write("Release|Any CPU = Release|Any CPU\n");
+                    writer.write("EndGlobalSection\n");
+                    writer.write("GlobalSection(ProjectConfigurationPlatforms) = postSolution\n");
+                    writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
+                    writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
+                    writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
+                    writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.Build.0 = Release|Any CPU\n");
+                    writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
+                    writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
+                    writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
+                    writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU\n");
+                    writer.write("EndGlobalSection\n");
+                    writer.write("GlobalSection(SolutionProperties) = preSolution\n");
+                    writer.write("HideSolutionNode = FALSE\n");
+                    writer.write("EndGlobalSection\n");
+                    writer.write("EndGlobal \n");
+                }
+            },
+            new NewFileReader() {
+                public void readFile(BufferedReader r) throws IOException {
+                    String line = r.readLine();
+                    assertEquals("First line is incorrect",
+                                 firstLine, line);
+                    line = r.readLine();
+                    assertEquals("Second line is incorrect",
+                                 secondLine, line);
+                    line = r.readLine();
+                    assertEquals("Third line is incorrect",
+                                 thirdLine, line);
+                }
+            });
+    }
+
+    public void testAddLicenceToVS2010SolutionWithBlankLine() throws IOException {
+        String filename = "tmp.sln";
+        final String firstLine = "";
+        final String secondLine = "Microsoft Visual Studio Solution File, "
+            + "Format Version 11.00";
+        final String thirdLine = "# Visual C# Express 2010";
+        final String forthLine = "#";
+
+        commonTestTemplate(filename, new FileCreator() {
+                public void createFile(Writer writer)
+                    throws IOException {
+                    writer.write(firstLine + "\n");
+                    writer.write(secondLine + "\n");
+                    writer.write(thirdLine + "\n");
+                    writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Lucene.Net\", \"..\\..\\..\\src\\core\\Lucene.Net.csproj\", \"{5D4AD9BE-1FFB-41AB-9943-25737971BF57}\"\n");
+                    writer.write("EndProject\n");
+                    writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Contrib.Highlighter\", \"..\\..\\..\\src\\contrib\\Highlighter\\Contrib.Highlighter.csproj\", \"{901D5415-383C-4AA6-A256-879558841BEA}\"\n");
+                    writer.write("EndProject\n");
+                    writer.write("Global\n");
+                    writer.write("GlobalSection(SolutionConfigurationPlatforms) = preSolution\n");
+                    writer.write("Debug|Any CPU = Debug|Any CPU\n");
+                    writer.write("Release|Any CPU = Release|Any CPU\n");
+                    writer.write("EndGlobalSection\n");
+                    writer.write("GlobalSection(ProjectConfigurationPlatforms) = postSolution\n");
+                    writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
+                    writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
+                    writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
+                    writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.Build.0 = Release|Any CPU\n");
+                    writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
+                    writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
+                    writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
+                    writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU\n");
+                    writer.write("EndGlobalSection\n");
+                    writer.write("GlobalSection(SolutionProperties) = preSolution\n");
+                    writer.write("HideSolutionNode = FALSE\n");
+                    writer.write("EndGlobalSection\n");
+                    writer.write("EndGlobal \n");
+                }
+            },
+            new NewFileReader() {
+                public void readFile(BufferedReader r) throws IOException {
+                    String line = r.readLine();
+                    assertEquals("First line is incorrect",
+                                 firstLine, line);
+                    line = r.readLine();
+                    assertEquals("Second line is incorrect",
+                                 secondLine, line);
+                    line = r.readLine();
+                    assertEquals("Third line is incorrect",
+                                 thirdLine, line);
+                    line = r.readLine();
+                    assertEquals("Forth line is incorrect",
+                                 forthLine, line);
+                }
+            });
+    }
 }
