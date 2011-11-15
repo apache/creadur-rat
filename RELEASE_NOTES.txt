@@ -4,7 +4,7 @@ RAT 0.9
 RAT 0.8
 =======
  * Some website fixes
- * The Antlib and Maven plugins now provider simpler ways to detect
+ * The Antlib and Maven plugins now provide simpler ways to detect
    licenses not directly supported by RAT.
  * Issues Resolved (see http://issues.apache.org/jira):
   * Bug:
