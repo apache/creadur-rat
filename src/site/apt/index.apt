@@ -81,15 +81,15 @@ java -jar apache-rat-VERSION.jar --help
  
 ** Running with Apache Ant
   
- RAT includes a task library for Ant 1.7. This allows RAT reports to be run against
- a wide variety of resources. See the file ant-task-examples.xml in
- the root directory of the project for details. 
+ RAT includes a task library for Ant. This allows RAT reports to be
+ run against a wide variety of resources. Details can be found in the
+ {{{./apache-rat-tasks/index.html} tasks documentation}}.
  
  To use the Ant tasks,
- {{{http://ant.apache.org/} Apache Ant 1.7}} is required.
+ {{{http://ant.apache.org/} Apache Ant 1.7}} or later is required.
  
 ** Running with Apache Maven
 
  RAT includes a plugin for Maven 2. This allows RAT reports to be run against
  a wide variety of resources. Details can be found in the
- {{{apache-rat-plugin/index.html} plugin documentation}}.
+ {{{./apache-rat-plugin/index.html} plugin documentation}}.
