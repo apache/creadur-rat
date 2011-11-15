@@ -83,7 +83,7 @@ java -jar apache-rat-VERSION.jar --help
   
  RAT includes a task library for Ant. This allows RAT reports to be
  run against a wide variety of resources. Details can be found in the
- {{{./apache-rat-tasks/index.html} tasks documentation}}.
+ {{{./apache-rat-tasks/index.html} antlib documentation}}.
  
  To use the Ant tasks,
  {{{http://ant.apache.org/} Apache Ant 1.7}} or later is required.

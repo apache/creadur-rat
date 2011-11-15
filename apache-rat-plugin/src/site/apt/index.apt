@@ -30,26 +30,26 @@ The RAT Maven Plugin
 
   The following goals are available:
 
-  * {{{check-mojo.html}rat:check}} Runs RAT and creates a report, which is written
+  * {{{./check-mojo.html}rat:check}} Runs RAT and creates a report, which is written
     to a plain text file.
 
-  * {{{rat-mojo.html}rat:rat}} Runs RAT and creates a report, which will be added
+  * {{{./rat-mojo.html}rat:rat}} Runs RAT and creates a report, which will be added
     to the generated site.
 
 * Usage
 
-  Instructions on how to use the RAT Maven Plugin can be found on the {{{usage.html}usage page}}.
+  Instructions on how to use the RAT Maven Plugin can be found on the {{{./usage.html}usage page}}.
 
 * Examples
 
   To provide you with better understanding of some usages of the RAT Maven Plugin,
   you can take a look into the following examples:
 
-  * {{{examples/basic.html}Basic use}} of the rat:check goal.
+  * {{{./examples/basic.html}Basic use}} of the rat:check goal.
 
-  * {{{examples/verify.html}Automatically}} running the rat:check goal
+  * {{{./examples/verify.html}Automatically}} running the rat:check goal
     when the project is built.
 
-  * Adding the report to the {{{examples/site.html}generated site}}.
+  * Adding the report to the {{{./examples/site.html}generated site}}.
 
-  * Applying a {{{examples/custom-license.html}custom license}}.
+  * Applying a {{{./examples/custom-license.html}custom license}}.

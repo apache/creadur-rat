@@ -19,7 +19,7 @@
 Built-In Types
 
  The RAT Antlib defines a few Ant types that can be used as nested
- elements to the {{{report.html} Report Task}} as license matchers or
+ elements to the {{{./report.html} Report Task}} as license matchers or
  license families.
 
  In order to stay compatible with Ant 1.7.1 these types are defined
@@ -92,7 +92,7 @@ Built-In Types
 
 ** Example
 
- Taking the example of {{{examples/custom.html}the custom types page}}
+ Taking the example of {{{./examples/custom.html}the custom types page}}
  in order to detect
 
 ------------------------------------------------------------------

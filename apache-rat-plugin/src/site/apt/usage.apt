@@ -52,7 +52,7 @@ Usage
 ------------------------------------------------------------------
 
   An example for running the plugin automatically can be found
-  {{{examples/verify.html}here}}.
+  {{{./examples/verify.html}here}}.
 
 *Adding the report to the generated site
 
