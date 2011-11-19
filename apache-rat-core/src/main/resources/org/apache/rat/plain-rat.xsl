@@ -85,7 +85,7 @@ Archives:
  =======================================================================
  ==<xsl:value-of select='@name'/>
  =======================================================================
-<xsl:value-of select='header-sample'/>
-</xsl:for-each>
+ <xsl:value-of select='header-sample'/>
+ </xsl:for-each>
 </xsl:template>
 </xsl:stylesheet>
