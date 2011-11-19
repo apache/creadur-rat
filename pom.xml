@@ -36,7 +36,7 @@ It's reports require interpretation.
 
 In response to demands from project quality tool developers, RAT is available as a 
 library suitable for inclusion in tools. This POM describes that library.
-Note that binary compatibility is not gauranteed between 0.x releases.
+Note that binary compatibility is not guaranteed between 0.x releases.
   </description>
   <inceptionYear>2006</inceptionYear>
 
