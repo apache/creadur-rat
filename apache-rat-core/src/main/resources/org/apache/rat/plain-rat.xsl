@@ -78,14 +78,14 @@ Archives:
  <xsl:text>
  </xsl:text>
  </xsl:for-each>
- *****************************************************
+*****************************************************
  Printing headers for files without AL header...
  
  <xsl:for-each select='descendant::resource[header-type/@name="?????"]'>
- =======================================================================
- ==<xsl:value-of select='@name'/>
- =======================================================================
- <xsl:value-of select='header-sample'/>
- </xsl:for-each>
+=======================================================================
+==<xsl:value-of select='@name'/>
+=======================================================================
+<xsl:value-of select='header-sample'/>
+</xsl:for-each>
 </xsl:template>
 </xsl:stylesheet>
