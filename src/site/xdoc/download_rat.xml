@@ -64,7 +64,7 @@ limitations under the License.
           link links to the code signing keys used to sign the
           product.  The <code>PGP</code> link downloads the OpenPGP
           compatible signature from our main site.  The
-          <code>SAH1</code> and <code>MD5</code> links download the
+          <code>SHA1</code> and <code>MD5</code> links download the
           checksum from the main site.
         </p>
       </subsection>
