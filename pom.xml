@@ -116,7 +116,7 @@ Note that binary compatibility is not guaranteed between 0.x releases.
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>3.8.2</version>
+        <version>4.10</version>
         <scope>test</scope>
       </dependency>
       <dependency>
