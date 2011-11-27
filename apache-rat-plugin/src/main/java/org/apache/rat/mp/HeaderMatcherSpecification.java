@@ -21,7 +21,7 @@ package org.apache.rat.mp;
 
 /**
  * Used to specify additional license matchers. A license matcher is basically a class, which implements
- * {@link rat.analysis.IHeaderMatcher}.
+ * {@link org.apache.rat.analysis.IHeaderMatcher}.
  */
 public class HeaderMatcherSpecification
 {

@@ -26,7 +26,7 @@ import org.apache.rat.report.AbstractReport;
 
 
 /**
- * Abstract base implementation of {@link Reporter}.
+ * Abstract base implementation of {@link AbstractReport}.
  * It is strongly suggested, that implementations derive from
  * this class.
  */

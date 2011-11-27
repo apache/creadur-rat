@@ -21,7 +21,7 @@ package org.apache.rat.mp;
 
 /**
  * Used to specify additional license familys. A license family is basically a class, which implements
- * {@link rat.license.ILicenseFamily}.
+ * {@link org.apache.rat.license.ILicenseFamily}.
  */
 public class LicenseFamilySpecification
 {
