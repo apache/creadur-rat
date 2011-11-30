@@ -3,7 +3,7 @@ RAT 0.9
  * RAT now requires Java5 at runtime
  * Issues Resolved (see http://issues.apache.org/jira):
   * Improvement:
-    * RAT-54 Upgrade to Java5
+    * RAT-59 Upgrade to Java5
 
 RAT 0.8
 =======
