@@ -31,7 +31,8 @@ Requirements
  works well with 1.8.x), Apache RAT core and transitively all
  dependencies of Apache RAT core.
 
- In order to use the tasks Java 1.4 is required.
+ In order to use the tasks Java 5 is required as of RAT 0.9 - RAT 0.8
+ and earlier require Java 1.4.
 
 Installation
 
