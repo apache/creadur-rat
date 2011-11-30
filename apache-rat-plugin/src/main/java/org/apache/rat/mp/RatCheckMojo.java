@@ -153,7 +153,7 @@ public class RatCheckMojo extends AbstractRatMojo
     public void execute() throws MojoExecutionException, MojoFailureException
     {
         File parent = reportFile.getParentFile();
-        if(!parent.mkdirs()) {
+        if(!parent.isDirectory() && !parent.mkdirs()) {
             throw new MojoExecutionException("Could not create report parent directory " + parent);
         }
 

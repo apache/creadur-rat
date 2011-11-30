@@ -217,7 +217,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
             SiteRendererSink sink = new SiteRendererSink( context );
             generate( sink, locale );
 
-            if( !outputDirectory.mkdirs() ) {
+            if( !outputDirectory.isDirectory() && !outputDirectory.mkdirs() ) {
                 throw new IOException("Could not created output directory " + outputDirectory);
             }
 
