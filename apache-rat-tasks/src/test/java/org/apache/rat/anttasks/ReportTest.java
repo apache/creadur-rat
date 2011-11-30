@@ -40,7 +40,9 @@ public class ReportTest extends AbstractRatAntTaskTest {
 
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
-        getTempDir().mkdirs();
+        if(!getTempDir().mkdirs()) {
+            throw new IOException("Could not create temporary directory " + getTempDir());
+        }
         final String alLine = "AL +\\Q" + getAntFileName() + "\\E";
         if (reportFile.isFile()  &&  !reportFile.delete()) {
             throw new IOException("Unable to remove report file " + reportFile);
