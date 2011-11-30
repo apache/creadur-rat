@@ -40,7 +40,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
 
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
-        if(!getTempDir().isDirectory() && !getTempDir().mkdirs()) {
+        if(!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
             throw new IOException("Could not create temporary directory " + getTempDir());
         }
         final String alLine = "AL +\\Q" + getAntFileName() + "\\E";
