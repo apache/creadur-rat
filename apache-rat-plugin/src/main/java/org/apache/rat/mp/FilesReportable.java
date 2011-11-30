@@ -19,19 +19,19 @@ package org.apache.rat.mp;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 
 /**
@@ -62,11 +62,10 @@ class FilesReportable implements IReportable
     public void run( RatReport report ) throws RatException
     {
         FileDocument document = new FileDocument();
-        for ( int i = 0; i < files.length; i++ )
-        {
-            document.setFile( new File( basedir, files[i] ) );
+        for (String file : files) {
+            document.setFile(new File(basedir, file));
             document.getMetaData().clear();
-            report.report( document );
+            report.report(document);
         }
     }
 

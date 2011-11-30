@@ -19,18 +19,6 @@ package org.apache.rat.mp;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -53,6 +41,18 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.rat.Defaults;
 import org.codehaus.doxia.sink.Sink;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -204,7 +204,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
     {
         DecorationModel model = new DecorationModel();
         model.setBody( new Body() );
-        Map attributes = new HashMap();
+        Map<String, String> attributes = new HashMap<String, String>();
         attributes.put( "outputEncoding", "UTF-8" );
         Locale locale = Locale.getDefault();
         try
@@ -260,7 +260,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
      */
     private String getRatVersion()
     {
-        for ( Iterator iter = getProject().getDependencyArtifacts().iterator(); iter.hasNext(); )
+        for ( Iterator<Artifact> iter = getProject().getDependencyArtifacts().iterator(); iter.hasNext(); )
         {
             Artifact a = (Artifact) iter.next();
             if ( "rat-lib".equals( a.getArtifactId() ) )

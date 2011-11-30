@@ -19,7 +19,6 @@
 package org.apache.rat.api;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -43,8 +42,8 @@ public class ContentType {
         this.mediaType = mediaType.toLowerCase(Locale.US);
         this.subType = subType.toLowerCase(Locale.US);
         this.parameters = new HashMap(parameters.size());
-        for (Iterator it=parameters.entrySet().iterator();it.hasNext();) {
-            final Map.Entry entry = (Map.Entry) it.next();
+        for (Object o : parameters.entrySet()) {
+            final Map.Entry entry = (Map.Entry) o;
             this.parameters.put(entry.getKey().toString().toLowerCase(Locale.US), entry.getValue());
         }
     }

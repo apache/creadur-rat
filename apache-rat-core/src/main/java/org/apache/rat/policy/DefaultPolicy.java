@@ -18,14 +18,14 @@
  */ 
 package org.apache.rat.policy;
 
-import java.util.Arrays;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicenseFamily;
+
+import java.util.Arrays;
 
 public class DefaultPolicy implements IDocumentAnalyser {
     private static final String[] APPROVED_LICENSES = {
@@ -47,7 +47,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
         }
         return results;
     }
-    ;
+
     private final String[] approvedLicenseNames;
     
     public DefaultPolicy() {

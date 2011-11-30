@@ -18,21 +18,6 @@
  */ 
 package org.apache.rat;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.PrintStream;
-import java.io.Writer;
-import java.util.List;
-
-import javax.xml.transform.TransformerConfigurationException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -43,8 +28,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NotFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.IReportable;
@@ -55,6 +40,10 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
+
+import javax.xml.transform.TransformerConfigurationException;
+import java.io.*;
+import java.util.List;
 
 
 public class Report {
@@ -105,8 +94,8 @@ public class Report {
                 if (excludeFileName != null) {
                     List excludes = FileUtils.readLines(new File(excludeFileName));
                     final OrFileFilter orFilter = new OrFileFilter();
-                    for (int i=0; i< excludes.size(); i++) {
-                        orFilter.addFileFilter(new RegexFileFilter((String)excludes.get(i)));
+                    for (Object exclude : excludes) {
+                        orFilter.addFileFilter(new RegexFileFilter((String) exclude));
                     }
                     final FilenameFilter filter = new NotFileFilter(orFilter);
                     report.setInputFileFilter(filter);
@@ -226,7 +215,7 @@ public class Report {
         HelpFormatter f = new HelpFormatter();
         String header = "Options";
 
-        StringBuffer footer = new StringBuffer("\n");
+        StringBuilder footer = new StringBuilder("\n");
         footer.append("NOTE:\n");
         footer.append("RAT is really little more than a grep ATM\n");
         footer.append("RAT is also rather memory hungry ATM\n");
@@ -349,8 +338,6 @@ public class Report {
      * @param out the stream to write the report to
      * @param base the files or directories to report on
      * @param style an input stream representing the stylesheet to use for styling the report
-     * @param matcher the header matcher for matching licence headers
-     * @param approvedLicenseNames a list of licence families that are approved for use in the project
      * @throws IOException
      * @throws TransformerConfigurationException
      * @throws InterruptedException
@@ -369,8 +356,6 @@ public class Report {
      * @param out the writer to write the report to
      * @param base the files or directories to report on
      * @param style an input stream representing the stylesheet to use for styling the report
-     * @param matcher the header matcher for matching licence headers
-     * @param approvedLicenseNames a list of licence families that are approved for use in the project
      * @throws IOException
      * @throws TransformerConfigurationException
      * @throws FileNotFoundException
@@ -396,8 +381,6 @@ public class Report {
      * 
      * @param container the files or directories to report on
      * @param out the writer to write the report to
-     * @param matcher the header matcher for matching licence headers
-     * @param approvedLicenseNames a list of licence families that are approved for use in the project
      * @throws IOException
      * @throws RatException
      */

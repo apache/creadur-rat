@@ -18,13 +18,13 @@
  */ 
 package org.apache.rat.report.claim.util;
 
-import java.util.List;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
+
+import java.util.List;
 
 
 public class ClaimReporterMultiplexer implements RatReport {
@@ -44,25 +44,22 @@ public class ClaimReporterMultiplexer implements RatReport {
                 throw new RatException(e.getMessage(), e);
             }
         }
-        final int length = reporters.size();
-        for (int i=0;  i<length;  i++) {
-            final RatReport report = (RatReport) reporters.get(i);
+        for (Object reporter : reporters) {
+            final RatReport report = (RatReport) reporter;
             report.report(document);
         } 
     }
 
     public void startReport() throws RatException {
-        final int length = reporters.size();
-        for (int i=0;  i<length;  i++) {
-            final RatReport report = (RatReport) reporters.get(i);
+        for (Object reporter : reporters) {
+            final RatReport report = (RatReport) reporter;
             report.startReport();
         } 
     }
 
     public void endReport() throws RatException {
-        final int length = reporters.size();
-        for (int i=0;  i<length;  i++) {
-            final RatReport report = (RatReport) reporters.get(i);
+        for (Object reporter : reporters) {
+            final RatReport report = (RatReport) reporter;
             report.endReport();
         } 
     }

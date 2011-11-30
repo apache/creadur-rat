@@ -109,7 +109,7 @@ public class MetaData {
      * Only likely to be a small quantity of data 
      * so trade some performance for simplicity.
      */
-    private final List/*<Datum>*/ data;
+    private final List<Datum> data;
 
     public MetaData() {
         this(null);
@@ -117,7 +117,7 @@ public class MetaData {
     
     public MetaData(final ContentType contentType) {
         this.contentType = contentType;
-        this.data = new ArrayList/*<Datum>*/(16);
+        this.data = new ArrayList<Datum>(16);
     }
     
     /**
@@ -174,8 +174,7 @@ public class MetaData {
      */
     public Datum get(final String name) {
         Datum result = null;
-        for (final Iterator/*<Datum>*/ it=data.iterator();it.hasNext();) {
-            final Datum next = (Datum) it.next();
+        for (Datum next : data) {
             if (name.equals(next.getName())) {
                 result = next;
                 break;

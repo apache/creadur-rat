@@ -54,7 +54,7 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
   //@Override
   public String getLicenceHeader(File document) {
     int type = getType(document);
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     if (copyright == null) {
       sb.append(getFirstLine(type));
       sb.append(getLine(type, ""));

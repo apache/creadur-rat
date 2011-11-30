@@ -19,18 +19,6 @@ package org.apache.rat.mp;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.lang.reflect.UndeclaredThrowableException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.transform.TransformerConfigurationException;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -45,6 +33,17 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.codehaus.plexus.util.DirectoryScanner;
+
+import javax.xml.transform.TransformerConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -202,12 +201,10 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
         if ( licenseMatchers != null )
         {
-            for ( int i = 0; i < licenseMatchers.length; i++ )
-            {
-                final HeaderMatcherSpecification spec = licenseMatchers[i];
+            for (final HeaderMatcherSpecification spec : licenseMatchers) {
                 final String className = spec.getClassName();
-                final IHeaderMatcher headerMatcher = (IHeaderMatcher) newInstance( IHeaderMatcher.class, className );
-                list.add( headerMatcher );
+                final IHeaderMatcher headerMatcher = (IHeaderMatcher) newInstance(IHeaderMatcher.class, className);
+                list.add(headerMatcher);
             }
         }
 
@@ -261,14 +258,11 @@ public abstract class AbstractRatMojo extends AbstractMojo
      * @param pArray
      *            The strings to add to the list.
      */
-    private void add( List pList, String[] pArray )
+    private void add( List<String> pList, String[] pArray )
     {
         if ( pArray != null )
         {
-            for ( int i = 0; i < pArray.length; i++ )
-            {
-                pList.add( pArray[i] );
-            }
+            Collections.addAll(pList, pArray);
         }
     }
 
@@ -305,7 +299,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     private void setExcludes( DirectoryScanner ds )
     {
-        final List excludeList1 = new ArrayList();
+        final List<String> excludeList1 = new ArrayList<String>();
         if ( useDefaultExcludes )
         {
             add( excludeList1, DirectoryScanner.DEFAULTEXCLUDES );
@@ -324,22 +318,21 @@ public abstract class AbstractRatMojo extends AbstractMojo
         }
         if ( excludeSubProjects && project != null && project.getModules() != null )
         {
-            for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
-            {
-                String moduleSubPath = (String) it.next();
-                excludeList1.add( moduleSubPath + "/**/*" );
+            for (Object o : project.getModules()) {
+                String moduleSubPath = (String) o;
+                excludeList1.add(moduleSubPath + "/**/*");
             }
         }
-        final List excludeList = excludeList1;
+        final List<String> excludeList = excludeList1;
         if ( excludes == null  ||  excludes.length == 0 )
         {
             getLog().info( "No excludes" );
         }
         else
         {
-            for ( int i = 0;  i < excludes.length;  i++ )
+            for ( String exclude : excludes)
             {
-                getLog().info( "Exclude: " + excludes[i] );
+                getLog().info( "Exclude: " + exclude);
             }
         }
         add( excludeList, excludes );
@@ -406,10 +399,8 @@ public abstract class AbstractRatMojo extends AbstractMojo
         }
         if ( licenseFamilyNames != null)
         {
-            for ( int i = 0; i < licenseFamilyNames.length; i++ )
-            {
-                LicenseFamilySpecification spec = licenseFamilyNames[i];
-                list.add( newInstance( ILicenseFamily.class, spec.getClassName() ) );
+            for (LicenseFamilySpecification spec : licenseFamilyNames) {
+                list.add(newInstance(ILicenseFamily.class, spec.getClassName()));
             }
         }
 

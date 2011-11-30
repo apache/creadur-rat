@@ -98,9 +98,9 @@ public class SimplePatternBasedLicense implements IHeaderMatcher {
         if (pLine != null) {
             final String[] pttrns = getPatterns();
             if (pttrns != null) {
-                for (int i = 0;  i < pttrns.length;  i++) {
-                    if (pLine.indexOf(pttrns [i], 0) >= 0) {
-                        return true; 
+                for (String pttrn : pttrns) {
+                    if (pLine.indexOf(pttrn, 0) >= 0) {
+                        return true;
                     }
                 }
             }

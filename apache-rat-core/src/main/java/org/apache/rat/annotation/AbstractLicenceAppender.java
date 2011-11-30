@@ -105,7 +105,7 @@ public abstract class AbstractLicenceAppender {
         TYPE_VISUAL_STUDIO_SOLUTION,
     };
 
-    private static final Map/*<String, Integer>*/ EXT2TYPE = new HashMap();
+    private static final Map<String, Integer> EXT2TYPE = new HashMap();
 
     static {
         // these arrays are used in Arrays.binarySearch so they must
@@ -337,9 +337,9 @@ public abstract class AbstractLicenceAppender {
         int lastDot = path.lastIndexOf(".");
         if (lastDot >= 0 && lastDot < path.length() - 1) {
             String ext = path.substring(lastDot + 1);
-            Object type = EXT2TYPE.get(ext);
-            if (type instanceof Integer) {
-                return ((Integer) type).intValue();
+            Integer type = EXT2TYPE.get(ext);
+            if (type != null) {
+                return type.intValue();
             }
         }
         return TYPE_UNKNOWN;
@@ -534,8 +534,8 @@ class BOMInputStream extends FilterInputStream {
     private void getBOM() throws IOException {
         if (firstBytes == null) {
             int max = 0;
-            for (int i = 0; i < BOMS.length; i++) {
-                max = Math.max(max, BOMS[i].length);
+            for (int[] BOM : BOMS) {
+                max = Math.max(max, BOM.length);
             }
             firstBytes = new int[max];
             for (int i = 0; i < firstBytes.length; i++) {
@@ -576,8 +576,8 @@ class BOMInputStream extends FilterInputStream {
     }
 
     private boolean find() {
-        for (int i = 0; i < BOMS.length; i++) {
-            if (matches(BOMS[i])) {
+        for (int[] BOM : BOMS) {
+            if (matches(BOM)) {
                 return true;
             }
         }

@@ -19,16 +19,16 @@
 
 package org.apache.rat.walker;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
-import java.util.regex.Pattern;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * Walks directories.
@@ -108,8 +108,7 @@ public class DirectoryWalker extends Walker implements IReportable {
      * @throws RatException
      */
     private void processDirectories(final RatReport report, final File[] files) throws RatException {
-        for (int i = 0; i < files.length; i++) {
-            final File file = files[i];
+        for (final File file : files) {
             if (!ignored(file)) {
                 if (file.isDirectory()) {
                     processDirectory(report, file);
@@ -126,8 +125,7 @@ public class DirectoryWalker extends Walker implements IReportable {
      * @throws RatException
      */
     private void processNonDirectories(final RatReport report, final File[] files) throws RatException {
-        for (int i = 0; i < files.length; i++) {
-            final File file = files[i];
+        for (final File file : files) {
             if (!ignored(file)) {
                 if (!file.isDirectory()) {
                     report(report, file);
