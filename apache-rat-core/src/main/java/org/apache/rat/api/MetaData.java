@@ -51,7 +51,7 @@ public class MetaData {
     
     // License Family Categories
     public static final String RAT_URL_LICENSE_FAMILY_CATEGORY= RAT_BASE_URL + "#LicenseFamilyCategory";
-    // Shortcuts used in report output, needs to have 5 characters
+    // Shortcuts used in report output, must be exactly 5 characters
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN = "?????";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL = "AL   ";
@@ -60,9 +60,9 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C = "W3C  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO = "DOJO ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF = "TMF  ";
-    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1 ="GPL1  ";
-    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2 ="GPL2  ";
-    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL3 = "GPL3  ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1 ="GPL1 ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2 ="GPL2 ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL3 = "GPL3 ";
 
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_UNKNOWN = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN);
