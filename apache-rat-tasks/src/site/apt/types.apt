@@ -43,6 +43,15 @@ Built-In Types
 *-------*---------+-------------+
 | generated | Generated documents that don't need a license | <<<org.apache.rat.analysis.generation.GeneratedLicenseNotRequired>>>
 *-------*---------+-------------+
+| gpl1 | {{{http://www.gnu.org/licenses/old-licenses/gpl-1.0.html}GNU General Public License, version 1}} | <<<org.apache.rat.analysis.license.GPL1License>>>
+| <since RAT Antlib 0.9> | |
+*-------*---------+-------------+
+| gpl2 | {{{http://www.gnu.org/licenses/old-licenses/gpl-2.0.html}GNU General Public License, version 2}} | <<<org.apache.rat.analysis.license.GPL2License>>>
+| <since RAT Antlib 0.9> | |
+*-------*---------+-------------+
+| gpl3 | {{{http://www.gnu.org/licenses/gpl.html}GNU General Public License, version 3}} | <<<org.apache.rat.analysis.license.GPL3License>>>
+| <since RAT Antlib 0.9> | |
+*-------*---------+-------------+
 | javadoc | Javadocs that don't need a license | <<<org.apache.rat.analysis.generation.JavaDocLicenseNotRequired>>>
 *-------*---------+-------------+
 | oasis | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.analysis.license.OASISLicense>>>
@@ -127,6 +136,15 @@ Built-In Types
 | <since RAT Antlib 0.8> | |
 *-------*---------+-------------+
 | apache20-license | Apache License 2.0 | <<<org.apache.rat.license.Apache20LicenseFamily>>>
+*-------*---------+-------------+
+| gpl1-family | GNU General Public License, version 1 | <<<org.apache.rat.license.GPL1LicenseFamily>>>
+| <since RAT Antlib 0.9> | |
+*-------*---------+-------------+
+| gpl2-family | GNU General Public License, version 2 | <<<org.apache.rat.license.GPL2LicenseFamily>>>
+| <since RAT Antlib 0.9> | |
+*-------*---------+-------------+
+| gpl3-family | GNU General Public License, version 3 | <<<org.apache.rat.license.GPL3LicenseFamily>>>
+| <since RAT Antlib 0.9> | |
 *-------*---------+-------------+
 | modified-bsd | Modified BSD License | <<<org.apache.rat.license.ModifiedBSDLicenseFamily>>>
 | <since RAT Antlib 0.8> | |

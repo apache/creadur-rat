@@ -41,6 +41,12 @@
     classname="org.apache.rat.analysis.license.W3CDocLicense"/>
   <typedef name="dojo"
     classname="org.apache.rat.analysis.license.DojoLicenseHeader"/>
+  <typedef name="gpl1"
+    classname="org.apache.rat.analysis.license.GPL1License"/>
+  <typedef name="gpl2"
+    classname="org.apache.rat.analysis.license.GPL2License"/>
+  <typedef name="gpl3"
+    classname="org.apache.rat.analysis.license.GPL3License"/>
 
   <!-- typedef the built-in license families -->
   <typedef name="w3c-doc-license"
@@ -57,5 +63,11 @@
     classname="org.apache.rat.license.ModifiedBSDLicenseFamily"/> 
   <typedef name="approvedLicense"
            classname="org.apache.rat.license.SimpleLicenseFamily"/> 
+  <typedef name="gpl1-family"
+    classname="org.apache.rat.license.GPL1LicenseFamily"/> 
+  <typedef name="gpl2-family"
+    classname="org.apache.rat.license.GPL2LicenseFamily"/> 
+  <typedef name="gpl3-family"
+    classname="org.apache.rat.license.GPL3LicenseFamily"/> 
     
 </antlib>
