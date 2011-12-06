@@ -4,6 +4,7 @@ RAT 0.9
  * Issues Resolved (see http://issues.apache.org/jira):
   * Improvement:
     * RAT-59 Upgrade to Java5
+    * RAT-13 GPL 1.x to 3.x are now detected (but not approved by default)
 
 RAT 0.8
 =======

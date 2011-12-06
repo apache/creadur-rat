@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-
-
 /**
  * Data about the subject.
  */
@@ -53,6 +51,7 @@ public class MetaData {
     
     // License Family Categories
     public static final String RAT_URL_LICENSE_FAMILY_CATEGORY= RAT_BASE_URL + "#LicenseFamilyCategory";
+    // Shortcuts used in report output, needs to have 5 characters
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN = "?????";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL = "AL   ";
@@ -61,6 +60,10 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C = "W3C  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO = "DOJO ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF = "TMF  ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1 ="GPL1  ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2 ="GPL2  ";
+    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL3 = "GPL3  ";
+
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_UNKNOWN = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL);
@@ -69,6 +72,9 @@ public class MetaData {
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3C = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_DOJO = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_TMF = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF);
+    public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL1 = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY,RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1);
+    public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL2 = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY,RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2);
+    public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL3 = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY,RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL3);
 
     // License Family Standard Names
     public static final String RAT_URL_LICENSE_FAMILY_NAME= RAT_BASE_URL + "#LicenseFamilyName";
@@ -77,6 +83,12 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE = "OASIS Open License";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE = "Modified BSD License";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0 = "Apache License Version 2.0";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_1 =
+            "GNU General Public License, version 1";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_2 =
+            "GNU General Public License, version 2";
+    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_3 =
+            "GNU General Public License, version 3";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1 = "Academic Free License, Version 2.1";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN = "?????";
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT 
@@ -89,6 +101,12 @@ public class MetaData {
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE);
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0);
+    public static final Datum
+            RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_1 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1);
+    public static final Datum
+            RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2);
+    public static final Datum
+            RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_3 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_3);
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_ACADEMIC_FREE_LICENSE_VERSION_2_1
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1);
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN

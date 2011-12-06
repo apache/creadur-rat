@@ -18,18 +18,21 @@
  */ 
 package org.apache.rat;
 
-import java.io.InputStream;
-
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.generation.GeneratedLicenseNotRequired;
 import org.apache.rat.analysis.generation.JavaDocLicenseNotRequired;
 import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
 import org.apache.rat.analysis.license.DojoLicenseHeader;
+import org.apache.rat.analysis.license.GPL1License;
+import org.apache.rat.analysis.license.GPL2License;
+import org.apache.rat.analysis.license.GPL3License;
 import org.apache.rat.analysis.license.OASISLicense;
 import org.apache.rat.analysis.license.TMF854LicenseHeader;
 import org.apache.rat.analysis.license.W3CDocLicense;
 import org.apache.rat.analysis.license.W3CLicense;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+
+import java.io.InputStream;
 
 
 
@@ -41,13 +44,16 @@ public class Defaults {
     private Defaults() {}
 
     /**
-     * The standard liest of licenses to include in the reports.
+     * The standard list of licenses to include in the reports.
      */
     public static final IHeaderMatcher[] DEFAULT_MATCHERS =
         new IHeaderMatcher[] {
             new ApacheSoftwareLicense20(),
-            new W3CLicense(), 
-            new W3CDocLicense(), 
+            new GPL1License(),
+            new GPL2License(),
+            new GPL3License(),
+            new W3CLicense(),
+            new W3CDocLicense(),
             new OASISLicense(),
             new JavaDocLicenseNotRequired(), 
             new GeneratedLicenseNotRequired(),
@@ -57,17 +63,17 @@ public class Defaults {
     
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
     
-    public static final InputStream getPlainStyleSheet() {
+    public static InputStream getPlainStyleSheet() {
         InputStream result = Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
         return result;
     }
     
-    public static final InputStream getDefaultStyleSheet() {
+    public static InputStream getDefaultStyleSheet() {
         InputStream result = getPlainStyleSheet();
         return result;
     }
     
-    public static final IHeaderMatcher createDefaultMatcher() {
+    public static IHeaderMatcher createDefaultMatcher() {
         return new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
     }
 }

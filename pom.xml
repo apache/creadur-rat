@@ -349,6 +349,9 @@ Note that binary compatibility is not guaranteed between 0.x releases.
       <name>Garrett Rooney</name>
       <email>rooneg@apache.org</email>
     </contributor>
+    <contributor>
+      <name>Hugo Hirsch</name>
+    </contributor>
   </contributors>
 
   <scm>
