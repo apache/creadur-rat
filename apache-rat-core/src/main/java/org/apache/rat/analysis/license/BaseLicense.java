@@ -23,22 +23,58 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 public class BaseLicense {
-	private final MetaData.Datum licenseFamilyCategory;
-	private final MetaData.Datum licenseFamilyName;
-	private final String notes;
+    private String licenseFamilyCategory;
+    private String licenseFamilyName;
+    private String notes;
 	
+    public BaseLicense() {
+    }
+
 	public BaseLicense(final MetaData.Datum licenseFamilyCategory, final MetaData.Datum licenseFamilyName, final String notes)
 	{
-		this.licenseFamilyCategory = licenseFamilyCategory;
-		this.licenseFamilyName = licenseFamilyName;
-		this.notes = notes;
+        if (!MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY.equals(licenseFamilyCategory.getName())) {
+            throw new IllegalStateException("Expected " + MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY
+                    + ", got " + licenseFamilyCategory.getName());
+        }
+        setLicenseFamilyCategory(licenseFamilyCategory.getValue());
+        if (!MetaData.RAT_URL_LICENSE_FAMILY_NAME.equals(licenseFamilyName.getName())) {
+            throw new IllegalStateException("Expected " + MetaData.RAT_URL_LICENSE_FAMILY_NAME
+                    + ", got " + licenseFamilyName.getName());
+        }
+        setLicenseFamilyName(licenseFamilyName.getValue());
+        setNotes(notes);
 	}
+
+    public String getLicenseFamilyCategory() {
+        return licenseFamilyCategory;
+    }
+
+    public void setLicenseFamilyCategory(String pDocumentCategory) {
+        licenseFamilyCategory = pDocumentCategory;
+    }
+
+    public String getLicenseFamilyName() {
+        return licenseFamilyName;
+    }
+
+    public void setLicenseFamilyName(String pLicenseFamilyCategory) {
+        licenseFamilyName = pLicenseFamilyCategory;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String pNotes) {
+        notes = pNotes;
+    }
 
     public final void reportOnLicense(Document subject) throws RatHeaderAnalysisException {
         final MetaData metaData = subject.getMetaData();
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY,licenseFamilyCategory.getValue()));
-        metaData.set(licenseFamilyCategory);
-        metaData.set(licenseFamilyName);
+        final String licFamilyCategory = getLicenseFamilyCategory();
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, licFamilyCategory));
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, licFamilyCategory));
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, getLicenseFamilyName()));
     }
 }
