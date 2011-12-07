@@ -29,55 +29,39 @@ import org.apache.rat.api.MetaData;
  * Looks for documents contain the OASIS copyright claim plus derivative work clause.
  * Perhaps need to match more.
  */
-public class OASISLicense extends BaseLicense implements IHeaderMatcher {
+public class OASISLicense extends FullTextMatchingLicense {
 
     private static final String COPYRIGHT_PATTERN_DEFN = ".*Copyright.*OASIS Open.*";
     private static final String CLAUSE_DEFN
-    = ".*thisdocumentandtranslationsofitmaybecopiedandfurnishedtoothersandderivativeworks" +
-            "thatcommentonorotherwiseexplainitorassistinitsimplementationmaybeprepared" +
-            "copiedpublishedanddistributed.*";
+    = "This document and translations of it may be copied and furnished to others and derivative works" +
+            "that comment on or otherwise explain it or assist in its implementation may be prepared" +
+            "copied published and distributed";
     
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile(COPYRIGHT_PATTERN_DEFN);
-    private static final Pattern CLAUSE_PATTERN = Pattern.compile(CLAUSE_DEFN);
 
     boolean copyrightMatch = false;
-    final StringBuffer buffer = new StringBuffer();
     
     public OASISLicense() {
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_OASIS, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE, "No modifications allowed");
+        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_OASIS,
+              MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE,
+              "No modifications allowed",
+              CLAUSE_DEFN);
     }
 
+    @Override
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         boolean result = false;
         if (copyrightMatch) {
-            line = line.toLowerCase();
-            buffer.append(line);
-            prune(buffer); 
-            final boolean clauseMatch = CLAUSE_PATTERN.matcher(buffer).matches();
-            if (clauseMatch) {
-                result = true;
-                reportOnLicense(subject);
-            }
-            
+            result = super.match(subject, line);
         } else {
             copyrightMatch = COPYRIGHT_PATTERN.matcher(line).matches();
         }
         return result;
     }
-    
-    private void prune(final StringBuffer buffer) {
-        final int length = buffer.length();
-        for (int i=length;i>0;) {
-            char at = buffer.charAt(--i);
-            if (at < 'a' || at > 'z')
-            {
-                buffer.deleteCharAt(i);
-            }
-        }
-    }
 
+    @Override
     public void reset() {
         copyrightMatch = false;
-        buffer.delete(0, buffer.length());
+        super.reset();
     }
 }
