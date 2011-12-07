@@ -26,6 +26,7 @@ import org.apache.rat.analysis.license.DojoLicenseHeader;
 import org.apache.rat.analysis.license.GPL1License;
 import org.apache.rat.analysis.license.GPL2License;
 import org.apache.rat.analysis.license.GPL3License;
+import org.apache.rat.analysis.license.MITLicense;
 import org.apache.rat.analysis.license.OASISLicense;
 import org.apache.rat.analysis.license.TMF854LicenseHeader;
 import org.apache.rat.analysis.license.W3CDocLicense;
@@ -52,6 +53,7 @@ public class Defaults {
             new GPL1License(),
             new GPL2License(),
             new GPL3License(),
+            new MITLicense(),
             new W3CLicense(),
             new W3CDocLicense(),
             new OASISLicense(),

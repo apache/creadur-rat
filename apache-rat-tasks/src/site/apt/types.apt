@@ -54,6 +54,9 @@ Built-In Types
 *-------*---------+-------------+
 | javadoc | Javadocs that don't need a license | <<<org.apache.rat.analysis.generation.JavaDocLicenseNotRequired>>>
 *-------*---------+-------------+
+| mit | {{{http://www.opensource.org/licenses/MIT}The MIT License}} | <<<org.apache.rat.analysis.license.MITLicense>>>
+| <since RAT Antlib 0.9> | |
+*-------*---------+-------------+
 | oasis | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.analysis.license.OASISLicense>>>
 | <since RAT Antlib 0.8> | |
 *-------*---------+-------------+
@@ -144,6 +147,9 @@ Built-In Types
 | <since RAT Antlib 0.9> | |
 *-------*---------+-------------+
 | gpl3-family | GNU General Public License, version 3 | <<<org.apache.rat.license.GPL3LicenseFamily>>>
+| <since RAT Antlib 0.9> | |
+*-------*---------+-------------+
+| mit-family | The MIT License | <<<org.apache.rat.license.MITLicenseFamily>>>
 | <since RAT Antlib 0.9> | |
 *-------*---------+-------------+
 | modified-bsd | Modified BSD License | <<<org.apache.rat.license.ModifiedBSDLicenseFamily>>>

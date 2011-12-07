@@ -33,7 +33,8 @@ public class DefaultPolicy implements IDocumentAnalyser {
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE
+        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE,
+        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MIT,
     };
     
     private static final String[] toNames(final ILicenseFamily[] approvedLicenses) {
