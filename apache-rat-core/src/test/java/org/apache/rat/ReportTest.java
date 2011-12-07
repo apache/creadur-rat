@@ -40,7 +40,7 @@ public class ReportTest extends TestCase {
             "Notes: 2\n" + 
             "Binaries: 1\n" + 
             "Archives: 1\n" + 
-            "Standards: 5\n" + 
+            "Standards: 6\n" + 
             "\n" + 
             "Apache Licensed: 3\n" + 
             "Generated Documents: 0\n" + 
@@ -68,6 +68,7 @@ public class ReportTest extends TestCase {
             "  Binary files (which do not require AL headers) will be marked B\n" + 
             "  Compressed archives will be marked A\n" + 
             "  Notices, licenses etc will be marked N\n" + 
+            "  MIT   " + pElementsPath + "/ILoggerFactory.java\n" + 
             "  B     " + pElementsPath + "/Image.png\n" + 
             "  N     " + pElementsPath + "/LICENSE\n" + 
             "  N     " + pElementsPath + "/NOTICE\n" + 

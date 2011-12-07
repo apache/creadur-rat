@@ -75,6 +75,7 @@ public class XmlReportFactoryTest extends TestCase {
                 "<rat-report timestamp="));
         assertTrue("Part after timestamp attribute is OK",
                    output.endsWith(">" +
+                "<resource name='" + elementsPath + "/ILoggerFactory.java'><type name='standard'/></resource>" +
                 "<resource name='" + elementsPath + "/Image.png'><type name='binary'/></resource>" +
                 "<resource name='" + elementsPath + "/LICENSE'><type name='notice'/></resource>" +
                 "<resource name='" + elementsPath + "/NOTICE'><type name='notice'/></resource>" +
@@ -91,7 +92,7 @@ public class XmlReportFactoryTest extends TestCase {
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
         assertEquals("Binary files", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
         assertEquals("Notice files", new Integer(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
-        assertEquals("Standard files", new Integer(4), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
+        assertEquals("Standard files", new Integer(5), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
         assertEquals("Archives", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
     }
 }
