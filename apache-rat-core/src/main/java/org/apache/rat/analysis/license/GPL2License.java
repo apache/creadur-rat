@@ -23,19 +23,15 @@ import org.apache.rat.api.MetaData;
 /**
  * Licence matches GPL2 or later.
  */
-public class GPL2License extends SimplePatternBasedLicense {
+public class GPL2License extends FullTextMatchingLicense {
 	public static final String FIRST_LICENSE_LINE = "This program is free software; you can redistribute it and/or\n" +
             " modify it under the terms of the GNU General Public License\n" +
             " as published by the Free Software Foundation; either version 2\n" +
             " of the License, or (at your option) any later version.";
 
-    public static final String LICENSE_REFERENCE_LINE = "You should have received a copy of the GNU General Public License\n" +
-            " along with this program; if not, write to the Free Software\n" +
-            " Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.";
-
 	public GPL2License() {
 		super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL2,
                 MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2,
-		        "", new String[]{FIRST_LICENSE_LINE, LICENSE_REFERENCE_LINE});
+		        "", FIRST_LICENSE_LINE);
 	}
 }

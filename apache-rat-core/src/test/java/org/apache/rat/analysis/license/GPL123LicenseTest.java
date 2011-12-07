@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
@@ -42,11 +43,11 @@ public class GPL123LicenseTest {
     /**
      * To ease testing provide a map with a given license version and the string to test for.
      */
-    private static Map<SimplePatternBasedLicense, String> licenseStringMap;
+    private static Map<IHeaderMatcher, String> licenseStringMap;
 
     @BeforeClass
     public static void initLicencesUnderTest() {
-        licenseStringMap = new HashMap<SimplePatternBasedLicense, String>();
+        licenseStringMap = new HashMap<IHeaderMatcher, String>();
         licenseStringMap.put(new GPL1License(), GPL1License.FIRST_LICENSE_LINE);
         licenseStringMap.put(new GPL2License(), GPL2License.FIRST_LICENSE_LINE);
         licenseStringMap.put(new GPL3License(), GPL3License.FIRST_LICENSE_LINE);
@@ -60,31 +61,14 @@ public class GPL123LicenseTest {
 
     @Test
     public void testNegativeMatches() throws Exception {
-        for(Map.Entry<SimplePatternBasedLicense, String> licenceUnderTest : licenseStringMap.entrySet()) {
-            assertFalse(licenceUnderTest.getKey().matches("'Behold, Telemachus! (nor fear the sight,)"));
+        for(Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap.entrySet()) {
             assertFalse(licenceUnderTest.getKey().match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
         }
     }
 
     @Test
-    public void testPositiveMatches() throws Exception {
-        for(Map.Entry<SimplePatternBasedLicense, String> licenceUnderTest : licenseStringMap.entrySet()) {
-            assertTrue(licenceUnderTest.getKey().matches("\t" + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches("     " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches(licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches(" * " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches(" // " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches(" /* " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches(" /** " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches("    " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches(" ## " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().matches(" ## " + licenceUnderTest.getValue() + " ##"));
-        }
-    }
-
-    @Test
     public void testPositiveMatchInDocument() throws Exception {
-        for(Map.Entry<SimplePatternBasedLicense, String> licenceUnderTest : licenseStringMap.entrySet()) {
+        for(Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap.entrySet()) {
             assertTrue(licenceUnderTest.getKey().match(subject, "\t" + licenceUnderTest.getValue()));
             assertTrue(licenceUnderTest.getKey().match(subject, "     " + licenceUnderTest.getValue()));
             assertTrue(licenceUnderTest.getKey().match(subject, licenceUnderTest.getValue()));
