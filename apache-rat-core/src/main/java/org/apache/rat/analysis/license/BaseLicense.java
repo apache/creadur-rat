@@ -26,12 +26,12 @@ public class BaseLicense {
     private String licenseFamilyCategory;
     private String licenseFamilyName;
     private String notes;
-	
+
     public BaseLicense() {
     }
 
-	public BaseLicense(final MetaData.Datum licenseFamilyCategory, final MetaData.Datum licenseFamilyName, final String notes)
-	{
+    public BaseLicense(final MetaData.Datum licenseFamilyCategory, final MetaData.Datum licenseFamilyName, final String notes)
+    {
         if (!MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY.equals(licenseFamilyCategory.getName())) {
             throw new IllegalStateException("Expected " + MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY
                     + ", got " + licenseFamilyCategory.getName());
@@ -43,7 +43,7 @@ public class BaseLicense {
         }
         setLicenseFamilyName(licenseFamilyName.getValue());
         setNotes(notes);
-	}
+    }
 
     public String getLicenseFamilyCategory() {
         return licenseFamilyCategory;
