@@ -117,4 +117,46 @@
       </rat:report>
     </au:expectfailure>
   </target>
+
+  <target name="testFullTextMatcherRequiresFamilyName">
+    <au:expectfailure
+        expectedMessage="The licenseFamilyName attribute is required.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:fullTextMatcher
+            licenseFamilyCategory="YASL1"
+            notes="Interesting License"
+            fullText="exmpl">
+        </rat:fullTextMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testFullTextMatcherRequiresFamilyCategory">
+    <au:expectfailure
+        expectedMessage="The licenseFamilyCategory attribute is required.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:fullTextMatcher
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License"
+            fullText="exmpl">
+        </rat:fullTextMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testFullTextMatcherRequiresText">
+    <au:expectfailure
+        expectedMessage="You must specify the text to match.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:fullTextMatcher
+            licenseFamilyCategory="YASL1"
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License">
+        </rat:fullTextMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
 </project>

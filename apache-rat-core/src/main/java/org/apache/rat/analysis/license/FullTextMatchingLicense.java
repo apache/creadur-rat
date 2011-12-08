@@ -58,6 +58,10 @@ public class FullTextMatchingLicense extends BaseLicense
                                           Pattern.CASE_INSENSITIVE);
     }
 
+    public final boolean hasFullText() {
+        return fullTextPattern != null;
+    }
+
     protected final String prune(String text) {
         final StringBuilder buffer = new StringBuilder(text);
         final int length = buffer.length();

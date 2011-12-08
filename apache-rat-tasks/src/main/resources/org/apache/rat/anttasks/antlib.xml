@@ -25,6 +25,8 @@
 
   <typedef name="substringMatcher"
            classname="org.apache.rat.anttasks.SubstringLicenseMatcher"/>
+  <typedef name="fullTextMatcher"
+           classname="org.apache.rat.anttasks.FullTextLicenseMatcher"/>
 
   <!-- typedef the built-in license matchers -->
   <typedef name="asl20"

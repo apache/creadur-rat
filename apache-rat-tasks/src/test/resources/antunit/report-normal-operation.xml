@@ -194,6 +194,83 @@
     <assertReportDoesntContain text=" YASL1 ${file.name}"/>
   </target>
 
+  <target name="testFullTextMatcherNotApprovedSentToFile"
+          depends="fileReportTest">
+    <rat:report reportFile="${report.file}"
+                addDefaultLicenseMatchers="false">
+      <file file="${ant.file}"/>
+      <rat:fullTextMatcher
+          licenseFamilyCategory="YASL1"
+          licenseFamilyName="Yet Another Software License (YASL) 1.0"
+          notes="Interesting License">
+        License Family Name: Yet Another Software License (YASL) 1.0
+      </rat:fullTextMatcher>
+    </rat:report>
+    <assertReportContains text="!YASL1 ${file.name}"/>
+    <assertReportDoesntContain text=" YASL1 ${file.name}"/>
+  </target>
+
+  <target name="testFullTextMatcherApprovedSentToFile"
+          depends="fileReportTest">
+    <rat:report reportFile="${report.file}"
+                addDefaultLicenseMatchers="false">
+      <file file="${ant.file}"/>
+      <rat:fullTextMatcher
+          licenseFamilyCategory="YASL1"
+          licenseFamilyName="Yet Another Software License (YASL) 1.0"
+          notes="Interesting License">
+        License Family Name: Yet Another Software License (YASL) 1.0
+      </rat:fullTextMatcher>
+      <rat:approvedLicense
+          familyName="Yet Another Software License (YASL) 1.0"/>
+    </rat:report>
+    <assertReportContains text=" YASL1 ${file.name}"/>
+    <assertReportDoesntContain text="!YASL1 ${file.name}"/>
+  </target>
+
+  <target name="testFullTextMatcherSentToFileNoMatch"
+          depends="fileReportTest">
+    <pathconvert dirsep="/" property="alt.file.name">
+      <path>
+        <pathelement location="report-bad-configurations.xml"/>
+      </path>
+    </pathconvert>
+    <rat:report reportFile="${report.file}"
+                addDefaultLicenseMatchers="false">
+      <file file="report-bad-configurations.xml"/>
+      <rat:fullTextMatcher
+          licenseFamilyCategory="YASL1"
+          licenseFamilyName="Yet Another Software License (YASL) 1.0"
+          notes="Interesting License">
+This text shouldn't exist in report-bad-configuration.xml
+      </rat:fullTextMatcher>
+    </rat:report>
+    <assertReportDoesntContain text="!YASL1 ${alt.file.name}"/>
+    <assertReportDoesntContain text=" YASL1 ${alt.file.name}"/>
+  </target>
+
+  <target name="testFullTextMatcherExpandsProperties"
+          depends="fileReportTest">
+    <pathconvert dirsep="/" property="alt.file.name">
+      <path>
+        <pathelement location="report-bad-configurations.xml"/>
+      </path>
+    </pathconvert>
+    <property name="test.version" value="1.0"/>
+    <rat:report reportFile="${report.file}"
+                addDefaultLicenseMatchers="false">
+      <file file="report-bad-configurations.xml"/>
+      <rat:fullTextMatcher
+          licenseFamilyCategory="YASL1"
+          licenseFamilyName="Yet Another Software License (YASL) 1.0"
+          notes="Interesting License">
+        License Family Name: Yet Another Software License (YASL) ${test.version}
+      </rat:fullTextMatcher>
+    </rat:report>
+    <assertReportContains text="!YASL1 ${alt.file.name}"/>
+    <assertReportDoesntContain text=" YASL1 ${alt.file.name}"/>
+  </target>
+
   <target name="fileReportTest" depends="setUp">
     <property name="report.file" location="${output.dir}/selftest.report"/>
     <au:assertFileDoesntExist file="${report.file}"/>

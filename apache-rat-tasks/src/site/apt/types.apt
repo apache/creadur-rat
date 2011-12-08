@@ -73,8 +73,9 @@ Built-In Types
  <since RAT Antlib 0.8>
 
  For the simple case where a license can be detected by searching for
- a given string - in fact this is what all built-in implementations do
- - you can use the <<<substringMatcher>>> type.
+ a given string in a single line of the source code - in fact this is what
+ many built-in implementations do - you can use the
+ <<<substringMatcher>>> type.
 
 **  Attributes of the Type
 
@@ -124,6 +125,78 @@ Built-In Types
              licenseFamilyName="Yet Another Software License, Version 1.0">
         <pattern substring="Yet Another Software License, 1.0"/>
     </rat:substringMatcher>
+</rat:report>
+------------------------------------------------------------------
+
+* {<<<fullTextMatcher>>>}
+
+ <since RAT Antlib 0.9>
+
+ This matcher searches for the full text given, ignoring everything
+ that is not a character or a number (and for US-ASCII characters it
+ is case-insensitive).  This allows licenses to be detected that can't
+ be identified by a single line, even if the formatting has been
+ changed.
+
+**  Attributes of the Type
+
+*-------------------------*-------------------------------+
+|Name                     |Description                    |
+*-------------------------*-------------------------------+
+| licenseFamilyCategory | Short name of the detected license.  Should be five characters long if you want to keep the layout of the plain text report.
+| | This will be printed next to to the checked file inside the plain text report and creates <<<header-type>>> elements inside the XML report.
+| | <<REQUIRED>>
+*-------------------------*-------------------------------+
+| licenseFamilyName | Long name of the detected license.  The value is checked against the list of approved licenses.
+| | This will not appear inside the plain text report and creates <<<license-family>>> elements inside the XML report.
+| | <<REQUIRED>>
+*-------------------------*-------------------------------+
+| notes | Additional notes you want to provide.
+| | This will not appear inside the plain text report and creates <<<header-sample>>> elements inside the XML report.
+*-------------------------*-------------------------------+
+| fullText | The license text to look for.
+| | Everything that is not a character or a digit will be ignored.
+| | <<REQUIRED>> unless the text is specified as nested content.
+*-------------------------*-------------------------------+
+
+ You can also nest the license text directly as content into the type.
+
+** Example
+
+ Taking the example of {{{./examples/custom.html}the custom types page}}
+ in order to detect
+
+------------------------------------------------------------------
+  /**
+   * Yet Another Software License, 1.0
+   *
+   * Lots of text, specifying the users rights, and whatever ...
+   */
+------------------------------------------------------------------
+
+  you could use
+
+------------------------------------------------------------------
+<rat:report>
+    <fileset dir="src"/>
+    <rat:fullTextMatcher licenseFamilyCategory="YASL1"
+             licenseFamilyName="Yet Another Software License, Version 1.0"
+             fullText="Yet Another Software License, 1.0 Lots of text, specifying the users rights, and whatever">
+    </rat:fullTextMatcher>
+</rat:report>
+------------------------------------------------------------------
+
+  or
+
+------------------------------------------------------------------
+<rat:report>
+    <fileset dir="src"/>
+    <rat:fullTextMatcher licenseFamilyCategory="YASL1"
+             licenseFamilyName="Yet Another Software License, Version 1.0">
+Yet Another Software License, 1.0
+
+Lots of text, specifying the users rights, and whatever
+    </rat:fullTextMatcher>
 </rat:report>
 ------------------------------------------------------------------
 

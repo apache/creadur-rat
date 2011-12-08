@@ -1,6 +1,8 @@
 RAT 0.9
 =======
  * RAT now requires Java5 at runtime
+ * The Antlib contains a new matcher type that allows matching on the
+   full text of the license rather than a single line.
  * Issues Resolved (see http://issues.apache.org/jira):
   * Improvement:
     * RAT-59 Upgrade to Java5
