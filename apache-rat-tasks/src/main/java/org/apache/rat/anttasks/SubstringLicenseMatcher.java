@@ -37,7 +37,7 @@ public class SubstringLicenseMatcher extends SimplePatternBasedLicense {
         patterns.add(p.getSubstring());
     }
 
-    // @Override
+    @Override
     public String[] getPatterns() {
         validate();
         return (String[]) patterns.toArray(new String[0]);
