@@ -137,6 +137,7 @@ public abstract class AbstractLicenceAppender {
         EXT2TYPE.put("csdproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("csproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("css", Integer.valueOf(TYPE_CSS));
+        EXT2TYPE.put("fxcop", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("groovy", Integer.valueOf(TYPE_GROOVY));
         EXT2TYPE.put("h", Integer.valueOf(TYPE_H));
         EXT2TYPE.put("hh", Integer.valueOf(TYPE_H));
@@ -146,6 +147,7 @@ public abstract class AbstractLicenceAppender {
         EXT2TYPE.put("java", Integer.valueOf(TYPE_JAVA));
         EXT2TYPE.put("js", Integer.valueOf(TYPE_JAVASCRIPT));
         EXT2TYPE.put("ndoc", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("nunit", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("php", Integer.valueOf(TYPE_PHP));
         EXT2TYPE.put("pl", Integer.valueOf(TYPE_PERL));
         EXT2TYPE.put("properties", Integer.valueOf(TYPE_PROPERTIES));
@@ -155,7 +157,9 @@ public abstract class AbstractLicenceAppender {
         EXT2TYPE.put("resx", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("scala", Integer.valueOf(TYPE_SCALA));
         EXT2TYPE.put("sh", Integer.valueOf(TYPE_SH));
+        EXT2TYPE.put("shfbproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("sln", Integer.valueOf(TYPE_VISUAL_STUDIO_SOLUTION));
+        EXT2TYPE.put("stylecop", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("tcl", Integer.valueOf(TYPE_TCL));
         EXT2TYPE.put("vbdproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("vbproj", Integer.valueOf(TYPE_XML));
