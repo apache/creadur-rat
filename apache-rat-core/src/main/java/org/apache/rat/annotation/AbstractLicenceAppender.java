@@ -160,6 +160,7 @@ public abstract class AbstractLicenceAppender {
         EXT2TYPE.put("shfbproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("sln", Integer.valueOf(TYPE_VISUAL_STUDIO_SOLUTION));
         EXT2TYPE.put("stylecop", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("svg", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("tcl", Integer.valueOf(TYPE_TCL));
         EXT2TYPE.put("vbdproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("vbproj", Integer.valueOf(TYPE_XML));
