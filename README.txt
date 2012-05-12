@@ -1,13 +1,10 @@
-                            Release Audit Tool
-                            ==================
+                            Apache Rat
+                            ==========
 
-Apache RAT is an effort undergoing incubation at The Apache Software Foundation (ASF), 
-sponsored by the Incubator PMC. Incubation is required of all newly accepted projects 
-until a further review indicates that the infrastructure, communications, and decision 
-making process have stabilized in a manner consistent with other successful ASF projects.
-While incubation status is not necessarily a reflection of the completeness or stability 
-of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
-      
+Apache Rat is developed by the Apache Creadur project of the Apache Software 
+Foundation. Join us at http://creadur.apache.org and read more about Apache Rat
+at http://creadur.apache.org/rat.  
+
 Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
@@ -37,10 +34,4 @@ library (rat-lib jar) suitable for inclusion in tools. Note that binary compatib
 is not gauranteed between 0.x releases. The XML output format is not yet in it's 
 final form and so library users are recommended to either use the supplied 
 stylesheets or keep in close touch with the code.
-
-RAT is in Incubation at Apache: http://incubator.apache.org/rat
-
-Artifacts
-=========
- TODO:
 
