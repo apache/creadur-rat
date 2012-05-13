@@ -18,28 +18,27 @@
  */ 
 package org.apache.rat.analysis;
 
-import java.io.File;
-import java.io.StringWriter;
-
-import junit.framework.TestCase;
-
-import org.apache.rat.analysis.DefaultAnalyserFactory;
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.junit.Before;
+import org.junit.Test;
 
-public class AnalyserFactoryTest extends TestCase {
+import java.io.File;
+import java.io.StringWriter;
+
+import static org.junit.Assert.assertEquals;
+
+public class AnalyserFactoryTest {
 
     StringWriter out;
     SimpleXmlClaimReporter reporter;
     IHeaderMatcher matcherStub;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    @Before
+    public void setUp() throws Exception {
         out = new StringWriter();
         XmlWriter writer = new XmlWriter(out);
         reporter = new SimpleXmlClaimReporter(writer);
@@ -54,12 +53,8 @@ public class AnalyserFactoryTest extends TestCase {
         };
      }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-
-    public void testStandardTypeAnalyser() throws Exception {
+    @Test
+    public void standardTypeAnalyser() throws Exception {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/resources/elements/Text.txt"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcherStub);
         analyser.analyse(document);
@@ -87,7 +82,8 @@ public class AnalyserFactoryTest extends TestCase {
                 "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/>", out.toString());
     }
 
-    public void testNoteTypeAnalyser() throws Exception {
+    @Test
+    public void noteTypeAnalyser() throws Exception {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/LICENSE"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcherStub);
         analyser.analyse(document);
@@ -95,7 +91,8 @@ public class AnalyserFactoryTest extends TestCase {
         assertEquals("Open note element", "<resource name='src/test/elements/LICENSE'><type name='notice'/>", out.toString());
     }
 
-    public void testBinaryTypeAnalyser() throws Exception {
+    @Test
+    public void binaryTypeAnalyser() throws Exception {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/Image.png"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcherStub);
         analyser.analyse(document);
@@ -103,7 +100,8 @@ public class AnalyserFactoryTest extends TestCase {
         assertEquals("Open binary element", "<resource name='src/test/elements/Image.png'><type name='binary'/>", out.toString());
     }
 
-    public void testArchiveTypeAnalyser() throws Exception {
+    @Test
+    public void archiveTypeAnalyser() throws Exception {
         MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/Dummy.jar"));
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcherStub);
         analyser.analyse(document);

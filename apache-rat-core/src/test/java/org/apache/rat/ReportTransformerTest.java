@@ -18,15 +18,17 @@
  */ 
 package org.apache.rat;
 
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
 
-public class ReportTransformerTest extends TestCase {
+public class ReportTransformerTest {
     
     private static final String SIMPLE_CONTENT =  
         "<?xml version='1.0'?>" +
@@ -37,18 +39,10 @@ public class ReportTransformerTest extends TestCase {
         "<directory name='.svn' restricted='true'/>" +
         "</directory>";
 
-    StringWriter writer;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        writer = new StringWriter();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void testTransform() throws Exception {
+        StringWriter writer = new StringWriter();
+        assertNotNull(writer);
         StringReader in = new StringReader(SIMPLE_CONTENT);
         ReportTransformer transformer = new ReportTransformer(writer, 
                 new BufferedReader(new FileReader(new File("src/main/resources/org/apache/rat/plain-rat.xsl"))), 

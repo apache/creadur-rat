@@ -23,10 +23,7 @@ public class SimpleCharFilter implements CharFilter {
     public boolean filterOut = false;
     
     public SimpleCharFilter() {}
-    public SimpleCharFilter(boolean filterOut) {
-        this.filterOut = filterOut;
-    }
-    
+
     public boolean isFilteredOut(char character) {
         return filterOut;
     }

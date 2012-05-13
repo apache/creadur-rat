@@ -18,23 +18,28 @@
  */ 
 package org.apache.rat.report.xml;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.lang.reflect.UndeclaredThrowableException;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.lang.reflect.UndeclaredThrowableException;
 
 public final class XmlUtils {
+    /**
+     * Private constructor, to prevent accidental instantiation.
+     */
+    private XmlUtils() {
+        // Does nothing
+    }
 
     public static final boolean isWellFormedXml(final String string) throws Exception {
         return isWellFormedXml(new InputSource(new StringReader(string)));

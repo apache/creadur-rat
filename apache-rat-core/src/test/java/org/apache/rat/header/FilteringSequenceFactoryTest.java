@@ -18,28 +18,29 @@
  */ 
 package org.apache.rat.header;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.StringReader;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class FilteringSequenceFactoryTest extends TestCase {
+public class FilteringSequenceFactoryTest {
 
     int capacity;
     FilteringSequenceFactory factory;
     SimpleCharFilter filter;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    @Before
+    public void setUp() throws Exception {
         capacity = 50;
         filter = new SimpleCharFilter();
         factory = new FilteringSequenceFactory(capacity, filter);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testNoFiltering() throws Exception {
+    @Test
+    public void noFiltering() throws Exception {
         final String INPUT = "Whatever";
         StringReader reader = new StringReader(INPUT);
         CharSequence result = factory.filter(reader);
@@ -53,7 +54,8 @@ public class FilteringSequenceFactoryTest extends TestCase {
         assertEquals("No filtering so input equals output. Independent of previous input", INPUT, output);
     }
 
-    public void testFiltering() throws Exception {
+    @Test
+    public void filtering() throws Exception {
         final String INPUT = "Whatever";
         StringReader reader = new StringReader(INPUT);
         CharSequence result = factory.filter(reader);
@@ -67,7 +69,8 @@ public class FilteringSequenceFactoryTest extends TestCase {
         assertEquals("All filtered output is empty. Independent of previous input", 0, result.length());
     }
     
-    public void testOverCapacity() throws Exception {
+    @Test
+    public void overCapacity() throws Exception {
         final String INPUT = "WhateverWhateverWhateverWhateverWhateverWhateverWhateverWhateverWhateverWhatever";
         StringReader reader = new StringReader(INPUT);
         CharSequence result = factory.filter(reader);

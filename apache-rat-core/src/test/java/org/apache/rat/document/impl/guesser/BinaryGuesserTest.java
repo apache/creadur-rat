@@ -18,39 +18,33 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
+import org.apache.rat.document.MockDocument;
+import org.apache.rat.document.impl.FileDocument;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import org.apache.rat.document.impl.FileDocument;
-import org.apache.rat.document.MockDocument;
-import junit.framework.TestCase;
 
-public class BinaryGuesserTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-    BinaryGuesser guesser;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        guesser = new BinaryGuesser();
-    }
+public class BinaryGuesserTest {
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
+    @Test
     public void testMatches() {
-        assertTrue(guesser.isBinary(new MockDocument("image.png")));
-        assertTrue(guesser.isBinary(new MockDocument("image.pdf")));
-        assertTrue(guesser.isBinary(new MockDocument("image.gif")));
-        assertTrue(guesser.isBinary(new MockDocument("image.giff")));
-        assertTrue(guesser.isBinary(new MockDocument("image.tif")));
-        assertTrue(guesser.isBinary(new MockDocument("image.tiff")));
-        assertTrue(guesser.isBinary(new MockDocument("image.jpg")));
-        assertTrue(guesser.isBinary(new MockDocument("image.jpeg")));
-        assertTrue(guesser.isBinary(new MockDocument("image.exe")));
-        assertTrue(guesser.isBinary(new MockDocument("Whatever.class")));
-        assertTrue(guesser.isBinary(new MockDocument("data.dat")));
-        assertTrue(guesser.isBinary(new MockDocument("libicudata.so.34.")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.png")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.pdf")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.gif")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.giff")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.tif")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.tiff")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.jpg")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.jpeg")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.exe")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("Whatever.class")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("data.dat")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("libicudata.so.34.")));
     }
 
     public void testIsBinary() {
@@ -75,7 +69,8 @@ public class BinaryGuesserTest extends TestCase {
      *
      * @see RAT-81
      */
-    public void testBinaryWithMalformedInput() throws Throwable {
+    @Test
+    public void binaryWithMalformedInputRAT81() throws Throwable {
         FileDocument doc = new FileDocument(new File("src/test/resources/binaries/UTF16_with_signature.xml"));
         Reader r = null;
         try {
@@ -91,9 +86,11 @@ public class BinaryGuesserTest extends TestCase {
             // still here?  can't test on this platform
             System.err.println("Skipping testBinaryWithMalformedInput");
         } catch (IOException e) {
-            r.close();
+            if (r!= null) {
+                r.close();
+            }
             r = null;
-            assertTrue(guesser.isBinary(doc));
+            assertTrue(BinaryGuesser.isBinary(doc));
         } finally {
             if (r != null) {
                 r.close();
@@ -101,15 +98,18 @@ public class BinaryGuesserTest extends TestCase {
         }
     }
 
-    public void testRealBinaryContent() {
-        assertTrue(guesser.isBinary(new FileDocument(new File("src/test/resources/binaries/Image-png.not"))));
+    @Test
+    public void realBinaryContent() {
+        assertTrue(BinaryGuesser.isBinary(new FileDocument(new File("src/test/resources/binaries/Image-png.not"))));
     }
 
-    public void testTextualContent() {
-        assertFalse(guesser.isBinary(new FileDocument(new File("src/test/resources/elements/Text.txt"))));
+    @Test
+    public void textualContent() {
+        assertFalse(BinaryGuesser.isBinary(new FileDocument(new File("src/test/resources/elements/Text.txt"))));
     }
 
-    public void testEmptyFile() {
-        assertFalse(guesser.isBinary(new FileDocument(new File("src/test/resources/elements/sub/Empty.txt"))));
+    @Test
+    public void emptyFile() {
+        assertFalse(BinaryGuesser.isBinary(new FileDocument(new File("src/test/resources/elements/sub/Empty.txt"))));
     }
 }

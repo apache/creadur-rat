@@ -18,37 +18,38 @@
  */ 
 package org.apache.rat.document.impl;
 
+import org.apache.rat.api.Document;
+import org.apache.rat.test.utils.Resources;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.Reader;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.test.utils.Resources;
-
-public class SingularFileDocumentTest extends TestCase {
+public class SingularFileDocumentTest {
 	private Document document;
 	private File file;
     
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         file = Resources.getResourceFile("elements/Source.java");
         document = new MonolithicFileDocument(file);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testReader() throws Exception {
+    @Test
+    public void reader() throws Exception {
         Reader reader = document.reader();
         assertNotNull("Reader should be returned", reader);
         assertEquals("First file line expected", "package elements;", 
                  new BufferedReader(reader).readLine());
     }
 
-    public void testGetName() {
+    @Test
+    public void getName() {
         final String name = document.getName();
         assertNotNull("Name is set", name);
         assertEquals("Name is filename", DocumentImplUtils.toName(file), name);

@@ -207,9 +207,8 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
         else if ( pDir.isDirectory() )
         {
             final File[] files = pDir.listFiles();
-            for ( int i = 0;  i < files.length;  i++ )
-            {
-                remove( files[i] );
+            for (File file : files) {
+                remove(file);
             }
             if ( ! pDir.delete() )
             {
@@ -235,16 +234,15 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
             scanner.setIncludes(new String[]{"*"});
             scanner.scan();
             final String[] dirs = scanner.getIncludedDirectories();
-            
-            for (int i = 0;  i < dirs.length;  i++) {
-                final String dir = dirs[i];
+
+            for (final String dir : dirs) {
                 if (!"".equals(dir)) {
-                    copy( new File(pSource, dir), new File(pTarget, dir));
+                    copy(new File(pSource, dir), new File(pTarget, dir));
                 }
             }
             final String[] files = scanner.getIncludedFiles();
-            for (int i = 0;  i < files.length;  i++) {
-                copy( new File(pSource, files[i]), new File(pTarget, files[i]));
+            for (String file : files) {
+                copy(new File(pSource, file), new File(pTarget, file));
             }
         }
         else if ( pSource.isFile() )
@@ -379,7 +377,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
     public void testIt3() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo( "it3", "check", true );
         setVariableValueToObject( mojo, "addLicenseHeaders", "true" );
-        setVariableValueToObject( mojo, "numUnapprovedLicenses", new Integer(1));
+        setVariableValueToObject( mojo, "numUnapprovedLicenses", Integer.valueOf(1));
         mojo.execute();
         final File ratTxtFile = getRatTxtFile( mojo );
         checkResult( ratTxtFile, 1, 1 );

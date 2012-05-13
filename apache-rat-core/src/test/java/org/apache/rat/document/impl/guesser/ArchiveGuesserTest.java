@@ -19,32 +19,24 @@
 package org.apache.rat.document.impl.guesser;
 
 import org.apache.rat.document.MockDocument;
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ArchiveGuesserTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
-    ArchiveGuesser guesser;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        this.guesser = new ArchiveGuesser();
-    }
+public class ArchiveGuesserTest {
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
-
-    public void testMatches() {
-        assertTrue(guesser.isArchive(new MockDocument("42.jar")));
-        assertTrue(guesser.isArchive(new MockDocument("42.tar.gz")));
-        assertTrue(guesser.isArchive(new MockDocument("42.zip")));
-        assertTrue(guesser.isArchive(new MockDocument("42.tar")));
-        assertTrue(guesser.isArchive(new MockDocument("42.bz")));
-        assertTrue(guesser.isArchive(new MockDocument("42.bz2")));
+    @Test
+    public void matches() {
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.jar")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.tar.gz")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.zip")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.tar")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.bz")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.bz2")));
     }
     
-    public void testIsArchive() {
+    @Test
+    public void isArchive() {
         assertTrue(ArchiveGuesser.isArchive("42.jar"));
         assertTrue(ArchiveGuesser.isArchive("42.tar.gz"));
         assertTrue(ArchiveGuesser.isArchive("42.zip"));

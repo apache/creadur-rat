@@ -18,14 +18,14 @@
  */ 
 package org.apache.rat.analysis;
 
+import org.apache.rat.api.Document;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.rat.api.Document;
-
 public class MockLicenseMatcher implements IHeaderMatcher {
 
-	public final List lines = new ArrayList();
+	public final List<String> lines = new ArrayList<String>();
 	public int resets = 0;
     public boolean result = true;
 	

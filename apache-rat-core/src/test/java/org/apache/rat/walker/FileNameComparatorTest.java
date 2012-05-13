@@ -18,26 +18,20 @@
  */ 
 package org.apache.rat.walker;
 
+import org.apache.rat.test.utils.Resources;
+import org.junit.Test;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.rat.test.utils.Resources;
+public class FileNameComparatorTest {
 
-public class FileNameComparatorTest extends TestCase {
-
-    FileNameComparator comparator;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        comparator = new FileNameComparator();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testCompare() throws IOException {
+    @Test
+    public void compare() throws IOException {
+        FileNameComparator comparator = new FileNameComparator();
+        assertNotNull(comparator);
         final int compare = comparator.compare(Resources.getResourceFile("elements/LICENSE"), Resources.getResourceFile("elements/NOTICE"));
         assertTrue("LICENSE is before NOTICE", compare < 0);
     }

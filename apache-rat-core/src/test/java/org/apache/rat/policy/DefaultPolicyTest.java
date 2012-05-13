@@ -18,31 +18,30 @@
  */ 
 package org.apache.rat.policy;
 
-import junit.framework.TestCase;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 
-public class DefaultPolicyTest extends TestCase {
+public class DefaultPolicyTest {
 
     MockClaimReporter reporter;
     DefaultPolicy policy;
     private Document subject;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    @Before
+    public void setUp() throws Exception {
         reporter = new MockClaimReporter();
         policy = new DefaultPolicy();
         subject = new MockLocation("subject");
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void testASLFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0);
         policy.analyse(subject);
@@ -53,24 +52,28 @@ public class DefaultPolicyTest extends TestCase {
         assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(subject.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
     }
 
+    @Test
     public void testOASISFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE);
         policy.analyse(subject);
         assertApproval(true);
     }
     
+    @Test
     public void testW3CFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT);
         policy.analyse(subject);
         assertApproval(true);
     }
     
+    @Test
     public void testW3CDocFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT);
         policy.analyse(subject);
         assertApproval(true);
     }
     
+    @Test
     public void testUnknownFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
         policy.analyse(subject);

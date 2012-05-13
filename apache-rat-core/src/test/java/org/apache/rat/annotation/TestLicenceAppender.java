@@ -18,6 +18,9 @@
  */ 
 package org.apache.rat.annotation;
 
+import org.apache.rat.test.utils.Resources;
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -26,11 +29,10 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Random;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import org.apache.rat.test.utils.Resources;
-
-public class TestLicenceAppender extends TestCase {
+public class TestLicenceAppender {
     /** Used to ensure that temporary files have unq */
     private Random random = new Random();
 
@@ -110,7 +112,8 @@ public class TestLicenceAppender extends TestCase {
         };
     }
 
-    public void testAddLicenceToUnknownFile() throws IOException {
+    @Test
+    public void addLicenceToUnknownFile() throws IOException {
         String filename = qualify("tmp" + random.nextLong()
                                   + ".unknownType");
         File file = null;
@@ -137,7 +140,8 @@ public class TestLicenceAppender extends TestCase {
         }
     }
 
-    public void testAddLicenceToJava() throws IOException {
+    @Test
+    public void addLicenceToJava() throws IOException {
         String filename = "tmp.java";
         final String firstLine = "package foo;";
         String secondLine = "/*";
@@ -153,7 +157,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
-    public void testAddLicenceToJavaWithoutPackage() throws IOException {
+    @Test
+    public void addLicenceToJavaWithoutPackage() throws IOException {
         String filename = "tmp.java";
         String commentLine = "/*";
         commonTestTemplate(filename, new FileCreator() {
@@ -166,7 +171,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(commentLine, null));
     }
 
-    public void testAddLicenceToXML() throws IOException {
+    @Test
+    public void addLicenceToXML() throws IOException {
         String filename = "tmp.xml";
         final String firstLine = "<?xml version='1.0'?>";
         final String secondLine = "<!--";
@@ -183,7 +189,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
-    public void testAddLicenceToXMLWithoutDecl() throws IOException {
+    @Test
+    public void addLicenceToXMLWithoutDecl() throws IOException {
         String filename = "tmp.xml";
         final String firstLine = "<?xml version='1.0'?>";
         final String secondLine = "<!--";
@@ -198,7 +205,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
-    public void testAddLicenceToHTML() throws IOException {
+    @Test
+    public void addLicenceToHTML() throws IOException {
         String filename = "tmp.html";
         String commentLine = "<!--";
 
@@ -213,7 +221,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(commentLine, null));
     }
 
-    public void testAddLicenceToCSS() throws IOException {
+    @Test
+    public void addLicenceToCSS() throws IOException {
         String filename = "tmp.css";
         String firstLine = "/*";
 
@@ -228,7 +237,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenceToJavascript() throws IOException {
+    @Test
+    public void addLicenceToJavascript() throws IOException {
         String filename = "tmp.js";
         String firstLine = "/*";
 
@@ -243,7 +253,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenceToAPT() throws IOException {
+    @Test
+    public void addLicenceToAPT() throws IOException {
         String filename = "tmp.apt";
         String firstLine = "~~";
 
@@ -258,7 +269,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenceToProperties() throws IOException {
+    @Test
+    public void addLicenceToProperties() throws IOException {
         String filename = "tmp.properties";
         String firstLine = "#";
 
@@ -273,7 +285,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenceToScala() throws IOException {
+    @Test
+    public void addLicenceToScala() throws IOException {
         String filename = "tmp.scala";
         final String firstLine = "package foo {";
         final String newFirstLine = "/*";
@@ -305,7 +318,8 @@ public class TestLicenceAppender extends TestCase {
             });
     }
 
-    public void testAddLicenseToRubyWithoutHashBang()
+    @Test
+    public void addLicenseToRubyWithoutHashBang()
         throws IOException {
         String filename = "tmp.rb";
         String firstLine = "#";
@@ -320,7 +334,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenseToRubyWithHashBang() throws IOException {
+    @Test
+    public void addLicenseToRubyWithHashBang() throws IOException {
         String filename = "tmp.rb";
         final String firstLine = "#!/usr/bin/env ruby";
         String secondLine = "#";
@@ -336,7 +351,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
-    public void testAddLicenseToPerlWithoutHashBang()
+    @Test
+    public void addLicenseToPerlWithoutHashBang()
         throws IOException {
         String filename = "tmp.pl";
         String firstLine = "#";
@@ -350,7 +366,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenseToPerlWithHashBang() throws IOException {
+    @Test
+    public void addLicenseToPerlWithHashBang() throws IOException {
         String filename = "tmp.pl";
         final String firstLine = "#!/usr/bin/env perl";
         String secondLine = "#";
@@ -365,7 +382,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
-    public void testAddLicenseToTclWithoutHashBang()
+    @Test
+    public void addLicenseToTclWithoutHashBang()
         throws IOException {
         String filename = "tmp.tcl";
         String firstLine = "#";
@@ -379,7 +397,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenseToTclWithHashBang() throws IOException {
+    @Test
+    public void addLicenseToTclWithHashBang() throws IOException {
         String filename = "tmp.tcl";
         final String firstLine = "#!/usr/bin/env tcl";
         String secondLine = "#";
@@ -394,7 +413,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
-    public void testAddLicenceToPHP() throws IOException {
+    @Test
+    public void addLicenceToPHP() throws IOException {
         String filename = "tmp.php";
         final String firstLine = "<?php";
         String secondLine = "/*";
@@ -410,7 +430,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
-    public void testAddLicenceToCSharp() throws IOException {
+    @Test
+    public void addLicenceToCSharp() throws IOException {
         String filename = "tmp.cs";
         String firstLine = "/*";
 
@@ -426,7 +447,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenceToGroovy() throws IOException {
+    @Test
+    public void addLicenceToGroovy() throws IOException {
         String filename = "tmp.groovy";
         String firstLine = "/*";
 
@@ -441,7 +463,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testAddLicenceToCPlusPlus() throws IOException {
+    @Test
+    public void addLicenceToCPlusPlus() throws IOException {
         String filename = "tmp.cpp";
         String firstLine = "/*";
 
@@ -457,7 +480,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, null));
     }
 
-    public void testFileWithBOM() throws IOException {
+    @Test
+    public void fileWithBOM() throws IOException {
         File f = Resources.getResourceFile("violations/FilterTest.cs");
         try {
             ApacheV2LicenceAppender appender =
@@ -486,7 +510,8 @@ public class TestLicenceAppender extends TestCase {
         }
     }
 
-    public void testAddLicenceToVS2003solution() throws IOException {
+    @Test
+    public void addLicenceToVS2003solution() throws IOException {
         String filename = "tmp.sln";
         final String firstLine = "Microsoft Visual Studio Solution File,"
             + " Format Version 8.0";
@@ -507,7 +532,8 @@ public class TestLicenceAppender extends TestCase {
             checkLines(firstLine, secondLine));
     }
 
-    public void testAddLicenceToVS2005solution() throws IOException {
+    @Test
+    public void addLicenceToVS2005solution() throws IOException {
         String filename = "tmp.sln";
         final String firstLine = "Microsoft Visual Studio Solution File,"
             + " Format Version 9.0";
@@ -542,7 +568,8 @@ public class TestLicenceAppender extends TestCase {
             });
     }
 
-    public void testAddLicenceToVS2010ExpressSolution() throws IOException {
+    @Test
+    public void addLicenceToVS2010ExpressSolution() throws IOException {
         String filename = "tmp.sln";
         final String firstLine = "Microsoft Visual Studio Solution File, "
             + "Format Version 11.00";
@@ -594,7 +621,8 @@ public class TestLicenceAppender extends TestCase {
             });
     }
 
-    public void testAddLicenceToVS2010SolutionWithBlankLine() throws IOException {
+    @Test
+    public void addLicenceToVS2010SolutionWithBlankLine() throws IOException {
         String filename = "tmp.sln";
         final String firstLine = "";
         final String secondLine = "Microsoft Visual Studio Solution File, "

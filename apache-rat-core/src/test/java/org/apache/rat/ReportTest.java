@@ -18,16 +18,18 @@
  */ 
 package org.apache.rat;
 
+import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.test.utils.Resources;
+import org.apache.rat.walker.DirectoryWalker;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.StringWriter;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.rat.walker.DirectoryWalker;
-import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
-import org.apache.rat.test.utils.Resources;
-
-public class ReportTest extends TestCase {
+public class ReportTest {
     private static final String HEADER =
             "\n" + 
             "*****************************************************\n" + 
@@ -102,15 +104,8 @@ public class ReportTest extends TestCase {
             "\n";
 	}
     
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testPlainReport() throws Exception {
+    @Test
+    public void plainReport() throws Exception {
         StringWriter out = new StringWriter();
         HeaderMatcherMultiplexer matcherMultiplexer = new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");

@@ -18,17 +18,20 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-
-import junit.framework.TestCase;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.test.utils.Resources;
+import org.junit.Before;
+import org.junit.Test;
 
-public class OASISLicenseTest extends TestCase {
+import java.io.BufferedReader;
+import java.io.StringReader;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class OASISLicenseTest {
     
     private static final String LICENSE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<!--\n" +
@@ -54,17 +57,14 @@ public class OASISLicenseTest extends TestCase {
     
     MockClaimReporter reporter;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         license = new OASISLicense();
         reporter = new MockClaimReporter();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testMatch() throws Exception {
+    @Test
+    public void match() throws Exception {
         BufferedReader in = new BufferedReader(new StringReader(LICENSE));
         String line = in.readLine();
         boolean result = false;
@@ -79,7 +79,8 @@ public class OASISLicenseTest extends TestCase {
         assertFalse("After reset, content should build up again", result);
     }
 
-    public void testNoMatch() throws Exception {
+    @Test
+    public void noMatch() throws Exception {
         BufferedReader in = Resources.getBufferedResourceReader("elements/Source.java");
         String line = in.readLine();
         boolean result = false;

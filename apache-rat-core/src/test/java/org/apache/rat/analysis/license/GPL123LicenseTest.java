@@ -23,7 +23,6 @@ import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -45,8 +44,11 @@ public class GPL123LicenseTest {
      */
     private static Map<IHeaderMatcher, String> licenseStringMap;
 
-    @BeforeClass
-    public static void initLicencesUnderTest() {
+    /**
+     * If you replace this with BeforeClass and make this method static the build fails at line 67.
+     */
+    @Before
+    public void initLicencesUnderTest() {
         licenseStringMap = new HashMap<IHeaderMatcher, String>();
         licenseStringMap.put(new GPL1License(), GPL1License.FIRST_LICENSE_LINE);
         licenseStringMap.put(new GPL2License(), GPL2License.FIRST_LICENSE_LINE);

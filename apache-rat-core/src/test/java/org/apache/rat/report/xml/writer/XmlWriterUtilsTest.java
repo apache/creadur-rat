@@ -18,33 +18,34 @@
  */ 
 package org.apache.rat.report.xml.writer;
 
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.StringWriter;
 
-import junit.framework.TestCase;
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import static org.junit.Assert.assertEquals;
 
-public class XmlWriterUtilsTest extends TestCase {
+public class XmlWriterUtilsTest {
 
     StringWriter out;
     IXmlWriter writer;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    @Before
+    public void setUp() throws Exception {
         out = new StringWriter();
         writer = new XmlWriter(out);
         writer.openElement("alpha");
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testWriteTrue() throws Exception {
+    @Test
+    public void writeTrue() throws Exception {
         XmlWriterUtils.writeAttribute(writer, "name", true);
         assertEquals("Attribute written as True", "<alpha name='true'", out.toString());
     }
 
-    public void testWriteFalse() throws Exception {
+    @Test
+    public void writeFalse() throws Exception {
         XmlWriterUtils.writeAttribute(writer, "name", false);
         assertEquals("Attribute written as False", "<alpha name='false'", out.toString());
     }

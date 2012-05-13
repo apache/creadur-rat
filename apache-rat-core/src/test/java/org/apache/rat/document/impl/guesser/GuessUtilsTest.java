@@ -18,19 +18,14 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class GuessUtilsTest extends TestCase {
+import static org.junit.Assert.assertEquals;
 
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+public class GuessUtilsTest {
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testNormalise() throws Exception {
+    @Test
+    public void normalise() throws Exception {
         assertEquals("LICENSE", GuessUtils.normalise("license"));
         assertEquals("LICENSE.TXT", GuessUtils.normalise("license.txt"));
         assertEquals("LICENSE.TXT", GuessUtils.normalise("some/path/license.txt"));

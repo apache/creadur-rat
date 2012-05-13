@@ -19,31 +19,24 @@
 package org.apache.rat.document.impl.guesser;
 
 import org.apache.rat.document.MockDocument;
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class NoteGuesserTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
-    NoteGuesser guesser;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        this.guesser = new NoteGuesser();
-    }
+public class NoteGuesserTest {
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void testMatches() {
-        assertTrue(guesser.isNote(new MockDocument("LICENSE")));
-        assertTrue(guesser.isNote(new MockDocument("LICENSE.txt")));
-        assertTrue(guesser.isNote(new MockDocument("NOTICE")));
-        assertTrue(guesser.isNote(new MockDocument("NOTICE.txt")));
-        assertTrue(guesser.isNote(new MockDocument("README")));
-        assertTrue(guesser.isNote(new MockDocument("README.txt")));
+        assertTrue(NoteGuesser.isNote(new MockDocument("LICENSE")));
+        assertTrue(NoteGuesser.isNote(new MockDocument("LICENSE.txt")));
+        assertTrue(NoteGuesser.isNote(new MockDocument("NOTICE")));
+        assertTrue(NoteGuesser.isNote(new MockDocument("NOTICE.txt")));
+        assertTrue(NoteGuesser.isNote(new MockDocument("README")));
+        assertTrue(NoteGuesser.isNote(new MockDocument("README.txt")));
     }
 
-    public void testIsNote() {
+    @Test
+    public void isNote() {
         assertTrue(NoteGuesser.isNote("LICENSE"));
         assertTrue(NoteGuesser.isNote("LICENSE.txt"));
         assertTrue(NoteGuesser.isNote("NOTICE"));
@@ -52,7 +45,8 @@ public class NoteGuesserTest extends TestCase {
         assertTrue(NoteGuesser.isNote("README.txt"));
     }
     
-    public void testIsNoteWithPath() {
+    @Test
+    public void isNoteWithPath() {
         assertTrue(NoteGuesser.isNote("src/test/LICENSE"));
         assertTrue(NoteGuesser.isNote("src/test/LICENSE.txt"));
         assertTrue(NoteGuesser.isNote("src/test/NOTICE"));

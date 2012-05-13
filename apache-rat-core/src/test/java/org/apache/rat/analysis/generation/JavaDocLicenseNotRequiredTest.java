@@ -18,43 +18,45 @@
  */ 
 package org.apache.rat.analysis.generation;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-
-import junit.framework.TestCase;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.test.utils.Resources;
+import org.junit.Before;
+import org.junit.Test;
 
-public class JavaDocLicenseNotRequiredTest extends TestCase {
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class JavaDocLicenseNotRequiredTest {
 
     MockClaimReporter reporter;
     JavaDocLicenseNotRequired license;
     
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         license = new JavaDocLicenseNotRequired();
         reporter = new MockClaimReporter();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
-    public void testMatchIndexDoc() throws Exception {
+    @Test
+    public void matchIndexDoc() throws Exception {
         boolean result = readAndMatch("index.html");
         assertTrue("Is a javadoc", result);
     }
 
-    public void testMatchClassDoc() throws Exception {
+    @Test
+    public void matchClassDoc() throws Exception {
         boolean result = readAndMatch("ArchiveElement.html");
         assertTrue("Is a javadoc", result);
     }
 
-    public void testMatchNonJavaDoc() throws Exception {
+    @Test
+    public void matchNonJavaDoc() throws Exception {
         boolean result = readAndMatch("notjavadoc.html");
         assertFalse("Not javadocs and so should return null", result);
     }

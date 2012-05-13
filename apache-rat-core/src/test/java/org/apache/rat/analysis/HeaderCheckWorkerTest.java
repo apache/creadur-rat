@@ -19,26 +19,20 @@
 
 package org.apache.rat.analysis;
 
-import java.io.StringReader;
-
-import junit.framework.TestCase;
-
-import org.apache.rat.analysis.HeaderCheckWorker;
 import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
+import org.junit.Test;
 
-public class HeaderCheckWorkerTest extends TestCase {
-    
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+import java.io.StringReader;
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-	
-	public void testIsFinished() throws Exception {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class HeaderCheckWorkerTest {
+
+    @Test
+	public void isFinished() throws Exception {
         final Document subject = new MockLocation("subject");
 		HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), new ApacheSoftwareLicense20(), subject);
 		assertFalse(worker.isFinished());

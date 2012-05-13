@@ -18,12 +18,6 @@
  */ 
 package org.apache.rat.report.xml;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
-
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.MetaData;
@@ -33,31 +27,36 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
+import org.junit.Before;
+import org.junit.Test;
 
-public class XmlReportFactoryTest extends TestCase {
+import java.io.File;
+import java.io.StringWriter;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class XmlReportFactoryTest {
 
     private static final Pattern IGNORE_EMPTY = Pattern.compile(".svn|Empty.txt");
     
     StringWriter out;
     IXmlWriter writer;
     
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         out = new StringWriter();
         writer = new XmlWriter(out);
         writer.startDocument();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
-
     private void report(DirectoryWalker directory, RatReport report) throws Exception {
         directory.run(report);
     }
     
-    public void testStandardReport() throws Exception {
+    @Test
+    public void standardReport() throws Exception {
     	final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
@@ -90,9 +89,9 @@ public class XmlReportFactoryTest extends TestCase {
                 "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
                                    "</rat-report>"));
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
-        assertEquals("Binary files", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
-        assertEquals("Notice files", new Integer(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
-        assertEquals("Standard files", new Integer(5), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
-        assertEquals("Archives", new Integer(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
+        assertEquals("Binary files", Integer.valueOf(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
+        assertEquals("Notice files", Integer.valueOf(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
+        assertEquals("Standard files", Integer.valueOf(5), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
+        assertEquals("Archives", Integer.valueOf(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
     }
 }

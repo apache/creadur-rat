@@ -18,36 +18,39 @@
  */ 
 package org.apache.rat.report.xml;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
-
-import org.apache.rat.walker.DirectoryWalker;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.walker.DirectoryWalker;
+import org.junit.Before;
+import org.junit.Test;
 
-public class XmlReportTest extends TestCase {
+import java.io.File;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertTrue;
+
+public class XmlReportTest {
 
     private static final Pattern IGNORE = Pattern.compile(".svn");
     StringWriter out;
     IXmlWriter writer;
     RatReport report;
     
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         out = new StringWriter();
         writer = new XmlWriter(out);
         writer.startDocument();
@@ -62,20 +65,17 @@ public class XmlReportTest extends TestCase {
             }            
         };
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcher);
-        final List reporters = new ArrayList();
+        final List<AbstractReport> reporters = new ArrayList<AbstractReport>();
         reporters.add(reporter);
         report = new ClaimReporterMultiplexer(analyser, reporters); 
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     private void report(DirectoryWalker directory) throws Exception {
         directory.run(report);
     }
     
-    public void testBaseReport() throws Exception {
+    @Test
+    public void baseReport() throws Exception {
     	final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE);
         report.startReport();

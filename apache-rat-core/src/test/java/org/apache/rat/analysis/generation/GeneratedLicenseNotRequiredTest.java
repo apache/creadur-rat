@@ -18,31 +18,31 @@
  */ 
 package org.apache.rat.analysis.generation;
 
-import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
+import org.junit.Before;
+import org.junit.Test;
 
-public class GeneratedLicenseNotRequiredTest extends TestCase {
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class GeneratedLicenseNotRequiredTest {
 
     GeneratedLicenseNotRequired license;
     MockClaimReporter reporter;
     
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         Pattern[] patterns = {Pattern.compile(".*Generated")};
         license = new GeneratedLicenseNotRequired(patterns);
         reporter = new MockClaimReporter();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testMatch() throws Exception {
+    @Test
+    public void match() throws Exception {
         final Document subject = new MockLocation("subject");
         assertFalse("Does not match regex", license.match(subject, "Not at all"));
         assertTrue("Matches regex", license.match(subject, "This is Generated"));

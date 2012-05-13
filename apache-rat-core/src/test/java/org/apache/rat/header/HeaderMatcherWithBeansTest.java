@@ -19,20 +19,24 @@
  */ 
 package org.apache.rat.header;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.StringReader;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class HeaderMatcherWithBeansTest extends TestCase {
+public class HeaderMatcherWithBeansTest {
 
     int capacity;
     HeaderMatcher matcher;
     SimpleCharFilter filter;
     HeaderBean[] beans;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    @Before
+    public void setUp() throws Exception {
         HeaderBean[] beans = {
                 new HeaderBean(),
                 new HeaderBean(),
@@ -44,11 +48,8 @@ public class HeaderMatcherWithBeansTest extends TestCase {
         matcher = new HeaderMatcher(filter, 20, beans);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
-    public void testNulls() throws Exception {
+    @Test
+    public void nulls() throws Exception {
         beans[0].setMatch(false);
         beans[1].setMatch(true);
         beans[2].setMatch(false);
@@ -64,8 +65,9 @@ public class HeaderMatcherWithBeansTest extends TestCase {
         assertFalse("State preserved", beans[1].isMatch());
         assertTrue("State preserved", beans[2].isMatch());
     }
-    
-    public void testMatches() throws Exception {
+
+    @Test
+    public void matches() throws Exception {
         beans[0].setHeaderPattern(Pattern.compile("What(.*)"));
         beans[1].setHeaderPattern(Pattern.compile("(.*)ever"));
         beans[2].setHeaderPattern(Pattern.compile("What"));

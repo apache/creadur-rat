@@ -18,26 +18,26 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import junit.framework.TestCase;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ApacheSoftwareLicense20Test extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class ApacheSoftwareLicense20Test {
 
     MockClaimReporter reporter;
-    
-	protected void setUp() throws Exception {
-		super.setUp();
+
+    @Before
+	public void setUp() throws Exception {
         reporter = new MockClaimReporter();
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-	
-	public void testMatches() throws Exception {
+	@Test
+    public void matches() throws Exception {
 		ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
 		assertTrue(worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
 		assertTrue(worker.matches("    Licensed under the Apache License, Version 2.0 (the \"License\");"));
@@ -51,7 +51,8 @@ public class ApacheSoftwareLicense20Test extends TestCase {
 		assertFalse(worker.matches("'Behold, Telemachus! (nor fear the sight,)"));
 	}
 	
-	public void testMatch() throws Exception {
+	@Test
+    public void match() throws Exception {
 		ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
 		final Document subject = new MockLocation("subject");
 		assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE));

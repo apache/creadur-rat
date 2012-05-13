@@ -18,28 +18,26 @@
  */ 
 package org.apache.rat.document;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ToNameTransformerTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+public class ToNameTransformerTest {
 
     ToNameTransformer transformer = new ToNameTransformer();
     
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testTransformLocation() {
+    @Test
+    public void transformLocation() {
         MockLocation location = new MockLocation();
         Object result = transformer.transform(location);
         assertNotNull("Transform into name", result);
         assertEquals("Transform into name", location.name, result);
     }
 
-    public void testTransformNull() {
+    @Test
+    public void transformNull() {
         Object result = transformer.transform(null);
         assertNull("Null transforms to null", result);
     }

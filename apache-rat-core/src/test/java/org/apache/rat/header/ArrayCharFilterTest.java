@@ -18,23 +18,24 @@
  */ 
 package org.apache.rat.header;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ArrayCharFilterTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class ArrayCharFilterTest {
 
     private static final char[] filtered = {'d', 'o', 'a'};
     ArrayCharFilter filter;
     
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         filter = new ArrayCharFilter(filtered);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testIsFilteredOut() {
+    @Test
+    public void isFilteredOut() {
         assertTrue(filter.isFilteredOut('a'));
         assertFalse(filter.isFilteredOut('b'));
         assertFalse(filter.isFilteredOut('c'));

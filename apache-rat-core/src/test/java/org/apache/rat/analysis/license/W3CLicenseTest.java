@@ -18,13 +18,16 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import junit.framework.TestCase;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
+import org.junit.Before;
+import org.junit.Test;
 
-public class W3CLicenseTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class W3CLicenseTest {
 
     public static final String COPYRIGHT_URL 
     = "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
@@ -37,22 +40,20 @@ public class W3CLicenseTest extends TestCase {
     
     W3CLicense license;
     MockClaimReporter reporter;
-    
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    @Before
+    public void setUp() throws Exception {
         license = new W3CLicense();
         reporter = new MockClaimReporter();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testMatch() throws Exception {
+    @Test
+    public void match() throws Exception {
         final Document subject = new MockLocation("subject");
         assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL));
         assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_COMMENTED));
         assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_XML));
         assertFalse("Return null if the license isn't matched", license.match(subject, "Bogus"));
     }
+
 }
