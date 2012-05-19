@@ -65,7 +65,10 @@ Note that binary compatibility is not guaranteed between 0.x releases.
           </profile>
         </profiles>
     -->
-    <rat.site.url>scp://people.apache.org/www/incubator.apache.org/rat/</rat.site.url>
+    <!-- 
+    For the moment, deploy to stage directory only. 
+    -->
+    <rat.site.url>file:stage</rat.site.url>
     <rat.site.name>Apache RAT Website</rat.site.name>
     <rat.site.id>org.apache.rat.incubating.site</rat.site.id>
     <rat.releases.id>apache.releases.https</rat.releases.id>
@@ -387,12 +390,4 @@ Note that binary compatibility is not guaranteed between 0.x releases.
     <module>apache-rat</module>
   </modules>
 
-  <profiles>
-    <profile>
-      <id>cms</id>
-      <properties>
-        <rat.site.url>file:stage</rat.site.url>
-      </properties>
-    </profile>
-  </profiles>
 </project>
