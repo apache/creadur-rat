@@ -390,4 +390,8 @@ Note that binary compatibility is not guaranteed between 0.x releases.
     <module>apache-rat</module>
   </modules>
 
+  <organization>
+  	<name>Apache Software Foundation</name>
+  	<url>http://www.apache.org</url>
+  </organization>
 </project>
