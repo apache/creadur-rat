@@ -358,9 +358,9 @@ Note that binary compatibility is not guaranteed between 0.x releases.
   </contributors>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/main/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/main/trunk</developerConnection>
-    <url>http://svn.apache.org/repos/asf/creadur/main/trunk</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/trunk</developerConnection>
+    <url>http://svn.apache.org/repos/asf/creadur/rat/trunk</url>
   </scm>
 
   <distributionManagement>
