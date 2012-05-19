@@ -390,6 +390,15 @@ Note that binary compatibility is not guaranteed between 0.x releases.
     <module>apache-rat</module>
   </modules>
 
+  <licenses>
+    <license>
+      <name>Apache License, Version 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>An OSI approved open source license.</comments>
+    </license>
+  </licenses>
+
   <organization>
   	<name>Apache Software Foundation</name>
   	<url>http://www.apache.org</url>
