@@ -27,7 +27,7 @@
   <packaging>pom</packaging>
   <version>0.9-SNAPSHOT</version>
   <name>RAT</name>
-  <url>http://incubator.apache.org/rat</url>
+  <url>http://creadur.apache.org/rat</url>
   <description>
 Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
