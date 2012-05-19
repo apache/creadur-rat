@@ -26,10 +26,10 @@
   <artifactId>apache-rat-project</artifactId>
   <packaging>pom</packaging>
   <version>0.9-SNAPSHOT</version>
-  <name>RAT</name>
+  <name>Apache Rat</name>
   <url>http://creadur.apache.org/rat</url>
   <description>
-Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
+Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
 It's reports require interpretation.
