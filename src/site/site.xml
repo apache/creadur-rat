@@ -14,9 +14,9 @@
  limitations under the License.
 
 -->
-<project name="Apache RAT (Incubating)">
+<project name="Apache Rat by Apache Creadur">
   <body>    
-    <menu name="RAT">
+    <menu name="Rat">
       <item name="Home" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
       <item name="Changes" href="/RELEASE_NOTES.txt"/>

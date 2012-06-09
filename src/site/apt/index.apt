@@ -13,45 +13,38 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                    --------------------------
-                   RAT - A Release Audit Tool
+                   Apache Rat - A Release Audit Tool
                    --------------------------
                    
-Release Audit Tool (RAT)
+Apache Rat
 
- Apache RAT is an effort undergoing incubation at The Apache Software Foundation (ASF), 
- sponsored by the Incubator PMC. Incubation is required of all newly accepted projects 
- until a further review indicates that the infrastructure, communications, and decision 
- making process have stabilized in a manner consistent with other successful ASF projects.
- While incubation status is not necessarily a reflection of the completeness or stability 
- of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
-      
- Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
- releases. It is heuristic in nature: making guesses about possible problems. It
- will produce false positives and cannot find every possible issue with a release.
- It's reports require interpretation.
+ Apache Rat is a release audit tool. Use Rat to improve accuracy and efficiency 
+ when checking releases. It is heuristic in nature: making guesses about possible 
+ problems. It will produce false positives and cannot find every possible issue 
+ with a release. It's reports require interpretation.
 
- RAT was developed in response to a need felt in the Apache Incubator to be able to
+ Rat was developed in response to a need felt in the Apache Incubator to be able to
  review releases for the most common faults less labour intensively. It is therefore
  highly tuned to the Apache style of releases.
 
- RAT is intended to be self documenting: reports should include introductory material
- describing their function. Building RAT describes how to run RAT. Running RAT 
+ Rat is intended to be self documenting: reports should include introductory material
+ describing their function. Building Rat describes how to run Rat. Running Rat 
  describes the options available. The release notes describe the current state of
- RAT.
+ Rat.
 
-* Checking Out RAT
+* Checking Out Rat
 
- RAT contains a number of different products. 
+ Rat contains a number of different products. 
  
  To checkout the main application run
 
 +------------------------------------------+
-svn co http://svn.apache.org/repos/asf/incubator/rat/main/trunk/
+svn co http://svn.apache.org/repos/asf/creadur/rat/trunk/
 +------------------------------------------+
 
-* Building RAT
+* Building Rat
 
- Building RAT requires
+ Building Rat requires
  {{{http://maven.apache.org/} Apache Maven}}. 
  Read BUILD.txt or (for the impatient) do
  
@@ -63,7 +56,7 @@ mvn install
  <<<apache-rat/target/apache-rat-X.Y-SNAPSHOT.jar>>> where X and Y are the current
  major and minor version numbers.
 
-* Running RAT
+* Running Rat
 
 ** Running from the Command Line
  
@@ -81,7 +74,7 @@ java -jar apache-rat-VERSION.jar --help
  
 ** Running with Apache Ant
   
- RAT includes a task library for Ant. This allows RAT reports to be
+ Rat includes a task library for Ant. This allows Rat reports to be
  run against a wide variety of resources. Details can be found in the
  {{{./apache-rat-tasks/index.html} antlib documentation}}.
  
@@ -90,6 +83,6 @@ java -jar apache-rat-VERSION.jar --help
  
 ** Running with Apache Maven
 
- RAT includes a plugin for Maven 2. This allows RAT reports to be run against
+ Rat includes a plugin for Maven 2. This allows Rat reports to be run against
  a wide variety of resources. Details can be found in the
  {{{./apache-rat-plugin/index.html} plugin documentation}}.
