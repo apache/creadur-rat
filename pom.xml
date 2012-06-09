@@ -34,9 +34,12 @@ releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
 It's reports require interpretation.
 
-In response to demands from project quality tool developers, RAT is available as a 
+In response to demands from project quality tool developers, Rat is available as a 
 library suitable for inclusion in tools. This POM describes that library.
 Note that binary compatibility is not guaranteed between 0.x releases.
+
+Apache Rat is developed by the Apache Creadur project, a language and build 
+agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
 
@@ -69,7 +72,7 @@ Note that binary compatibility is not guaranteed between 0.x releases.
     For the moment, deploy to stage directory only. 
     -->
     <rat.site.url>file:stage</rat.site.url>
-    <rat.site.name>Apache RAT Website</rat.site.name>
+    <rat.site.name>Apache Rat Website</rat.site.name>
     <rat.site.id>org.apache.rat.incubating.site</rat.site.id>
     <rat.releases.id>apache.releases.https</rat.releases.id>
     <rat.releases.name>Apache Release Distribution Repository</rat.releases.name>

@@ -31,6 +31,11 @@ Apache Rat
  describing their function. Building Rat describes how to run Rat. Running Rat 
  describes the options available. The release notes describe the current state of
  Rat.
+ 
+ Apache Rat is developed by the {{{http://creadur.apache.org}Apache Creadur project}}, 
+ a language- and build-agnostic home for software distribution comprehension 
+ and audit tools.
+ 
 
 * Checking Out Rat
 

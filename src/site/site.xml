@@ -14,13 +14,19 @@
  limitations under the License.
 
 -->
-<project name="Apache Rat by Apache Creadur">
+<project name="Apache Rat">
   <body>    
-    <menu name="Rat">
-      <item name="Home" href="/index.html"/>
+    <menu name="Apache Rat">
+      <item name="Introducing Rat" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
+
+	<menu name="Apache Creadur">
+		<item name='Project Home' href="http://creadur.apache.org"/>
+		<item name='Apache Tentacles' href="http://creadur.apache.org/tentacles"/>
+		<item name='Apache Whisker' href="http://creadur.apache.org/whisker"/>  
+	</menu>
 
     <menu name="Committer Info">
       <item name="Publish this site" href="site-publish.html"/>
