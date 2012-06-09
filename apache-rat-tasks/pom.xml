@@ -24,8 +24,11 @@
   </parent>
   <artifactId>apache-rat-tasks</artifactId>
   <packaging>jar</packaging>
-  <name>RAT Ant Tasks</name>
-  <description>Ant tasks for running RAT</description>
+  <name>Rat::Tasks4Ant</name>
+  <description>
+ A plugin for Apache Ant that runs Apache Rat
+   to audit the source to be distributed.
+  </description>
 
   <dependencies>
     <dependency>
@@ -64,7 +67,6 @@
         <directory>..</directory>
         <targetPath>META-INF</targetPath>
         <includes>
-          <include>DISCLAIMER.txt</include>
           <include>RELEASE_NOTES.txt</include>
         </includes>
       </resource>

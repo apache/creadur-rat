@@ -24,10 +24,10 @@
   </parent>
   <artifactId>apache-rat</artifactId>
   <packaging>jar</packaging>
-  <name>RAT Application</name>
+  <name>Rat::Command Line</name>
   <description>
     This library provides upwards compatibility for projects,
-    which are based on RAT versions upto 0.5: Basically, it
+    which are based on Apache Rat versions up to 0.5: Basically, it
     provides a JAR file, which is the combination of
     rat-core, rat-tasks, and its dependencies.
   </description>
@@ -96,11 +96,11 @@
             <manifestEntries>
               <Main-Class>org.apache.rat.Report</Main-Class>
               <Extension-Name>rat</Extension-Name>
-              <Specification-Title>Release Audit Tool</Specification-Title>
+              <Specification-Title>Apache Rat</Specification-Title>
               <Specification-Vendor>apache.org</Specification-Vendor>
               <Specification-Version>${project.version}</Specification-Version>
               <Implementation-Vendor-Id>apache.org</Implementation-Vendor-Id>
-              <Implementation-Title>Release Audit Tool</Implementation-Title>
+              <Implementation-Title>Apache Rat</Implementation-Title>
               <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
               <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>

@@ -24,8 +24,9 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>apache-rat-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>RAT Maven Plugin</name>
-  <description>Maven 2 plugin for running RAT, the Release Audit Tool.</description>
+  <name>Rat::Plugin4Maven</name>
+  <description>A plugin for Apache Maven that runs Apache Rat
+   to audit the source to be distributed.</description>
   <inceptionYear>2007</inceptionYear>
   <prerequisites>
     <maven>2.0.4</maven>

@@ -24,8 +24,8 @@
   </parent>
   <artifactId>apache-rat-core</artifactId>
   <packaging>jar</packaging>
-  <name>RAT Core</name>
-  <description>The core functionality of RAT, shared by the Ant tasks,
+  <name>Rat::Core</name>
+  <description>The core functionality, shared by the Ant tasks,
     and the Maven plugin.</description>
 
   <build>   
@@ -42,7 +42,6 @@
         <directory>..</directory>
         <targetPath>META-INF</targetPath>
         <includes>
-          <include>DISCLAIMER.txt</include>
           <include>RELEASE_NOTES.txt</include>
         </includes>
       </resource>
