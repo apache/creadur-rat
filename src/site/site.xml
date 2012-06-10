@@ -32,6 +32,10 @@
 		<item name='Project Home' href="http://creadur.apache.org"/>
 		<item name='Apache Tentacles' href="http://creadur.apache.org/tentacles"/>
 		<item name='Apache Whisker' href="http://creadur.apache.org/whisker"/>  
+		<item name='Security' href='http://www.apache.org/security/'/>
+		<item name='License' href='http://www.apache.org/licenses/'/>
+		<item name='Sponsorship' href='http://www.apache.org/foundation/sponsorship.html'/>
+		<item name='Thanks' href='http://www.apache.org/foundation/thanks.html'/>
 	</menu>
 
     <menu name="Committer Info">
