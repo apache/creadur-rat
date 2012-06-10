@@ -27,7 +27,7 @@
   <packaging>pom</packaging>
   <version>0.9-SNAPSHOT</version>
   <name>Apache Rat</name>
-  <url>http://creadur.apache.org/rat</url>
+  <url>http://creadur.apache.org/rat/</url>
   <description>
 Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
@@ -222,6 +222,16 @@ agnostic home for software distribution comprehension and audit tools.
             <target>1.5</target>
             <encoding>${project.build.sourceEncoding}</encoding>
           </configuration>
+        </plugin>
+        <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-site-plugin</artifactId>
+	        <version>3.1</version>
+	        <configuration>
+	          <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
+	          <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+	          <relativizeDecorationLinks>false</relativizeDecorationLinks>
+        	</configuration>
         </plugin>
       </plugins>
     </pluginManagement>

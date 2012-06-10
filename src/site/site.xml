@@ -16,13 +16,19 @@
 -->
 <project name="Apache Rat">
   <body>    
-    <menu name="Apache Rat">
+    <breadcrumbs>
+      <item name="Apache" href="http://www.apache.org/"/>
+      <item name="Creadur" href="http://creadur.apache.org/"/>
+      <item name="Rat" href="http://creadur.apache.org/rat/"/>
+    </breadcrumbs>
+  
+    <menu name="Apache Rat" inherit="bottom">
       <item name="Introducing Rat" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
 
-	<menu name="Apache Creadur">
+	<menu name="Apache Creadur" inherit="bottom">
 		<item name='Project Home' href="http://creadur.apache.org"/>
 		<item name='Apache Tentacles' href="http://creadur.apache.org/tentacles"/>
 		<item name='Apache Whisker' href="http://creadur.apache.org/whisker"/>  
