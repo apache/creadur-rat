@@ -32,9 +32,12 @@ Apache Rat
  describes the options available. The release notes describe the current state of
  Rat.
  
- Apache Rat is developed by the {{{http://creadur.apache.org}Apache Creadur project}}, 
- a language- and build-agnostic home for software distribution comprehension 
- and audit tools.
+  Apache Rat is part of the {{{http://creadur.apache.org}Apache Creadur}}
+  language- and build-agnostic suite of tools for auditing and comprehending 
+  software distributions. Our community develops 
+  {{{http://www.opensource.org/} open source software}} the
+  {{{http://www.apache.org/foundation/how-it-works.html} Apache way}}.  
+
  
 
 * Checking Out Rat
