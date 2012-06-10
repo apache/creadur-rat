@@ -15,6 +15,12 @@
 
 -->
 <project name="Apache Rat">
+  <bannerRight>
+    <title>The Apache Software Foundation</title>
+    <name>The Apache Software Foundation</name>
+    <src>http://www.apache.org/images/asf_logo_wide.jpg</src>
+    <href>http://www.apache.org/</href>
+  </bannerRight>
   <body>    
     <breadcrumbs>
       <item name="Apache" href="http://www.apache.org/"/>
