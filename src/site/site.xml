@@ -55,8 +55,15 @@
             href='http://blogs.apache.org/foundation/'/>
     </menu>
 
-    <menu name="Committer Info">
+    <menu name="Committer Info" inherit="bottom">
       <item name="Publish this site" href="site-publish.html"/>
+      <item name="Committers' FAQ" href='http://www.apache.org/dev/committers.html'/>
+      <item name='New Committers Guide' href='http://www.apache.org/dev/new-committers-guide.html'/>
+      <item name='Plant Apache' href='http://planet.apache.org/committers/'/>
+      <item name='Community' href='http://community.apache.org/'/>
+      <item name='Legal' href='http://www.apache.org/legal/'/>
+      <item name='Branding' href='http://www.apache.org/foundation/marks/'/>
+      <item name='Media Relations' href='http://www.apache.org/press/'/>
     </menu>
 
     <menu ref="modules"/>
