@@ -45,11 +45,15 @@
 	</menu>
   
     <menu name="The Apache Software Foundation" inherit="bottom">
-        <item name='About the ASF' 
+        <item name='About the Foundation' 
             href="http://www.apache.org/foundation"/>
-        <item name='How Apache works' 
+        <item name='The projects' 
+            href="http://projects.apache.org"/>
+        <item name='The people' 
+            href="http://people.apache.org"/>
+        <item name='How we work' 
             href='http://www.apache.org/foundation/how-it-works.html'/>
-        <item name='Some history' 
+        <item name='Our history' 
             href='http://www.apache.org/foundation/how-it-works.html#history'/>
         <item name='News' 
             href='http://blogs.apache.org/foundation/'/>
