@@ -14,7 +14,7 @@
  limitations under the License.
 
 -->
-<project name="Apache Rat">
+<project name="Apache Rat&trade;">
   <bannerRight>
     <title>The Apache Software Foundation</title>
     <name>The Apache Software Foundation</name>
@@ -28,13 +28,13 @@
       <item name="Rat" href="http://creadur.apache.org/rat/"/>
     </breadcrumbs>
   
-    <menu name="Apache Rat" inherit="bottom">
+    <menu name="Apache Rat&trade;" inherit="bottom">
       <item name="Introducing Rat" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
 
-	<menu name="Apache Creadur" inherit="bottom">
+	<menu name="Apache Creadur&trade;" inherit="bottom">
 		<item name='Creadur Project Home' href="http://creadur.apache.org"/>
 		<item name='Apache Tentacles' href="http://creadur.apache.org/tentacles"/>
 		<item name='Apache Whisker' href="http://creadur.apache.org/whisker"/>  
