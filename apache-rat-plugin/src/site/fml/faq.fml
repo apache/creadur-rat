@@ -33,22 +33,22 @@
       </answer>
     </faq>
     <faq id="where">
-      <question>Where do I find RAT?</question>
+      <question>Where do I find Apache Rat?</question>
       <answer>
         <p>
-          RAT can be found <a href="http://incubator.apache.org/rat/">
-          http://incubator.apache.org/rat/</a>. In other words, it is
-          an incubating Apache project: Has been preliminarily accepted
-          by the ASF, but not finally.
+          Apache Rat is now part of the 
+          <a href='http://creadur.apache.org'>Apache Creadur</a> project,
+          a home for all sorts of software that helps audit and review
+          software distributions.
         </p>
       </answer>
     </faq>
     <faq id="why">
-      <question>Why should I use the Maven plugin to run RAT?</question>
+      <question>Why should I use the Maven plugin to run Apache Rat?</question>
       <answer>
-        <p>Because it makes running RAT trivial. Basically, you just
+        <p>Because it makes running Rat trivial. Basically, you just
           add the plugin to the <code>build/plugins</code> section
-          of your POM and run <code>mvn rat:check</code>. Using RAT
+          of your POM and run <code>mvn rat:check</code>. Using Rat
           cannot be simpler.
         </p>
       </answer>
