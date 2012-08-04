@@ -21,6 +21,20 @@
     <src>http://www.apache.org/images/asf_logo_wide.jpg</src>
     <href>http://www.apache.org/</href>
   </bannerRight>
+  <poweredBy>
+      <logo name="ApacheCon EU 2012 November 5-8 Sinsheim, Germany" 
+            href="http://www.apachecon.eu/"
+            img="http://www.apache.org/events/logos-banners/ApacheCon-2012-Europe/EU_square_20.png"/>
+
+      <logo name="ApacheCon NA 2012 November 26-28 Portland, Oregon" 
+            href="http://na.apachecon.com/"
+            img="http://www.apache.org/events/logos-banners/ApacheCon-2013-NorthAmerica/NA_square_20.png"/>
+      <logo name="Maven" 
+            href="http://maven.apache.org/"
+            img="http://maven.apache.org/images/logos/maven-feather.png"/>
+            
+  </poweredBy>
+  
   <body>    
     <breadcrumbs>
       <item name="Apache" href="http://www.apache.org/"/>
