@@ -34,8 +34,15 @@
             img="http://maven.apache.org/images/logos/maven-feather.png"/>
             
   </poweredBy>
-  
-  <body>    
+    
+  <body>
+    <head>
+      <link 
+            href='http://fonts.googleapis.com/css?family=Mate+SC' 
+            rel='stylesheet' 
+            type='text/css'/>
+    </head>
+      
     <breadcrumbs>
       <item name="Apache" href="http://www.apache.org/"/>
       <item name="Creadur" href="http://creadur.apache.org/"/>
