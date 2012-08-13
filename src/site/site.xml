@@ -55,6 +55,12 @@
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
 
+    <menu name="Running Rat" inherit="bottom">
+      <item name="From The Command Line" href="apache-rat/index.html"/>
+      <item name="With Ant" href="apache-rat-tasks/index.html"/>
+      <item name="With Maven" href="apache-rat-plugin/index.html"/>
+    </menu>
+
 	<menu name="Apache Creadur&trade;" inherit="bottom">
 		<item name='Creadur Project Home' href="http://creadur.apache.org"/>
 		<item name='Apache Tentacles' href="http://creadur.apache.org/tentacles"/>
