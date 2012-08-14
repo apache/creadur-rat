@@ -69,3 +69,44 @@ java -jar apache-rat-VERSION.jar
  -E /path/to/project/.rat-excludes
  -d /path/to/project
 +------------------------------------------+
+
+* Command Line Options
+
+
++------------------------------------------+
+usage: java rat.report [options] [DIR|TARBALL]
+Options
+ -A,--addLicense                Add the default licence header to any file
+                                with an unknown licence that is not in the
+                                exclusion list. By default new files will
+                                be created with the licence header, to
+                                force the modification of existing files
+                                use the --force option.
+ -a,--addLicence                Add the default licence header to any file
+                                with an unknown licence that is not in the
+                                exclusion list. By default new files will
+                                be created with the licence header, to
+                                force the modification of existing files
+                                use the --force option.
+ -c,--copyright <arg>           The copyright message to use in the
+                                licence headers, usually in the form of
+                                "Copyright 2008 Foo"
+ -d,--dir                       Used to indicate source when using
+                                --exclude
+ -E,--exclude-file <fileName>   Excludes files matching regular expression
+                                in <file> Note that --dir is required when
+                                using this parameter.
+ -e,--exclude <expression>      Excludes files matching wildcard
+                                <expression>. Note that --dir is required
+                                when using this parameter. Allows multiple
+                                arguments.
+ -f,--force                     Forces any changes in files to be written
+                                directly to the source files (i.e. new
+                                files are not created)
+ -h,--help                      Print help for the RAT command line
+                                interface and exit
+ -s,--stylesheet <arg>          XSLT stylesheet to use when creating the
+                                report.  Not compatible with -x
+ -x,--xml                       Output the report in raw XML format.  Not
+                                compatible with -s
++------------------------------------------+
