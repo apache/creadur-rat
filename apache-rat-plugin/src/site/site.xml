@@ -17,6 +17,13 @@
 -->
 <project>
   <body>
+    <head>
+        <link 
+            href='http://fonts.googleapis.com/css?family=Mate+SC' 
+            rel='stylesheet' 
+            type='text/css'/>
+    </head>
+  
     <menu ref="parent"/>
 
     <menu name="Overview">
