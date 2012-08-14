@@ -15,7 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project name="Apache RAT (Incubating) Ant Task Library">
+<project name="Apache Rat&trade; Task Library for Apache Ant">
   <body>    
     <menu ref="parent"/>
     <menu name="Overview">
