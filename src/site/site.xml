@@ -51,6 +51,7 @@
   
     <menu name="Apache Rat&trade;" inherit="bottom">
       <item name="Introducing Rat" href="/index.html"/>
+      <item name="Javadocs" href="/apidocs/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
