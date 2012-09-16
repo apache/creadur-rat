@@ -34,11 +34,11 @@ releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
 It's reports require interpretation.
 
-In response to demands from project quality tool developers, Rat is available as a 
+In response to demands from project quality tool developers, Rat is available as a
 library suitable for inclusion in tools. This POM describes that library.
 Note that binary compatibility is not guaranteed between 0.x releases.
 
-Apache Rat is developed by the Apache Creadur project, a language and build 
+Apache Rat is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
@@ -68,8 +68,8 @@ agnostic home for software distribution comprehension and audit tools.
           </profile>
         </profiles>
     -->
-    <!-- 
-    For the moment, deploy to stage directory only. 
+    <!--
+    For the moment, deploy to stage directory only.
     -->
     <rat.site.url>file:stage</rat.site.url>
     <rat.site.name>Apache Rat Website</rat.site.name>
@@ -236,7 +236,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.5.1</version>
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
@@ -293,7 +293,7 @@ agnostic home for software distribution comprehension and audit tools.
     <system>Buildbot</system>
     <url>http://ci.apache.org/builders/rat_trunk</url>
   </ciManagement>
-  
+
   <mailingLists>
     <mailingList>
       <name>Rat Development (Apache Creadur project)</name>
@@ -402,7 +402,7 @@ agnostic home for software distribution comprehension and audit tools.
       <name>${rat.site.name}</name>
       <url>${rat.site.url}</url>
     </site>
- 
+
     <repository>
       <id>${rat.releases.id}</id>
       <name>${rat.releases.name}</name>
