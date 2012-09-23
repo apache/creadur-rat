@@ -44,11 +44,12 @@ agnostic home for software distribution comprehension and audit tools.
   <inceptionYear>2006</inceptionYear>
 
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <properties>
     <javaVersion>1.5</javaVersion>
+    <mavenVersion>2.0.4</mavenVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--
       These properties are to allow deployment to another target than
