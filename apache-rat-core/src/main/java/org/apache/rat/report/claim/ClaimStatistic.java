@@ -46,7 +46,7 @@ public class ClaimStatistic {
 
     /**
      * Returns the number of files with unapproved licenses.
-     * {@em Note:} This might include files with unknown
+     * <em>Note:</em> This might include files with unknown
      * licenses.
      * @see #getNumUnknown()
      */
@@ -56,7 +56,7 @@ public class ClaimStatistic {
 
     /**
      * Returns the number of files with unapproved licenses.
-     * {@em Note:} This might include files with unknown
+     * <em>Note:</em> This might include files with unknown
      * licenses.
      * @see #setNumUnknown(int)
      */
