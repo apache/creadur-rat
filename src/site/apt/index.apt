@@ -48,7 +48,7 @@ Apache Rat
 java -jar apache-rat-0.9.jar --help
 +------------------------------------------+
 
- Read more {{{apache-rat/index.html}here}}.
+ Read more {{{./apache-rat/index.html}here}}.
  
 ** Apache Ant
   
