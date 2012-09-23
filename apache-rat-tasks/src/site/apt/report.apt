@@ -96,7 +96,7 @@ Nested Elements
   of a document.
 
   The Ant library already contains
-  {{{./types.html#License Matchers}types for the built-in license
+  {{{./types.html#License_Matchers}types for the built-in license
   matchers}} but you can define your own classes for
   {{{./examples/custom.html}custom matchers}}.
 
