@@ -262,9 +262,9 @@ agnostic home for software distribution comprehension and audit tools.
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
                 <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>
