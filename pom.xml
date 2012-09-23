@@ -167,6 +167,13 @@ agnostic home for software distribution comprehension and audit tools.
               <version>2.5.1</version>
             </tagletArtifact>
           </tagletArtifacts>
+          <tags>
+            <tag>
+              <name>TODO</name>
+              <placement>X</placement>
+              <head>To do:</head>
+            </tag>
+          </tags>
         </configuration>
         <reportSets>
           <reportSet>
