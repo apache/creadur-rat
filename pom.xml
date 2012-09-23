@@ -48,6 +48,7 @@ agnostic home for software distribution comprehension and audit tools.
   </prerequisites>
 
   <properties>
+    <javaVersion>1.5</javaVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--
       These properties are to allow deployment to another target than
@@ -186,6 +187,9 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>2.4</version>
+        <configuration>
+          <targetJdk>${javaVersion}</targetJdk>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -233,9 +237,17 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.5.1</version>
           <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
+            <source>${javaVersion}</source>
+            <target>${javaVersion}</target>
             <encoding>${project.build.sourceEncoding}</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <targetJdk>${javaVersion}</targetJdk>
           </configuration>
         </plugin>
         <plugin>
