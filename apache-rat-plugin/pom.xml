@@ -29,11 +29,12 @@
    to audit the source to be distributed.</description>
   <inceptionYear>2007</inceptionYear>
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <properties>
     <currentVersion>${project.version}</currentVersion>
+    <mavenVersion>2.0.4</mavenVersion>
   </properties>
   
   <build>
@@ -101,7 +102,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
@@ -111,12 +112,13 @@
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
+      <!-- This is the implementation version which has a different release cycle than Maven core -->
       <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact-manager</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
