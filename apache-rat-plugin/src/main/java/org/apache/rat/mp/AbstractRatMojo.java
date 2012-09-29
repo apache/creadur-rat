@@ -22,6 +22,8 @@ package org.apache.rat.mp;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.rat.Defaults;
 import org.apache.rat.Report;
@@ -72,25 +74,25 @@ public abstract class AbstractRatMojo extends AbstractMojo
     /**
      * The base directory, in which to search for files.
      * 
-     * @parameter expression="${rat.basedir}" default-value="${basedir}"
-     * @required
      */
+    @Parameter (property = "rat.basedir", defaultValue = "${basedir}", required = true)
     protected File basedir;
 
     /**
      * Specifies the licenses to accept. Deprecated, use {@link #licenses} instead.
      * 
-     * @parameter
      * @deprecated Use {@link #licenses} instead.
      */
+    @Parameter
     private HeaderMatcherSpecification[] licenseMatchers;
 
     /**
      * Specifies the licenses to accept. By default, these are added to the default
      * licenses, unless you set {@link #addDefaultLicenseMatchers} to true.
-     * @parameter
+     *
      * @since 0.8
      */
+    @Parameter
     private IHeaderMatcher[] licenses;
 
     /**
@@ -101,45 +103,46 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     /**
      * Specifies the license families to accept.
-     * @parameter
+     *
      * @since 0.8
      */
+    @Parameter
     private ILicenseFamily[] licenseFamilies;
     
     /**
      * Whether to add the default list of license matchers.
      * 
-     * @parameter expression="${rat.addDefaultLicenseMatchers}" default-value="true"
      */
+    @Parameter(property = "rat.addDefaultLicenseMatchers", defaultValue = "true")
     private boolean addDefaultLicenseMatchers;
 
     /**
      * Specifies files, which are included in the report. By default, all files are included.
      * 
-     * @parameter
      */
+    @Parameter
     private String[] includes;
 
     /**
      * Specifies files, which are excluded in the report. By default, no files are excluded.
      * 
-     * @parameter
      */
+    @Parameter
     private String[] excludes;
 
     /**
      * Whether to use the default excludes when scanning for files.
      * 
-     * @parameter expression="${rat.useDefaultExcludes}" default-value="true"
      */
+    @Parameter(property = "rat.useDefaultExcludes", defaultValue = "true")
     private boolean useDefaultExcludes;
 
     /**
      * Whether to use the Maven specific default excludes when scanning for files. Maven specific default excludes are
      * given by the constant MAVEN_DEFAULT_EXCLUDES: The target directory, the cobertura.ser file, and so on.
      * 
-     * @parameter expression="${rat.useMavenDefaultExcludes}" default-value="true"
      */
+    @Parameter(property = "rat.useMavenDefaultExcludes", defaultValue = "true")
     private boolean useMavenDefaultExcludes;
 
     /**
@@ -147,31 +150,30 @@ public abstract class AbstractRatMojo extends AbstractMojo
      * are given by the constant ECLIPSE_DEFAULT_EXCLUDES: The .classpath and .project files, the .settings directory,
      * and so on.
      * 
-     * @parameter expression="${rat.useEclipseDefaultExcludes}" default-value="true"
      */
+    @Parameter(property = "rat.useEclipseDefaultExcludes", defaultValue = "true")
     private boolean useEclipseDefaultExcludes;
 
     /**
      * Whether to use the IDEA specific default excludes when scanning for files. IDEA specific default excludes are
      * given by the constant IDEA_DEFAULT_EXCLUDES: The *.iml, *.ipr and *.iws files.
      * 
-     * @parameter expression="${rat.useIdeaDefaultExcludes}" default-value="true"
      */
+    @Parameter(property = "rat.useIdeaDefaultExcludes", defaultValue = "true")
     private boolean useIdeaDefaultExcludes;
 
     /**
      * Whether to exclude subprojects. This is recommended, if you want a
      * separate apache-rat-plugin report for each subproject.
      * 
-     * @parameter expression="${rat.excludeSubprojects}" default-value="true"
      */
+    @Parameter(property = "rat.excludeSubprojects", defaultValue = "true")
     private boolean excludeSubProjects;
     
     /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
+     *
      */
+    @Component
     private MavenProject project;
 
     /**
@@ -203,7 +205,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
         {
             for (final HeaderMatcherSpecification spec : licenseMatchers) {
                 final String className = spec.getClassName();
-                final IHeaderMatcher headerMatcher = (IHeaderMatcher) newInstance(IHeaderMatcher.class, className);
+                final IHeaderMatcher headerMatcher = newInstance(IHeaderMatcher.class, className);
                 list.add(headerMatcher);
             }
         }
@@ -215,14 +217,14 @@ public abstract class AbstractRatMojo extends AbstractMojo
         return (IHeaderMatcher[]) list.toArray( new IHeaderMatcher[list.size()] );
     }
 
-    private Object newInstance( final Class clazz, final String className )
+    private <T> T newInstance( final Class<T> clazz, final String className )
         throws MojoExecutionException, MojoFailureException
     {
-        final Object o;
+        final T o;
         try
         {
             final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            o = cl.loadClass( className ).newInstance();
+            o = (T) cl.loadClass( className ).newInstance();
         }
         catch ( InstantiationException e )
         {

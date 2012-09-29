@@ -37,6 +37,10 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.rat.Defaults;
@@ -58,39 +62,27 @@ import java.util.ResourceBundle;
 /**
  * Generates a report with RAT's output.
  * 
- * @goal rat
- * @requiresDependencyResolution test
  */
+@Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST)
 public class RatReportMojo extends AbstractRatMojo implements MavenReport
 {
     /**
      * Specifies the directory where the report will be generated
      * 
-     * @parameter default-value="${project.reporting.outputDirectory}"
-     * @required
      */
+    @Parameter(defaultValue = "${project.reporting.outputDirectory}", required = true)
     private File outputDirectory;
 
-    /**
-     * @component
-     */
+    @Component
     private Renderer siteRenderer;
 
-    /**
-     * @component
-     */
+    @Component
     private ArtifactFactory factory;
 
-    /**
-     * @component
-     */
+    @Component
     private ArtifactResolver resolver;
 
-    /**
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
-     */
+    @Parameter(defaultValue = "${localRepository}", required = true, readonly = true)
     private ArtifactRepository localRepository;
 
     /**

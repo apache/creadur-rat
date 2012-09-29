@@ -28,47 +28,49 @@ import java.io.InputStream;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 /**
  * Run RAT to perform a violation check.
- * 
- * @goal check
- * @phase verify
+ *
  */
+@Mojo (name = "check", defaultPhase = LifecyclePhase.VERIFY)
 public class RatCheckMojo extends AbstractRatMojo
 {
     /**
      * Where to store the report.
-     * 
-     * @parameter expression="${rat.outputFile}" default-value="${project.build.directory}/rat.txt"
+     *
      */
+    @Parameter (property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
     private File reportFile;
 
     /**
      * Output style of the report. Use "plain" (the default) for a plain text
      * report or "xml" for the raw XML report. Alternatively you can give the
      * path of an XSL transformation that will be applied on the raw XML to
-     * produce the report written to the output file. 
-     * 
-     * @parameter expression="${rat.outputStyle}" default-value="plain"
+     * produce the report written to the output file.
+     *
      */
+    @Parameter(property = "rat.outputStyle", defaultValue = "plain")
     private String reportStyle;
 
     /**
      * Maximum number of files with unapproved licenses.
-     * @parameter expression="${rat.numUnapprovedLicenses}" default-value="0"
      */
+    @Parameter(property = "rat.numUnapprovedLicenses", defaultValue = "0")
     private int numUnapprovedLicenses;
 
     /**
      * Whether to add license headers; possible values are
      * {@code forced}, {@code true}, and {@code false} (default).
      *
-     * @parameter expression="${rat.addLicenseHeaders}" default-value="false"
      */
+    @Parameter(property = "rat.addLicenseHeaders", defaultValue = "false")
     private String addLicenseHeaders;
 
     /**
@@ -76,9 +78,17 @@ public class RatCheckMojo extends AbstractRatMojo
      * ignored, unless {@code addLicenseHeaders} is set to {@code true},
      * or {@code forced}.
      *
-     * @parameter expression="${rat.copyrightMessage}"
      */
+    @Parameter(property = "rat.copyrightMessage")
     private String copyrightMessage;
+
+    /**
+     * Will ignore rat errors and display a log message if any.
+     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * @since 0.9
+     */
+    @Parameter(property = "rat.ignoreErrors", defaultValue = "false")
+    private boolean ignoreErrors;
 
     private ClaimStatistic getRawReport()
         throws MojoExecutionException, MojoFailureException
@@ -144,7 +154,7 @@ public class RatCheckMojo extends AbstractRatMojo
 
     /**
      * Invoked by Maven to execute the Mojo.
-     * 
+     *
      * @throws MojoFailureException
      *             An error in the plugin configuration was detected.
      * @throws MojoExecutionException
@@ -166,8 +176,18 @@ public class RatCheckMojo extends AbstractRatMojo
     {
         if ( numUnapprovedLicenses < statistics.getNumUnApproved() )
         {
-            throw new RatCheckException( "Too many unapproved licenses: " + statistics.getNumUnApproved() );
+            if ( !ignoreErrors )
+            {
+                throw new RatCheckException( "Too many unapproved licenses: " + statistics.getNumUnApproved() );
+            }
+            else
+            {
+                getLog().warn( "Rat check:" + statistics.getNumUnApproved() + " errors on non approved has been ignored." );
+            }
+
         }
+
+
     }
 
     protected ReportConfiguration getConfiguration()
