@@ -36,11 +36,11 @@ import java.util.regex.Pattern;
 public class DirectoryWalker extends Walker implements IReportable {
 
     protected static final FileNameComparator COMPARATOR = new FileNameComparator();
-	
-	public DirectoryWalker(File file) {
-	    this(file, (FilenameFilter) null);
-	}
-	
+
+    public DirectoryWalker(File file) {
+        this(file, (FilenameFilter) null);
+    }
+
     /**
      * Constructs a walker.
      * @param file not null
@@ -54,18 +54,18 @@ public class DirectoryWalker extends Walker implements IReportable {
     public DirectoryWalker(File file, final Pattern ignoreNameRegex) {
         super(file.getPath(), file, regexFilter(ignoreNameRegex));
     }
-	
+
     public boolean isRestricted() {
         return false;
     }
    
-	  /**
-	   * Process a directory, restricted directories will be ignored.
-	   * 
-	   * @param report The report to process the directory with
-	   * @param file the directory to process
-	   * @throws RatException
-	   */
+    /**
+     * Process a directory, restricted directories will be ignored.
+     *
+     * @param report The report to process the directory with
+     * @param file the directory to process
+     * @throws RatException
+     */
     private void processDirectory(RatReport  report, final File file) throws RatException {
         if (!isRestricted(file)) {
             process(report, file);

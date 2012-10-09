@@ -41,7 +41,7 @@ import org.apache.rat.report.RatReport;
  * Walks various kinds of archives files
  */
 public class ArchiveWalker extends Walker implements IReportable {
-	
+
     /**
      * Constructs a walker.
      * @param file not null
@@ -62,46 +62,46 @@ public class ArchiveWalker extends Walker implements IReportable {
      * 
      */
     public void run(final RatReport report) throws RatException {
-    	
-		try {
-			ArchiveInputStream input;
-		
+
+        try {
+            ArchiveInputStream input;
+
             /* I am really sad that classes aren't first-class objects in
                Java :'( */
-			try {
-				input = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(file)));
-			} catch (IOException e) {
-				try {
-					input = new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
-				} catch (IOException e2) {
-					input = new ZipArchiveInputStream(new FileInputStream(file));
-				}
-			}
+            try {
+                input = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(file)));
+            } catch (IOException e) {
+                try {
+                    input = new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
+                } catch (IOException e2) {
+                    input = new ZipArchiveInputStream(new FileInputStream(file));
+                }
+            }
 
-			ArchiveEntry entry = input.getNextEntry();
-    	    while (entry != null) {
-    	    	File f = new File(entry.getName());
-    	    	byte[] contents = new byte[(int) entry.getSize()];
-    	    	int offset = 0;
-    	    	int length = contents.length;
+            ArchiveEntry entry = input.getNextEntry();
+            while (entry != null) {
+                File f = new File(entry.getName());
+                byte[] contents = new byte[(int) entry.getSize()];
+                int offset = 0;
+                int length = contents.length;
 
-    	    	while (offset < entry.getSize()) {
-        	    	int actualRead = input.read(contents, offset, length);
-        	    	length -= actualRead;
-        	    	offset += actualRead;
-    	    	}
-    	    	
-    	    	if (!entry.isDirectory() && !ignored(f)) {
-    	    		report(report, contents, f);
-    	    	}
+                while (offset < entry.getSize()) {
+                    int actualRead = input.read(contents, offset, length);
+                    length -= actualRead;
+                    offset += actualRead;
+                }
 
-        		entry = input.getNextEntry();
-    	    }
-    	    
-    	    input.close();
-		} catch (IOException e) {
-			throw new RatException(e);
-		}
+                if (!entry.isDirectory() && !ignored(f)) {
+                    report(report, contents, f);
+                }
+
+                entry = input.getNextEntry();
+            }
+
+            input.close();
+        } catch (IOException e) {
+            throw new RatException(e);
+        }
     }
 
     /**

@@ -26,21 +26,21 @@ import org.apache.rat.api.MetaData;
  * Abstract base class for monolithic documents.
  */
 public abstract class AbstractMonolithicDocument implements Document {
-	private final String name;
-	private final MetaData metaData;
+    private final String name;
+    private final MetaData metaData;
 
-	public AbstractMonolithicDocument(String pName) {
-		name = pName;
+    public AbstractMonolithicDocument(String pName) {
+        name = pName;
         this.metaData = new MetaData();
-	}
+    }
 
-	public boolean isComposite() {
+    public boolean isComposite() {
         return false;
     }
 
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
     public MetaData getMetaData() {
         return metaData;

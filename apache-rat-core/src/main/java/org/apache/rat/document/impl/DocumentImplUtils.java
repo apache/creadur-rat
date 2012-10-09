@@ -34,15 +34,15 @@ public class DocumentImplUtils {
     }
     
     public static final boolean isZipStream(InputStream stream) {
-    	ZipInputStream zip = new ZipInputStream(stream);
-    	try {
-			zip.getNextEntry();
-			return true;
+        ZipInputStream zip = new ZipInputStream(stream);
+        try {
+            zip.getNextEntry();
+            return true;
         } catch (ZipException e) {
             return false;
-		} catch (IOException e) {
-			return false;
-		} finally {
+        } catch (IOException e) {
+            return false;
+        } finally {
             if (zip != null) {
                 try {
                     zip.close();
@@ -50,12 +50,12 @@ public class DocumentImplUtils {
                     // Swallow
                 }
             }
-		}
+        }
     }
 
     public static final boolean isZip(File file) {
         try {
-        	return isZipStream(new FileInputStream(file));
+            return isZipStream(new FileInputStream(file));
         } catch (IOException e) {
             return false;
         }

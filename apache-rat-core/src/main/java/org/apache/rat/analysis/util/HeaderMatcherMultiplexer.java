@@ -28,29 +28,29 @@ import org.apache.rat.api.Document;
  */
 public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 
-	private final IHeaderMatcher[] matchers;
-	private final int numberOfMatchers;
-	
-	public HeaderMatcherMultiplexer(final IHeaderMatcher[] matchers) {
-		this.matchers = matchers;
-		numberOfMatchers = matchers.length;
-	}
-	
-	public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+    private final IHeaderMatcher[] matchers;
+    private final int numberOfMatchers;
+
+    public HeaderMatcherMultiplexer(final IHeaderMatcher[] matchers) {
+        this.matchers = matchers;
+        numberOfMatchers = matchers.length;
+    }
+
+    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         boolean result = false;
-		for (int i=0;i<numberOfMatchers;i++) {
-			result = matchers[i].match(subject, line);
+        for (int i=0;i<numberOfMatchers;i++) {
+            result = matchers[i].match(subject, line);
             if (result) {
                 break;
             }
-		}
+        }
         return result;
-	}
+    }
 
-	public void reset() {
-		for (int i=0;i<numberOfMatchers;i++) {
-			matchers[i].reset();
-		}
-	}
+    public void reset() {
+        for (int i=0;i<numberOfMatchers;i++) {
+            matchers[i].reset();
+        }
+    }
 
 }

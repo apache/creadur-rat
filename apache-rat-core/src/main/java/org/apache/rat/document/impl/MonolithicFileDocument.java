@@ -31,30 +31,30 @@ import org.apache.rat.api.Document;
 
 
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
-	private final File file;
+    private final File file;
 
     /**
      * Creates a new instance. The document is read from the
      * given URL.
      */
     public static Document newInstance(final URL url) {
-    	if ("file".equals(url.getProtocol())) {
-    		final File f = new File(url.getFile());
-    		return new MonolithicFileDocument(f);
-    	}
-    	return new AbstractMonolithicDocument(url.toExternalForm()){
-			public Reader reader() throws IOException {
-				return new InputStreamReader(inputStream(), "UTF-8");
-			}
+        if ("file".equals(url.getProtocol())) {
+            final File f = new File(url.getFile());
+            return new MonolithicFileDocument(f);
+        }
+        return new AbstractMonolithicDocument(url.toExternalForm()){
+            public Reader reader() throws IOException {
+                return new InputStreamReader(inputStream(), "UTF-8");
+           }
 
             public InputStream inputStream() throws IOException {
                 return url.openStream();
             }
-    	};
+        };
     }
 
     public MonolithicFileDocument(final File file) {
-    	super(DocumentImplUtils.toName(file));
+        super(DocumentImplUtils.toName(file));
         this.file = file;
     }
 

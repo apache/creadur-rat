@@ -29,12 +29,12 @@ import org.apache.rat.report.IReportable;
  * Abstract walker.
  */
 public abstract class Walker implements IReportable {
-	
+
     protected final File file;
     protected final String name;
 
     protected final FilenameFilter filter;
-	
+
     protected static FilenameFilter regexFilter(final Pattern pattern) {
         return new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -48,12 +48,12 @@ public abstract class Walker implements IReportable {
             }
         };
     }
-	
-	protected boolean isRestricted(File file) {
-		String name = file.getName();
-		boolean result = name.startsWith(".");
-		return result;
-	}
+
+    protected boolean isRestricted(File file) {
+        String name = file.getName();
+        boolean result = name.startsWith(".");
+        return result;
+    }
  
     protected final boolean ignored(final File file) {
         boolean result = false;
@@ -64,11 +64,11 @@ public abstract class Walker implements IReportable {
         }
         return result;
     }
-        
+
     public Walker(File file, final FilenameFilter filter) {
         this(file.getPath(), file, filter);
     }
-	
+
     protected Walker(final String name, final File file, final FilenameFilter filter) {
         this.name = name;
         this.file = file;

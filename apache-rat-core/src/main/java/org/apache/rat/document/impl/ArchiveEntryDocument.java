@@ -31,37 +31,37 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 
 public class ArchiveEntryDocument implements Document {
-	
-	private byte[] contents;
+
+    private byte[] contents;
     private final String name;
 
     private final MetaData metaData = new MetaData();
 
-	public ArchiveEntryDocument(File file, byte[] contents) throws RatException {
-		super();
-		name = DocumentImplUtils.toName(file);
-		this.contents = contents;
-	}
-	
-	public MetaData getMetaData() {
-		return metaData;
-	}
+    public ArchiveEntryDocument(File file, byte[] contents) throws RatException {
+        super();
+        name = DocumentImplUtils.toName(file);
+        this.contents = contents;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public MetaData getMetaData() {
+        return metaData;
+    }
 
-	public InputStream inputStream() throws IOException {
-		return new ByteArrayInputStream(contents);
-	}
+    public String getName() {
+        return name;
+    }
 
-	public boolean isComposite() {
-		return DocumentImplUtils.isZipStream(new ByteArrayInputStream(contents));
-	}
+    public InputStream inputStream() throws IOException {
+        return new ByteArrayInputStream(contents);
+    }
 
-	public Reader reader() throws IOException {
-		return new InputStreamReader(new ByteArrayInputStream(contents));
-	}
+    public boolean isComposite() {
+        return DocumentImplUtils.isZipStream(new ByteArrayInputStream(contents));
+    }
+
+    public Reader reader() throws IOException {
+        return new InputStreamReader(new ByteArrayInputStream(contents));
+    }
 
 
     /**
