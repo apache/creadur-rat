@@ -1,5 +1,5 @@
-	How to build
-	============
+How to build
+============
 
 Normal development:
 

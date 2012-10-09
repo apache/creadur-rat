@@ -25,13 +25,13 @@ import org.apache.rat.api.MetaData;
 
 public class Matcher extends BaseLicense implements IHeaderMatcher {
     public Matcher() {
-    	super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"), 
+        super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"),
                 new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, "Example License"), "");
     }
     public void reset() {}
     
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-    	reportOnLicense(subject);
-    	return true;
+        reportOnLicense(subject);
+        return true;
     }
 }

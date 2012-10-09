@@ -24,12 +24,12 @@
     xmlns:au="antlib:org.apache.ant.antunit"
     xmlns:rat="antlib:org.apache.rat.anttasks">
   <taskdef uri="antlib:org.apache.ant.antunit"
-	  resource="org/apache/ant/antunit/antlib.xml"
-     classpath="${test.classpath}"/>
+      resource="org/apache/ant/antunit/antlib.xml"
+      classpath="${test.classpath}"/>
 
   <taskdef uri="antlib:org.apache.rat.anttasks"
-  	  resource="org/apache/rat/anttasks/antlib.xml"
-     classpath="${test.classpath}"/>
+      resource="org/apache/rat/anttasks/antlib.xml"
+      classpath="${test.classpath}"/>
 
   <property name="output.dir" location="target/anttasks"/>
   <pathconvert dirsep="/" property="file.name">
@@ -40,7 +40,7 @@
   <property name="expectedOutput" value="AL    ${file.name}"/>
 
   <target name="testWithReportSentToAnt">
-  	<rat:report>
+    <rat:report>
       <file file="${ant.file}"/>
     </rat:report>
   </target>
@@ -64,10 +64,10 @@
   <target name="testCustomMatcher">
     <mkdir dir="${output.dir}/dest"/>
     <mkdir dir="${output.dir}/src/org/example"/>
-  	<typedef name="exmpl" classname="org.example.Matcher"
-    	classpath="${test.classpath}"/>
+    <typedef name="exmpl" classname="org.example.Matcher"
+        classpath="${test.classpath}"/>
     <typedef name="exmpl-license" classname="org.example.LicenseFamily"
-    	classpath="${test.classpath}"/>
+        classpath="${test.classpath}"/>
     <rat:report>
       <file file="${ant.file}"/>
       <exmpl/>
@@ -82,13 +82,13 @@
   <target name="testNoLicenseMatchers">
     <rat:report addDefaultLicenseMatchers="false">
       <file file="${ant.file}"/>
-	</rat:report>
+    </rat:report>
   </target>
 
   <target name="testAddLicenseHeaders">
-  	<delete dir="${output.dir}/it-sources"/>
+    <delete dir="${output.dir}/it-sources"/>
     <mkdir dir="${output.dir}/it-sources"/>
-  	<copy file="src/test/resources/antunit/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
+    <copy file="src/test/resources/antunit/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
     <rat:report addLicenseHeaders="true">
        <file file="${output.dir}/it-sources/index.apt"/>
     </rat:report>
