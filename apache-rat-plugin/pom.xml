@@ -34,8 +34,8 @@
 
   <properties>
     <currentVersion>${project.version}</currentVersion>
-    <doxiaVersion>1.0-alpha-8</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-8</doxiaSitetoolsVersion>
+    <doxiaVersion>1.2</doxiaVersion>
+    <doxiaSitetoolsVersion>1.2</doxiaSitetoolsVersion>
     <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
   
@@ -189,13 +189,7 @@
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <!-- This is the implementation version which has a different release cycle than Maven core -->
-      <version>2.0.4</version>
+      <version>3.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>

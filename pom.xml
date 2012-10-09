@@ -48,7 +48,7 @@ agnostic home for software distribution comprehension and audit tools.
 
   <properties>
     <javaVersion>1.5</javaVersion>
-    <mavenVersion>2.0.6</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--
       These properties are to allow deployment to another target than
