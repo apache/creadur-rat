@@ -76,7 +76,7 @@ public class XmlReportTest {
     
     @Test
     public void baseReport() throws Exception {
-    	final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
+        final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE);
         report.startReport();
         report(directory);

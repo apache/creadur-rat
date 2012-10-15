@@ -46,29 +46,29 @@ public final class XmlUtils {
     }
 
     public static final XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
-    	final SAXParserFactory spf = SAXParserFactory.newInstance();
-    	spf.setValidating(false);
-    	spf.setNamespaceAware(true);
-    	return spf.newSAXParser().getXMLReader();
+        final SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setValidating(false);
+        spf.setNamespaceAware(true);
+        return spf.newSAXParser().getXMLReader();
     }
 
     public static final boolean isWellFormedXml(final InputSource isource) {
-    	try {
-    		newXMLReader().parse(isource);
-    		return true;
-    	} catch (SAXException e) {
-    		System.out.println(e);
-    		e.printStackTrace();
-    		return false;
-    	} catch (IOException e) {
-    		throw new UndeclaredThrowableException(e);
-    	} catch (ParserConfigurationException e) {
-    		throw new UndeclaredThrowableException(e);
-    	}
+        try {
+            newXMLReader().parse(isource);
+            return true;
+        } catch (SAXException e) {
+            System.out.println(e);
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            throw new UndeclaredThrowableException(e);
+        } catch (ParserConfigurationException e) {
+            throw new UndeclaredThrowableException(e);
+        }
     }
 
     public static final boolean isWellFormedXml(final InputStream in) throws Exception {
-    	return isWellFormedXml(new InputSource(in));
+        return isWellFormedXml(new InputSource(in));
     }
     
     public static final Document toDom(final InputStream in) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {

@@ -82,7 +82,7 @@ agnostic home for software distribution comprehension and audit tools.
     <rat.snapshots.name>${distMgmtSnapshotsName}</rat.snapshots.name> <!-- Parent POM uses these properties -->
     <rat.snapshots.url>${distMgmtSnapshotsUrl}</rat.snapshots.url>
 
-    <!-- maven plugn versions -->
+    <!-- maven plugin versions -->
     <surefire.version>2.12.3</surefire.version>
 
   </properties>
@@ -275,14 +275,14 @@ agnostic home for software distribution comprehension and audit tools.
           <version>${surefire.version}</version>
         </plugin>
         <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-site-plugin</artifactId>
-	        <version>3.1</version>
-	        <configuration>
-	          <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
-	          <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
-	          <relativizeDecorationLinks>false</relativizeDecorationLinks>
-        	</configuration>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.1</version>
+          <configuration>
+            <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
+            <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+            <relativizeDecorationLinks>false</relativizeDecorationLinks>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -464,7 +464,7 @@ agnostic home for software distribution comprehension and audit tools.
   </licenses>
 
   <organization>
-  	<name>Apache Software Foundation</name>
-  	<url>http://www.apache.org</url>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org</url>
   </organization>
 </project>

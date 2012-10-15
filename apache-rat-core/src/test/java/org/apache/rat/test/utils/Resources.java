@@ -35,52 +35,52 @@ import org.apache.rat.document.impl.DocumentImplUtils;
  * test cases.
  */
 public class Resources {
-	/**
-	 * Private constructor, to prevent accidental instantiation.
-	 */
-	private Resources() {
-		// Does nothing
-	}
+    /**
+     * Private constructor, to prevent accidental instantiation.
+     */
+    private Resources() {
+        // Does nothing
+    }
 
-	/**
-	 * Locates a resource file in the class path.
-	 */
-	public static File getResourceFile(String pResource) throws IOException {
-		final File f = new File("src/test/resources", pResource);
-		if (!f.isFile()) {
-			throw new FileNotFoundException("Unable to locate resource file: " + pResource);
-		}
-		return f;
-	}
+    /**
+     * Locates a resource file in the class path.
+     */
+    public static File getResourceFile(String pResource) throws IOException {
+        final File f = new File("src/test/resources", pResource);
+        if (!f.isFile()) {
+            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
+        }
+        return f;
+    }
 
-	/**
-	 * Locates a resource file in the class path and returns an {@link InputStream}.
-	 */
-	public static InputStream getResourceStream(String pResource) throws IOException {
-		return new FileInputStream(getResourceFile(pResource));
-	}
+    /**
+     * Locates a resource file in the class path and returns an {@link InputStream}.
+     */
+    public static InputStream getResourceStream(String pResource) throws IOException {
+        return new FileInputStream(getResourceFile(pResource));
+    }
 
-	/**
-	 * Locates a resource file in the class path and returns a {@link Reader}.
-	 */
-	public static Reader getResourceReader(String pResource) throws IOException {
-		return new InputStreamReader(getResourceStream(pResource), "UTF-8");
-	}
+    /**
+     * Locates a resource file in the class path and returns a {@link Reader}.
+     */
+    public static Reader getResourceReader(String pResource) throws IOException {
+        return new InputStreamReader(getResourceStream(pResource), "UTF-8");
+    }
 
-	/**
-	 * Locates a resource file in the class path and returns a {@link BufferedReader}.
-	 */
-	public static BufferedReader getBufferedResourceReader(String pResource) throws IOException {
-		return new BufferedReader(getResourceReader(pResource));
-	}
+    /**
+     * Locates a resource file in the class path and returns a {@link BufferedReader}.
+     */
+    public static BufferedReader getBufferedResourceReader(String pResource) throws IOException {
+        return new BufferedReader(getResourceReader(pResource));
+    }
 
-	/**
-	 * Locates the name of a directory, which contains the given
-	 * resource file.
-	 */
-	public static String getResourceDirectory(String pResource) throws IOException {
-    	final File resource = getResourceFile(pResource);
-    	final File dir = resource.getParentFile();
-    	return DocumentImplUtils.toName(dir);
-	}
+    /**
+     * Locates the name of a directory, which contains the given
+     * resource file.
+     */
+    public static String getResourceDirectory(String pResource) throws IOException {
+        final File resource = getResourceFile(pResource);
+        final File dir = resource.getParentFile();
+        return DocumentImplUtils.toName(dir);
+    }
 }

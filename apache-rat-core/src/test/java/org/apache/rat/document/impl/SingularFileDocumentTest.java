@@ -31,8 +31,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class SingularFileDocumentTest {
-	private Document document;
-	private File file;
+    private Document document;
+    private File file;
     
     @Before
     public void setUp() throws Exception {

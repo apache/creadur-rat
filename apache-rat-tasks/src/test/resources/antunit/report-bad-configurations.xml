@@ -21,20 +21,20 @@
 -->
 
 <project default="allTests"
-	name='report-bad-configurations'
-  xmlns:au="antlib:org.apache.ant.antunit"
-  xmlns:rat="antlib:org.apache.rat.anttasks">
+    name='report-bad-configurations'
+    xmlns:au="antlib:org.apache.ant.antunit"
+    xmlns:rat="antlib:org.apache.rat.anttasks">
     
-    <taskdef uri="antlib:org.apache.ant.antunit" 
-        resource="org/apache/ant/antunit/antlib.xml" 
-        classpath="${test.classpath}" />
+  <taskdef uri="antlib:org.apache.ant.antunit"
+      resource="org/apache/ant/antunit/antlib.xml"
+      classpath="${test.classpath}" />
 
-    <taskdef uri="antlib:org.apache.rat.anttasks" resource="org/apache/rat/anttasks/antlib.xml">
-        <classpath>
-            <pathelement location="${jar.name}" />
-            <pathelement path='${test.classpath}' />
-        </classpath>
-    </taskdef>
+  <taskdef uri="antlib:org.apache.rat.anttasks" resource="org/apache/rat/anttasks/antlib.xml">
+    <classpath>
+      <pathelement location="${jar.name}" />
+      <pathelement path='${test.classpath}' />
+    </classpath>
+  </taskdef>
 
   <target name="allTests">
     <au:antunit xmlns:au="antlib:org.apache.ant.antunit"

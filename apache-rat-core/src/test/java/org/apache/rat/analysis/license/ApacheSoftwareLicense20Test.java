@@ -32,30 +32,30 @@ public class ApacheSoftwareLicense20Test {
     MockClaimReporter reporter;
 
     @Before
-	public void setUp() throws Exception {
+    public void setUp() throws Exception {
         reporter = new MockClaimReporter();
-	}
+    }
 
-	@Test
+    @Test
     public void matches() throws Exception {
-		ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
-		assertTrue(worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
-		assertTrue(worker.matches("    Licensed under the Apache License, Version 2.0 (the \"License\");"));
-		assertTrue(worker.matches("Licensed under the Apache License, Version 2.0 (the \"License\");"));
-		assertTrue(worker.matches(" * Licensed under the Apache License, Version 2.0 (the \"License\");"));
-		assertTrue(worker.matches(" // Licensed under the Apache License, Version 2.0 (the \"License\");"));
-		assertTrue(worker.matches(" /* Licensed under the Apache License, Version 2.0 (the \"License\");"));
-		assertTrue(worker.matches("    Licensed under the Apache License, Version 2.0 (the \"License\");"));
-		assertTrue(worker.matches(" ## Licensed under the Apache License, Version 2.0 (the \"License\");"));
-		assertTrue(worker.matches(" ## Licensed under the Apache License, Version 2.0 (the \"License\") ##);"));
-		assertFalse(worker.matches("'Behold, Telemachus! (nor fear the sight,)"));
-	}
-	
-	@Test
+        ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
+        assertTrue(worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
+        assertTrue(worker.matches("    Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.matches("Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.matches(" * Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.matches(" // Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.matches(" /* Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.matches("    Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.matches(" ## Licensed under the Apache License, Version 2.0 (the \"License\");"));
+        assertTrue(worker.matches(" ## Licensed under the Apache License, Version 2.0 (the \"License\") ##);"));
+        assertFalse(worker.matches("'Behold, Telemachus! (nor fear the sight,)"));
+    }
+
+    @Test
     public void match() throws Exception {
-		ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
-		final Document subject = new MockLocation("subject");
-		assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
+        ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
+        final Document subject = new MockLocation("subject");
+        assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
         assertTrue(worker.match(subject, "    Licensed under the Apache License, Version 2.0 (the \"License\");"));
         assertTrue(worker.match(subject, "Licensed under the Apache License, Version 2.0 (the \"License\");"));
         assertTrue(worker.match(subject, " * Licensed under the Apache License, Version 2.0 (the \"License\");"));
@@ -65,6 +65,6 @@ public class ApacheSoftwareLicense20Test {
         assertTrue(worker.match(subject, " ## Licensed under the Apache License, Version 2.0 (the \"License\");"));
         assertTrue(worker.match(subject, " ## Licensed under the Apache License, Version 2.0 (the \"License\") ##);"));
         assertFalse(worker.match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
-	}
-    
+    }
+
 }

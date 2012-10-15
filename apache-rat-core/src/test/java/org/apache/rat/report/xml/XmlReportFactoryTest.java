@@ -57,7 +57,7 @@ public class XmlReportFactoryTest {
     
     @Test
     public void standardReport() throws Exception {
-    	final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
+        final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
         final ClaimStatistic statistic = new ClaimStatistic();

@@ -37,8 +37,8 @@ public class ReportTest {
             "-------\n" + 
             "Generated at: ";
 
-	private static String getElementsReports(String pElementsPath) {
-		return
+    private static String getElementsReports(String pElementsPath) {
+        return
             "Notes: 2\n" + 
             "Binaries: 1\n" + 
             "Archives: 1\n" + 
@@ -102,7 +102,7 @@ public class ReportTest {
             "==" + pElementsPath + "/sub/Empty.txt\n" + 
             "=======================================================================\n" + 
             "\n";
-	}
+    }
     
     @Test
     public void plainReport() throws Exception {

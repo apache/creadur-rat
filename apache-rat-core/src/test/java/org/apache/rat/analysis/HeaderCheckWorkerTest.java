@@ -32,11 +32,11 @@ import static org.junit.Assert.assertTrue;
 public class HeaderCheckWorkerTest {
 
     @Test
-	public void isFinished() throws Exception {
+    public void isFinished() throws Exception {
         final Document subject = new MockLocation("subject");
-		HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), new ApacheSoftwareLicense20(), subject);
-		assertFalse(worker.isFinished());
-		worker.read();
-		assertTrue(worker.isFinished());
-	}
+        HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), new ApacheSoftwareLicense20(), subject);
+        assertFalse(worker.isFinished());
+        worker.read();
+        assertTrue(worker.isFinished());
+    }
 }

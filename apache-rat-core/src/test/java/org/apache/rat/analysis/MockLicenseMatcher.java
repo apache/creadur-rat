@@ -25,17 +25,17 @@ import java.util.List;
 
 public class MockLicenseMatcher implements IHeaderMatcher {
 
-	public final List<String> lines = new ArrayList<String>();
-	public int resets = 0;
+    public final List<String> lines = new ArrayList<String>();
+    public int resets = 0;
     public boolean result = true;
-	
-	public boolean match(Document subject, String line) {
-		lines.add(line);
-		return result;  
-	}
 
-	public void reset() {
-		resets++;
-	}
+    public boolean match(Document subject, String line) {
+        lines.add(line);
+        return result;
+    }
+
+    public void reset() {
+        resets++;
+    }
 
 }

@@ -21,9 +21,9 @@
 -->
 
 <project name='report-normal-operation'
-	default="allTests"
-  	xmlns:au="antlib:org.apache.ant.antunit"
-  	xmlns:rat="antlib:org.apache.rat.anttasks">
+    default="allTests"
+    xmlns:au="antlib:org.apache.ant.antunit"
+    xmlns:rat="antlib:org.apache.rat.anttasks">
 
   <property name="output.dir" location="../../../../target/testoutput"/>
   <mkdir dir="${output.dir}/dest"/>
@@ -42,7 +42,7 @@
            resource="org/apache/rat/anttasks/antlib.xml"
            classpathref="all-classes-needed-for-tests"
            loaderref="testloader"/>
-	
+
   <target name="setUp">
     <pathconvert dirsep="/" property="file.name">
       <path>
@@ -308,15 +308,15 @@ import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 public class Matcher extends BaseLicense implements IHeaderMatcher {
     public Matcher() {
-    	super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"),
+        super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"),
               new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, "Example License"),
-               "");
+              "");
     }
     public void reset() {}
     
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-    	reportOnLicense(subject);
-    	return true;
+        reportOnLicense(subject);
+        return true;
     }
 }
 ]]></echo>
@@ -325,8 +325,8 @@ package org.example;
 import org.apache.rat.license.ILicenseFamily;
 public class LicenseFamily implements ILicenseFamily {
     public String getFamilyName() {
-    	return "Example License";
-   	}
+        return "Example License";
+    }
 }
 ]]></echo>
     <javac srcdir="${output.dir}/src" destdir="${output.dir}/dest"
