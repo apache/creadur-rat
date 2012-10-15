@@ -23,8 +23,6 @@
 
   <property name="src-dir" location="apache-rat-core/src/main/java"/>
   <property name="version" value="0.7-SNAPSHOT"/>
-  <property name="core-jar"
-            location="apache-rat-core/target/apache-rat-core-${version}.jar"/>
   <property name="src-jar"
             location="apache-rat-core/target/apache-rat-core-${version}-sources.jar"/>
 
