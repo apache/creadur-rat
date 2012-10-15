@@ -45,7 +45,7 @@ Apache Rat
  Quick start by
 
 +------------------------------------------+
-java -jar apache-rat-0.9.jar --help
+java -jar apache-rat-${project.version}.jar --help
 +------------------------------------------+
 
  Read more {{{./apache-rat/index.html}here}}.
@@ -58,7 +58,7 @@ java -jar apache-rat-0.9.jar --help
  
 ** Apache Maven
 
- Use the plugin for {{{http://maven.apache.org}Apache Maven 2}} or later.
+ Use the plugin for {{{http://maven.apache.org}Apache Maven ${mavenVersion}}} or later.
  
  Read more {{{./apache-rat-plugin/index.html} here}}.
  

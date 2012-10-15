@@ -28,12 +28,9 @@ Release Audit Tool (RAT)
  Run from the command line with:
 
 +------------------------------------------+
-java -jar apache-rat-VERSION.jar --help
+java -jar apache-rat-${project.version}.jar --help
 +------------------------------------------+
 
- Where VERSION is replaced with the version number you are 
- working with.
- 
  This will output a help message detailing the command line
  options available to you.
 
@@ -46,7 +43,7 @@ java -jar apache-rat-VERSION.jar --help
  To add licence headers use a command such as:
 
 +------------------------------------------+
-java -jar apache-rat-VERSION.jar --addLicence
+java -jar apache-rat-${project.version}.jar --addLicence
   --copyright "Copyright 2008 Foo" 
   /path/to/project
 +------------------------------------------+

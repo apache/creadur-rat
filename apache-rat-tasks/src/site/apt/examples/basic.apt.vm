@@ -35,9 +35,9 @@ Examples
 
   This corresponds to the command line
 
----
-java -jar apache-rat-VERSION.jar src
----
++------------------------------------------+
+java -jar apache-rat-${project.version}.jar src
++------------------------------------------+
 
   except that Ant's default excludes will be applied when looking for
   documents to check.
@@ -56,7 +56,7 @@ java -jar apache-rat-VERSION.jar src
   The equivalent of
 
 +------------------------------------------+
-java -jar apache-rat-VERSION.jar --addLicence
+java -jar apache-rat-${project.version}.jar --addLicence
   --copyright "Copyright 2008 Foo" 
   /path/to/project
 +------------------------------------------+
