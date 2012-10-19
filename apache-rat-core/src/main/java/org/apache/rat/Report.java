@@ -131,7 +131,7 @@ public class Report {
         Options opts = new Options();
 
         Option help = new Option("h", "help", false,
-        "Print help for the RAT command line interface and exit");
+        "Print help for the Rat command line interface and exit");
         opts.addOption(help);
 
         OptionGroup addLicenceGroup = new OptionGroup();
@@ -217,13 +217,13 @@ public class Report {
 
         StringBuilder footer = new StringBuilder("\n");
         footer.append("NOTE:\n");
-        footer.append("RAT is really little more than a grep ATM\n");
-        footer.append("RAT is also rather memory hungry ATM\n");
-        footer.append("RAT is very basic ATM\n");
-        footer.append("RAT highlights possible issues\n");
-        footer.append("RAT reports require intepretation\n");
-        footer.append("RAT often requires some tuning before it runs well against a project\n");
-        footer.append("RAT relies on heuristics: it may miss issues\n");
+        footer.append("Rat is really little more than a grep ATM\n");
+        footer.append("Rat is also rather memory hungry ATM\n");
+        footer.append("Rat is very basic ATM\n");
+        footer.append("Rat highlights possible issues\n");
+        footer.append("Rat reports require intepretation\n");
+        footer.append("Rat often requires some tuning before it runs well against a project\n");
+        footer.append("Rat relies on heuristics: it may miss issues\n");
 
         f.printHelp("java rat.report [options] [DIR|TARBALL]",
                 header, opts, footer.toString(), false);
@@ -264,7 +264,7 @@ public class Report {
     }
 
     /**
-     * @since RAT 0.8
+     * @since Rat 0.8
      */
     public ClaimStatistic report(PrintStream out,
                                  ReportConfiguration configuration)
@@ -320,7 +320,7 @@ public class Report {
      * @param out - the output stream to recieve the styled report
      * @param configuration the configuration to use
      * @throws Exception
-     * @since RAT 0.8
+     * @since Rat 0.8
      */
     public void styleReport(PrintStream out,
                             ReportConfiguration configuration)

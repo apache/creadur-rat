@@ -18,9 +18,9 @@
  ------
 
 
-The RAT Maven Plugin
+The Rat Maven Plugin
 
-  This plugin may be used to run RAT, the
+  This plugin may be used to run Rat, the
   {{{../index.html}Release Audit Tool}}. It
   verifies, whether your source code matches standards like the
   {{{http://www.apache.org/legal/src-headers.html}ASF Source Header
@@ -30,19 +30,19 @@ The RAT Maven Plugin
 
   The following goals are available:
 
-  * {{{./check-mojo.html}rat:check}} Runs RAT and creates a report, which is written
+  * {{{./check-mojo.html}rat:check}} Runs Rat and creates a report, which is written
     to a plain text file.
 
-  * {{{./rat-mojo.html}rat:rat}} Runs RAT and creates a report, which will be added
+  * {{{./rat-mojo.html}rat:rat}} Runs Rat and creates a report, which will be added
     to the generated site.
 
 * Usage
 
-  Instructions on how to use the RAT Maven Plugin can be found on the {{{./usage.html}usage page}}.
+  Instructions on how to use the Rat Maven Plugin can be found on the {{{./usage.html}usage page}}.
 
 * Examples
 
-  To provide you with better understanding of some usages of the RAT Maven Plugin,
+  To provide you with better understanding of some usages of the Rat Maven Plugin,
   you can take a look into the following examples:
 
   * {{{./examples/basic.html}Basic use}} of the rat:check goal.

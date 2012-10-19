@@ -16,10 +16,10 @@
                         Introduction
                         -----
 
-Apache RAT Ant Task Library
+Apache Rat Ant Task Library
 
  The Ant Task Library provides a single Ant task and a few supporting
- Ant types to run RAT, the {{{../index.html}Release Audit Tool}} from
+ Ant types to run Rat, the {{{../index.html}Release Audit Tool}} from
  inside {{{http://ant.apache.org/}Apache Ant}}.
 
  Using Ant's resource abstraction the task can be used to check files
@@ -27,11 +27,11 @@ Apache RAT Ant Task Library
 
 Requirements
 
- The RAT Ant Task Library requires Apache Ant 1.7.1 or higher (it
- works well with 1.8.x), Apache RAT core and transitively all
- dependencies of Apache RAT core.
+ The Rat Ant Task Library requires Apache Ant 1.7.1 or higher (it
+ works well with 1.8.x), Apache Rat core and transitively all
+ dependencies of Apache Rat core.
 
- In order to use the tasks Java 5 is required as of RAT 0.9 - RAT 0.8
+ In order to use the tasks Java 5 is required as of Rat 0.9 - Rat 0.8
  and earlier require Java 1.4.
 
 Installation

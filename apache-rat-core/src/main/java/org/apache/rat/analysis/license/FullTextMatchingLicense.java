@@ -34,7 +34,7 @@ import org.apache.rat.api.MetaData.Datum;
  * <p>The text comparison is case insensitive but assumes only
  * characters in the US-ASCII charset are being matched.</p>
  *
- * @since RAT 0.9
+ * @since Rat 0.9
  */
 public class FullTextMatchingLicense extends BaseLicense
     implements IHeaderMatcher {

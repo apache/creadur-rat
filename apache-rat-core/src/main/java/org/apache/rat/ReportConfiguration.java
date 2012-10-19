@@ -63,7 +63,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * If RAT is adding license headers: Returns the optional
+     * If Rat is adding license headers: Returns the optional
      * copyright message. This value is ignored, if no
      * license headers are added.
      * @see #isAddingLicenses()
@@ -73,7 +73,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * If RAT is adding license headers: Sets the optional
+     * If Rat is adding license headers: Sets the optional
      * copyright message. This value is ignored, if no
      * license headers are added.
      * @see #setAddingLicenses(boolean)
@@ -83,7 +83,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * If RAT is adding license headers: Returns, whether adding
+     * If Rat is adding license headers: Returns, whether adding
      * license headers is enforced. This value is ignored, if no
      * license headers are added.
      * @see #isAddingLicenses()
@@ -93,7 +93,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * If RAT is adding license headers: Sets, whether adding
+     * If Rat is adding license headers: Sets, whether adding
      * license headers is enforced. This value is ignored, if no
      * license headers are added.
      * @see #isAddingLicenses()
@@ -103,7 +103,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Returns, whether RAT should add missing license headers.
+     * Returns, whether Rat should add missing license headers.
      * @see #isAddingLicensesForced()
      * @see #getCopyrightMessage()
      */
@@ -112,7 +112,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Returns, whether RAT should add missing license headers.
+     * Returns, whether Rat should add missing license headers.
      * @see #setAddingLicensesForced(boolean)
      * @see #setCopyrightMessage(String)
      */

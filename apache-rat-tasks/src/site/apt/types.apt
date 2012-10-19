@@ -18,7 +18,7 @@
 
 Built-In Types
 
- The RAT Antlib defines a few Ant types that can be used as nested
+ The Rat Antlib defines a few Ant types that can be used as nested
  elements to the {{{./report.html} Report Task}} as license matchers or
  license families.
 
@@ -31,7 +31,7 @@ Built-In Types
 
 {License Matchers}
 
- The following types correspond to the built-in license matchers of RAT:
+ The following types correspond to the built-in license matchers of Rat:
 
 *-------*---------+-------------+
 | Typename | Detected License | Corresponding class |
@@ -39,26 +39,26 @@ Built-In Types
 | asl20 | Apache License 2.0 | <<<org.apache.rat.analysis.license.ApacheSoftwareLicense20>>>
 *-------*---------+-------------+
 | dojo | {{{http://dojotoolkit.org/community/licensing.shtml}License of the Dojo Toolkit}} | <<<org.apache.rat.analysis.license.DojoLicenseHeader>>>
-| <since RAT Antlib 0.8> | |
+| <since Rat Antlib 0.8> | |
 *-------*---------+-------------+
 | generated | Generated documents that don't need a license | <<<org.apache.rat.analysis.generation.GeneratedLicenseNotRequired>>>
 *-------*---------+-------------+
 | gpl1 | {{{http://www.gnu.org/licenses/old-licenses/gpl-1.0.html}GNU General Public License, version 1}} | <<<org.apache.rat.analysis.license.GPL1License>>>
-| <since RAT Antlib 0.9> | |
+| <since Rat Antlib 0.9> | |
 *-------*---------+-------------+
 | gpl2 | {{{http://www.gnu.org/licenses/old-licenses/gpl-2.0.html}GNU General Public License, version 2}} | <<<org.apache.rat.analysis.license.GPL2License>>>
-| <since RAT Antlib 0.9> | |
+| <since Rat Antlib 0.9> | |
 *-------*---------+-------------+
 | gpl3 | {{{http://www.gnu.org/licenses/gpl.html}GNU General Public License, version 3}} | <<<org.apache.rat.analysis.license.GPL3License>>>
-| <since RAT Antlib 0.9> | |
+| <since Rat Antlib 0.9> | |
 *-------*---------+-------------+
 | javadoc | Javadocs that don't need a license | <<<org.apache.rat.analysis.generation.JavaDocLicenseNotRequired>>>
 *-------*---------+-------------+
 | mit | {{{http://www.opensource.org/licenses/MIT}The MIT License}} | <<<org.apache.rat.analysis.license.MITLicense>>>
-| <since RAT Antlib 0.9> | |
+| <since Rat Antlib 0.9> | |
 *-------*---------+-------------+
 | oasis | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.analysis.license.OASISLicense>>>
-| <since RAT Antlib 0.8> | |
+| <since Rat Antlib 0.8> | |
 *-------*---------+-------------+
 | w3c | {{{http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231}W3C Software License}} | <<<org.apache.rat.analysis.license.W3CLicense>>>
 *-------*---------+-------------+
@@ -70,7 +70,7 @@ Built-In Types
 
 * {<<<substringMatcher>>>}
 
- <since RAT Antlib 0.8>
+ <since Rat Antlib 0.8>
 
  For the simple case where a license can be detected by searching for
  a given string in a single line of the source code - in fact this is what
@@ -130,7 +130,7 @@ Built-In Types
 
 * {<<<fullTextMatcher>>>}
 
- <since RAT Antlib 0.9>
+ <since Rat Antlib 0.9>
 
  This matcher searches for the full text given, ignoring everything
  that is not a character or a number (and for US-ASCII characters it
@@ -202,34 +202,34 @@ Lots of text, specifying the users rights, and whatever
 
 {License Families}
 
- The following types correspond to the built-in license families of RAT:
+ The following types correspond to the built-in license families of Rat:
 
 *-------*---------+-------------+
 | Typename | License Family | Corresponding class |
 *-------*---------+-------------+
 *-------*---------+-------------+
 | academic-free-21 | Academic Free License 2.1 | <<<org.apache.rat.license.AcademicFree21LicenseFamily>>>
-| <since RAT Antlib 0.8> | |
+| <since Rat Antlib 0.8> | |
 *-------*---------+-------------+
 | apache20-license | Apache License 2.0 | <<<org.apache.rat.license.Apache20LicenseFamily>>>
 *-------*---------+-------------+
 | gpl1-family | GNU General Public License, version 1 | <<<org.apache.rat.license.GPL1LicenseFamily>>>
-| <since RAT Antlib 0.9> | |
+| <since Rat Antlib 0.9> | |
 *-------*---------+-------------+
 | gpl2-family | GNU General Public License, version 2 | <<<org.apache.rat.license.GPL2LicenseFamily>>>
-| <since RAT Antlib 0.9> | |
+| <since Rat Antlib 0.9> | |
 *-------*---------+-------------+
 | gpl3-family | GNU General Public License, version 3 | <<<org.apache.rat.license.GPL3LicenseFamily>>>
-| <since RAT Antlib 0.9> | |
+| <since Rat Antlib 0.9> | |
 *-------*---------+-------------+
 | mit-family | The MIT License | <<<org.apache.rat.license.MITLicenseFamily>>>
-| <since RAT Antlib 0.9> | |
+| <since Rat Antlib 0.9> | |
 *-------*---------+-------------+
 | modified-bsd | Modified BSD License | <<<org.apache.rat.license.ModifiedBSDLicenseFamily>>>
-| <since RAT Antlib 0.8> | |
+| <since Rat Antlib 0.8> | |
 *-------*---------+-------------+
 | oasis-license | OASIS copyright claim plus derivative work clause | <<<org.apache.rat.license.OASISLicenseFamily>>>
-| <since RAT Antlib 0.8> | |
+| <since Rat Antlib 0.8> | |
 *-------*---------+-------------+
 | w3c-doc-license | {{{http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231}W3C Document License}} | <<<org.apache.rat.license.W3CDocumentLicenseFamily>>>
 *-------*---------+-------------+
@@ -241,7 +241,7 @@ Lots of text, specifying the users rights, and whatever
 
 * {<<<approvedLicense>>>}
 
- <since RAT Antlib 0.8>
+ <since Rat Antlib 0.8>
 
  This wrapper type makes it easy to specify a license name for new
  approved licenses.  The type has a single attribute <<<familyName>>>

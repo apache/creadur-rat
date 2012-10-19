@@ -19,7 +19,7 @@
 Custom Types
 
  It is possible to provide license matchers or license families of
- your own by implementing one of the RAT interfaces and providing the
+ your own by implementing one of the Rat interfaces and providing the
  implementation as an Ant type.  This example will show how to use a
  custom license matcher.
 
@@ -87,7 +87,7 @@ public class YASLMatcher implements IHeaderMatcher {
 }
 ------------------------------------------------------------------
 
- Actually it would be easier to use RAT's
+ Actually it would be easier to use Rat's
  <<<SimplePatternBasedLicense>>> implementation or the built-in
  {{{../types.html#substringMatcher}<<<substringMatcher>>>}}, but this
  is just an example.
@@ -106,13 +106,13 @@ public class YASLMatcher implements IHeaderMatcher {
               classname="org.example.YASLMatcher"/>
 ------------------------------------------------------------------
 
- Since you will be using classes from RAT's core in both the Report
+ Since you will be using classes from Rat's core in both the Report
  task and your implementation you must ensure they get loaded via the
  same classloader.  If you are using the <<<-lib>>> command line
- switchRAT's core will be part of Ant's core classloader and you don't
+ switch Rat's core will be part of Ant's core classloader and you don't
  need to reference it in the <<<typedef>>> for <<<yasl>>> at all.
 
- If you define the RAT Antlib via a <<<taskdef>>> task with a nested
+ If you define the Rat Antlib via a <<<taskdef>>> task with a nested
  <<<classpath>>> then you just use the same <<<classpath>>> when
  defining your custom matcher as well and set <<<loaderRef>>> to the
  same name.  I.e.

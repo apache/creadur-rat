@@ -18,11 +18,11 @@
 
 Examples
 
-  These examples assume you have installed the RAT Antlib in a way
+  These examples assume you have installed the Rat Antlib in a way
   that provides the Report task in the XML namespace associated with
   the prefix <<<rat>>>.
 
-* Run RAT in default configuration on all files in directory
+* Run Rat in default configuration on all files in directory
   <<<src>>>.
 
 ---
@@ -42,7 +42,7 @@ java -jar apache-rat-${project.version}.jar src
   except that Ant's default excludes will be applied when looking for
   documents to check.
 
-* Run RAT on multiple directories
+* Run Rat on multiple directories
 
 ---
 <rat:report>
@@ -81,7 +81,7 @@ java -jar apache-rat-${project.version}.jar --addLicence
 </rat:report>
 ---
 
-* Run RAT on a tarball located on a webserver
+* Run Rat on a tarball located on a webserver
 
 ---
 <rat:report>
@@ -93,7 +93,7 @@ java -jar apache-rat-${project.version}.jar --addLicence
 </rat:report>
 ---
 
-* Run RAT but make the Apache License Version 2.0 the only one
+* Run Rat but make the Apache License Version 2.0 the only one
   accepted
 
 --- 
@@ -103,7 +103,7 @@ java -jar apache-rat-${project.version}.jar --addLicence
 </rat:report>
 ---
 
-* Run RAT on all files in <<<src>>> that have been modified today
+* Run Rat on all files in <<<src>>> that have been modified today
 
 --- 
 <tstamp/>
@@ -115,7 +115,7 @@ java -jar apache-rat-${project.version}.jar --addLicence
 </rat:report>
 ---
 
-* Make RAT only detect your custom license and mark this license
+* Make Rat only detect your custom license and mark this license
   approved.
 
 ---

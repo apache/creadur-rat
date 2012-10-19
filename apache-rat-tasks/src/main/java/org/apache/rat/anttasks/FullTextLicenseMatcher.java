@@ -28,7 +28,7 @@ import org.apache.tools.ant.Project;
  * Adapts {@link FullTextMatchingLicense FullTextMatchingLicense}
  * to Ant's method naming conventions so it becomes easy to write
  * text matching based license matchers inside an Ant build file.
- * @since RAT Antlib 0.9
+ * @since Rat Antlib 0.9
  */
 public class FullTextLicenseMatcher extends FullTextMatchingLicense {
     private boolean validated = false;

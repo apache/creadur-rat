@@ -27,7 +27,7 @@ import org.apache.tools.ant.BuildException;
  * Adapts {@link SimplePatternBasedLicense SimplePatternBasedLicense}
  * to Ant's method naming conventions so it becomes easy to write
  * substring based license matchers inside an Ant build file.
- * @since RAT Antlib 0.8
+ * @since Rat Antlib 0.8
  */
 public class SubstringLicenseMatcher extends SimplePatternBasedLicense {
     private List/*<String>*/ patterns = new ArrayList();

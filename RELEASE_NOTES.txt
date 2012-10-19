@@ -1,6 +1,6 @@
-RAT 0.9
+Rat 0.9
 =======
- * RAT now requires Java5 at runtime
+ * Rat now requires Java5 at runtime
  * The Antlib contains a new matcher type that allows matching on the
    full text of the license rather than a single line.
  * Support automatic addition of license headers to svg files.
@@ -15,17 +15,17 @@ RAT 0.9
     * RAT-121 use maven java5 annotations for maven plugins
     * RAT-120 fix some maven warning and upgrade some dependencies.
 
-RAT 0.8
+Rat 0.8
 =======
  * Some website fixes
  * The Antlib and Maven plugins now provide simpler ways to detect
-   licenses not directly supported by RAT.
+   licenses not directly supported by Rat.
  * Issues Resolved (see http://issues.apache.org/jira):
   * Bug:
     * RAT-86 CLI doesn't allow adding of licenses unless a custom
       stylesheet has been specified
     * RAT-87 Tests could leave temporary files around.
-    * RAT-92 When adding licenses RAT used \n instead of the platform
+    * RAT-92 When adding licenses Rat used \n instead of the platform
       dependent line--end character(s)
     * RAT-94 Streams were not always closed immediately when adding
       licenses.
@@ -47,18 +47,18 @@ RAT 0.8
       declaration now - it used to not add anything.
     * RAT-67 The XML and standard plain text reports now contain a
       timestamp with the time the report has been generated.
-    * RAT-95 When adding licenses RAT will now remove any BOM from the file.
+    * RAT-95 When adding licenses Rat will now remove any BOM from the file.
     * RAT-93 --addLicense now supports more .NET specific files like
       MS Visual Studio project and solution files
     * RAT-99 The command line interface has a new option that
       specifies a file containing regular expressions for files to exclude
 
-RAT 0.7
+Rat 0.7
 =======
  * Some website fixes
  * Issues Resolved (see http://issues.apache.org/jira):
   * Bug:
-    * RAT-62 Some of RATs own files missing License Headers
+    * RAT-62 Some of Rat's own files missing License Headers
     * RAT-63 ant-task-examples.xml has an wrong uri in the -typedef ant target
     * RAT-70 Missing closing html tag in generated report by
   * Improvement:
@@ -66,13 +66,13 @@ RAT 0.7
     * RAT-30 / RAT-76 Support automatic addition of license headers
     * RAT-52 Merge In Rat Output Semantics
     * RAT-56 Commons IO Wildcard Excludes
-    * RAT-65 RAT Pom cleanup
+    * RAT-65 Rat Pom cleanup
     * RAT-68 Add support for Python, C, & script files (.bat & .sh)
     * RAT-72 Keep version in plugins sample doc up to date
     * RAT-73 / RAT-74 Support for XML output in Ant task and Maven Plugin
     * RAT-74 / RAT-75 Support for custom XSLT stylesheets
 
-RAT 0.6
+Rat 0.6
 ===========
  * Support for TMF header
  * Comprehend PEM, CRL file endings
@@ -104,31 +104,31 @@ RAT 0.6
   * Wish
     * RAT-1 maven-rat-plugin and ant-rat tasks
 
-RAT 0.5.1
+Rat 0.5.1
 =========
  * Fixed file closing bug
  * Fixed XML bad character bug
 
-RAT 0.5
+Rat 0.5
 =======
  * Added header matcher for DoJo.
  * Refactoring existing codebase to separate concerns and use
    resource pipeline.
  * New header matching library.
 
-RAT 0.4.1
+Rat 0.4.1
 =========
-RAT 0.4.1 is the first release with distributions. The release was cut
+Rat 0.4.1 is the first release with distributions. The release was cut
 for this purpose.
 
-RAT 0.4.1 Notes
+Rat 0.4.1 Notes
 ===============
- * Created POM for use with RAT library.
+ * Created POM for use with Rat library.
  * Ant task switched to use Xml based report.
 
-RAT 0.4 Notes
+Rat 0.4 Notes
 =============
- * Ant tasks added. These allow RAT reports to be run against a wide variety
+ * Ant tasks added. These allow Rat reports to be run against a wide variety
    of resources from within Ant.
  * Legacy report is now deprecated. It will be removed before the next release.
  * Created stylesheet for xml reports which produce output similar to the legacy
@@ -136,11 +136,11 @@ RAT 0.4 Notes
  * Revised xml output format
  * Improve support for binary recognition by adding code that tastes files
 
-RAT 0.3 Notes
+Rat 0.3 Notes
 =============
  * This is the last release with the original hacked together plain test report.
    The new XML reporting code is present but is not yet the default.
- * RAT 0.3 is the first release with release notes. All previous releases are
+ * Rat 0.3 is the first release with release notes. All previous releases are
    now consigned to Ancient History. No record of them will be found here.
 
 

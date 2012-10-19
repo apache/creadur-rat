@@ -20,7 +20,7 @@ package org.apache.rat.license;
 
 /**
  * Trivial bean implementing ILicenseFamily
- * @since RAT 0.8
+ * @since Rat 0.8
  */
 public class SimpleLicenseFamily implements ILicenseFamily {
     private String familyName;

@@ -36,7 +36,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 /**
- * Run RAT to perform a violation check.
+ * Run Rat to perform a violation check.
  *
  */
 @Mojo (name = "check", defaultPhase = LifecyclePhase.VERIFY)

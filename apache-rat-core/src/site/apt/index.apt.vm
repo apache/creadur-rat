@@ -16,9 +16,9 @@
                    Core Module
                    --------------------------
 
-Release Audit Tool (RAT)
+Release Audit Tool (Rat)
 
- Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
+ Release Audit Tool (Rat) is a tool to improve accuracy and efficiency when checking
  releases. It is heuristic in nature: making guesses about possible problems. It
  will produce false positives and cannot find every possible issue with a release.
  It's reports require interpretation.
@@ -36,9 +36,9 @@ java -jar apache-rat-${project.version}.jar --help
 
 * Adding licence headers
 
- RAT can be used to automatically add licence headers to
+ Rat can be used to automatically add licence headers to
  files that do not currently have them. Only files that
- are not excluded by the RAT configurations will be affected.
+ are not excluded by the Rat configurations will be affected.
 
  To add licence headers use a command such as:
 

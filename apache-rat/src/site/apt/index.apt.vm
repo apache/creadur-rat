@@ -16,9 +16,9 @@
                    Library Module
                    --------------------------
 
-Release Audit Tool (RAT)
+Release Audit Tool (Rat)
 
- Release Audit Tool (RAT) is a tool to improve accuracy and efficiency when checking
+ Release Audit Tool (Rat) is a tool to improve accuracy and efficiency when checking
  releases. It is heuristic in nature: making guesses about possible problems. It
  will produce false positives and cannot find every possible issue with a release.
  It's reports require interpretation.
@@ -37,9 +37,9 @@ java -jar apache-rat-${project.version}.jar --help
 
 * Adding licence headers
 
- RAT can be used to automatically add licence headers to
+ Rat can be used to automatically add licence headers to
  files that do not currently have them. Only files that
- are not excluded by the RAT configurations will be affected.
+ are not excluded by the Rat configurations will be affected.
 
  To add licence headers use a command such as:
 
@@ -55,9 +55,9 @@ java -jar apache-rat-${project.version}.jar --addLicence
 
 * Using multiple excludes from a file
 
-  It is common to use the RAT with the maven or ant plugins and specify
+  It is common to use the Rat with the maven or ant plugins and specify
   a series of files to exclude (such as a README or version control
-  files).  If you are using the RAT application instead of a plugin you
+  files).  If you are using the Rat application instead of a plugin you
   can specify a series of regex excludes in a file and specify that with
   the -E option.
 
@@ -100,7 +100,7 @@ Options
  -f,--force                     Forces any changes in files to be written
                                 directly to the source files (i.e. new
                                 files are not created)
- -h,--help                      Print help for the RAT command line
+ -h,--help                      Print help for the Rat command line
                                 interface and exit
  -s,--stylesheet <arg>          XSLT stylesheet to use when creating the
                                 report.  Not compatible with -x

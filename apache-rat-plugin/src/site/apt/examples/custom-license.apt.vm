@@ -84,7 +84,7 @@ Custom License Matchers
 Approved License Families
 
   Detecting the license is not enough in many cases as the "new"
-  license may not be considered approved by RAT.  In order to make a
+  license may not be considered approved by Rat.  In order to make a
   license approved you provide a custom implementation of
   <<<org.apache.rat.license.ILicenseFamily>>>.  Usually all you need
   to provide the name of the license, in which case the built-in

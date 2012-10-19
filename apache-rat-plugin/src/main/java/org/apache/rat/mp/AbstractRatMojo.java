@@ -49,7 +49,7 @@ import java.util.List;
 
 
 /**
- * Abstract base class for Mojos, which are running RAT.
+ * Abstract base class for Mojos, which are running Rat.
  */
 public abstract class AbstractRatMojo extends AbstractMojo
 {

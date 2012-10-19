@@ -60,7 +60,7 @@ import java.util.ResourceBundle;
 
 
 /**
- * Generates a report with RAT's output.
+ * Generates a report with Rat's output.
  * 
  */
 @Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST)
@@ -246,7 +246,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
     }
 
     /**
-     * Searches for a RAT artifact in the dependency list and returns its version.
+     * Searches for a Rat artifact in the dependency list and returns its version.
      * 
      * @return Version number, if found, or null.
      */

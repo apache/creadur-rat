@@ -18,7 +18,7 @@
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="what">
-      <question>What is RAT?</question>
+      <question>What is Rat?</question>
       <answer>
         <p>
           Basically, you can think of it as a tool that checks,
