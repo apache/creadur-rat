@@ -132,32 +132,37 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     /**
      * Whether to use the default excludes when scanning for files.
-     * 
+     * The default excludes are:
+     * <ul>
+     *   <li>meta data files for version control systems</li>
+     *   <li>temporary files used by Maven, see <a href="#useMavenDefaultExcludes">useMavenDefaultExcludes</a></li>
+     *   <li>configuration files for Eclipse, see <a href="#useEclipseDefaultExcludes">useEclipseDefaultExcludes</a></li>
+     *   <li>configuration files for IDEA, see <a href="#useIdeaDefaultExcludes">useIdeaDefaultExcludes</a></li>
+     * </ul>
      */
     @Parameter(property = "rat.useDefaultExcludes", defaultValue = "true")
     private boolean useDefaultExcludes;
 
     /**
      * Whether to use the Maven specific default excludes when scanning for files. Maven specific default excludes are
-     * given by the constant MAVEN_DEFAULT_EXCLUDES: The target directory, the cobertura.ser file, and so on.
-     * 
+     * given by the constant MAVEN_DEFAULT_EXCLUDES: The <code>target</code> directory, the <code>cobertura.ser</code>
+     * file, and so on.
      */
     @Parameter(property = "rat.useMavenDefaultExcludes", defaultValue = "true")
     private boolean useMavenDefaultExcludes;
 
     /**
      * Whether to use the Eclipse specific default excludes when scanning for files. Eclipse specific default excludes
-     * are given by the constant ECLIPSE_DEFAULT_EXCLUDES: The .classpath and .project files, the .settings directory,
-     * and so on.
-     * 
+     * are given by the constant ECLIPSE_DEFAULT_EXCLUDES: The <code>.classpath</code> and <code>.project</code> files,
+     * the <code>.settings</code> directory, and so on.
      */
     @Parameter(property = "rat.useEclipseDefaultExcludes", defaultValue = "true")
     private boolean useEclipseDefaultExcludes;
 
     /**
      * Whether to use the IDEA specific default excludes when scanning for files. IDEA specific default excludes are
-     * given by the constant IDEA_DEFAULT_EXCLUDES: The *.iml, *.ipr and *.iws files and the .idea directory.
-     * 
+     * given by the constant IDEA_DEFAULT_EXCLUDES: The <code>*.iml</code>, <code>*.ipr</code> and <code>*.iws</code>
+     * files and the <code>.idea</code> directory.
      */
     @Parameter(property = "rat.useIdeaDefaultExcludes", defaultValue = "true")
     private boolean useIdeaDefaultExcludes;
