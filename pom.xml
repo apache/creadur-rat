@@ -285,6 +285,12 @@ agnostic home for software distribution comprehension and audit tools.
             <relativizeDecorationLinks>false</relativizeDecorationLinks>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <!-- Must use previous version, to avoid a cyclic reference -->
+          <version>0.8</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
