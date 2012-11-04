@@ -69,7 +69,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
     /**
      * The IDEA specific default excludes.
      */
-    public static final String[] IDEA_DEFAULT_EXCLUDES = new String[] { "*.iml", "*.ipr", "*.iws" };
+    public static final String[] IDEA_DEFAULT_EXCLUDES = new String[] { "*.iml", "*.ipr", "*.iws", ".idea/**/*" };
 
     /**
      * The base directory, in which to search for files.
@@ -156,7 +156,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     /**
      * Whether to use the IDEA specific default excludes when scanning for files. IDEA specific default excludes are
-     * given by the constant IDEA_DEFAULT_EXCLUDES: The *.iml, *.ipr and *.iws files.
+     * given by the constant IDEA_DEFAULT_EXCLUDES: The *.iml, *.ipr and *.iws files and the .idea directory.
      * 
      */
     @Parameter(property = "rat.useIdeaDefaultExcludes", defaultValue = "true")
