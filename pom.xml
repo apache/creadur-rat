@@ -306,6 +306,16 @@ agnostic home for software distribution comprehension and audit tools.
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- This file only describes how to build the project and it has no license header -->
+            <exclude>BUILD.txt</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
     </plugins>
     <extensions>
       <extension>

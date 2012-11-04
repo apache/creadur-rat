@@ -46,6 +46,21 @@
         </includes>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- These files does not have license headers because they are used to test license headers -->
+            <exclude>src/test/resources/elements/Source.java</exclude>
+            <exclude>src/test/resources/elements/sub/Empty.txt</exclude>
+            <exclude>src/test/resources/violations/bad.txt</exclude>
+            <exclude>src/test/resources/violations/FilterTest.cs</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencies>

@@ -115,6 +115,18 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- These files does not have license headers because they are used to test license headers -->
+            <exclude>src/test/invoker/it1/src.apt</exclude>
+            <exclude>src/test/it2/src.txt</exclude>
+            <exclude>src/test/it3/src.apt</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
