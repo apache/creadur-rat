@@ -9,3 +9,6 @@ Normal development without running tests:
 
     mvn -Dmaven.test.skip=true install
 
+Normal development, eating dog food:
+
+    mvn clean verify -Prat
