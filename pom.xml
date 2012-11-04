@@ -312,16 +312,6 @@ agnostic home for software distribution comprehension and audit tools.
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <!-- This file only describes how to build the project and it has no license header -->
-            <exclude>BUILD.txt</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
     </plugins>
     <extensions>
       <extension>
@@ -484,4 +474,33 @@ agnostic home for software distribution comprehension and audit tools.
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org</url>
   </organization>
+
+  <profiles>
+    <profile>
+      <id>rat</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- We don't want this to propagate to the modules, because they all have their own excludes -->
+            <inherited>false</inherited>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <!-- This file only describes how to build the project and it has no license header -->
+                <exclude>BUILD.txt</exclude>
+              </excludes>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
