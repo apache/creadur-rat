@@ -1,15 +1,18 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~ Licensed under the Apache License, Version 2.0 (the "License");
-~~ you may not use this file except in compliance with the License.
-~~ You may obtain a copy of the License at
-~~ 
-~~      http://www.apache.org/licenses/LICENSE-2.0
-~~ 
-~~ Unless required by applicable law or agreed to in writing, software
-~~ distributed under the License is distributed on an "AS IS" BASIS,
-~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~~ See the License for the specific language governing permissions and
-~~ limitations under the License.
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 -----
@@ -42,7 +45,7 @@ Attributes of the Task
 | format | The format to use for the report.
 | | Choices are <<<xml>>> for Rat's XML format,
 | | <<<plain>>> for plain text using Rat's built-in stylesheet,
-| | <<<styled>>> transforms the XML output using the given stylesheet. The stylesheet nested element must be set as well if this attribute is used. 
+| | <<<styled>>> transforms the XML output using the given stylesheet. The stylesheet nested element must be set as well if this attribute is used.
 | | Defaults to <<<plain>>>|
 *-------------------------*-------------------------------+
 | addDefaultLicenseMatchers | Whether to use Rat's built-in set of license matchers in addition to those specified as nested elements.
@@ -78,7 +81,7 @@ Nested Elements
   If the <<<format>>> attribute has been set to <<<styled>>> the XSLT
   stylesheet to apply is specified as a nested resource element.  For
   example
- 
+
 ---
 <rat:report format="styled" reportFile="rat-report.html">
     ...
@@ -112,7 +115,7 @@ Nested Elements
   <<<addDefaultLicenseMatchers>>> to false and then explicitly add the
   built-in <<<asl20>>> matcher
 
---- 
+---
 <rat:report addDefaultLicenseMatchers="false">
     <rat:asl20/>
 </rat:report>
