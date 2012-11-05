@@ -19,39 +19,18 @@
                    Core Module
                    --------------------------
 
-Release Audit Tool (Rat)
+About Apache Rat
 
- Release Audit Tool (Rat) is a tool to improve accuracy and efficiency when checking
- releases. It is heuristic in nature: making guesses about possible problems. It
- will produce false positives and cannot find every possible issue with a release.
- It's reports require interpretation.
+ Rat audits software distributions, with a special interest in headers.
+ If this isn't quite what you're looking for then take a look at the
+ other products developed by {{{http://creadur.apache.org}Apache Creadur}},
+ including {{{http://creadur.apache.org/whisker}Apache Whisker}} which audits
+ and generates legal (for example <<<LICENSE>>>) documents for
+ complex software distributions.
 
-* Running from the Command Line
+Architecture
 
- Run from the command line with:
+* Modules
 
-+------------------------------------------+
-java -jar apache-rat-${project.version}.jar --help
-+------------------------------------------+
-
- This will output a help message detailing the command line
- options available to you.
-
-* Adding licence headers
-
- Rat can be used to automatically add licence headers to
- files that do not currently have them. Only files that
- are not excluded by the Rat configurations will be affected.
-
- To add licence headers use a command such as:
-
-+------------------------------------------+
-java -jar apache-rat-${project.version}.jar --addLicence
-  --copyright "Copyright 2008 Foo"
-  /path/to/project
-+------------------------------------------+
-
- This command will add the licence header directly to the
- source files. If you prefer to see which files will be
- changed and how then remove the "--force" option.
-
+ This module, <<<apache-rat-core>>>, is a library containing the basic
+ engine. Other modules allow this engine to be run in various ways.
