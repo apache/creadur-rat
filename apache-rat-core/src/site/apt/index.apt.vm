@@ -28,9 +28,20 @@ About Apache Rat
  and generates legal (for example <<<LICENSE>>>) documents for
  complex software distributions.
 
-Architecture
+Developing Rat
 
-* Modules
+* Introducing the Modules
 
  This module, <<<apache-rat-core>>>, is a library containing the basic
  engine. Other modules allow this engine to be run in various ways.
+
+*----------+--------------+----------------+
+ <<Runs Rat via>> | <<Requires>>     | <<Module>>       |
+*----------+--------------+----------------+
+ An Ant task | {{{http://ant.apache.org}Apache Ant}}     | {{{../apache-rat-tasks}apache-rat-tasks}}      |
+*----------+--------------+----------------+
+ The command line | Java\u00ae     | {{{../apache-rat}apache-rat}}       |
+*----------+--------------+----------------+
+ A Maven plugin | {{{http://maven.apache.org}Apache Maven}}     | {{{../apache-rat-plugin}apache-rat-plugin}}       |
+*----------+--------------+----------------+
+<<Modules that run Rat>>

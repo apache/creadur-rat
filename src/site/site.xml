@@ -4,9 +4,9 @@
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
       http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,33 +24,33 @@
     <href>http://www.apache.org/</href>
   </bannerRight>
   <poweredBy>
-      <logo name="ApacheCon EU 2012 November 5-8 Sinsheim, Germany" 
+      <logo name="ApacheCon EU 2012 November 5-8 Sinsheim, Germany"
             href="http://www.apachecon.eu/"
             img="http://www.apache.org/events/logos-banners/ApacheCon-2012-Europe/EU_square_20.png"/>
 
-      <logo name="ApacheCon NA 2012 November 26-28 Portland, Oregon" 
+      <logo name="ApacheCon NA 2012 November 26-28 Portland, Oregon"
             href="http://na.apachecon.com/"
             img="http://www.apache.org/events/logos-banners/ApacheCon-2013-NorthAmerica/NA_square_20.png"/>
-      <logo name="Maven" 
+      <logo name="Maven"
             href="http://maven.apache.org/"
             img="http://maven.apache.org/images/logos/maven-feather.png"/>
-            
+
   </poweredBy>
-    
+
   <body>
     <head>
-      <link 
-            href='http://fonts.googleapis.com/css?family=Mate+SC' 
-            rel='stylesheet' 
+      <link
+            href='http://fonts.googleapis.com/css?family=Mate+SC'
+            rel='stylesheet'
             type='text/css'/>
     </head>
-      
+
     <breadcrumbs>
       <item name="Apache" href="http://www.apache.org/"/>
       <item name="Creadur" href="http://creadur.apache.org/"/>
       <item name="Rat" href="http://creadur.apache.org/rat/"/>
     </breadcrumbs>
-  
+
     <menu name="Apache Rat&trade;" inherit="bottom">
       <item name="Introducing Rat" href="/index.html"/>
       <item name="Javadocs" href="/apidocs/index.html"/>
@@ -73,25 +73,25 @@
       <item name='Sponsorship' href='http://www.apache.org/foundation/sponsorship.html'/>
       <item name='Thanks' href='http://www.apache.org/foundation/thanks.html'/>
     </menu>
-  
+
     <menu name="The Apache Software Foundation" inherit="bottom">
-        <item name='About the Foundation' 
+        <item name='About the Foundation'
             href="http://www.apache.org/foundation"/>
-        <item name='The projects' 
+        <item name='The projects'
             href="http://projects.apache.org"/>
-        <item name='The people' 
+        <item name='The people'
             href="http://people.apache.org"/>
-        <item name='How we work' 
+        <item name='How we work'
             href='http://www.apache.org/foundation/how-it-works.html'/>
-        <item name='Our history' 
+        <item name='Our history'
             href='http://www.apache.org/foundation/how-it-works.html#history'/>
-        <item name='News' 
+        <item name='News'
             href='http://blogs.apache.org/foundation/'/>
     </menu>
 
     <menu name="Contribute" inherit="bottom">
       <item name="Get Involved" href='http://www.apache.org/foundation/getinvolved.html'/>
-    </menu>    
+    </menu>
 
     <menu name="Committer Info" inherit="bottom">
       <item name="Publish this site" href="site-publish.html"/>
@@ -106,11 +106,12 @@
 
     <menu ref="modules"/>
     <menu ref="reports"/>
-    
+
     <footer>Copyright &#169; 2012 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
-      Apache Creadur, Creadur, Apache Rat, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks 
+      Apache Creadur, Creadur, Apache Rat, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks
       of The Apache Software Foundation.
+      Oracle and Java are registered trademarks of Oracle and/or its affiliates.
       All other marks mentioned may be trademarks or registered trademarks of their respective owners.</footer>
-    
+
   </body>
 </project>
