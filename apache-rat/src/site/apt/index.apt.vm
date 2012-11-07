@@ -16,16 +16,17 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                    --------------------------
-                   Library Module
+                   Command Line Support
                    --------------------------
 
-Release Audit Tool (Rat)
+About Apache Rat&#8482;
 
- Release Audit Tool (Rat) is a tool to improve accuracy and efficiency when checking
- releases. It is heuristic in nature: making guesses about possible problems. It
- will produce false positives and cannot find every possible issue with a release.
- It's reports require interpretation.
-
+ Rat audits software distributions, with a special interest in headers.
+ If this isn't quite what you're looking for then take a look at the
+ other products developed by {{{http://creadur.apache.org}Apache Creadur}}&#8482;,
+ including {{{http://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
+ and generates legal (for example <<<LICENSE>>>) documents for
+ complex software distributions.
 
 * Running from the Command Line
 
