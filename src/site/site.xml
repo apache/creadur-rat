@@ -24,11 +24,7 @@
     <href>http://www.apache.org/</href>
   </bannerRight>
   <poweredBy>
-      <logo name="ApacheCon EU 2012 November 5-8 Sinsheim, Germany"
-            href="http://www.apachecon.eu/"
-            img="http://www.apache.org/events/logos-banners/ApacheCon-2012-Europe/EU_square_20.png"/>
-
-      <logo name="ApacheCon NA 2012 November 26-28 Portland, Oregon"
+      <logo name="ApacheCon NA 2013 November 26-28 Portland, Oregon"
             href="http://na.apachecon.com/"
             img="http://www.apache.org/events/logos-banners/ApacheCon-2013-NorthAmerica/NA_square_20.png"/>
       <logo name="Maven"
