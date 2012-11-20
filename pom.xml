@@ -52,28 +52,24 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenVersion>2.2.1</mavenVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--
-      These properties are to allow deployment to another target than
-      the Apache repositories. The default settings are expected to
-      match the settings from the parent POM.
+    Publication to the website is a two phase operation:
 
-      To override these properties, use something like the following
-      in your settings.xml:
-        <profiles>
-          <profile>
-            <activation>
-              <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-              <rat.site.url>file:///C:/temp/my.rat.site</rat.site.url>
-              ...
-            </properties>
-          </profile>
-        </profiles>
+     1. Deploy to local stage: mvn site:deploy
+     2. Publish to Apache CMS: mvn scm-publish:publish-scm
+
+    This will only work when the origin for scm-publish:publish-scm
+    is the target for site:deploy.
+
+    SO MAKE SURE THAT THE FOLLOWING PROPERTIES RESOLVE TO THE SAME
+    DIRECTORY:
+
+     * scmpublish.content
+     * rat.site.url
+
     -->
-    <!--
-    For the moment, deploy to stage directory only.
-    -->
-    <rat.site.url>file:stage</rat.site.url>
+    <rat.LocalSiteStaging>stage</rat.LocalSiteStaging>
+    <scmpublish.content>${rat.LocalSiteStaging}</scmpublish.content>
+    <rat.site.url>file:${rat.LocalSiteStaging}</rat.site.url>
     <rat.site.name>Apache Rat Website</rat.site.name>
     <rat.site.id>org.apache.rat.site</rat.site.id>
     <rat.releases.id>apache.releases.https</rat.releases.id>
@@ -82,8 +78,6 @@ agnostic home for software distribution comprehension and audit tools.
     <rat.snapshots.id>apache.snapshots.https</rat.snapshots.id>
     <rat.snapshots.name>${distMgmtSnapshotsName}</rat.snapshots.name> <!-- Parent POM uses these properties -->
     <rat.snapshots.url>${distMgmtSnapshotsUrl}</rat.snapshots.url>
-
-    <scmpublish.content>stage</scmpublish.content>
 
     <!-- maven plugin versions -->
     <surefire.version>2.12.3</surefire.version>

@@ -62,6 +62,15 @@ mvn clean install site
  Publishing updates the main site with changes committed since the last
  time the site was published.
 
+** Publish to Local Stage
+
+ Rat declares a local staging directory (<<<stage>>>) for Maven
+ site deployments. To avoid excessive numbers of commits, the
+ local staging directory needs to remain ignored by <<<subversion>>>.
+ As well as being the target for <<<mvn site:deploy>>>, this is also
+ the origin for publication.
+
+
 
 Troubleshooting
 
