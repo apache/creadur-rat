@@ -62,6 +62,10 @@ mvn clean install site
  Publishing updates the main site with changes committed since the last
  time the site was published.
 
+ Publication is a multi-stage process with a mixture of automated
+ and manual processing. End to end, the process is slow - perhaps
+ taking 30 minutes but close supervision is not required.
+
 ** Publish to Local Stage
 
  Rat declares a local staging directory (<<<stage>>>) for Maven
@@ -70,7 +74,51 @@ mvn clean install site
  As well as being the target for <<<mvn site:deploy>>>, this is also
  the origin for publication.
 
+ Triggering the automated publication pipeline is a two phase process:
+ Maven needs to deploy the latest site to <<<stage>>> and then
+ <<<scm-publish>>> pushes this content into version control.
 
+ If you prefer to be prompted to type your subversion passphrase, edit
+ <<<~/.scm/svn-settings.xml>>> to include
+
++------------------------------------------+
+<svn-settings>
+  ...
+  <useNonInteractive>false</useNonInteractive>
+  <useAuthCache>false</useAuthCache>
+  ...
+</svn-settings>
++------------------------------------------+
+
+ Run both steps together by
+
++------------------------------------------+
+
+mvn site:deploy scm-publish:publish-scm
+
++------------------------------------------+
+
+ Publication is slow, and the plugin may wait silently for up to
+ 30 minutes - so please allow the build enough time to complete.
+
+*** Automated Build and Stage on Apache
+
+ The content committed by the Maven <<<scm-publish>>> plugin
+ triggers a staging build on
+ {{{http://ci.apache.org/}<<<http://ci.apache.org/>>>}}. To
+ follow its progress, open the
+ {{{http://ci.apache.org/builders/creadur-site-staging}creadur
+ site builder}}.
+
+ When this builds has completed successfully, review the content
+ staged on
+ {{{http://creadur.staging.apache.org/rat/index.html}
+ <<<http://creadur.staging.apache.org/rat/index.html>>>}}. If
+ this looks fine then publish the staged content using the
+ {{{http://www.apache.org/dev/cms.html}ASF Content Management System}}.
+
+ Propagating the content to production may take a brief while (maybe
+ 30 seconds) so please be patient a little longer.
 
 Troubleshooting
 
