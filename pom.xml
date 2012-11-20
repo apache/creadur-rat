@@ -75,7 +75,7 @@ agnostic home for software distribution comprehension and audit tools.
     -->
     <rat.site.url>file:stage</rat.site.url>
     <rat.site.name>Apache Rat Website</rat.site.name>
-    <rat.site.id>org.apache.rat.incubating.site</rat.site.id>
+    <rat.site.id>org.apache.rat.site</rat.site.id>
     <rat.releases.id>apache.releases.https</rat.releases.id>
     <rat.releases.name>Apache Release Distribution Repository</rat.releases.name>
     <rat.releases.url>https://repository.apache.org/service/local/staging/deploy/maven2</rat.releases.url>
