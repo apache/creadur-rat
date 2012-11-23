@@ -24,7 +24,7 @@ How to publish the Rat website
  that develops {{{http://creadur.apache.org/rat}Apache Rat}},
  hosts its website on the
  {{{http://www.apache.org/dev/cms.html}ASF Content Management System}}.
- {{{http//maven.apache.org}Apache Maven}} builds Rat, and generates this
+ {{{http://maven.apache.org}Apache Maven}} builds Rat, and generates this
  subsite. Here's (one way) to work with these systems.
 
 * Developing Content
