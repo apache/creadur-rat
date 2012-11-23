@@ -29,21 +29,21 @@ How to publish the Rat website
 
 * Developing Content
 
- Build and generate using Maven the usual way
+ Build and generate the site using Maven the usual way
 
 +------------------------------------------+
-mvn clean install site
+mvn clean site
 +------------------------------------------+
 
- Make your changes to the site xml and/or .apt files then launch
+ Make your changes to the <<<site.xml>>> and/or <<<.apt>>> files then launch
  a server on <<<localhost:8080>>> using
 
 +------------------------------------------+
  mvn site:run
 +------------------------------------------+
 
- Review the {{{http://localhost:8080}<<<localhost:8080>>>}} using a browser, and edit.
- You'll see your change as soon as you refresh the page.
+ Review {{{http://localhost:8080}<<<localhost:8080>>>}} using a browser, and do more edits.
+ You'll see your changes as soon as you refresh the page.
 
 * Committing and Reviewing Content
 
@@ -59,23 +59,23 @@ mvn clean install site
 
 * Publishing the Site
 
- Publishing updates the main site with changes committed since the last
+ The publishing process updates the main site with any changes committed since the last
  time the site was published.
 
- Publication is a multi-stage process with a mixture of automated
+ Publishing is a multi-stage process with a mixture of automated
  and manual processing. End to end, the process is slow - perhaps
  taking 30 minutes but close supervision is not required.
 
-** Publish to Local Stage
+** Deploy the Site Locally
 
- Rat declares a local staging directory (<<<stage>>>) for Maven
+ Rat declares a local directory (<<<stage>>>) for Maven
  site deployments. To avoid excessive numbers of commits, the
- local staging directory needs to remain ignored by <<<subversion>>>.
- As well as being the target for <<<mvn site:deploy>>>, this is also
+ local directory needs to remain ignored by <<<subversion>>>.
+ As well as being the target for <<<mvn site-deploy>>>, this is also
  the origin for publication.
 
  Triggering the automated publication pipeline is a two phase process:
- Maven needs to deploy the latest site to <<<stage>>> and then
+ Maven needs to deploy the latest site locally and then
  <<<scm-publish>>> pushes this content into version control.
 
  If you prefer to be prompted to type your subversion passphrase, edit
@@ -94,14 +94,14 @@ mvn clean install site
 
 +------------------------------------------+
 
-mvn site:deploy scm-publish:publish-scm
+mvn site-deploy scm-publish:publish-scm
 
 +------------------------------------------+
 
  Publication is slow, and the plugin may wait silently for up to
  30 minutes - so please allow the build enough time to complete.
 
-*** Automated Build and Stage on Apache
+** Automated Staging of the Site
 
  The content committed by the Maven <<<scm-publish>>> plugin
  triggers a staging build on
@@ -120,9 +120,9 @@ mvn site:deploy scm-publish:publish-scm
  Propagating the content to production may take a brief while (maybe
  30 seconds) so please be patient a little longer.
 
-Troubleshooting
+* Troubleshooting
 
-  * If you have issues with 'mvn site' failing try running 'mvn clean' then 'mvn install package' before going back and running 'mvn site' again.
+  * If you have issues with 'mvn site' failing try running 'mvn clean' then 'mvn install' before going back and running 'mvn site' again.
 
   * If you experience an Out of Memory error <<java.lang.OutOfMemoryError: Java heap space>> when running 'mvn site' try setting 'export MAVEN_OPTS=-Xmx512m'
-     or for windows 'set MAVEN_OPTS=-Xmx512m' first on the command line (or in your profile) and then try 'mvn site' again.
+     or for Windows 'set MAVEN_OPTS=-Xmx512m' first on the command line (or in your profile) and then try 'mvn site' again.
