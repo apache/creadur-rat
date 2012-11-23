@@ -51,7 +51,7 @@ mvn clean site
  {{{http://ci.apache.org/buildbot.html}Buildbot}} automatically
  notices the commit and creates a staging site to look at
  {{{http://ci.apache.org/projects/rat} http://ci.apache.org/projects/rat/}}
- which is always up to date (within a minute of any commit).
+ which is always up to date (within a couple of minutes of any commit).
 
  Need to make changes? No problem - go back and repeat the cycle as often as you like.
 
