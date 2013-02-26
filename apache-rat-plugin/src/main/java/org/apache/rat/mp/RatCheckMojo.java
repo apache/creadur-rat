@@ -174,20 +174,19 @@ public class RatCheckMojo extends AbstractRatMojo
     protected void check( ClaimStatistic statistics )
         throws MojoFailureException
     {
+        getLog().info("Rat check: Summary of files. Unapproved: " + statistics.getNumUnApproved() + " unknown: " + statistics.getNumUnknown() + " generated: " + statistics.getNumGenerated() + " approved: " + statistics.getNumApproved() + " licence.");
         if ( numUnapprovedLicenses < statistics.getNumUnApproved() )
         {
+            final String seeReport = " See RAT report in: " + reportFile;
             if ( !ignoreErrors )
             {
-                throw new RatCheckException( "Too many unapproved licenses: " + statistics.getNumUnApproved() );
+                throw new RatCheckException( "Too many files with unapproved license: " + statistics.getNumUnApproved() + seeReport);
             }
             else
             {
-                getLog().warn( "Rat check:" + statistics.getNumUnApproved() + " errors on non approved has been ignored." );
+                getLog().warn( "Rat check: " + statistics.getNumUnApproved() + " files with unaproved licenses." + seeReport);
             }
-
         }
-
-
     }
 
     protected ReportConfiguration getConfiguration()
