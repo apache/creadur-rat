@@ -73,14 +73,14 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     /**
      * The base directory, in which to search for files.
-     * 
+     *
      */
     @Parameter (property = "rat.basedir", defaultValue = "${basedir}", required = true)
     protected File basedir;
 
     /**
      * Specifies the licenses to accept. Deprecated, use {@link #licenses} instead.
-     * 
+     *
      * @deprecated Use {@link #licenses} instead.
      */
     @Parameter
@@ -108,24 +108,24 @@ public abstract class AbstractRatMojo extends AbstractMojo
      */
     @Parameter
     private ILicenseFamily[] licenseFamilies;
-    
+
     /**
      * Whether to add the default list of license matchers.
-     * 
+     *
      */
     @Parameter(property = "rat.addDefaultLicenseMatchers", defaultValue = "true")
     private boolean addDefaultLicenseMatchers;
 
     /**
      * Specifies files, which are included in the report. By default, all files are included.
-     * 
+     *
      */
     @Parameter
     private String[] includes;
 
     /**
      * Specifies files, which are excluded in the report. By default, no files are excluded.
-     * 
+     *
      */
     @Parameter
     private String[] excludes;
@@ -170,11 +170,11 @@ public abstract class AbstractRatMojo extends AbstractMojo
     /**
      * Whether to exclude subprojects. This is recommended, if you want a
      * separate apache-rat-plugin report for each subproject.
-     * 
+     *
      */
     @Parameter(property = "rat.excludeSubprojects", defaultValue = "true")
     private boolean excludeSubProjects;
-    
+
     /**
      *
      */
@@ -191,7 +191,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     /**
      * Returns the set of {@link IHeaderMatcher header matchers} to use.
-     * 
+     *
      * @throws MojoFailureException
      *             An error in the plugin configuration was detected.
      * @throws MojoExecutionException
@@ -259,7 +259,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     /**
      * Adds the given string array to the list.
-     * 
+     *
      * @param pList
      *            The list to which the array elements are being added.
      * @param pArray
@@ -275,7 +275,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     /**
      * Creates an iterator over the files to check.
-     * 
+     *
      * @return A container of files, which are being checked.
      */
     protected IReportable getResources()
@@ -306,34 +306,10 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     private void setExcludes( DirectoryScanner ds )
     {
-        final List<String> excludeList1 = new ArrayList<String>();
-        if ( useDefaultExcludes )
-        {
-            add( excludeList1, DirectoryScanner.DEFAULTEXCLUDES );
-        }
-        if ( useMavenDefaultExcludes )
-        {
-            add( excludeList1, MAVEN_DEFAULT_EXCLUDES );
-        }
-        if ( useEclipseDefaultExcludes )
-        {
-            add( excludeList1, ECLIPSE_DEFAULT_EXCLUDES );
-        }
-        if ( useIdeaDefaultExcludes )
-        {
-            add( excludeList1, IDEA_DEFAULT_EXCLUDES );
-        }
-        if ( excludeSubProjects && project != null && project.getModules() != null )
-        {
-            for (Object o : project.getModules()) {
-                String moduleSubPath = (String) o;
-                excludeList1.add(moduleSubPath + "/**/*");
-            }
-        }
-        final List<String> excludeList = excludeList1;
+        final List<String> excludeList = buildDefaultExclusions();
         if ( excludes == null  ||  excludes.length == 0 )
         {
-            getLog().info( "No excludes" );
+            getLog().info( "No excludes explicitly specified." );
         }
         else
         {
@@ -350,9 +326,97 @@ public abstract class AbstractRatMojo extends AbstractMojo
         }
     }
 
+    private List<String> buildDefaultExclusions() {
+        final List<String> results = new ArrayList<String>();
+
+        addPlexusDefaults(results);
+
+        addMavenDefaults(results);
+
+        addEclipseDefaults(results);
+
+        addIdeaDefaults(results);
+
+        if ( excludeSubProjects && project != null && project.getModules() != null )
+        {
+            for (Object o : project.getModules()) {
+                String moduleSubPath = (String) o;
+                results.add(moduleSubPath + "/**/*");
+            }
+        }
+
+        getLog().debug("Finished creating list of implicit excludes.");
+        if (results.isEmpty()) {
+            getLog().info( "No excludes implicitly specified." );
+        } else {
+            getLog().info( results.size() + " implicit excludes (use -debug for more details)." );
+            for ( final String exclude : results ) {
+                getLog().debug( "Implicit exclude: " + exclude);
+            }
+        }
+
+        return results;
+    }
+
+    private void addPlexusDefaults(final List<String> excludeList1) {
+        if ( useDefaultExcludes )
+        {
+            getLog().debug("Adding plexus default exclusions...");
+            add( excludeList1, DirectoryScanner.DEFAULTEXCLUDES );
+        }
+        else
+        {
+            getLog().debug("rat.useDefaultExcludes set to false. " +
+            		"Plexus default exclusions will not be added");
+        }
+    }
+
+    private void addMavenDefaults(final List<String> excludeList1) {
+        if ( useMavenDefaultExcludes )
+        {
+            getLog().debug("Adding exclusions often needed by Maven projects...");
+            add( excludeList1, MAVEN_DEFAULT_EXCLUDES );
+        }
+        else
+        {
+            getLog().debug("rat.useMavenDefaultExcludes set to false. " +
+            		"Exclusions often needed by Maven projects will not be added.");
+        }
+    }
+
+    private void addEclipseDefaults(final List<String> excludeList1) {
+        if ( useEclipseDefaultExcludes )
+        {
+            getLog().debug("Adding exclusions often needed by projects " +
+            		"developed in Eclipse...");
+            add( excludeList1, ECLIPSE_DEFAULT_EXCLUDES );
+        }
+        else
+        {
+            getLog().debug("rat.useEclipseDefaultExcludes set to false. " +
+                    "Exclusions often needed by projects developed in " +
+                    "Eclipse will not be added.");
+        }
+    }
+
+    private void addIdeaDefaults(final List<String> excludeList1) {
+        if ( useIdeaDefaultExcludes )
+        {
+            getLog().debug("Adding exclusions often needed by projects " +
+                    "developed in IDEA...");
+            add( excludeList1, IDEA_DEFAULT_EXCLUDES );
+        }
+        else
+        {
+            getLog().debug("rat.useIdeaDefaultExcludes set to false. " +
+                    "Exclusions often needed by projects developed in " +
+                    "IDEA will not be added.");
+        }
+    }
+
     /**
      * Writes the report to the given stream.
-     * 
+     *
      * @param out The target writer, to which the report is being written.
      * @param style The stylesheet to use, or <code>null</code> for raw XML
      * @throws MojoFailureException
