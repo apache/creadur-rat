@@ -280,11 +280,12 @@ public abstract class AbstractRatMojo extends AbstractMojo
      */
     protected IReportable getResources()
     {
-        DirectoryScanner ds = new DirectoryScanner();
+        final DirectoryScanner ds = new DirectoryScanner();
         ds.setBasedir( basedir );
         setExcludes( ds );
         setIncludes( ds );
         ds.scan();
+        whenDebuggingLogExcludedFiles(ds);
         final String[] files = ds.getIncludedFiles();
         try
         {
@@ -293,6 +294,20 @@ public abstract class AbstractRatMojo extends AbstractMojo
         catch ( IOException e )
         {
             throw new UndeclaredThrowableException( e );
+        }
+    }
+
+    private void whenDebuggingLogExcludedFiles(final DirectoryScanner ds) {
+        if (getLog().isDebugEnabled()) {
+            final String[] excludedFiles = ds.getExcludedFiles();
+            if (excludedFiles.length == 0) {
+                getLog().debug("No excluded resources.");
+            } else {
+                getLog().debug("Excluded " + excludedFiles.length + " resources:");
+                for (final String resource : excludedFiles) {
+                    getLog().debug(" - excluded " + resource);
+                }
+            }
         }
     }
 
