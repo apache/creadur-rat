@@ -287,6 +287,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
         ds.scan();
         whenDebuggingLogExcludedFiles(ds);
         final String[] files = ds.getIncludedFiles();
+        logAboutIncludedFiles(files);
         try
         {
             return new FilesReportable( basedir, files );
@@ -294,6 +295,19 @@ public abstract class AbstractRatMojo extends AbstractMojo
         catch ( IOException e )
         {
             throw new UndeclaredThrowableException( e );
+        }
+    }
+
+    private void logAboutIncludedFiles(final String[] files) {
+        if (files.length == 0) {
+            getLog().warn("No resources included.");
+        } else {
+            getLog().info(files.length + " resources included (use -debug for more details)");
+            if(getLog().isDebugEnabled()) {
+                for (String resource: files) {
+                    getLog().debug(" - included " + resource);
+                }
+            }
         }
     }
 
