@@ -184,7 +184,7 @@ public class RatCheckMojo extends AbstractRatMojo
             }
             else
             {
-                getLog().warn( "Rat check: " + statistics.getNumUnApproved() + " files with unaproved licenses." + seeReport);
+                getLog().warn( "Rat check: " + statistics.getNumUnApproved() + " files with unapproved licenses." + seeReport);
             }
         }
     }
