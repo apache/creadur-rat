@@ -21,19 +21,50 @@
 
 Apache Rat
 
- Apache Rat is a release audit tool. Use Rat to improve accuracy and efficiency
- when checking releases. It is heuristic in nature: making guesses about possible
- problems. It will produce false positives and cannot find every possible issue
- with a release. It's reports require interpretation.
+ In a hurry? Jump to {{{Quick_Start:_Running_Rat}quick start}}
 
- Rat was developed in response to a need felt in the Apache Incubator to be able to
- review releases for the most common faults less labour intensively. It is therefore
- highly tuned to the Apache style of releases.
+%{toc|fromDepth=2|toDepth=3}
 
- Rat is intended to be self documenting: reports should include introductory material
- describing their function. Building Rat describes how to run Rat. Running Rat
- describes the options available. The release notes describe the current state of
- Rat.
+* About Rat
+
+** What Is Rat?
+
+ Apache Rat is a release audit tool, focused on licenses.
+
+** Rat Is Used To...?
+
+ Use Rat to improve accuracy and efficiency
+ when checking releases for licenses.
+
+** Why Develop Rat?
+
+ Reviewing releases in the {{{http://incubator.apache.org/}Apache Incubator}}
+ by hand was error-prone and time-consuming.
+
+ Rat arises from the Apache style, but is used more widely.
+ If your release style isn't supported,
+ {{{http://creadur.apache.org/rat/mail-lists.html}talk to us}}.
+
+** How Do I Use Rat?
+
+ Apache Rat ${project.version} ships with tooling for
+
+   * {{{http://ant.apache.org/} Apache Ant}},
+
+   * {{{http://maven.apache.org}Apache Maven}} and
+
+   * the command line.
+
+ Rat is extensible. If your build tool isn't supported, please contribute a
+ {{{http://creadur.apache.org/rat/issue-tracking.html}patch}} or
+ {{{http://creadur.apache.org/rat/mail-lists.html}talk to us}}.
+
+ Rat aspires to be self documenting. Please contribute a
+ {{{http://creadur.apache.org/rat/issue-tracking.html}patch}} or
+ {{{http://creadur.apache.org/rat/mail-lists.html}talk to us}}
+ whenever Rat falls short.
+
+** Who Develops Rat?
 
   Apache Rat is part of the {{{http://creadur.apache.org}Apache Creadur}}
   language- and build-agnostic suite of tools for auditing and comprehending
@@ -41,7 +72,15 @@ Apache Rat
   {{{http://www.opensource.org/} open source software}} the
   {{{http://www.apache.org/foundation/how-it-works.html} Apache way}}.
 
-* Running Rat
+  Please feel free to contribute a
+  {{{http://creadur.apache.org/rat/issue-tracking.html}patch}},
+  {{{http://c2.com/cgi/wiki?TestDrivenDevelopment}demonstrate}} an
+  {{{http://creadur.apache.org/rat/issue-tracking.html}bug}}, or
+  just
+  {{{http://creadur.apache.org/rat/mail-lists.html}talk to us}}.
+  All welcome :-)
+
+* Quick Start: Running Rat
 
 ** Command Line
 
@@ -62,6 +101,14 @@ java -jar apache-rat-${project.version}.jar --help
 ** Apache Maven
 
  Use the plugin for {{{http://maven.apache.org}Apache Maven ${mavenVersion}}} or later.
+
++------------------------------------------+
+  <plugin>
+    <groupId>org.apache.rat</groupId>
+    <artifactId>apache-rat-plugin</artifactId>
+    <version>${project.version}</version>
+  </plugin>
++------------------------------------------+
 
  Read more {{{./apache-rat-plugin/index.html} here}}.
 
