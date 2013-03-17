@@ -72,12 +72,6 @@ agnostic home for software distribution comprehension and audit tools.
     <rat.site.url>file:${rat.LocalSiteStaging}</rat.site.url>
     <rat.site.name>Apache Rat Website</rat.site.name>
     <rat.site.id>org.apache.rat.site</rat.site.id>
-    <rat.releases.id>apache.releases.https</rat.releases.id>
-    <rat.releases.name>Apache Release Distribution Repository</rat.releases.name>
-    <rat.releases.url>https://repository.apache.org/service/local/staging/deploy/maven2</rat.releases.url>
-    <rat.snapshots.id>apache.snapshots.https</rat.snapshots.id>
-    <rat.snapshots.name>${distMgmtSnapshotsName}</rat.snapshots.name> <!-- Parent POM uses these properties -->
-    <rat.snapshots.url>${distMgmtSnapshotsUrl}</rat.snapshots.url>
 
     <!-- maven plugin versions -->
     <surefire.version>2.12.3</surefire.version>
@@ -451,18 +445,6 @@ agnostic home for software distribution comprehension and audit tools.
       <name>${rat.site.name}</name>
       <url>${rat.site.url}</url>
     </site>
-
-    <repository>
-      <id>${rat.releases.id}</id>
-      <name>${rat.releases.name}</name>
-      <url>${rat.releases.url}</url>
-    </repository>
-
-    <snapshotRepository>
-      <id>${rat.snapshots.id}</id>
-      <name>${rat.snapshots.name}</name>
-      <url>${rat.snapshots.url}</url>
-    </snapshotRepository>
   </distributionManagement>
 
   <modules>
