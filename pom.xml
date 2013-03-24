@@ -25,7 +25,7 @@
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
   <packaging>pom</packaging>
-  <version>0.9</version>
+  <version>0.9-SNAPSHOT</version>
   <name>Apache Rat</name>
   <url>http://creadur.apache.org/rat/</url>
   <description>
@@ -318,7 +318,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <configuration>
               <target>
-                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
+                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false"/>
               </target>
             </configuration>
           </execution>
@@ -441,9 +441,9 @@ agnostic home for software distribution comprehension and audit tools.
   </contributors>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/tags/apache-rat-project-0.9</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/tags/apache-rat-project-0.9</developerConnection>
-    <url>http://svn.apache.org/repos/asf/creadur/rat/tags/apache-rat-project-0.9</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/trunk</developerConnection>
+    <url>http://svn.apache.org/repos/asf/creadur/rat/trunk</url>
   </scm>
 
   <distributionManagement>
