@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.rat</groupId>
     <artifactId>apache-rat-project</artifactId>
-    <version>0.10-SNAPSHOT</version>
+    <version>0.9</version>
   </parent>
   <artifactId>apache-rat-tasks</artifactId>
   <packaging>jar</packaging>
