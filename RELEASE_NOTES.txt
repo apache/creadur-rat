@@ -1,5 +1,6 @@
 Rat 0.9
 =======
+ * Improved documentation
  * Rat now requires Java5 at runtime
  * The Antlib contains a new matcher type that allows matching on the
    full text of the license rather than a single line.
