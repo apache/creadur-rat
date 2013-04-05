@@ -259,7 +259,7 @@ public class Report {
     }
 
     /**
-     * @deprecated use the two-arg version instead
+     * @deprecated use {@link #report(PrintStream, ReportConfiguration)} instead
      */
     @Deprecated
     public ClaimStatistic report(PrintStream out) throws Exception {
@@ -310,7 +310,7 @@ public class Report {
      * 
      * @param out - the output stream to recieve the styled report
      * @throws Exception
-     * @deprecated use the two-arg version instead
+     * @deprecated use {@link #styleReport(PrintStream, ReportConfiguration)} instead
      */
     @Deprecated
     public void styleReport(PrintStream out) throws Exception {
