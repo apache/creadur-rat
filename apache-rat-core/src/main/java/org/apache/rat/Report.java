@@ -92,10 +92,11 @@ public class Report {
             else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
                 String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
                 if (excludeFileName != null) {
-                    List excludes = FileUtils.readLines(new File(excludeFileName));
+                    @SuppressWarnings("unchecked") // method generates list of Strings, but is not yet generic
+                    List<String> excludes = FileUtils.readLines(new File(excludeFileName));
                     final OrFileFilter orFilter = new OrFileFilter();
-                    for (Object exclude : excludes) {
-                        orFilter.addFileFilter(new RegexFileFilter((String) exclude));
+                    for (String exclude : excludes) {
+                        orFilter.addFileFilter(new RegexFileFilter(exclude));
                     }
                     final FilenameFilter filter = new NotFileFilter(orFilter);
                     report.setInputFileFilter(filter);
@@ -257,6 +258,7 @@ public class Report {
     /**
      * @deprecated use the two-arg version instead
      */
+    @Deprecated
     public ClaimStatistic report(PrintStream out) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
@@ -307,6 +309,7 @@ public class Report {
      * @throws Exception
      * @deprecated use the two-arg version instead
      */
+    @Deprecated
     public void styleReport(PrintStream out) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
