@@ -29,9 +29,9 @@ import java.util.List;
 
 public class ClaimReporterMultiplexer implements RatReport {
     private final IDocumentAnalyser analyser;
-    private final List reporters;
+    private final List<? extends RatReport> reporters;
 
-    public ClaimReporterMultiplexer(final IDocumentAnalyser pAnalyser, final List reporters) {
+    public ClaimReporterMultiplexer(final IDocumentAnalyser pAnalyser, final List<? extends RatReport> reporters) {
         analyser = pAnalyser;
         this.reporters = reporters;
     }
@@ -44,22 +44,19 @@ public class ClaimReporterMultiplexer implements RatReport {
                 throw new RatException(e.getMessage(), e);
             }
         }
-        for (Object reporter : reporters) {
-            final RatReport report = (RatReport) reporter;
+        for (RatReport report : reporters) {
             report.report(document);
         } 
     }
 
     public void startReport() throws RatException {
-        for (Object reporter : reporters) {
-            final RatReport report = (RatReport) reporter;
+        for (RatReport report : reporters) {
             report.startReport();
         } 
     }
 
     public void endReport() throws RatException {
-        for (Object reporter : reporters) {
-            final RatReport report = (RatReport) reporter;
+        for (RatReport report : reporters) {
             report.endReport();
         } 
     }

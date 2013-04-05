@@ -33,17 +33,17 @@ import org.apache.rat.report.claim.ClaimStatistic;
  */
 public class ClaimAggregator extends AbstractClaimReporter {
     private final ClaimStatistic statistic;
-    private final Map numsByLicenseFamilyName = new HashMap();
-    private final Map numsByLicenseFamilyCode = new HashMap();
-    private final Map numsByFileType = new HashMap();
+    private final Map<String, Integer> numsByLicenseFamilyName = new HashMap<String, Integer>();
+    private final Map<String, Integer> numsByLicenseFamilyCode = new HashMap<String, Integer>();
+    private final Map<String, Integer> numsByFileType = new HashMap<String, Integer>();
     private int numApproved, numUnApproved, numGenerated, numUnknown;
 
     public ClaimAggregator(ClaimStatistic pStatistic) {
         statistic = pStatistic;
     }
     
-    private void incMapValue(Map pMap, Object pKey) {
-        final Integer num = (Integer) pMap.get(pKey);
+    private void incMapValue(Map<String, Integer> pMap, String pKey) {
+        final Integer num = pMap.get(pKey);
         final int newNum;
         if (num == null) {
             newNum = 1;

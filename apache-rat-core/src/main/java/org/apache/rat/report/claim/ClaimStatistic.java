@@ -27,7 +27,7 @@ import java.util.Map;
  * the report.
  */
 public class ClaimStatistic {
-    private Map documentCategoryMap, licenseFamilyCodeMap, licenseFamilyNameMap;
+    private Map<String, Integer> documentCategoryMap, licenseFamilyCodeMap, licenseFamilyNameMap;
     private int numApproved, numUnApproved, numGenerated, numUnknown;
 
     /**
@@ -100,7 +100,7 @@ public class ClaimStatistic {
      * are integers with the number of resources matching
      * the file type.
      */
-    public void setDocumentCategoryMap(Map pDocumentCategoryMap) {
+    public void setDocumentCategoryMap(Map<String, Integer> pDocumentCategoryMap) {
         documentCategoryMap = pDocumentCategoryMap;
     }
 
@@ -110,7 +110,7 @@ public class ClaimStatistic {
      * are integers with the number of resources matching
      * the file type.
      */
-    public Map getDocumentCategoryMap() {
+    public Map<String, Integer> getDocumentCategoryMap() {
         return documentCategoryMap;
     }
 
@@ -120,7 +120,7 @@ public class ClaimStatistic {
      * the map values are integers with the number of resources
      * matching the license family code.
      */
-    public Map getLicenseFileCodeMap() {
+    public Map<String, Integer> getLicenseFileCodeMap() {
         return licenseFamilyCodeMap;
     }
 
@@ -130,7 +130,7 @@ public class ClaimStatistic {
      * the map values are integers with the number of resources
      * matching the license family code.
      */
-    public void setLicenseFileCodeMap(Map pLicenseFamilyCodeMap) {
+    public void setLicenseFileCodeMap(Map<String, Integer> pLicenseFamilyCodeMap) {
         licenseFamilyCodeMap = pLicenseFamilyCodeMap;
     }
 
@@ -140,7 +140,7 @@ public class ClaimStatistic {
      * the map values are integers with the number of resources
      * matching the license family name.
      */
-    public Map getLicenseFileNameMap() {
+    public Map<String, Integer> getLicenseFileNameMap() {
         return licenseFamilyNameMap;
     }
 
@@ -150,7 +150,7 @@ public class ClaimStatistic {
      * the map values are integers with the number of resources
      * matching the license family name.
      */
-    public void setLicenseFileNameMap(Map pLicenseFamilyNameMap) {
+    public void setLicenseFileNameMap(Map<String, Integer> pLicenseFamilyNameMap) {
         licenseFamilyNameMap = pLicenseFamilyNameMap;
     }
 }

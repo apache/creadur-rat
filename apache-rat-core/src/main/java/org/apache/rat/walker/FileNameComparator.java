@@ -21,12 +21,10 @@ package org.apache.rat.walker;
 import java.io.File;
 import java.util.Comparator;
 
-class FileNameComparator implements Comparator {
+class FileNameComparator implements Comparator<File> {
 
-    public int compare(Object first, Object second) {
+    public int compare(File firstFile, File secondFile) {
         int result = 0;
-        File firstFile = (File) first;
-        File secondFile = (File) second;
         if (firstFile == null) {
             if (secondFile != null) {
                 result = 1;

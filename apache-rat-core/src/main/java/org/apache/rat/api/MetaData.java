@@ -165,7 +165,7 @@ public class MetaData {
      * Gets all data.
      * @return unmodifiable view of the meta data.
      */
-    public Collection getData() {
+    public Collection<Datum> getData() {
         return Collections.unmodifiableCollection(data);
     }
     
@@ -231,8 +231,8 @@ public class MetaData {
      */
     public boolean clear(final String name) {
         boolean dataRemoved = false;
-        for (final Iterator it=data.iterator();it.hasNext();) {
-            final Datum datum = (Datum) it.next();
+        for (final Iterator<Datum> it = data.iterator();it.hasNext();) {
+            final Datum datum = it.next();
             if (datum.getName().equals(name)) {
                 it.remove();
                 dataRemoved = true;

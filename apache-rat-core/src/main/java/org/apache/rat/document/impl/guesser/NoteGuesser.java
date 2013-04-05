@@ -57,7 +57,7 @@ public class NoteGuesser {
     public static final boolean isNote(final String name) {
         if (name == null) {return false;}
     
-        List l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
+        List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
         String normalisedName = GuessUtils.normalise(name);
         
         if (l.contains(name) || l.contains(normalisedName)) {

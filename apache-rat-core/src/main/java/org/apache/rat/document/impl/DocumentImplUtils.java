@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.IOUtils;
+
 public class DocumentImplUtils {
 
     public final static String toName(File file) {
@@ -43,13 +45,7 @@ public class DocumentImplUtils {
         } catch (IOException e) {
             return false;
         } finally {
-            if (zip != null) {
-                try {
-                    zip.close();
-                } catch (Throwable t) {
-                    // Swallow
-                }
-            }
+            IOUtils.closeQuietly(zip);
         }
     }
 

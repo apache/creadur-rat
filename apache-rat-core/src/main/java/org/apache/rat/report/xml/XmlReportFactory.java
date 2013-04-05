@@ -41,7 +41,7 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 public class XmlReportFactory {
     public static final RatReport createStandardReport(IXmlWriter writer,
             final ClaimStatistic pStatistic, ReportConfiguration pConfiguration) {
-        final List reporters = new ArrayList();
+        final List<RatReport> reporters = new ArrayList<RatReport>();
         if (pStatistic != null) {
             reporters.add(new ClaimAggregator(pStatistic));
         }

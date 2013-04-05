@@ -28,7 +28,7 @@ import java.util.Map;
 public class ContentType {
     private final String mediaType;
     private final String subType;
-    private final Map/*<String, String>*/ parameters;
+    private final Map<String, String> parameters;
 
     /**
      * Constructs content types, 
@@ -37,13 +37,12 @@ public class ContentType {
      * @param subType not null
      * @param parameters not null
      */
-    public ContentType(final String mediaType, final String subType, final Map parameters) {
+    public ContentType(final String mediaType, final String subType, final Map<String, String> parameters) {
         super();
         this.mediaType = mediaType.toLowerCase(Locale.US);
         this.subType = subType.toLowerCase(Locale.US);
-        this.parameters = new HashMap(parameters.size());
-        for (Object o : parameters.entrySet()) {
-            final Map.Entry entry = (Map.Entry) o;
+        this.parameters = new HashMap<String, String>(parameters.size());
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
             this.parameters.put(entry.getKey().toString().toLowerCase(Locale.US), entry.getValue());
         }
     }
@@ -72,7 +71,7 @@ public class ContentType {
      * with keys normalised to lower case.
      * @return not null
      */
-    public Map/*<String, String>*/ getParameters() {
+    public Map<String, String> getParameters() {
         return parameters;
     }
 }
