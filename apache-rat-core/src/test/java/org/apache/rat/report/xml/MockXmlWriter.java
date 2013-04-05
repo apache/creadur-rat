@@ -26,10 +26,10 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class MockXmlWriter implements IXmlWriter {
 
-    public final List calls;
+    public final List<Object> calls;
     
     public MockXmlWriter() {
-        calls = new ArrayList();
+        calls = new ArrayList<Object>();
     }
     
     public IXmlWriter attribute(CharSequence name, CharSequence value)
