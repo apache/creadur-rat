@@ -63,7 +63,7 @@ public class TestLicenceAppender {
         }
     }
 
-    private static void tryToDelete(File f) throws IOException {
+    private static void tryToDelete(File f) {
         if (f != null && f.exists() && !f.delete()) {
             f.deleteOnExit();
         }
