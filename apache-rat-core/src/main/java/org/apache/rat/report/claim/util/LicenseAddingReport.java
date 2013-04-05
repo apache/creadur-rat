@@ -37,6 +37,7 @@ public class LicenseAddingReport extends AbstractReport {
         appender.setForce(pForced);
     }
 
+    @Override
     public void report(org.apache.rat.api.Document document) throws RatException {
         final MetaData metaData = document.getMetaData();
         final Datum licenseHeader = metaData.get(MetaData.RAT_URL_HEADER_CATEGORY);

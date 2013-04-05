@@ -29,6 +29,7 @@ public class DocumentAnalyserMultiplexerTest extends TestCase {
     IDocumentAnalyser[] analysers;
     MockDocument document;
     
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         IDocumentAnalyser[] analysers = {
@@ -41,6 +42,7 @@ public class DocumentAnalyserMultiplexerTest extends TestCase {
         multiplexer = new DocumentAnalyserMultiplexer(analysers);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }

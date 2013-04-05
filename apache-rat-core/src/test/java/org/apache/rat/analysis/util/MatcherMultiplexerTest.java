@@ -37,6 +37,7 @@ public class MatcherMultiplexerTest extends TestCase {
 
     HeaderMatcherMultiplexer multiplexer;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         matcherOne = new MockLicenseMatcher();
@@ -46,6 +47,7 @@ public class MatcherMultiplexerTest extends TestCase {
         reporter = new MockClaimReporter();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }

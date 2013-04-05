@@ -51,7 +51,7 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
     this.copyright = copyright;
   }
 
-  //@Override
+  @Override
   public String getLicenceHeader(File document) {
     int type = getType(document);
     StringBuilder sb = new StringBuilder();

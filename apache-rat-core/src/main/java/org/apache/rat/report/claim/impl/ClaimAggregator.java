@@ -53,10 +53,12 @@ public class ClaimAggregator extends AbstractClaimReporter {
         pMap.put(pKey, new Integer(newNum));
     }
     
+    @Override
     protected void handleDocumentCategoryClaim(String documentCategoryName) {
         incMapValue(numsByFileType, documentCategoryName);
     }
 
+    @Override
     protected void handleApprovedLicenseClaim(String licenseApproved) {
         if (MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(licenseApproved)) {
             numApproved++;
@@ -65,10 +67,12 @@ public class ClaimAggregator extends AbstractClaimReporter {
         }
     }
 
+    @Override
     protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
         incMapValue(numsByLicenseFamilyName, licenseFamilyName);
     }
 
+    @Override
     protected void handleHeaderCategoryClaim(String headerCategory) {
         
         if (MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN.equals(headerCategory)) {
@@ -90,6 +94,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
         pStatistic.setNumUnknown(numUnknown);
     }
 
+    @Override
     public void endReport() throws RatException {
         super.endReport();
         fillClaimStatistic(statistic);

@@ -69,6 +69,7 @@ public class FileDocument implements Document {
      * @return a <code>String</code> representation 
      * of this object.
      */
+    @Override
     public String toString()
     {
         return "FileDocument ( "

@@ -506,11 +506,13 @@ class BOMInputStream extends FilterInputStream {
         super(s);
     }
 
+    @Override
     public int read() throws IOException {
         int b = readFirstBytes();
         return (b >= 0) ? b : in.read();
     }
 
+    @Override
     public int read(byte[] buf, int off, int len) throws IOException {
         int firstCount = 0;
         int b = 0;
@@ -527,6 +529,7 @@ class BOMInputStream extends FilterInputStream {
             ? (firstCount > 0 ? firstCount : -1) : firstCount + secondCount;
     }
 
+    @Override
     public int read(byte[] buf) throws IOException {
         return read(buf, 0, buf.length);
     }
@@ -558,12 +561,14 @@ class BOMInputStream extends FilterInputStream {
             }
         }
     }
+    @Override
     public synchronized void mark(int readlimit) {
         markFbIndex = fbIndex;
         markedAtStart = (firstBytes == null);
         in.mark(readlimit);
     }
 
+    @Override
     public synchronized void reset() throws IOException {
         fbIndex = markFbIndex;
         if (markedAtStart) {
@@ -573,6 +578,7 @@ class BOMInputStream extends FilterInputStream {
         in.reset();
     }
 
+    @Override
     public long skip(long n) throws IOException {
         while ((n > 0) && (readFirstBytes() >= 0)) {
             n--;

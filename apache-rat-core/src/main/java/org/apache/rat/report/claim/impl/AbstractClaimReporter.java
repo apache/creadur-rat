@@ -95,6 +95,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
         }
     }
     
+    @Override
     public void report(Document subject) throws RatException {
         writeDocumentClaim(subject);
     }

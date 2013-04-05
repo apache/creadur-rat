@@ -66,6 +66,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         }
     }
 
+    @Override
     public void report(final Document subject) throws RatException {
         try {
             if (firstTime) {
@@ -125,6 +126,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         }
     }
 
+    @Override
     public void startReport() throws RatException {
         try {
             writer.openElement("rat-report")
@@ -136,6 +138,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         }
     }
 
+    @Override
     public void endReport() throws RatException {
         try {
             writer.closeDocument();
