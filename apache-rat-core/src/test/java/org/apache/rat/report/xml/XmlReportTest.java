@@ -82,7 +82,7 @@ public class XmlReportTest {
         report(directory);
         report.endReport();
         writer.closeDocument();
-        final String output = out.toString();;
+        final String output = out.toString();
         assertTrue("Preamble and document element are OK",
                    output.startsWith("<?xml version='1.0'?>" +
                 "<rat-report timestamp="));
