@@ -64,6 +64,7 @@ public class Report {
         } catch (ParseException e) {
             System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
             System.exit(1);
+            return; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE for "cl"
         }
 
         if (cl.hasOption('h')) {
@@ -166,6 +167,7 @@ public class Report {
         "The copyright message to use in the licence headers, usually in the form of \"Copyright 2008 Foo\"");
         opts.addOption(copyright);
 
+        @SuppressWarnings("static-access") // ignore OptionBuilder design fault
         final Option exclude = OptionBuilder
                             .withArgName("expression")
                             .withLongOpt("exclude")
@@ -176,6 +178,7 @@ public class Report {
                             .create(EXCLUDE_CLI);
         opts.addOption(exclude);
 
+        @SuppressWarnings("static-access") // ignore OptionBuilder design fault
         final Option excludeFile = OptionBuilder
                             .withArgName("fileName")
                             .withLongOpt("exclude-file")
