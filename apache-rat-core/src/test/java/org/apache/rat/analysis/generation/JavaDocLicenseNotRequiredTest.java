@@ -71,6 +71,7 @@ public class JavaDocLicenseNotRequiredTest {
             result = license.match(subject, line);
             line = in.readLine();
         }
+        in.close();
         return result;
     }
 }
