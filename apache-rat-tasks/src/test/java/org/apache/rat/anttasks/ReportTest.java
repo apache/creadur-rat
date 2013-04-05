@@ -29,6 +29,7 @@ import junit.framework.Assert;
 public class ReportTest extends AbstractRatAntTaskTest {
     private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
 
+    @Override
     protected File getAntFile() {
         return antFile;
     }

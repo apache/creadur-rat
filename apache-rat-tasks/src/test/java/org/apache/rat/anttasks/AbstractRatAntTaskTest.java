@@ -34,6 +34,7 @@ public abstract class AbstractRatAntTaskTest extends BuildFileTest {
         return tempDir;
     }
 
+    @Override
     public void setUp() {
         configureProject(getAntFile().getPath());
     }

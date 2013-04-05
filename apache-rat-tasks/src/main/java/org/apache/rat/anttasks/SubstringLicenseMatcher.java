@@ -30,7 +30,7 @@ import org.apache.tools.ant.BuildException;
  * @since Rat Antlib 0.8
  */
 public class SubstringLicenseMatcher extends SimplePatternBasedLicense {
-    private List/*<String>*/ patterns = new ArrayList();
+    private List<String> patterns = new ArrayList<String>();
     private boolean validated = false;
 
     public void addConfiguredPattern(Pattern p) {
@@ -40,7 +40,7 @@ public class SubstringLicenseMatcher extends SimplePatternBasedLicense {
     @Override
     public String[] getPatterns() {
         validate();
-        return (String[]) patterns.toArray(new String[0]);
+        return patterns.toArray(new String[0]);
     }
 
     private void validate() {

@@ -48,7 +48,7 @@ class ResourceCollectionContainer implements IReportable {
 
     public void run(RatReport report) throws RatException {
         ResourceDocument document = new ResourceDocument();
-        for (Iterator iter = rc.iterator(); iter.hasNext(); ) {
+        for (Iterator<?> iter = rc.iterator(); iter.hasNext(); ) {
             Resource r = (Resource) iter.next();
             if (!r.isDirectory()) {
                 document.setResource(r);

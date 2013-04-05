@@ -71,9 +71,9 @@ public class Report extends Task {
     /**
      * The licenses we want to match on.
      */
-    private ArrayList licenseMatchers = new ArrayList();
+    private ArrayList<IHeaderMatcher> licenseMatchers = new ArrayList<IHeaderMatcher>();
 
-    private ArrayList licenseNames = new ArrayList();
+    private ArrayList<ILicenseFamily> licenseNames = new ArrayList<ILicenseFamily>();
 
     /**
      * Whether to add the default list of license matchers.
@@ -176,6 +176,7 @@ public class Report extends Task {
     /**
      * Generates the report.
      */
+    @Override
     public void execute() {
         validate();
 
@@ -295,8 +296,7 @@ public class Report extends Task {
                                  nestedSize, Defaults.DEFAULT_MATCHERS.length);
             }
         } else {
-            matchers = (IHeaderMatcher[])
-                licenseMatchers.toArray(new IHeaderMatcher[0]);
+            matchers = licenseMatchers.toArray(new IHeaderMatcher[0]);
         }
         return matchers;
     }
@@ -305,7 +305,7 @@ public class Report extends Task {
         // TODO: add support for adding default licenses
         ILicenseFamily[] results = null;
         if (licenseNames.size() > 0) {
-            results = (ILicenseFamily[]) licenseNames.toArray(new ILicenseFamily[0]);
+            results = licenseNames.toArray(new ILicenseFamily[0]);
         }
         return results;
     }
@@ -327,6 +327,7 @@ public class Report extends Task {
             setValue(s);
         }
 
+        @Override
         public String[] getValues() {
             return new String[] {
                 XML_KEY, STYLED_KEY, PLAIN_KEY
@@ -348,6 +349,7 @@ public class Report extends Task {
         }
         
         
+        @Override
         public String[] getValues() {
             return new String[] {
                 TRUE, FALSE, FORCED
