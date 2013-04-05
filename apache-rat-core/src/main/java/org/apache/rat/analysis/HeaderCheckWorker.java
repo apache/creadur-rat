@@ -81,7 +81,9 @@ class HeaderCheckWorker {
             final StringBuffer headers = new StringBuffer();
             headerLinesToRead = numberOfRetainedHeaderLines;
             try {
-                while(readLine(headers));
+                while(readLine(headers)) {
+                    // do nothing
+                }
                 if (!match) {
                     final String notes = headers.toString();
                     final MetaData metaData = subject.getMetaData();
