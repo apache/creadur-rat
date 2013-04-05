@@ -102,6 +102,7 @@ class FilesReportable implements IReportable
             return new FileInputStream(file);
         }
         
+        @Override
         public String toString() {
             return "File:" + file.getAbsolutePath();
         }

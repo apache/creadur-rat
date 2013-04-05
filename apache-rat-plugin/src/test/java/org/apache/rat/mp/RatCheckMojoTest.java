@@ -170,6 +170,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
         final Build build = new Build();
         build.setDirectory( buildDirectory.getPath() );
         final MavenProjectStub project = new MavenProjectStub(){
+            @Override
             public Build getBuild()
             {
                 return build;

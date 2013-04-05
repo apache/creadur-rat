@@ -189,6 +189,7 @@ public class RatCheckMojo extends AbstractRatMojo
         }
     }
 
+    @Override
     protected ReportConfiguration getConfiguration()
             throws MojoFailureException, MojoExecutionException {
         final ReportConfiguration configuration = super.getConfiguration();

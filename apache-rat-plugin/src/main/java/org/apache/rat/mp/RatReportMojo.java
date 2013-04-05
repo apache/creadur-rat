@@ -254,7 +254,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
     {
         for ( Iterator<Artifact> iter = getProject().getDependencyArtifacts().iterator(); iter.hasNext(); )
         {
-            Artifact a = (Artifact) iter.next();
+            Artifact a = iter.next();
             if ( "rat-lib".equals( a.getArtifactId() ) )
             {
                 return a.getVersion();
