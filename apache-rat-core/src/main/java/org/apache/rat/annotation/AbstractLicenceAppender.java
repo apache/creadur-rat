@@ -219,9 +219,7 @@ public abstract class AbstractLicenceAppender {
                 }
             }
         } finally {
-            if (writer != null) {
-                writer.close();
-            }
+            writer.close();
         }
 
         if (isForced) {
