@@ -83,6 +83,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
      *
      * @deprecated Use {@link #licenses} instead.
      */
+    @Deprecated
     @Parameter
     private HeaderMatcherSpecification[] licenseMatchers;
 
@@ -99,6 +100,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
      * The set of approved license family names.
      * @deprecated Use {@link #licenseFamilies} instead.
      */
+    @Deprecated
     private LicenseFamilySpecification[] licenseFamilyNames;
 
     /**
@@ -200,7 +202,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
      */
     protected IHeaderMatcher[] getLicenseMatchers() throws MojoFailureException, MojoExecutionException
     {
-        final List list = new ArrayList();
+        final List<IHeaderMatcher> list = new ArrayList<IHeaderMatcher>();
         if ( licenses != null )
         {
             list.addAll( Arrays.asList( licenses ) );
@@ -219,17 +221,24 @@ public abstract class AbstractRatMojo extends AbstractMojo
         {
             list.addAll( Arrays.asList( Defaults.DEFAULT_MATCHERS ) );
         }
-        return (IHeaderMatcher[]) list.toArray( new IHeaderMatcher[list.size()] );
+        return list.toArray( new IHeaderMatcher[list.size()] );
     }
 
     private <T> T newInstance( final Class<T> clazz, final String className )
         throws MojoExecutionException, MojoFailureException
     {
-        final T o;
         try
         {
             final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            o = (T) cl.loadClass( className ).newInstance();
+            @SuppressWarnings("unchecked") // incorrect cast will be caught below
+            final T o = (T) cl.loadClass( className ).newInstance();
+
+            if ( !clazz.isAssignableFrom( o.getClass() ) )
+            {
+                throw new MojoFailureException( "The class " + o.getClass().getName() + " does not implement "
+                                + clazz.getName() );
+            }
+            return o;
         }
         catch ( InstantiationException e )
         {
@@ -248,13 +257,6 @@ public abstract class AbstractRatMojo extends AbstractMojo
         {
             throw new MojoExecutionException( "Class " + className + " not found: " + e.getMessage(), e );
         }
-
-        if ( !clazz.isAssignableFrom( o.getClass() ) )
-        {
-            throw new MojoFailureException( "The class " + o.getClass().getName() + " does not implement "
-                            + clazz.getName() );
-        }
-        return o;
     }
 
     /**
@@ -350,7 +352,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
         add( excludeList, excludes );
         if ( !excludeList.isEmpty() )
         {
-            String[] allExcludes = (String[]) excludeList.toArray( new String[excludeList.size()] );
+            String[] allExcludes = excludeList.toArray( new String[excludeList.size()] );
             ds.setExcludes( allExcludes );
         }
     }
@@ -492,7 +494,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
 
     private ILicenseFamily[] getApprovedLicenseNames() throws MojoExecutionException, MojoFailureException
     {
-        final List list = new ArrayList();
+        final List<ILicenseFamily> list = new ArrayList<ILicenseFamily>();
         if ( licenseFamilies != null )
         {
             list.addAll( Arrays.asList( licenseFamilies ) );
@@ -508,6 +510,6 @@ public abstract class AbstractRatMojo extends AbstractMojo
         {
             return null;
         }
-        return (ILicenseFamily[]) list.toArray( new ILicenseFamily[ list.size() ] );
+        return list.toArray( new ILicenseFamily[ list.size() ] );
     }
 }
