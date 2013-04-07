@@ -57,9 +57,9 @@ public abstract class Walker implements IReportable {
  
     protected final boolean ignored(final File file) {
         boolean result = false;
-        final String name = file.getName();
-        final File dir = file.getParentFile();
         if (filter != null) {
+            final String name = file.getName();
+            final File dir = file.getParentFile();
             result = !filter.accept(dir, name);
         }
         return result;
