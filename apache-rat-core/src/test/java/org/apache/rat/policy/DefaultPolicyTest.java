@@ -48,6 +48,7 @@ public class DefaultPolicyTest {
         assertApproval(true);
     }
 
+    @SuppressWarnings("boxing") // OK in test code
     private void assertApproval(boolean pApproved) {
         assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(subject.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
     }
