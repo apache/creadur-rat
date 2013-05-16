@@ -67,7 +67,7 @@ public class BinaryGuesserTest {
      * because the encoding of the stream was different from the
      * platform's default encoding.
      *
-     * @see RAT-81
+     * @see "RAT-81"
      */
     @Test
     public void binaryWithMalformedInputRAT81() throws Throwable {
