@@ -27,7 +27,7 @@ import org.apache.rat.api.MetaData;
 
 /**
  * JavaDocs are generated and so no license is required.
- * It is useful to not these separately.
+ * It is useful to note these separately.
  */
 public class JavaDocLicenseNotRequired implements IHeaderMatcher {
 
