@@ -358,7 +358,10 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
         }
         catch ( RatCheckException e )
         {
-            // Ok
+            final String msg = e.getMessage();
+            final String REPORTFILE = "rat.txt"; // Default: defaultValue = "${project.build.directory}/rat.txt"
+            assertTrue("report filename was not contained in '" + msg +"'", msg.contains(REPORTFILE));
+            assertFalse("no null allowed in '" + msg +"'", (msg.toUpperCase().indexOf("NULL") > -1));
         }
         checkResult( ratTxtFile, 1, 1 );
     }
@@ -393,22 +396,4 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
         assertTrue(firstLineModified.indexOf("~~") != -1);
     }
 
-    /**
-     * Verify it2 exception message contains report file name (RAT-127).
-     */
-    public void testIt4() throws Exception {
-        final RatCheckMojo mojo = newRatCheckMojo( "it2" );
-        try
-        {
-            mojo.execute();
-            fail( "Expected RatCheckException" );
-        }
-        catch ( RatCheckException e )
-        {
-            final String msg = e.getMessage();
-            final String REPORTFILE = "rat.txt"; // Default: defaultValue = "${project.build.directory}/rat.txt"
-            assertTrue("report filename was not contained in '" + msg +"'", (msg.indexOf(REPORTFILE) > -1));
-            assertFalse("no null allowed in '" + msg +"'", (msg.toUpperCase().indexOf("NULL") > -1));
-        }
-    }
 }
