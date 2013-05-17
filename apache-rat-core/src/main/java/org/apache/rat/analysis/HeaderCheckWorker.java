@@ -78,7 +78,7 @@ class HeaderCheckWorker {
 
     public void read() throws RatHeaderAnalysisException {
         if (!finished) {
-            final StringBuffer headers = new StringBuffer();
+            final StringBuilder headers = new StringBuilder();
             headerLinesToRead = numberOfRetainedHeaderLines;
             try {
                 while(readLine(headers)) {
@@ -104,7 +104,7 @@ class HeaderCheckWorker {
         finished = true;
     }
 
-    boolean readLine(StringBuffer headers) throws IOException, RatHeaderAnalysisException {
+    boolean readLine(StringBuilder headers) throws IOException, RatHeaderAnalysisException {
         String line = reader.readLine();
         boolean result = line != null;
         if (result) {
