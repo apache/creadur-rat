@@ -43,7 +43,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
         return result;
     }
 
-    private void reportOnLicense(Document subject) throws RatHeaderAnalysisException {
+    private void reportOnLicense(Document subject) {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN);
     }
     
