@@ -27,7 +27,7 @@
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <version>0.7-SNAPSHOT</version>
+        <version>@pom.version@</version>
         <configuration>
         </configuration>
       </plugin>
