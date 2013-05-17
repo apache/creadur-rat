@@ -45,12 +45,12 @@ public class FilteringSequenceFactoryTest {
         StringReader reader = new StringReader(INPUT);
         CharSequence result = factory.filter(reader);
         assertNotNull(result);
-        String output = new StringBuffer().append(result).toString();
+        String output = result.toString();
         assertEquals("No filtering so input equals output.", INPUT, output);
         reader = new StringReader(INPUT);
         result = factory.filter(reader);
         assertNotNull(result);
-        output = new StringBuffer().append(result).toString();
+        output = result.toString();
         assertEquals("No filtering so input equals output. Independent of previous input", INPUT, output);
     }
 
@@ -60,7 +60,7 @@ public class FilteringSequenceFactoryTest {
         StringReader reader = new StringReader(INPUT);
         CharSequence result = factory.filter(reader);
         assertNotNull(result);
-        String output = new StringBuffer().append(result).toString();
+        String output = result.toString();
         assertEquals("No filtering so input equals output.", INPUT, output);
         filter.filterOut = true;
         reader = new StringReader(INPUT);
