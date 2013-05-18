@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import java.util.regex.Pattern;
+import java.util.Locale;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
@@ -38,7 +38,8 @@ import org.apache.rat.api.MetaData.Datum;
 public class FullTextMatchingLicense extends BaseLicense
     implements IHeaderMatcher {
 
-    private Pattern fullTextPattern;
+    private String fullText;
+
     private final StringBuilder buffer = new StringBuilder();
 
     public FullTextMatchingLicense() {
@@ -53,17 +54,18 @@ public class FullTextMatchingLicense extends BaseLicense
     }
 
     public final void setFullText(String text) {
-        fullTextPattern = Pattern.compile(".*" + prune(text) + ".*",
-                                          Pattern.CASE_INSENSITIVE);
+        fullText = prune(text).toLowerCase(Locale.ENGLISH);
     }
 
     public final boolean hasFullText() {
-        return fullTextPattern != null;
+        return fullText != null;
     }
 
+    // TODO this is still quite inefficient if the match does not occur near the start of the buffer
+    // see RAT-138
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        buffer.append(prune(line));
-        if (fullTextPattern.matcher(buffer).matches()) {
+        buffer.append(prune(line).toLowerCase(Locale.ENGLISH));
+        if (buffer.toString().contains(fullText)) {
             reportOnLicense(subject);
             return true;
         }
