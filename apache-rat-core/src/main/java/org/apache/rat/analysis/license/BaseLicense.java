@@ -77,4 +77,17 @@ public class BaseLicense {
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, licFamilyCategory));
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, getLicenseFamilyName()));
     }
+
+    protected static final String prune(String text) {
+        final int length = text.length();
+        final StringBuilder buffer = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char at = text.charAt(i);
+            if (Character.isLetterOrDigit(at)) {
+                buffer.append(at);
+            }
+        }
+        return buffer.toString();
+    }
+
 }

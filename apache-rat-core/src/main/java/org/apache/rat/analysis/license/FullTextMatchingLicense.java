@@ -61,18 +61,6 @@ public class FullTextMatchingLicense extends BaseLicense
         return fullTextPattern != null;
     }
 
-    protected final String prune(String text) {
-        final StringBuilder buffer = new StringBuilder(text);
-        final int length = buffer.length();
-        for (int i = length; i > 0;) {
-            char at = buffer.charAt(--i);
-            if (!Character.isLetterOrDigit(at)) {
-                buffer.deleteCharAt(i);
-            }
-        }
-        return buffer.toString();
-    }
-
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         buffer.append(prune(line));
         if (fullTextPattern.matcher(buffer).matches()) {

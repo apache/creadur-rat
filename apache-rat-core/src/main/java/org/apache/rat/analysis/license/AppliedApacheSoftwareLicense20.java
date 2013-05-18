@@ -46,18 +46,6 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 
     protected static final Pattern LICENSE_PATTERN = Pattern.compile(".*" + prune(ASL20_LICENSE_DEFN) + ".*", Pattern.CASE_INSENSITIVE);
 
-    protected static String prune(String text) {
-        StringBuilder buffer = new StringBuilder(text);
-        int length = buffer.length();
-        for (int i = length; i > 0;) {
-            char at = buffer.charAt(--i);
-            if (!Character.isLetterOrDigit(at)) {
-                buffer.deleteCharAt(i);
-            }
-        }
-        return buffer.toString();
-    }
-
     private StringBuilder buffer = new StringBuilder();
 
     public AppliedApacheSoftwareLicense20() {
