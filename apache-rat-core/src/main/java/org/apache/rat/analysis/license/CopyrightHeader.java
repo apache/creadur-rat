@@ -81,7 +81,7 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
         return copyrightMatch;
     }
 
-    protected boolean matchCopyright(String s) throws RatHeaderAnalysisException {
+    protected boolean matchCopyright(String s) {
         if (!copyrightMatch) {
             copyrightMatch = copyrightPattern.matcher(s).matches();
         }
