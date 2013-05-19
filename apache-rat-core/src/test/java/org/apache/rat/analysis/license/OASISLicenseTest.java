@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
@@ -26,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.StringReader;
 
 import static org.junit.Assert.assertFalse;
@@ -91,6 +93,16 @@ public class OASISLicenseTest {
         }
         assertFalse("OASIS license should not be matched", result);
         license.reset();
+    }
+    
+    @Test
+    public void goodFiles() throws Exception {
+        DirectoryScanner.testFilesInDir("oasis/good", license, true);
+    }
+   
+    @Test
+    public void baddFiles() throws Exception {
+        DirectoryScanner.testFilesInDir("oasis/bad", license, false);
     }
    
 }
