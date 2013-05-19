@@ -30,7 +30,7 @@ import org.apache.rat.api.MetaData;
  */
 public class OASISLicense extends FullTextMatchingLicense {
 
-    private static final String COPYRIGHT_PATTERN_DEFN = ".*Copyright.*OASIS Open.*";
+    private static final String COPYRIGHT_PATTERN_DEFN = ".*Copyright\\s.*OASIS Open.*";
     private static final String CLAUSE_DEFN
     = "This document and translations of it may be copied and furnished to others and derivative works" +
             "that comment on or otherwise explain it or assist in its implementation may be prepared" +
