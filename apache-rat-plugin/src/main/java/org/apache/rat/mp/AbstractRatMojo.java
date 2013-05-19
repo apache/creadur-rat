@@ -398,7 +398,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
         else
         {
             getLog().debug("rat.useDefaultExcludes set to false. " +
-            		"Plexus default exclusions will not be added");
+                    "Plexus default exclusions will not be added");
         }
     }
 
@@ -411,7 +411,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
         else
         {
             getLog().debug("rat.useMavenDefaultExcludes set to false. " +
-            		"Exclusions often needed by Maven projects will not be added.");
+                    "Exclusions often needed by Maven projects will not be added.");
         }
     }
 
@@ -419,7 +419,7 @@ public abstract class AbstractRatMojo extends AbstractMojo
         if ( useEclipseDefaultExcludes )
         {
             getLog().debug("Adding exclusions often needed by projects " +
-            		"developed in Eclipse...");
+                    "developed in Eclipse...");
             add( excludeList1, ECLIPSE_DEFAULT_EXCLUDES );
         }
         else
