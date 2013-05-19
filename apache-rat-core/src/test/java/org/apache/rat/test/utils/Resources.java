@@ -20,6 +20,7 @@ package org.apache.rat.test.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,7 +62,10 @@ public class Resources {
         if (!f.isDirectory()) {
             throw new FileNotFoundException("Unable to locate resource directory: " + f);
         }
-        return f.listFiles();
+        return f.listFiles(new FileFilter(){
+            public boolean accept(File pathname) {
+                return pathname.isFile();
+            }});
     }
 
     /**
