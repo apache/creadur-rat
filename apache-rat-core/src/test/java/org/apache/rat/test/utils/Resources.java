@@ -54,6 +54,17 @@ public class Resources {
     }
 
     /**
+     * Locates a set of resource files in the class path.
+     */
+    public static File[] getResourceFiles(String pResource) throws IOException {
+        final File f = new File("src/test/resources", pResource);
+        if (!f.isDirectory()) {
+            throw new FileNotFoundException("Unable to locate resource directory: " + f);
+        }
+        return f.listFiles();
+    }
+
+    /**
      * Locates a resource file in the class path and returns an {@link InputStream}.
      */
     public static InputStream getResourceStream(String pResource) throws IOException {
@@ -72,6 +83,13 @@ public class Resources {
      */
     public static BufferedReader getBufferedResourceReader(String pResource) throws IOException {
         return new BufferedReader(getResourceReader(pResource));
+    }
+
+    /**
+     * Locates a resource file in the class path and returns a {@link BufferedReader}.
+     */
+    public static BufferedReader getBufferedReader(File file) throws IOException {
+        return new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
     }
 
     /**
