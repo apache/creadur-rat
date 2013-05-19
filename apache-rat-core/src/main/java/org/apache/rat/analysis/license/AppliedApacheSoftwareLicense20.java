@@ -18,8 +18,6 @@
  */
 package org.apache.rat.analysis.license;
 
-import java.util.regex.Pattern;
-
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -44,12 +42,11 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
             + "See the License for the specific language governing permissions and\n"
             + "limitations under the License.\n";
 
-    protected static final Pattern LICENSE_PATTERN = Pattern.compile(".*" + prune(ASL20_LICENSE_DEFN) + ".*", Pattern.CASE_INSENSITIVE);
-
-    private StringBuilder buffer = new StringBuilder();
+    private final FullTextMatchingLicense textMatcher;
 
     public AppliedApacheSoftwareLicense20() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,"");
+        textMatcher = new FullTextMatchingLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,"",ASL20_LICENSE_DEFN);
     }
 
     public AppliedApacheSoftwareLicense20(String copyrightOwner) {
@@ -61,12 +58,7 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
     public boolean match(Document subject, String s) throws RatHeaderAnalysisException {
         boolean result = false;
         if (isCopyrightMatch()) {
-            buffer.append(prune(s));
-            if (LICENSE_PATTERN.matcher(buffer).matches()) {
-                reportOnLicense(subject);
-                return true;
-            }
-            return false;
+            return textMatcher.match(subject, s); // will report the match if it has occurred
         }
         else {
             matchCopyright(s);
@@ -77,6 +69,6 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
     @Override
     public void reset() {
         super.reset();
-        buffer.setLength(0);
+        textMatcher.reset();
     }
 }

@@ -89,4 +89,14 @@ public class AppliedApacheSoftwareLicense20Test {
         assertFalse("Applied ASL2.0 license should not be matched", result);
         license.reset();
     }
+    @Test(timeout=2000) // may need to be adjusted if many more files are added
+    public void goodFiles() throws Exception {
+        DirectoryScanner.testFilesInDir("appliedASL20/good", license, true);
+    }
+   
+    @Test(timeout=2000) // may need to be adjusted if many more files are added
+    public void baddFiles() throws Exception {
+        DirectoryScanner.testFilesInDir("appliedASL20/bad", license, false);
+    }
+   
 }
