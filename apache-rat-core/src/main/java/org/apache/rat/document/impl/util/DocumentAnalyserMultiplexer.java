@@ -32,9 +32,8 @@ public class DocumentAnalyserMultiplexer implements IDocumentAnalyser {
     }
 
     public void analyse(Document document) throws RatDocumentAnalysisException {
-        final int length = analysers.length;
-        for (int i=0;i<length;i++) {
-            analysers[i].analyse(document);
+        for (IDocumentAnalyser analyser : analysers) {
+            analyser.analyse(document);
         }
     }
 
