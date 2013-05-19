@@ -64,7 +64,8 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
         setCopyrightOwner(copyrightOwner);
     }
 
-    public void setCopyrightOwner(String copyrightOwner) {
+    // Called by ctor, so must not be overridden
+    public final void setCopyrightOwner(String copyrightOwner) {
         this.copyrightOwner = copyrightOwner;
         this.copyrightPattern = Pattern.compile(COPYRIGHT_PREFIX_PATTERN_DEFN+copyrightOwner+".*", Pattern.CASE_INSENSITIVE);
     }
