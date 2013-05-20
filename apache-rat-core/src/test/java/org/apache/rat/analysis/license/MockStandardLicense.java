@@ -18,15 +18,12 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.rat.api.MetaData;
 
 
 public class MockStandardLicense extends BaseLicense {
 
-    public List visitors = new ArrayList();
+//    public List visitors = new ArrayList();
     
     public MockStandardLicense() {
         super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, ""), 
