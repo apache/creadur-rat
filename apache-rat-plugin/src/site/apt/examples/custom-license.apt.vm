@@ -69,11 +69,11 @@ Custom License Matchers
 
 *-----------------------+-----------+
 | licenseFamilyCategory | The license family category is a very short string (exactly 5 characters, preferrably no blanks),
-|                       | which identifies the license. For example, this could be <<<ASL20>>> to identify the Apache
-|                       | Software License, 2.0.
+|                       | which identifies the license. For example, this could be <<<AL20>>> to identify the
+|                       |  Apache License, 2.0.
 *-----------------------+-----------+
 | licenseFamilyName     | The license family name is a longer string, which gives the licenses full name. For example,
-|                       | this could be <<<Apache Software License, 2.0>>>.
+|                       | this could be <<<Apache License, 2.0>>>.
 *-----------------------+-----------+
 | notes                 | You might specify additional notes here, like "Dual licensed GPL/MPL".
 *-----------------------+-----------+
