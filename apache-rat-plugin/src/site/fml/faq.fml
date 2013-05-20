@@ -48,7 +48,7 @@
       <answer>
         <p>Because it makes running Rat trivial. Basically, you just
           add the plugin to the <code>build/plugins</code> section
-          of your POM and run <code>mvn rat:check</code>. Using Rat
+          of your POM and run <code>mvn apache-rat:check</code>. Using Rat
           cannot be simpler.
         </p>
       </answer>
