@@ -22,7 +22,7 @@ import java.io.File;
 
 
 /**
- * Add an Apache Software Licence V2 licence header to a 
+ * Add an Apache Licence V2 licence header to a 
  * document. This appender does not check for the
  * existence of an existing licence header, it is assumed that either a second
  * licence header is intentional or that there is no licence header present

@@ -21,7 +21,7 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.api.MetaData;
 
 /**
- * Matches Apache Software License, Version 2.0
+ * Matches Apache License, Version 2.0
  *
  */
 public final class ApacheSoftwareLicense20 extends SimplePatternBasedLicense {
