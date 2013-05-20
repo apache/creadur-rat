@@ -93,7 +93,6 @@ public class Report {
             else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
                 String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
                 if (excludeFileName != null) {
-                    @SuppressWarnings("unchecked") // method generates list of Strings, but is not yet generic
                     List<String> excludes = FileUtils.readLines(new File(excludeFileName));
                     final OrFileFilter orFilter = new OrFileFilter();
                     for (String exclude : excludes) {
