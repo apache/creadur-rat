@@ -99,7 +99,7 @@
                           file="${report.file}.xml"/>
   </target>
 
-  <target name="xtestWithASLUnknown">
+  <target name="xtestWithALUnknown">
     <rat:report addDefaultLicenseMatchers="false">
       <file file="${ant.file}"/>
       <rat:w3c/>
@@ -108,7 +108,7 @@
     <au:assertLogContains text="!????? ${file.name}"/>
   </target>
 
-  <target name="testWithASLUnknownSentToFile" depends="fileReportTest">
+  <target name="testWithALUnknownSentToFile" depends="fileReportTest">
     <rat:report addDefaultLicenseMatchers="false" reportFile="${report.file}">
       <file file="${ant.file}"/>
       <rat:w3c/>

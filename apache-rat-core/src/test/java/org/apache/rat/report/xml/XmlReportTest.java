@@ -94,7 +94,7 @@ public class XmlReportTest {
                     "<resource name='" + elementsPath + "/Source.java'><header-sample>package elements;\n" +
 "\n" +
 "/*\n" +
-" * This file does intentionally *NOT* contain an ASL license header,\n" +
+" * This file does intentionally *NOT* contain an AL license header,\n" +
 " * because it is used in the test suite.\n" +
 " */\n" +
 "public class Source {\n" +

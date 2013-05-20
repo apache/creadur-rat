@@ -70,7 +70,7 @@ public class AppliedApacheSoftwareLicense20Test {
             result = license.match(subject, line);
             line = in.readLine();
         }
-        assertTrue("Applied ASL2.0 license should be matched", result);
+        assertTrue("Applied AL2.0 license should be matched", result);
         license.reset();
         result = license.match(subject, "New line");
         assertFalse("After reset, content should build up again", result);
@@ -86,17 +86,17 @@ public class AppliedApacheSoftwareLicense20Test {
             result = license.match(subject, line);
             line = in.readLine();
         }
-        assertFalse("Applied ASL2.0 license should not be matched", result);
+        assertFalse("Applied AL2.0 license should not be matched", result);
         license.reset();
     }
     @Test(timeout=2000) // may need to be adjusted if many more files are added
     public void goodFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("appliedASL20/good", license, true);
+        DirectoryScanner.testFilesInDir("appliedAL20/good", license, true);
     }
    
     @Test(timeout=2000) // may need to be adjusted if many more files are added
     public void baddFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("appliedASL20/bad", license, false);
+        DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
     }
    
 }

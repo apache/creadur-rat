@@ -42,7 +42,7 @@ public class DefaultPolicyTest {
     }
 
     @Test
-    public void testASLFamily() throws Exception {
+    public void testALFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0);
         policy.analyse(subject);
         assertApproval(true);

@@ -310,16 +310,16 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
      * Reads the created report file and verifies, whether the detected numbers
      * are matching.
      * @param pRatTxtFile The file to read.
-     * @param pNumAslFiles The number of files with ASL.
+     * @param pNumALFiles The number of files with AL.
      * @param pNumNoLicenseFiles The number of files without license.
      * @throws IOException An error occurred while reading the file.
      */
-    private void checkResult( File pRatTxtFile, int pNumAslFiles, int pNumNoLicenseFiles )
+    private void checkResult( File pRatTxtFile, int pNumALFiles, int pNumNoLicenseFiles )
             throws IOException
     {
         assertTrue( pRatTxtFile.exists() );
         BufferedReader reader = new BufferedReader( new FileReader( pRatTxtFile ) );
-        Integer numAslFiles = null;
+        Integer numALFiles = null;
         Integer numNoLicenseFiles = null;
         for (;;)
         {
@@ -331,7 +331,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
             int offset = line.indexOf( "Apache Licensed: " );
             if ( offset >= 0 )
             {
-                numAslFiles = new Integer( line.substring( offset + "Apache Licensed: ".length() ).trim() );
+                numALFiles = new Integer( line.substring( offset + "Apache Licensed: ".length() ).trim() );
             }
             offset = line.indexOf( "Unknown Licenses" );
             if ( offset >= 0 )
@@ -340,7 +340,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
             }
         }
         reader.close();
-        assertEquals( new Integer( pNumAslFiles), numAslFiles );
+        assertEquals( new Integer( pNumALFiles), numALFiles );
         assertEquals( new Integer( pNumNoLicenseFiles ), numNoLicenseFiles );
     }
 

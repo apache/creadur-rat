@@ -54,8 +54,8 @@ public class ReportTest extends AbstractRatAntTaskTest {
         assertFileMatches(reportFile, alLine);
     }
 
-    public void testWithASLUnknown() throws Exception {
-        executeTarget("testWithASLUnknown");
+    public void testWithALUnknown() throws Exception {
+        executeTarget("testWithALUnknown");
         assertLogDoesntMatch("AL +\\Q" + getAntFileName() + "\\E");
         assertLogMatches("\\!\\?\\?\\?\\?\\? +\\Q" + getAntFileName() + "\\E");
     }

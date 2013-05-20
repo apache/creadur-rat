@@ -54,7 +54,7 @@
     </rat:report>
   </target>
 
-  <target name="testWithASLUnknown">
+  <target name="testWithALUnknown">
     <rat:report addDefaultLicenseMatchers="false">
       <file file="${ant.file}"/>
       <rat:w3c/>

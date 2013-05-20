@@ -30,7 +30,7 @@ Rat 0.9
      * [RAT-108] - Add native support for thrift generated code to be
                    ignored
      * [RAT-111] - RAT does not ignore javah generated files
-     * [RAT-125] - Support applied ASL20 license headers, including
+     * [RAT-125] - Support applied AL20 license headers, including
                    checking for required copyright header line
    * New Features
      * [RAT-78]  - Support doxia 1.1.2
