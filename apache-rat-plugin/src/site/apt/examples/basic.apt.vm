@@ -23,7 +23,7 @@ Basic use
   However, it doesn't run automatically, but on demand:
 
 ------------------------------------------------------------------
-  mvn rat:check
+  mvn apache-rat:check
 ------------------------------------------------------------------
 
   To achieve that, a section like the following needs to be

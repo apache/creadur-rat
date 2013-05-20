@@ -21,7 +21,7 @@ Usage
 
   To use the plugin, you've got two options: First of all, it can
   create a simple text file, called <<<target/rat.txt>>>, with the
-  plugins output. This is done by invoking the <<<rat:check>>> goal.
+  plugins output. This is done by invoking the <<<apache-rat:check>>> goal.
 
   You may also add a report to the generated site. This is your
   second option.
@@ -29,7 +29,7 @@ Usage
 *Writing the report to a text file
 
   To create a text file with the report, you need to run the
-  <<<rat:check>>> goal. Add a section like the following to your POM:
+  <<<apache-rat:check>>> goal. Add a section like the following to your POM:
 
 ------------------------------------------------------------------
   <build>
@@ -49,7 +49,7 @@ Usage
   line by simply typing
 
 ------------------------------------------------------------------
-  mvn rat:check
+  mvn apache-rat:check
 ------------------------------------------------------------------
 
   An example for running the plugin automatically can be found
