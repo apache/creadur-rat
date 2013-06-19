@@ -60,7 +60,7 @@ limitations under the License.
 
         <p>
           The <a
-          href="http://www.apache.org/dist/incubator/rat/KEYS">KEYS</a>
+          href="http://www.apache.org/dist/creadur/apache-rat-0.9/KEYS">KEYS</a>
           link links to the code signing keys used to sign the
           product.  The <code>PGP</code> link downloads the OpenPGP
           compatible signature from our main site.  The
@@ -73,44 +73,44 @@ limitations under the License.
       <subsection name="Binaries">
         <table>
           <tr>
-              <td><a href="[preferred]/incubator/rat/binaries/apache-rat-incubating-0.8-bin.tar.bz2">apache-rat-incubating-0.8-bin.tar.bz2</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.tar.bz2.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.tar.bz2.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.tar.bz2.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.bz2">apache-rat-0.9-bin.tar.bz2</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.bz2.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.bz2.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.bz2.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/incubator/rat/binaries/apache-rat-incubating-0.8-bin.tar.gz">apache-rat-incubating-0.8-bin.tar.gz</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.tar.gz.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.tar.gz.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.tar.gz.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.gz">apache-rat-0.9-bin.tar.gz</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.gz.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.gz.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/incubator/rat/binaries/apache-rat-incubating-0.8-bin.zip">apache-rat-incubating-0.8-bin.zip</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.zip.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.zip.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/binaries/apache-rat-incubating-0.8-bin.zip.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-bin.zip">apache-rat-0.9-bin.zip</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.zip.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.zip.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.zip.asc">pgp</a></td>
           </tr>
         </table>
       </subsection>
       <subsection name="Source">
         <table>
           <tr>
-              <td><a href="[preferred]/incubator/rat/sources/apache-rat-incubating-0.8-src.tar.bz2">apache-rat-incubating-0.8-src.tar.bz2</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.tar.bz2.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.tar.bz2.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.tar.bz2.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.bz2">apache-rat-0.9-src.tar.bz2</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.bz2.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.bz2.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.bz2.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/incubator/rat/sources/apache-rat-incubating-0.8-src.tar.gz">apache-rat-incubating-0.8-src.tar.gz</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.tar.gz.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.tar.gz.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.tar.gz.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.gz">apache-rat-0.9-src.tar.gz</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.gz.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.gz.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/incubator/rat/sources/apache-rat-incubating-0.8-src.zip">apache-rat-incubating-0.8-src.zip</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.zip.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.zip.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/incubator/rat/sources/apache-rat-incubating-0.8-src.zip.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-src.zip">apache-rat-0.9-src.zip</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.zip.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.zip.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.zip.asc">pgp</a></td>
           </tr>
         </table>
       </subsection>
@@ -120,8 +120,8 @@ limitations under the License.
           Older releases can be obtained from the archives.
         </p>
         <ul>
-          <li class="download"><a href="[preferred]/incubator/rat/">browse download area</a></li>
-          <li><a href="http://archive.apache.org/dist/incubator/rat/">archives...</a></li>
+          <li class="download"><a href="[preferred]/creadur/apache-rat-0.9/">browse download area</a></li>
+          <li><a href="http://archive.apache.org/dist/creadur/apache-rat-0.9/">archives...</a></li>
         </ul>
     </section>
   </body>
