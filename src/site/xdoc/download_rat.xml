@@ -121,7 +121,8 @@ limitations under the License.
         </p>
         <ul>
           <li class="download"><a href="[preferred]/creadur/apache-rat-0.9/">browse download area</a></li>
-          <li><a href="http://archive.apache.org/dist/creadur/apache-rat-0.9/">archives...</a></li>
+          <li><a href="http://archive.apache.org/dist/creadur/">archives...</a></li>
+          <li><a href="http://archive.apache.org/dist/incubator/rat/">Incubator archives...</a></li>
         </ul>
     </section>
   </body>
