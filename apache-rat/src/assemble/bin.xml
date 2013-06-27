@@ -38,7 +38,6 @@
         <include>NOTICE</include>
         <include>NOTICE.*</include>
         <include>RELEASE_NOTES.txt</include>
-        <include>DISCLAIMER.txt</include>
       </includes>
     </fileSet>
     <fileSet>
