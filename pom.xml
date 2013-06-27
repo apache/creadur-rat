@@ -24,8 +24,8 @@
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
-  <packaging>pom</packaging>
   <version>0.10-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>Apache Rat</name>
   <url>http://creadur.apache.org/rat/</url>
   <description>
