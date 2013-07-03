@@ -150,7 +150,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
             <configuration>
-              <descriptorSourceDirectory>${basedir}/src/assemble/</descriptorSourceDirectory>
+              <descriptorSourceDirectory>${basedir}/src/main/assembly/</descriptorSourceDirectory>
               <tarLongFileMode>gnu</tarLongFileMode>
             </configuration>
             <executions>
