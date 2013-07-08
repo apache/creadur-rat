@@ -484,6 +484,29 @@ agnostic home for software distribution comprehension and audit tools.
 
   <profiles>
     <profile>
+       <id>apache-release</id>
+      <build>
+        <plugins>
+          <!-- Skip the source-release artifact here; we create it under the CLI module -->
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>source-release-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <skipAssembly>true</skipAssembly>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>rat</id>
       <build>
         <plugins>
