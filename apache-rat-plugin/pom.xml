@@ -53,7 +53,6 @@
         <directory>..</directory>
         <targetPath>META-INF</targetPath>
         <includes>
-          <include>DISCLAIMER.txt</include>
           <include>RELEASE_NOTES.txt</include>
         </includes>
       </resource>
