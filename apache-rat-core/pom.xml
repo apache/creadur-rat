@@ -96,6 +96,13 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
+      <exclusions>
+        <!-- Not actually used (yet) so no point including it -->
+        <exclusion>
+          <groupId>org.tukaani</groupId>
+          <artifactId>xz</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
