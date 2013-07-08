@@ -24,7 +24,7 @@
   </parent>
   <artifactId>apache-rat-core</artifactId>
   <packaging>jar</packaging>
-  <name>Rat::Core</name>
+  <name>Apache Creadur Rat::Core</name>
   <description>The core functionality, shared by the Ant tasks,
     and the Maven plugin.</description>
 

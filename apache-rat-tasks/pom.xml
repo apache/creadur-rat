@@ -24,7 +24,7 @@
   </parent>
   <artifactId>apache-rat-tasks</artifactId>
   <packaging>jar</packaging>
-  <name>Rat::Tasks4Ant</name>
+  <name>Apache Creadur Rat::Tasks4Ant</name>
   <description>
  A plugin for Apache Ant that runs Apache Rat
    to audit the source to be distributed.
