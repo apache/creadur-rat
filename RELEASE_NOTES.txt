@@ -1,3 +1,18 @@
+Rat 0.10
+========
+The main change is RAT-138 - Rat 0.9 could run much slower than 0.8 on some input.
+
+ * Simpler binary archive
+ * Issues resolved (see http://issues.apache.org/jira):
+   * Bugs fixed:
+     * [RAT-137] Website shows incorrect Maven goals in some pages
+     * [RAT-128] Use the proper name for the Apache License
+     * [RAT-138] RAT runs very slowly on some input
+     * [RAT-140] OASISLicense allows invalid Copyright line
+     * [RAT-139] FullTextMatchingLicense.prune uses inefficient deleteAtChar
+ * Updated dependencies and plugins
+ * Fixed up generics and annotations
+
 Rat 0.9
 =======
  * Improved documentation
