@@ -111,7 +111,8 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>3.1</version>
+        <!-- Later versions use different package name / Maven coords -->
+        <version>2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
