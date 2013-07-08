@@ -20,7 +20,7 @@
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
   <id>bin</id>
   <!-- 
-  Generates a jar file including the binary jar and the runtime dependencies.
+  Generates archive files including the binary CLI jar (which also supports Ant)
   including NOTICE and LICENSE in the root.
   -->
   <formats>
@@ -29,64 +29,29 @@
     <format>tar.bz2</format>
   </formats>
   <fileSets>
+    <!-- The project documentation files -->
     <fileSet>
       <directory>${project.basedir}/..</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>LICENSE</include>
-        <include>LICENSE.*</include>
         <include>NOTICE</include>
-        <include>NOTICE.*</include>
         <include>RELEASE_NOTES.txt</include>
       </includes>
     </fileSet>
     <fileSet>
-      <directory>${project.basedir}/../apache-rat-core/target</directory>
-      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
       <includes>
-        <include>apache-rat*.jar</include>
+        <include>README.txt</include>
       </includes>
     </fileSet>
-    <fileSet>
-      <directory>${project.basedir}/../apache-rat-plugin/target</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>apache-rat*.jar</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>${project.basedir}/../apache-rat-tasks/target</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>apache-rat*.jar</include>
-      </includes>
-      <excludes>
-        <exclude>apache-rat-*-source.jar</exclude>
-      </excludes>
-    </fileSet>
+    <!-- The combined CLI jar we built earlier -->
     <fileSet>
       <directory>target</directory>
       <outputDirectory>/</outputDirectory>      
       <includes>
-        <include>apache-rat*.jar</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>../src/python</directory>
-      <outputDirectory>/</outputDirectory>      
-      <includes>
-        <include>*.py</include>
+        <include>apache-rat-${project.version}.jar</include>
       </includes>
     </fileSet>
   </fileSets>
-  <dependencySets>
-    <dependencySet>
-      <outputDirectory>/lib/</outputDirectory>
-      <useProjectArtifact>false</useProjectArtifact>
-      <scope>runtime</scope>
-      <excludes>
-        <exclude>apache-rat*</exclude>
-      </excludes>
-    </dependencySet>
-  </dependencySets>
 </assembly>
