@@ -34,7 +34,6 @@
       <outputDirectory></outputDirectory>
       <excludes>
         <exclude>**/target/**</exclude>
-        <exclude>.*</exclude>
         <exclude>.*/**</exclude>
         <exclude>**.bak</exclude>
         <exclude>*.jar</exclude>
