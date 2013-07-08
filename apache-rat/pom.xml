@@ -61,6 +61,8 @@
         <artifactId>maven-source-plugin</artifactId>
         <configuration>
           <attach>false</attach>
+          <!-- We don't need a source jar of this module -->
+          <skipSource>true</skipSource>
         </configuration>
       </plugin>
       <plugin>
