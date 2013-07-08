@@ -46,9 +46,6 @@
   <build>
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <resource>
         <directory>..</directory>
         <targetPath>META-INF</targetPath>
         <includes>
@@ -79,7 +76,7 @@
               <includeScope>runtime</includeScope>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
               <overWriteIfNewer>false</overWriteIfNewer>
-              <excludes>META-INF/LICENSE,META-INF/NOTICE,META-INF/LICENSE.*,META-INF/NOTICE.*</excludes>
+              <excludes>META-INF/**</excludes>
             </configuration>
           </execution>
         </executions>
