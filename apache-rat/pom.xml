@@ -24,7 +24,7 @@
   </parent>
   <artifactId>apache-rat</artifactId>
   <packaging>jar</packaging>
-  <name>Rat::Command Line</name>
+  <name>Apache Creadur Rat::Command Line</name>
   <description>
     This library provides upwards compatibility for projects,
     which are based on Apache Rat versions up to 0.5: Basically, it
