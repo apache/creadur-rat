@@ -43,7 +43,7 @@ Apache Rat
 
  Rat arises from the Apache style, but is used more widely.
  If your release style isn't supported,
- {{{http://creadur.apache.org/rat/mail-lists.html}talk to us}}.
+ {{{./mail-lists.html}talk to us}}.
 
 ** How Do I Use Rat?
 
@@ -56,12 +56,12 @@ Apache Rat
    * the command line.
 
  Rat is extensible. If your build tool isn't supported, please contribute a
- {{{http://creadur.apache.org/rat/issue-tracking.html}patch}} or
- {{{http://creadur.apache.org/rat/mail-lists.html}talk to us}}.
+ {{{./issue-tracking.html}patch}} or
+ {{{./mail-lists.html}talk to us}}.
 
  Rat aspires to be self documenting. Please contribute a
- {{{http://creadur.apache.org/rat/issue-tracking.html}patch}} or
- {{{http://creadur.apache.org/rat/mail-lists.html}talk to us}}
+ {{{./issue-tracking.html}patch}} or
+ {{{./mail-lists.html}talk to us}}
  whenever Rat falls short.
 
 ** Who Develops Rat?
@@ -73,11 +73,11 @@ Apache Rat
   {{{http://www.apache.org/foundation/how-it-works.html} Apache way}}.
 
   Please feel free to contribute a
-  {{{http://creadur.apache.org/rat/issue-tracking.html}patch}},
+  {{{./issue-tracking.html}patch}},
   {{{http://c2.com/cgi/wiki?TestDrivenDevelopment}demonstrate}} an
-  {{{http://creadur.apache.org/rat/issue-tracking.html}bug}}, or
+  {{{./issue-tracking.html}bug}}, or
   just
-  {{{http://creadur.apache.org/rat/mail-lists.html}talk to us}}.
+  {{{./mail-lists.html}talk to us}}.
   All welcome :-)
 
 * Quick Start: Running Rat
