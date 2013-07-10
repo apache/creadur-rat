@@ -42,7 +42,7 @@
     <fileSet>
       <filtered>true</filtered>
       <includes>
-        <include>README.txt</include>
+        <include>README*.txt</include>
       </includes>
     </fileSet>
     <!-- The combined CLI jar we built earlier -->
