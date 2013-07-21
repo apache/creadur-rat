@@ -39,7 +39,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
  * Run Rat to perform a violation check.
  *
  */
-@Mojo (name = "check", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo (name = "check", defaultPhase = LifecyclePhase.VALIDATE)
 public class RatCheckMojo extends AbstractRatMojo
 {
     /**

@@ -10,6 +10,7 @@ The main change is RAT-138 - Rat 0.9 could run much slower than 0.8 on some inpu
      * [RAT-138] RAT runs very slowly on some input
      * [RAT-140] OASISLicense allows invalid Copyright line
      * [RAT-139] FullTextMatchingLicense.prune uses inefficient deleteAtChar
+     * [RAT-145] Maven plugin should not run in the "verify" phase, but in the "validate" phase
    * Improvements:
      * [RAT-129] Add support for CDDL 1.0 
  * Updated dependencies and plugins
