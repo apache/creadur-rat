@@ -35,6 +35,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MIT,
+        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1,
     };
     
     private static final String[] toNames(final ILicenseFamily[] approvedLicenses) {

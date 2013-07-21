@@ -34,6 +34,7 @@ import org.apache.rat.analysis.license.W3CLicense;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 
 import java.io.InputStream;
+import org.apache.rat.analysis.license.CDDL1License;
 
 
 
@@ -60,7 +61,8 @@ public class Defaults {
             new JavaDocLicenseNotRequired(), 
             new GeneratedLicenseNotRequired(),
             new DojoLicenseHeader(),
-            new TMF854LicenseHeader()
+            new TMF854LicenseHeader(),
+            new CDDL1License(),
     };
     
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
