@@ -101,7 +101,7 @@
     <menu ref="modules"/>
     <menu ref="reports"/>
 
-    <footer>Copyright &#169; 2012 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
+    <footer>Copyright &#169; 2013 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
       Apache Creadur, Creadur, Apache Rat, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks
       of The Apache Software Foundation.
       Oracle and Java are registered trademarks of Oracle and/or its affiliates.
