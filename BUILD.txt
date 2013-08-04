@@ -12,3 +12,7 @@ Normal development without running tests:
 Normal development, eating dog food:
 
     mvn clean verify -Prat
+
+Build apache release
+
+    mvn clean install -Papache-release
