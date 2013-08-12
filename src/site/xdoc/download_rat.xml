@@ -60,7 +60,7 @@ limitations under the License.
 
         <p>
           The <a
-          href="http://www.apache.org/dist/creadur/apache-rat-0.9/KEYS">KEYS</a>
+          href="http://www.apache.org/dist/creadur/KEYS">KEYS</a>
           link links to the code signing keys used to sign the
           product.  The <code>PGP</code> link downloads the OpenPGP
           compatible signature from our main site.  The
