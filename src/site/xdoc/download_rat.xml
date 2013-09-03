@@ -25,7 +25,7 @@ limitations under the License.
         <p>
           We recommend you use a mirror to download our release
           builds, but you <strong>must</strong> verify the integrity of
-          the downloaded files using signatures downloaded from our main 
+          the downloaded files using signatures downloaded from our main
           distribution directories. Recent releases (48 hours) may not yet
           be available from the mirrors.
         </p>
@@ -42,7 +42,7 @@ limitations under the License.
 
         <form action="[location]" method="get" id="SelectMirror">
           <p>
-            Other mirrors: 
+            Other mirrors:
             <select name="Preferred">
               [if-any http]
               [for http]<option value="[http]">[http]</option>[end]
@@ -69,48 +69,48 @@ limitations under the License.
         </p>
       </subsection>
     </section>
-    <section name="Apache Rat 0.9">
+    <section name="Apache Rat 0.10">
       <subsection name="Binaries">
         <table>
           <tr>
-              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.bz2">apache-rat-0.9-bin.tar.bz2</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.bz2.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.bz2.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.bz2.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.10/apache-rat-0.10-bin.tar.bz2">apache-rat-0.10-bin.tar.bz2</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.tar.bz2.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.tar.bz2.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.tar.bz2.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.gz">apache-rat-0.9-bin.tar.gz</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.gz.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.gz.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.tar.gz.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.10/apache-rat-0.10-bin.tar.gz">apache-rat-0.10-bin.tar.gz</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.tar.gz.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.tar.gz.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-bin.zip">apache-rat-0.9-bin.zip</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.zip.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.zip.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-bin.zip.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.10/apache-rat-0.10-bin.zip">apache-rat-0.10-bin.zip</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.zip.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.zip.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-bin.zip.asc">pgp</a></td>
           </tr>
         </table>
       </subsection>
       <subsection name="Source">
         <table>
           <tr>
-              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.bz2">apache-rat-0.9-src.tar.bz2</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.bz2.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.bz2.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.bz2.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.10/apache-rat-0.10-src.tar.bz2">apache-rat-0.10-src.tar.bz2</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.tar.bz2.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.tar.bz2.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.tar.bz2.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.gz">apache-rat-0.9-src.tar.gz</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.gz.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.gz.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.tar.gz.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.10/apache-rat-0.10-src.tar.gz">apache-rat-0.10-src.tar.gz</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.tar.gz.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.tar.gz.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/creadur/apache-rat-0.9/apache-rat-0.9-src.zip">apache-rat-0.9-src.zip</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.zip.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.zip.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.9/apache-rat-0.9-src.zip.asc">pgp</a></td>
+              <td><a href="[preferred]/creadur/apache-rat-0.10/apache-rat-0.10-src.zip">apache-rat-0.10-src.zip</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.zip.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.zip.sha1">sha1</a></td>
+              <td><a href="http://www.apache.org/dist/creadur/apache-rat-0.10/apache-rat-0.10-src.zip.asc">pgp</a></td>
           </tr>
         </table>
       </subsection>
