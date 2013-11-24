@@ -1,3 +1,7 @@
+GSoc Merge Branch
+=================
+Merging in code quality improvements from GSOC 2013 project
+
 Rat 0.10
 ========
 The main change is RAT-138 - Rat 0.9 could run much slower than 0.8 on some input.
