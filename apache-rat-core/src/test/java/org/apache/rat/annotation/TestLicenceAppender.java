@@ -33,6 +33,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class TestLicenceAppender {
+    private static final String FIRST_LICENSE_LINE  = " Licensed to the Apache Software Foundation (ASF) under one";
+
     /** Used to ensure that temporary files have unq */
     private Random random = new Random();
 
@@ -112,6 +114,28 @@ public class TestLicenceAppender {
         };
     }
 
+    private static NewFileReader checkLines(final String firstLine,
+                                            final String secondLine,
+                                            final String thirdLine) {
+        return new NewFileReader() {
+            public void readFile(BufferedReader r) throws IOException {
+                String line = r.readLine();
+                assertEquals("First line is incorrect",
+                             firstLine, line);
+                if (secondLine != null) {
+                    line = r.readLine();
+                    assertEquals("Second line is incorrect",
+                                 secondLine, line);
+                }
+                if (thirdLine != null) {
+                    line = r.readLine();
+                    assertEquals("Third line is incorrect",
+                                 thirdLine, line);
+                }
+            }
+        };
+    }
+
     @Test
     public void addLicenceToUnknownFile() throws IOException {
         String filename = qualify("tmp" + random.nextLong()
@@ -144,7 +168,8 @@ public class TestLicenceAppender {
     public void addLicenceToJava() throws IOException {
         String filename = "tmp.java";
         final String firstLine = "package foo;";
-        String secondLine = "/*";
+        final String secondLine = "";
+        final String thirdLine = "/*";
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
                     throws IOException {
@@ -154,7 +179,7 @@ public class TestLicenceAppender {
                     writer.write("}\n");
                 }
             },
-            checkLines(firstLine, secondLine));
+            checkLines(firstLine, secondLine, thirdLine));
     }
 
     @Test
@@ -175,7 +200,8 @@ public class TestLicenceAppender {
     public void addLicenceToXML() throws IOException {
         String filename = "tmp.xml";
         final String firstLine = "<?xml version='1.0'?>";
-        final String secondLine = "<!--";
+        final String secondLine = "";
+        final String thirdLine = "<!--";
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -186,7 +212,7 @@ public class TestLicenceAppender {
                     writer.write("</xml>\n");
                 }
             },
-            checkLines(firstLine, secondLine));
+            checkLines(firstLine, secondLine, thirdLine));
     }
 
     @Test
@@ -256,7 +282,7 @@ public class TestLicenceAppender {
     @Test
     public void addLicenceToAPT() throws IOException {
         String filename = "tmp.apt";
-        String firstLine = "~~";
+        String firstLine = "~~" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -272,7 +298,7 @@ public class TestLicenceAppender {
     @Test
     public void addLicenceToProperties() throws IOException {
         String filename = "tmp.properties";
-        String firstLine = "#";
+        String firstLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -322,7 +348,7 @@ public class TestLicenceAppender {
     public void addLicenseToRubyWithoutHashBang()
         throws IOException {
         String filename = "tmp.rb";
-        String firstLine = "#";
+        String firstLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -338,7 +364,7 @@ public class TestLicenceAppender {
     public void addLicenseToRubyWithHashBang() throws IOException {
         String filename = "tmp.rb";
         final String firstLine = "#!/usr/bin/env ruby";
-        String secondLine = "#";
+        String secondLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -355,7 +381,7 @@ public class TestLicenceAppender {
     public void addLicenseToPerlWithoutHashBang()
         throws IOException {
         String filename = "tmp.pl";
-        String firstLine = "#";
+        String firstLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -370,7 +396,7 @@ public class TestLicenceAppender {
     public void addLicenseToPerlWithHashBang() throws IOException {
         String filename = "tmp.pl";
         final String firstLine = "#!/usr/bin/env perl";
-        String secondLine = "#";
+        String secondLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -386,7 +412,7 @@ public class TestLicenceAppender {
     public void addLicenseToTclWithoutHashBang()
         throws IOException {
         String filename = "tmp.tcl";
-        String firstLine = "#";
+        String firstLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -401,7 +427,7 @@ public class TestLicenceAppender {
     public void addLicenseToTclWithHashBang() throws IOException {
         String filename = "tmp.tcl";
         final String firstLine = "#!/usr/bin/env tcl";
-        String secondLine = "#";
+        String secondLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -417,7 +443,8 @@ public class TestLicenceAppender {
     public void addLicenceToPHP() throws IOException {
         String filename = "tmp.php";
         final String firstLine = "<?php";
-        String secondLine = "/*";
+        final String secondLine = "";
+        final String thirdLine = "/*";
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -427,7 +454,7 @@ public class TestLicenceAppender {
                     writer.write("?>\n");
                 }
             },
-            checkLines(firstLine, secondLine));
+            checkLines(firstLine, secondLine, thirdLine));
     }
 
     @Test
@@ -515,7 +542,7 @@ public class TestLicenceAppender {
         String filename = "tmp.sln";
         final String firstLine = "Microsoft Visual Studio Solution File,"
             + " Format Version 8.0";
-        String secondLine = "#";
+        String secondLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -538,7 +565,7 @@ public class TestLicenceAppender {
         final String firstLine = "Microsoft Visual Studio Solution File,"
             + " Format Version 9.0";
         final String secondLine = "# Visual Studio 2005";
-        final String thirdLine = "#";
+        final String thirdLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -574,7 +601,7 @@ public class TestLicenceAppender {
         final String firstLine = "Microsoft Visual Studio Solution File, "
             + "Format Version 11.00";
         final String secondLine = "# Visual C# Express 2010";
-        final String thirdLine = "#";
+        final String thirdLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
@@ -628,7 +655,7 @@ public class TestLicenceAppender {
         final String secondLine = "Microsoft Visual Studio Solution File, "
             + "Format Version 11.00";
         final String thirdLine = "# Visual C# Express 2010";
-        final String forthLine = "#";
+        final String forthLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                 public void createFile(Writer writer)
