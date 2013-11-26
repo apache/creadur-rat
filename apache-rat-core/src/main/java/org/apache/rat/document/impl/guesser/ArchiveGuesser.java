@@ -29,6 +29,8 @@ public class ArchiveGuesser {
         "zip", "tar",
         "bz", "bz2",
         "rar", "war",
+        "ear", "mar",
+        "par", "xar",
     };
 
     public static final boolean isArchive(final Document document) {
