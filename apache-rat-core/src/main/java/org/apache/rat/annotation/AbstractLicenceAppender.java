@@ -403,7 +403,7 @@ public abstract class AbstractLicenceAppender {
      */
     protected String getLastLine(int type) {
         if (isFamilyC(type)) {
-            return "*/" + LINE_SEP;
+            return " */" + LINE_SEP;
         } else if (isFamilySGML(type)) {
             return "-->" + LINE_SEP;
         } else if (isFamilyAPT(type)) {
