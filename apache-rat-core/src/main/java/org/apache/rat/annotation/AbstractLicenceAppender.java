@@ -426,21 +426,18 @@ public abstract class AbstractLicenceAppender {
      * @return not null
      */
     protected String getLine(int type, String content) {
-        if (content != null && content.length() > 0) {
-            content = " " + content;
-        }
         if (isFamilyC(type)) {
-            return " *" + content + LINE_SEP;
+            return " * " + content + LINE_SEP;
         } else if (isFamilySGML(type)) {
             return content + LINE_SEP;
         } else if (isFamilyAPT(type)) {
-            return "~~" + content + LINE_SEP;
+            return "~~ " + content + LINE_SEP;
         } else if (isFamilySH(type)) {
-            return "#" + content + LINE_SEP;
+            return "# " + content + LINE_SEP;
         } else if (isFamilyBAT(type)) {
-            return "rem" + content + LINE_SEP;
+            return "rem " + content + LINE_SEP;
         } else if (isFamilyVelocity(type)) {
-            return "##" + content + LINE_SEP;
+            return "## " + content + LINE_SEP;
         }
         return "";
     }
