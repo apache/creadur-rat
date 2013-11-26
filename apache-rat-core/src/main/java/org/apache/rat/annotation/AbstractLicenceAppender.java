@@ -383,12 +383,6 @@ public abstract class AbstractLicenceAppender {
             return "/*" + LINE_SEP;
         } else if (isFamilySGML(type)) {
             return "<!--" + LINE_SEP;
-        } else if (isFamilyAPT(type)) {
-            return "~~" + LINE_SEP;
-        } else if (isFamilySH(type)) {
-            return "#" + LINE_SEP;
-        } else if (isFamilyBAT(type)) {
-            return "rem" + LINE_SEP;
         }
         return "";
     }
@@ -406,12 +400,6 @@ public abstract class AbstractLicenceAppender {
             return " */" + LINE_SEP;
         } else if (isFamilySGML(type)) {
             return "-->" + LINE_SEP;
-        } else if (isFamilyAPT(type)) {
-            return "~~" + LINE_SEP;
-        } else if (isFamilySH(type)) {
-            return "#" + LINE_SEP;
-        } else if (isFamilyBAT(type)) {
-            return "rem" + LINE_SEP;
         }
         return "";
     }
