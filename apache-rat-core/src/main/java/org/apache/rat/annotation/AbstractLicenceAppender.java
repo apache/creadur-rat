@@ -295,14 +295,17 @@ public abstract class AbstractLicenceAppender {
 
                     if (expectsPackage && line.startsWith("package ")) {
                         written = true;
+                        writer.write(LINE_SEP);
                         writer.write(getLicenceHeader(document));
                         writer.write(LINE_SEP);
                     } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
                         written = true;
+                        writer.write(LINE_SEP);
                         writer.write(getLicenceHeader(document));
                         writer.write(LINE_SEP);
                     } else if (expectsPhpPI && line.startsWith("<?php")) {
                         written = true;
+                        writer.write(LINE_SEP);
                         writer.write(getLicenceHeader(document));
                         writer.write(LINE_SEP);
                     }
