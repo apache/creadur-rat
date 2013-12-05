@@ -24,7 +24,11 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-
+/**
+ * 
+ * @author Manuel
+ *
+ */
 public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -55,20 +59,38 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 	private final Pattern[] linePatterns;
 	private final String[] phrases;
 
+	/**
+	 * 
+	 */
 	public GeneratedLicenseNotRequired() {
 		this(DEFAULT_PHRASES);
 	}
 
+	/**
+	 * 
+	 * @param linePatterns
+	 */
 	public GeneratedLicenseNotRequired(final Pattern[] linePatterns) {
 		this.linePatterns = linePatterns;
 		this.phrases = EMPTY_STRING_ARRAY;
 	}
 
+	/**
+	 * 
+	 * @param lines
+	 */
 	public GeneratedLicenseNotRequired(final String[] lines) {
 		this.linePatterns = EMPTY_PATTERN_ARRAY;
 		this.phrases = lines;
 	}
 
+	/**
+	 * 
+	 * @param subject
+	 * @param line
+	 * @return
+	 * @throws RatHeaderAnalysisException
+	 */
 	public boolean match(Document subject, String line)
 			throws RatHeaderAnalysisException {
 		boolean result = false;
@@ -89,11 +111,18 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param subject
+	 */
 	private void reportOnLicense(Document subject) {
 		subject.getMetaData().set(
 				MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN);
 	}
 
+	/**
+	 * 
+	 */
 	public void reset() {
 		// stateless
 	}
