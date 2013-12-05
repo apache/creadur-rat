@@ -27,19 +27,20 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
 
 public class GeneratedLicenseNotRequiredTest {
 
-    GeneratedLicenseNotRequired license;
+    private GeneratedLicenseNotRequired license;
     
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Pattern[] patterns = {Pattern.compile(".*Generated")};
         license = new GeneratedLicenseNotRequired(patterns);
     }
 
     @Test
-    public void match() throws Exception {
+    public void match() throws RatHeaderAnalysisException {
         final Document subject = new MockLocation("subject");
         assertFalse("Does not match regex", license.match(subject, "Not at all"));
         assertTrue("Matches regex", license.match(subject, "This is Generated"));
