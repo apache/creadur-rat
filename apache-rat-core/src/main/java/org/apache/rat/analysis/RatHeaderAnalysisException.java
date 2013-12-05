@@ -26,18 +26,34 @@ public class RatHeaderAnalysisException extends Exception {
 
     private static final long serialVersionUID = 7613577476983281387L;
 
+    /**
+     * 
+     */
     public RatHeaderAnalysisException() {
         super();
     }
 
+    /**
+     * 
+     * @param msg
+     * @param cause
+     */
     public RatHeaderAnalysisException(String msg, Throwable cause) {
         super(msg, cause);
     }
 
+    /**
+     * 
+     * @param msg
+     */
     public RatHeaderAnalysisException(String msg) {
         super(msg);
     }
 
+    /**
+     * 
+     * @param cause
+     */
     public RatHeaderAnalysisException(Throwable cause) {
         super(cause);
     }
