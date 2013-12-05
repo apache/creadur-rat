@@ -34,7 +34,41 @@ import org.apache.rat.api.Document;
  */
 public class BinaryGuesser {
 
-    private static boolean isBinaryDocument(final Document document) {
+    private static final String[] DATA_EXTENSIONS = { "DAT", "DOC", "NCB",
+            "IDB", "SUO", "XCF", "RAJ", "CERT", "KS", "TS", "ODP", };
+    private static final String[] EXE_EXTENSIONS = { "EXE", "DLL", "LIB", "SO",
+            "A", "EXP", };
+    private static final String[] KEYSTORE_EXTENSIONS = { "JKS", "KEYSTORE",
+            "PEM", "CRL" };
+    private static final String[] IMAGE_EXTENSIONS = { "PNG", "PDF", "GIF",
+            "GIFF", "TIF", "TIFF", "JPG", "JPEG", "ICO", "ICNS", };
+    private static final String[] BYTECODE_EXTENSIONS = { "CLASS", "PYD",
+            "OBJ", "PYC", };
+
+    private static final String JAR_MANIFEST = "MANIFEST.MF";
+    private static final String JAVA = "JAVA";
+    private static final int HIGH_BYTES_RATIO = 100;
+    private static final int TOTAL_READ_RATIO = 30;
+    private static final int NON_ASCII_THREASHOLD = 256;
+    private static final int ASCII_CHAR_THREASHOLD = 8;
+
+    public static final boolean isBinary(final Document document) {
+        return new BinaryGuesser().matches(document);
+    }
+
+    public BinaryGuesser() {
+    }
+
+    private boolean matches(final Document document) {
+        // TODO: reimplement the binary test algorithm?
+        // TODO: more efficient to move into standard analysis
+        // TODO: then use binary as default
+        return isBinary(document.getName()) ||
+        // try a taste
+                isBinaryDocument(document);
+    }
+
+    private boolean isBinaryDocument(final Document document) {
         boolean result = false;
         InputStream stream = null;
         try {
@@ -54,7 +88,7 @@ public class BinaryGuesser {
         return result;
     }
 
-    private static boolean isBinary(final CharSequence taste) {
+    private boolean isBinary(final CharSequence taste) {
         int highBytes = 0;
         final int length = taste.length();
         for (int i = 0; i < length; i++) {
@@ -82,7 +116,7 @@ public class BinaryGuesser {
      * binary and return true.
      * </p>
      */
-    private static boolean isBinary(final InputStream in) {
+    private boolean isBinary(final InputStream in) {
         try {
             final byte[] taste = new byte[200];
             final int bytesRead = in.read(taste);
@@ -118,18 +152,17 @@ public class BinaryGuesser {
         return false;
     }
 
-    private static final boolean isBinaryData(final String name) {
+    private boolean isBinaryData(final String name) {
         return extensionMatches(name, DATA_EXTENSIONS);
     }
 
-    private static final boolean isExecutable(final String name) {
+    private boolean isExecutable(final String name) {
         return name.equals(BinaryGuesser.JAVA)
                 || extensionMatches(name, EXE_EXTENSIONS)
                 || containsExtension(name, EXE_EXTENSIONS);
     }
 
-    private static boolean containsExtension(final String name,
-            final String[] exts) {
+    private boolean containsExtension(final String name, final String[] exts) {
         for (final String ext : exts) {
             if (name.indexOf("." + ext + ".") >= 0) {
                 return true;
@@ -138,8 +171,7 @@ public class BinaryGuesser {
         return false;
     }
 
-    private static boolean extensionMatches(final String name,
-            final String[] exts) {
+    private boolean extensionMatches(final String name, final String[] exts) {
         for (final String ext : exts) {
             if (name.endsWith("." + ext)) {
                 return true;
@@ -148,59 +180,30 @@ public class BinaryGuesser {
         return false;
     }
 
-    private static boolean isBytecode(final String name) {
-        return BinaryGuesser.extensionMatches(name, BYTECODE_EXTENSIONS);
+    private boolean isBytecode(final String name) {
+        return extensionMatches(name, BYTECODE_EXTENSIONS);
     }
 
-    private static final boolean isImage(final String name) {
-        return BinaryGuesser.extensionMatches(name, IMAGE_EXTENSIONS);
+    private boolean isImage(final String name) {
+        return extensionMatches(name, IMAGE_EXTENSIONS);
     }
 
-    private static final boolean isKeystore(final String name) {
-        return BinaryGuesser.extensionMatches(name, KEYSTORE_EXTENSIONS);
+    private boolean isKeystore(final String name) {
+        return extensionMatches(name, KEYSTORE_EXTENSIONS);
     }
 
     /**
      * Is a file by that name a known binary file?
      */
-    private static final boolean isBinary(final String name) {
+    private boolean isBinary(final String name) {
         if (name == null) {
             return false;
         }
         final String normalisedName = GuessUtils.normalise(name);
         return BinaryGuesser.JAR_MANIFEST.equals(name)
-                || BinaryGuesser.isImage(normalisedName)
-                || BinaryGuesser.isKeystore(normalisedName)
-                || BinaryGuesser.isBytecode(normalisedName)
-                || BinaryGuesser.isBinaryData(normalisedName)
-                || BinaryGuesser.isExecutable(normalisedName);
-    }
-
-    private static final String[] DATA_EXTENSIONS = { "DAT", "DOC", "NCB",
-            "IDB", "SUO", "XCF", "RAJ", "CERT", "KS", "TS", "ODP", };
-    private static final String[] EXE_EXTENSIONS = { "EXE", "DLL", "LIB", "SO",
-            "A", "EXP", };
-    private static final String[] KEYSTORE_EXTENSIONS = { "JKS", "KEYSTORE",
-            "PEM", "CRL" };
-    private static final String[] IMAGE_EXTENSIONS = { "PNG", "PDF", "GIF",
-            "GIFF", "TIF", "TIFF", "JPG", "JPEG", "ICO", "ICNS", };
-    private static final String[] BYTECODE_EXTENSIONS = { "CLASS", "PYD",
-            "OBJ", "PYC", };
-
-    private static final String JAR_MANIFEST = "MANIFEST.MF";
-    private static final String JAVA = "JAVA";
-    private static final int HIGH_BYTES_RATIO = 100;
-    private static final int TOTAL_READ_RATIO = 30;
-    private static final int NON_ASCII_THREASHOLD = 256;
-    private static final int ASCII_CHAR_THREASHOLD = 8;
-
-    public static final boolean isBinary(final Document document) {
-        // TODO: reimplement the binary test algorithm?
-        // TODO: more efficient to move into standard analysis
-        // TODO: then use binary as default
-        return isBinary(document.getName()) ||
-        // try a taste
-                isBinaryDocument(document);
+                || isImage(normalisedName) || isKeystore(normalisedName)
+                || isBytecode(normalisedName) || isBinaryData(normalisedName)
+                || isExecutable(normalisedName);
     }
 
 }
