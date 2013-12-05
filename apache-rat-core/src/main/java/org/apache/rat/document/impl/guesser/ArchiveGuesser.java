@@ -28,13 +28,16 @@ public class ArchiveGuesser {
             "tar", "bz", "bz2", "rar", "war", };
 
     public static final boolean isArchive(final Document document) {
-        return isArchive(document.getName());
+        return new ArchiveGuesser().isArchive(document.getName());
+    }
+
+    private ArchiveGuesser() {
     }
 
     /**
      * Is a file by that name an archive?
      */
-    private static final boolean isArchive(final String name) {
+    private boolean isArchive(final String name) {
         if (name == null) {
             return false;
         }
