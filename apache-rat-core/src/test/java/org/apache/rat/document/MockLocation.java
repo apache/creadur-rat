@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
 import java.io.IOException;
@@ -27,46 +27,45 @@ import org.apache.rat.api.MetaData;
 
 public class MockLocation implements Document {
 
-    public String name;
-    public String url;
-    private final MetaData metaData = new MetaData();
-    
-    public MockLocation() {
-        this("name", "url");
-    }
-    
-    public MockLocation(String name) {
-        this(name, "url");
-    }
+	public String name;
+	public String url;
+	private final MetaData metaData = new MetaData();
 
-    public MockLocation(String name, String url) {
-        super();
-        this.name = name;
-        this.url = url;
-    }
+	public MockLocation() {
+		this("name", "url");
+	}
 
-    public String getName() {
-        return name;
-    }
+	public MockLocation(String name) {
+		this(name, "url");
+	}
 
-    public String getURL() {
-        return url;
-    }
+	public MockLocation(String name, String url) {
+		super();
+		this.name = name;
+		this.url = url;
+	}
 
-    public boolean isComposite() {
-        return false;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Reader reader() throws IOException {
-        throw new UnsupportedOperationException();
-    }
+	public String getURL() {
+		return url;
+	}
 
-    public MetaData getMetaData() {
-        return metaData;
-    }
-    
+	public boolean isComposite() {
+		return false;
+	}
 
-    public InputStream inputStream() throws IOException {
-        throw new UnsupportedOperationException();
-    }
+	public Reader reader() throws IOException {
+		throw new UnsupportedOperationException();
+	}
+
+	public MetaData getMetaData() {
+		return metaData;
+	}
+
+	public InputStream inputStream() throws IOException {
+		throw new UnsupportedOperationException();
+	}
 }
