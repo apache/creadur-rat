@@ -46,7 +46,7 @@ public class MockLocation implements Document {
 	 * 
 	 * @param name
 	 */
-	public MockLocation(String name) {
+	public MockLocation(final String name) {
 		this(name, "url");
 	}
 
@@ -55,7 +55,7 @@ public class MockLocation implements Document {
 	 * @param name
 	 * @param url
 	 */
-	public MockLocation(String name, String url) {
+	public MockLocation(final String name, final String url) {
 		super();
 		this.name = name;
 		this.url = url;
