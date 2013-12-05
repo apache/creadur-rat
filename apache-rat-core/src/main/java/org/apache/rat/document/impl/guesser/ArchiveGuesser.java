@@ -31,7 +31,15 @@ public class ArchiveGuesser {
         return new ArchiveGuesser().isArchive(document.getName());
     }
 
+    private final String[] archiveExtensions;
+
     private ArchiveGuesser() {
+        this(ARCHIVE_EXTENSIONS);
+    }
+
+    public ArchiveGuesser(final String[] archiveExtensions) {
+        super();
+        this.archiveExtensions = archiveExtensions;
     }
 
     /**
@@ -42,7 +50,7 @@ public class ArchiveGuesser {
             return false;
         }
         final String nameToLower = name.toLowerCase(Locale.US);
-        for (final String element : ArchiveGuesser.ARCHIVE_EXTENSIONS) {
+        for (final String element : this.archiveExtensions) {
             if (nameToLower.endsWith("." + element)) {
                 return true;
             }
