@@ -30,6 +30,7 @@ final class DefaultAnalyser implements IDocumentAnalyser {
 
     private final IHeaderMatcher matcher;
     private final ArchiveGuesser archiveGuesser = new ArchiveGuesser();
+    private final NoteGuesser noteGuessor = new NoteGuesser();
 
     public DefaultAnalyser(final IHeaderMatcher matcher) {
         super();
@@ -39,7 +40,7 @@ final class DefaultAnalyser implements IDocumentAnalyser {
     public void analyse(final Document subject)
             throws RatDocumentAnalysisException {
         final MetaData.Datum documentCategory;
-        if (new NoteGuesser().matches(subject)) {
+        if (this.noteGuessor.matches(subject)) {
             documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
         } else {
             if (this.archiveGuesser.matches(subject)) {
