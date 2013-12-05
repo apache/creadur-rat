@@ -23,9 +23,17 @@ import java.io.InputStream;
 import java.io.Reader;
 
 import org.apache.rat.document.CompositeDocumentException;
-
+/**
+ * 
+ * @author Manuel
+ *
+ */
 public interface Document {
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getName();
 
 	/**
