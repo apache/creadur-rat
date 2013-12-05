@@ -20,14 +20,12 @@ package org.apache.rat.document.impl.guesser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
-import java.util.Locale;
 
 import org.apache.rat.api.Document;
 
@@ -68,32 +66,6 @@ public class BinaryGuesser {
         }
         return highBytes * BinaryGuesser.HIGH_BYTES_RATIO > length
                 * BinaryGuesser.TOTAL_READ_RATIO;
-    }
-
-    /**
-     * Do the first few bytes of the stream hint at a binary file?
-     * 
-     * <p>
-     * Any IOException is swallowed internally and the test returns false.
-     * </p>
-     * 
-     * <p>
-     * This method may lead to false negatives if the reader throws an exception
-     * because it can't read characters according to the reader's encoding from
-     * the underlying stream.
-     * </p>
-     */
-    private static boolean isBinary(final Reader in) {
-        final char[] taste = new char[100];
-        try {
-            final int bytesRead = in.read(taste);
-            if (bytesRead > 0) {
-                return isBinary(new String(taste, 0, bytesRead));
-            }
-        } catch (final IOException e) {
-            // SWALLOW
-        }
-        return false;
     }
 
     /**
@@ -148,17 +120,6 @@ public class BinaryGuesser {
 
     private static final boolean isBinaryData(final String name) {
         return extensionMatches(name, DATA_EXTENSIONS);
-    }
-
-    /**
-     * Is a file by that name a known non-binary file?
-     */
-    private static final boolean isNonBinary(final String name) {
-        if (name == null) {
-            return false;
-        }
-        return extensionMatches(name.toUpperCase(Locale.US),
-                BinaryGuesser.NON_BINARY_EXTENSIONS);
     }
 
     private static final boolean isExecutable(final String name) {
@@ -226,20 +187,6 @@ public class BinaryGuesser {
     private static final String[] BYTECODE_EXTENSIONS = { "CLASS", "PYD",
             "OBJ", "PYC", };
 
-    /**
-     * Based on http://www.apache.org/dev/svn-eol-style.txt
-     */
-    private static final String[] NON_BINARY_EXTENSIONS = { "AART", "AC", "AM",
-            "BAT", "C", "CAT", "CGI", "CLASSPATH", "CMD", "CONFIG", "CPP",
-            "CSS", "CWIKI", "DATA", "DCL", "DTD", "EGRM", "ENT", "FT", "FN",
-            "FV", "GRM", "G", "H", "HTACCESS", "HTML", "IHTML", "IN", "JAVA",
-            "JMX", "JSP", "JS", "JUNIT", "JX", "MANIFEST", "M4", "MF", "MF",
-            "META", "MOD", "N3", "PEN", "PL", "PM", "POD", "POM", "PROJECT",
-            "PROPERTIES", "PY", "RB", "RDF", "RNC", "RNG", "RNX", "ROLES",
-            "RSS", "SH", "SQL", "SVG", "TLD", "TXT", "TYPES", "VM", "VSL",
-            "WSDD", "WSDL", "XARGS", "XCAT", "XCONF", "XEGRM", "XGRM", "XLEX",
-            "XLOG", "XMAP", "XML", "XROLES", "XSAMPLES", "XSD", "XSL", "XSLT",
-            "XSP", "XUL", "XWEB", "XWELCOME", };
     private static final String JAR_MANIFEST = "MANIFEST.MF";
     private static final String JAVA = "JAVA";
     private static final int HIGH_BYTES_RATIO = 100;
