@@ -38,10 +38,17 @@ public class NoteGuesser {
     private static final String[] NOTE_FILE_EXTENSIONS = { "LICENSE",
             "LICENSE.TXT", "NOTICE", "NOTICE.TXT", };
 
+    public static final boolean isNote(final Document document) {
+        return new NoteGuesser().matches(document);
+    }
+
+    private NoteGuesser() {
+    }
+
     /**
      * Is a file by that name a note file?
      */
-    private static final boolean isNote(final String name) {
+    private final boolean isNote(final String name) {
         if (name == null) {
             return false;
         }
@@ -62,8 +69,7 @@ public class NoteGuesser {
         return false;
     }
 
-    public static final boolean isNote(final Document document) {
+    public final boolean matches(final Document document) {
         return isNote(document.getName());
     }
-
 }
