@@ -70,7 +70,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 	 * 
 	 * @param linePatterns
 	 */
-	public GeneratedLicenseNotRequired(final Pattern[] linePatterns) {
+	public GeneratedLicenseNotRequired(final Pattern... linePatterns) {
 		this.linePatterns = linePatterns;
 		this.phrases = EMPTY_STRING_ARRAY;
 	}
@@ -79,7 +79,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 	 * 
 	 * @param lines
 	 */
-	public GeneratedLicenseNotRequired(final String[] lines) {
+	public GeneratedLicenseNotRequired(final String... lines) {
 		this.linePatterns = EMPTY_PATTERN_ARRAY;
 		this.phrases = lines;
 	}
@@ -91,7 +91,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 	 * @return
 	 * @throws RatHeaderAnalysisException
 	 */
-	public boolean match(Document subject, String line)
+	public boolean match(final Document subject, final String line)
 			throws RatHeaderAnalysisException {
 		boolean result = false;
 		for (Pattern pat : linePatterns) {
@@ -115,7 +115,7 @@ public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 	 * 
 	 * @param subject
 	 */
-	private void reportOnLicense(Document subject) {
+	private void reportOnLicense(final Document subject) {
 		subject.getMetaData().set(
 				MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN);
 	}
