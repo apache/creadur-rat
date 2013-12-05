@@ -27,11 +27,17 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+/**
+ * 
+ * @author Manuel
+ *
+ */
 public class GeneratedLicenseNotRequiredTest {
 
-	private GeneratedLicenseNotRequired license;
+	private IHeaderMatcher license;
 
 	@Before
 	public void setUp() {
