@@ -18,13 +18,7 @@
  */
 package org.apache.rat.analysis;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.document.impl.guesser.ArchiveGuesser;
-import org.apache.rat.document.impl.guesser.BinaryGuesser;
-import org.apache.rat.document.impl.guesser.NoteGuesser;
 
 /**
  * Creates default analysers.
@@ -36,39 +30,5 @@ public class DefaultAnalyserFactory {
             final IHeaderMatcher matcher) {
 
         return new DefaultAnalyser(matcher);
-    }
-
-    private final static class DefaultAnalyser implements IDocumentAnalyser {
-
-        private final IHeaderMatcher matcher;
-        private final ArchiveGuesser archiveGuesser = new ArchiveGuesser();
-
-        public DefaultAnalyser(final IHeaderMatcher matcher) {
-            super();
-            this.matcher = matcher;
-        }
-
-        public void analyse(final Document subject)
-                throws RatDocumentAnalysisException {
-            final MetaData.Datum documentCategory;
-            if (NoteGuesser.isNote(subject)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
-            } else {
-                if (this.archiveGuesser.isArchive(subject.getName())) {
-                    documentCategory =
-                            MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
-                } else if (BinaryGuesser.isBinary(subject)) {
-                    documentCategory =
-                            MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
-                } else {
-                    documentCategory =
-                            MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-                    final DocumentHeaderAnalyser headerAnalyser =
-                            new DocumentHeaderAnalyser(this.matcher);
-                    headerAnalyser.analyse(subject);
-                }
-            }
-            subject.getMetaData().set(documentCategory);
-        }
     }
 }
