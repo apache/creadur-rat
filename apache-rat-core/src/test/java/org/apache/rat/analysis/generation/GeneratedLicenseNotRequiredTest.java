@@ -20,7 +20,6 @@ package org.apache.rat.analysis.generation;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,13 +31,11 @@ import static org.junit.Assert.assertTrue;
 public class GeneratedLicenseNotRequiredTest {
 
     GeneratedLicenseNotRequired license;
-    MockClaimReporter reporter;
     
     @Before
     public void setUp() throws Exception {
         Pattern[] patterns = {Pattern.compile(".*Generated")};
         license = new GeneratedLicenseNotRequired(patterns);
-        reporter = new MockClaimReporter();
     }
 
     @Test
