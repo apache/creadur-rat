@@ -38,7 +38,18 @@ public class NoteGuesser {
     private static final String[] NOTE_FILE_EXTENSIONS = { "LICENSE",
             "LICENSE.TXT", "NOTICE", "NOTICE.TXT", };
 
+    private final String[] noteFileNames;
+    private final String[] noteFileExtensions;
+
     public NoteGuesser() {
+        this(NOTE_FILE_NAMES, NOTE_FILE_EXTENSIONS);
+    }
+
+    public NoteGuesser(final String[] noteFileNames,
+            final String[] noteFileExtensions) {
+        super();
+        this.noteFileNames = noteFileNames;
+        this.noteFileExtensions = noteFileExtensions;
     }
 
     /**
@@ -49,14 +60,14 @@ public class NoteGuesser {
             return false;
         }
 
-        final List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
+        final List<String> l = Arrays.asList(this.noteFileNames);
         final String normalisedName = GuessUtils.normalise(name);
 
         if (l.contains(name) || l.contains(normalisedName)) {
             return true;
         }
 
-        for (final String element : NoteGuesser.NOTE_FILE_EXTENSIONS) {
+        for (final String element : this.noteFileExtensions) {
             if (normalisedName.endsWith("." + element)) {
                 return true;
             }
