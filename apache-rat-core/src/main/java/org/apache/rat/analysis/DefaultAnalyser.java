@@ -42,12 +42,10 @@ final class DefaultAnalyser implements IDocumentAnalyser {
         if (NoteGuesser.isNote(subject)) {
             documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
         } else {
-            if (this.archiveGuesser.isArchive(subject.getName())) {
-                documentCategory =
-                        MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
+            if (this.archiveGuesser.matches(subject)) {
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
             } else if (BinaryGuesser.isBinary(subject)) {
-                documentCategory =
-                        MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
             } else {
                 documentCategory =
                         MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;

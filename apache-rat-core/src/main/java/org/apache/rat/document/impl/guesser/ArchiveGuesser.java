@@ -20,6 +20,8 @@ package org.apache.rat.document.impl.guesser;
 
 import java.util.Locale;
 
+import org.apache.rat.api.Document;
+
 public class ArchiveGuesser {
 
     private static final String[] ARCHIVE_EXTENSIONS = { "jar", "gz", "zip",
@@ -34,6 +36,10 @@ public class ArchiveGuesser {
     public ArchiveGuesser(final String[] archiveExtensions) {
         super();
         this.archiveExtensions = archiveExtensions;
+    }
+
+    public boolean matches(final Document subject) {
+        return isArchive(subject.getName());
     }
 
     /**
