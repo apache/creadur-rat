@@ -27,11 +27,11 @@ public class ArchiveGuesserTest {
 
     @Test
     public void matches() {
-        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.jar")));
-        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.tar.gz")));
-        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.zip")));
-        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.tar")));
-        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.bz")));
-        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.bz2")));
+        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.jar").getName()));
+        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.tar.gz").getName()));
+        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.zip").getName()));
+        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.tar").getName()));
+        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.bz").getName()));
+        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.bz2").getName()));
     }
 }

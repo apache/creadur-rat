@@ -20,20 +20,14 @@ package org.apache.rat.document.impl.guesser;
 
 import java.util.Locale;
 
-import org.apache.rat.api.Document;
-
 public class ArchiveGuesser {
 
     private static final String[] ARCHIVE_EXTENSIONS = { "jar", "gz", "zip",
             "tar", "bz", "bz2", "rar", "war", };
 
-    public static final boolean isArchive(final Document document) {
-        return new ArchiveGuesser().isArchive(document.getName());
-    }
-
     private final String[] archiveExtensions;
 
-    private ArchiveGuesser() {
+    public ArchiveGuesser() {
         this(ARCHIVE_EXTENSIONS);
     }
 
@@ -45,7 +39,7 @@ public class ArchiveGuesser {
     /**
      * Is a file by that name an archive?
      */
-    private boolean isArchive(final String name) {
+    public boolean isArchive(final String name) {
         if (name == null) {
             return false;
         }
@@ -57,5 +51,4 @@ public class ArchiveGuesser {
         }
         return false;
     }
-
 }

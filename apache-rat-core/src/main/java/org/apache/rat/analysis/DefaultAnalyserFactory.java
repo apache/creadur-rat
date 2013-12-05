@@ -50,7 +50,7 @@ public class DefaultAnalyserFactory {
             final MetaData.Datum documentCategory;
             if (NoteGuesser.isNote(subject)) {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
-            } else if (ArchiveGuesser.isArchive(subject)) {
+            } else if (new ArchiveGuesser().isArchive(subject.getName())) {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
             } else if (BinaryGuesser.isBinary(subject)) {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
