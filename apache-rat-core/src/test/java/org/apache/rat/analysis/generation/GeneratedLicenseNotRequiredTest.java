@@ -40,10 +40,8 @@ public class GeneratedLicenseNotRequiredTest {
 	}
 
 	@Test
-	public void match() throws RatHeaderAnalysisException {
+	public void testMatchPatternLicense() throws RatHeaderAnalysisException {
 		final Document subject = new MockLocation("subject");
-		assertFalse("Does not match regex",
-				license.match(subject, "Not at all"));
 		assertTrue("Matches regex", license.match(subject, "This is Generated"));
 	}
 }
