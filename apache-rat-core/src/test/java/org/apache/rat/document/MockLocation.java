@@ -24,47 +24,89 @@ import java.io.Reader;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-
+/**
+ * 
+ * @author Manuel
+ *
+ */
 public class MockLocation implements Document {
 
 	public String name;
 	public String url;
 	private final MetaData metaData = new MetaData();
 
+	/**
+	 * 
+	 */
 	public MockLocation() {
 		this("name", "url");
 	}
 
+	/**
+	 * 
+	 * @param name
+	 */
 	public MockLocation(String name) {
 		this(name, "url");
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param url
+	 */
 	public MockLocation(String name, String url) {
 		super();
 		this.name = name;
 		this.url = url;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getURL() {
 		return url;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isComposite() {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public Reader reader() throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public MetaData getMetaData() {
 		return metaData;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public InputStream inputStream() throws IOException {
 		throw new UnsupportedOperationException();
 	}
