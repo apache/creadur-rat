@@ -15,29 +15,33 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis;
 
 import org.apache.rat.api.Document;
 
 /**
  * Matches text headers to known licenses.
- *
+ * 
  */
 public interface IHeaderMatcher {
 
-    /**
-     * Resets this matches.
-     * Subsequent calls to {@link #match} will accumulate new text.
-     */
-    public void reset();
+	/**
+	 * Resets this matches. Subsequent calls to {@link #match} will accumulate
+	 * new text.
+	 */
+	public void reset();
 
-    /**
-     * Matches the text accumulated to licenses.
-     * TODO probably a poor design choice - hope to fix later
-     * @param subject TODO
-     * @param line next line of text, not null
-     * @return TODO
-     */
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException;
+	/**
+	 * Matches the text accumulated to licenses. TODO probably a poor design
+	 * choice - hope to fix later
+	 * 
+	 * @param subject
+	 *            TODO
+	 * @param line
+	 *            next line of text, not null
+	 * @return TODO
+	 */
+	public boolean match(Document subject, String line)
+			throws RatHeaderAnalysisException;
 }
