@@ -15,49 +15,39 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl.guesser;
+
+import static org.junit.Assert.assertTrue;
 
 import org.apache.rat.document.MockDocument;
 import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
 
 public class NoteGuesserTest {
 
     @Test
     public void testMatches() {
-        assertTrue(NoteGuesser.isNote(new MockDocument("LICENSE")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("LICENSE.txt")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("NOTICE")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("NOTICE.txt")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("README")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("README.txt")));
+        assertThatGuesserMatches("LICENSE");
+        assertThatGuesserMatches("LICENSE.txt");
+        assertThatGuesserMatches("NOTICE");
+        assertThatGuesserMatches("NOTICE.txt");
+        assertThatGuesserMatches("README");
+        assertThatGuesserMatches("README.txt");
+        assertThatGuesserMatches("src/test/LICENSE");
+        assertThatGuesserMatches("src/test/LICENSE.txt");
+        assertThatGuesserMatches("src/test/NOTICE");
+        assertThatGuesserMatches("src/test/NOTICE.txt");
+        assertThatGuesserMatches("src/test/README");
+        assertThatGuesserMatches("src/test/README.txt");
+        assertThatGuesserMatches("src\\test\\LICENSE");
+        assertThatGuesserMatches("src\\test\\LICENSE.txt");
+        assertThatGuesserMatches("src\\test\\NOTICE");
+        assertThatGuesserMatches("src\\test\\NOTICE.txt");
+        assertThatGuesserMatches("src\\test\\README");
+        assertThatGuesserMatches("src\\test\\README.txt");
     }
 
-    @Test
-    public void isNote() {
-        assertTrue(NoteGuesser.isNote("LICENSE"));
-        assertTrue(NoteGuesser.isNote("LICENSE.txt"));
-        assertTrue(NoteGuesser.isNote("NOTICE"));
-        assertTrue(NoteGuesser.isNote("NOTICE.txt"));
-        assertTrue(NoteGuesser.isNote("README"));
-        assertTrue(NoteGuesser.isNote("README.txt"));
-    }
-    
-    @Test
-    public void isNoteWithPath() {
-        assertTrue(NoteGuesser.isNote("src/test/LICENSE"));
-        assertTrue(NoteGuesser.isNote("src/test/LICENSE.txt"));
-        assertTrue(NoteGuesser.isNote("src/test/NOTICE"));
-        assertTrue(NoteGuesser.isNote("src/test/NOTICE.txt"));
-        assertTrue(NoteGuesser.isNote("src/test/README"));
-        assertTrue(NoteGuesser.isNote("src/test/README.txt"));
-        assertTrue(NoteGuesser.isNote("src\\test\\LICENSE"));
-        assertTrue(NoteGuesser.isNote("src\\test\\LICENSE.txt"));
-        assertTrue(NoteGuesser.isNote("src\\test\\NOTICE"));
-        assertTrue(NoteGuesser.isNote("src\\test\\NOTICE.txt"));
-        assertTrue(NoteGuesser.isNote("src\\test\\README"));
-        assertTrue(NoteGuesser.isNote("src\\test\\README.txt"));
+    private void assertThatGuesserMatches(final String name) {
+        assertTrue(NoteGuesser.isNote(new MockDocument(name)));
     }
 }
