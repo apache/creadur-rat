@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.api;
 
 import java.io.IOException;
@@ -26,33 +26,39 @@ import org.apache.rat.document.CompositeDocumentException;
 
 public interface Document {
 
-    public String getName();
-    
-    /**
-     * Reads the content of this document.
-     * @return <code>Reader</code> not null
-     * @throws IOException if this document cannot be read
-     * @throws CompositeDocumentException if this document can only be read as
-     * a composite archive
-     */
-    public Reader reader() throws IOException;
-    
-    /**
-     * Streams the document's contents.
-     * @return not null
-     * @throws IOException when stream could not be opened
-     */
-    public InputStream inputStream() throws IOException;
+	public String getName();
 
-    /**
-     * Gets data describing this resource.
-     * @return not null
-     */
-    public MetaData getMetaData();
-    
-    /**
-     * Is this a composite document?
-     * @return true if composite, false otherwise
-     */
-    public boolean isComposite();
+	/**
+	 * Reads the content of this document.
+	 * 
+	 * @return <code>Reader</code> not null
+	 * @throws IOException
+	 *             if this document cannot be read
+	 * @throws CompositeDocumentException
+	 *             if this document can only be read as a composite archive
+	 */
+	public Reader reader() throws IOException;
+
+	/**
+	 * Streams the document's contents.
+	 * 
+	 * @return not null
+	 * @throws IOException
+	 *             when stream could not be opened
+	 */
+	public InputStream inputStream() throws IOException;
+
+	/**
+	 * Gets data describing this resource.
+	 * 
+	 * @return not null
+	 */
+	public MetaData getMetaData();
+
+	/**
+	 * Is this a composite document?
+	 * 
+	 * @return true if composite, false otherwise
+	 */
+	public boolean isComposite();
 }
