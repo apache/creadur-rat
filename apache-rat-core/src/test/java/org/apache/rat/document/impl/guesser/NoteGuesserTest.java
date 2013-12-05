@@ -48,6 +48,6 @@ public class NoteGuesserTest {
     }
 
     private void assertThatGuesserMatches(final String name) {
-        assertTrue(NoteGuesser.isNote(new MockDocument(name)));
+        assertTrue(new NoteGuesser().matches(new MockDocument(name)));
     }
 }
