@@ -266,24 +266,22 @@ public class MetaData {
         return result;
     }
 
-    /**
-     * Gets the value of the first datum matching the given name.
-     *
-     * @param name
-     *            not null
-     * @return the value of the matchin datum first added when there is any
-     *         matching data, null otherwise
-     */
-    public String value(final String name) {
-        final Datum datum = get(name);
-        final String result;
-        if (datum == null) {
-            result = null;
-        } else {
-            result = datum.getValue();
-        }
-        return result;
-    }
+	/**
+	 * Gets the value of the first datum matching the given name.
+	 *
+	 * @param name
+	 *            not null
+	 * @return the value of the matching datum first added when there is any
+	 *         matching data, null otherwise
+	 */
+	public String value(final String name) {
+		final Datum datum = get(name);
+		String result = null;
+		if (datum != null) {
+			result = datum.getValue();
+		}
+		return result;
+	}
 
     /**
      * Removes all data matching the given name.
