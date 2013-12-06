@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
 import org.apache.rat.api.MetaData;
@@ -24,17 +24,17 @@ import org.apache.rat.api.MetaData;
  * Licence matches GPL3 or later.
  */
 public class GPL3License extends FullTextMatchingLicense {
-    public static final String FIRST_LICENSE_LINE = "This program is free software: you can redistribute it and/or modify\n" +
-            " it under the terms of the GNU General Public License as published by\n" +
-            " the Free Software Foundation, either version 3 of the License, or\n" +
-            " (at your option) any later version.";
+	public static final String FIRST_LICENSE_LINE = "This program is free software: you can redistribute it and/or modify\n"
+			+ " it under the terms of the GNU General Public License as published by\n"
+			+ " the Free Software Foundation, either version 3 of the License, or\n"
+			+ " (at your option) any later version.";
 
 	/**
      * 
      */
-    public GPL3License() {
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL3,
-                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_3,
-                "", FIRST_LICENSE_LINE);
-    }
+	public GPL3License() {
+		super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL3,
+				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_3, "",
+				FIRST_LICENSE_LINE);
+	}
 }
