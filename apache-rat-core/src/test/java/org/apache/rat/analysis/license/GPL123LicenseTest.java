@@ -57,7 +57,7 @@ public class GPL123LicenseTest {
 	}
 
 	@Test
-	public void testNegativeMatches() throws Exception {
+	public void testNegativeMatchGPL123License() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
 			assertFalse(
@@ -68,7 +68,7 @@ public class GPL123LicenseTest {
 	}
 
 	@Test
-	public void testPositiveMatchInDocument() {
+	public void testPositiveMatchGPL123License() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
 			assertTrue("Not Match GPL123 license", licenceUnderTest.getKey()

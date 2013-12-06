@@ -56,7 +56,7 @@ public class MITLicenseTest {
 	}
 
 	@Test
-	public void testNegativeMatches() {
+	public void testNegativeMatchMITLicense() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
 			assertFalse(
@@ -67,7 +67,7 @@ public class MITLicenseTest {
 	}
 
 	@Test
-	public void testPositiveMatchInDocument() {
+	public void testPositiveMatchMITLicense() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
 			assertTrue(
