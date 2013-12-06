@@ -15,60 +15,60 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
 
-
 /**
  * @since Rat 0.8
  */
-public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMatcher {
-    private String[] patterns;
+public class SimplePatternBasedLicense extends BaseLicense implements
+		IHeaderMatcher {
+	private String[] patterns;
 
-    public SimplePatternBasedLicense() {
-    }
+	public SimplePatternBasedLicense() {
+	}
 
-    protected SimplePatternBasedLicense(Datum pLicenseFamilyCategory, Datum pLicenseFamilyName,
-            String pNotes, String[] pPatterns) {
-        super(pLicenseFamilyCategory, pLicenseFamilyName, pNotes);
-        setPatterns(pPatterns);
-    }
-    
-    public String[] getPatterns() {
-        return patterns;
-    }
+	protected SimplePatternBasedLicense(Datum pLicenseFamilyCategory,
+			Datum pLicenseFamilyName, String pNotes, String[] pPatterns) {
+		super(pLicenseFamilyCategory, pLicenseFamilyName, pNotes);
+		setPatterns(pPatterns);
+	}
 
-    public void setPatterns(String[] pPatterns) {
-        patterns = pPatterns;
-    }
+	public String[] getPatterns() {
+		return patterns;
+	}
 
-    protected boolean matches(String pLine) {
-        if (pLine != null) {
-            final String[] pttrns = getPatterns();
-            if (pttrns != null) {
-                for (String pttrn : pttrns) {
-                    if (pLine.indexOf(pttrn, 0) >= 0) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    
-    public void reset() {
-        // Nothing to do
-    }
+	public void setPatterns(String[] pPatterns) {
+		patterns = pPatterns;
+	}
 
-    public boolean match(Document pSubject, String pLine) {
-        final boolean result = matches(pLine);
-        if (result) {
-            reportOnLicense(pSubject);
-        }
-        return result;
-    }
+	protected boolean matches(String pLine) {
+		if (pLine != null) {
+			final String[] pttrns = getPatterns();
+			if (pttrns != null) {
+				for (String pttrn : pttrns) {
+					if (pLine.indexOf(pttrn, 0) >= 0) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public void reset() {
+		// Nothing to do
+	}
+
+	public boolean match(Document pSubject, String pLine) {
+		final boolean result = matches(pLine);
+		if (result) {
+			reportOnLicense(pSubject);
+		}
+		return result;
+	}
 }
