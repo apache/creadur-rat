@@ -31,6 +31,7 @@ import org.apache.rat.api.MetaData;
  */
 public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 
+	/** The Constant ASL20_LICENSE_DEFN. */
 	public static final String ASL20_LICENSE_DEFN = "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
 			+ "you may not use this file except in compliance with the License.\n"
 			+ "You may obtain a copy of the License at\n"
@@ -41,8 +42,12 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 			+ "See the License for the specific language governing permissions and\n"
 			+ "limitations under the License.\n";
 
+	/** The text matcher. */
 	private final FullTextMatchingLicense textMatcher;
 
+	/**
+	 * Instantiates a new applied apache software license20.
+	 */
 	public AppliedApacheSoftwareLicense20() {
 		super(
 				MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,
@@ -54,23 +59,41 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 				"", ASL20_LICENSE_DEFN);
 	}
 
+	/**
+	 * Instantiates a new applied apache software license20.
+	 * 
+	 * @param copyrightOwner
+	 *            the copyright owner
+	 */
 	public AppliedApacheSoftwareLicense20(String copyrightOwner) {
 		this();
 		setCopyrightOwner(copyrightOwner);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.analysis.license.CopyrightHeader#match(org.apache.rat.
+	 * api.Document, java.lang.String)
+	 */
 	@Override
 	public boolean match(Document subject, String s) {
 		boolean result = false;
 		if (isCopyrightMatch()) {
-			return textMatcher.match(subject, s); // will report the match if it
-													// has occurred
+			// will report the match if it has occurred
+			return textMatcher.match(subject, s); 
 		} else {
 			matchCopyright(s);
 		}
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.analysis.license.CopyrightHeader#reset()
+	 */
 	@Override
 	public void reset() {
 		super.reset();
