@@ -19,7 +19,6 @@
 package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
 
@@ -65,7 +64,7 @@ public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMat
         // Nothing to do
     }
 
-    public boolean match(Document pSubject, String pLine) throws RatHeaderAnalysisException {
+    public boolean match(Document pSubject, String pLine) {
         final boolean result = matches(pLine);
         if (result) {
             reportOnLicense(pSubject);

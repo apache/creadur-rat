@@ -76,24 +76,23 @@ class HeaderCheckWorker {
         return finished;
     }
 
-    public void read() throws RatHeaderAnalysisException {
+    public void read() throws IOException{
         if (!finished) {
             final StringBuilder headers = new StringBuilder();
             headerLinesToRead = numberOfRetainedHeaderLines;
-            try {
-                while(readLine(headers)) {
-                    // do nothing
-                }
-                if (!match) {
-                    final String notes = headers.toString();
-                    final MetaData metaData = subject.getMetaData();
-                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
-                    metaData.set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
-                }
-            } catch (IOException e) {
-                throw new RatHeaderAnalysisException("Cannot read header for " + subject, e);
-            }
+			while (readLine(headers)) {
+				// do nothing
+			}
+			if (!match) {
+				final String notes = headers.toString();
+				final MetaData metaData = subject.getMetaData();
+				metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE,
+						notes));
+				metaData.set(new MetaData.Datum(
+						MetaData.RAT_URL_HEADER_CATEGORY,
+						MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
+				metaData.set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
+			}
             try {
                 reader.close();
             } catch (IOException e) {
@@ -104,7 +103,7 @@ class HeaderCheckWorker {
         finished = true;
     }
 
-    boolean readLine(StringBuilder headers) throws IOException, RatHeaderAnalysisException {
+    boolean readLine(StringBuilder headers) throws IOException {
         String line = reader.readLine();
         boolean result = line != null;
         if (result) {

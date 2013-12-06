@@ -18,7 +18,6 @@
  */ 
 package org.apache.rat.anttasks;
 
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.license.FullTextMatchingLicense;
 import org.apache.rat.api.Document;
 import org.apache.tools.ant.BuildException;
@@ -46,7 +45,7 @@ public class FullTextLicenseMatcher extends FullTextMatchingLicense {
     }
 
     @Override
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line) {
         validate();
         return super.match(subject, line);
     }

@@ -18,7 +18,6 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
@@ -55,7 +54,7 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
     }
 
     @Override
-    public boolean match(Document subject, String s) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String s) {
         boolean result = false;
         if (isCopyrightMatch()) {
             return textMatcher.match(subject, s); // will report the match if it has occurred

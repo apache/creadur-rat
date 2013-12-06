@@ -42,6 +42,5 @@ public interface IHeaderMatcher {
 	 *            next line of text, not null
 	 * @return TODO
 	 */
-	boolean match(Document subject, String line)
-			throws RatHeaderAnalysisException;
+	boolean match(Document subject, String line);
 }

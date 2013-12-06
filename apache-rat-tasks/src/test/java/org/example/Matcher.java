@@ -17,7 +17,6 @@
 package org.example;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -30,7 +29,7 @@ public class Matcher extends BaseLicense implements IHeaderMatcher {
     }
     public void reset() {}
     
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line) {
         reportOnLicense(subject);
         return true;
     }

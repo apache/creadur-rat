@@ -44,7 +44,7 @@ public class AnalyserFactoryTest {
         reporter = new SimpleXmlClaimReporter(writer);
         matcherStub = new IHeaderMatcher() {
 
-            public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+            public boolean match(Document subject, String line) {
                 return false;
             }
 

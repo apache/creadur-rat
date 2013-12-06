@@ -21,10 +21,10 @@ package org.apache.rat.analysis;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
+import java.io.IOException;
 
 final class DefaultAnalyser implements IDocumentAnalyser {
 
@@ -38,8 +38,7 @@ final class DefaultAnalyser implements IDocumentAnalyser {
         this.matcher = matcher;
     }
 
-    public void analyse(final Document subject)
-            throws RatDocumentAnalysisException {
+    public void analyse(final Document subject) throws IOException{
         final MetaData.Datum documentCategory;
         if (this.noteGuessor.matches(subject)) {
             documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;

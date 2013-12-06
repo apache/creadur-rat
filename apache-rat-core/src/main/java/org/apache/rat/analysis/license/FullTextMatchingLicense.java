@@ -21,7 +21,6 @@ package org.apache.rat.analysis.license;
 import java.util.Locale;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
 
@@ -74,7 +73,7 @@ public class FullTextMatchingLicense extends BaseLicense
         return fullText != null;
     }
 
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line) {
         final String inputToMatch = prune(line).toLowerCase(Locale.ENGLISH);
         if (seenFirstLine) { // Accumulate more input
             buffer.append(inputToMatch);

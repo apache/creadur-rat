@@ -23,7 +23,6 @@ import java.io.Reader;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
 
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
@@ -34,17 +33,13 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
         this.matcher = matcher;
     }
 
-    public void analyse(Document document) throws RatDocumentAnalysisException {
+    public void analyse(Document document) throws IOException{
         Reader reader = null;
         try {
             reader = document.reader();
             // TODO: worker function should be moved into this class
             HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher, document);
             worker.read();
-        } catch (IOException e) {
-            throw new RatDocumentAnalysisException("Cannot read header", e);
-        } catch (RatHeaderAnalysisException e) {
-            throw new RatDocumentAnalysisException("Cannot analyse header", e);
         } finally {
             if (reader != null) {
                 try {

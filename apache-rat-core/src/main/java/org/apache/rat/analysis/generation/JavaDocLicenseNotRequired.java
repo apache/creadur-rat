@@ -19,7 +19,6 @@
 package org.apache.rat.analysis.generation;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
@@ -34,8 +33,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
 	/**
 	 * 
 	 */
-	public boolean match(final Document subject, final String line)
-			throws RatHeaderAnalysisException {
+	public boolean match(final Document subject, final String line) {
 		boolean result = line.contains(JAVADOC_REGEX_DEFN);
 		if (result) {
 			reportOnLicense(subject);

@@ -20,7 +20,6 @@ package org.apache.rat.analysis.license;
 
 import java.util.regex.Pattern;
 
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
@@ -48,7 +47,7 @@ public class OASISLicense extends FullTextMatchingLicense {
     }
 
     @Override
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line) {
         boolean result = false;
         if (copyrightMatch) {
             result = super.match(subject, line);

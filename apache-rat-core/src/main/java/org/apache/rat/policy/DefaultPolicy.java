@@ -22,7 +22,6 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicenseFamily;
 
 import java.util.Arrays;
@@ -81,7 +80,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
         subject.getMetaData().set(datum);
     }
     
-    public void analyse(final Document subject) throws RatDocumentAnalysisException {
+    public void analyse(final Document subject) {
         if (subject != null) {
             final String name = subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
             if (name != null) {

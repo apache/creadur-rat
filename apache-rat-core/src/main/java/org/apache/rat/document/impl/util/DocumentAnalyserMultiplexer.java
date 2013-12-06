@@ -20,7 +20,7 @@ package org.apache.rat.document.impl.util;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
+import java.io.IOException;
 
 public class DocumentAnalyserMultiplexer implements IDocumentAnalyser {
 
@@ -31,7 +31,7 @@ public class DocumentAnalyserMultiplexer implements IDocumentAnalyser {
         this.analysers = analysers;
     }
 
-    public void analyse(Document document) throws RatDocumentAnalysisException {
+    public void analyse(Document document) throws IOException{
         for (IDocumentAnalyser analyser : analysers) {
             analyser.analyse(document);
         }

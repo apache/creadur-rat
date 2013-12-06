@@ -21,7 +21,6 @@ package org.apache.rat.analysis.license;
 import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
 
@@ -89,14 +88,14 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
         return copyrightMatch;
     }
 
-    public boolean match(Document subject, String s) throws RatHeaderAnalysisException {
-        if (!copyrightMatch) {
-            if (matchCopyright(s)) {
-                reportOnLicense(subject);
-            }
-        }
-        return copyrightMatch;
-    }
+	public boolean match(Document subject, String s) {
+		if (!copyrightMatch) {
+			if (matchCopyright(s)) {
+				reportOnLicense(subject);
+			}
+		}
+		return copyrightMatch;
+	}
 
     public void reset() {
         copyrightMatch = false;

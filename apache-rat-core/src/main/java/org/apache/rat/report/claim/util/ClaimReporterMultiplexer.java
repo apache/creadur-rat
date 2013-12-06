@@ -21,7 +21,6 @@ package org.apache.rat.report.claim.util;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class ClaimReporterMultiplexer implements RatReport {
         if (analyser != null) {
             try {
                 analyser.analyse(document);
-            } catch (RatDocumentAnalysisException e) {
+            } catch (Exception e) {
                 throw new RatException(e.getMessage(), e);
             }
         }

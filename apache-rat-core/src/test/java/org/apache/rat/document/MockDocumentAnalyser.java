@@ -27,7 +27,7 @@ public class MockDocumentAnalyser implements IDocumentAnalyser {
 
     public List<Document> matches = new ArrayList<Document>();
     
-    public void analyse(Document document) throws RatDocumentAnalysisException {
+    public void analyse(Document document) {
         matches.add(document);
     }
 

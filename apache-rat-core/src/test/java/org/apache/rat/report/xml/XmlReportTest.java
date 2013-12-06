@@ -20,7 +20,6 @@ package org.apache.rat.report.xml;
 
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.report.AbstractReport;
@@ -57,7 +56,7 @@ public class XmlReportTest {
         final SimpleXmlClaimReporter reporter = new SimpleXmlClaimReporter(writer);
         final IHeaderMatcher matcher = new IHeaderMatcher() {
 
-            public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+            public boolean match(Document subject, String line) {
                 return false;
             }
 

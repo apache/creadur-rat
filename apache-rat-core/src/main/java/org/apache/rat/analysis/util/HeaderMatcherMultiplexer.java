@@ -19,7 +19,6 @@
 package org.apache.rat.analysis.util;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 
 /**
@@ -34,7 +33,7 @@ public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
         this.matchers = matchers;
     }
 
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+    public boolean match(Document subject, String line) {
         boolean result = false;
         for (IHeaderMatcher matcher : matchers) {
             result = matcher.match(subject, line);

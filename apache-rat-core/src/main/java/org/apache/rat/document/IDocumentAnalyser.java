@@ -19,9 +19,10 @@
 package org.apache.rat.document;
 
 import org.apache.rat.api.Document;
+import java.io.IOException;
 
 
 public interface IDocumentAnalyser {
 
-    public void analyse(Document document) throws RatDocumentAnalysisException;
+    public void analyse(Document document) throws IOException;
 }
