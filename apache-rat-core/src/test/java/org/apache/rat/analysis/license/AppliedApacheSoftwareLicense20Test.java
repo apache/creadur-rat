@@ -26,6 +26,8 @@ import java.io.StringReader;
 import java.io.IOException;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
+import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.test.utils.Resources;
 import org.junit.Assert;
@@ -111,6 +113,20 @@ public class AppliedApacheSoftwareLicense20Test {
 	@Test
 	public void testHasCopyrightPattern() {
 		assertTrue("copyrightPattern not null", license.hasCopyrightPattern());
+	}
+	
+	@Test
+	public void testHasFullText() {
+		Datum licenseFamilyCategory = new Datum(
+				MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY,
+				MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
+		Datum licenseFamilyName = new Datum(
+				MetaData.RAT_URL_LICENSE_FAMILY_NAME,
+				MetaData.RAT_URL_LICENSE_FAMILY_NAME);
+		String fullText = "";
+		FullTextMatchingLicense fullTextMatchingLicense = new FullTextMatchingLicense(
+				licenseFamilyCategory, licenseFamilyName, null, fullText);
+		assertTrue("fullText not null", fullTextMatchingLicense.hasFullText());
 	}
 
 }
