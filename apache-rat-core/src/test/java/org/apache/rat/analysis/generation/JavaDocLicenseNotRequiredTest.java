@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.generation;
 
 import org.apache.rat.api.Document;
@@ -32,49 +32,50 @@ import java.io.FileReader;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 /**
  *
  */
 public class JavaDocLicenseNotRequiredTest {
 
-    MockClaimReporter reporter;
-    IHeaderMatcher license;
-    
-    @Before
-    public void setUp() throws Exception {
-        license = new JavaDocLicenseNotRequired();
-        reporter = new MockClaimReporter();
-    }
+	MockClaimReporter reporter;
+	IHeaderMatcher license;
 
-    @Test
-    public void matchIndexDoc() throws Exception {
-        boolean result = readAndMatch("index.html");
-        assertTrue("Is a javadoc", result);
-    }
+	@Before
+	public void setUp() throws Exception {
+		license = new JavaDocLicenseNotRequired();
+		reporter = new MockClaimReporter();
+	}
 
-    @Test
-    public void matchClassDoc() throws Exception {
-        boolean result = readAndMatch("ArchiveElement.html");
-        assertTrue("Is a javadoc", result);
-    }
+	@Test
+	public void matchIndexDoc() throws Exception {
+		boolean result = readAndMatch("index.html");
+		assertTrue("Is a javadoc", result);
+	}
 
-    @Test
-    public void matchNonJavaDoc() throws Exception {
-        boolean result = readAndMatch("notjavadoc.html");
-        assertFalse("Not javadocs and so should return null", result);
-    }
-    
-    boolean readAndMatch(String name) throws Exception {
-        File file = Resources.getResourceFile("javadocs/" + name);
-        boolean result = false;
-        BufferedReader in = new BufferedReader(new FileReader(file));
-        String line = in.readLine();
-        final Document subject = new MockLocation("subject");
-        while (line != null && !result) {
-            result = license.match(subject, line);
-            line = in.readLine();
-        }
-        in.close();
-        return result;
-    }
+	@Test
+	public void matchClassDoc() throws Exception {
+		boolean result = readAndMatch("ArchiveElement.html");
+		assertTrue("Is a javadoc", result);
+	}
+
+	@Test
+	public void matchNonJavaDoc() throws Exception {
+		boolean result = readAndMatch("notjavadoc.html");
+		assertFalse("Not javadocs and so should return null", result);
+	}
+
+	boolean readAndMatch(String name) throws Exception {
+		File file = Resources.getResourceFile("javadocs/" + name);
+		boolean result = false;
+		BufferedReader in = new BufferedReader(new FileReader(file));
+		String line = in.readLine();
+		final Document subject = new MockLocation("subject");
+		while (line != null && !result) {
+			result = license.match(subject, line);
+			line = in.readLine();
+		}
+		in.close();
+		return result;
+	}
 }
