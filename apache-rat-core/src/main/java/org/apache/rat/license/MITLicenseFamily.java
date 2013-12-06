@@ -18,14 +18,14 @@
  */ 
 package org.apache.rat.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.MIT;
 
 /**
  * Base implementation for MIT licenses.
  */
 public class MITLicenseFamily extends SimpleLicenseFamily {
     public MITLicenseFamily() {
-        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MIT);
+		super(MIT.getName());
     }
 
 }

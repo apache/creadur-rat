@@ -18,28 +18,26 @@
  */
 package org.apache.rat.policy;
 
+
 import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
+import static org.apache.rat.api.domain.RatLicenseFamily.MIT;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 
 import java.util.Arrays;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
-import org.apache.rat.api.domain.RatLicenseFamily;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
 
 public class DefaultPolicy implements IDocumentAnalyser {
-    private static final String[] APPROVED_LICENSES = {
-    	APACHE.getName(),
-		MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE,
-		W3C.getName(),
-        RatLicenseFamily.W3C_DOCUMENTATION.getName(),
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MIT,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1,
-    };
+       private static final String[] APPROVED_LICENSES = { APACHE.getName(),
+                   MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE,
+                   W3C.getName(), W3C_DOCUMENTATION.getName(),
+                   MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE,
+                   MIT.getName(), MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1, };
 
     private static final String[] toNames(final ILicenseFamily[] approvedLicenses) {
         String[] results = null;

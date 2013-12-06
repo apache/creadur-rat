@@ -19,6 +19,7 @@
 package org.apache.rat.policy;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
+import static org.apache.rat.api.domain.RatLicenseFamily.MIT;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 import static org.junit.Assert.assertEquals;
@@ -26,20 +27,17 @@ import static org.junit.Assert.assertEquals;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
 
 
 public class DefaultPolicyTest {
 
-    MockClaimReporter reporter;
     DefaultPolicy policy;
     private Document subject;
 
     @Before
     public void setUp() throws Exception {
-        reporter = new MockClaimReporter();
         policy = new DefaultPolicy();
         subject = new MockLocation("subject");
     }
@@ -79,7 +77,16 @@ public class DefaultPolicyTest {
         assertApproval(true);
     }
     
-    @Test
+	@Test
+	public void testMITFamily() throws Exception {
+		subject.getMetaData().set(
+				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, MIT
+						.getName()));
+		policy.analyse(subject);
+		assertApproval(true);
+	}
+
+	@Test
     public void testUnknownFamily() throws Exception {
         subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
         policy.analyse(subject);

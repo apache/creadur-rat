@@ -18,7 +18,7 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.MIT;
 
 /**
  * Base MIT license (all 3 parts).
@@ -32,8 +32,7 @@ public class MITLicense extends FullTextMatchingLicense {
      * 
      */
 	public MITLicense() {
-		super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_MIT,
-				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MIT, "",
+		super(MIT.licenseFamily(),
 				FIRST_LICENSE_LINE + MIDDLE_LICENSE_LINE + AS_IS_LICENSE_LINE);
 	}
 }

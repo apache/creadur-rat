@@ -18,17 +18,19 @@
  */
 package org.apache.rat.analysis.license;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * 
@@ -75,6 +77,24 @@ public class MITLicenseTest {
 					licenceUnderTest.getKey().match(subject,
 							"\t" + licenceUnderTest.getValue()));
 		}
+	}
+
+	@Test
+	public void testNotes() {
+		assertThat(
+				new MITLicense().getNotes(),
+				is("Note that MIT requires a NOTICE. All modifications require notes. See http://opensource.org/licenses/MIT."));
+	}
+
+	@Test
+	public void testCategory() {
+		assertThat(new MITLicense().getLicenseFamilyCategory(), is("MIT  "));
+	}
+
+	@Test
+	public void testName() {
+		assertThat(new MITLicense().getLicenseFamilyName(),
+				is("The MIT License"));
 	}
 
 }
