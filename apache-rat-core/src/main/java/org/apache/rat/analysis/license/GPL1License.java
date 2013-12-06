@@ -29,6 +29,9 @@ public class GPL1License extends FullTextMatchingLicense {
             " the Free Software Foundation; either version 1, or (at your option)\n" +
             " any later version.";
 
+    /**
+     * 
+     */
     public GPL1License() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL1,
                 MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_1,
