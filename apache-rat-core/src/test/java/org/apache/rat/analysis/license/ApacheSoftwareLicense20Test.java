@@ -20,7 +20,6 @@ package org.apache.rat.analysis.license;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,14 +29,16 @@ import static org.junit.Assert.assertTrue;
  * 
  */
 public class ApacheSoftwareLicense20Test {
+	
+	private ApacheSoftwareLicense20 worker;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
+    	worker = new ApacheSoftwareLicense20();
     }
 
     @Test
     public void matches() {
-        ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
         assertTrue(worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
         assertTrue(worker.matches("    Licensed under the Apache License, Version 2.0 (the \"License\");"));
         assertTrue(worker.matches("Licensed under the Apache License, Version 2.0 (the \"License\");"));
@@ -52,7 +53,6 @@ public class ApacheSoftwareLicense20Test {
 
     @Test
     public void match() {
-        ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
         final Document subject = new MockLocation("subject");
         assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
         assertTrue(worker.match(subject, "    Licensed under the Apache License, Version 2.0 (the \"License\");"));
