@@ -37,12 +37,6 @@ public class BaseLicense {
 
 	/**
 	 * Instantiates a new base license.
-	 */
-	public BaseLicense() {
-	}
-
-	/**
-	 * Instantiates a new base license.
 	 * 
 	 * @param licenseFamilyCategory
 	 *            the license family category
@@ -85,7 +79,7 @@ public class BaseLicense {
 	 * @param pDocumentCategory
 	 *            the new license family category
 	 */
-	public void setLicenseFamilyCategory(String pDocumentCategory) {
+	public void setLicenseFamilyCategory(final String pDocumentCategory) {
 		licenseFamilyCategory = pDocumentCategory;
 	}
 
@@ -104,7 +98,7 @@ public class BaseLicense {
 	 * @param pLicenseFamilyCategory
 	 *            the new license family name
 	 */
-	public void setLicenseFamilyName(String pLicenseFamilyCategory) {
+	public void setLicenseFamilyName(final String pLicenseFamilyCategory) {
 		licenseFamilyName = pLicenseFamilyCategory;
 	}
 
@@ -123,7 +117,7 @@ public class BaseLicense {
 	 * @param pNotes
 	 *            the new notes
 	 */
-	public void setNotes(String pNotes) {
+	public void setNotes(final String pNotes) {
 		notes = pNotes;
 	}
 
@@ -133,7 +127,7 @@ public class BaseLicense {
 	 * @param subject
 	 *            the subject
 	 */
-	public final void reportOnLicense(Document subject) {
+	public final void reportOnLicense(final Document subject) {
 		final MetaData metaData = subject.getMetaData();
 		metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
 		final String licFamilyCategory = getLicenseFamilyCategory();
@@ -152,13 +146,13 @@ public class BaseLicense {
 	 *            the text
 	 * @return the string
 	 */
-	protected static final String prune(String text) {
+	protected static final String prune(final String text) {
 		final int length = text.length();
 		final StringBuilder buffer = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
-			char at = text.charAt(i);
-			if (Character.isLetterOrDigit(at)) {
-				buffer.append(at);
+			char charIndex = text.charAt(i);
+			if (Character.isLetterOrDigit(charIndex)) {
+				buffer.append(charIndex);
 			}
 		}
 		return buffer.toString();

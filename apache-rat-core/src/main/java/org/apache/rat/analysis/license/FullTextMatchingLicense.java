@@ -48,9 +48,6 @@ public class FullTextMatchingLicense extends BaseLicense
 
     private final StringBuilder buffer = new StringBuilder();
 
-    public FullTextMatchingLicense() {
-    }
-
     protected FullTextMatchingLicense(Datum licenseFamilyCategory,
                                       Datum licenseFamilyName,
                                       String notes,
