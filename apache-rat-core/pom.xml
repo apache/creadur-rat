@@ -82,6 +82,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
     </dependency>

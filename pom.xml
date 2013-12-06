@@ -89,6 +89,11 @@ agnostic home for software distribution comprehension and audit tools.
       </dependency>
       <dependency>
         <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-tasks</artifactId>
         <version>${project.version}</version>
       </dependency>
