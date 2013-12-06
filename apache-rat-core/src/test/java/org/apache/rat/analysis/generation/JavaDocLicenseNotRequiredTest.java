@@ -47,19 +47,19 @@ public class JavaDocLicenseNotRequiredTest {
 	}
 
 	@Test
-	public void matchIndexDoc() throws RatHeaderAnalysisException, IOException {
+	public void testMatchIndexDocLicense() throws RatHeaderAnalysisException, IOException {
 		boolean result = readAndMatch("index.html");
 		assertTrue("Is a javadoc", result);
 	}
 
 	@Test
-	public void matchClassDoc() throws RatHeaderAnalysisException, IOException {
+	public void testMatchClassDocLicense() throws RatHeaderAnalysisException, IOException {
 		boolean result = readAndMatch("ArchiveElement.html");
 		assertTrue("Is a javadoc", result);
 	}
 
 	@Test
-	public void matchNonJavaDoc() throws RatHeaderAnalysisException,
+	public void testMatchNonJavaDocLicense() throws RatHeaderAnalysisException,
 			IOException {
 		boolean result = readAndMatch("notjavadoc.html");
 		assertFalse("Not javadocs and so should return null", result);
