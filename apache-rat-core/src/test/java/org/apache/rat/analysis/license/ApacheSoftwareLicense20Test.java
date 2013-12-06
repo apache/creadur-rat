@@ -52,5 +52,14 @@ public class ApacheSoftwareLicense20Test {
         final Document subject = new MockLocation("subject");
         assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
 	}
+    
+	@Test
+	public void testMatchNonApacheLicense() {
+		final Document subject = new MockLocation("subject");
+		if (worker.getNotes() != null) {
+			assertFalse("Match the apache license", worker.match(subject,
+					"'Behold, Telemachus! (nor fear the sight,)"));
+		}
+	}
 
 }
