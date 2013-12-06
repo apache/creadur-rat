@@ -53,7 +53,7 @@ public class CDDL1License extends SimplePatternBasedLicense {
 	 * @return the reg ex patterns
 	 */
     private Pattern[] getRegExPatterns() {
-        final Pattern[] result;
+        Pattern[] result;
         final String[] pttrns = getPatterns();
         if (ArrayUtils.isEmpty(pttrns)) {
             result = new Pattern[0];
@@ -74,18 +74,20 @@ public class CDDL1License extends SimplePatternBasedLicense {
 	 * org.apache.rat.analysis.license.SimplePatternBasedLicense#matches(java
 	 * .lang.String)
 	 */
-    @Override
-    protected boolean matches(final String pLine) {
-        if (pLine != null) {
-            final String[] pttrns = getPatterns();
-            if (pttrns != null) {
-                for (Pattern pttrn : getRegExPatterns()) {
-                    if (pttrn.matcher(pLine).find()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+	@Override
+	protected boolean matches(final String pLine) {
+		boolean result = false;
+		if (pLine != null) {
+			final String[] pttrns = getPatterns();
+			if (pttrns != null) {
+				for (Pattern pttrn : getRegExPatterns()) {
+					if (pttrn.matcher(pLine).find()) {
+						result = true;
+						break;
+					}
+				}
+			}
+		}
+		return result;
     }
 }
