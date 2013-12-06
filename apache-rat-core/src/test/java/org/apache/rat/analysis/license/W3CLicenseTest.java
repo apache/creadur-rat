@@ -15,8 +15,13 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
@@ -24,36 +29,54 @@ import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class W3CLicenseTest {
 
-    public static final String COPYRIGHT_URL 
-    = "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
-    
-    public static final String COPYRIGHT_URL_COMMENTED
-    = "# http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 #";
-    
-    public static final String COPYRIGHT_URL_XML
-    = "<!-- http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 -->";
-    
+    public static final String COPYRIGHT_URL =
+            "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
+
+    public static final String COPYRIGHT_URL_COMMENTED =
+            "# http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 #";
+
+    public static final String COPYRIGHT_URL_XML =
+            "<!-- http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 -->";
+
     W3CLicense license;
     MockClaimReporter reporter;
 
     @Before
     public void setUp() throws Exception {
-        license = new W3CLicense();
-        reporter = new MockClaimReporter();
+        this.license = new W3CLicense();
+        this.reporter = new MockClaimReporter();
     }
 
     @Test
     public void match() throws Exception {
         final Document subject = new MockLocation("subject");
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL));
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_COMMENTED));
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_XML));
-        assertFalse("Return null if the license isn't matched", license.match(subject, "Bogus"));
+        assertTrue("Expected matcher to return license",
+                this.license.match(subject, COPYRIGHT_URL));
+        assertTrue("Expected matcher to return license",
+                this.license.match(subject, COPYRIGHT_URL_COMMENTED));
+        assertTrue("Expected matcher to return license",
+                this.license.match(subject, COPYRIGHT_URL_XML));
+        assertFalse("Return null if the license isn't matched",
+                this.license.match(subject, "Bogus"));
     }
 
+    @Test
+    public void testNotes() {
+        assertThat(
+                this.license.getNotes(),
+                is("Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231."));
+    }
+
+    @Test
+    public void testCategory() {
+        assertThat(this.license.getLicenseFamilyCategory(), is("W3C  "));
+    }
+
+    @Test
+    public void testName() {
+        assertThat(this.license.getLicenseFamilyName(),
+                is("W3C Software Copyright"));
+    }
 }

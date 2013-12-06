@@ -15,22 +15,18 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 
 public class W3CLicense extends SimplePatternBasedLicense {
 
-    private static final String NOTES 
-        = "Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.";
-    private static final String COPYRIGHT_URL 
-    = "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
-    
+    private static final String COPYRIGHT_URL =
+            "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
+
     public W3CLicense() {
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3C, 
-                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT,  NOTES,
-                new String[]{COPYRIGHT_URL});
-        
+        super(W3C.licenseFamily(), new String[] { COPYRIGHT_URL });
+
     }
 }

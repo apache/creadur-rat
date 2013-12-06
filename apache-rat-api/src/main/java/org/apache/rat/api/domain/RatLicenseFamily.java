@@ -25,7 +25,10 @@ import static org.apache.rat.api.domain.LicenseFamilyBuilder.aLicenseFamily;
  */
 public enum RatLicenseFamily {
 
-    W3C("W3C Software Copyright", "W3C  ", "");
+    W3C(
+            "W3C Software Copyright",
+            "W3C  ",
+            "Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.");
 
     /** @see LicenseFamily#getName() */
     private final String name;

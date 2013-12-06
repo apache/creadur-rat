@@ -38,6 +38,8 @@ public class RatLicenseFamilyTest {
 
     @Test
     public void testW3CLicenseFamilyNotes() {
-        assertThat(W3C.getNotes(), is(""));
+        assertThat(
+                W3C.getNotes(),
+                is("Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231."));
     }
 }
