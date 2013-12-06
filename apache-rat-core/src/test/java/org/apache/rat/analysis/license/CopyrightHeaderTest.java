@@ -39,8 +39,8 @@ public class CopyrightHeaderTest {
 			"/*  Copyright 123a*/", "/*  Copyright 123f oobar*/",
 			"/*  Copyright 2013FooBar*/", "/*  Copyright 2012 2013 FooBar.*/" };
 
-	CopyrightHeader header;
-	Document subject = new MockLocation("subject");
+	private CopyrightHeader header;
+	private Document subject = new MockLocation("subject");
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,7 +52,7 @@ public class CopyrightHeaderTest {
 	}
 
 	@Test
-	public void match() throws Exception {
+	public void match() {
 		for (String line : MATCHING_HEADERS) {
 			assertTrue("Copyright Header should be matched",
 					header.match(subject, line));
@@ -64,7 +64,7 @@ public class CopyrightHeaderTest {
 	}
 
 	@Test
-	public void noMatch() throws Exception {
+	public void noMatch() {
 		for (String line : NON_MATCHING_HEADERS) {
 			assertFalse("Copyright Header shouldn't be matched",
 					header.match(subject, line));
