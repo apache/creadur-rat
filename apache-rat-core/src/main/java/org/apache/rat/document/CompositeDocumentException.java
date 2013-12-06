@@ -31,8 +31,8 @@ public class CompositeDocumentException extends IOException {
 		super("This document must be read as an archive.");
 	}
 
-	public CompositeDocumentException(String s) {
-		super(s);
+	public CompositeDocumentException(final String message) {
+		super(message);
 	}
 
 }
