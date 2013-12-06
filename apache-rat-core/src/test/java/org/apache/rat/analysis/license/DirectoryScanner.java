@@ -33,35 +33,36 @@ import org.junit.Assert;
 
 class DirectoryScanner {
 
-    @SuppressWarnings("boxing")
-    /**
-     * Get list of files in a directory, and scan for license matches
-     * @param directory the directory containing the files
-     * @param matcher the license matcher
-     * @param expected the expected result of the each scan
-     * @throws Exception
-     */
-    public static void testFilesInDir(String directory, IHeaderMatcher matcher, boolean expected) throws IOException {
-        final File[] resourceFiles = Resources.getResourceFiles(directory);
-        if (resourceFiles.length == 0) {
-            Assert.fail("No files found under "+directory);
-        }
-        for(File f : resourceFiles) {
-            final Document subject = new MockLocation(f.toString());
-            BufferedReader br = null;
-            try {
-                boolean result = false;
-                br = Resources.getBufferedReader(f);
-                String line;
-                while(!result && (line = br.readLine()) != null) {
-                    result = matcher.match(subject, line);
-                }
-                assertEquals(f.toString(), expected, result);
-            } finally {
-                matcher.reset();
-                IOUtils.closeQuietly(br);
-            }
-        }
-    }
+	@SuppressWarnings("boxing")
+	/**
+	 * Get list of files in a directory, and scan for license matches
+	 * @param directory the directory containing the files
+	 * @param matcher the license matcher
+	 * @param expected the expected result of the each scan
+	 * @throws Exception
+	 */
+	public static void testFilesInDir(String directory, IHeaderMatcher matcher,
+			boolean expected) throws IOException {
+		final File[] resourceFiles = Resources.getResourceFiles(directory);
+		if (resourceFiles.length == 0) {
+			Assert.fail("No files found under " + directory);
+		}
+		for (File f : resourceFiles) {
+			final Document subject = new MockLocation(f.toString());
+			BufferedReader br = null;
+			try {
+				boolean result = false;
+				br = Resources.getBufferedReader(f);
+				String line;
+				while (!result && (line = br.readLine()) != null) {
+					result = matcher.match(subject, line);
+				}
+				assertEquals(f.toString(), expected, result);
+			} finally {
+				matcher.reset();
+				IOUtils.closeQuietly(br);
+			}
+		}
+	}
 
 }
