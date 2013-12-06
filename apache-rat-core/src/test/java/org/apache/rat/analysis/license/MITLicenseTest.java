@@ -54,15 +54,11 @@ public class MITLicenseTest {
 				+ "\n" + MITLicense.MIDDLE_LICENSE_LINE + "\r\n * "
 				+ MITLicense.AS_IS_LICENSE_LINE);
 		assertEquals(1, licenseStringMap.entrySet().size());
-	}
-
-	@Before
-	public final void initReporter() {
 		this.subject = new MockLocation("subject");
 	}
 
 	@Test
-	public void testNegativeMatches() throws Exception {
+	public void testNegativeMatches() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
 			assertFalse(licenceUnderTest.getKey().match(subject,
@@ -71,7 +67,7 @@ public class MITLicenseTest {
 	}
 
 	@Test
-	public void testPositiveMatchInDocument() throws Exception {
+	public void testPositiveMatchInDocument() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
 			assertTrue(licenceUnderTest.getKey().match(subject,
