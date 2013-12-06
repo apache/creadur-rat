@@ -31,6 +31,7 @@ final class DefaultAnalyser implements IDocumentAnalyser {
     private final IHeaderMatcher matcher;
     private final ArchiveGuesser archiveGuesser = new ArchiveGuesser();
     private final NoteGuesser noteGuessor = new NoteGuesser();
+    private final BinaryGuesser binaryGuessor = new BinaryGuesser();
 
     public DefaultAnalyser(final IHeaderMatcher matcher) {
         super();
@@ -45,7 +46,7 @@ final class DefaultAnalyser implements IDocumentAnalyser {
         } else {
             if (this.archiveGuesser.matches(subject)) {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
-            } else if (new BinaryGuesser().matches(subject)) {
+            } else if (this.binaryGuessor.matches(subject)) {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
             } else {
                 documentCategory =
