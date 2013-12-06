@@ -39,26 +39,29 @@ public class ApacheSoftwareLicense20Test {
 
     @Test
     public void testMatchesApacheLicense() {
-        assertTrue(worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
+		assertTrue("Matches the apache license",
+				worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
     }
     
     @Test
     public void testMatchesNonApacheLicense() {
-    	assertFalse(worker.matches("'Behold, Telemachus! (nor fear the sight,)"));
+		assertFalse("Not Matches the reference apache license",
+				worker.matches("'Behold, Telemachus! (nor fear the sight,)"));
     }
     
     @Test
     public void testMatchApacheLicenseLine() {
         final Document subject = new MockLocation("subject");
-        assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
+		assertTrue("Match the apache license", worker.match(subject,
+				ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
 	}
     
 	@Test
 	public void testMatchNonApacheLicense() {
 		final Document subject = new MockLocation("subject");
 		if (worker.getNotes() != null) {
-			assertFalse("Match the apache license", worker.match(subject,
-					"'Behold, Telemachus! (nor fear the sight,)"));
+			assertFalse("Not Match the reference apache license", worker.match(
+					subject, "'Behold, Telemachus! (nor fear the sight,)"));
 		}
 	}
 
