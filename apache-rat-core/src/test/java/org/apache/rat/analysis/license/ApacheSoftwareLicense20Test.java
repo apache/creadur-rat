@@ -64,7 +64,8 @@ public class ApacheSoftwareLicense20Test {
         assertTrue(worker.match(subject, "    Licensed under the Apache License, Version 2.0 (the \"License\");"));
         assertTrue(worker.match(subject, " ## Licensed under the Apache License, Version 2.0 (the \"License\");"));
         assertTrue(worker.match(subject, " ## Licensed under the Apache License, Version 2.0 (the \"License\") ##);"));
-        assertFalse(worker.match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
-    }
+		assertFalse(worker.match(subject,
+				"'Behold, Telemachus! (nor fear the sight,)"));
+	}
 
 }
