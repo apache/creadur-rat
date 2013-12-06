@@ -29,41 +29,54 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.test.utils.Resources;
-import org.junit.Assert;
 
 /**
  * The Class DirectoryScanner.
  */
-class DirectoryScanner {
+final class DirectoryScanner {
 
-	@SuppressWarnings("boxing")
+	private static final int ZERO = 0;
+
+	/**
+	 * 
+	 */
+	private DirectoryScanner() {
+		super();
+	}
+
 	/**
 	 * Get list of files in a directory, and scan for license matches
-	 * @param directory the directory containing the files
-	 * @param matcher the license matcher
-	 * @param expected the expected result of the each scan
+	 * 
+	 * @param directory
+	 *            the directory containing the files
+	 * @param matcher
+	 *            the license matcher
+	 * @param expected
+	 *            the expected result of the each scan
 	 * @throws IOException
 	 */
-	public static void testFilesInDir(String directory, IHeaderMatcher matcher,
-			boolean expected) throws IOException {
+	public static void testFilesInDir(final String directory,
+			final IHeaderMatcher matcher, final boolean expected)
+			throws IOException {
 		final File[] resourceFiles = Resources.getResourceFiles(directory);
-		if (resourceFiles.length == 0) {
-			Assert.fail("No files found under " + directory);
+		if (resourceFiles.length == ZERO) {
+			throw new IOException("No files found under " + directory);
 		}
-		for (File f : resourceFiles) {
-			final Document subject = new MockLocation(f.toString());
-			BufferedReader br = null;
+		for (File file : resourceFiles) {
+			final Document subject = new MockLocation(file.toString());
+			BufferedReader bufferedReader = null;
 			try {
 				boolean result = false;
-				br = Resources.getBufferedReader(f);
-				String line;
-				while (!result && (line = br.readLine()) != null) {
+				bufferedReader = Resources.getBufferedReader(file);
+				String line = bufferedReader.readLine();
+				while (!result && line != null) {
 					result = matcher.match(subject, line);
+					line = bufferedReader.readLine();
 				}
-				assertEquals(f.toString(), expected, result);
+				assertEquals(file.toString(), expected, result);
 			} finally {
 				matcher.reset();
-				IOUtils.closeQuietly(br);
+				IOUtils.closeQuietly(bufferedReader);
 			}
 		}
 	}
