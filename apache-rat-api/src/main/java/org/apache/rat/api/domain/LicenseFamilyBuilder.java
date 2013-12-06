@@ -18,34 +18,77 @@
  */
 package org.apache.rat.api.domain;
 
+/**
+ * Builds {@link LicenseFamily} instances.
+ */
 public final class LicenseFamilyBuilder {
 
+    /**
+     * Begins to build a license family.
+     * 
+     * @return a builder for a license family, not null
+     */
     public static LicenseFamilyBuilder aLicenseFamily() {
-
         return new LicenseFamilyBuilder();
     }
 
+    /** Further information associated with the license family. Human readable. */
     private String notes;
+    /**
+     * Names of the category containing this license family. Recommended that
+     * this be an URI.
+     */
     private String category;
+    /** Uniquely identifies this family. Choosing a suitable URI is recommended */
     private String name;
 
+    /** Use {@link #aLicenseFamily()  */
     private LicenseFamilyBuilder() {
     }
 
+    /**
+     * Builds family with further information associated with the license
+     * family. Human readable.
+     * 
+     * @param notes
+     *            possibly null
+     * @return this instance, not null
+     */
     public LicenseFamilyBuilder withNotes(final String notes) {
         this.notes = notes;
         return this;
     }
 
+    /**
+     * Builds a family.
+     * 
+     * @return not null
+     */
     public LicenseFamily build() {
         return new LicenseFamily(this.notes, this.category, this.name);
     }
 
+    /**
+     * Builds family with category containing this license family. Choosing a
+     * suitable URI is recommended
+     * 
+     * @param category
+     *            possible null
+     * @return this instance, not null
+     */
     public LicenseFamilyBuilder withCategory(final String category) {
         this.category = category;
         return this;
     }
 
+    /**
+     * 
+     * Uniquely identifies this family. Choosing a suitable URI is recommended.
+     * 
+     * @param name
+     *            not null
+     * @return this instance, not null
+     */
     public LicenseFamilyBuilder withName(final String name) {
         this.name = name;
         return this;

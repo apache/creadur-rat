@@ -18,12 +18,46 @@
  */
 package org.apache.rat.api.domain;
 
+/**
+ * Licenses are grouped into families. Each family has similar legal semantics,
+ * though some small details may differ.
+ * <p/>
+ * For example, the <a href='http://opensource.org/licenses/BSD-3-Clause'>3
+ * clause BSD license</a> is in a family where members differ by &lt;OWNER&gt;,
+ * &lt;ORGANIZATION&gt; and &lt;YEAR&gt; parameters.
+ * 
+ */
 public final class LicenseFamily {
 
+    /**
+     * Further information associated with the license family. Human readable.
+     * Possibly null.
+     */
     private final String notes;
+    /**
+     * Names of the category containing this license family. Choosing a suitable
+     * URI is recommended. Possibly null;
+     */
     private final String category;
+    /**
+     * Uniquely identifies this family. Choosing a suitable URI is recommended.
+     * Not null.
+     */
     private final String name;
 
+    /**
+     * Constructs an immutable license family.
+     * 
+     * @param notes
+     *            further information associated with the license family. Human
+     *            readable. Possibly null.
+     * @param category
+     *            the name of the category containing this license family.
+     *            Recommended that this be an URI. Possibly null.
+     * @param name
+     *            the name uniquely identifying this family. Recommended that
+     *            this be an URI. Not null.
+     */
     public LicenseFamily(final String notes, final String category,
             final String name) {
         super();
@@ -32,14 +66,32 @@ public final class LicenseFamily {
         this.name = name;
     }
 
+    /**
+     * Gets further information associated with the license family. Human
+     * readable.
+     * 
+     * @return possibly null
+     */
     public String getNotes() {
         return this.notes;
     }
 
+    /**
+     * Gets the name of the category containing this license family. Recommended
+     * that this be an URI.
+     * 
+     * @return possibly null
+     */
     public String getCategory() {
         return this.category;
     }
 
+    /**
+     * Gets the name uniquely identifying this family. Recommended that this be
+     * an URI.
+     * 
+     * @return not null
+     */
     public String getName() {
         return this.name;
     }
