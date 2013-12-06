@@ -179,58 +179,27 @@ public class MetaData {
     public static final Datum RAT_APPROVED_LICENSE_DATIM_FALSE = new Datum(
             RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_FALSE);
 
-
-    private ContentType contentType;
-    /**
-     * Only likely to be a small quantity of data so trade some performance for
-     * simplicity.
-     */
-    private final List<Datum> data;
+	/**
+	 * Only likely to be a small quantity of data so trade some performance for
+	 * simplicity.
+	 */
+	private final List<Datum> data;
 
 	/**
 	 *
 	 */
 	public MetaData() {
-		this(null);
+		this.data = new ArrayList<Datum>(16);
 	}
 
 	/**
-	 * Constructs meta-data representing the given content.
-	 * @param contentType not null
+	 * Gets all data.
+	 *
+	 * @return unmodifiable view of the meta data.
 	 */
-    public MetaData(final ContentType contentType) {
-        this.contentType = contentType;
-        this.data = new ArrayList<Datum>(16);
-    }
-
-    /**
-     * Gets the content type for the subject.
-     *
-     * @return or null when the type is unknown
-     */
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    /**
-     * Sets the content type for this subject.
-     *
-     * @param contentType
-     *            <code>ContentType</code>, or null when the content type is
-     *            unknown
-     */
-    public void setContentType(final ContentType contentType) {
-        this.contentType = contentType;
-    }
-
-    /**
-     * Gets all data.
-     *
-     * @return unmodifiable view of the meta data.
-     */
-    public Collection<Datum> getData() {
-        return Collections.unmodifiableCollection(data);
-    }
+	public Collection<Datum> getData() {
+		return Collections.unmodifiableCollection(data);
+	}
 
     /**
      * Adds a new datum. Existing data with the same name are not replaced.
@@ -310,13 +279,12 @@ public class MetaData {
         return dataRemoved;
     }
 
-    /**
-     * Clears all data.
-     */
-    public void clear() {
-        data.clear();
-        this.contentType = null;
-    }
+	/**
+	 * Clears all data.
+	 */
+	public void clear() {
+		data.clear();
+	}
 
     /**
      * A datum.
