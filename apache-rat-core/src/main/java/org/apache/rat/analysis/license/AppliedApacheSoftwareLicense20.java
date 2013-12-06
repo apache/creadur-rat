@@ -18,8 +18,9 @@
  */
 package org.apache.rat.analysis.license;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
+
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 
 /**
  * Matches an applied AL 2.0 License header, including a <em>required</em>
@@ -49,14 +50,9 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 	 * Instantiates a new applied apache software license20.
 	 */
 	public AppliedApacheSoftwareLicense20() {
-		super(
-				MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,
-				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,
-				"");
-		textMatcher = new FullTextMatchingLicense(
-				MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,
-				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,
-				"", ASL20_LICENSE_DEFN);
+		super(APACHE.licenseFamily(), "");
+		textMatcher = new FullTextMatchingLicense(APACHE.licenseFamily(),
+				ASL20_LICENSE_DEFN);
 	}
 
 	/**

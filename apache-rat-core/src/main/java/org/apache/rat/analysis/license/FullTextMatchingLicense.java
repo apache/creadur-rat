@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
+import org.apache.rat.api.domain.LicenseFamily;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
@@ -83,6 +84,20 @@ public class FullTextMatchingLicense extends BaseLicense implements
         super(licenseFamilyCategory, licenseFamilyName, notes);
         setFullText(fullText);
     }
+    
+	/**
+	 * Constructs a license indicated by the given patterns.
+	 * 
+	 * @param pLicenseFamily
+	 *            not null
+	 * @param fullText
+	 *            not null
+	 */
+	public FullTextMatchingLicense(final LicenseFamily pLicenseFamily,
+			final String fullText) {
+		super(pLicenseFamily);
+		setFullText(fullText);
+	}
 
     /**
      * Sets the full text.

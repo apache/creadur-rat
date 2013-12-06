@@ -18,6 +18,7 @@
  */
 package org.apache.rat.api.domain;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 import static org.hamcrest.CoreMatchers.is;
@@ -60,4 +61,21 @@ public class RatLicenseFamilyTest {
                 W3C_DOCUMENTATION.getNotes(),
                 is("Note that W3CD does not allow modifications. See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231."));
     }
+
+	@Test
+	public void testAPACHELicenseFamilyCategory() {
+		assertThat(APACHE.getCategory(), is("AL   "));
+	}
+
+	@Test
+	public void testAPACHELicenseFamilyName() {
+		assertThat(APACHE.getName(), is("Apache License Version 2.0"));
+	}
+
+	@Test
+	public void testAPACHELicenseFamilyNotes() {
+		assertThat(
+				APACHE.getNotes(),
+				is("Note that APACHE requires a NOTICE. All modifications require notes. See http://www.apache.org/licenses/LICENSE-2.0."));
+	}
 }

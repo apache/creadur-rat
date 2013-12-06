@@ -18,16 +18,17 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.license.BaseLicense;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 /**
  * 
  */
@@ -85,6 +86,24 @@ public class ApacheSoftwareLicense20Test {
 		Datum licenseFamilyName = new Datum("", "");
 		String notes = null;
 		new BaseLicense(licenseFamilyCategory, licenseFamilyName, notes);
+	}
+
+	@Test
+	public void testNotes() {
+		assertThat(
+				this.worker.getNotes(),
+				is("Note that APACHE requires a NOTICE. All modifications require notes. See http://www.apache.org/licenses/LICENSE-2.0."));
+	}
+
+	@Test
+	public void testCategory() {
+		assertThat(this.worker.getLicenseFamilyCategory(), is("AL   "));
+	}
+
+	@Test
+	public void testName() {
+		assertThat(this.worker.getLicenseFamilyName(),
+				is("Apache License Version 2.0"));
 	}
 
 }

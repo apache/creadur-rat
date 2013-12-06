@@ -18,10 +18,10 @@
  */ 
 package org.apache.rat.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
 
 public final class Apache20LicenseFamily extends SimpleLicenseFamily {
     public Apache20LicenseFamily() {
-        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0);
+		super(APACHE.getName());
     }
 }

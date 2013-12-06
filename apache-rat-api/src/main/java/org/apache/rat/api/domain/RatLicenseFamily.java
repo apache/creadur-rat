@@ -25,6 +25,11 @@ import static org.apache.rat.api.domain.LicenseFamilyBuilder.aLicenseFamily;
  */
 public enum RatLicenseFamily {
 
+	APACHE(
+			"Apache License Version 2.0",
+			"AL   ",
+			"Note that APACHE requires a NOTICE. All modifications require notes. See http://www.apache.org/licenses/LICENSE-2.0."),
+
     W3C(
             "W3C Software Copyright",
             "W3C  ",

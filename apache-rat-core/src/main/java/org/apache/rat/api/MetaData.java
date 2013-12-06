@@ -64,7 +64,6 @@ public class MetaData {
     // Shortcuts used in report output, must be exactly 5 characters
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN = "?????";
-    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL = "AL   ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_OASIS = "OASIS";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO = "DOJO ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF = "TMF  ";
@@ -80,9 +79,6 @@ public class MetaData {
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_UNKNOWN = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN);
-    public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL = new Datum(
-            RAT_URL_LICENSE_FAMILY_CATEGORY,
-            RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_OASIS = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_OASIS);
@@ -114,7 +110,6 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT = "W3C Document Copyright";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE = "OASIS Open License";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE = "Modified BSD License";
-    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0 = "Apache License Version 2.0";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_1 = "GNU General Public License, version 1";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_2 = "GNU General Public License, version 2";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_3 = "GNU General Public License, version 3";
@@ -128,9 +123,6 @@ public class MetaData {
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE = new Datum(
             RAT_URL_LICENSE_FAMILY_NAME,
             RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE);
-    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0 = new Datum(
-            RAT_URL_LICENSE_FAMILY_NAME,
-            RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0);
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_1 = new Datum(
             RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1);
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2 = new Datum(

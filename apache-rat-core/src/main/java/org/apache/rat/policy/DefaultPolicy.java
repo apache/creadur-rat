@@ -18,7 +18,10 @@
  */
 package org.apache.rat.policy;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
+
+import java.util.Arrays;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -27,13 +30,11 @@ import org.apache.rat.api.domain.RatLicenseFamily;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
 
-import java.util.Arrays;
-
 public class DefaultPolicy implements IDocumentAnalyser {
     private static final String[] APPROVED_LICENSES = {
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE,
-        W3C.getName(),
+    	APACHE.getName(),
+		MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE,
+		W3C.getName(),
         RatLicenseFamily.W3C_DOCUMENTATION.getName(),
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MIT,

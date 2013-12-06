@@ -18,17 +18,17 @@
  */ 
 package org.apache.rat.policy;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
-import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
-import static org.junit.Assert.assertEquals;
 
 
 public class DefaultPolicyTest {
@@ -46,7 +46,9 @@ public class DefaultPolicyTest {
 
     @Test
     public void testALFamily() throws Exception {
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0);
+		subject.getMetaData().set(
+				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, APACHE
+						.getName()));
         policy.analyse(subject);
         assertApproval(true);
     }
