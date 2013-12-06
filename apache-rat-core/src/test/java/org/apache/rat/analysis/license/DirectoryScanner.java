@@ -31,6 +31,9 @@ import org.apache.rat.document.MockLocation;
 import org.apache.rat.test.utils.Resources;
 import org.junit.Assert;
 
+/**
+ * The Class DirectoryScanner.
+ */
 class DirectoryScanner {
 
 	@SuppressWarnings("boxing")
@@ -39,7 +42,7 @@ class DirectoryScanner {
 	 * @param directory the directory containing the files
 	 * @param matcher the license matcher
 	 * @param expected the expected result of the each scan
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public static void testFilesInDir(String directory, IHeaderMatcher matcher,
 			boolean expected) throws IOException {
