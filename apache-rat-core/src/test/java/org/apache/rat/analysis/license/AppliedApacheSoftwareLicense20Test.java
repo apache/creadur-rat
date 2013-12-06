@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.test.utils.Resources;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,6 +101,11 @@ public class AppliedApacheSoftwareLicense20Test {
 	// may need to be adjusted if many more files are added
 	public void baddFiles() throws IOException {
 		DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
+	}
+	
+	@Test
+	public void testNotNullCopyRightOwner() {
+		Assert.assertNotNull(license.getCopyRightOwner());
 	}
 
 }
