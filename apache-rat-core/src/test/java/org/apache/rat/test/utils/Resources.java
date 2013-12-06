@@ -34,7 +34,7 @@ import org.apache.rat.document.impl.DocumentImplUtils;
 /**
  * Utility class, which provides static methods for creating test cases.
  */
-public class Resources {
+public final class Resources {
 	/**
 	 * Private constructor, to prevent accidental instantiation.
 	 */
@@ -49,14 +49,14 @@ public class Resources {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static File getResourceFile(String pResource)
+	public static File getResourceFile(final String pResource)
 			throws FileNotFoundException {
-		final File f = new File("src/test/resources", pResource);
-		if (!f.isFile()) {
+		final File file = new File("src/test/resources", pResource);
+		if (!file.isFile()) {
 			throw new FileNotFoundException("Unable to locate resource file: "
 					+ pResource);
 		}
-		return f;
+		return file;
 	}
 
 	/**
@@ -66,15 +66,15 @@ public class Resources {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static File[] getResourceFiles(String pResource)
+	public static File[] getResourceFiles(final String pResource)
 			throws FileNotFoundException {
-		final File f = new File("src/test/resources", pResource);
-		if (!f.isDirectory()) {
+		final File file = new File("src/test/resources", pResource);
+		if (!file.isDirectory()) {
 			throw new FileNotFoundException(
-					"Unable to locate resource directory: " + f);
+					"Unable to locate resource directory: " + file);
 		}
-		return f.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
+		return file.listFiles(new FileFilter() {
+			public boolean accept(final File pathname) {
 				return pathname.isFile();
 			}
 		});
@@ -88,7 +88,7 @@ public class Resources {
 	 * @return
 	 * @throws IOException
 	 */
-	public static InputStream getResourceStream(String pResource)
+	public static InputStream getResourceStream(final String pResource)
 			throws IOException {
 		return new FileInputStream(getResourceFile(pResource));
 	}
@@ -101,7 +101,7 @@ public class Resources {
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
 	 */
-	public static Reader getResourceReader(String pResource)
+	public static Reader getResourceReader(final String pResource)
 			throws UnsupportedEncodingException, IOException {
 		return new InputStreamReader(getResourceStream(pResource), "UTF-8");
 	}
@@ -114,7 +114,7 @@ public class Resources {
 	 * @return
 	 * @throws IOException
 	 */
-	public static BufferedReader getBufferedResourceReader(String pResource)
+	public static BufferedReader getBufferedResourceReader(final String pResource)
 			throws IOException {
 		return new BufferedReader(getResourceReader(pResource));
 	}
@@ -128,7 +128,7 @@ public class Resources {
 	 * @throws UnsupportedEncodingException
 	 * @throws FileNotFoundException
 	 */
-	public static BufferedReader getBufferedReader(File file)
+	public static BufferedReader getBufferedReader(final File file)
 			throws UnsupportedEncodingException, FileNotFoundException {
 		return new BufferedReader(new InputStreamReader(new FileInputStream(
 				file), "UTF-8"));
@@ -141,7 +141,7 @@ public class Resources {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static String getResourceDirectory(String pResource)
+	public static String getResourceDirectory(final String pResource)
 			throws FileNotFoundException {
 		final File resource = getResourceFile(pResource);
 		final File dir = resource.getParentFile();
