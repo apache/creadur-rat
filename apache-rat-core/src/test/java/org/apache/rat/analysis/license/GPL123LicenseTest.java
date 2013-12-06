@@ -18,25 +18,23 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.api.Document;
+import org.apache.rat.document.MockLocation;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests GPL license occurrences within comments and other characters.
  * Works for GPL1 to GPL3.
  */
 public class GPL123LicenseTest {
-    MockClaimReporter reporter;
     Document subject;
 
     /**
@@ -57,7 +55,6 @@ public class GPL123LicenseTest {
 
     @Before
     public final void initReporter() {
-        this.reporter = new MockClaimReporter();
         this.subject = new MockLocation("subject");
     }
 
