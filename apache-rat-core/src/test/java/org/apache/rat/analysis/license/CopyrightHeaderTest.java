@@ -26,7 +26,9 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
-
+/**
+ * 
+ */
 public class CopyrightHeaderTest {
 
 	private static final String[] MATCHING_HEADERS = {
