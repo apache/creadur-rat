@@ -26,10 +26,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
+/**
+ * 
+ */
 public class ApacheSoftwareLicense20Test {
 
-    MockClaimReporter reporter;
+	private MockClaimReporter reporter;
 
     @Before
     public void setUp() throws Exception {
@@ -37,7 +39,7 @@ public class ApacheSoftwareLicense20Test {
     }
 
     @Test
-    public void matches() throws Exception {
+    public void matches() {
         ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
         assertTrue(worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
         assertTrue(worker.matches("    Licensed under the Apache License, Version 2.0 (the \"License\");"));
@@ -52,7 +54,7 @@ public class ApacheSoftwareLicense20Test {
     }
 
     @Test
-    public void match() throws Exception {
+    public void match() {
         ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
         final Document subject = new MockLocation("subject");
         assertTrue(worker.match(subject, ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
