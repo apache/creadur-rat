@@ -21,13 +21,14 @@ package org.apache.rat.document.impl.util;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.MockDocumentAnalyser;
+import org.apache.rat.api.Document;
 import junit.framework.TestCase;
 
 public class DocumentAnalyserMultiplexerTest extends TestCase {
 
     DocumentAnalyserMultiplexer multiplexer;
     IDocumentAnalyser[] analysers;
-    MockDocument document;
+    Document document;
     
     @Override
     protected void setUp() throws Exception {
