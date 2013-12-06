@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import org.apache.rat.document.CompositeDocumentException;
 /**
  * 
  */
@@ -40,8 +39,6 @@ public interface Document {
 	 * @return <code>Reader</code> not null
 	 * @throws IOException
 	 *             if this document cannot be read
-	 * @throws CompositeDocumentException
-	 *             if this document can only be read as a composite archive
 	 */
 	Reader reader() throws IOException;
 
