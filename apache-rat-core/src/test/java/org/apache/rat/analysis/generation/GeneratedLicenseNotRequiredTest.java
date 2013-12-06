@@ -31,8 +31,6 @@ import static org.junit.Assert.assertTrue;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 /**
- * 
- * @author Manuel
  *
  */
 public class GeneratedLicenseNotRequiredTest {

@@ -25,8 +25,6 @@ import java.io.Reader;
 import org.apache.rat.document.CompositeDocumentException;
 /**
  * 
- * @author Manuel
- *
  */
 public interface Document {
 

@@ -25,9 +25,8 @@ import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 /**
- * 
- * @author Manuel
- *
+ * License are generated and so no license is required.
+ * It is useful to note these separately.
  */
 public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 
