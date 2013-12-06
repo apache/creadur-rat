@@ -35,7 +35,7 @@ import org.junit.Test;
  * GPL1 to GPL3.
  */
 public class GPL123LicenseTest {
-	Document subject;
+	private Document subject;
 
 	/**
 	 * To ease testing provide a map with a given license version and the string
@@ -53,10 +53,6 @@ public class GPL123LicenseTest {
 		licenseStringMap.put(new GPL1License(), GPL1License.FIRST_LICENSE_LINE);
 		licenseStringMap.put(new GPL2License(), GPL2License.FIRST_LICENSE_LINE);
 		licenseStringMap.put(new GPL3License(), GPL3License.FIRST_LICENSE_LINE);
-	}
-
-	@Before
-	public final void initReporter() {
 		this.subject = new MockLocation("subject");
 	}
 
@@ -64,35 +60,19 @@ public class GPL123LicenseTest {
 	public void testNegativeMatches() throws Exception {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
-			assertFalse(licenceUnderTest.getKey().match(subject,
-					"'Behold, Telemachus! (nor fear the sight,)"));
+			assertFalse(
+					"Error Match GPL123 license",
+					licenceUnderTest.getKey().match(subject,
+							"'Behold, Telemachus! (nor fear the sight,)"));
 		}
 	}
 
 	@Test
-	public void testPositiveMatchInDocument() throws Exception {
+	public void testPositiveMatchInDocument() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					"\t" + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					"     " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" * " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" // " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" /* " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" /** " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					"    " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" ## " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" ## " + licenceUnderTest.getValue() + " ##"));
+			assertTrue("Not Match GPL123 license", licenceUnderTest.getKey()
+					.match(subject, "\t" + licenceUnderTest.getValue()));
 		}
 	}
 
