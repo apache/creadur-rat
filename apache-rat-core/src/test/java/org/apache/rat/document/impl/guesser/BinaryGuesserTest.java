@@ -49,7 +49,7 @@ public class BinaryGuesserTest {
     }
 
     private void assertThatDocumentIsBinary(final String name) {
-        assertTrue(BinaryGuesser.isBinary(new MockDocument(name)));
+        assertTrue(new BinaryGuesser().matches(new MockDocument(name)));
     }
 
     /**
@@ -85,7 +85,7 @@ public class BinaryGuesserTest {
                 r.close();
             }
             r = null;
-            assertTrue(BinaryGuesser.isBinary(doc));
+            assertTrue(new BinaryGuesser().matches(doc));
         } finally {
             if (r != null) {
                 r.close();
@@ -97,20 +97,20 @@ public class BinaryGuesserTest {
     public void realBinaryContent() {
         // This test is not accurate on all platforms
         if (System.getProperty("file.encoding").startsWith("ANSI")) {
-            assertTrue(BinaryGuesser.isBinary(new FileDocument(new File(
-                    "src/test/resources/binaries/Image-png.not"))));
+            assertTrue(new BinaryGuesser().matches(new FileDocument(new File(
+            "src/test/resources/binaries/Image-png.not"))));
         }
     }
 
     @Test
     public void textualContent() {
-        assertFalse(BinaryGuesser.isBinary(new FileDocument(new File(
-                "src/test/resources/elements/Text.txt"))));
+        assertFalse(new BinaryGuesser().matches(new FileDocument(new File(
+        "src/test/resources/elements/Text.txt"))));
     }
 
     @Test
     public void emptyFile() {
-        assertFalse(BinaryGuesser.isBinary(new FileDocument(new File(
-                "src/test/resources/elements/sub/Empty.txt"))));
+        assertFalse(new BinaryGuesser().matches(new FileDocument(new File(
+        "src/test/resources/elements/sub/Empty.txt"))));
     }
 }

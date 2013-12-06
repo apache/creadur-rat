@@ -52,14 +52,10 @@ public class BinaryGuesser {
     private static final int NON_ASCII_THREASHOLD = 256;
     private static final int ASCII_CHAR_THREASHOLD = 8;
 
-    public static final boolean isBinary(final Document document) {
-        return new BinaryGuesser().matches(document);
-    }
-
     public BinaryGuesser() {
     }
 
-    private boolean matches(final Document document) {
+    public boolean matches(final Document document) {
         // TODO: reimplement the binary test algorithm?
         // TODO: more efficient to move into standard analysis
         // TODO: then use binary as default
