@@ -60,7 +60,7 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 	private String copyrightOwner;
 	
 	/** The copyright match. */
-	private boolean copyrightMatch = false;
+	private boolean copyrightMatch;
 
 	/**
 	 * Instantiates a new copyright header.
@@ -69,8 +69,8 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 	 * @param licenseFamilyName the license family name
 	 * @param notes the notes
 	 */
-	protected CopyrightHeader(Datum licenseFamilyCategory,
-			Datum licenseFamilyName, String notes) {
+	protected CopyrightHeader(final Datum licenseFamilyCategory,
+			final Datum licenseFamilyName, final String notes) {
 		super(licenseFamilyCategory, licenseFamilyName, notes);
 	}
 
@@ -82,8 +82,8 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 	 * @param notes the notes
 	 * @param copyrightOwner the copyright owner
 	 */
-	protected CopyrightHeader(Datum licenseFamilyCategory,
-			Datum licenseFamilyName, String notes, String copyrightOwner) {
+	protected CopyrightHeader(final Datum licenseFamilyCategory,
+			final Datum licenseFamilyName, final String notes, final String copyrightOwner) {
 		this(licenseFamilyCategory, licenseFamilyName, notes);
 		setCopyrightOwner(copyrightOwner);
 	}
@@ -94,7 +94,7 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 	 *
 	 * @param copyrightOwner the new copyright owner
 	 */
-	public final void setCopyrightOwner(String copyrightOwner) {
+	public final void setCopyrightOwner(final String copyrightOwner) {
 		this.copyrightOwner = copyrightOwner;
 		this.copyrightPattern = Pattern.compile(COPYRIGHT_PREFIX_PATTERN_DEFN
 				+ copyrightOwner + ".*", Pattern.CASE_INSENSITIVE);
@@ -133,9 +133,9 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 	 * @param s the s
 	 * @return true, if successful
 	 */
-	protected boolean matchCopyright(String s) {
+	protected boolean matchCopyright(final String text) {
 		if (!copyrightMatch) {
-			copyrightMatch = copyrightPattern.matcher(s).matches();
+			copyrightMatch = copyrightPattern.matcher(text).matches();
 		}
 		return copyrightMatch;
 	}
@@ -143,11 +143,9 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 	/* (non-Javadoc)
 	 * @see org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document, java.lang.String)
 	 */
-	public boolean match(Document subject, String s) {
-		if (!copyrightMatch) {
-			if (matchCopyright(s)) {
-				reportOnLicense(subject);
-			}
+	public boolean match(final Document subject, final String text) {
+		if (!copyrightMatch && matchCopyright(text)) {
+			reportOnLicense(subject);
 		}
 		return copyrightMatch;
 	}
