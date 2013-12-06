@@ -19,15 +19,25 @@
 package org.apache.rat.api.domain;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-public final class LicenseFamilyFactory {
+import org.junit.Test;
 
+public class RatLicenseFamilyTest {
 
-    private LicenseFamilyFactory() {
+    @Test
+    public void testW3CLicenseFamilyCategory() {
+        assertThat(W3C.getCategory(), is("W3C  "));
     }
 
-    public static LicenseFamily w3c() {
-        return W3C.licenseFamily();
+    @Test
+    public void testW3CLicenseFamilyName() {
+        assertThat(W3C.getName(), is("W3C Software Copyright"));
     }
 
+    @Test
+    public void testW3CLicenseFamilyNotes() {
+        assertThat(W3C.getNotes(), is(""));
+    }
 }
