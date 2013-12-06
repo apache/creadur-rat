@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.rat.document.impl.DocumentImplUtils;
 
@@ -43,8 +44,13 @@ public class Resources {
 
 	/**
 	 * Locates a resource file in the class path.
+	 * 
+	 * @param pResource
+	 * @return
+	 * @throws FileNotFoundException
 	 */
-	public static File getResourceFile(String pResource) throws IOException {
+	public static File getResourceFile(String pResource)
+			throws FileNotFoundException {
 		final File f = new File("src/test/resources", pResource);
 		if (!f.isFile()) {
 			throw new FileNotFoundException("Unable to locate resource file: "
@@ -55,8 +61,13 @@ public class Resources {
 
 	/**
 	 * Locates a set of resource files in the class path.
+	 * 
+	 * @param pResource
+	 * @return
+	 * @throws FileNotFoundException
 	 */
-	public static File[] getResourceFiles(String pResource) throws IOException {
+	public static File[] getResourceFiles(String pResource)
+			throws FileNotFoundException {
 		final File f = new File("src/test/resources", pResource);
 		if (!f.isDirectory()) {
 			throw new FileNotFoundException(
@@ -72,6 +83,10 @@ public class Resources {
 	/**
 	 * Locates a resource file in the class path and returns an
 	 * {@link InputStream}.
+	 * 
+	 * @param pResource
+	 * @return
+	 * @throws IOException
 	 */
 	public static InputStream getResourceStream(String pResource)
 			throws IOException {
@@ -80,14 +95,24 @@ public class Resources {
 
 	/**
 	 * Locates a resource file in the class path and returns a {@link Reader}.
+	 * 
+	 * @param pResource
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws IOException
 	 */
-	public static Reader getResourceReader(String pResource) throws IOException {
+	public static Reader getResourceReader(String pResource)
+			throws UnsupportedEncodingException, IOException {
 		return new InputStreamReader(getResourceStream(pResource), "UTF-8");
 	}
 
 	/**
 	 * Locates a resource file in the class path and returns a
 	 * {@link BufferedReader}.
+	 * 
+	 * @param pResource
+	 * @return
+	 * @throws IOException
 	 */
 	public static BufferedReader getBufferedResourceReader(String pResource)
 			throws IOException {
@@ -97,18 +122,27 @@ public class Resources {
 	/**
 	 * Locates a resource file in the class path and returns a
 	 * {@link BufferedReader}.
+	 * 
+	 * @param file
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
 	 */
 	public static BufferedReader getBufferedReader(File file)
-			throws IOException {
+			throws UnsupportedEncodingException, FileNotFoundException {
 		return new BufferedReader(new InputStreamReader(new FileInputStream(
 				file), "UTF-8"));
 	}
 
 	/**
 	 * Locates the name of a directory, which contains the given resource file.
+	 * 
+	 * @param pResource
+	 * @return
+	 * @throws FileNotFoundException
 	 */
 	public static String getResourceDirectory(String pResource)
-			throws IOException {
+			throws FileNotFoundException {
 		final File resource = getResourceFile(pResource);
 		final File dir = resource.getParentFile();
 		return DocumentImplUtils.toName(dir);
