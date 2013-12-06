@@ -38,10 +38,15 @@ public class ApacheSoftwareLicense20Test {
     }
 
     @Test
-    public void testMatchesFirstApacheLicense() {
+    public void testMatchesApacheLicense() {
         assertTrue(worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
     }
-
+    
+    @Test
+    public void testMatchesNonApacheLicense() {
+    	assertFalse(worker.matches("'Behold, Telemachus! (nor fear the sight,)"));
+    }
+    
     @Test
     public void match() {
         final Document subject = new MockLocation("subject");
