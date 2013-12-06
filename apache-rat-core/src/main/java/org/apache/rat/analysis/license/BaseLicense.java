@@ -20,6 +20,7 @@ package org.apache.rat.analysis.license;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.api.domain.LicenseFamily;
 
 /**
  * The Class BaseLicense.
@@ -72,6 +73,18 @@ public class BaseLicense {
         }
         setLicenseFamilyName(licenseFamilyName.getValue());
         setNotes(notes);
+    }
+
+    /**
+     * Constructs a license based on the given family.
+     * 
+     * @param licenseFamily
+     *            not null
+     */
+    public BaseLicense(final LicenseFamily licenseFamily) {
+        this.notes = licenseFamily.getNotes();
+        this.licenseFamilyCategory = licenseFamily.getCategory();
+        this.licenseFamilyName = licenseFamily.getName();
     }
 
     /**
