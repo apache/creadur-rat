@@ -32,7 +32,9 @@ import java.io.FileReader;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
+/**
+ *
+ */
 public class JavaDocLicenseNotRequiredTest {
 
     MockClaimReporter reporter;
