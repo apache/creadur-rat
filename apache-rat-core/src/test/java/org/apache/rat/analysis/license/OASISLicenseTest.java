@@ -95,12 +95,12 @@ public class OASISLicenseTest {
     
     @Test(timeout=2000) // may need to be adjusted if many more files are added
     public void goodFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("oasis/good", license, true);
+        DirectoryScanner.filesInDir("oasis/good", license, true);
     }
    
     @Test(timeout=2000) // may need to be adjusted if many more files are added
     public void baddFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("oasis/bad", license, false);
+        DirectoryScanner.filesInDir("oasis/bad", license, false);
     }
    
 }

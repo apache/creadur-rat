@@ -55,7 +55,7 @@ final class DirectoryScanner {
 	 *            the expected result of the each scan
 	 * @throws IOException
 	 */
-	public static void testFilesInDir(final String directory,
+	public static void filesInDir(final String directory,
 			final IHeaderMatcher matcher, final boolean expected)
 			throws IOException {
 		final File[] resourceFiles = Resources.getResourceFiles(directory);
