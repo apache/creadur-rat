@@ -27,6 +27,7 @@ import java.io.Reader;
 
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.api.Document;
 import org.junit.Test;
 
 public class BinaryGuesserTest {
@@ -60,7 +61,7 @@ public class BinaryGuesserTest {
      */
     @Test
     public void binaryWithMalformedInputRAT81() throws Throwable {
-        FileDocument doc =
+        Document doc =
                 new FileDocument(new File(
                         "src/test/resources/binaries/UTF16_with_signature.xml"));
         Reader r = null;
