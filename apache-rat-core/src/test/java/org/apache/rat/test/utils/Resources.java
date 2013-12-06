@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.test.utils;
 
 import java.io.BufferedReader;
@@ -30,79 +30,87 @@ import java.io.Reader;
 
 import org.apache.rat.document.impl.DocumentImplUtils;
 
-
 /**
- * Utility class, which provides static methods for creating
- * test cases.
+ * Utility class, which provides static methods for creating test cases.
  */
 public class Resources {
-    /**
-     * Private constructor, to prevent accidental instantiation.
-     */
-    private Resources() {
-        // Does nothing
-    }
+	/**
+	 * Private constructor, to prevent accidental instantiation.
+	 */
+	private Resources() {
+		// Does nothing
+	}
 
-    /**
-     * Locates a resource file in the class path.
-     */
-    public static File getResourceFile(String pResource) throws IOException {
-        final File f = new File("src/test/resources", pResource);
-        if (!f.isFile()) {
-            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
-        }
-        return f;
-    }
+	/**
+	 * Locates a resource file in the class path.
+	 */
+	public static File getResourceFile(String pResource) throws IOException {
+		final File f = new File("src/test/resources", pResource);
+		if (!f.isFile()) {
+			throw new FileNotFoundException("Unable to locate resource file: "
+					+ pResource);
+		}
+		return f;
+	}
 
-    /**
-     * Locates a set of resource files in the class path.
-     */
-    public static File[] getResourceFiles(String pResource) throws IOException {
-        final File f = new File("src/test/resources", pResource);
-        if (!f.isDirectory()) {
-            throw new FileNotFoundException("Unable to locate resource directory: " + f);
-        }
-        return f.listFiles(new FileFilter(){
-            public boolean accept(File pathname) {
-                return pathname.isFile();
-            }});
-    }
+	/**
+	 * Locates a set of resource files in the class path.
+	 */
+	public static File[] getResourceFiles(String pResource) throws IOException {
+		final File f = new File("src/test/resources", pResource);
+		if (!f.isDirectory()) {
+			throw new FileNotFoundException(
+					"Unable to locate resource directory: " + f);
+		}
+		return f.listFiles(new FileFilter() {
+			public boolean accept(File pathname) {
+				return pathname.isFile();
+			}
+		});
+	}
 
-    /**
-     * Locates a resource file in the class path and returns an {@link InputStream}.
-     */
-    public static InputStream getResourceStream(String pResource) throws IOException {
-        return new FileInputStream(getResourceFile(pResource));
-    }
+	/**
+	 * Locates a resource file in the class path and returns an
+	 * {@link InputStream}.
+	 */
+	public static InputStream getResourceStream(String pResource)
+			throws IOException {
+		return new FileInputStream(getResourceFile(pResource));
+	}
 
-    /**
-     * Locates a resource file in the class path and returns a {@link Reader}.
-     */
-    public static Reader getResourceReader(String pResource) throws IOException {
-        return new InputStreamReader(getResourceStream(pResource), "UTF-8");
-    }
+	/**
+	 * Locates a resource file in the class path and returns a {@link Reader}.
+	 */
+	public static Reader getResourceReader(String pResource) throws IOException {
+		return new InputStreamReader(getResourceStream(pResource), "UTF-8");
+	}
 
-    /**
-     * Locates a resource file in the class path and returns a {@link BufferedReader}.
-     */
-    public static BufferedReader getBufferedResourceReader(String pResource) throws IOException {
-        return new BufferedReader(getResourceReader(pResource));
-    }
+	/**
+	 * Locates a resource file in the class path and returns a
+	 * {@link BufferedReader}.
+	 */
+	public static BufferedReader getBufferedResourceReader(String pResource)
+			throws IOException {
+		return new BufferedReader(getResourceReader(pResource));
+	}
 
-    /**
-     * Locates a resource file in the class path and returns a {@link BufferedReader}.
-     */
-    public static BufferedReader getBufferedReader(File file) throws IOException {
-        return new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-    }
+	/**
+	 * Locates a resource file in the class path and returns a
+	 * {@link BufferedReader}.
+	 */
+	public static BufferedReader getBufferedReader(File file)
+			throws IOException {
+		return new BufferedReader(new InputStreamReader(new FileInputStream(
+				file), "UTF-8"));
+	}
 
-    /**
-     * Locates the name of a directory, which contains the given
-     * resource file.
-     */
-    public static String getResourceDirectory(String pResource) throws IOException {
-        final File resource = getResourceFile(pResource);
-        final File dir = resource.getParentFile();
-        return DocumentImplUtils.toName(dir);
-    }
+	/**
+	 * Locates the name of a directory, which contains the given resource file.
+	 */
+	public static String getResourceDirectory(String pResource)
+			throws IOException {
+		final File resource = getResourceFile(pResource);
+		final File dir = resource.getParentFile();
+		return DocumentImplUtils.toName(dir);
+	}
 }
