@@ -18,7 +18,9 @@
  */
 package org.apache.rat.analysis.license;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -74,6 +76,60 @@ public class GPL123LicenseTest {
 			assertTrue("Not Match GPL123 license", licenceUnderTest.getKey()
 					.match(subject, "\t" + licenceUnderTest.getValue()));
 		}
+	}
+	
+	@Test
+	public void testGPL1Notes() {
+		assertThat(
+				new GPL1License().getNotes(),
+				is("Note that GPL1 requires a NOTICE. All modifications require notes. See http://www.gnu.org/licenses/gpl-1.0.html."));
+	}
+
+	@Test
+	public void testGPL1Category() {
+		assertThat(new GPL1License().getLicenseFamilyCategory(), is("GPL1 "));
+	}
+
+	@Test
+	public void testGPL1Name() {
+		assertThat(new GPL1License().getLicenseFamilyName(),
+				is("GNU General Public License, version 1"));
+	}
+
+	@Test
+	public void testGPL2Notes() {
+		assertThat(
+				new GPL2License().getNotes(),
+				is("Note that GPL2 requires a NOTICE. All modifications require notes. See http://www.gnu.org/licenses/gpl-2.0.html."));
+	}
+
+	@Test
+	public void testGPL2Category() {
+		assertThat(new GPL2License().getLicenseFamilyCategory(), is("GPL2 "));
+	}
+
+	@Test
+	public void testGPL2Name() {
+		assertThat(new GPL2License().getLicenseFamilyName(),
+				is("GNU General Public License, version 2"));
+	}
+
+	@Test
+	public void testGPL3Notes() {
+		assertThat(
+				new GPL3License().getNotes(),
+				is("Note that GPL3 requires a NOTICE. All modifications require notes. See http://www.gnu.org/licenses/gpl-3.0.html."));
+	}
+
+	@Test
+	public void testGPL3Category() {
+		assertThat(new GPL3License().getLicenseFamilyCategory(), is("GPL3 "));
+	}
+
+	@Test
+	public void testGPL3Name() {
+		assertThat(new GPL3License().getLicenseFamilyName(),
+				is("GNU General Public License, version 3"));
 	}
 
 }
