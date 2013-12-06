@@ -23,29 +23,66 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
 
 /**
+ * The Class SimplePatternBasedLicense.
+ * 
  * @since Rat 0.8
  */
 public class SimplePatternBasedLicense extends BaseLicense implements
 		IHeaderMatcher {
+
+	/** The patterns. */
 	private String[] patterns;
 
+	/**
+	 * Instantiates a new simple pattern based license.
+	 */
 	public SimplePatternBasedLicense() {
 	}
 
+	/**
+	 * Instantiates a new simple pattern based license.
+	 * 
+	 * @param pLicenseFamilyCategory
+	 *            the license family category
+	 * @param pLicenseFamilyName
+	 *            the license family name
+	 * @param pNotes
+	 *            the notes
+	 * @param pPatterns
+	 *            the patterns
+	 */
 	protected SimplePatternBasedLicense(Datum pLicenseFamilyCategory,
 			Datum pLicenseFamilyName, String pNotes, String[] pPatterns) {
 		super(pLicenseFamilyCategory, pLicenseFamilyName, pNotes);
 		setPatterns(pPatterns);
 	}
 
+	/**
+	 * Gets the patterns.
+	 * 
+	 * @return the patterns
+	 */
 	public String[] getPatterns() {
 		return patterns;
 	}
 
+	/**
+	 * Sets the patterns.
+	 * 
+	 * @param pPatterns
+	 *            the new patterns
+	 */
 	public void setPatterns(String[] pPatterns) {
 		patterns = pPatterns;
 	}
 
+	/**
+	 * Matches.
+	 * 
+	 * @param pLine
+	 *            the line
+	 * @return true, if successful
+	 */
 	protected boolean matches(String pLine) {
 		if (pLine != null) {
 			final String[] pttrns = getPatterns();
@@ -60,10 +97,22 @@ public class SimplePatternBasedLicense extends BaseLicense implements
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.analysis.IHeaderMatcher#reset()
+	 */
 	public void reset() {
 		// Nothing to do
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document,
+	 * java.lang.String)
+	 */
 	public boolean match(Document pSubject, String pLine) {
 		final boolean result = matches(pLine);
 		if (result) {
