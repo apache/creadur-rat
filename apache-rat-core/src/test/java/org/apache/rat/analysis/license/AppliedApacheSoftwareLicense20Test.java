@@ -92,18 +92,6 @@ public class AppliedApacheSoftwareLicense20Test {
 		license.reset();
 	}
 
-	@Test(timeout = 2000)
-	// may need to be adjusted if many more files are added
-	public void goodFiles() throws IOException {
-		DirectoryScanner.testFilesInDir("appliedAL20/good", license, true);
-	}
-
-	@Test(timeout = 2000)
-	// may need to be adjusted if many more files are added
-	public void baddFiles() throws IOException {
-		DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
-	}
-
 	@Test
 	public void testNotNullCopyRightOwner() {
 		Assert.assertNotNull(license.getCopyRightOwner());
