@@ -69,7 +69,7 @@ public class CDDL1LicenseTest {
     }
 
     @Test
-    public void testNegativeMatches() throws Exception {
+    public void testNegativeMatchCDDL1License() throws Exception {
     	for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
 			assertFalse(
@@ -80,7 +80,7 @@ public class CDDL1LicenseTest {
     }
 
     @Test
-    public void testPositiveMatchInDocument() throws Exception {
+    public void testPositiveMatchCDDL1License() throws Exception {
     	for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap.entrySet()) {
 			assertTrue("Not Matches the  CDDL1 License", licenceUnderTest
 					.getKey()
