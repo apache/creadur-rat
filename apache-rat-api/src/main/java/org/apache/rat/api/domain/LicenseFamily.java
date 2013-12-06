@@ -22,11 +22,14 @@ public final class LicenseFamily {
 
     private final String notes;
     private final String category;
+    private final String name;
 
-    public LicenseFamily(final String notes, final String category) {
+    public LicenseFamily(final String notes, final String category,
+            final String name) {
         super();
         this.notes = notes;
         this.category = category;
+        this.name = name;
     }
 
     public String getNotes() {
@@ -35,6 +38,10 @@ public final class LicenseFamily {
 
     public String getCategory() {
         return this.category;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
 }

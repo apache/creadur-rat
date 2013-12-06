@@ -50,4 +50,14 @@ public class LicenseFamilyBuilderTest {
                         .withCategory(someCategory).build();
         assertThat(family.getCategory(), is(someCategory));
     }
+
+    @Test
+    public void testWithName() {
+        final String someName = "A name for a license";
+        final LicenseFamily family =
+                LicenseFamilyBuilder.aLicenseFamily().withName(someName)
+                        .build();
+        assertThat(family.getName(), is(someName));
+
+    }
 }

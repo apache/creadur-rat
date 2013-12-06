@@ -27,10 +27,9 @@ public final class LicenseFamilyBuilder {
 
     private String notes;
     private String category;
+    private String name;
 
     private LicenseFamilyBuilder() {
-        this.notes = null;
-        this.category = null;
     }
 
     public LicenseFamilyBuilder withNotes(final String notes) {
@@ -39,11 +38,16 @@ public final class LicenseFamilyBuilder {
     }
 
     public LicenseFamily build() {
-        return new LicenseFamily(this.notes, this.category);
+        return new LicenseFamily(this.notes, this.category, this.name);
     }
 
     public LicenseFamilyBuilder withCategory(final String category) {
         this.category = category;
+        return this;
+    }
+
+    public LicenseFamilyBuilder withName(final String name) {
+        this.name = name;
         return this;
     }
 }
