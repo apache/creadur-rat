@@ -126,19 +126,7 @@ public class FullTextMatchingLicense extends BaseLicense implements
 				reportOnLicense(subject);
 				// we found a match
 				result = true;
-			} else {
-				// buffer contains first line but does not contain full text
-				// It's possible that the buffer contains the first line again
-				int offset = buffer.substring(1).toString().indexOf(firstLine);
-				if (offset >= ZERO) {
-					// first line found again
-					buffer.delete(0, offset); // reset buffer to the new start
-				} else {
-					// buffer does not even contain first line, so cannot
-					// be used to match full text
-					init();
-				}
-			}
+			} 
 		}
 		return result;
 	}
