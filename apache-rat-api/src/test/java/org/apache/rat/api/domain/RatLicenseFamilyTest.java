@@ -20,6 +20,7 @@ package org.apache.rat.api.domain;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL1;
+import static org.apache.rat.api.domain.RatLicenseFamily.GPL2;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 import static org.hamcrest.CoreMatchers.is;
@@ -95,5 +96,22 @@ public class RatLicenseFamilyTest {
 		assertThat(
 				GPL1.getNotes(),
 				is("Note that GPL1 requires a NOTICE. All modifications require notes. See http://www.gnu.org/licenses/gpl-1.0.html."));
+	}
+
+	@Test
+	public void testGPL2LicenseFamilyCategory() {
+		assertThat(GPL2.getCategory(), is("GPL2 "));
+	}
+
+	@Test
+	public void testGPL2LicenseFamilyName() {
+		assertThat(GPL2.getName(), is("GNU General Public License, version 2"));
+	}
+
+	@Test
+	public void testGPL2LicenseFamilyNotes() {
+		assertThat(
+				GPL2.getNotes(),
+				is("Note that GPL2 requires a NOTICE. All modifications require notes. See http://www.gnu.org/licenses/gpl-2.0.html."));
 	}
 }

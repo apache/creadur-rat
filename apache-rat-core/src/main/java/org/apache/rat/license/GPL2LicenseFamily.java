@@ -18,14 +18,14 @@
  */ 
 package org.apache.rat.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.GPL2;
 
 /**
  * Base implementation for GPLv3 or later.
  */
 public class GPL2LicenseFamily extends SimpleLicenseFamily {
     public GPL2LicenseFamily() {
-        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_2);
+		super(GPL2.getName());
     }
 
 }

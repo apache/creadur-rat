@@ -18,7 +18,7 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.GPL2;
 
 /**
  * Licence matches GPL2 or later.
@@ -33,8 +33,7 @@ public class GPL2License extends FullTextMatchingLicense {
      * 
      */
 	public GPL2License() {
-		super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL2,
-				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2, "",
+		super(GPL2.licenseFamily(),
 				FIRST_LICENSE_LINE);
 	}
 }
