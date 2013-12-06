@@ -179,6 +179,7 @@ public class MetaData {
     public static final Datum RAT_APPROVED_LICENSE_DATIM_FALSE = new Datum(
             RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_FALSE);
 
+
     private ContentType contentType;
     /**
      * Only likely to be a small quantity of data so trade some performance for
@@ -186,10 +187,17 @@ public class MetaData {
      */
     private final List<Datum> data;
 
-    public MetaData() {
-        this(null);
-    }
+	/**
+	 *
+	 */
+	public MetaData() {
+		this(null);
+	}
 
+	/**
+	 * Constructs meta-data representing the given content.
+	 * @param contentType not null
+	 */
     public MetaData(final ContentType contentType) {
         this.contentType = contentType;
         this.data = new ArrayList<Datum>(16);
