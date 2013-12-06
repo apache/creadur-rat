@@ -37,6 +37,10 @@ public enum RatLicenseFamily {
 			"GNU General Public License, version 2",
 			"GPL2 ",
 			"Note that GPL2 requires a NOTICE. All modifications require notes. See http://www.gnu.org/licenses/gpl-2.0.html."),
+	GPL3(
+			"GNU General Public License, version 3",
+			"GPL3 ",
+			"Note that GPL3 requires a NOTICE. All modifications require notes. See http://www.gnu.org/licenses/gpl-3.0.html."),
     W3C(
             "W3C Software Copyright",
             "W3C  ",
