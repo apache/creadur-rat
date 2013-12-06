@@ -30,6 +30,9 @@ import org.apache.rat.test.utils.Resources;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * 
+ */
 public class AppliedApacheSoftwareLicense20Test {
 
 	private static final String HEADER = "/*\n"
