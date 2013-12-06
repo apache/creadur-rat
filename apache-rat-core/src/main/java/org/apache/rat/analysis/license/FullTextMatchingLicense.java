@@ -42,6 +42,8 @@ public class FullTextMatchingLicense extends BaseLicense implements
 	/** The Constant DEFAULT_INITIAL_LINE_LENGTH. */
 	// Number of match characters assumed to be present on first line
 	private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
+	
+	private static final int ZERO = 0;
 
 	/** The full text. */
 	private String fullText;
@@ -50,7 +52,7 @@ public class FullTextMatchingLicense extends BaseLicense implements
 	private String firstLine;
 
 	/** The seen first line. */
-	private boolean seenFirstLine = false;
+	private boolean seenFirstLine;
 
 	/** The buffer. */
 	private final StringBuilder buffer = new StringBuilder();
@@ -63,8 +65,8 @@ public class FullTextMatchingLicense extends BaseLicense implements
 	 * @param notes the notes
 	 * @param fullText the full text
 	 */
-	protected FullTextMatchingLicense(Datum licenseFamilyCategory,
-			Datum licenseFamilyName, String notes, String fullText) {
+	protected FullTextMatchingLicense(final Datum licenseFamilyCategory,
+			final Datum licenseFamilyName, final String notes, final String fullText) {
 		super(licenseFamilyCategory, licenseFamilyName, notes);
 		setFullText(fullText);
 	}
@@ -74,7 +76,7 @@ public class FullTextMatchingLicense extends BaseLicense implements
 	 *
 	 * @param text the new full text
 	 */
-	public final void setFullText(String text) {
+	public final void setFullText(final String text) {
 		int offset = text.indexOf('\n');
 		if (offset == -1) {
 			offset = Math.min(DEFAULT_INITIAL_LINE_LENGTH, text.length());
@@ -97,35 +99,38 @@ public class FullTextMatchingLicense extends BaseLicense implements
 	/* (non-Javadoc)
 	 * @see org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document, java.lang.String)
 	 */
-	public boolean match(Document subject, String line) {
+	public boolean match(final Document subject, final String line) {
+		boolean result = false;
+		boolean follow = true;
 		final String inputToMatch = prune(line).toLowerCase(Locale.ENGLISH);
 		if (seenFirstLine) {
 			// Accumulate more input
 			buffer.append(inputToMatch);
 		} else {
 			int offset = inputToMatch.indexOf(firstLine);
-			if (offset >= 0) {
+			if (offset >= ZERO) {
 				// we have a match, save the text starting with the match
 				buffer.append(inputToMatch.substring(offset));
 				seenFirstLine = true;
 				// Drop out to check whether full text is matched
 			} else {
-				// we assume that the first line must appear in a single line
-				return false; // no more to do here
+				// we assume that the first line must appear in a single line no
+				// more to do here
+				result = false; 
+				follow = false;
 			}
 		}
-
-		if (buffer.length() >= fullText.length()) {
+		if (buffer.length() >= fullText.length() && follow) {
 			// we have enough data to match
 			if (buffer.toString().contains(fullText)) {
 				reportOnLicense(subject);
 				// we found a match
-				return true;
+				result = true;
 			} else {
 				// buffer contains first line but does not contain full text
 				// It's possible that the buffer contains the first line again
 				int offset = buffer.substring(1).toString().indexOf(firstLine);
-				if (offset >= 0) {
+				if (offset >= ZERO) {
 					// first line found again
 					buffer.delete(0, offset); // reset buffer to the new start
 				} else {
@@ -135,7 +140,7 @@ public class FullTextMatchingLicense extends BaseLicense implements
 				}
 			}
 		}
-		return false;
+		return result;
 	}
 
 	/* (non-Javadoc)
