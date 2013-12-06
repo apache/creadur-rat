@@ -21,7 +21,6 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,11 +32,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author hirsch
- * @version 2011-12-06, 23:48
+ * 
  */
 public class MITLicenseTest {
-    private MockClaimReporter reporter;
     private Document subject;
 
     /**
@@ -61,7 +58,6 @@ public class MITLicenseTest {
 
     @Before
     public final void initReporter() {
-        this.reporter = new MockClaimReporter();
         this.subject = new MockLocation("subject");
     }
 
