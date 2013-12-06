@@ -21,6 +21,7 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
+import org.apache.rat.api.domain.LicenseFamily;
 
 /**
  * The Class SimplePatternBasedLicense.
@@ -59,6 +60,20 @@ public class SimplePatternBasedLicense extends BaseLicense implements
             final Datum pLicenseFamilyName, final String pNotes,
             final String... pPatterns) {
         super(pLicenseFamilyCategory, pLicenseFamilyName, pNotes);
+        setPatterns(pPatterns);
+    }
+
+    /**
+     * Constructs a license indicated by the given patterns.
+     * 
+     * @param pLicenseFamily
+     *            not null
+     * @param pPatterns
+     *            not null
+     */
+    public SimplePatternBasedLicense(final LicenseFamily pLicenseFamily,
+            final String... pPatterns) {
+        super(pLicenseFamily);
         setPatterns(pPatterns);
     }
 
