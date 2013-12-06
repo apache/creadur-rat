@@ -32,12 +32,8 @@ public class SimplePatternBasedLicense extends BaseLicense implements
 
 	/** The patterns. */
 	private String[] patterns;
-
-	/**
-	 * Instantiates a new simple pattern based license.
-	 */
-	public SimplePatternBasedLicense() {
-	}
+	
+	private static final int ZERO = 0;
 
 	/**
 	 * Instantiates a new simple pattern based license.
@@ -51,8 +47,8 @@ public class SimplePatternBasedLicense extends BaseLicense implements
 	 * @param pPatterns
 	 *            the patterns
 	 */
-	protected SimplePatternBasedLicense(Datum pLicenseFamilyCategory,
-			Datum pLicenseFamilyName, String pNotes, String[] pPatterns) {
+	protected SimplePatternBasedLicense(final Datum pLicenseFamilyCategory,
+			final Datum pLicenseFamilyName, final String pNotes, final String... pPatterns) {
 		super(pLicenseFamilyCategory, pLicenseFamilyName, pNotes);
 		setPatterns(pPatterns);
 	}
@@ -63,7 +59,7 @@ public class SimplePatternBasedLicense extends BaseLicense implements
 	 * @return the patterns
 	 */
 	public String[] getPatterns() {
-		return patterns;
+		return patterns.clone();
 	}
 
 	/**
@@ -72,7 +68,7 @@ public class SimplePatternBasedLicense extends BaseLicense implements
 	 * @param pPatterns
 	 *            the new patterns
 	 */
-	public void setPatterns(String[] pPatterns) {
+	public void setPatterns(final String... pPatterns) {
 		patterns = pPatterns;
 	}
 
@@ -83,18 +79,17 @@ public class SimplePatternBasedLicense extends BaseLicense implements
 	 *            the line
 	 * @return true, if successful
 	 */
-	protected boolean matches(String pLine) {
-		if (pLine != null) {
-			final String[] pttrns = getPatterns();
-			if (pttrns != null) {
-				for (String pttrn : pttrns) {
-					if (pLine.indexOf(pttrn, 0) >= 0) {
-						return true;
-					}
+	protected boolean matches(final String pLine) {
+		boolean resultado = false;
+		final String[] pttrns = getPatterns();
+		if (pLine != null && pttrns != null) {
+			for (String pttrn : pttrns) {
+				if (pLine.indexOf(pttrn, 0) >= ZERO) {
+					resultado = true;
 				}
 			}
 		}
-		return false;
+		return resultado;
 	}
 
 	/*
@@ -113,7 +108,7 @@ public class SimplePatternBasedLicense extends BaseLicense implements
 	 * org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document,
 	 * java.lang.String)
 	 */
-	public boolean match(Document pSubject, String pLine) {
+	public boolean match(final Document pSubject, final String pLine) {
 		final boolean result = matches(pLine);
 		if (result) {
 			reportOnLicense(pSubject);
