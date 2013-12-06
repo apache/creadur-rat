@@ -20,7 +20,6 @@ package org.apache.rat.analysis.generation;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.test.utils.Resources;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,13 +37,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class JavaDocLicenseNotRequiredTest {
 
-	MockClaimReporter reporter;
 	IHeaderMatcher license;
 
 	@Before
 	public void setUp() throws Exception {
 		license = new JavaDocLicenseNotRequired();
-		reporter = new MockClaimReporter();
 	}
 
 	@Test
