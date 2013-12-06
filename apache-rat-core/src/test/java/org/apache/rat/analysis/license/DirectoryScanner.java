@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -40,7 +41,7 @@ class DirectoryScanner {
      * @param expected the expected result of the each scan
      * @throws Exception
      */
-    public static void testFilesInDir(String directory, IHeaderMatcher matcher, boolean expected) throws Exception {
+    public static void testFilesInDir(String directory, IHeaderMatcher matcher, boolean expected) throws IOException {
         final File[] resourceFiles = Resources.getResourceFiles(directory);
         if (resourceFiles.length == 0) {
             Assert.fail("No files found under "+directory);

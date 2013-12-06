@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.io.IOException;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
@@ -50,7 +51,7 @@ public class AppliedApacheSoftwareLicense20Test {
 			+ " *  See the License for the specific language governing permissions and\n"
 			+ " *  limitations under the License.\n" + " */\n";
 
-	AppliedApacheSoftwareLicense20 license;
+	private AppliedApacheSoftwareLicense20 license;
 
 
 	@Before
@@ -59,14 +60,14 @@ public class AppliedApacheSoftwareLicense20Test {
 	}
 
 	@Test
-	public void match() throws Exception {
-		BufferedReader in = new BufferedReader(new StringReader(HEADER));
-		String line = in.readLine();
+	public void match() throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new StringReader(HEADER));
+		String line = bufferedReader.readLine();
 		boolean result = false;
 		final Document subject = new MockLocation("subject");
 		while (line != null) {
 			result = license.match(subject, line);
-			line = in.readLine();
+			line = bufferedReader.readLine();
 		}
 		assertTrue("Applied AL2.0 license should be matched", result);
 		license.reset();
@@ -75,15 +76,15 @@ public class AppliedApacheSoftwareLicense20Test {
 	}
 
 	@Test
-	public void noMatch() throws Exception {
-		BufferedReader in = Resources
+	public void noMatch() throws IOException {
+		BufferedReader bufferedReader = Resources
 				.getBufferedResourceReader("elements/Source.java");
-		String line = in.readLine();
+		String line = bufferedReader.readLine();
 		boolean result = false;
 		final Document subject = new MockLocation("subject");
 		while (line != null) {
 			result = license.match(subject, line);
-			line = in.readLine();
+			line = bufferedReader.readLine();
 		}
 		assertFalse("Applied AL2.0 license should not be matched", result);
 		license.reset();
@@ -91,13 +92,13 @@ public class AppliedApacheSoftwareLicense20Test {
 
 	@Test(timeout = 2000)
 	// may need to be adjusted if many more files are added
-	public void goodFiles() throws Exception {
+	public void goodFiles() throws IOException {
 		DirectoryScanner.testFilesInDir("appliedAL20/good", license, true);
 	}
 
 	@Test(timeout = 2000)
 	// may need to be adjusted if many more files are added
-	public void baddFiles() throws Exception {
+	public void baddFiles() throws IOException {
 		DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
 	}
 
