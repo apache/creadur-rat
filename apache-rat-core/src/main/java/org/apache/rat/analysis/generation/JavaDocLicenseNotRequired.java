@@ -34,7 +34,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
 	/**
 	 * 
 	 */
-	public boolean match(Document subject, String line)
+	public boolean match(final Document subject, final String line)
 			throws RatHeaderAnalysisException {
 		boolean result = line.contains(JAVADOC_REGEX_DEFN);
 		if (result) {
@@ -47,7 +47,7 @@ public class JavaDocLicenseNotRequired implements IHeaderMatcher {
 	 * 
 	 * @param subject
 	 */
-	private void reportOnLicense(Document subject) {
+	private void reportOnLicense(final Document subject) {
 		subject.getMetaData().set(
 				MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN);
 	}
