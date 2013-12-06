@@ -52,25 +52,19 @@ public class CopyrightHeaderTest {
 	}
 
 	@Test
-	public void match() {
+	public void testMatchCopyrightHeader() {
 		for (String line : MATCHING_HEADERS) {
 			assertTrue("Copyright Header should be matched",
 					header.match(subject, line));
-			header.reset();
-			assertFalse("After reset, content should build up again",
-					header.match(subject, "New line"));
 			header.reset();
 		}
 	}
 
 	@Test
-	public void noMatch() {
+	public void testNoMatchCopyrightHeader() {
 		for (String line : NON_MATCHING_HEADERS) {
 			assertFalse("Copyright Header shouldn't be matched",
 					header.match(subject, line));
-			header.reset();
-			assertTrue("After reset, content should build up again",
-					header.match(subject, MATCHING_HEADERS[0]));
 			header.reset();
 		}
 	}
