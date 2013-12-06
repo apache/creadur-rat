@@ -22,8 +22,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
-import java.io.StringReader;
 import java.io.IOException;
+import java.io.StringReader;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -63,8 +63,9 @@ public class AppliedApacheSoftwareLicense20Test {
 	}
 
 	@Test
-	public void match() throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(new StringReader(HEADER));
+	public void testMatchAppliedApacheLicense() throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new StringReader(
+				HEADER));
 		String line = bufferedReader.readLine();
 		boolean result = false;
 		final Document subject = new MockLocation("subject");
@@ -74,12 +75,10 @@ public class AppliedApacheSoftwareLicense20Test {
 		}
 		assertTrue("Applied AL2.0 license should be matched", result);
 		license.reset();
-		result = license.match(subject, "New line");
-		assertFalse("After reset, content should build up again", result);
 	}
 
 	@Test
-	public void noMatch() throws IOException {
+	public void testNoMatchAppliedApacheLicense() throws IOException {
 		BufferedReader bufferedReader = Resources
 				.getBufferedResourceReader("elements/Source.java");
 		String line = bufferedReader.readLine();
@@ -104,17 +103,17 @@ public class AppliedApacheSoftwareLicense20Test {
 	public void baddFiles() throws IOException {
 		DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
 	}
-	
+
 	@Test
 	public void testNotNullCopyRightOwner() {
 		Assert.assertNotNull(license.getCopyRightOwner());
 	}
-	
+
 	@Test
 	public void testHasCopyrightPattern() {
 		assertTrue("copyrightPattern not null", license.hasCopyrightPattern());
 	}
-	
+
 	@Test
 	public void testHasFullText() {
 		Datum licenseFamilyCategory = new Datum(
@@ -128,5 +127,4 @@ public class AppliedApacheSoftwareLicense20Test {
 				licenseFamilyCategory, licenseFamilyName, null, fullText);
 		assertTrue("fullText not null", fullTextMatchingLicense.hasFullText());
 	}
-
 }
