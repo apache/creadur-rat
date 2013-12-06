@@ -29,7 +29,10 @@ public enum RatLicenseFamily {
 			"Apache License Version 2.0",
 			"AL   ",
 			"Note that APACHE requires a NOTICE. All modifications require notes. See http://www.apache.org/licenses/LICENSE-2.0."),
-
+	GPL1(
+			"GNU General Public License, version 1",
+			"GPL1 ",
+			"Note that GPL1 requires a NOTICE. All modifications require notes. See http://www.gnu.org/licenses/gpl-1.0.html."),
     W3C(
             "W3C Software Copyright",
             "W3C  ",

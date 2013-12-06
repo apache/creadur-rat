@@ -88,9 +88,6 @@ public class MetaData {
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_TMF = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF);
-    public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL1 = new Datum(
-            RAT_URL_LICENSE_FAMILY_CATEGORY,
-            RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL2 = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2);
@@ -110,7 +107,6 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT = "W3C Document Copyright";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE = "OASIS Open License";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE = "Modified BSD License";
-    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_1 = "GNU General Public License, version 1";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_2 = "GNU General Public License, version 2";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_3 = "GNU General Public License, version 3";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_MIT = "The MIT License";
@@ -123,8 +119,6 @@ public class MetaData {
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE = new Datum(
             RAT_URL_LICENSE_FAMILY_NAME,
             RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE);
-    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_1 = new Datum(
-            RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1);
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2 = new Datum(
             RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2);
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_3 = new Datum(
