@@ -26,136 +26,147 @@ import org.apache.rat.api.MetaData;
  */
 public class BaseLicense {
 
-	/** The license family category. */
-	private String licenseFamilyCategory;
+    /** The license family category. */
+    private String licenseFamilyCategory;
 
-	/** The license family name. */
-	private String licenseFamilyName;
+    /** The license family name. */
+    private String licenseFamilyName;
 
-	/** The notes. */
-	private String notes;
+    /** The notes. */
+    private String notes;
 
-	/**
-	 * Instantiates a new base license.
-	 * 
-	 * @param licenseFamilyCategory
-	 *            the license family category
-	 * @param licenseFamilyName
-	 *            the license family name
-	 * @param notes
-	 *            the notes
-	 */
-	public BaseLicense(final MetaData.Datum licenseFamilyCategory,
-			final MetaData.Datum licenseFamilyName, final String notes) {
-		if (!MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY
-				.equals(licenseFamilyCategory.getName())) {
-			throw new IllegalStateException("Expected "
-					+ MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY + ", got "
-					+ licenseFamilyCategory.getName());
-		}
-		setLicenseFamilyCategory(licenseFamilyCategory.getValue());
-		if (!MetaData.RAT_URL_LICENSE_FAMILY_NAME.equals(licenseFamilyName
-				.getName())) {
-			throw new IllegalStateException("Expected "
-					+ MetaData.RAT_URL_LICENSE_FAMILY_NAME + ", got "
-					+ licenseFamilyName.getName());
-		}
-		setLicenseFamilyName(licenseFamilyName.getValue());
-		setNotes(notes);
-	}
+    /**
+     * Constructs empty base license. Useful when creating an instance via
+     * reflection.
+     */
+    public BaseLicense() {
+        this.licenseFamilyCategory = null;
+        this.licenseFamilyName = null;
+        this.notes = null;
+    }
 
-	/**
-	 * Gets the license family category.
-	 * 
-	 * @return the license family category
-	 */
-	public String getLicenseFamilyCategory() {
-		return licenseFamilyCategory;
-	}
+    /**
+     * Instantiates a new base license.
+     * 
+     * @param licenseFamilyCategory
+     *            the license family category
+     * @param licenseFamilyName
+     *            the license family name
+     * @param notes
+     *            the notes
+     */
+    public BaseLicense(final MetaData.Datum licenseFamilyCategory,
+            final MetaData.Datum licenseFamilyName, final String notes) {
+        if (!MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY
+                .equals(licenseFamilyCategory.getName())) {
+            throw new IllegalStateException("Expected "
+                    + MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY + ", got "
+                    + licenseFamilyCategory.getName());
+        }
+        setLicenseFamilyCategory(licenseFamilyCategory.getValue());
+        if (!MetaData.RAT_URL_LICENSE_FAMILY_NAME.equals(licenseFamilyName
+                .getName())) {
+            throw new IllegalStateException("Expected "
+                    + MetaData.RAT_URL_LICENSE_FAMILY_NAME + ", got "
+                    + licenseFamilyName.getName());
+        }
+        setLicenseFamilyName(licenseFamilyName.getValue());
+        setNotes(notes);
+    }
 
-	/**
-	 * Sets the license family category.
-	 * 
-	 * @param pDocumentCategory
-	 *            the new license family category
-	 */
-	public void setLicenseFamilyCategory(final String pDocumentCategory) {
-		licenseFamilyCategory = pDocumentCategory;
-	}
+    /**
+     * Gets the license family category.
+     * 
+     * @return the license family category
+     */
+    public String getLicenseFamilyCategory() {
+        return this.licenseFamilyCategory;
+    }
 
-	/**
-	 * Gets the license family name.
-	 * 
-	 * @return the license family name
-	 */
-	public String getLicenseFamilyName() {
-		return licenseFamilyName;
-	}
+    /**
+     * Sets the license family category.
+     * 
+     * @param pDocumentCategory
+     *            the new license family category
+     */
+    public void setLicenseFamilyCategory(final String pDocumentCategory) {
+        this.licenseFamilyCategory = pDocumentCategory;
+    }
 
-	/**
-	 * Sets the license family name.
-	 * 
-	 * @param pLicenseFamilyCategory
-	 *            the new license family name
-	 */
-	public void setLicenseFamilyName(final String pLicenseFamilyCategory) {
-		licenseFamilyName = pLicenseFamilyCategory;
-	}
+    /**
+     * Gets the license family name.
+     * 
+     * @return the license family name
+     */
+    public String getLicenseFamilyName() {
+        return this.licenseFamilyName;
+    }
 
-	/**
-	 * Gets the notes.
-	 * 
-	 * @return the notes
-	 */
-	public String getNotes() {
-		return notes;
-	}
+    /**
+     * Sets the license family name.
+     * 
+     * @param pLicenseFamilyCategory
+     *            the new license family name
+     */
+    public void setLicenseFamilyName(final String pLicenseFamilyCategory) {
+        this.licenseFamilyName = pLicenseFamilyCategory;
+    }
 
-	/**
-	 * Sets the notes.
-	 * 
-	 * @param pNotes
-	 *            the new notes
-	 */
-	public void setNotes(final String pNotes) {
-		notes = pNotes;
-	}
+    /**
+     * Gets the notes.
+     * 
+     * @return the notes
+     */
+    public String getNotes() {
+        return this.notes;
+    }
 
-	/**
-	 * Report on license.
-	 * 
-	 * @param subject
-	 *            the subject
-	 */
-	public final void reportOnLicense(final Document subject) {
-		final MetaData metaData = subject.getMetaData();
-		metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-		final String licFamilyCategory = getLicenseFamilyCategory();
-		metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY,
-				licFamilyCategory));
-		metaData.set(new MetaData.Datum(
-				MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, licFamilyCategory));
-		metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME,
-				getLicenseFamilyName()));
-	}
+    /**
+     * Sets the notes.
+     * 
+     * @param pNotes
+     *            the new notes
+     */
+    public void setNotes(final String pNotes) {
+        this.notes = pNotes;
+    }
 
-	/**
-	 * Prune.
-	 * 
-	 * @param text
-	 *            the text
-	 * @return the string
-	 */
-	protected static final String prune(final String text) {
-		final int length = text.length();
-		final StringBuilder buffer = new StringBuilder(length);
-		for (int i = 0; i < length; i++) {
-			char charIndex = text.charAt(i);
-			if (Character.isLetterOrDigit(charIndex)) {
-				buffer.append(charIndex);
-			}
-		}
-		return buffer.toString();
-	}
+    /**
+     * Report on license.
+     * 
+     * @param subject
+     *            the subject
+     */
+    public final void reportOnLicense(final Document subject) {
+        final MetaData metaData = subject.getMetaData();
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE,
+                this.notes));
+        final String licFamilyCategory = getLicenseFamilyCategory();
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY,
+                licFamilyCategory));
+        metaData.set(new MetaData.Datum(
+                MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, licFamilyCategory));
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME,
+                getLicenseFamilyName()));
+    }
+
+    /**
+     * Prune.
+     * 
+     * @param text
+     *            the text
+     * @return the string
+     */
+    protected static final String prune(final String text) {
+        final int length = text.length();
+        final StringBuilder buffer = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            final char charIndex = text.charAt(i);
+            if (Character.isLetterOrDigit(charIndex)) {
+                buffer.append(charIndex);
+            }
+        }
+        return buffer.toString();
+    }
 
 }
