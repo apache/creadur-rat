@@ -29,6 +29,9 @@ public class GPL3License extends FullTextMatchingLicense {
             " the Free Software Foundation, either version 3 of the License, or\n" +
             " (at your option) any later version.";
 
+	/**
+     * 
+     */
     public GPL3License() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL3,
                 MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_3,
