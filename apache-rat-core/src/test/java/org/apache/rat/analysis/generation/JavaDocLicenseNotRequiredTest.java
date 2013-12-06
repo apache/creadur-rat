@@ -24,6 +24,7 @@ import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.test.utils.Resources;
 import org.junit.Before;
 import org.junit.Test;
+import org.apache.rat.analysis.IHeaderMatcher;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 public class JavaDocLicenseNotRequiredTest {
 
     MockClaimReporter reporter;
-    JavaDocLicenseNotRequired license;
+    IHeaderMatcher license;
     
     @Before
     public void setUp() throws Exception {
