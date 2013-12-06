@@ -26,20 +26,27 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
+
 /**
  *
  */
-public class DocumentImplUtils {
+public final class DocumentImplUtils {
+
+	/**
+	 * 
+	 */
+	private DocumentImplUtils() {
+		super();
+	}
 
 	/**
 	 * 
 	 * @param file
 	 * @return
 	 */
-	public final static String toName(File file) {
+	public final static String toName(final File file) {
 		String path = file.getPath();
-		String normalisedPath = path.replace('\\', '/');
-		return normalisedPath;
+		return path.replace('\\', '/');
 	}
 
 	/**
@@ -47,18 +54,19 @@ public class DocumentImplUtils {
 	 * @param stream
 	 * @return
 	 */
-	public static final boolean isZipStream(InputStream stream) {
+	public static final boolean isZipStream(final InputStream stream) {
 		ZipInputStream zip = new ZipInputStream(stream);
+		boolean result = true;
 		try {
 			zip.getNextEntry();
-			return true;
 		} catch (ZipException e) {
-			return false;
+			result = false;
 		} catch (IOException e) {
-			return false;
+			result = false;
 		} finally {
 			IOUtils.closeQuietly(zip);
 		}
+		return result;
 	}
 
 	/**
@@ -66,12 +74,14 @@ public class DocumentImplUtils {
 	 * @param file
 	 * @return
 	 */
-	public static final boolean isZip(File file) {
+	public static final boolean isZip(final File file) {
+		boolean result;
 		try {
-			return isZipStream(new FileInputStream(file));
+			result = isZipStream(new FileInputStream(file));
 		} catch (IOException e) {
-			return false;
+			result = false;
 		}
+		return result;
 	}
 
 }
