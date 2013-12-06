@@ -47,13 +47,15 @@ public class JavaDocLicenseNotRequiredTest {
 	}
 
 	@Test
-	public void testMatchIndexDocLicense() throws RatHeaderAnalysisException, IOException {
+	public void testMatchIndexDocLicense() throws RatHeaderAnalysisException,
+			IOException {
 		boolean result = readAndMatch("index.html");
 		assertTrue("Is a javadoc", result);
 	}
 
 	@Test
-	public void testMatchClassDocLicense() throws RatHeaderAnalysisException, IOException {
+	public void testMatchClassDocLicense() throws RatHeaderAnalysisException,
+			IOException {
 		boolean result = readAndMatch("ArchiveElement.html");
 		assertTrue("Is a javadoc", result);
 	}
@@ -71,8 +73,8 @@ public class JavaDocLicenseNotRequiredTest {
 	 * @return
 	 * @throws IOException
 	 */
-	private boolean readAndMatch(final String name) throws RatHeaderAnalysisException,
-			IOException {
+	private boolean readAndMatch(final String name)
+			throws RatHeaderAnalysisException, IOException {
 		File file = Resources.getResourceFile("javadocs/" + name);
 		boolean result = false;
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));

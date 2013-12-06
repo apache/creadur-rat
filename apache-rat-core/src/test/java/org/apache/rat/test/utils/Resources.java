@@ -114,8 +114,8 @@ public final class Resources {
 	 * @return
 	 * @throws IOException
 	 */
-	public static BufferedReader getBufferedResourceReader(final String pResource)
-			throws IOException {
+	public static BufferedReader getBufferedResourceReader(
+			final String pResource) throws IOException {
 		return new BufferedReader(getResourceReader(pResource));
 	}
 

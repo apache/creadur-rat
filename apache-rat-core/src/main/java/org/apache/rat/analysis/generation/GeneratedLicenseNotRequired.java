@@ -24,9 +24,10 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+
 /**
- * License are generated and so no license is required.
- * It is useful to note these separately.
+ * License are generated and so no license is required. It is useful to note
+ * these separately.
  */
 public class GeneratedLicenseNotRequired implements IHeaderMatcher {
 
