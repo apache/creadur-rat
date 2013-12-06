@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.license.CDDL1License;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.junit.Before;
@@ -78,6 +79,14 @@ public class CDDL1LicenseTest {
 							"'Behold, Telemachus! (nor fear the sight,)"));
 		}
     }
+    
+	@Test
+	public void testNegativeMatchCDDL1LicenseEmptyPattern() throws Exception {
+		CDDL1License licenseCDDL1 = new CDDL1License();
+		licenseCDDL1.setPatterns(new String[0]);
+		assertFalse("Not Matches the  CDDL1 License", licenseCDDL1.match(
+				subject, "'Behold, Telemachus! (nor fear the sight,)"));
+	}
 
     @Test
     public void testPositiveMatchCDDL1License() throws Exception {
