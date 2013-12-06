@@ -29,6 +29,9 @@ public class GPL2License extends FullTextMatchingLicense {
             " as published by the Free Software Foundation; either version 2\n" +
             " of the License, or (at your option) any later version.";
 
+    /**
+     * 
+     */
     public GPL2License() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL2,
                 MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2,
