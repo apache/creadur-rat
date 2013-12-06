@@ -30,7 +30,9 @@ import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
+/**
+ * 
+ */
 public class CDDL1LicenseTest {
 
     private static final String LICENSE_LINE =
@@ -49,7 +51,10 @@ public class CDDL1LicenseTest {
     private static Map<IHeaderMatcher, String> licenseStringMap;
 
     private Document subject;
-
+    
+    /**
+	 * Inits the licences under test.
+	 */
     @BeforeClass
     public static void initLicencesUnderTest() {
         licenseStringMap = new HashMap<IHeaderMatcher, String>();
