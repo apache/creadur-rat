@@ -80,16 +80,16 @@ public class SimplePatternBasedLicense extends BaseLicense implements
 	 * @return true, if successful
 	 */
 	protected boolean matches(final String pLine) {
-		boolean resultado = false;
+		boolean result = false;
 		final String[] pttrns = getPatterns();
 		if (pLine != null && pttrns != null) {
 			for (String pttrn : pttrns) {
 				if (pLine.indexOf(pttrn, 0) >= ZERO) {
-					resultado = true;
+					result = true;
 				}
 			}
 		}
-		return resultado;
+		return result;
 	}
 
 	/*
