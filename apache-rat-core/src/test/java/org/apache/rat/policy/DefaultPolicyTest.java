@@ -20,11 +20,14 @@ package org.apache.rat.policy;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 import static org.junit.Assert.assertEquals;
 
 
@@ -62,14 +65,14 @@ public class DefaultPolicyTest {
     
     @Test
     public void testW3CFamily() throws Exception {
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT);
+        subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, W3C.getName()));
         policy.analyse(subject);
         assertApproval(true);
     }
     
     @Test
     public void testW3CDocFamily() throws Exception {
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT);
+        subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, W3C_DOCUMENTATION.getName()));
         policy.analyse(subject);
         assertApproval(true);
     }

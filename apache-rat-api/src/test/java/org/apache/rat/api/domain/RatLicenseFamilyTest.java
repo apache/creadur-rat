@@ -19,6 +19,7 @@
 package org.apache.rat.api.domain;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -41,5 +42,22 @@ public class RatLicenseFamilyTest {
         assertThat(
                 W3C.getNotes(),
                 is("Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231."));
+    }
+
+    @Test
+    public void testW3CDocLicenseFamilyCategory() {
+        assertThat(W3C_DOCUMENTATION.getCategory(), is("W3CD "));
+    }
+
+    @Test
+    public void testW3CDocLicenseFamilyName() {
+        assertThat(W3C_DOCUMENTATION.getName(), is("W3C Document Copyright"));
+    }
+
+    @Test
+    public void testW3CDocLicenseFamilyNotes() {
+        assertThat(
+                W3C_DOCUMENTATION.getNotes(),
+                is("Note that W3CD does not allow modifications. See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231."));
     }
 }

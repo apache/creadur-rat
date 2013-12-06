@@ -18,7 +18,6 @@
  */
 package org.apache.rat.api;
 
-import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,7 +66,6 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN = "?????";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL = "AL   ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_OASIS = "OASIS";
-    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3CD = "W3CD ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO = "DOJO ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF = "TMF  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1 = "GPL1 ";
@@ -88,11 +86,6 @@ public class MetaData {
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_OASIS = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_OASIS);
-    public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3CD = new Datum(
-            RAT_URL_LICENSE_FAMILY_CATEGORY,
-            RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3CD);
-    public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3C =
-            new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, W3C.getCategory());
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_DOJO = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO);
@@ -129,11 +122,6 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1 = "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1 = "Academic Free License, Version 2.1";
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN = "?????";
-    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT =
-            new Datum(RAT_URL_LICENSE_FAMILY_NAME, W3C.getName());
-    public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT = new Datum(
-            RAT_URL_LICENSE_FAMILY_NAME,
-            RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT);
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE = new Datum(
             RAT_URL_LICENSE_FAMILY_NAME,
             RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE);

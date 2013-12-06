@@ -15,13 +15,39 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.license;
+ */
+package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.domain.RatLicenseFamily;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-public class W3CDocumentLicenseFamily extends SimpleLicenseFamily {
-    public W3CDocumentLicenseFamily() {
-        super(RatLicenseFamily.W3C_DOCUMENTATION.getName());
+import org.junit.Before;
+import org.junit.Test;
+
+public class W3CDocLicenseTest {
+
+    W3CDocLicense license;
+
+    @Before
+    public void setUp() throws Exception {
+        this.license = new W3CDocLicense();
+    }
+
+    @Test
+    public void testNotes() {
+        assertThat(
+                this.license.getNotes(),
+                is("Note that W3CD does not allow modifications. See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231."));
+    }
+
+    @Test
+    public void testCategory() {
+        assertThat(this.license.getLicenseFamilyCategory(), is("W3CD "));
+    }
+
+    @Test
+    public void testName() {
+        assertThat(this.license.getLicenseFamilyName(),
+                is("W3C Document Copyright"));
     }
 }
