@@ -26,15 +26,27 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
-
+/**
+ *
+ */
 public class DocumentImplUtils {
 
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public final static String toName(File file) {
 		String path = file.getPath();
 		String normalisedPath = path.replace('\\', '/');
 		return normalisedPath;
 	}
 
+	/**
+	 * 
+	 * @param stream
+	 * @return
+	 */
 	public static final boolean isZipStream(InputStream stream) {
 		ZipInputStream zip = new ZipInputStream(stream);
 		try {
@@ -49,6 +61,11 @@ public class DocumentImplUtils {
 		}
 	}
 
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public static final boolean isZip(File file) {
 		try {
 			return isZipStream(new FileInputStream(file));
