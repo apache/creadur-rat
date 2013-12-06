@@ -65,7 +65,7 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 	 * @param copyrightOwner
 	 *            the copyright owner
 	 */
-	public AppliedApacheSoftwareLicense20(String copyrightOwner) {
+	public AppliedApacheSoftwareLicense20(final String copyrightOwner) {
 		this();
 		setCopyrightOwner(copyrightOwner);
 	}
@@ -78,13 +78,13 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 	 * api.Document, java.lang.String)
 	 */
 	@Override
-	public boolean match(Document subject, String s) {
+	public boolean match(final Document subject, final String text) {
 		boolean result = false;
 		if (isCopyrightMatch()) {
 			// will report the match if it has occurred
-			return textMatcher.match(subject, s); 
+			result = textMatcher.match(subject, text);
 		} else {
-			matchCopyright(s);
+			matchCopyright(text);
 		}
 		return result;
 	}
