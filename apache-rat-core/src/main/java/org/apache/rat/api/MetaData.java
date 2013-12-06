@@ -18,13 +18,14 @@
  */
 package org.apache.rat.api;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.rat.api.domain.LicenseFamilyFactory;
 
 /**
  * Data about the subject.
@@ -93,7 +94,7 @@ public class MetaData {
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3CD);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3C = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
-            LicenseFamilyFactory.RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C);
+            W3C.getCategory());
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_DOJO = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO);
@@ -132,7 +133,7 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN = "?????";
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT = new Datum(
             RAT_URL_LICENSE_FAMILY_NAME,
-            LicenseFamilyFactory.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT);
+            W3C.getName());
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT = new Datum(
             RAT_URL_LICENSE_FAMILY_NAME,
             RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT);

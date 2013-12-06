@@ -18,22 +18,16 @@
  */
 package org.apache.rat.api.domain;
 
-import static org.apache.rat.api.domain.LicenseFamilyBuilder.aLicenseFamily;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 
 public final class LicenseFamilyFactory {
 
-    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C = "W3C  ";
-    public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT =
-            "W3C Software Copyright";
 
     private LicenseFamilyFactory() {
     }
 
     public static LicenseFamily w3c() {
-        return aLicenseFamily()
-                .withCategory(RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C)
-               .withName(RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT)
-                .withNotes("").build();
+        return W3C.licenseFamily();
     }
 
 }

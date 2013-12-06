@@ -18,10 +18,10 @@
  */
 package org.apache.rat.license;
 
-import org.apache.rat.api.domain.LicenseFamilyFactory;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 
 public class W3CSoftwareLicenseFamily extends SimpleLicenseFamily {
     public W3CSoftwareLicenseFamily() {
-        super(LicenseFamilyFactory.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT);
+        super(W3C.getName());
     }
 }

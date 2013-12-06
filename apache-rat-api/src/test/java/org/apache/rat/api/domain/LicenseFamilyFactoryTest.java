@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 
 public class LicenseFamilyFactoryTest {
 
@@ -29,7 +30,7 @@ public class LicenseFamilyFactoryTest {
     public void testW3CLicenseFamilyCategory() {
         final LicenseFamily family = LicenseFamilyFactory.w3c();
         assertThat(family.getCategory(),
-                is(LicenseFamilyFactory.RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C));
+                is(W3C.getCategory()));
     }
 
     @Test
@@ -37,7 +38,7 @@ public class LicenseFamilyFactoryTest {
         final LicenseFamily family = LicenseFamilyFactory.w3c();
         assertThat(
                 family.getName(),
-                is(LicenseFamilyFactory.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT));
+                is(W3C.getName()));
     }
 
     @Test
