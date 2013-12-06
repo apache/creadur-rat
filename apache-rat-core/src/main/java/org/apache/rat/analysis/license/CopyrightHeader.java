@@ -50,17 +50,38 @@ import org.apache.rat.api.MetaData.Datum;
  */
 public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 
+	/** The Constant COPYRIGHT_PREFIX_PATTERN_DEFN. */
 	public static final String COPYRIGHT_PREFIX_PATTERN_DEFN = ".*Copyright [0-9]{4}(\\-[0-9]{4})? ";
 
+	/** The copyright pattern. */
 	private Pattern copyrightPattern;
+	
+	/** The copyright owner. */
 	private String copyrightOwner;
+	
+	/** The copyright match. */
 	private boolean copyrightMatch = false;
 
+	/**
+	 * Instantiates a new copyright header.
+	 *
+	 * @param licenseFamilyCategory the license family category
+	 * @param licenseFamilyName the license family name
+	 * @param notes the notes
+	 */
 	protected CopyrightHeader(Datum licenseFamilyCategory,
 			Datum licenseFamilyName, String notes) {
 		super(licenseFamilyCategory, licenseFamilyName, notes);
 	}
 
+	/**
+	 * Instantiates a new copyright header.
+	 *
+	 * @param licenseFamilyCategory the license family category
+	 * @param licenseFamilyName the license family name
+	 * @param notes the notes
+	 * @param copyrightOwner the copyright owner
+	 */
 	protected CopyrightHeader(Datum licenseFamilyCategory,
 			Datum licenseFamilyName, String notes, String copyrightOwner) {
 		this(licenseFamilyCategory, licenseFamilyName, notes);
@@ -68,24 +89,50 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 	}
 
 	// Called by ctor, so must not be overridden
+	/**
+	 * Sets the copyright owner.
+	 *
+	 * @param copyrightOwner the new copyright owner
+	 */
 	public final void setCopyrightOwner(String copyrightOwner) {
 		this.copyrightOwner = copyrightOwner;
 		this.copyrightPattern = Pattern.compile(COPYRIGHT_PREFIX_PATTERN_DEFN
 				+ copyrightOwner + ".*", Pattern.CASE_INSENSITIVE);
 	}
 
+	/**
+	 * Gets the copy right owner.
+	 *
+	 * @return the copy right owner
+	 */
 	public String getCopyRightOwner() {
 		return copyrightOwner;
 	}
 
+	/**
+	 * Checks for copyright pattern.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasCopyrightPattern() {
 		return copyrightPattern != null;
 	}
 
+	/**
+	 * Checks if is copyright match.
+	 *
+	 * @return true, if is copyright match
+	 */
 	protected boolean isCopyrightMatch() {
 		return copyrightMatch;
 	}
 
+	/**
+	 * Match copyright.
+	 *
+	 * @param s the s
+	 * @return true, if successful
+	 */
 	protected boolean matchCopyright(String s) {
 		if (!copyrightMatch) {
 			copyrightMatch = copyrightPattern.matcher(s).matches();
@@ -93,6 +140,9 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 		return copyrightMatch;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document, java.lang.String)
+	 */
 	public boolean match(Document subject, String s) {
 		if (!copyrightMatch) {
 			if (matchCopyright(s)) {
@@ -102,6 +152,9 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 		return copyrightMatch;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.rat.analysis.IHeaderMatcher#reset()
+	 */
 	public void reset() {
 		copyrightMatch = false;
 	}
