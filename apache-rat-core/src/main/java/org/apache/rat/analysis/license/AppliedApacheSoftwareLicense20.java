@@ -23,51 +23,57 @@ import org.apache.rat.api.MetaData;
 
 /**
  * Matches an applied AL 2.0 License header, including a <em>required</em>
- * initial copyright header line, conforming the <a href="http://apache.org/licenses/LICENSE-2.0.html#apply">template</a>
- * from the AL 2.0 license itself.
- *
+ * initial copyright header line, conforming the <a
+ * href="http://apache.org/licenses/LICENSE-2.0.html#apply">template</a> from
+ * the AL 2.0 license itself.
+ * 
  * @since Rat 0.9
  */
 public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 
-    public static final String ASL20_LICENSE_DEFN
-            = "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
-            + "you may not use this file except in compliance with the License.\n"
-            + "You may obtain a copy of the License at\n"
-            + "http://www.apache.org/licenses/LICENSE-2.0\n"
-            + "Unless required by applicable law or agreed to in writing, software\n"
-            + "distributed under the License is distributed on an \"AS IS\" BASIS,\n"
-            + "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
-            + "See the License for the specific language governing permissions and\n"
-            + "limitations under the License.\n";
+	public static final String ASL20_LICENSE_DEFN = "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+			+ "you may not use this file except in compliance with the License.\n"
+			+ "You may obtain a copy of the License at\n"
+			+ "http://www.apache.org/licenses/LICENSE-2.0\n"
+			+ "Unless required by applicable law or agreed to in writing, software\n"
+			+ "distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+			+ "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+			+ "See the License for the specific language governing permissions and\n"
+			+ "limitations under the License.\n";
 
-    private final FullTextMatchingLicense textMatcher;
+	private final FullTextMatchingLicense textMatcher;
 
-    public AppliedApacheSoftwareLicense20() {
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,"");
-        textMatcher = new FullTextMatchingLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,"",ASL20_LICENSE_DEFN);
-    }
+	public AppliedApacheSoftwareLicense20() {
+		super(
+				MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,
+				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,
+				"");
+		textMatcher = new FullTextMatchingLicense(
+				MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,
+				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,
+				"", ASL20_LICENSE_DEFN);
+	}
 
-    public AppliedApacheSoftwareLicense20(String copyrightOwner) {
-        this();
-        setCopyrightOwner(copyrightOwner);
-    }
+	public AppliedApacheSoftwareLicense20(String copyrightOwner) {
+		this();
+		setCopyrightOwner(copyrightOwner);
+	}
 
-    @Override
-    public boolean match(Document subject, String s) {
-        boolean result = false;
-        if (isCopyrightMatch()) {
-            return textMatcher.match(subject, s); // will report the match if it has occurred
-        }
-        else {
-            matchCopyright(s);
-        }
-        return result;
-    }
+	@Override
+	public boolean match(Document subject, String s) {
+		boolean result = false;
+		if (isCopyrightMatch()) {
+			return textMatcher.match(subject, s); // will report the match if it
+													// has occurred
+		} else {
+			matchCopyright(s);
+		}
+		return result;
+	}
 
-    @Override
-    public void reset() {
-        super.reset();
-        textMatcher.reset();
-    }
+	@Override
+	public void reset() {
+		super.reset();
+		textMatcher.reset();
+	}
 }
