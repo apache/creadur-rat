@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.policy;
 
 import org.apache.rat.api.Document;
@@ -23,6 +23,7 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.api.domain.LicenseFamilyFactory;
 
 import java.util.Arrays;
 
@@ -30,13 +31,13 @@ public class DefaultPolicy implements IDocumentAnalyser {
     private static final String[] APPROVED_LICENSES = {
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT,
+        LicenseFamilyFactory.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MIT,
         MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1,
     };
-    
+
     private static final String[] toNames(final ILicenseFamily[] approvedLicenses) {
         String[] results = null;
         if (approvedLicenses != null) {
@@ -50,11 +51,11 @@ public class DefaultPolicy implements IDocumentAnalyser {
     }
 
     private final String[] approvedLicenseNames;
-    
+
     public DefaultPolicy() {
         this(APPROVED_LICENSES);
     }
-    
+
     public DefaultPolicy(final ILicenseFamily[] approvedLicenses) {
         this(toNames(approvedLicenses));
     }
@@ -79,7 +80,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
         }
         subject.getMetaData().set(datum);
     }
-    
+
     public void analyse(final Document subject) {
         if (subject != null) {
             final String name = subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
