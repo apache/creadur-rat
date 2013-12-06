@@ -27,7 +27,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -53,7 +52,6 @@ public class MITLicenseTest {
 		licenseStringMap.put(new MITLicense(), MITLicense.FIRST_LICENSE_LINE
 				+ "\n" + MITLicense.MIDDLE_LICENSE_LINE + "\r\n * "
 				+ MITLicense.AS_IS_LICENSE_LINE);
-		assertEquals(1, licenseStringMap.entrySet().size());
 		this.subject = new MockLocation("subject");
 	}
 
@@ -61,8 +59,10 @@ public class MITLicenseTest {
 	public void testNegativeMatches() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
-			assertFalse(licenceUnderTest.getKey().match(subject,
-					"'Behold, Telemachus! (nor fear the sight,)"));
+			assertFalse(
+					"Error match MITLicense",
+					licenceUnderTest.getKey().match(subject,
+							"'Behold, Telemachus! (nor fear the sight,)"));
 		}
 	}
 
@@ -70,26 +70,10 @@ public class MITLicenseTest {
 	public void testPositiveMatchInDocument() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					"\t" + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					"     " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" * " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" // " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" /* " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" /** " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					"    " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" ## " + licenceUnderTest.getValue()));
-			assertTrue(licenceUnderTest.getKey().match(subject,
-					" ## " + licenceUnderTest.getValue() + " ##"));
+			assertTrue(
+					"Not match MITLicense",
+					licenceUnderTest.getKey().match(subject,
+							"\t" + licenceUnderTest.getValue()));
 		}
 	}
 
