@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl;
 
 import java.io.File;
@@ -29,32 +29,32 @@ import org.apache.commons.io.IOUtils;
 
 public class DocumentImplUtils {
 
-    public final static String toName(File file) {
-        String path = file.getPath();
-        String normalisedPath = path.replace('\\', '/');
-        return normalisedPath;
-    }
-    
-    public static final boolean isZipStream(InputStream stream) {
-        ZipInputStream zip = new ZipInputStream(stream);
-        try {
-            zip.getNextEntry();
-            return true;
-        } catch (ZipException e) {
-            return false;
-        } catch (IOException e) {
-            return false;
-        } finally {
-            IOUtils.closeQuietly(zip);
-        }
-    }
+	public final static String toName(File file) {
+		String path = file.getPath();
+		String normalisedPath = path.replace('\\', '/');
+		return normalisedPath;
+	}
 
-    public static final boolean isZip(File file) {
-        try {
-            return isZipStream(new FileInputStream(file));
-        } catch (IOException e) {
-            return false;
-        }
-    }
+	public static final boolean isZipStream(InputStream stream) {
+		ZipInputStream zip = new ZipInputStream(stream);
+		try {
+			zip.getNextEntry();
+			return true;
+		} catch (ZipException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		} finally {
+			IOUtils.closeQuietly(zip);
+		}
+	}
+
+	public static final boolean isZip(File file) {
+		try {
+			return isZipStream(new FileInputStream(file));
+		} catch (IOException e) {
+			return false;
+		}
+	}
 
 }
