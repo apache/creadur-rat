@@ -18,15 +18,14 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class CopyrightHeaderTest {
 
@@ -44,13 +43,11 @@ public class CopyrightHeaderTest {
             , "/*  Copyright 2012 2013 FooBar.*/" };
 
     CopyrightHeader header;
-    MockClaimReporter reporter;
     Document subject = new MockLocation("subject");
 
     @Before
     public void setUp() throws Exception {
         header = new CopyrightHeader(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,"","FooBar");
-        reporter = new MockClaimReporter();
         subject = new MockLocation("subject");
     }
 
