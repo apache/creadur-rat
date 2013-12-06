@@ -21,14 +21,36 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
+/**
+ * The Class BaseLicense.
+ */
 public class BaseLicense {
+
+	/** The license family category. */
 	private String licenseFamilyCategory;
+
+	/** The license family name. */
 	private String licenseFamilyName;
+
+	/** The notes. */
 	private String notes;
 
+	/**
+	 * Instantiates a new base license.
+	 */
 	public BaseLicense() {
 	}
 
+	/**
+	 * Instantiates a new base license.
+	 * 
+	 * @param licenseFamilyCategory
+	 *            the license family category
+	 * @param licenseFamilyName
+	 *            the license family name
+	 * @param notes
+	 *            the notes
+	 */
 	public BaseLicense(final MetaData.Datum licenseFamilyCategory,
 			final MetaData.Datum licenseFamilyName, final String notes) {
 		if (!MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY
@@ -48,30 +70,69 @@ public class BaseLicense {
 		setNotes(notes);
 	}
 
+	/**
+	 * Gets the license family category.
+	 * 
+	 * @return the license family category
+	 */
 	public String getLicenseFamilyCategory() {
 		return licenseFamilyCategory;
 	}
 
+	/**
+	 * Sets the license family category.
+	 * 
+	 * @param pDocumentCategory
+	 *            the new license family category
+	 */
 	public void setLicenseFamilyCategory(String pDocumentCategory) {
 		licenseFamilyCategory = pDocumentCategory;
 	}
 
+	/**
+	 * Gets the license family name.
+	 * 
+	 * @return the license family name
+	 */
 	public String getLicenseFamilyName() {
 		return licenseFamilyName;
 	}
 
+	/**
+	 * Sets the license family name.
+	 * 
+	 * @param pLicenseFamilyCategory
+	 *            the new license family name
+	 */
 	public void setLicenseFamilyName(String pLicenseFamilyCategory) {
 		licenseFamilyName = pLicenseFamilyCategory;
 	}
 
+	/**
+	 * Gets the notes.
+	 * 
+	 * @return the notes
+	 */
 	public String getNotes() {
 		return notes;
 	}
 
+	/**
+	 * Sets the notes.
+	 * 
+	 * @param pNotes
+	 *            the new notes
+	 */
 	public void setNotes(String pNotes) {
 		notes = pNotes;
 	}
 
+	/**
+	 * Report on license.
+	 * 
+	 * @param subject
+	 *            the subject
+	 */
 	public final void reportOnLicense(Document subject) {
 		final MetaData metaData = subject.getMetaData();
 		metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
@@ -84,6 +145,13 @@ public class BaseLicense {
 				getLicenseFamilyName()));
 	}
 
+	/**
+	 * Prune.
+	 * 
+	 * @param text
+	 *            the text
+	 * @return the string
+	 */
 	protected static final String prune(String text) {
 		final int length = text.length();
 		final StringBuilder buffer = new StringBuilder(length);
