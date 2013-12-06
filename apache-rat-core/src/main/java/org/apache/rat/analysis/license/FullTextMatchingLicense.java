@@ -39,23 +39,41 @@ import org.apache.rat.api.MetaData.Datum;
 public class FullTextMatchingLicense extends BaseLicense implements
 		IHeaderMatcher {
 
+	/** The Constant DEFAULT_INITIAL_LINE_LENGTH. */
 	// Number of match characters assumed to be present on first line
 	private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
 
+	/** The full text. */
 	private String fullText;
 
+	/** The first line. */
 	private String firstLine;
 
+	/** The seen first line. */
 	private boolean seenFirstLine = false;
 
+	/** The buffer. */
 	private final StringBuilder buffer = new StringBuilder();
 
+	/**
+	 * Instantiates a new full text matching license.
+	 *
+	 * @param licenseFamilyCategory the license family category
+	 * @param licenseFamilyName the license family name
+	 * @param notes the notes
+	 * @param fullText the full text
+	 */
 	protected FullTextMatchingLicense(Datum licenseFamilyCategory,
 			Datum licenseFamilyName, String notes, String fullText) {
 		super(licenseFamilyCategory, licenseFamilyName, notes);
 		setFullText(fullText);
 	}
 
+	/**
+	 * Sets the full text.
+	 *
+	 * @param text the new full text
+	 */
 	public final void setFullText(String text) {
 		int offset = text.indexOf('\n');
 		if (offset == -1) {
@@ -67,10 +85,18 @@ public class FullTextMatchingLicense extends BaseLicense implements
 		init();
 	}
 
+	/**
+	 * Checks for full text.
+	 *
+	 * @return true, if successful
+	 */
 	public final boolean hasFullText() {
 		return fullText != null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document, java.lang.String)
+	 */
 	public boolean match(Document subject, String line) {
 		final String inputToMatch = prune(line).toLowerCase(Locale.ENGLISH);
 		if (seenFirstLine) {
@@ -112,11 +138,16 @@ public class FullTextMatchingLicense extends BaseLicense implements
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.rat.analysis.IHeaderMatcher#reset()
+	 */
 	public void reset() {
 		init();
 	}
 
-	// This is called indirectly from a ctor so must be final or private
+	/**
+	 * This is called indirectly from a ctor so must be final or private
+	 */
 	private void init() {
 		buffer.setLength(0);
 		seenFirstLine = false;
