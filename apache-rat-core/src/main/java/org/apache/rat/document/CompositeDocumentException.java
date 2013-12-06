@@ -27,10 +27,16 @@ public class CompositeDocumentException extends IOException {
 
 	private static final long serialVersionUID = -8874256971728263295L;
 
+	/**
+	 * 
+	 */
 	public CompositeDocumentException() {
 		super("This document must be read as an archive.");
 	}
-
+	/**
+	 * 
+	 * @param message
+	 */
 	public CompositeDocumentException(final String message) {
 		super(message);
 	}
