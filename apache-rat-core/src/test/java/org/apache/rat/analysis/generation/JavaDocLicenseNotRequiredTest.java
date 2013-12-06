@@ -24,10 +24,12 @@ import org.apache.rat.test.utils.Resources;
 import org.junit.Before;
 import org.junit.Test;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -37,42 +39,50 @@ import static org.junit.Assert.assertTrue;
  */
 public class JavaDocLicenseNotRequiredTest {
 
-	IHeaderMatcher license;
+	private IHeaderMatcher license;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		license = new JavaDocLicenseNotRequired();
 	}
 
 	@Test
-	public void matchIndexDoc() throws Exception {
+	public void matchIndexDoc() throws RatHeaderAnalysisException, IOException {
 		boolean result = readAndMatch("index.html");
 		assertTrue("Is a javadoc", result);
 	}
 
 	@Test
-	public void matchClassDoc() throws Exception {
+	public void matchClassDoc() throws RatHeaderAnalysisException, IOException {
 		boolean result = readAndMatch("ArchiveElement.html");
 		assertTrue("Is a javadoc", result);
 	}
 
 	@Test
-	public void matchNonJavaDoc() throws Exception {
+	public void matchNonJavaDoc() throws RatHeaderAnalysisException,
+			IOException {
 		boolean result = readAndMatch("notjavadoc.html");
 		assertFalse("Not javadocs and so should return null", result);
 	}
 
-	boolean readAndMatch(String name) throws Exception {
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 * @throws IOException
+	 */
+	private boolean readAndMatch(final String name) throws RatHeaderAnalysisException,
+			IOException {
 		File file = Resources.getResourceFile("javadocs/" + name);
 		boolean result = false;
-		BufferedReader in = new BufferedReader(new FileReader(file));
-		String line = in.readLine();
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+		String line = bufferedReader.readLine();
 		final Document subject = new MockLocation("subject");
 		while (line != null && !result) {
 			result = license.match(subject, line);
-			line = in.readLine();
+			line = bufferedReader.readLine();
 		}
-		in.close();
+		bufferedReader.close();
 		return result;
 	}
 }
