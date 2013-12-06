@@ -18,7 +18,10 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
+import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +66,25 @@ public class ApacheSoftwareLicense20Test {
 			assertFalse("Not Match the reference apache license", worker.match(
 					subject, "'Behold, Telemachus! (nor fear the sight,)"));
 		}
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testApacheLicenseIllegalStateFamilyCategory() {
+		Datum licenseFamilyCategory = new Datum("", "");
+		Datum licenseFamilyName = new Datum("", "");
+		String notes = null;
+		new BaseLicense(licenseFamilyCategory,
+				licenseFamilyName, notes);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testApacheLicenseIllegalStateFamilyName() {
+		Datum licenseFamilyCategory = new Datum(
+				MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY,
+				MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
+		Datum licenseFamilyName = new Datum("", "");
+		String notes = null;
+		new BaseLicense(licenseFamilyCategory, licenseFamilyName, notes);
 	}
 
 }
