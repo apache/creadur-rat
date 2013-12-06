@@ -39,47 +39,25 @@ import org.junit.Test;
  */
 public class JavaDocLicenseNotRequiredTest {
 
-	/** The license. */
 	private static IHeaderMatcher license;
 
-	/**
-	 * Sets the up.
-	 */
 	@Before
 	public void setUp() {
 		license = new JavaDocLicenseNotRequired();
 	}
 
-	/**
-	 * Test match index doc license.
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
 	@Test
 	public void testMatchIndexDocLicense() throws IOException {
 		final boolean result = readAndMatch("index.html");
 		assertTrue("Is a javadoc", result);
 	}
 
-	/**
-	 * Test match class doc license.
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
 	@Test
 	public void testMatchClassDocLicense() throws IOException {
 		final boolean result = readAndMatch("ArchiveElement.html");
 		assertTrue("Is a javadoc", result);
 	}
 
-	/**
-	 * Test match non java doc license.
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
 	@Test
 	public void testMatchNonJavaDocLicense() throws IOException {
 		final boolean result = readAndMatch("notjavadoc.html");
