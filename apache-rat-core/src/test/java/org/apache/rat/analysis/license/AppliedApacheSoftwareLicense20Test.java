@@ -107,5 +107,10 @@ public class AppliedApacheSoftwareLicense20Test {
 	public void testNotNullCopyRightOwner() {
 		Assert.assertNotNull(license.getCopyRightOwner());
 	}
+	
+	@Test
+	public void testHasCopyrightPattern() {
+		assertTrue("copyrightPattern not null", license.hasCopyrightPattern());
+	}
 
 }
