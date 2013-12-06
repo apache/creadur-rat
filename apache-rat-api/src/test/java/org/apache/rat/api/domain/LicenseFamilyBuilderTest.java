@@ -27,12 +27,27 @@ import org.junit.Test;
 public class LicenseFamilyBuilderTest {
 
     @Test
+    public void testBuilderBuilds() {
+        final LicenseFamily family =
+                LicenseFamilyBuilder.aLicenseFamily().build();
+        assertNotNull("Builder should build", family);
+    }
+
+    @Test
     public void testWithNotes() {
         final String someNotes = "Some notes";
         final LicenseFamily family =
                 LicenseFamilyBuilder.aLicenseFamily().withNotes(someNotes)
                         .build();
-        assertNotNull("Builder should build", family);
         assertThat(family.getNotes(), is(someNotes));
+    }
+
+    @Test
+    public void testWithCategory() {
+        final String someCategory = "Some license category";
+        final LicenseFamily family =
+                LicenseFamilyBuilder.aLicenseFamily()
+                        .withCategory(someCategory).build();
+        assertThat(family.getCategory(), is(someCategory));
     }
 }

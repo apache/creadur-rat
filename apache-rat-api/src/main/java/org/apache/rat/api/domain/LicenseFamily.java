@@ -21,14 +21,20 @@ package org.apache.rat.api.domain;
 public final class LicenseFamily {
 
     private final String notes;
+    private final String category;
 
-    public LicenseFamily(final String notes) {
+    public LicenseFamily(final String notes, final String category) {
         super();
         this.notes = notes;
+        this.category = category;
     }
 
     public String getNotes() {
         return this.notes;
+    }
+
+    public String getCategory() {
+        return this.category;
     }
 
 }
