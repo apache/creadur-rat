@@ -47,19 +47,18 @@ public final class LicenseFamily {
 
     /**
      * Constructs an immutable license family.
-     * 
-     * @param notes
-     *            further information associated with the license family. Human
-     *            readable. Possibly null.
-     * @param category
-     *            the name of the category containing this license family.
-     *            Recommended that this be an URI. Possibly null.
      * @param name
      *            the name uniquely identifying this family. Recommended that
      *            this be an URI. Not null.
+     * @param category
+     *            the name of the category containing this license family.
+     *            Recommended that this be an URI. Possibly null.
+     * @param notes
+     *            further information associated with the license family. Human
+     *            readable. Possibly null.
      */
-    public LicenseFamily(final String notes, final String category,
-            final String name) {
+    public LicenseFamily(final String name, final String category,
+            final String notes) {
         super();
         this.notes = notes;
         this.category = category;

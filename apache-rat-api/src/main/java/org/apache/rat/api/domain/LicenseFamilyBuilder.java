@@ -47,6 +47,15 @@ public final class LicenseFamilyBuilder {
     }
 
     /**
+     * Builds a family.
+     * 
+     * @return not null
+     */
+    public LicenseFamily build() {
+        return new LicenseFamily(this.name, this.category, this.notes);
+    }
+
+    /**
      * Builds family with further information associated with the license
      * family. Human readable.
      * 
@@ -57,15 +66,6 @@ public final class LicenseFamilyBuilder {
     public LicenseFamilyBuilder withNotes(final String notes) {
         this.notes = notes;
         return this;
-    }
-
-    /**
-     * Builds a family.
-     * 
-     * @return not null
-     */
-    public LicenseFamily build() {
-        return new LicenseFamily(this.notes, this.category, this.name);
     }
 
     /**
