@@ -21,11 +21,34 @@ package org.apache.rat.report;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 
+/**
+ * The Interface RatReport.
+ */
 public interface RatReport {
 
+	/**
+	 * Start report.
+	 * 
+	 * @throws RatException
+	 *             the rat exception
+	 */
 	public void startReport() throws RatException;
 
+	/**
+	 * Report.
+	 * 
+	 * @param document
+	 *            the document
+	 * @throws RatException
+	 *             the rat exception
+	 */
 	public void report(Document document) throws RatException;
 
+	/**
+	 * End report.
+	 * 
+	 * @throws RatException
+	 *             the rat exception
+	 */
 	public void endReport() throws RatException;
 }
