@@ -37,7 +37,7 @@ public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 	 *            the matchers
 	 */
 	public HeaderMatcherMultiplexer(final IHeaderMatcher[] matchers) {
-		this.matchers = matchers;
+		this.matchers = matchers.clone();
 	}
 
 	/*
@@ -47,7 +47,7 @@ public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 	 * org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document,
 	 * java.lang.String)
 	 */
-	public boolean match(Document subject, String line) {
+	public boolean match(final Document subject, final String line) {
 		boolean result = false;
 		for (IHeaderMatcher matcher : matchers) {
 			result = matcher.match(subject, line);
