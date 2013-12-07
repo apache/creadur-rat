@@ -15,21 +15,21 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml.writer;
 
 import java.io.IOException;
 
 /**
  * Indicates that the requested document would not be well formed.
- *
+ * 
  */
 public class InvalidXmlException extends IOException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public InvalidXmlException(String s) {
-        super(s);
-    }
+	public InvalidXmlException(String s) {
+		super(s);
+	}
 
 }
