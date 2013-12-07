@@ -32,7 +32,7 @@ public interface RatReport {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	public void startReport() throws RatException;
+	void startReport() throws RatException;
 
 	/**
 	 * Report.
@@ -42,7 +42,7 @@ public interface RatReport {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	public void report(Document document) throws RatException;
+	void report(Document document) throws RatException;
 
 	/**
 	 * End report.
@@ -50,5 +50,5 @@ public interface RatReport {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	public void endReport() throws RatException;
+	void endReport() throws RatException;
 }
