@@ -29,9 +29,7 @@ import java.nio.charset.CodingErrorAction;
 
 import org.apache.rat.api.Document;
 
-/**
- * TODO: factor into MIME guesser and MIME->binary guesser
- */
+
 public class BinaryGuesser {
 
     private static final String[] DATA_EXTENSIONS = { "DAT", "DOC", "NCB",
@@ -56,9 +54,6 @@ public class BinaryGuesser {
     }
 
     public boolean matches(final Document document) {
-        // TODO: reimplement the binary test algorithm?
-        // TODO: more efficient to move into standard analysis
-        // TODO: then use binary as default
         return isBinary(document.getName()) ||
         // try a taste
                 isBinaryDocument(document);
