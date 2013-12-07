@@ -40,8 +40,6 @@ public class DojoLicenseHeader extends SimplePatternBasedLicense {
 	 * Instantiates a new dojo license header.
 	 */
     public DojoLicenseHeader() {
-        // TODO: support for dual licensing
-        // TODO: support for or higher clauses
 		super(DOJO.licenseFamily(),
                 new String[]{LICENSE_URL});
     }
