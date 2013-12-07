@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.collections.ArrayStack;
-
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.InvalidXmlException;
 import org.apache.rat.report.xml.writer.OperationNotAllowedException;
@@ -43,12 +42,20 @@ import org.apache.rat.report.xml.writer.OperationNotAllowedException;
  */
 public final class XmlWriter implements IXmlWriter {
 
+	/** The Constant NAME_START_MASK. */
 	private static final byte NAME_START_MASK = 1 << 1;
+
+	/** The Constant NAME_MASK. */
 	private static final byte NAME_MASK = 1 << 2;
+
+	/** The Constant NAME_BODY_CHAR. */
 	private static final byte NAME_BODY_CHAR = NAME_MASK;
+
+	/** The Constant NAME_START_OR_BODY_CHAR. */
 	private static final byte NAME_START_OR_BODY_CHAR = NAME_MASK
 			| NAME_START_MASK;
 
+	/** The Constant ALLOWED_CHARACTERS. */
 	private final static boolean[] ALLOWED_CHARACTERS = new boolean[1 << 16];
 
 	static {
@@ -60,6 +67,7 @@ public final class XmlWriter implements IXmlWriter {
 		Arrays.fill(ALLOWED_CHARACTERS, 0xE000, 0xFFFD, true);
 	}
 
+	/** The Constant CHARACTER_CODES. */
 	private final static byte[] CHARACTER_CODES = new byte[1 << 16];
 
 	static {
@@ -405,14 +413,30 @@ public final class XmlWriter implements IXmlWriter {
 
 	}
 
+	/** The writer. */
 	private final Writer writer;
+
+	/** The element names. */
 	private final ArrayStack elementNames;
+
+	/** The current attributes. */
 	private final Set<CharSequence> currentAttributes = new HashSet<CharSequence>();
 
+	/** The elements written. */
 	boolean elementsWritten = false;
+
+	/** The in element. */
 	boolean inElement = false;
+
+	/** The prolog written. */
 	boolean prologWritten = false;
 
+	/**
+	 * Instantiates a new xml writer.
+	 * 
+	 * @param writer
+	 *            the writer
+	 */
 	public XmlWriter(final Writer writer) {
 		this.writer = writer;
 		this.elementNames = new ArrayStack();
@@ -423,9 +447,8 @@ public final class XmlWriter implements IXmlWriter {
 	 * When writing a document fragment, it should <em>not</em> be called.
 	 * 
 	 * @return this object
-	 * @throws OperationNotAllowedException
-	 *             if called after the first element has been written or once a
-	 *             prolog has already been written
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public IXmlWriter startDocument() throws IOException {
 		if (elementsWritten) {
@@ -445,10 +468,8 @@ public final class XmlWriter implements IXmlWriter {
 	 * @param elementName
 	 *            the name of the element, not null
 	 * @return this object
-	 * @throws InvalidXmlException
-	 *             if the name is not valid for an xml element
-	 * @throws OperationNotAllowedException
-	 *             if called after the first element has been closed
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public IXmlWriter openElement(final CharSequence elementName)
 			throws IOException {
@@ -481,11 +502,8 @@ public final class XmlWriter implements IXmlWriter {
 	 * @param value
 	 *            the attribute value, not null
 	 * @return this object
-	 * @throws InvalidXmlException
-	 *             if the name is not valid for an xml attribute or if a value
-	 *             for the attribute has already been written
-	 * @throws OperationNotAllowedException
-	 *             if called after {@link #content(CharSequence)} or
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 *             {@link #closeElement()} or before any call to
 	 *             {@link #openElement(CharSequence)}
 	 */
@@ -522,6 +540,14 @@ public final class XmlWriter implements IXmlWriter {
 		return this;
 	}
 
+	/**
+	 * Write attribute content.
+	 * 
+	 * @param content
+	 *            the content
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeAttributeContent(CharSequence content) throws IOException {
 		writeEscaped(content, true);
 	}
@@ -533,9 +559,8 @@ public final class XmlWriter implements IXmlWriter {
 	 * @param content
 	 *            the content to write
 	 * @return this object
-	 * @throws OperationNotAllowedException
-	 *             if called before any call to {@link #openElement} or after
-	 *             the first element has been closed
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public IXmlWriter content(CharSequence content) throws IOException {
 		if (elementNames.isEmpty()) {
@@ -555,11 +580,29 @@ public final class XmlWriter implements IXmlWriter {
 		return this;
 	}
 
+	/**
+	 * Write body content.
+	 * 
+	 * @param content
+	 *            the content
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeBodyContent(final CharSequence content)
 			throws IOException {
 		writeEscaped(content, false);
 	}
 
+	/**
+	 * Write escaped.
+	 * 
+	 * @param content
+	 *            the content
+	 * @param isAttributeContent
+	 *            the is attribute content
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeEscaped(final CharSequence content,
 			boolean isAttributeContent) throws IOException {
 		final int length = content.length();
@@ -583,6 +626,13 @@ public final class XmlWriter implements IXmlWriter {
 		}
 	}
 
+	/**
+	 * Checks if is out of range.
+	 * 
+	 * @param character
+	 *            the character
+	 * @return true, if is out of range
+	 */
 	private boolean isOutOfRange(final char character) {
 		final boolean result = !ALLOWED_CHARACTERS[character];
 		return result;
@@ -592,9 +642,8 @@ public final class XmlWriter implements IXmlWriter {
 	 * Closes the last element written.
 	 * 
 	 * @return this object
-	 * @throws OperationNotAllowedException
-	 *             if called before any call to {@link #openElement} or after
-	 *             the first element has been closed
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public IXmlWriter closeElement() throws IOException {
 		if (elementNames.isEmpty()) {
@@ -627,8 +676,8 @@ public final class XmlWriter implements IXmlWriter {
 	 * element has already been closed.
 	 * 
 	 * @return this object
-	 * @throws OperationNotAllowedException
-	 *             if called before any call to {@link #openElement}
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public IXmlWriter closeDocument() throws IOException {
 		if (elementNames.isEmpty()) {
@@ -644,6 +693,14 @@ public final class XmlWriter implements IXmlWriter {
 		return this;
 	}
 
+	/**
+	 * Raw write.
+	 * 
+	 * @param sequence
+	 *            the sequence
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void rawWrite(final CharSequence sequence) throws IOException {
 		for (int i = 0; i < sequence.length(); i++) {
 			final char charAt = sequence.charAt(i);
@@ -651,6 +708,13 @@ public final class XmlWriter implements IXmlWriter {
 		}
 	}
 
+	/**
+	 * Checks if is valid name.
+	 * 
+	 * @param sequence
+	 *            the sequence
+	 * @return true, if is valid name
+	 */
 	private boolean isValidName(final CharSequence sequence) {
 		boolean result = true;
 		final int length = sequence.length();
@@ -671,12 +735,26 @@ public final class XmlWriter implements IXmlWriter {
 		return result;
 	}
 
+	/**
+	 * Checks if is valid name start.
+	 * 
+	 * @param character
+	 *            the character
+	 * @return true, if is valid name start
+	 */
 	private boolean isValidNameStart(final char character) {
 		final byte code = CHARACTER_CODES[character];
 		final boolean result = (code & NAME_START_MASK) > 0;
 		return result;
 	}
 
+	/**
+	 * Checks if is valid name body.
+	 * 
+	 * @param character
+	 *            the character
+	 * @return true, if is valid name body
+	 */
 	private boolean isValidNameBody(final char character) {
 		final byte code = CHARACTER_CODES[character];
 		final boolean result = (code & NAME_MASK) > 0;
