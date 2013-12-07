@@ -77,7 +77,7 @@ public class AnalyserFactoryTest {
 	 *             the rat exception
 	 */
 	@Test
-	public void standardTypeAnalyser() throws IOException, RatException {
+	public void testStandardTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/resources/elements/Text.txt"));
 		IDocumentAnalyser analyser = DefaultAnalyserFactory
@@ -119,7 +119,7 @@ public class AnalyserFactoryTest {
 	 *             the rat exception
 	 */
 	@Test
-	public void noteTypeAnalyser() throws IOException, RatException {
+	public void testNoteTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/LICENSE"));
 		IDocumentAnalyser analyser = DefaultAnalyserFactory
@@ -141,7 +141,7 @@ public class AnalyserFactoryTest {
 	 *             the rat exception
 	 */
 	@Test
-	public void binaryTypeAnalyser() throws IOException, RatException {
+	public void testBinaryTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/Image.png"));
 		IDocumentAnalyser analyser = DefaultAnalyserFactory
@@ -163,7 +163,7 @@ public class AnalyserFactoryTest {
 	 *             the rat exception
 	 */
 	@Test
-	public void archiveTypeAnalyser() throws IOException, RatException {
+	public void testArchiveTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/Dummy.jar"));
 		IDocumentAnalyser analyser = DefaultAnalyserFactory
