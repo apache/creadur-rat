@@ -62,32 +62,6 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
 	
 	/** The copyright match. */
 	private boolean copyrightMatch;
-
-	/**
-	 * Instantiates a new copyright header.
-	 *
-	 * @param licenseFamilyCategory the license family category
-	 * @param licenseFamilyName the license family name
-	 * @param notes the notes
-	 */
-	protected CopyrightHeader(final Datum licenseFamilyCategory,
-			final Datum licenseFamilyName, final String notes) {
-		super(licenseFamilyCategory, licenseFamilyName, notes);
-	}
-
-	/**
-	 * Instantiates a new copyright header.
-	 *
-	 * @param licenseFamilyCategory the license family category
-	 * @param licenseFamilyName the license family name
-	 * @param notes the notes
-	 * @param copyrightOwner the copyright owner
-	 */
-	protected CopyrightHeader(final Datum licenseFamilyCategory,
-			final Datum licenseFamilyName, final String notes, final String copyrightOwner) {
-		this(licenseFamilyCategory, licenseFamilyName, notes);
-		setCopyrightOwner(copyrightOwner);
-	}
 	
 	/**
 	 * Constructs a license indicated by the given patterns.
