@@ -21,9 +21,11 @@ package org.apache.rat.analysis;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
@@ -37,13 +39,13 @@ import org.junit.Test;
 public class AnalyserFactoryTest {
 
 	/** The out. */
-	StringWriter out;
+	private StringWriter out;
 
 	/** The reporter. */
-	SimpleXmlClaimReporter reporter;
+	private SimpleXmlClaimReporter reporter;
 
 	/** The matcher stub. */
-	IHeaderMatcher matcherStub;
+	private IHeaderMatcher matcherStub;
 
 	/**
 	 * Sets the up.
@@ -57,11 +59,9 @@ public class AnalyserFactoryTest {
 		XmlWriter writer = new XmlWriter(out);
 		reporter = new SimpleXmlClaimReporter(writer);
 		matcherStub = new IHeaderMatcher() {
-
-			public boolean match(Document subject, String line) {
+			public boolean match(final Document subject, final String line) {
 				return false;
 			}
-
 			public void reset() {
 			}
 		};
@@ -70,11 +70,12 @@ public class AnalyserFactoryTest {
 	/**
 	 * Standard type analyser.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 * @throws RatException
+	 * 
 	 */
 	@Test
-	public void standardTypeAnalyser() throws Exception {
+	public void standardTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/resources/elements/Text.txt"));
 		IDocumentAnalyser analyser = DefaultAnalyserFactory
@@ -110,11 +111,12 @@ public class AnalyserFactoryTest {
 	/**
 	 * Note type analyser.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 * @throws RatException
+	 * 
 	 */
 	@Test
-	public void noteTypeAnalyser() throws Exception {
+	public void noteTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/LICENSE"));
 		IDocumentAnalyser analyser = DefaultAnalyserFactory
@@ -130,11 +132,12 @@ public class AnalyserFactoryTest {
 	/**
 	 * Binary type analyser.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 * @throws RatException
+	 * 
 	 */
 	@Test
-	public void binaryTypeAnalyser() throws Exception {
+	public void binaryTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/Image.png"));
 		IDocumentAnalyser analyser = DefaultAnalyserFactory
@@ -150,11 +153,12 @@ public class AnalyserFactoryTest {
 	/**
 	 * Archive type analyser.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 * @throws RatException
+	 * 
 	 */
 	@Test
-	public void archiveTypeAnalyser() throws Exception {
+	public void archiveTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/Dummy.jar"));
 		IDocumentAnalyser analyser = DefaultAnalyserFactory
