@@ -26,8 +26,15 @@ import java.io.IOException;
  */
 public class OperationNotAllowedException extends IOException {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Instantiates a new operation not allowed exception.
+	 * 
+	 * @param message
+	 *            the message
+	 */
 	public OperationNotAllowedException(String message) {
 		super(message);
 	}
