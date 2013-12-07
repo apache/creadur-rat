@@ -47,35 +47,6 @@ public class BaseLicense {
     }
 
     /**
-     * Instantiates a new base license.
-     * 
-     * @param licenseFamilyCategory
-     *            the license family category
-     * @param licenseFamilyName
-     *            the license family name
-     * @param notes
-     *            the notes
-     */
-    public BaseLicense(final MetaData.Datum licenseFamilyCategory,
-            final MetaData.Datum licenseFamilyName, final String notes) {
-        if (!MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY
-                .equals(licenseFamilyCategory.getName())) {
-            throw new IllegalStateException("Expected "
-                    + MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY + ", got "
-                    + licenseFamilyCategory.getName());
-        }
-        setLicenseFamilyCategory(licenseFamilyCategory.getValue());
-        if (!MetaData.RAT_URL_LICENSE_FAMILY_NAME.equals(licenseFamilyName
-                .getName())) {
-            throw new IllegalStateException("Expected "
-                    + MetaData.RAT_URL_LICENSE_FAMILY_NAME + ", got "
-                    + licenseFamilyName.getName());
-        }
-        setLicenseFamilyName(licenseFamilyName.getValue());
-        setNotes(notes);
-    }
-
-    /**
      * Constructs a license based on the given family.
      * 
      * @param licenseFamily

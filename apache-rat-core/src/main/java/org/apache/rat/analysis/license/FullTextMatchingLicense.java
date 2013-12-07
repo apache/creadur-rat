@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.api.domain.LicenseFamily;
 
 /**
@@ -64,25 +63,6 @@ public class FullTextMatchingLicense extends BaseLicense implements
     public FullTextMatchingLicense() {
         super();
         this.fullText = null;
-    }
-
-    /**
-     * Instantiates a new full text matching license.
-     * 
-     * @param licenseFamilyCategory
-     *            the license family category
-     * @param licenseFamilyName
-     *            the license family name
-     * @param notes
-     *            the notes
-     * @param fullText
-     *            the full text
-     */
-    public FullTextMatchingLicense(final Datum licenseFamilyCategory,
-            final Datum licenseFamilyName, final String notes,
-            final String fullText) {
-        super(licenseFamilyCategory, licenseFamilyName, notes);
-        setFullText(fullText);
     }
     
 	/**

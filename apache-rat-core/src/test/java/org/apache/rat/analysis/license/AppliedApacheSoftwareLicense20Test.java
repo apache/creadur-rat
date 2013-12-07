@@ -18,6 +18,7 @@
  */
 package org.apache.rat.analysis.license;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.GPL1;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -26,8 +27,6 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.test.utils.Resources;
 import org.junit.Assert;
@@ -104,15 +103,9 @@ public class AppliedApacheSoftwareLicense20Test {
 
 	@Test
 	public void testHasFullText() {
-		Datum licenseFamilyCategory = new Datum(
-				MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY,
-				MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY);
-		Datum licenseFamilyName = new Datum(
-				MetaData.RAT_URL_LICENSE_FAMILY_NAME,
-				MetaData.RAT_URL_LICENSE_FAMILY_NAME);
 		String fullText = "";
 		FullTextMatchingLicense fullTextMatchingLicense = new FullTextMatchingLicense(
-				licenseFamilyCategory, licenseFamilyName, null, fullText);
+				GPL1.licenseFamily(), fullText);
 		assertTrue("fullText not null", fullTextMatchingLicense.hasFullText());
 	}
 }
