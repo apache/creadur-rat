@@ -20,8 +20,12 @@ package org.apache.rat.analysis.license;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.DOJO;
 
-
+/**
+ * The Class DojoLicenseHeader.
+ */
 public class DojoLicenseHeader extends SimplePatternBasedLicense {
+
+	/** The Constant LICENSE_URL. */
     private static final String LICENSE_URL  = "http://dojotoolkit.org/community/licensing.shtml";
     
     //  Copyright (c) 2004-2006, The Dojo Foundation
@@ -32,6 +36,9 @@ public class DojoLicenseHeader extends SimplePatternBasedLicense {
     //
     //    http://dojotoolkit.org/community/licensing.shtml
 
+	/**
+	 * Instantiates a new dojo license header.
+	 */
     public DojoLicenseHeader() {
         // TODO: support for dual licensing
         // TODO: support for or higher clauses
