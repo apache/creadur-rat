@@ -35,7 +35,7 @@ public class OperationNotAllowedException extends IOException {
 	 * @param message
 	 *            the message
 	 */
-	public OperationNotAllowedException(String message) {
+	public OperationNotAllowedException(final String message) {
 		super(message);
 	}
 
