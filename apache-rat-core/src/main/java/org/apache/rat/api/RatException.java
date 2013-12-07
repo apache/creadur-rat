@@ -41,7 +41,7 @@ public class RatException extends Exception {
 	 * @param cause
 	 *            the cause
 	 */
-	public RatException(String message, Throwable cause) {
+	public RatException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 
@@ -51,7 +51,7 @@ public class RatException extends Exception {
 	 * @param message
 	 *            the message
 	 */
-	public RatException(String message) {
+	public RatException(final String message) {
 		super(message);
 	}
 
@@ -61,7 +61,7 @@ public class RatException extends Exception {
 	 * @param cause
 	 *            the cause
 	 */
-	public RatException(Throwable cause) {
+	public RatException(final Throwable cause) {
 		super(cause);
 	}
 }
