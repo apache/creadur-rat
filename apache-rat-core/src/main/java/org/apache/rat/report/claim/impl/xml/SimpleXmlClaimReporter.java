@@ -28,20 +28,50 @@ import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
+/**
+ * The Class SimpleXmlClaimReporter.
+ */
 public class SimpleXmlClaimReporter extends AbstractReport {
+
+	/** The Constant LICENSE_APPROVAL_PREDICATE. */
 	public static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
+
+	/** The Constant LICENSE_FAMILY_PREDICATE. */
 	public static final String LICENSE_FAMILY_PREDICATE = "license-family";
+
+	/** The Constant HEADER_SAMPLE_PREDICATE. */
 	public static final String HEADER_SAMPLE_PREDICATE = "header-sample";
+
+	/** The Constant HEADER_TYPE_PREDICATE. */
 	public static final String HEADER_TYPE_PREDICATE = "header-type";
+
+	/** The Constant FILE_TYPE_PREDICATE. */
 	public static final String FILE_TYPE_PREDICATE = "type";
+
+	/** The Constant ARCHIVE_TYPE_PREDICATE. */
 	public static final String ARCHIVE_TYPE_PREDICATE = "archive-type";
+
+	/** The Constant ARCHIVE_TYPE_UNREADABLE. */
 	public static final String ARCHIVE_TYPE_UNREADABLE = "unreadable";
+
+	/** The Constant ARCHIVE_TYPE_READABLE. */
 	public static final String ARCHIVE_TYPE_READABLE = "readable";
 
+	/** The Constant NAME. */
 	private static final String NAME = "name";
+
+	/** The writer. */
 	private final IXmlWriter writer;
+
+	/** The first time. */
 	private boolean firstTime = true;
 
+	/**
+	 * Instantiates a new simple xml claim reporter.
+	 * 
+	 * @param writer
+	 *            the writer
+	 */
 	public SimpleXmlClaimReporter(final IXmlWriter writer) {
 		super();
 		this.writer = writer;
@@ -70,6 +100,12 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.report.AbstractReport#report(org.apache.rat.api.Document)
+	 */
 	@Override
 	public void report(final Document subject) throws RatException {
 		try {
@@ -86,6 +122,14 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
+	/**
+	 * Write document claims.
+	 * 
+	 * @param subject
+	 *            the subject
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeDocumentClaims(final Document subject)
  throws IOException {
 		final MetaData metaData = subject.getMetaData();
@@ -96,6 +140,14 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		writeDocumentCategory(metaData);
 	}
 
+	/**
+	 * Write approved license.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeApprovedLicense(final MetaData metaData)
 			throws IOException {
 		final String approvedLicense = metaData
@@ -105,6 +157,14 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
+	/**
+	 * Write license family name.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeLicenseFamilyName(final MetaData metaData)
 			throws IOException {
 		final String licenseFamilyName = metaData
@@ -114,6 +174,14 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
+	/**
+	 * Write header category.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeHeaderCategory(final MetaData metaData)
 			throws IOException {
 		final String headerCategory = metaData
@@ -123,6 +191,14 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
+	/**
+	 * Write header sample.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeHeaderSample(final MetaData metaData) throws IOException {
 		final String sample = metaData.value(MetaData.RAT_URL_HEADER_SAMPLE);
 		if (sample != null) {
@@ -130,6 +206,14 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
+	/**
+	 * Write document category.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeDocumentCategory(final MetaData metaData)
 			throws IOException {
 		final String documentCategory = metaData
@@ -139,6 +223,11 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.AbstractReport#startReport()
+	 */
 	@Override
 	public void startReport() throws RatException {
 		try {
@@ -151,6 +240,11 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.AbstractReport#endReport()
+	 */
 	@Override
 	public void endReport() throws RatException {
 		try {
