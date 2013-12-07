@@ -72,10 +72,13 @@ public class BinaryGuesser {
 	/** The Constant ASCII_CHAR_THREASHOLD. */
 	private static final int ASCII_CHAR_THREASHOLD = 8;
 
+	private static final int ZERO = 0;
+
 	/**
 	 * Instantiates a new binary guesser.
 	 */
 	public BinaryGuesser() {
+		super();
 	}
 
 	/**
@@ -107,12 +110,13 @@ public class BinaryGuesser {
 		} catch (final IOException e) {
 			result = false;
 		} finally {
-			try {
-				if (stream != null) {
+			if (stream != null) {
+				try {
 					stream.close();
+				} catch (IOException e) {
+					// Not change anything because it´s problem after work with
+					// the file.
 				}
-			} catch (final IOException e) {
-				// SWALLOW
 			}
 		}
 		return result;
@@ -129,9 +133,9 @@ public class BinaryGuesser {
 		int highBytes = 0;
 		final int length = taste.length();
 		for (int i = 0; i < length; i++) {
-			final char c = taste.charAt(i);
-			if (c > BinaryGuesser.NON_ASCII_THREASHOLD
-					|| c <= BinaryGuesser.ASCII_CHAR_THREASHOLD) {
+			final char value = taste.charAt(i);
+			if (value > BinaryGuesser.NON_ASCII_THREASHOLD
+					|| value <= BinaryGuesser.ASCII_CHAR_THREASHOLD) {
 				highBytes++;
 			}
 		}
@@ -157,39 +161,47 @@ public class BinaryGuesser {
 	 *            the in
 	 * @return true, if is binary
 	 */
-	private boolean isBinary(final InputStream in) {
+	private boolean isBinary(final InputStream inputStream) {
+		boolean result = false;
 		try {
 			final byte[] taste = new byte[200];
-			final int bytesRead = in.read(taste);
-			if (bytesRead > 0) {
+			final int bytesRead = inputStream.read(taste);
+			if (bytesRead > ZERO) {
 				final ByteBuffer bytes = ByteBuffer.wrap(taste, 0, bytesRead);
 				CharBuffer chars = CharBuffer.allocate(2 * bytesRead);
-				final Charset cs = Charset.forName(System
+				final Charset charset = Charset.forName(System
 						.getProperty("file.encoding"));
-				final CharsetDecoder cd = cs.newDecoder()
+				final CharsetDecoder charsetDecoder = charset.newDecoder()
 						.onMalformedInput(CodingErrorAction.REPORT)
 						.onUnmappableCharacter(CodingErrorAction.REPORT);
+				boolean goOn = true;
 				while (bytes.remaining() > 0) {
-					final CoderResult res = cd.decode(bytes, chars, true);
+					final CoderResult res = charsetDecoder.decode(bytes, chars,
+							true);
 					if (res.isMalformed() || res.isUnmappable()) {
-						return true;
+						result = true;
+						goOn = false;
+						break;
 					} else if (res.isOverflow()) {
 						chars.limit(chars.position());
 						chars.rewind();
-						final int c = chars.capacity() * 2;
-						final CharBuffer on = CharBuffer.allocate(c);
-						on.put(chars);
-						chars = on;
+						final int value = chars.capacity() * 2;
+						final CharBuffer charBuffer = CharBuffer
+								.allocate(value);
+						charBuffer.put(chars);
+						chars = charBuffer;
 					}
 				}
-				chars.limit(chars.position());
-				chars.rewind();
-				return isBinary(chars);
+				if (goOn) {
+					chars.limit(chars.position());
+					chars.rewind();
+					result = isBinary(chars);
+				}
 			}
 		} catch (final IOException e) {
-			// SWALLOW
+			result = false;
 		}
-		return false;
+		return result;
 	}
 
 	/**
@@ -225,13 +237,15 @@ public class BinaryGuesser {
 	 *            the exts
 	 * @return true, if successful
 	 */
-	private boolean containsExtension(final String name, final String[] exts) {
-		for (final String ext : exts) {
-			if (name.indexOf("." + ext + ".") >= 0) {
-				return true;
+	private boolean containsExtension(final String name, final String... exts) {
+		boolean result = false;
+		for (String ext : exts) {
+			if (name.indexOf("." + ext + ".") >= ZERO) {
+				result = true;
+				break;
 			}
 		}
-		return false;
+		return result;
 	}
 
 	/**
@@ -243,13 +257,15 @@ public class BinaryGuesser {
 	 *            the exts
 	 * @return true, if successful
 	 */
-	private boolean extensionMatches(final String name, final String[] exts) {
-		for (final String ext : exts) {
+	private boolean extensionMatches(final String name, final String... exts) {
+		boolean result = false;
+		for (String ext : exts) {
 			if (name.endsWith("." + ext)) {
-				return true;
+				result = true;
+				break;
 			}
 		}
-		return false;
+		return result;
 	}
 
 	/**
@@ -293,14 +309,16 @@ public class BinaryGuesser {
 	 * @return true, if is binary
 	 */
 	private boolean isBinary(final String name) {
-		if (name == null) {
-			return false;
+		boolean result = false;
+		if (name != null) {
+			final String normalisedName = GuessUtils.normalise(name);
+			result = BinaryGuesser.JAR_MANIFEST.equals(name)
+					|| isImage(normalisedName) || isKeystore(normalisedName)
+					|| isBytecode(normalisedName)
+					|| isBinaryData(normalisedName)
+					|| isExecutable(normalisedName);
 		}
-		final String normalisedName = GuessUtils.normalise(name);
-		return BinaryGuesser.JAR_MANIFEST.equals(name)
-				|| isImage(normalisedName) || isKeystore(normalisedName)
-				|| isBytecode(normalisedName) || isBinaryData(normalisedName)
-				|| isExecutable(normalisedName);
+		return result;
 	}
 
 }
