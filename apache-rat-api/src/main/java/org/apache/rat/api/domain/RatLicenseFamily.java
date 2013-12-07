@@ -49,6 +49,10 @@ public enum RatLicenseFamily {
 			"COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0",
 			"CDDL1",
 			"Note that CDDL1 requires a NOTICE. All modifications require notes. See https://oss.oracle.com/licenses/CDDL."),
+	OASIS(
+			"OASIS Open License",
+			"OASIS",
+			"Note that OASIS requires a NOTICE. All modifications require notes. See https://www.oasis-open.org/policies-guidelines/ipr."),
     W3C(
             "W3C Software Copyright",
             "W3C  ",

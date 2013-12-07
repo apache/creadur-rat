@@ -20,6 +20,7 @@ package org.apache.rat.policy;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
 import static org.apache.rat.api.domain.RatLicenseFamily.MIT;
+import static org.apache.rat.api.domain.RatLicenseFamily.OASIS;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 import static org.junit.Assert.assertEquals;
@@ -56,12 +57,14 @@ public class DefaultPolicyTest {
         assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(subject.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
     }
 
-    @Test
-    public void testOASISFamily() throws Exception {
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE);
-        policy.analyse(subject);
-        assertApproval(true);
-    }
+	@Test
+	public void testOASISFamily() throws Exception {
+		subject.getMetaData().set(
+				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, OASIS
+						.getName()));
+		policy.analyse(subject);
+		assertApproval(true);
+	}
     
     @Test
     public void testW3CFamily() throws Exception {

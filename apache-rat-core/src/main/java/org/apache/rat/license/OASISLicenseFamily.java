@@ -18,10 +18,10 @@
  */ 
 package org.apache.rat.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.OASIS;
 
 public final class OASISLicenseFamily extends SimpleLicenseFamily {
     public OASISLicenseFamily() {
-        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE);
+		super(OASIS.getName());
     }
 }

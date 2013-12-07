@@ -18,7 +18,9 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
@@ -52,10 +54,10 @@ public class OASISLicenseTest {
             "This document and the information contained herein is provided on an \"AS IS\" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.\n" +
             "-->\n";
     
-    private OASISLicense license;
+	private OASISLicense license;
 
     @Before
-    public void setUp() {
+	public void setUp() {
         license = new OASISLicense();
     }
 
@@ -80,5 +82,22 @@ public class OASISLicenseTest {
 		boolean result = license.match(subject, "New line");
 		assertFalse("After reset, content should build up again", result);
     }
+
+	@Test
+	public void testNotes() {
+		assertThat(
+				license.getNotes(),
+				is("Note that OASIS requires a NOTICE. All modifications require notes. See https://www.oasis-open.org/policies-guidelines/ipr."));
+	}
+
+	@Test
+	public void testCategory() {
+		assertThat(license.getLicenseFamilyCategory(), is("OASIS"));
+	}
+
+	@Test
+	public void testName() {
+		assertThat(license.getLicenseFamilyName(), is("OASIS Open License"));
+	}
    
 }

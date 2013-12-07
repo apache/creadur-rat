@@ -18,10 +18,11 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.OASIS;
+
 import java.util.regex.Pattern;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 
 /**
  * Looks for documents contain the OASIS copyright claim plus derivative work clause.
@@ -42,15 +43,13 @@ public class OASISLicense extends FullTextMatchingLicense {
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile(COPYRIGHT_PATTERN_DEFN);
 
 	/** The copyright match. */
-    private boolean copyrightMatch;
+	private boolean copyrightMatch;
     
 	/**
 	 * Instantiates a new oASIS license.
 	 */
     public OASISLicense() {
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_OASIS,
-              MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE,
-              "No modifications allowed",
+		super(OASIS.licenseFamily(),
               CLAUSE_DEFN);
     }
 
@@ -62,7 +61,7 @@ public class OASISLicense extends FullTextMatchingLicense {
 	 * .rat.api.Document, java.lang.String)
 	 */
     @Override
-    public boolean match(final Document subject, final String line) {
+	public boolean match(final Document subject, final String line) {
         boolean result = false;
         if (copyrightMatch) {
             result = super.match(subject, line);
