@@ -19,17 +19,18 @@ package org.example;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-
+import org.apache.rat.api.domain.LicenseFamilyBuilder;
 
 public class Matcher extends BaseLicense implements IHeaderMatcher {
     public Matcher() {
-        super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"),
-                new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, "Example License"), "");
+        super(LicenseFamilyBuilder.aLicenseFamily().withName("Example License")
+                .withCategory("EXMPL").build());
     }
-    public void reset() {}
-    
-    public boolean match(Document subject, String line) {
+
+    public void reset() {
+    }
+
+    public boolean match(final Document subject, final String line) {
         reportOnLicense(subject);
         return true;
     }
