@@ -24,7 +24,14 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+/**
+ * The Class SimplePatternBasedLicenseTest.
+ */
 public class SimplePatternBasedLicenseTest {
+
+	/**
+	 * Test license family constructor sets notes.
+	 */
     @Test
     public void testLicenseFamilyConstructorSetsNotes() {
         final String someNotes = "Some notes about a license family";
@@ -33,6 +40,9 @@ public class SimplePatternBasedLicenseTest {
                         someNotes).build()).getNotes(), is(someNotes));
     }
 
+	/**
+	 * Test license family constructor sets category.
+	 */
     @Test
     public void testLicenseFamilyConstructorSetsCategory() {
         final String someCategory = "http://some.category.org";
@@ -42,6 +52,9 @@ public class SimplePatternBasedLicenseTest {
                 is(someCategory));
     }
 
+	/**
+	 * Test license family constructor sets name.
+	 */
     @Test
     public void testLicenseFamilyConstructorSetsName() {
         final String someName = "http://some.name.org";
