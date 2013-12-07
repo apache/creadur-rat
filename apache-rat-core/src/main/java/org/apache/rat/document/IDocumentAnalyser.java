@@ -18,10 +18,22 @@
  */
 package org.apache.rat.document;
 
-import org.apache.rat.api.Document;
 import java.io.IOException;
 
+import org.apache.rat.api.Document;
+
+/**
+ * The Interface IDocumentAnalyser.
+ */
 public interface IDocumentAnalyser {
 
+	/**
+	 * Analyse.
+	 * 
+	 * @param document
+	 *            the document
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public void analyse(Document document) throws IOException;
 }
