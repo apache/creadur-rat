@@ -30,6 +30,7 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,8 +72,9 @@ public class AnalyserFactoryTest {
 	 * Standard type analyser.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws RatException
-	 * 
+	 *             the rat exception
 	 */
 	@Test
 	public void standardTypeAnalyser() throws IOException, RatException {
@@ -112,8 +114,9 @@ public class AnalyserFactoryTest {
 	 * Note type analyser.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws RatException
-	 * 
+	 *             the rat exception
 	 */
 	@Test
 	public void noteTypeAnalyser() throws IOException, RatException {
@@ -133,8 +136,9 @@ public class AnalyserFactoryTest {
 	 * Binary type analyser.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws RatException
-	 * 
+	 *             the rat exception
 	 */
 	@Test
 	public void binaryTypeAnalyser() throws IOException, RatException {
@@ -154,8 +158,9 @@ public class AnalyserFactoryTest {
 	 * Archive type analyser.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws RatException
-	 * 
+	 *             the rat exception
 	 */
 	@Test
 	public void archiveTypeAnalyser() throws IOException, RatException {
@@ -169,5 +174,15 @@ public class AnalyserFactoryTest {
 				"Open archive element",
 				"<resource name='src/test/elements/Dummy.jar'><type name='archive'/>",
 				out.toString());
+	}
+
+	/**
+	 * Test abstract monolithicis composite.
+	 */
+	@Test
+	public void testAbstractMonolithicisComposite() {
+		MonolithicFileDocument document = new MonolithicFileDocument(new File(
+				"src/test/elements/Dummy.jar"));
+		Assert.assertFalse(document.isComposite());
 	}
 }
