@@ -75,23 +75,27 @@ public class MatcherMultiplexerTest extends TestCase {
 	/**
 	 * Test matcher line.
 	 * 
-	 * @throws Exception
-	 *             the exception
 	 */
 	@Test
-	public void testMatcherLine() throws Exception {
+	public void testMatcherLineHeaderMatcherMultiplexer() {
 		matcherOne.result = false;
 		matcherTwo.result = false;
 		final Document subject = new MockLocation("subject");
 		multiplexer.match(subject, LINE_ONE);
-		assertEquals("One line", 1, matcherOne.lines.size());
-		assertEquals("Same as line passed", LINE_ONE, matcherOne.lines.get(0));
-		assertEquals("One line", 1, matcherTwo.lines.size());
-		assertEquals("Same as line passed", LINE_ONE, matcherTwo.lines.get(0));
 		multiplexer.match(subject, LINE_TWO);
 		assertEquals("One line", 2, matcherOne.lines.size());
-		assertEquals("Same as line passed", LINE_TWO, matcherOne.lines.get(1));
-		assertEquals("One line", 2, matcherTwo.lines.size());
+	}
+
+	/**
+	 * Test matcher value header matcher multiplexer.
+	 */
+	@Test
+	public void testMatcherValueHeaderMatcherMultiplexer() {
+		matcherOne.result = false;
+		matcherTwo.result = false;
+		final Document subject = new MockLocation("subject");
+		multiplexer.match(subject, LINE_ONE);
+		multiplexer.match(subject, LINE_TWO);
 		assertEquals("Same as line passed", LINE_TWO, matcherTwo.lines.get(1));
 	}
 
@@ -99,12 +103,9 @@ public class MatcherMultiplexerTest extends TestCase {
 	 * Test reset.
 	 */
 	@Test
-	public void testReset() {
+	public void testResetHeaderMatcherMultiplexer() {
 		multiplexer.reset();
-		assertEquals("Reset once", 1, matcherOne.resets);
-		assertEquals("Reset once", 1, matcherTwo.resets);
 		multiplexer.reset();
-		assertEquals("Reset twice", 2, matcherOne.resets);
-		assertEquals("Reset twice", 2, matcherTwo.resets);
+		assertEquals("Reset once", 2, matcherTwo.resets);
 	}
 }
