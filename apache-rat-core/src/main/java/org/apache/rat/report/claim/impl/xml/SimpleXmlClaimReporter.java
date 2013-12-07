@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Calendar;
 
 import org.apache.commons.lang.time.DateFormatUtils;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
@@ -44,6 +43,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	private boolean firstTime = true;
 
 	public SimpleXmlClaimReporter(final IXmlWriter writer) {
+		super();
 		this.writer = writer;
 	}
 
@@ -62,8 +62,8 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	 * @throws RatException
 	 *             Another error occurred while writing the claim.
 	 */
-	protected void writeClaim(String pPredicate, String pObject,
-			boolean pLiteral) throws IOException, RatException {
+	protected void writeClaim(final String pPredicate, final String pObject,
+			final boolean pLiteral) throws IOException, RatException {
 		if (pLiteral) {
 			writer.openElement(pPredicate).content(pObject).closeElement();
 		} else {
