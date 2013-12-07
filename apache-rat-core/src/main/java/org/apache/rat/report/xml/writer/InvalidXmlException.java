@@ -35,8 +35,8 @@ public class InvalidXmlException extends IOException {
 	 * @param s
 	 *            the s
 	 */
-	public InvalidXmlException(String s) {
-		super(s);
+	public InvalidXmlException(final String message) {
+		super(message);
 	}
 
 }
