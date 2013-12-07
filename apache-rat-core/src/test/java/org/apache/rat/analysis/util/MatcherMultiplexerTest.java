@@ -25,16 +25,31 @@ import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 
+/**
+ * The Class MatcherMultiplexerTest.
+ */
 public class MatcherMultiplexerTest extends TestCase {
 
+	/** The Constant LINE_ONE. */
 	private static final String LINE_ONE = "Line One";
+
+	/** The Constant LINE_TWO. */
 	private static final String LINE_TWO = "Line Two";
 
+	/** The matcher one. */
 	MockLicenseMatcher matcherOne;
+
+	/** The matcher two. */
 	MockLicenseMatcher matcherTwo;
 
+	/** The multiplexer. */
 	HeaderMatcherMultiplexer multiplexer;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#setUp()
+	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -44,11 +59,22 @@ public class MatcherMultiplexerTest extends TestCase {
 		multiplexer = new HeaderMatcherMultiplexer(matchers);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#tearDown()
+	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
 
+	/**
+	 * Test matcher line.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	public void testMatcherLine() throws Exception {
 		matcherOne.result = false;
 		matcherTwo.result = false;
@@ -65,6 +91,9 @@ public class MatcherMultiplexerTest extends TestCase {
 		assertEquals("Same as line passed", LINE_TWO, matcherTwo.lines.get(1));
 	}
 
+	/**
+	 * Test reset.
+	 */
 	public void testReset() {
 		multiplexer.reset();
 		assertEquals("Reset once", 1, matcherOne.resets);
