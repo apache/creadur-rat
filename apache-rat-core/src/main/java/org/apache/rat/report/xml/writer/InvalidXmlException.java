@@ -26,8 +26,15 @@ import java.io.IOException;
  */
 public class InvalidXmlException extends IOException {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Instantiates a new invalid xml exception.
+	 * 
+	 * @param s
+	 *            the s
+	 */
 	public InvalidXmlException(String s) {
 		super(s);
 	}
