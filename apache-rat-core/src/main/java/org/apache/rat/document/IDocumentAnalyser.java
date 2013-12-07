@@ -35,5 +35,5 @@ public interface IDocumentAnalyser {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void analyse(Document document) throws IOException;
+	void analyse(Document document) throws IOException;
 }
