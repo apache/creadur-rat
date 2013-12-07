@@ -59,11 +59,9 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	 *            attribute (false).
 	 * @throws IOException
 	 *             An I/O error occurred while writing the claim.
-	 * @throws RatException
-	 *             Another error occurred while writing the claim.
 	 */
 	protected void writeClaim(final String pPredicate, final String pObject,
-			final boolean pLiteral) throws IOException, RatException {
+			final boolean pLiteral) throws IOException {
 		if (pLiteral) {
 			writer.openElement(pPredicate).content(pObject).closeElement();
 		} else {
@@ -89,7 +87,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	}
 
 	private void writeDocumentClaims(final Document subject)
-			throws IOException, RatException {
+ throws IOException {
 		final MetaData metaData = subject.getMetaData();
 		writeHeaderSample(metaData);
 		writeHeaderCategory(metaData);
@@ -99,7 +97,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	}
 
 	private void writeApprovedLicense(final MetaData metaData)
-			throws IOException, RatException {
+			throws IOException {
 		final String approvedLicense = metaData
 				.value(MetaData.RAT_URL_APPROVED_LICENSE);
 		if (approvedLicense != null) {
@@ -108,7 +106,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	}
 
 	private void writeLicenseFamilyName(final MetaData metaData)
-			throws IOException, RatException {
+			throws IOException {
 		final String licenseFamilyName = metaData
 				.value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
 		if (licenseFamilyName != null) {
@@ -117,7 +115,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	}
 
 	private void writeHeaderCategory(final MetaData metaData)
-			throws IOException, RatException {
+			throws IOException {
 		final String headerCategory = metaData
 				.value(MetaData.RAT_URL_HEADER_CATEGORY);
 		if (headerCategory != null) {
@@ -125,8 +123,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 		}
 	}
 
-	private void writeHeaderSample(final MetaData metaData) throws IOException,
-			RatException {
+	private void writeHeaderSample(final MetaData metaData) throws IOException {
 		final String sample = metaData.value(MetaData.RAT_URL_HEADER_SAMPLE);
 		if (sample != null) {
 			writeClaim(HEADER_SAMPLE_PREDICATE, sample, true);
@@ -134,7 +131,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	}
 
 	private void writeDocumentCategory(final MetaData metaData)
-			throws IOException, RatException {
+			throws IOException {
 		final String documentCategory = metaData
 				.value(MetaData.RAT_URL_DOCUMENT_CATEGORY);
 		if (documentCategory != null) {
