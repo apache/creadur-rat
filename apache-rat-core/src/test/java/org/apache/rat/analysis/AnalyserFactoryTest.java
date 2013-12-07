@@ -185,4 +185,22 @@ public class AnalyserFactoryTest {
 				"src/test/elements/Dummy.jar"));
 		Assert.assertFalse(document.isComposite());
 	}
+
+	/**
+	 * Test standard type analyser exception.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws RatException
+	 *             the rat exception
+	 */
+	@Test(expected = IOException.class)
+	public void testStandardTypeAnalyserFileException() throws IOException,
+			RatException {
+		MonolithicFileDocument document = new MonolithicFileDocument(new File(
+				"src/test/resources/elements/Text.txtt"));
+		IDocumentAnalyser analyser = DefaultAnalyserFactory
+				.createDefaultAnalyser(matcherStub);
+		analyser.analyse(document);
+	}
 }
