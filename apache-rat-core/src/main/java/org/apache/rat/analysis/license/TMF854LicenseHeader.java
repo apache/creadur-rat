@@ -21,12 +21,19 @@ package org.apache.rat.analysis.license;
 import static org.apache.rat.api.domain.RatLicenseFamily.TMF854;
 
 
+/**
+ * The Class TMF854LicenseHeader.
+ */
 public class TMF854LicenseHeader extends SimplePatternBasedLicense {
     
+	/** The Constant COPYRIGHT_HEADER. */
     private static final String COPYRIGHT_HEADER = "TMF854 Version 1.0 - Copyright TeleManagement Forum";
     
     //  TMF854 Version 1.0 - Copyright TeleManagement Forum 
 
+	/**
+	 * Instantiates a new tM f854 license header.
+	 */
     public TMF854LicenseHeader() {
 		super(TMF854.licenseFamily(),
                 new String[]{COPYRIGHT_HEADER});
