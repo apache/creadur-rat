@@ -25,14 +25,30 @@ import org.apache.rat.api.RatException;
  * Abstract base class for deriving implementations of {@link RatReport}.
  */
 public abstract class AbstractReport implements RatReport {
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.RatReport#startReport()
+	 */
 	public void startReport() throws RatException {
 		// Does nothing
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.RatReport#report(org.apache.rat.api.Document)
+	 */
 	public void report(Document document) throws RatException {
 		// Does nothing
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.RatReport#endReport()
+	 */
 	public void endReport() throws RatException {
 		// Does nothing
 	}
