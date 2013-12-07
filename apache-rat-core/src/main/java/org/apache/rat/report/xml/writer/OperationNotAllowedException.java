@@ -15,22 +15,21 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml.writer;
 
 import java.io.IOException;
 
 /**
- * Thrown by {@link IXmlWriter} implementations when the current
- * state does not allow the requested operation.
+ * Thrown by {@link IXmlWriter} implementations when the current state does not
+ * allow the requested operation.
  */
 public class OperationNotAllowedException extends IOException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public OperationNotAllowedException(String message) {
-        super(message);
-    }
+	public OperationNotAllowedException(String message) {
+		super(message);
+	}
 
-    
 }
