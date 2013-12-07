@@ -57,6 +57,10 @@ public enum RatLicenseFamily {
 			"Modified BSD License",
 			"TMF  ",
 			"Note that TMF854 requires a NOTICE. All modifications require notes. See http://opensource.org/licenses/BSD-3-Clause."),
+	 DOJO(
+			"Modified BSD License",
+			"DOJO ",
+			"Note that DOJO requires a NOTICE. All modifications require notes. See http://dojotoolkit.org/community/licensing.shtml."),
     W3C(
             "W3C Software Copyright",
             "W3C  ",

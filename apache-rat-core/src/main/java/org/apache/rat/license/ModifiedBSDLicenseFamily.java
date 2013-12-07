@@ -18,10 +18,10 @@
  */ 
 package org.apache.rat.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.DOJO;
 
 public class ModifiedBSDLicenseFamily extends SimpleLicenseFamily {
     public ModifiedBSDLicenseFamily() {
-        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE);
+		super(DOJO.getName());
     }
 }

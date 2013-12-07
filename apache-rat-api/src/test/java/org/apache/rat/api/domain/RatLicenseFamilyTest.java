@@ -20,6 +20,7 @@ package org.apache.rat.api.domain;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
 import static org.apache.rat.api.domain.RatLicenseFamily.CDDL1;
+import static org.apache.rat.api.domain.RatLicenseFamily.DOJO;
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL1;
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL2;
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL3;
@@ -204,5 +205,22 @@ public class RatLicenseFamilyTest {
 		assertThat(
 				TMF854.getNotes(),
 				is("Note that TMF854 requires a NOTICE. All modifications require notes. See http://opensource.org/licenses/BSD-3-Clause."));
+	}
+	
+	@Test
+	public void testDOJOLicenseFamilyCategory() {
+		assertThat(DOJO.getCategory(), is("DOJO "));
+	}
+
+	@Test
+	public void testDOJOLicenseFamilyName() {
+		assertThat(DOJO.getName(), is("Modified BSD License"));
+	}
+
+	@Test
+	public void testDOJOLicenseFamilyNotes() {
+		assertThat(
+				DOJO.getNotes(),
+				is("Note that DOJO requires a NOTICE. All modifications require notes. See http://dojotoolkit.org/community/licensing.shtml."));
 	}
 }

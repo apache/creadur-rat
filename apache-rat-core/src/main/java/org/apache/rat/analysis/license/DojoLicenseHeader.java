@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.DOJO;
 
 
 public class DojoLicenseHeader extends SimplePatternBasedLicense {
@@ -35,7 +35,7 @@ public class DojoLicenseHeader extends SimplePatternBasedLicense {
     public DojoLicenseHeader() {
         // TODO: support for dual licensing
         // TODO: support for or higher clauses
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_DOJO, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE, "Dual license AFL/BSD",
+		super(DOJO.licenseFamily(),
                 new String[]{LICENSE_URL});
     }
 }
