@@ -24,6 +24,9 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * The Class MatcherMultiplexerTest.
@@ -37,20 +40,20 @@ public class MatcherMultiplexerTest extends TestCase {
 	private static final String LINE_TWO = "Line Two";
 
 	/** The matcher one. */
-	MockLicenseMatcher matcherOne;
+	private MockLicenseMatcher matcherOne;
 
 	/** The matcher two. */
-	MockLicenseMatcher matcherTwo;
+	private MockLicenseMatcher matcherTwo;
 
 	/** The multiplexer. */
-	HeaderMatcherMultiplexer multiplexer;
+	private HeaderMatcherMultiplexer multiplexer;
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
-	@Override
+	@Before
 	protected void setUp() throws Exception {
 		super.setUp();
 		matcherOne = new MockLicenseMatcher();
@@ -64,7 +67,7 @@ public class MatcherMultiplexerTest extends TestCase {
 	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
-	@Override
+	@After
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
@@ -75,6 +78,7 @@ public class MatcherMultiplexerTest extends TestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Test
 	public void testMatcherLine() throws Exception {
 		matcherOne.result = false;
 		matcherTwo.result = false;
@@ -94,6 +98,7 @@ public class MatcherMultiplexerTest extends TestCase {
 	/**
 	 * Test reset.
 	 */
+	@Test
 	public void testReset() {
 		multiplexer.reset();
 		assertEquals("Reset once", 1, matcherOne.resets);
