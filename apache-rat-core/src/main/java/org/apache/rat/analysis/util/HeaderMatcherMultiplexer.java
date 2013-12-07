@@ -27,12 +27,26 @@ import org.apache.rat.api.Document;
  */
 public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 
+	/** The matchers. */
 	private final IHeaderMatcher[] matchers;
 
+	/**
+	 * Instantiates a new header matcher multiplexer.
+	 * 
+	 * @param matchers
+	 *            the matchers
+	 */
 	public HeaderMatcherMultiplexer(final IHeaderMatcher[] matchers) {
 		this.matchers = matchers;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document,
+	 * java.lang.String)
+	 */
 	public boolean match(Document subject, String line) {
 		boolean result = false;
 		for (IHeaderMatcher matcher : matchers) {
@@ -44,6 +58,11 @@ public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.analysis.IHeaderMatcher#reset()
+	 */
 	public void reset() {
 		for (IHeaderMatcher matcher : matchers) {
 			matcher.reset();
