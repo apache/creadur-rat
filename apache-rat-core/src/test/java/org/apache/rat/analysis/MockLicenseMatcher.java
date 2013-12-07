@@ -32,7 +32,7 @@ public class MockLicenseMatcher implements IHeaderMatcher {
 	public final List<String> lines = new ArrayList<String>();
 
 	/** The resets. */
-	public int resets = 0;
+	public int resets;
 
 	/** The result. */
 	public boolean result = true;
@@ -44,7 +44,7 @@ public class MockLicenseMatcher implements IHeaderMatcher {
 	 * org.apache.rat.analysis.IHeaderMatcher#match(org.apache.rat.api.Document,
 	 * java.lang.String)
 	 */
-	public boolean match(Document subject, String line) {
+	public boolean match(final Document subject, final String line) {
 		lines.add(line);
 		return result;
 	}
