@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.util;
 
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -23,31 +23,31 @@ import org.apache.rat.api.Document;
 
 /**
  * Delegates to an ordered set of matchers.
- *
+ * 
  */
 public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 
-    private final IHeaderMatcher[] matchers;
+	private final IHeaderMatcher[] matchers;
 
-    public HeaderMatcherMultiplexer(final IHeaderMatcher[] matchers) {
-        this.matchers = matchers;
-    }
+	public HeaderMatcherMultiplexer(final IHeaderMatcher[] matchers) {
+		this.matchers = matchers;
+	}
 
-    public boolean match(Document subject, String line) {
-        boolean result = false;
-        for (IHeaderMatcher matcher : matchers) {
-            result = matcher.match(subject, line);
-            if (result) {
-                break;
-            }
-        }
-        return result;
-    }
+	public boolean match(Document subject, String line) {
+		boolean result = false;
+		for (IHeaderMatcher matcher : matchers) {
+			result = matcher.match(subject, line);
+			if (result) {
+				break;
+			}
+		}
+		return result;
+	}
 
-    public void reset() {
-        for (IHeaderMatcher matcher : matchers) {
-            matcher.reset();
-        }
-    }
+	public void reset() {
+		for (IHeaderMatcher matcher : matchers) {
+			matcher.reset();
+		}
+	}
 
 }
