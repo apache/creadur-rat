@@ -27,7 +27,6 @@ import java.io.StringReader;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.test.utils.Resources;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,43 +60,25 @@ public class OASISLicenseTest {
     }
 
     @Test
-    public void match() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new StringReader(LICENSE));
-        String line = bufferedReader.readLine();
+	public void testMatchOASISLicense() throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new StringReader(
+				LICENSE));
+		String line = bufferedReader.readLine();
         boolean result = false;
         final Document subject = new MockLocation("subject");
         while (line != null) {
             result = license.match(subject, line);
-            line = bufferedReader.readLine();
+			line = bufferedReader.readLine();
         }
         assertTrue("OASIS license should be matched", result);
-        license.reset();
-        result = license.match(subject, "New line");
-        assertFalse("After reset, content should build up again", result);
     }
 
     @Test
-    public void noMatch() throws IOException {
-        BufferedReader bufferedReader = Resources.getBufferedResourceReader("elements/Source.java");
-        String line = bufferedReader.readLine();
-        boolean result = false;
-        final Document subject = new MockLocation("subject");
-        while (line != null) {
-            result = license.match(subject, line);
-            line = bufferedReader.readLine();
-        }
-        assertFalse("OASIS license should not be matched", result);
+	public void testNonMatchOASISLicense() throws IOException {
+		final Document subject = new MockLocation("subject");
         license.reset();
-    }
-    
-    @Test(timeout=2000) // may need to be adjusted if many more files are added
-    public void goodFiles() throws IOException {
-        DirectoryScanner.filesInDir("oasis/good", license, true);
-    }
-   
-    @Test(timeout=2000) // may need to be adjusted if many more files are added
-    public void baddFiles() throws IOException {
-        DirectoryScanner.filesInDir("oasis/bad", license, false);
+		boolean result = license.match(subject, "New line");
+		assertFalse("After reset, content should build up again", result);
     }
    
 }
