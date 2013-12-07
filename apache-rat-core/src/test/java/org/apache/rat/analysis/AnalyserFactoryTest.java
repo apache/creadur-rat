@@ -18,6 +18,11 @@
  */
 package org.apache.rat.analysis;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.StringWriter;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
@@ -26,17 +31,26 @@ import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.StringWriter;
-
-import static org.junit.Assert.assertEquals;
-
+/**
+ * The Class AnalyserFactoryTest.
+ */
 public class AnalyserFactoryTest {
 
+	/** The out. */
 	StringWriter out;
+
+	/** The reporter. */
 	SimpleXmlClaimReporter reporter;
+
+	/** The matcher stub. */
 	IHeaderMatcher matcherStub;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		out = new StringWriter();
@@ -53,6 +67,12 @@ public class AnalyserFactoryTest {
 		};
 	}
 
+	/**
+	 * Standard type analyser.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void standardTypeAnalyser() throws Exception {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
@@ -87,6 +107,12 @@ public class AnalyserFactoryTest {
 				out.toString());
 	}
 
+	/**
+	 * Note type analyser.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void noteTypeAnalyser() throws Exception {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
@@ -101,6 +127,12 @@ public class AnalyserFactoryTest {
 				out.toString());
 	}
 
+	/**
+	 * Binary type analyser.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void binaryTypeAnalyser() throws Exception {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
@@ -115,6 +147,12 @@ public class AnalyserFactoryTest {
 				out.toString());
 	}
 
+	/**
+	 * Archive type analyser.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void archiveTypeAnalyser() throws Exception {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
