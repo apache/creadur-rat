@@ -53,6 +53,10 @@ public enum RatLicenseFamily {
 			"OASIS Open License",
 			"OASIS",
 			"Note that OASIS requires a NOTICE. All modifications require notes. See https://www.oasis-open.org/policies-guidelines/ipr."),
+	TMF854(
+			"Modified BSD License",
+			"TMF  ",
+			"Note that TMF854 requires a NOTICE. All modifications require notes. See http://opensource.org/licenses/BSD-3-Clause."),
     W3C(
             "W3C Software Copyright",
             "W3C  ",

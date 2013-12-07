@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.TMF854;
 
 
 public class TMF854LicenseHeader extends SimplePatternBasedLicense {
@@ -28,8 +28,7 @@ public class TMF854LicenseHeader extends SimplePatternBasedLicense {
     //  TMF854 Version 1.0 - Copyright TeleManagement Forum 
 
     public TMF854LicenseHeader() {
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_TMF, 
-                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE, "BSD",
+		super(TMF854.licenseFamily(),
                 new String[]{COPYRIGHT_HEADER});
     }
 }

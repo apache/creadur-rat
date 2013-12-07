@@ -65,7 +65,6 @@ public class MetaData {
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN = "?????";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO = "DOJO ";
-    public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF = "TMF  ";
 
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
@@ -76,9 +75,6 @@ public class MetaData {
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_DOJO = new Datum(
             RAT_URL_LICENSE_FAMILY_CATEGORY,
             RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO);
-    public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_TMF = new Datum(
-            RAT_URL_LICENSE_FAMILY_CATEGORY,
-            RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF);
 
     // License Family Standard Names
     public static final String RAT_URL_LICENSE_FAMILY_NAME = RAT_BASE_URL

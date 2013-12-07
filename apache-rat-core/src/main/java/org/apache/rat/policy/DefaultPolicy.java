@@ -23,6 +23,7 @@ import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
 import static org.apache.rat.api.domain.RatLicenseFamily.CDDL1;
 import static org.apache.rat.api.domain.RatLicenseFamily.MIT;
 import static org.apache.rat.api.domain.RatLicenseFamily.OASIS;
+import static org.apache.rat.api.domain.RatLicenseFamily.TMF854;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 
@@ -38,7 +39,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
        private static final String[] APPROVED_LICENSES = { APACHE.getName(),
                    OASIS.getName(),
                    W3C.getName(), W3C_DOCUMENTATION.getName(),
-                   MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE,
+                   TMF854.getName(),
                    MIT.getName(), CDDL1.getName(), };
 
     private static final String[] toNames(final ILicenseFamily[] approvedLicenses) {

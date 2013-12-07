@@ -25,6 +25,7 @@ import static org.apache.rat.api.domain.RatLicenseFamily.GPL2;
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL3;
 import static org.apache.rat.api.domain.RatLicenseFamily.MIT;
 import static org.apache.rat.api.domain.RatLicenseFamily.OASIS;
+import static org.apache.rat.api.domain.RatLicenseFamily.TMF854;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 import static org.hamcrest.CoreMatchers.is;
@@ -178,8 +179,7 @@ public class RatLicenseFamilyTest {
 
 	@Test
 	public void testOASISLicenseFamilyName() {
-		assertThat(OASIS.getName(),
- is("OASIS Open License"));
+		assertThat(OASIS.getName(), is("OASIS Open License"));
 	}
 
 	@Test
@@ -187,5 +187,22 @@ public class RatLicenseFamilyTest {
 		assertThat(
 				OASIS.getNotes(),
 				is("Note that OASIS requires a NOTICE. All modifications require notes. See https://www.oasis-open.org/policies-guidelines/ipr."));
+	}
+	
+	@Test
+	public void testTMF854LicenseFamilyCategory() {
+		assertThat(TMF854.getCategory(), is("TMF  "));
+	}
+
+	@Test
+	public void testTMF854LicenseFamilyName() {
+		assertThat(TMF854.getName(), is("Modified BSD License"));
+	}
+
+	@Test
+	public void testTMF854LicenseFamilyNotes() {
+		assertThat(
+				TMF854.getNotes(),
+				is("Note that TMF854 requires a NOTICE. All modifications require notes. See http://opensource.org/licenses/BSD-3-Clause."));
 	}
 }
