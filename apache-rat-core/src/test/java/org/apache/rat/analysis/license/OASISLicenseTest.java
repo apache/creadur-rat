@@ -18,18 +18,17 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import org.apache.rat.test.utils.Resources;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apache.rat.api.Document;
+import org.apache.rat.document.MockLocation;
+import org.apache.rat.test.utils.Resources;
+import org.junit.Before;
+import org.junit.Test;
 
 public class OASISLicenseTest {
     
@@ -54,13 +53,10 @@ public class OASISLicenseTest {
             "-->\n";
     
     OASISLicense license;
-    
-    MockClaimReporter reporter;
 
     @Before
     public void setUp() throws Exception {
         license = new OASISLicense();
-        reporter = new MockClaimReporter();
     }
 
     @Test
