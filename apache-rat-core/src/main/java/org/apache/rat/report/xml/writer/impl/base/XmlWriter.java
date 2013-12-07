@@ -42,6 +42,9 @@ import org.apache.rat.report.xml.writer.OperationNotAllowedException;
  */
 public final class XmlWriter implements IXmlWriter {
 
+	/** The Constant CHARACTER_CODES. */
+	private final static byte[] CHARACTER_CODES = new byte[1 << 16];
+
 	/** The Constant NAME_START_MASK. */
 	private static final byte NAME_START_MASK = 1 << 1;
 
@@ -58,6 +61,32 @@ public final class XmlWriter implements IXmlWriter {
 	/** The Constant ALLOWED_CHARACTERS. */
 	private final static boolean[] ALLOWED_CHARACTERS = new boolean[1 << 16];
 
+	private static final char AMPERSAND = '&';
+
+	private static final char MINOR = '<';
+
+	private static final char MAYOR = '>';
+
+	private static final int ZERO = 0;
+
+	/** The elements written. */
+	private boolean elementsWritten;
+
+	/** The writer. */
+	private final Writer writer;
+
+	/** The element names. */
+	private final ArrayStack elementNames;
+
+	/** The current attributes. */
+	private final Set<CharSequence> currentAttributes = new HashSet<CharSequence>();
+
+	/** The in element. */
+	private boolean inElement;
+
+	/** The prolog written. */
+	private boolean prologWritten;
+
 	static {
 		Arrays.fill(ALLOWED_CHARACTERS, false);
 		ALLOWED_CHARACTERS[0x9] = true;
@@ -66,9 +95,6 @@ public final class XmlWriter implements IXmlWriter {
 		Arrays.fill(ALLOWED_CHARACTERS, 0x20, 0xD7FF, true);
 		Arrays.fill(ALLOWED_CHARACTERS, 0xE000, 0xFFFD, true);
 	}
-
-	/** The Constant CHARACTER_CODES. */
-	private final static byte[] CHARACTER_CODES = new byte[1 << 16];
 
 	static {
 		// Name ::= (Letter | '_' | ':') (NameChar)*
@@ -413,24 +439,6 @@ public final class XmlWriter implements IXmlWriter {
 
 	}
 
-	/** The writer. */
-	private final Writer writer;
-
-	/** The element names. */
-	private final ArrayStack elementNames;
-
-	/** The current attributes. */
-	private final Set<CharSequence> currentAttributes = new HashSet<CharSequence>();
-
-	/** The elements written. */
-	boolean elementsWritten = false;
-
-	/** The in element. */
-	boolean inElement = false;
-
-	/** The prolog written. */
-	boolean prologWritten = false;
-
 	/**
 	 * Instantiates a new xml writer.
 	 * 
@@ -507,7 +515,8 @@ public final class XmlWriter implements IXmlWriter {
 	 *             {@link #closeElement()} or before any call to
 	 *             {@link #openElement(CharSequence)}
 	 */
-	public IXmlWriter attribute(CharSequence name, CharSequence value)
+	public IXmlWriter attribute(final CharSequence name,
+			final CharSequence value)
 			throws IOException {
 		if (elementNames.isEmpty()) {
 			if (elementsWritten) {
@@ -548,7 +557,8 @@ public final class XmlWriter implements IXmlWriter {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private void writeAttributeContent(CharSequence content) throws IOException {
+	private void writeAttributeContent(final CharSequence content)
+			throws IOException {
 		writeEscaped(content, true);
 	}
 
@@ -562,7 +572,7 @@ public final class XmlWriter implements IXmlWriter {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public IXmlWriter content(CharSequence content) throws IOException {
+	public IXmlWriter content(final CharSequence content) throws IOException {
 		if (elementNames.isEmpty()) {
 			if (elementsWritten) {
 				throw new OperationNotAllowedException(
@@ -604,15 +614,15 @@ public final class XmlWriter implements IXmlWriter {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private void writeEscaped(final CharSequence content,
-			boolean isAttributeContent) throws IOException {
+			final boolean isAttributeContent) throws IOException {
 		final int length = content.length();
 		for (int i = 0; i < length; i++) {
 			char character = content.charAt(i);
-			if (character == '&') {
+			if (character == AMPERSAND) {
 				writer.write("&amp;");
-			} else if (character == '<') {
+			} else if (character == MINOR) {
 				writer.write("&lt;");
-			} else if (character == '>') {
+			} else if (character == MAYOR) {
 				writer.write("&gt;");
 			} else if (isAttributeContent && character == '\'') {
 				writer.write("&apos;");
@@ -634,8 +644,7 @@ public final class XmlWriter implements IXmlWriter {
 	 * @return true, if is out of range
 	 */
 	private boolean isOutOfRange(final char character) {
-		final boolean result = !ALLOWED_CHARACTERS[character];
-		return result;
+		return !ALLOWED_CHARACTERS[character];
 	}
 
 	/**
@@ -680,11 +689,9 @@ public final class XmlWriter implements IXmlWriter {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public IXmlWriter closeDocument() throws IOException {
-		if (elementNames.isEmpty()) {
-			if (!elementsWritten) {
-				throw new OperationNotAllowedException(
-						"Close called before an element has been opened.");
-			}
+		if (elementNames.isEmpty() && !elementsWritten) {
+			throw new OperationNotAllowedException(
+					"Close called before an element has been opened.");
 		}
 		while (!elementNames.isEmpty()) {
 			closeElement();
@@ -720,7 +727,7 @@ public final class XmlWriter implements IXmlWriter {
 		final int length = sequence.length();
 		for (int i = 0; i < length; i++) {
 			char character = sequence.charAt(i);
-			if (i == 0) {
+			if (i == ZERO) {
 				if (!isValidNameStart(character)) {
 					result = false;
 					break;
@@ -744,8 +751,7 @@ public final class XmlWriter implements IXmlWriter {
 	 */
 	private boolean isValidNameStart(final char character) {
 		final byte code = CHARACTER_CODES[character];
-		final boolean result = (code & NAME_START_MASK) > 0;
-		return result;
+		return (code & NAME_START_MASK) > 0;
 	}
 
 	/**
@@ -757,7 +763,6 @@ public final class XmlWriter implements IXmlWriter {
 	 */
 	private boolean isValidNameBody(final char character) {
 		final byte code = CHARACTER_CODES[character];
-		final boolean result = (code & NAME_MASK) > 0;
-		return result;
+		return (code & NAME_MASK) > 0;
 	}
 }
