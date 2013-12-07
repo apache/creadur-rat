@@ -18,22 +18,49 @@
  */
 package org.apache.rat.api;
 
+/**
+ * The Class RatException.
+ */
 public class RatException extends Exception {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4940711222435919034L;
 
+	/**
+	 * Instantiates a new rat exception.
+	 */
 	public RatException() {
 		super();
 	}
 
+	/**
+	 * Instantiates a new rat exception.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 */
 	public RatException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
+	/**
+	 * Instantiates a new rat exception.
+	 * 
+	 * @param message
+	 *            the message
+	 */
 	public RatException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Instantiates a new rat exception.
+	 * 
+	 * @param cause
+	 *            the cause
+	 */
 	public RatException(Throwable cause) {
 		super(cause);
 	}
