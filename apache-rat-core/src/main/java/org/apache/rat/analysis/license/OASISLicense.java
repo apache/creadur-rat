@@ -42,7 +42,7 @@ public class OASISLicense extends FullTextMatchingLicense {
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile(COPYRIGHT_PATTERN_DEFN);
 
 	/** The copyright match. */
-    boolean copyrightMatch = false;
+    private boolean copyrightMatch;
     
 	/**
 	 * Instantiates a new oASIS license.
@@ -62,7 +62,7 @@ public class OASISLicense extends FullTextMatchingLicense {
 	 * .rat.api.Document, java.lang.String)
 	 */
     @Override
-    public boolean match(Document subject, String line) {
+    public boolean match(final Document subject, final String line) {
         boolean result = false;
         if (copyrightMatch) {
             result = super.match(subject, line);
