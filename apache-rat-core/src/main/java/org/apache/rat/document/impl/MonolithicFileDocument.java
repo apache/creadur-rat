@@ -26,18 +26,39 @@ import java.io.InputStream;
 import java.io.Reader;
 
 
+/**
+ * The Class MonolithicFileDocument.
+ */
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
+
+	/** The file. */
     private final File file;
 
+	/**
+	 * Instantiates a new monolithic file document.
+	 * 
+	 * @param file
+	 *            the file
+	 */
     public MonolithicFileDocument(final File file) {
         super(DocumentImplUtils.toName(file));
         this.file = file;
     }
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#reader()
+	 */
     public Reader reader() throws IOException {
         return new FileReader(file);
     }
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#inputStream()
+	 */
     public InputStream inputStream() throws IOException {
         return new FileInputStream(file);
     }
