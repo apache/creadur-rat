@@ -23,35 +23,11 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
-
-import org.apache.rat.api.Document;
 
 
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
     private final File file;
-
-    /**
-     * Creates a new instance. The document is read from the
-     * given URL.
-     */
-    public static Document newInstance(final URL url) {
-        if ("file".equals(url.getProtocol())) {
-            final File f = new File(url.getFile());
-            return new MonolithicFileDocument(f);
-        }
-        return new AbstractMonolithicDocument(url.toExternalForm()){
-            public Reader reader() throws IOException {
-                return new InputStreamReader(inputStream(), "UTF-8");
-           }
-
-            public InputStream inputStream() throws IOException {
-                return url.openStream();
-            }
-        };
-    }
 
     public MonolithicFileDocument(final File file) {
         super(DocumentImplUtils.toName(file));
