@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis;
 
 import org.apache.rat.api.Document;
@@ -25,17 +25,17 @@ import java.util.List;
 
 public class MockLicenseMatcher implements IHeaderMatcher {
 
-    public final List<String> lines = new ArrayList<String>();
-    public int resets = 0;
-    public boolean result = true;
+	public final List<String> lines = new ArrayList<String>();
+	public int resets = 0;
+	public boolean result = true;
 
-    public boolean match(Document subject, String line) {
-        lines.add(line);
-        return result;
-    }
+	public boolean match(Document subject, String line) {
+		lines.add(line);
+		return result;
+	}
 
-    public void reset() {
-        resets++;
-    }
+	public void reset() {
+		resets++;
+	}
 
 }
