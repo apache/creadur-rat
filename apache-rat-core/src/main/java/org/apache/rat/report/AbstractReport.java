@@ -40,7 +40,7 @@ public abstract class AbstractReport implements RatReport {
 	 * 
 	 * @see org.apache.rat.report.RatReport#report(org.apache.rat.api.Document)
 	 */
-	public void report(Document document) throws RatException {
+	public void report(final Document document) throws RatException {
 		// Does nothing
 	}
 
