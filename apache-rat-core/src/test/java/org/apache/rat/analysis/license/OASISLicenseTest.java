@@ -22,6 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
 
 import org.apache.rat.api.Document;
@@ -52,22 +53,22 @@ public class OASISLicenseTest {
             "This document and the information contained herein is provided on an \"AS IS\" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.\n" +
             "-->\n";
     
-    OASISLicense license;
+    private OASISLicense license;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         license = new OASISLicense();
     }
 
     @Test
-    public void match() throws Exception {
-        BufferedReader in = new BufferedReader(new StringReader(LICENSE));
-        String line = in.readLine();
+    public void match() throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(LICENSE));
+        String line = bufferedReader.readLine();
         boolean result = false;
         final Document subject = new MockLocation("subject");
         while (line != null) {
             result = license.match(subject, line);
-            line = in.readLine();
+            line = bufferedReader.readLine();
         }
         assertTrue("OASIS license should be matched", result);
         license.reset();
@@ -76,26 +77,26 @@ public class OASISLicenseTest {
     }
 
     @Test
-    public void noMatch() throws Exception {
-        BufferedReader in = Resources.getBufferedResourceReader("elements/Source.java");
-        String line = in.readLine();
+    public void noMatch() throws IOException {
+        BufferedReader bufferedReader = Resources.getBufferedResourceReader("elements/Source.java");
+        String line = bufferedReader.readLine();
         boolean result = false;
         final Document subject = new MockLocation("subject");
         while (line != null) {
             result = license.match(subject, line);
-            line = in.readLine();
+            line = bufferedReader.readLine();
         }
         assertFalse("OASIS license should not be matched", result);
         license.reset();
     }
     
     @Test(timeout=2000) // may need to be adjusted if many more files are added
-    public void goodFiles() throws Exception {
+    public void goodFiles() throws IOException {
         DirectoryScanner.filesInDir("oasis/good", license, true);
     }
    
     @Test(timeout=2000) // may need to be adjusted if many more files are added
-    public void baddFiles() throws Exception {
+    public void baddFiles() throws IOException {
         DirectoryScanner.filesInDir("oasis/bad", license, false);
     }
    
