@@ -49,4 +49,28 @@ public class BaseLicenseTest {
                 is(someName));
     }
 
+	@Test
+	public void testSetsCategory() {
+		final String someName = "http://some.name.org";
+		BaseLicense baseLicense = new BaseLicense();
+		baseLicense.setLicenseFamilyCategory(someName);
+		assertThat(baseLicense.getLicenseFamilyCategory(), is(someName));
+	}
+
+	@Test
+	public void testSetsName() {
+		final String someName = "http://some.name.org";
+		BaseLicense baseLicense = new BaseLicense();
+		baseLicense.setLicenseFamilyName(someName);
+		assertThat(baseLicense.getLicenseFamilyName(), is(someName));
+	}
+
+	@Test
+	public void testSetsNotes() {
+		final String someName = "http://some.name.org";
+		BaseLicense baseLicense = new BaseLicense();
+		baseLicense.setNotes(someName);
+		assertThat(baseLicense.getNotes(), is(someName));
+	}
+
 }
