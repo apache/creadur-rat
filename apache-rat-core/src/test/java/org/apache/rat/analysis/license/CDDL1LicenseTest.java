@@ -18,8 +18,10 @@
  */
 package org.apache.rat.analysis.license;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -96,4 +98,22 @@ public class CDDL1LicenseTest {
 					.match(subject, "\t" + licenceUnderTest.getValue()));
         }
     }
+    
+	@Test
+	public void testNotes() {
+		assertThat(
+				new CDDL1License().getNotes(),
+				is("Note that CDDL1 requires a NOTICE. All modifications require notes. See https://oss.oracle.com/licenses/CDDL."));
+	}
+
+	@Test
+	public void testCategory() {
+		assertThat(new CDDL1License().getLicenseFamilyCategory(), is("CDDL1"));
+	}
+
+	@Test
+	public void testName() {
+		assertThat(new CDDL1License().getLicenseFamilyName(),
+				is("COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"));
+	}
 }

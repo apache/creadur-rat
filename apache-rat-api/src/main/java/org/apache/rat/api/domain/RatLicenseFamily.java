@@ -45,6 +45,10 @@ public enum RatLicenseFamily {
 			"The MIT License",
 			"MIT  ",
 			"Note that MIT requires a NOTICE. All modifications require notes. See http://opensource.org/licenses/MIT."),
+	CDDL1(
+			"COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0",
+			"CDDL1",
+			"Note that CDDL1 requires a NOTICE. All modifications require notes. See https://oss.oracle.com/licenses/CDDL."),
     W3C(
             "W3C Software Copyright",
             "W3C  ",

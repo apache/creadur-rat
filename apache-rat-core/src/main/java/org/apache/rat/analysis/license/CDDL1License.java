@@ -18,10 +18,11 @@
  */
 package org.apache.rat.analysis.license;
 
+import static org.apache.rat.api.domain.RatLicenseFamily.CDDL1;
+
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.rat.api.MetaData;
 
 /**
  * Base CDDL 1.0 license.
@@ -42,9 +43,7 @@ public class CDDL1License extends SimplePatternBasedLicense {
 	 * Instantiates a new cDD l1 license.
 	 */
     public CDDL1License() {
-        super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_CDLL1,
-                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1,
-                "", new String[]{LICENSE_LINE, LICENSE_URL});
+		super(CDDL1.licenseFamily(), new String[] { LICENSE_LINE, LICENSE_URL });
     }
 
 	/**
@@ -53,7 +52,7 @@ public class CDDL1License extends SimplePatternBasedLicense {
 	 * @return the reg ex patterns
 	 */
     private Pattern[] getRegExPatterns() {
-        Pattern[] result;
+		Pattern[] result;
         final String[] pttrns = getPatterns();
         if (ArrayUtils.isEmpty(pttrns)) {
             result = new Pattern[0];

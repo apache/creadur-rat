@@ -18,7 +18,7 @@
  */
 package org.apache.rat.license;
 
-import org.apache.rat.api.MetaData;
+import static org.apache.rat.api.domain.RatLicenseFamily.CDDL1;
 
 /**
  * Base implementation for CDDL 1.0 licenses.
@@ -26,6 +26,6 @@ import org.apache.rat.api.MetaData;
 public class CDDL1LicenseFamily extends SimpleLicenseFamily {
 
     public CDDL1LicenseFamily() {
-        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1);
+		super(CDDL1.getName());
     }
 }

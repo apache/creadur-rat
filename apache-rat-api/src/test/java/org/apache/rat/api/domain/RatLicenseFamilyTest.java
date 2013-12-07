@@ -19,6 +19,7 @@
 package org.apache.rat.api.domain;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
+import static org.apache.rat.api.domain.RatLicenseFamily.CDDL1;
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL1;
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL2;
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL3;
@@ -149,5 +150,23 @@ public class RatLicenseFamilyTest {
 		assertThat(
 				MIT.getNotes(),
 				is("Note that MIT requires a NOTICE. All modifications require notes. See http://opensource.org/licenses/MIT."));
+	}
+
+	@Test
+	public void testCDDL1LicenseFamilyCategory() {
+		assertThat(CDDL1.getCategory(), is("CDDL1"));
+	}
+
+	@Test
+	public void testCDDL1LicenseFamilyName() {
+		assertThat(CDDL1.getName(),
+				is("COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"));
+	}
+
+	@Test
+	public void testCDDL1LicenseFamilyNotes() {
+		assertThat(
+				CDDL1.getNotes(),
+				is("Note that CDDL1 requires a NOTICE. All modifications require notes. See https://oss.oracle.com/licenses/CDDL."));
 	}
 }
