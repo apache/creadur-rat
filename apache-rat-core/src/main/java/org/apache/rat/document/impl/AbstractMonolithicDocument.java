@@ -38,7 +38,7 @@ public abstract class AbstractMonolithicDocument implements Document {
 	 * @param pName
 	 *            the name
 	 */
-	public AbstractMonolithicDocument(String pName) {
+	public AbstractMonolithicDocument(final String pName) {
 		name = pName;
 		this.metaData = new MetaData();
 	}
