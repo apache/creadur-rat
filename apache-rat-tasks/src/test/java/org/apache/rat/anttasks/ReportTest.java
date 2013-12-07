@@ -24,10 +24,9 @@ import java.io.InputStreamReader;
 
 import org.apache.tools.ant.BuildException;
 
-import junit.framework.Assert;
-
 public class ReportTest extends AbstractRatAntTaskTest {
-    private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
+    private static final File antFile = new File(
+            "src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
 
     @Override
     protected File getAntFile() {
@@ -41,16 +40,17 @@ public class ReportTest extends AbstractRatAntTaskTest {
 
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
-        if(!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
-            throw new IOException("Could not create temporary directory " + getTempDir());
+        if (!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
+            throw new IOException("Could not create temporary directory "
+                    + getTempDir());
         }
         final String alLine = "AL +\\Q" + getAntFileName() + "\\E";
-        if (reportFile.isFile()  &&  !reportFile.delete()) {
+        if (reportFile.isFile() && !reportFile.delete()) {
             throw new IOException("Unable to remove report file " + reportFile);
         }
         executeTarget("testWithReportSentToFile");
         assertLogDoesntMatch(alLine);
-        Assert.assertTrue("Expected report file " + reportFile, reportFile.isFile());
+        assertTrue("Expected report file " + reportFile, reportFile.isFile());
         assertFileMatches(reportFile, alLine);
     }
 
@@ -70,10 +70,10 @@ public class ReportTest extends AbstractRatAntTaskTest {
         try {
             executeTarget("testNoResources");
             fail("Expected Exception");
-        } catch (BuildException e) {
+        } catch (final BuildException e) {
             final String expect = "You must specify at least one file";
-            assertTrue("Expected " + expect + ", got " + e.getMessage(),
-                       e.getMessage().indexOf(expect) != -1);
+            assertTrue("Expected " + expect + ", got " + e.getMessage(), e
+                    .getMessage().indexOf(expect) != -1);
         }
     }
 
@@ -81,10 +81,10 @@ public class ReportTest extends AbstractRatAntTaskTest {
         try {
             executeTarget("testNoLicenseMatchers");
             fail("Expected Exception");
-        } catch (BuildException e) {
+        } catch (final BuildException e) {
             final String expect = "at least one license";
-            assertTrue("Expected " + expect + ", got " + e.getMessage(),
-                       e.getMessage().indexOf(expect) != -1);
+            assertTrue("Expected " + expect + ", got " + e.getMessage(), e
+                    .getMessage().indexOf(expect) != -1);
         }
     }
 
@@ -92,7 +92,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         return getAntFile().getPath().replace('\\', '/');
     }
 
-    private String getFirstLine(File pFile) throws IOException {
+    private String getFirstLine(final File pFile) throws IOException {
         final FileInputStream fis = new FileInputStream(pFile);
         final InputStreamReader reader = new InputStreamReader(fis, "UTF8");
         final BufferedReader breader = new BufferedReader(reader);
@@ -108,7 +108,8 @@ public class ReportTest extends AbstractRatAntTaskTest {
         final String origFirstLine = getFirstLine(origFile);
         assertTrue(origFirstLine.indexOf("--") != -1);
         assertTrue(origFirstLine.indexOf("~~") == -1);
-        final File modifiedFile = new File("target/anttasks/it-sources/index.apt.new");
+        final File modifiedFile =
+                new File("target/anttasks/it-sources/index.apt.new");
         final String modifiedFirstLine = getFirstLine(modifiedFile);
         assertTrue(modifiedFirstLine.indexOf("--") == -1);
         assertTrue(modifiedFirstLine.indexOf("~~") != -1);

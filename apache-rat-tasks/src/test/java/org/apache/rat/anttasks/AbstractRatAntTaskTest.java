@@ -13,17 +13,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.apache.rat.anttasks;
-
-import junit.framework.Assert;
-import org.apache.tools.ant.BuildFileTest;
-import org.apache.tools.ant.util.FileUtils;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
+
+import org.apache.tools.ant.BuildFileTest;
+import org.apache.tools.ant.util.FileUtils;
 
 public abstract class AbstractRatAntTaskTest extends BuildFileTest {
     private static final File tempDir = new File("target/anttasks");
@@ -39,15 +38,15 @@ public abstract class AbstractRatAntTaskTest extends BuildFileTest {
         configureProject(getAntFile().getPath());
     }
 
-    protected void assertLogDoesntMatch(String pPattern) {
+    protected void assertLogDoesntMatch(final String pPattern) {
         final String log = super.getLog();
-        Assert.assertFalse("Log matches the pattern: " + pPattern + ", got " + log,
+        assertFalse("Log matches the pattern: " + pPattern + ", got " + log,
                 isMatching(pPattern, log));
     }
 
-    protected void assertLogMatches(String pPattern) {
+    protected void assertLogMatches(final String pPattern) {
         final String log = super.getLog();
-        Assert.assertTrue("Log doesn't match string: " + pPattern + ", got " + log,
+        assertTrue("Log doesn't match string: " + pPattern + ", got " + log,
                 isMatching(pPattern, log));
     }
 
@@ -55,13 +54,13 @@ public abstract class AbstractRatAntTaskTest extends BuildFileTest {
         return Pattern.compile(pPattern).matcher(pValue).find();
     }
 
-    private String load(File pFile) throws IOException {
+    private String load(final File pFile) throws IOException {
         FileReader fr = new FileReader(pFile);
         try {
             final StringBuilder sb = new StringBuilder();
-            char[] buffer = new char[1024];
+            final char[] buffer = new char[1024];
             for (;;) {
-                int res = fr.read(buffer);
+                final int res = fr.read(buffer);
                 if (res == -1) {
                     fr.close();
                     fr = null;
@@ -76,12 +75,10 @@ public abstract class AbstractRatAntTaskTest extends BuildFileTest {
         }
     }
 
-    protected void assertFileMatches(File pFile, String pPattern)
+    protected void assertFileMatches(final File pFile, final String pPattern)
             throws IOException {
         final String content = load(pFile);
-        Assert.assertTrue("File " + pFile
-                + " doesn't match the pattern " + pPattern
-                + ", got " + content,
-                isMatching(pPattern, content));
+        assertTrue("File " + pFile + " doesn't match the pattern " + pPattern
+                + ", got " + content, isMatching(pPattern, content));
     }
 }
