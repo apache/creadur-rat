@@ -29,35 +29,75 @@ import java.nio.charset.CodingErrorAction;
 
 import org.apache.rat.api.Document;
 
+/**
+ * The Class BinaryGuesser.
+ */
 public class BinaryGuesser {
 
+	/** The Constant DATA_EXTENSIONS. */
 	private static final String[] DATA_EXTENSIONS = { "DAT", "DOC", "NCB",
 			"IDB", "SUO", "XCF", "RAJ", "CERT", "KS", "TS", "ODP", };
+
+	/** The Constant EXE_EXTENSIONS. */
 	private static final String[] EXE_EXTENSIONS = { "EXE", "DLL", "LIB", "SO",
 			"A", "EXP", };
+
+	/** The Constant KEYSTORE_EXTENSIONS. */
 	private static final String[] KEYSTORE_EXTENSIONS = { "JKS", "KEYSTORE",
 			"PEM", "CRL" };
+
+	/** The Constant IMAGE_EXTENSIONS. */
 	private static final String[] IMAGE_EXTENSIONS = { "PNG", "PDF", "GIF",
 			"GIFF", "TIF", "TIFF", "JPG", "JPEG", "ICO", "ICNS", };
+
+	/** The Constant BYTECODE_EXTENSIONS. */
 	private static final String[] BYTECODE_EXTENSIONS = { "CLASS", "PYD",
 			"OBJ", "PYC", };
 
+	/** The Constant JAR_MANIFEST. */
 	private static final String JAR_MANIFEST = "MANIFEST.MF";
+
+	/** The Constant JAVA. */
 	private static final String JAVA = "JAVA";
+
+	/** The Constant HIGH_BYTES_RATIO. */
 	private static final int HIGH_BYTES_RATIO = 100;
+
+	/** The Constant TOTAL_READ_RATIO. */
 	private static final int TOTAL_READ_RATIO = 30;
+
+	/** The Constant NON_ASCII_THREASHOLD. */
 	private static final int NON_ASCII_THREASHOLD = 256;
+
+	/** The Constant ASCII_CHAR_THREASHOLD. */
 	private static final int ASCII_CHAR_THREASHOLD = 8;
 
+	/**
+	 * Instantiates a new binary guesser.
+	 */
 	public BinaryGuesser() {
 	}
 
+	/**
+	 * Matches.
+	 * 
+	 * @param document
+	 *            the document
+	 * @return true, if successful
+	 */
 	public boolean matches(final Document document) {
 		return isBinary(document.getName()) ||
 		// try a taste
 				isBinaryDocument(document);
 	}
 
+	/**
+	 * Checks if is binary document.
+	 * 
+	 * @param document
+	 *            the document
+	 * @return true, if is binary document
+	 */
 	private boolean isBinaryDocument(final Document document) {
 		boolean result = false;
 		InputStream stream = null;
@@ -78,6 +118,13 @@ public class BinaryGuesser {
 		return result;
 	}
 
+	/**
+	 * Checks if is binary.
+	 * 
+	 * @param taste
+	 *            the taste
+	 * @return true, if is binary
+	 */
 	private boolean isBinary(final CharSequence taste) {
 		int highBytes = 0;
 		final int length = taste.length();
@@ -105,6 +152,10 @@ public class BinaryGuesser {
 	 * not be translated to characters it will assume the original data must be
 	 * binary and return true.
 	 * </p>
+	 * 
+	 * @param in
+	 *            the in
+	 * @return true, if is binary
 	 */
 	private boolean isBinary(final InputStream in) {
 		try {
@@ -141,16 +192,39 @@ public class BinaryGuesser {
 		return false;
 	}
 
+	/**
+	 * Checks if is binary data.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is binary data
+	 */
 	private boolean isBinaryData(final String name) {
 		return extensionMatches(name, DATA_EXTENSIONS);
 	}
 
+	/**
+	 * Checks if is executable.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is executable
+	 */
 	private boolean isExecutable(final String name) {
 		return name.equals(BinaryGuesser.JAVA)
 				|| extensionMatches(name, EXE_EXTENSIONS)
 				|| containsExtension(name, EXE_EXTENSIONS);
 	}
 
+	/**
+	 * Contains extension.
+	 * 
+	 * @param name
+	 *            the name
+	 * @param exts
+	 *            the exts
+	 * @return true, if successful
+	 */
 	private boolean containsExtension(final String name, final String[] exts) {
 		for (final String ext : exts) {
 			if (name.indexOf("." + ext + ".") >= 0) {
@@ -160,6 +234,15 @@ public class BinaryGuesser {
 		return false;
 	}
 
+	/**
+	 * Extension matches.
+	 * 
+	 * @param name
+	 *            the name
+	 * @param exts
+	 *            the exts
+	 * @return true, if successful
+	 */
 	private boolean extensionMatches(final String name, final String[] exts) {
 		for (final String ext : exts) {
 			if (name.endsWith("." + ext)) {
@@ -169,20 +252,45 @@ public class BinaryGuesser {
 		return false;
 	}
 
+	/**
+	 * Checks if is bytecode.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is bytecode
+	 */
 	private boolean isBytecode(final String name) {
 		return extensionMatches(name, BYTECODE_EXTENSIONS);
 	}
 
+	/**
+	 * Checks if is image.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is image
+	 */
 	private boolean isImage(final String name) {
 		return extensionMatches(name, IMAGE_EXTENSIONS);
 	}
 
+	/**
+	 * Checks if is keystore.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is keystore
+	 */
 	private boolean isKeystore(final String name) {
 		return extensionMatches(name, KEYSTORE_EXTENSIONS);
 	}
 
 	/**
-	 * Is a file by that name a known binary file?
+	 * Is a file by that name a known binary file?.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is binary
 	 */
 	private boolean isBinary(final String name) {
 		if (name == null) {
