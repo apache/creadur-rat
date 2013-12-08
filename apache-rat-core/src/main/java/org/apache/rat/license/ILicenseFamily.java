@@ -28,5 +28,5 @@ public interface ILicenseFamily {
 	 * 
 	 * @return the family name
 	 */
-	public String getFamilyName();
+	String getFamilyName();
 }
