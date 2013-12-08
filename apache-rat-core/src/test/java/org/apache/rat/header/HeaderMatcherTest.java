@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.regex.Pattern;
 
@@ -33,14 +34,11 @@ import org.junit.Test;
  */
 public class HeaderMatcherTest {
 
-	/** The capacity. */
-	int capacity;
-
 	/** The matcher. */
-	HeaderMatcher matcher;
+	private HeaderMatcher matcher;
 
 	/** The filter. */
-	SimpleCharFilter filter;
+	private SimpleCharFilter filter;
 
 	/**
 	 * Sets the up.
@@ -50,7 +48,6 @@ public class HeaderMatcherTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		capacity = 20;
 		filter = new SimpleCharFilter();
 		matcher = new HeaderMatcher(filter, 20);
 	}
@@ -58,49 +55,68 @@ public class HeaderMatcherTest {
 	/**
 	 * Simple matches.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void simpleMatches() throws Exception {
+	public void testSimpleMatches() throws IOException {
 		Pattern hatPattern = Pattern.compile("(.*)hat(.*)");
+		StringReader reader = new StringReader("The mad hatter");
+		matcher.read(reader);
+		assertTrue("Expresion must be true", matcher.matches(hatPattern));
+	}
+
+	/**
+	 * Test non simple matches.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testNonSimpleMatches() throws IOException {
 		Pattern headPattern = Pattern.compile("head....");
 		StringReader reader = new StringReader("The mad hatter");
 		matcher.read(reader);
-		assertTrue(matcher.matches(hatPattern));
-		assertFalse(matcher.matches(headPattern));
-		reader = new StringReader("headache");
-		matcher.read(reader);
-		assertFalse(matcher.matches(hatPattern));
-		assertTrue(matcher.matches(headPattern));
+		assertFalse("Expresion must be false", matcher.matches(headPattern));
 	}
 
 	/**
 	 * Filtered matches.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void filteredMatches() throws Exception {
+	public void testFilteredMatches() throws IOException {
 		Pattern capPattern = Pattern.compile("cap(.*)");
 		StringReader reader = new StringReader("capped");
 		matcher.read(reader);
-		assertTrue(matcher.matches(capPattern));
+		assertTrue("Expresion must be true", matcher.matches(capPattern));
+	}
+
+	/**
+	 * Test non filtered matches.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testNonFilteredMatches() throws IOException {
+		Pattern capPattern = Pattern.compile("cap(.*)");
 		filter.filterOut = true;
-		reader = new StringReader("capped");
+		StringReader reader = new StringReader("capped");
 		matcher.read(reader);
-		assertFalse(matcher.matches(capPattern));
+		assertFalse("Expresion must be false", matcher.matches(capPattern));
 	}
 
 	/**
 	 * No lines.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void noLines() throws Exception {
+	public void testNoLines() throws IOException {
 		StringReader reader = new StringReader("None");
 		matcher.read(reader);
 		assertEquals("No lines read", 0, matcher.lines());
@@ -109,21 +125,12 @@ public class HeaderMatcherTest {
 	/**
 	 * Lines.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void lines() throws Exception {
-		StringReader reader = new StringReader("One\n");
-		matcher.read(reader);
-		assertEquals("One line read", 1, matcher.lines());
-		reader = new StringReader("One\nTwo");
-		matcher.read(reader);
-		assertEquals("One line read", 1, matcher.lines());
-		reader = new StringReader("One\nTwo\nThree");
-		matcher.read(reader);
-		assertEquals("Two lines read", 2, matcher.lines());
-		reader = new StringReader("One\nTwo\nThree\n");
+	public void testLines() throws IOException {
+		StringReader reader = new StringReader("One\nTwo\nThree\n");
 		matcher.read(reader);
 		assertEquals("Three lines read", 3, matcher.lines());
 	}
@@ -131,11 +138,11 @@ public class HeaderMatcherTest {
 	/**
 	 * Too many lines.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void tooManyLines() throws Exception {
+	public void testTooManyLines() throws IOException {
 		StringReader reader = new StringReader(
 				"WhateverWhateverWhateverWhateverWhateverWhateverWhateverWhatever");
 		matcher.read(reader);
