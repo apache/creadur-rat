@@ -21,6 +21,7 @@ package org.apache.rat.walker;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -93,7 +94,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 *             the rat exception
 	 */
 	private void processDirectory(final RatReport report, final File file)
-			throws RatException {
+			throws IOException {
 		if (!isRestricted(file)) {
 			process(report, file);
 		}
@@ -108,7 +109,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	public void run(final RatReport report) throws RatException {
+	public void run(final RatReport report) throws IOException {
 		process(report, file);
 	}
 
@@ -123,7 +124,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 *             the rat exception
 	 */
 	private void process(final RatReport report, final File file)
-			throws RatException {
+			throws IOException {
 		final File[] files = file.listFiles();
 		Arrays.sort(files, COMPARATOR);
 		if (files != null) {
@@ -145,7 +146,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 *             the rat exception
 	 */
 	private void processDirectories(final RatReport report, final File... files)
-			throws RatException {
+			throws IOException {
 		for (File file : files) {
 			if (!ignored(file) && file.isDirectory()) {
 				processDirectory(report, file);
@@ -165,7 +166,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 *             the rat exception
 	 */
 	private void processNonDirectories(final RatReport report,
-			final File... files) throws RatException {
+			final File... files) throws IOException {
 		for (File file : files) {
 			if (!ignored(file) && !file.isDirectory()) {
 				report(report, file);
@@ -184,7 +185,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 *             the rat exception
 	 */
 	private void report(final RatReport report, final File file)
-			throws RatException {
+			throws IOException {
 
 		Document document = new FileDocument(file);
 		report.report(document);

@@ -28,7 +28,6 @@ import java.io.Reader;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 
 public class ArchiveEntryDocument implements Document {
 
@@ -37,7 +36,7 @@ public class ArchiveEntryDocument implements Document {
 
     private final MetaData metaData = new MetaData();
 
-    public ArchiveEntryDocument(File file, byte[] contents) throws RatException {
+	public ArchiveEntryDocument(File file, byte[] contents) {
         super();
         name = DocumentImplUtils.toName(file);
         this.contents = contents;

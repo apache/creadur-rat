@@ -18,8 +18,9 @@
  */ 
 package org.apache.rat.report.claim.impl.xml;
 
+import java.io.IOException;
+
 import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
 
 /**
@@ -34,7 +35,7 @@ public class MockClaimReporter extends AbstractReport {
 	 * org.apache.rat.report.AbstractReport#report(org.apache.rat.api.Document)
 	 */
 	@Override
-	public void report(Document document) throws RatException {
+	public void report(Document document) throws IOException {
 
 	}
 }

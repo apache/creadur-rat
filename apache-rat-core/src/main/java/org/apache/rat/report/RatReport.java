@@ -18,6 +18,8 @@
  */
 package org.apache.rat.report;
 
+import java.io.IOException;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 
@@ -42,7 +44,7 @@ public interface RatReport {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	void report(Document document) throws RatException;
+	void report(Document document) throws IOException;
 
 	/**
 	 * End report.

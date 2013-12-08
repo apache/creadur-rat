@@ -18,6 +18,8 @@
  */
 package org.apache.rat.report;
 
+import java.io.IOException;
+
 import org.apache.rat.api.RatException;
 
 /**
@@ -33,5 +35,5 @@ public interface IReportable {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	void run(RatReport report) throws RatException;
+	void run(RatReport report) throws IOException;
 }

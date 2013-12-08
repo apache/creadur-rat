@@ -64,13 +64,9 @@ public class Pipeline implements RatReport {
 	 * 
 	 * @see org.apache.rat.report.RatReport#report(org.apache.rat.api.Document)
 	 */
-	public void report(final Document document) throws RatException {
+	public void report(final Document document) throws IOException {
 		if (this.analyser != null) {
-			try {
 				this.analyser.analyse(document);
-			} catch (final IOException e) {
-				throw new RatException(e.getMessage(), e);
-			}
 		}
 
 		if (this.policy != null) {

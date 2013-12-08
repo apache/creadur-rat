@@ -78,7 +78,7 @@ public class XmlReportFactoryTest {
 	 *             the rat exception
 	 */
 	private void report(final DirectoryWalker directory, final RatReport report)
-			throws RatException {
+			throws IOException {
 		directory.run(report);
 	}
 
@@ -104,6 +104,9 @@ public class XmlReportFactoryTest {
 				statistic, configuration);
 		report.startReport();
 		report(directory, report);
+		// File file = Resources.getResourceFile("elements/Source.java");
+		// Document document = new FileDocument(file);
+		// report.report(document);
 		report.endReport();
 		writer.closeDocument();
 		final String output = out.toString();

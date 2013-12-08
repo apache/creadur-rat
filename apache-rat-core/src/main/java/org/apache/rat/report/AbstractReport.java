@@ -18,6 +18,8 @@
  */
 package org.apache.rat.report;
 
+import java.io.IOException;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 
@@ -40,7 +42,7 @@ public abstract class AbstractReport implements RatReport {
 	 * 
 	 * @see org.apache.rat.report.RatReport#report(org.apache.rat.api.Document)
 	 */
-	public abstract void report(final Document document) throws RatException;
+	public abstract void report(final Document document) throws IOException;
 
 	/*
 	 * (non-Javadoc)

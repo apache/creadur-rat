@@ -60,9 +60,8 @@ public class ArchiveWalker extends Walker implements IReportable {
      * @param report the defined RatReport to run on this GZIP walker.
      * 
      */
-    public void run(final RatReport report) throws RatException {
+	public void run(final RatReport report) throws IOException {
 
-        try {
             ArchiveInputStream input;
 
             /* I am really sad that classes aren't first-class objects in
@@ -98,9 +97,6 @@ public class ArchiveWalker extends Walker implements IReportable {
             }
 
             input.close();
-        } catch (IOException e) {
-            throw new RatException(e);
-        }
     }
 
     /**
@@ -110,7 +106,8 @@ public class ArchiveWalker extends Walker implements IReportable {
      * @param file the file to be reported on
      * @throws RatException
      */
-    private void report(final RatReport report, byte[] contents, File file) throws RatException {
+	private void report(final RatReport report, byte[] contents, File file)
+			throws IOException {
 
         Document document = new ArchiveEntryDocument(file, contents);
         report.report(document);

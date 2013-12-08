@@ -107,19 +107,14 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 	 * org.apache.rat.report.AbstractReport#report(org.apache.rat.api.Document)
 	 */
 	@Override
-	public void report(final Document subject) throws RatException {
-		try {
-			if (firstTime) {
-				firstTime = false;
-			} else {
-				writer.closeElement();
-			}
-			writer.openElement("resource").attribute(NAME, subject.getName());
-			writeDocumentClaims(subject);
-		} catch (IOException e) {
-			throw new RatException("XML writing failure: " + e.getMessage()
-					+ " subject: " + subject, e);
+	public void report(final Document subject) throws IOException {
+		if (firstTime) {
+			firstTime = false;
+		} else {
+			writer.closeElement();
 		}
+		writer.openElement("resource").attribute(NAME, subject.getName());
+		writeDocumentClaims(subject);
 	}
 
 	/**
