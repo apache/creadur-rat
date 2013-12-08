@@ -1056,4 +1056,65 @@ public class LicenceAppenderTest {
 		bomInputStream.close();
 	}
 
+	/**
+	 * Test licence header with copyright.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testLicenceHeaderWithCopyright() throws IOException {
+		String filename = "tmp.java";
+		final String firstLine = "package foo;";
+		String secondLine = "/*";
+		commonTestTemplateWithCopyright(filename, new FileCreator() {
+			public void createFile(final Writer writer) throws IOException {
+				writer.write(firstLine + "\n");
+				writer.write("\n");
+				writer.write("public class test {\n");
+				writer.write(END_BRACKET);
+			}
+		}, checkLines(firstLine, secondLine));
+	}
+
+	/**
+	 * Common test template with copyright.
+	 * 
+	 * @param relativeName
+	 *            the relative name
+	 * @param creator
+	 *            the creator
+	 * @param reader
+	 *            the reader
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static void commonTestTemplateWithCopyright(
+			final String relativeName, final FileCreator creator,
+			final NewFileReader reader) throws IOException {
+		String name = qualify(relativeName);
+		try {
+			createTestFile(name, creator);
+
+			String copyright = "Copyright SUN MICROSYSTEMS";
+			ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender(
+					copyright);
+			appender.append(new File(name));
+
+			BufferedReader bufferedReader = null;
+			try {
+				bufferedReader = new BufferedReader(new FileReader(name
+						+ DOT_NEW));
+				reader.readFile(bufferedReader);
+			} finally {
+				if (bufferedReader != null) {
+					bufferedReader.close();
+				}
+			}
+		} finally {
+			tryToDelete(new File(name));
+			tryToDelete(new File(name + DOT_NEW));
+		}
+	}
+
 }
