@@ -29,6 +29,7 @@ import java.io.File;
  */
 public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
 
+	/** The copyright. */
 	private String copyright;
 
 	/**
@@ -43,12 +44,20 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
 	 * of the form "Copyright 2008 Foo"
 	 * 
 	 * @param copyright
+	 *            the copyright
 	 */
 	public ApacheV2LicenceAppender(String copyright) {
 		super();
 		this.copyright = copyright;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.annotation.AbstractLicenceAppender#getLicenceHeader(java
+	 * .io.File)
+	 */
 	@Override
 	public String getLicenceHeader(File document) {
 		int type = getType(document);
