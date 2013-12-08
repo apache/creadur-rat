@@ -80,7 +80,7 @@ public class HeaderMatcher {
 			final HeaderBean[] headers) {
 		factory = new FilteringSequenceFactory(capacity, filter);
 		read = null;
-		this.headers = headers.clone();
+		this.headers = headers;
 	}
 
 	/**
