@@ -1032,4 +1032,50 @@ public class LicenceAppenderTest {
 		Assert.assertEquals(1000, bomInputStream.read(buf));
 		bomInputStream.close();
 	}
+
+	/**
+	 * Test bom input stream reset.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testBOMInputStreamReset() throws IOException {
+		String document = qualify("tmp.apt");
+		FileCreator creator = new FileCreator() {
+			public void createFile(final Writer writer) throws IOException {
+				writer.write("A Simple APT file");
+				writer.write(" This file contains nothing\n");
+				writer.write(" of any importance\n");
+			}
+		};
+		createTestFile(document, creator);
+		InputStream fis = new FileInputStream(new File(document));
+		BOMInputStream bomInputStream = new BOMInputStream(fis);
+		bomInputStream.mark(10000);
+		bomInputStream.close();
+	}
+
+	/**
+	 * Test bom input stream mark.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testBOMInputStreamMark() throws IOException {
+		String document = qualify("tmp.apt");
+		FileCreator creator = new FileCreator() {
+			public void createFile(final Writer writer) throws IOException {
+				writer.write("A Simple APT file");
+				writer.write(" This file contains nothing\n");
+				writer.write(" of any importance\n");
+			}
+		};
+		createTestFile(document, creator);
+		InputStream fis = new FileInputStream(new File(document));
+		BOMInputStream bomInputStream = new BOMInputStream(fis);
+		bomInputStream.mark(10000);
+		bomInputStream.close();
+	}
 }
