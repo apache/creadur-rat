@@ -44,9 +44,9 @@ public class ToNameTransformer implements Transformer {
 	 * @see
 	 * org.apache.commons.collections.Transformer#transform(java.lang.Object)
 	 */
-	public Object transform(Object subject) {
+	public Object transform(final Object subject) {
 		Object result = null;
-		if (subject != null && subject instanceof Document) {
+		if (subject instanceof Document) {
 			Document location = (Document) subject;
 			result = location.getName();
 		}
