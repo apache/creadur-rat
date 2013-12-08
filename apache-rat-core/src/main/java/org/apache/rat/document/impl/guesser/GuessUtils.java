@@ -25,10 +25,17 @@ import org.apache.commons.lang.StringUtils;
 /**
  * The Class GuessUtils.
  */
-public class GuessUtils {
+public final class GuessUtils {
 
 	/** The Constant SEPARATORS. */
 	private static final String[] SEPARATORS = { "/", "\\" };
+
+	/**
+	 * Instantiates a new guess utils.
+	 */
+	private GuessUtils() {
+		super();
+	}
 
 	/**
 	 * Converts name to upper case and strips any path.
@@ -37,7 +44,7 @@ public class GuessUtils {
 	 *            not null
 	 * @return not null
 	 */
-	public static final String normalise(final String name) {
+	public static String normalise(final String name) {
 		String result = name.toUpperCase(Locale.US);
 		final int lastSeparatorIndex = StringUtils.lastIndexOfAny(result,
 				SEPARATORS);
