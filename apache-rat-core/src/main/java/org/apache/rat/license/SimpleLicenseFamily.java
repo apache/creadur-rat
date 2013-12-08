@@ -34,7 +34,7 @@ public class SimpleLicenseFamily implements ILicenseFamily {
 	 * @param familyName
 	 *            the family name
 	 */
-	public SimpleLicenseFamily(String familyName) {
+	public SimpleLicenseFamily(final String familyName) {
 		setFamilyName(familyName);
 	}
 
@@ -51,7 +51,7 @@ public class SimpleLicenseFamily implements ILicenseFamily {
 	 * @param familyName
 	 *            the new family name
 	 */
-	public final void setFamilyName(String familyName) {
+	public final void setFamilyName(final String familyName) {
 		this.familyName = familyName;
 	}
 
