@@ -19,8 +19,8 @@
 
 package org.apache.rat.report.claim.impl;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
@@ -35,13 +35,13 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	private final ClaimStatistic statistic;
 
 	/** The nums by license family name. */
-	private final Map<String, Integer> numsByLicenseFamilyName = new HashMap<String, Integer>();
+	private final Map<String, Integer> numsByLicenseFamilyName = new ConcurrentHashMap<String, Integer>();
 
 	/** The nums by license family code. */
-	private final Map<String, Integer> numsByLicenseFamilyCode = new HashMap<String, Integer>();
+	private final Map<String, Integer> numsByLicenseFamilyCode = new ConcurrentHashMap<String, Integer>();
 
 	/** The nums by file type. */
-	private final Map<String, Integer> numsByFileType = new HashMap<String, Integer>();
+	private final Map<String, Integer> numsByFileType = new ConcurrentHashMap<String, Integer>();
 
 	/** The num unknown. */
 	private int numApproved, numUnApproved, numGenerated, numUnknown;
@@ -52,7 +52,8 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	 * @param pStatistic
 	 *            the statistic
 	 */
-	public ClaimAggregator(ClaimStatistic pStatistic) {
+	public ClaimAggregator(final ClaimStatistic pStatistic) {
+		super();
 		statistic = pStatistic;
 	}
 
@@ -64,15 +65,15 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	 * @param pKey
 	 *            the key
 	 */
-	private void incMapValue(Map<String, Integer> pMap, String pKey) {
+	private void incMapValue(final Map<String, Integer> pMap, final String pKey) {
 		final Integer num = pMap.get(pKey);
-		final int newNum;
+		int newNum;
 		if (num == null) {
 			newNum = 1;
 		} else {
 			newNum = num.intValue() + 1;
 		}
-		pMap.put(pKey, new Integer(newNum));
+		pMap.put(pKey, Integer.valueOf(newNum));
 	}
 
 	/*
@@ -82,7 +83,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	 * handleDocumentCategoryClaim(java.lang.String)
 	 */
 	@Override
-	protected void handleDocumentCategoryClaim(String documentCategoryName) {
+	protected void handleDocumentCategoryClaim(final String documentCategoryName) {
 		incMapValue(numsByFileType, documentCategoryName);
 	}
 
@@ -93,7 +94,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	 * handleApprovedLicenseClaim(java.lang.String)
 	 */
 	@Override
-	protected void handleApprovedLicenseClaim(String licenseApproved) {
+	protected void handleApprovedLicenseClaim(final String licenseApproved) {
 		if (MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(licenseApproved)) {
 			numApproved++;
 		} else {
@@ -108,7 +109,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	 * handleLicenseFamilyNameClaim(java.lang.String)
 	 */
 	@Override
-	protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
+	protected void handleLicenseFamilyNameClaim(final String licenseFamilyName) {
 		incMapValue(numsByLicenseFamilyName, licenseFamilyName);
 	}
 
@@ -119,7 +120,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	 * handleHeaderCategoryClaim(java.lang.String)
 	 */
 	@Override
-	protected void handleHeaderCategoryClaim(String headerCategory) {
+	protected void handleHeaderCategoryClaim(final String headerCategory) {
 
 		if (MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN
 				.equals(headerCategory)) {
@@ -140,7 +141,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	 * @param pStatistic
 	 *            the statistic
 	 */
-	public void fillClaimStatistic(ClaimStatistic pStatistic) {
+	public void fillClaimStatistic(final ClaimStatistic pStatistic) {
 		pStatistic.setDocumentCategoryMap(numsByFileType);
 		pStatistic.setLicenseFileCodeMap(numsByLicenseFamilyCode);
 		pStatistic.setLicenseFileNameMap(numsByLicenseFamilyName);
