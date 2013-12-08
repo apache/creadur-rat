@@ -874,4 +874,64 @@ public class LicenceAppenderTest {
 			}
 		});
 	}
+
+	/**
+	 * Test add licence to java forced.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testAddLicenceToJavaForced() throws IOException {
+		String filename = "tmp.java";
+		final String firstLine = "package foo;";
+		String secondLine = "/*";
+		commonTestTemplateForced(filename, new FileCreator() {
+			public void createFile(final Writer writer) throws IOException {
+				writer.write(firstLine + "\n");
+				writer.write("\n");
+				writer.write("public class test {\n");
+				writer.write(END_BRACKET);
+			}
+		}, checkLines(firstLine, secondLine));
+	}
+
+	/**
+	 * Common test template forced.
+	 * 
+	 * @param relativeName
+	 *            the relative name
+	 * @param creator
+	 *            the creator
+	 * @param reader
+	 *            the reader
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static void commonTestTemplateForced(final String relativeName,
+			final FileCreator creator, final NewFileReader reader)
+			throws IOException {
+		String name = qualify(relativeName);
+		try {
+			createTestFile(name, creator);
+
+			ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
+			appender.setForce(true);
+			appender.append(new File(name));
+
+			BufferedReader bufferedReader = null;
+			try {
+				bufferedReader = new BufferedReader(new FileReader(name
+						+ DOT_NEW));
+				reader.readFile(bufferedReader);
+			} finally {
+				if (bufferedReader != null) {
+					bufferedReader.close();
+				}
+			}
+		} finally {
+			tryToDelete(new File(name));
+			tryToDelete(new File(name + DOT_NEW));
+		}
+	}
 }
