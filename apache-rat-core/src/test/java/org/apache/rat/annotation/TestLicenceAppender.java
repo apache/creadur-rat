@@ -37,8 +37,16 @@ import org.junit.Test;
  */
 public class TestLicenceAppender {
 	
+	private static final int ZERO = 0;
+	private static final String END_BRACKET = "}\n";
+	private static final String TMP_SLN = "tmp.sln";
+	private static final String SECOND_LINE_INCORRECT = "Second line is incorrect";
+	private static final String FIRST_LINE_INCORRECT = "First line is incorrect";
+	private static final String END_PROJECT = "EndProject\n";
+	private static final String END_GLOBAL_SELECTION = "EndGlobalSection\n";
+	private static final String DOT_NEW = ".new";
 	/** Used to ensure that temporary files have unq. */
-	private Random random = new Random();
+	private final Random random = new Random();
 
 	/**
 	 * The Interface FileCreator.
@@ -51,7 +59,7 @@ public class TestLicenceAppender {
 		 * @param w the w
 		 * @throws IOException Signals that an I/O exception has occurred.
 		 */
-		void createFile(Writer w) throws IOException;
+		void createFile(Writer writer) throws IOException;
 	}
 
 	/**
@@ -65,7 +73,7 @@ public class TestLicenceAppender {
 		 * @param r the r
 		 * @throws IOException Signals that an I/O exception has occurred.
 		 */
-		void readFile(BufferedReader r) throws IOException;
+		void readFile(BufferedReader bufferedReader) throws IOException;
 	}
 
 	/**
@@ -74,7 +82,7 @@ public class TestLicenceAppender {
 	 * @param fileName the file name
 	 * @return the string
 	 */
-	private static String qualify(String fileName) {
+	private static String qualify(final String fileName) {
 		return new File(new File(System.getProperty("java.io.tmpdir")),
 				fileName).getAbsolutePath();
 	}
@@ -86,14 +94,14 @@ public class TestLicenceAppender {
 	 * @param creator the creator
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	private static void createTestFile(String fileName, FileCreator creator)
+	private static void createTestFile(final String fileName, final FileCreator creator)
 			throws IOException {
-		FileWriter w = null;
+		FileWriter fileWriter = null;
 		try {
-			creator.createFile(w = new FileWriter(fileName));
+			creator.createFile(fileWriter = new FileWriter(fileName));
 		} finally {
-			if (w != null) {
-				w.close();
+			if (fileWriter != null) {
+				fileWriter.close();
 			}
 		}
 	}
@@ -103,9 +111,9 @@ public class TestLicenceAppender {
 	 *
 	 * @param f the f
 	 */
-	private static void tryToDelete(File f) {
-		if (f != null && f.exists() && !f.delete()) {
-			f.deleteOnExit();
+	private static void tryToDelete(final File file) {
+		if (file != null && file.exists() && !file.delete()) {
+			file.deleteOnExit();
 		}
 	}
 
@@ -117,8 +125,8 @@ public class TestLicenceAppender {
 	 * @param reader the reader
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	private static void commonTestTemplate(String relativeName,
-			FileCreator creator, NewFileReader reader) throws IOException {
+	private static void commonTestTemplate(final String relativeName,
+			final FileCreator creator, final NewFileReader reader) throws IOException {
 		String name = qualify(relativeName);
 		try {
 			createTestFile(name, creator);
@@ -126,18 +134,18 @@ public class TestLicenceAppender {
 			ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
 			appender.append(new File(name));
 
-			BufferedReader r = null;
+			BufferedReader bufferedReader = null;
 			try {
-				r = new BufferedReader(new FileReader(name + ".new"));
-				reader.readFile(r);
+				bufferedReader = new BufferedReader(new FileReader(name + DOT_NEW));
+				reader.readFile(bufferedReader);
 			} finally {
-				if (r != null) {
-					r.close();
+				if (bufferedReader != null) {
+					bufferedReader.close();
 				}
 			}
 		} finally {
 			tryToDelete(new File(name));
-			tryToDelete(new File(name + ".new"));
+			tryToDelete(new File(name + DOT_NEW));
 		}
 	}
 
@@ -151,12 +159,12 @@ public class TestLicenceAppender {
 	private static NewFileReader checkLines(final String firstLine,
 			final String secondLine) {
 		return new NewFileReader() {
-			public void readFile(BufferedReader r) throws IOException {
-				String line = r.readLine();
-				assertEquals("First line is incorrect", firstLine, line);
+			public void readFile(final BufferedReader bufferedReader) throws IOException {
+				String line = bufferedReader.readLine();
+				assertEquals(FIRST_LINE_INCORRECT, firstLine, line);
 				if (secondLine != null) {
-					line = r.readLine();
-					assertEquals("Second line is incorrect", secondLine, line);
+					line = bufferedReader.readLine();
+					assertEquals(SECOND_LINE_INCORRECT, secondLine, line);
 				}
 			}
 		};
@@ -174,7 +182,7 @@ public class TestLicenceAppender {
 		File newFile = null;
 		try {
 			createTestFile(filename, new FileCreator() {
-				public void createFile(Writer writer) throws IOException {
+				public void createFile(final Writer writer) throws IOException {
 					writer.write("Unknown file type\n");
 				}
 			});
@@ -183,7 +191,7 @@ public class TestLicenceAppender {
 			ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
 			appender.append(file);
 
-			newFile = new File(filename + ".new");
+			newFile = new File(filename + DOT_NEW);
 			assertFalse("No new file should have been written",
 					newFile.exists());
 		} finally {
@@ -203,11 +211,11 @@ public class TestLicenceAppender {
 		final String firstLine = "package foo;";
 		String secondLine = "/*";
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write("\n");
 				writer.write("public class test {\n");
-				writer.write("}\n");
+				writer.write(END_BRACKET);
 			}
 		}, checkLines(firstLine, secondLine));
 	}
@@ -222,9 +230,9 @@ public class TestLicenceAppender {
 		String filename = "tmp.java";
 		String commentLine = "/*";
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("public class test {\n");
-				writer.write("}\n");
+				writer.write(END_BRACKET);
 			}
 		}, checkLines(commentLine, null));
 	}
@@ -238,10 +246,10 @@ public class TestLicenceAppender {
 	public void addLicenceToXML() throws IOException {
 		String filename = "tmp.xml";
 		final String firstLine = "<?xml version='1.0'?>";
-		final String secondLine = "<!--";
+		String secondLine = "<!--";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write("\n");
 				writer.write("<xml>\n");
@@ -258,11 +266,11 @@ public class TestLicenceAppender {
 	@Test
 	public void addLicenceToXMLWithoutDecl() throws IOException {
 		String filename = "tmp.xml";
-		final String firstLine = "<?xml version='1.0'?>";
-		final String secondLine = "<!--";
+		String firstLine = "<?xml version='1.0'?>";
+		String secondLine = "<!--";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("<xml>\n");
 				writer.write("</xml>\n");
 			}
@@ -280,7 +288,7 @@ public class TestLicenceAppender {
 		String commentLine = "<!--";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("<html>\n");
 				writer.write("\n");
 				writer.write("</html>\n");
@@ -299,10 +307,10 @@ public class TestLicenceAppender {
 		String firstLine = "/*";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(".class {\n");
 				writer.write(" background-color: red;");
-				writer.write("}\n");
+				writer.write(END_BRACKET);
 			}
 		}, checkLines(firstLine, null));
 	}
@@ -318,10 +326,10 @@ public class TestLicenceAppender {
 		String firstLine = "/*";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("if (a ==b) {>\n");
 				writer.write(" alert(\"how useful!\");");
-				writer.write("}\n");
+				writer.write(END_BRACKET);
 			}
 		}, checkLines(firstLine, null));
 	}
@@ -337,7 +345,7 @@ public class TestLicenceAppender {
 		String firstLine = "~~";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("A Simple APT file");
 				writer.write(" This file contains nothing\n");
 				writer.write(" of any importance\n");
@@ -356,7 +364,7 @@ public class TestLicenceAppender {
 		String firstLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("property = value\n");
 				writer.write("fun = true\n");
 				writer.write("cool = true\n");
@@ -376,21 +384,22 @@ public class TestLicenceAppender {
 		final String newFirstLine = "/*";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write("\n");
 				writer.write("    object X { val x = 1; }\n");
-				writer.write("}\n");
+				writer.write(END_BRACKET);
 			}
 		}, new NewFileReader() {
-			public void readFile(BufferedReader reader) throws IOException {
+			public void readFile(final BufferedReader reader) throws IOException {
 				String line = reader.readLine();
-				assertEquals("First line is incorrect", newFirstLine, line);
-				while ((line = reader.readLine()) != null) {
-					if (line.length() == 0) {
+				assertEquals(FIRST_LINE_INCORRECT, newFirstLine, line);
+				while (line != null) {
+					if (line.length() == ZERO) {
 						line = reader.readLine();
 						break;
 					}
+					line = reader.readLine();
 				}
 				assertEquals("Package line is incorrect", firstLine, line);
 			}
@@ -408,7 +417,7 @@ public class TestLicenceAppender {
 		String firstLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("class Foo\n");
 				writer.write("end\n");
 			}
@@ -427,7 +436,7 @@ public class TestLicenceAppender {
 		String secondLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write("class Foo\n");
 				writer.write("end\n");
@@ -446,7 +455,7 @@ public class TestLicenceAppender {
 		String firstLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("print \"Hello world\"\n");
 			}
 		}, checkLines(firstLine, null));
@@ -464,7 +473,7 @@ public class TestLicenceAppender {
 		String secondLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write("print \"Hello world\"\n");
 			}
@@ -482,7 +491,7 @@ public class TestLicenceAppender {
 		String firstLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("puts \"Hello world\"\n");
 			}
 		}, checkLines(firstLine, null));
@@ -500,7 +509,7 @@ public class TestLicenceAppender {
 		String secondLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write("puts \"Hello world\"\n");
 			}
@@ -519,7 +528,7 @@ public class TestLicenceAppender {
 		String secondLine = "/*";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write("echo 'Hello World'\n");
 				writer.write("?>\n");
@@ -538,11 +547,11 @@ public class TestLicenceAppender {
 		String firstLine = "/*";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("namespace org.example {\n");
 				writer.write("    public class Foo {\n");
 				writer.write("    }\n");
-				writer.write("}\n");
+				writer.write(END_BRACKET);
 			}
 		}, checkLines(firstLine, null));
 	}
@@ -558,7 +567,7 @@ public class TestLicenceAppender {
 		String firstLine = "/*";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("package org.example \n");
 				writer.write("    class Foo {\n");
 				writer.write("    }\n");
@@ -577,11 +586,11 @@ public class TestLicenceAppender {
 		String firstLine = "/*";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write("namespace org.example {\n");
 				writer.write("    public class Foo {\n");
 				writer.write("    }\n");
-				writer.write("}\n");
+				writer.write(END_BRACKET);
 			}
 		}, checkLines(firstLine, null));
 	}
@@ -593,30 +602,31 @@ public class TestLicenceAppender {
 	 */
 	@Test
 	public void fileWithBOM() throws IOException {
-		File f = Resources.getResourceFile("violations/FilterTest.cs");
+		File file = Resources.getResourceFile("violations/FilterTest.cs");
 		try {
 			ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
-			appender.append(f);
+			appender.append(file);
 
-			BufferedReader r = null;
+			BufferedReader bufferedReader = null;
 			try {
-				r = new BufferedReader(new FileReader(f.getAbsolutePath()
-						+ ".new"));
-				assertEquals("/*", r.readLine());
-				String line = null;
-				while ((line = r.readLine()) != null) {
-					if (line.trim().length() == 0) {
+				bufferedReader = new BufferedReader(new FileReader(file.getAbsolutePath()
+						+ DOT_NEW));
+				assertEquals("The string must be /*","/*", bufferedReader.readLine());
+				String line = bufferedReader.readLine();
+				while (line != null) {
+					if (line.trim().length() == ZERO) {
 						break;
 					}
+					line = bufferedReader.readLine();
 				}
-				assertEquals("#if NET_2_0", r.readLine());
+				assertEquals("The string must be #if NET_2_0","#if NET_2_0", bufferedReader.readLine());
 			} finally {
-				if (r != null) {
-					r.close();
+				if (bufferedReader != null) {
+					bufferedReader.close();
 				}
 			}
 		} finally {
-			tryToDelete(new File(f.getAbsolutePath() + ".new"));
+			tryToDelete(new File(file.getAbsolutePath() + DOT_NEW));
 		}
 	}
 
@@ -627,20 +637,20 @@ public class TestLicenceAppender {
 	 */
 	@Test
 	public void addLicenceToVS2003solution() throws IOException {
-		String filename = "tmp.sln";
+		String filename = TMP_SLN;
 		final String firstLine = "Microsoft Visual Studio Solution File,"
 				+ " Format Version 8.0";
 		String secondLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
 				writer.write("	ProjectSection(WebsiteProperties) = preProject\n");
 				writer.write("		Debug.AspNetCompiler.Debug = \"True\"\n");
 				writer.write("		Release.AspNetCompiler.Debug = \"False\"\n");
 				writer.write("	EndProjectSection\n");
-				writer.write("EndProject\n");
+				writer.write(END_PROJECT);
 			}
 		}, checkLines(firstLine, secondLine));
 	}
@@ -652,14 +662,14 @@ public class TestLicenceAppender {
 	 */
 	@Test
 	public void addLicenceToVS2005solution() throws IOException {
-		String filename = "tmp.sln";
+		String filename = TMP_SLN;
 		final String firstLine = "Microsoft Visual Studio Solution File,"
 				+ " Format Version 9.0";
 		final String secondLine = "# Visual Studio 2005";
 		final String thirdLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write(secondLine + "\n");
 				writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
@@ -667,15 +677,15 @@ public class TestLicenceAppender {
 				writer.write("		Debug.AspNetCompiler.Debug = \"True\"\n");
 				writer.write("		Release.AspNetCompiler.Debug = \"False\"\n");
 				writer.write("	EndProjectSection\n");
-				writer.write("EndProject\n");
+				writer.write(END_PROJECT);
 			}
 		}, new NewFileReader() {
-			public void readFile(BufferedReader r) throws IOException {
-				String line = r.readLine();
-				assertEquals("First line is incorrect", firstLine, line);
-				line = r.readLine();
-				assertEquals("Second line is incorrect", secondLine, line);
-				line = r.readLine();
+			public void readFile(final BufferedReader bufferedReader) throws IOException {
+				String line = bufferedReader.readLine();
+				assertEquals(FIRST_LINE_INCORRECT, firstLine, line);
+				line = bufferedReader.readLine();
+				assertEquals(SECOND_LINE_INCORRECT, secondLine, line);
+				line = bufferedReader.readLine();
 				assertEquals("Third line is incorrect", thirdLine, line);
 			}
 		});
@@ -688,25 +698,25 @@ public class TestLicenceAppender {
 	 */
 	@Test
 	public void addLicenceToVS2010ExpressSolution() throws IOException {
-		String filename = "tmp.sln";
+		String filename = TMP_SLN;
 		final String firstLine = "Microsoft Visual Studio Solution File, "
 				+ "Format Version 11.00";
 		final String secondLine = "# Visual C# Express 2010";
 		final String thirdLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write(secondLine + "\n");
 				writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Lucene.Net\", \"..\\..\\..\\src\\core\\Lucene.Net.csproj\", \"{5D4AD9BE-1FFB-41AB-9943-25737971BF57}\"\n");
-				writer.write("EndProject\n");
+				writer.write(END_PROJECT);
 				writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Contrib.Highlighter\", \"..\\..\\..\\src\\contrib\\Highlighter\\Contrib.Highlighter.csproj\", \"{901D5415-383C-4AA6-A256-879558841BEA}\"\n");
-				writer.write("EndProject\n");
+				writer.write(END_PROJECT);
 				writer.write("Global\n");
 				writer.write("GlobalSection(SolutionConfigurationPlatforms) = preSolution\n");
 				writer.write("Debug|Any CPU = Debug|Any CPU\n");
 				writer.write("Release|Any CPU = Release|Any CPU\n");
-				writer.write("EndGlobalSection\n");
+				writer.write(END_GLOBAL_SELECTION);
 				writer.write("GlobalSection(ProjectConfigurationPlatforms) = postSolution\n");
 				writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
 				writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
@@ -716,19 +726,19 @@ public class TestLicenceAppender {
 				writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
 				writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
 				writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU\n");
-				writer.write("EndGlobalSection\n");
+				writer.write(END_GLOBAL_SELECTION);
 				writer.write("GlobalSection(SolutionProperties) = preSolution\n");
 				writer.write("HideSolutionNode = FALSE\n");
-				writer.write("EndGlobalSection\n");
+				writer.write(END_GLOBAL_SELECTION);
 				writer.write("EndGlobal \n");
 			}
 		}, new NewFileReader() {
-			public void readFile(BufferedReader r) throws IOException {
-				String line = r.readLine();
-				assertEquals("First line is incorrect", firstLine, line);
-				line = r.readLine();
-				assertEquals("Second line is incorrect", secondLine, line);
-				line = r.readLine();
+			public void readFile(final BufferedReader bufferedReader) throws IOException {
+				String line = bufferedReader.readLine();
+				assertEquals(FIRST_LINE_INCORRECT, firstLine, line);
+				line = bufferedReader.readLine();
+				assertEquals(SECOND_LINE_INCORRECT, secondLine, line);
+				line = bufferedReader.readLine();
 				assertEquals("Third line is incorrect", thirdLine, line);
 			}
 		});
@@ -741,7 +751,7 @@ public class TestLicenceAppender {
 	 */
 	@Test
 	public void addLicenceToVS2010SolutionWithBlankLine() throws IOException {
-		String filename = "tmp.sln";
+		String filename = TMP_SLN;
 		final String firstLine = "";
 		final String secondLine = "Microsoft Visual Studio Solution File, "
 				+ "Format Version 11.00";
@@ -749,19 +759,19 @@ public class TestLicenceAppender {
 		final String forthLine = "#";
 
 		commonTestTemplate(filename, new FileCreator() {
-			public void createFile(Writer writer) throws IOException {
+			public void createFile(final Writer writer) throws IOException {
 				writer.write(firstLine + "\n");
 				writer.write(secondLine + "\n");
 				writer.write(thirdLine + "\n");
 				writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Lucene.Net\", \"..\\..\\..\\src\\core\\Lucene.Net.csproj\", \"{5D4AD9BE-1FFB-41AB-9943-25737971BF57}\"\n");
-				writer.write("EndProject\n");
+				writer.write(END_PROJECT);
 				writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Contrib.Highlighter\", \"..\\..\\..\\src\\contrib\\Highlighter\\Contrib.Highlighter.csproj\", \"{901D5415-383C-4AA6-A256-879558841BEA}\"\n");
-				writer.write("EndProject\n");
+				writer.write(END_PROJECT);
 				writer.write("Global\n");
 				writer.write("GlobalSection(SolutionConfigurationPlatforms) = preSolution\n");
 				writer.write("Debug|Any CPU = Debug|Any CPU\n");
 				writer.write("Release|Any CPU = Release|Any CPU\n");
-				writer.write("EndGlobalSection\n");
+				writer.write(END_GLOBAL_SELECTION);
 				writer.write("GlobalSection(ProjectConfigurationPlatforms) = postSolution\n");
 				writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
 				writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
@@ -771,21 +781,21 @@ public class TestLicenceAppender {
 				writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
 				writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
 				writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU\n");
-				writer.write("EndGlobalSection\n");
+				writer.write(END_GLOBAL_SELECTION);
 				writer.write("GlobalSection(SolutionProperties) = preSolution\n");
 				writer.write("HideSolutionNode = FALSE\n");
-				writer.write("EndGlobalSection\n");
+				writer.write(END_GLOBAL_SELECTION);
 				writer.write("EndGlobal \n");
 			}
 		}, new NewFileReader() {
-			public void readFile(BufferedReader r) throws IOException {
-				String line = r.readLine();
-				assertEquals("First line is incorrect", firstLine, line);
-				line = r.readLine();
-				assertEquals("Second line is incorrect", secondLine, line);
-				line = r.readLine();
+			public void readFile(final BufferedReader bufferedReader) throws IOException {
+				String line = bufferedReader.readLine();
+				assertEquals(FIRST_LINE_INCORRECT, firstLine, line);
+				line = bufferedReader.readLine();
+				assertEquals(SECOND_LINE_INCORRECT, secondLine, line);
+				line = bufferedReader.readLine();
 				assertEquals("Third line is incorrect", thirdLine, line);
-				line = r.readLine();
+				line = bufferedReader.readLine();
 				assertEquals("Forth line is incorrect", forthLine, line);
 			}
 		});
