@@ -54,7 +54,6 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 		Reader reader = null;
 		try {
 			reader = document.reader();
-			// TODO: worker function should be moved into this class
 			HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher,
 					document);
 			worker.read();
