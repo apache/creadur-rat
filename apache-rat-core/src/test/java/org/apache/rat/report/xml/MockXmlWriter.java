@@ -46,7 +46,8 @@ public class MockXmlWriter implements IXmlWriter {
 	 * org.apache.rat.report.xml.writer.IXmlWriter#attribute(java.lang.CharSequence
 	 * , java.lang.CharSequence)
 	 */
-	public IXmlWriter attribute(CharSequence name, CharSequence value)
+	public IXmlWriter attribute(final CharSequence name,
+			final CharSequence value)
 			throws IOException {
 		calls.add(new Attribute(name, value));
 		return this;
@@ -79,7 +80,7 @@ public class MockXmlWriter implements IXmlWriter {
 	 * org.apache.rat.report.xml.writer.IXmlWriter#content(java.lang.CharSequence
 	 * )
 	 */
-	public IXmlWriter content(CharSequence content) throws IOException {
+	public IXmlWriter content(final CharSequence content) throws IOException {
 		calls.add(new Content(content));
 		return this;
 	}
@@ -90,7 +91,8 @@ public class MockXmlWriter implements IXmlWriter {
 	 * @see org.apache.rat.report.xml.writer.IXmlWriter#openElement(java.lang.
 	 * CharSequence)
 	 */
-	public IXmlWriter openElement(CharSequence elementName) throws IOException {
+	public IXmlWriter openElement(final CharSequence elementName)
+			throws IOException {
 		calls.add(new OpenElement(elementName));
 		return this;
 	}
@@ -112,7 +114,7 @@ public class MockXmlWriter implements IXmlWriter {
 	 *            the index
 	 * @return true, if is close element
 	 */
-	public boolean isCloseElement(int index) {
+	public boolean isCloseElement(final int index) {
 		boolean result = false;
 		final Object call = calls.get(index);
 		result = call instanceof CloseElement;
@@ -128,7 +130,7 @@ public class MockXmlWriter implements IXmlWriter {
 	 *            the index
 	 * @return true, if is content
 	 */
-	public boolean isContent(String content, int index) {
+	public boolean isContent(final String content, final int index) {
 		boolean result = false;
 		final Object call = calls.get(index);
 		if (call instanceof Content) {
@@ -147,7 +149,7 @@ public class MockXmlWriter implements IXmlWriter {
 	 *            the index
 	 * @return true, if is open element
 	 */
-	public boolean isOpenElement(String name, int index) {
+	public boolean isOpenElement(final String name, final int index) {
 		boolean result = false;
 		final Object call = calls.get(index);
 		if (call instanceof OpenElement) {
@@ -168,7 +170,8 @@ public class MockXmlWriter implements IXmlWriter {
 	 *            the index
 	 * @return true, if is attribute
 	 */
-	public boolean isAttribute(String name, String value, int index) {
+	public boolean isAttribute(final String name, final String value,
+			final int index) {
 		boolean result = false;
 		final Object call = calls.get(index);
 		if (call instanceof Attribute) {
@@ -211,7 +214,7 @@ public class MockXmlWriter implements IXmlWriter {
 		 * @param elementName
 		 *            the element name
 		 */
-		private OpenElement(CharSequence elementName) {
+		private OpenElement(final CharSequence elementName) {
 			this.elementName = elementName;
 		}
 	}
@@ -230,7 +233,7 @@ public class MockXmlWriter implements IXmlWriter {
 		 * @param content
 		 *            the content
 		 */
-		private Content(CharSequence content) {
+		private Content(final CharSequence content) {
 			this.content = content;
 		}
 	}
@@ -254,7 +257,7 @@ public class MockXmlWriter implements IXmlWriter {
 		 * @param value
 		 *            the value
 		 */
-		private Attribute(CharSequence name, CharSequence value) {
+		private Attribute(final CharSequence name, final CharSequence value) {
 			this.name = name;
 			this.value = value;
 		}
