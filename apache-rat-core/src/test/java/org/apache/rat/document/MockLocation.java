@@ -26,33 +26,43 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 /**
- *
+ * The Class MockLocation.
  */
 public class MockLocation implements Document {
 
+	/** The name. */
 	public String name;
+
+	/** The url. */
 	public String url;
+
+	/** The meta data. */
 	private final MetaData metaData = new MetaData();
 
 	/**
-	 * 
+	 * Instantiates a new mock location.
 	 */
 	public MockLocation() {
 		this("name", "url");
 	}
 
 	/**
+	 * Instantiates a new mock location.
 	 * 
 	 * @param name
+	 *            the name
 	 */
 	public MockLocation(final String name) {
 		this(name, "url");
 	}
 
 	/**
+	 * Instantiates a new mock location.
 	 * 
 	 * @param name
+	 *            the name
 	 * @param url
+	 *            the url
 	 */
 	public MockLocation(final String name, final String url) {
 		super();
@@ -60,51 +70,59 @@ public class MockLocation implements Document {
 		this.url = url;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see org.apache.rat.api.Document#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
+	 * Gets the url.
 	 * 
-	 * @return
+	 * @return the url
 	 */
 	public String getURL() {
 		return url;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see org.apache.rat.api.Document#isComposite()
 	 */
 	public boolean isComposite() {
 		return false;
 	}
 
 	/**
+	 * Reader.
 	 * 
-	 * @return
+	 * @return the reader
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public Reader reader() throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see org.apache.rat.api.Document#getMetaData()
 	 */
 	public MetaData getMetaData() {
 		return metaData;
 	}
 
 	/**
+	 * Input stream.
 	 * 
-	 * @return
+	 * @return the input stream
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public InputStream inputStream() throws IOException {
 		throw new UnsupportedOperationException();
