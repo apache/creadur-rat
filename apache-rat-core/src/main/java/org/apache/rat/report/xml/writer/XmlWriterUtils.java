@@ -23,7 +23,14 @@ import java.io.IOException;
 /**
  * The Class XmlWriterUtils.
  */
-public class XmlWriterUtils {
+public final class XmlWriterUtils {
+
+	/**
+	 * Instantiates a new xml writer utils.
+	 */
+	public XmlWriterUtils() {
+		super();
+	}
 
 	/**
 	 * Write attribute.
@@ -37,7 +44,7 @@ public class XmlWriterUtils {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static final void writeAttribute(final IXmlWriter writer,
+	public void writeAttribute(final IXmlWriter writer,
 			final String name, final boolean booleanValue) throws IOException {
 		final String value = Boolean.toString(booleanValue);
 		writer.attribute(name, value);
