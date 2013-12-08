@@ -24,6 +24,10 @@ import static org.apache.rat.api.domain.RatLicenseFamily.GPL2;
  * Base implementation for GPLv3 or later.
  */
 public class GPL2LicenseFamily extends SimpleLicenseFamily {
+
+	/**
+	 * Instantiates a new gP l2 license family.
+	 */
 	public GPL2LicenseFamily() {
 		super(GPL2.getName());
 	}
