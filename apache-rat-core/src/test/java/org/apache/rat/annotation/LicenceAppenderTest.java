@@ -33,9 +33,9 @@ import org.apache.rat.test.utils.Resources;
 import org.junit.Test;
 
 /**
- * The Class TestLicenceAppender.
+ * The Class LicenceAppenderTest.
  */
-public class TestLicenceAppender {
+public class LicenceAppenderTest {
 
 	/** The Constant ZERO. */
 	private static final int ZERO = 0;
