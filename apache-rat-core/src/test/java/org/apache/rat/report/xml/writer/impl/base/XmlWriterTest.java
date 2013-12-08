@@ -18,31 +18,50 @@
  */
 package org.apache.rat.report.xml.writer.impl.base;
 
-import org.apache.rat.report.xml.writer.InvalidXmlException;
-import org.apache.rat.report.xml.writer.OperationNotAllowedException;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.StringWriter;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.StringWriter;
+
+import org.apache.rat.report.xml.writer.InvalidXmlException;
+import org.apache.rat.report.xml.writer.OperationNotAllowedException;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * The Class XmlWriterTest.
+ */
 public class XmlWriterTest {
 
+	/** The Constant ZERO_CHAR. */
 	private static final char[] ZERO_CHAR = { (char) 0 };
 
+	/** The writer. */
 	XmlWriter writer;
+
+	/** The out. */
 	StringWriter out;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		out = new StringWriter();
 		writer = new XmlWriter(out);
 	}
 
+	/**
+	 * Return values.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void returnValues() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -55,6 +74,12 @@ public class XmlWriterTest {
 				writer.closeElement());
 	}
 
+	/**
+	 * Open element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void openElement() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -73,6 +98,12 @@ public class XmlWriterTest {
 				out.toString());
 	}
 
+	/**
+	 * Invalid element name.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void invalidElementName() throws Exception {
 		assertTrue("All strings ok", isValidElementName("alpha"));
@@ -91,6 +122,15 @@ public class XmlWriterTest {
 		assertTrue("Start with colon ok", isValidElementName(":a77"));
 	}
 
+	/**
+	 * Checks if is valid element name.
+	 * 
+	 * @param elementName
+	 *            the element name
+	 * @return true, if is valid element name
+	 * @throws Exception
+	 *             the exception
+	 */
 	private boolean isValidElementName(String elementName) throws Exception {
 		boolean result = true;
 		try {
@@ -101,6 +141,12 @@ public class XmlWriterTest {
 		return result;
 	}
 
+	/**
+	 * Call open element after last element closed.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void callOpenElementAfterLastElementClosed() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -117,6 +163,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Call close element after last element closed.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void callCloseElementAfterLastElementClosed() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -133,6 +185,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Close first element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void closeFirstElement() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -143,6 +201,12 @@ public class XmlWriterTest {
 		assertEquals("Element alpha is closed", "<alpha/>", out.toString());
 	}
 
+	/**
+	 * Close element with content.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void closeElementWithContent() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -166,6 +230,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Close element before first element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void closeElementBeforeFirstElement() throws Exception {
 		try {
@@ -176,6 +246,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Content after element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void contentAfterElement() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -210,6 +286,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Content after last element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void contentAfterLastElement() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -226,6 +308,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Write content before first element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void writeContentBeforeFirstElement() throws Exception {
 		try {
@@ -236,6 +324,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Content escaping.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void contentEscaping() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -256,6 +350,12 @@ public class XmlWriterTest {
 
 	}
 
+	/**
+	 * Attribute after last element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void attributeAfterLastElement() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -272,6 +372,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Attribute content before first element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void attributeContentBeforeFirstElement() throws Exception {
 		try {
@@ -282,6 +388,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Invalid attribute name.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void invalidAttributeName() throws Exception {
 		writer.openElement("alpha");
@@ -295,6 +407,15 @@ public class XmlWriterTest {
 		assertFalse("Quote not ok", isValidAttributeName("alph'a77"));
 	}
 
+	/**
+	 * Checks if is valid attribute name.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is valid attribute name
+	 * @throws Exception
+	 *             the exception
+	 */
 	private boolean isValidAttributeName(String name) throws Exception {
 		boolean result = true;
 		try {
@@ -305,6 +426,12 @@ public class XmlWriterTest {
 		return result;
 	}
 
+	/**
+	 * Escape attribute content.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void escapeAttributeContent() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -340,6 +467,12 @@ public class XmlWriterTest {
 
 	}
 
+	/**
+	 * Attribute in content.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void attributeInContent() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -355,6 +488,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Out of range character.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void outOfRangeCharacter() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -367,6 +506,12 @@ public class XmlWriterTest {
 				"<alpha>?", out);
 	}
 
+	/**
+	 * Attribute after element closed.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void attributeAfterElementClosed() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -386,6 +531,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Close document before open.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void closeDocumentBeforeOpen() throws Exception {
 		try {
@@ -396,6 +547,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Close document after root element closed.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void closeDocumentAfterRootElementClosed() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -411,6 +568,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Close simple document.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void closeSimpleDocument() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -425,6 +588,12 @@ public class XmlWriterTest {
 				out.toString());
 	}
 
+	/**
+	 * Close complex document.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void closeComplexDocument() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -462,6 +631,12 @@ public class XmlWriterTest {
 				out.toString());
 	}
 
+	/**
+	 * Write prolog.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void writeProlog() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -469,6 +644,12 @@ public class XmlWriterTest {
 		assertEquals("Prolog written", "<?xml version='1.0'?>", out.toString());
 	}
 
+	/**
+	 * Write after element.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void writeAfterElement() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -482,6 +663,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Write prolog two.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void writePrologTwo() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -495,6 +682,12 @@ public class XmlWriterTest {
 		}
 	}
 
+	/**
+	 * Duplicate attributes.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void duplicateAttributes() throws Exception {
 		assertEquals("XmlWriters should always return themselves", writer,
