@@ -1033,4 +1033,27 @@ public class LicenceAppenderTest {
 		bomInputStream.close();
 	}
 
+	/**
+	 * Test bom input streamskip.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testBOMInputStreamskip() throws IOException {
+		String document = qualify("tmp.apt");
+		FileCreator creator = new FileCreator() {
+			public void createFile(final Writer writer) throws IOException {
+				writer.write("A Simple APT file");
+				writer.write(" This file contains nothing\n");
+				writer.write(" of any importance\n");
+			}
+		};
+		createTestFile(document, creator);
+		InputStream fis = new FileInputStream(new File(document));
+		BOMInputStream bomInputStream = new BOMInputStream(fis);
+		bomInputStream.skip(1);
+		bomInputStream.close();
+	}
+
 }
