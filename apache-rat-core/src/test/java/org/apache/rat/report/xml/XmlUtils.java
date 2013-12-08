@@ -18,21 +18,25 @@
  */
 package org.apache.rat.report.xml;
 
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.lang.reflect.UndeclaredThrowableException;
 
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+/**
+ * The Class XmlUtils.
+ */
 public final class XmlUtils {
 	/**
 	 * Private constructor, to prevent accidental instantiation.
@@ -41,11 +45,29 @@ public final class XmlUtils {
 		// Does nothing
 	}
 
+	/**
+	 * Checks if is well formed xml.
+	 * 
+	 * @param string
+	 *            the string
+	 * @return true, if is well formed xml
+	 * @throws Exception
+	 *             the exception
+	 */
 	public static final boolean isWellFormedXml(final String string)
 			throws Exception {
 		return isWellFormedXml(new InputSource(new StringReader(string)));
 	}
 
+	/**
+	 * New xml reader.
+	 * 
+	 * @return the xML reader
+	 * @throws SAXException
+	 *             the sAX exception
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 */
 	public static final XMLReader newXMLReader() throws SAXException,
 			ParserConfigurationException {
 		final SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -54,6 +76,13 @@ public final class XmlUtils {
 		return spf.newSAXParser().getXMLReader();
 	}
 
+	/**
+	 * Checks if is well formed xml.
+	 * 
+	 * @param isource
+	 *            the isource
+	 * @return true, if is well formed xml
+	 */
 	public static final boolean isWellFormedXml(final InputSource isource) {
 		try {
 			newXMLReader().parse(isource);
@@ -69,11 +98,35 @@ public final class XmlUtils {
 		}
 	}
 
+	/**
+	 * Checks if is well formed xml.
+	 * 
+	 * @param in
+	 *            the in
+	 * @return true, if is well formed xml
+	 * @throws Exception
+	 *             the exception
+	 */
 	public static final boolean isWellFormedXml(final InputStream in)
 			throws Exception {
 		return isWellFormedXml(new InputSource(in));
 	}
 
+	/**
+	 * To dom.
+	 * 
+	 * @param in
+	 *            the in
+	 * @return the document
+	 * @throws SAXException
+	 *             the sAX exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 * @throws FactoryConfigurationError
+	 *             the factory configuration error
+	 */
 	public static final Document toDom(final InputStream in)
 			throws SAXException, IOException, ParserConfigurationException,
 			FactoryConfigurationError {
