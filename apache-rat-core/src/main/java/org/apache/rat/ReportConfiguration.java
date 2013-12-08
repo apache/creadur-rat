@@ -27,14 +27,26 @@ import org.apache.rat.license.ILicenseFamily;
  * and invoke the {@link Report}.
  */
 public class ReportConfiguration {
+
+	/** The header matcher. */
 	private IHeaderMatcher headerMatcher;
+
+	/** The approved license names. */
 	private ILicenseFamily[] approvedLicenseNames;
+
+	/** The adding licenses. */
 	private boolean addingLicenses;
+
+	/** The adding licenses forced. */
 	private boolean addingLicensesForced;
+
+	/** The copyright message. */
 	private String copyrightMessage;
 
 	/**
 	 * Returns the header matcher.
+	 * 
+	 * @return the header matcher
 	 */
 	public IHeaderMatcher getHeaderMatcher() {
 		return headerMatcher;
@@ -42,6 +54,9 @@ public class ReportConfiguration {
 
 	/**
 	 * Sets the header matcher.
+	 * 
+	 * @param headerMatcher
+	 *            the new header matcher
 	 */
 	public void setHeaderMatcher(IHeaderMatcher headerMatcher) {
 		this.headerMatcher = headerMatcher;
@@ -49,6 +64,8 @@ public class ReportConfiguration {
 
 	/**
 	 * Returns the set of approved license names.
+	 * 
+	 * @return the approved license names
 	 */
 	public ILicenseFamily[] getApprovedLicenseNames() {
 		return approvedLicenseNames;
@@ -56,6 +73,9 @@ public class ReportConfiguration {
 
 	/**
 	 * Sets the set of approved license names.
+	 * 
+	 * @param approvedLicenseNames
+	 *            the new approved license names
 	 */
 	public void setApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
 		this.approvedLicenseNames = approvedLicenseNames;
@@ -65,6 +85,7 @@ public class ReportConfiguration {
 	 * If Rat is adding license headers: Returns the optional copyright message.
 	 * This value is ignored, if no license headers are added.
 	 * 
+	 * @return the copyright message
 	 * @see #isAddingLicenses()
 	 */
 	public String getCopyrightMessage() {
@@ -75,6 +96,8 @@ public class ReportConfiguration {
 	 * If Rat is adding license headers: Sets the optional copyright message.
 	 * This value is ignored, if no license headers are added.
 	 * 
+	 * @param copyrightMessage
+	 *            the new copyright message
 	 * @see #setAddingLicenses(boolean)
 	 */
 	public void setCopyrightMessage(String copyrightMessage) {
@@ -85,6 +108,7 @@ public class ReportConfiguration {
 	 * If Rat is adding license headers: Returns, whether adding license headers
 	 * is enforced. This value is ignored, if no license headers are added.
 	 * 
+	 * @return true, if is adding licenses forced
 	 * @see #isAddingLicenses()
 	 */
 	public boolean isAddingLicensesForced() {
@@ -95,6 +119,8 @@ public class ReportConfiguration {
 	 * If Rat is adding license headers: Sets, whether adding license headers is
 	 * enforced. This value is ignored, if no license headers are added.
 	 * 
+	 * @param addingLicensesForced
+	 *            the new adding licenses forced
 	 * @see #isAddingLicenses()
 	 */
 	public void setAddingLicensesForced(boolean addingLicensesForced) {
@@ -104,6 +130,7 @@ public class ReportConfiguration {
 	/**
 	 * Returns, whether Rat should add missing license headers.
 	 * 
+	 * @return true, if is adding licenses
 	 * @see #isAddingLicensesForced()
 	 * @see #getCopyrightMessage()
 	 */
@@ -114,6 +141,8 @@ public class ReportConfiguration {
 	/**
 	 * Returns, whether Rat should add missing license headers.
 	 * 
+	 * @param addingLicenses
+	 *            the new adding licenses
 	 * @see #setAddingLicensesForced(boolean)
 	 * @see #setCopyrightMessage(String)
 	 */
