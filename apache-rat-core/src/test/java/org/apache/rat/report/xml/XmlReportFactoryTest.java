@@ -91,7 +91,7 @@ public class XmlReportFactoryTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void standardReport() throws RatException, IOException {
+	public void testStandardReport() throws RatException, IOException {
 		final String elementsPath = Resources
 				.getResourceDirectory("elements/Source.java");
 		final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
