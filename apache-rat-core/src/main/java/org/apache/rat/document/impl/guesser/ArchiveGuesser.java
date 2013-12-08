@@ -24,37 +24,37 @@ import org.apache.rat.api.Document;
 
 public class ArchiveGuesser {
 
-    private static final String[] ARCHIVE_EXTENSIONS = { "jar", "gz", "zip",
-            "tar", "bz", "bz2", "rar", "war", };
+	private static final String[] ARCHIVE_EXTENSIONS = { "jar", "gz", "zip",
+			"tar", "bz", "bz2", "rar", "war", };
 
-    private final String[] archiveExtensions;
+	private final String[] archiveExtensions;
 
-    public ArchiveGuesser() {
-        this(ARCHIVE_EXTENSIONS);
-    }
+	public ArchiveGuesser() {
+		this(ARCHIVE_EXTENSIONS);
+	}
 
-    public ArchiveGuesser(final String[] archiveExtensions) {
-        super();
-        this.archiveExtensions = archiveExtensions;
-    }
+	public ArchiveGuesser(final String[] archiveExtensions) {
+		super();
+		this.archiveExtensions = archiveExtensions;
+	}
 
-    public boolean matches(final Document subject) {
-        return isArchive(subject.getName());
-    }
+	public boolean matches(final Document subject) {
+		return isArchive(subject.getName());
+	}
 
-    /**
-     * Is a file by that name an archive?
-     */
-    public boolean isArchive(final String name) {
-        if (name == null) {
-            return false;
-        }
-        final String nameToLower = name.toLowerCase(Locale.US);
-        for (final String element : this.archiveExtensions) {
-            if (nameToLower.endsWith("." + element)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * Is a file by that name an archive?
+	 */
+	public boolean isArchive(final String name) {
+		if (name == null) {
+			return false;
+		}
+		final String nameToLower = name.toLowerCase(Locale.US);
+		for (final String element : this.archiveExtensions) {
+			if (nameToLower.endsWith("." + element)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
