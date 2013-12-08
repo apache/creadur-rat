@@ -63,7 +63,7 @@ final class DefaultAnalyser implements IDocumentAnalyser {
 	 * Document)
 	 */
 	public void analyse(final Document subject) throws IOException {
-		final MetaData.Datum documentCategory;
+		MetaData.Datum documentCategory;
 		if (this.noteGuessor.matches(subject)) {
 			documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
 		} else {
