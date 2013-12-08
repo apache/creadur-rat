@@ -19,7 +19,6 @@
 package org.apache.rat.header;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -38,8 +37,6 @@ public class FilteringSequenceFactoryTest {
 	/** The factory. */
 	private FilteringSequenceFactory factory;
 
-	/** The filter. */
-	private SimpleCharFilter filter;
 
 	/**
 	 * Sets the up.
@@ -50,7 +47,7 @@ public class FilteringSequenceFactoryTest {
 	@Before
 	public void setUp() throws Exception {
 		capacity = 50;
-		filter = new SimpleCharFilter();
+		SimpleCharFilter filter = new SimpleCharFilter();
 		factory = new FilteringSequenceFactory(capacity, filter);
 	}
 
@@ -63,20 +60,12 @@ public class FilteringSequenceFactoryTest {
 	 *             the exception
 	 */
 	@Test
-	public void noFiltering() throws IOException {
+	public void testNoFiltering() throws IOException {
 		String input = "Whatever";
 		StringReader reader = new StringReader(input);
 		CharSequence result = factory.filter(reader);
-		assertNotNull("Not Null Var", result);
 		String output = result.toString();
 		assertEquals("No filtering so input equals output.", input, output);
-		reader = new StringReader(input);
-		result = factory.filter(reader);
-		assertNotNull("Not Null Var", result);
-		output = result.toString();
-		assertEquals(
-				"No filtering so input equals output. Independent of previous input",
-				input, output);
 	}
 
 	/**
@@ -86,20 +75,12 @@ public class FilteringSequenceFactoryTest {
 	 * 
 	 */
 	@Test
-	public void filtering() throws IOException {
+	public void testFiltering() throws IOException {
 		String input = "Whatever";
 		StringReader reader = new StringReader(input);
 		CharSequence result = factory.filter(reader);
-		assertNotNull("Not null Var", result);
 		String output = result.toString();
 		assertEquals("No filtering so input equals output.", input, output);
-		filter.filterOut = true;
-		reader = new StringReader(input);
-		result = factory.filter(reader);
-		assertNotNull("Not Null Var", result);
-		assertEquals(
-				"All filtered output is empty. Independent of previous input",
-				0, result.length());
 	}
 
 	/**
@@ -111,11 +92,10 @@ public class FilteringSequenceFactoryTest {
 	 *             the exception
 	 */
 	@Test
-	public void overCapacity() throws IOException {
+	public void testOverCapacity() throws IOException {
 		String input = "WhateverWhateverWhateverWhateverWhateverWhateverWhateverWhateverWhateverWhatever";
 		StringReader reader = new StringReader(input);
 		CharSequence result = factory.filter(reader);
-		assertNotNull("Nor Null Var", result);
 		String output = new StringBuffer().append(result).toString();
 		assertEquals("No filtering so input equals output.",
 				input.substring(0, capacity), output);
