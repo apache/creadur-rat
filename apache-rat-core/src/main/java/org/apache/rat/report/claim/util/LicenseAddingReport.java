@@ -44,7 +44,8 @@ public class LicenseAddingReport extends AbstractReport {
 	 * @param pForced
 	 *            the forced
 	 */
-	public LicenseAddingReport(String pCopyrightMsg, boolean pForced) {
+	public LicenseAddingReport(final String pCopyrightMsg, final boolean pForced) {
+		super();
 		appender = pCopyrightMsg == null ? new ApacheV2LicenceAppender()
 				: new ApacheV2LicenceAppender(pCopyrightMsg);
 		appender.setForce(pForced);
@@ -57,7 +58,7 @@ public class LicenseAddingReport extends AbstractReport {
 	 * org.apache.rat.report.AbstractReport#report(org.apache.rat.api.Document)
 	 */
 	@Override
-	public void report(org.apache.rat.api.Document document)
+	public void report(final org.apache.rat.api.Document document)
 			throws RatException {
 		final MetaData metaData = document.getMetaData();
 		final Datum licenseHeader = metaData
