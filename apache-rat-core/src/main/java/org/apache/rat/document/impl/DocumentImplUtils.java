@@ -46,7 +46,7 @@ public final class DocumentImplUtils {
 	 *            the file
 	 * @return the string
 	 */
-	public final static String toName(final File file) {
+	public static String toName(final File file) {
 		String path = file.getPath();
 		return path.replace('\\', '/');
 	}
@@ -58,7 +58,7 @@ public final class DocumentImplUtils {
 	 *            the stream
 	 * @return true, if is zip stream
 	 */
-	public static final boolean isZipStream(final InputStream stream) {
+	public static boolean isZipStream(final InputStream stream) {
 		ZipInputStream zip = new ZipInputStream(stream);
 		boolean result = true;
 		try {
@@ -80,7 +80,7 @@ public final class DocumentImplUtils {
 	 *            the file
 	 * @return true, if is zip
 	 */
-	public static final boolean isZip(final File file) {
+	public boolean isZip(final File file) {
 		boolean result;
 		try {
 			result = isZipStream(new FileInputStream(file));
