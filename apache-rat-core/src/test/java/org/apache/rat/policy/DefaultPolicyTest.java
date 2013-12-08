@@ -28,6 +28,9 @@ import static org.junit.Assert.assertEquals;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
+import org.apache.rat.license.Apache20LicenseFamily;
+import org.apache.rat.license.ILicenseFamily;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,10 +48,9 @@ public class DefaultPolicyTest {
 	/**
 	 * Sets the up.
 	 *
-	 * @throws Exception the exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		policy = new DefaultPolicy();
 		subject = new MockLocation("subject");
 	}
@@ -56,10 +58,9 @@ public class DefaultPolicyTest {
 	/**
 	 * Test al family.
 	 *
-	 * @throws Exception the exception
 	 */
 	@Test
-	public void testALFamily() throws Exception {
+	public void testALFamily() {
 		subject.getMetaData().set(
 				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, APACHE
 						.getName()));
@@ -72,8 +73,6 @@ public class DefaultPolicyTest {
 	 *
 	 * @param pApproved the approved
 	 */
-	@SuppressWarnings("boxing")
-	// OK in test code
 	private void assertApproval(final boolean pApproved) {
 		assertEquals("Metadata value are equals.", pApproved,
 				MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE
@@ -84,10 +83,9 @@ public class DefaultPolicyTest {
 	/**
 	 * Test oasis family.
 	 *
-	 * @throws Exception the exception
 	 */
 	@Test
-	public void testOASISFamily() throws Exception {
+	public void testOASISFamily() {
 		subject.getMetaData().set(
 				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, OASIS
 						.getName()));
@@ -98,10 +96,9 @@ public class DefaultPolicyTest {
 	/**
 	 * Test w3 c family.
 	 *
-	 * @throws Exception the exception
 	 */
 	@Test
-	public void testW3CFamily() throws Exception {
+	public void testW3CFamily() {
 		subject.getMetaData().set(
 				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, W3C
 						.getName()));
@@ -112,10 +109,9 @@ public class DefaultPolicyTest {
 	/**
 	 * Test w3 c doc family.
 	 *
-	 * @throws Exception the exception
 	 */
 	@Test
-	public void testW3CDocFamily() throws Exception {
+	public void testW3CDocFamily() {
 		subject.getMetaData().set(
 				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME,
 						W3C_DOCUMENTATION.getName()));
@@ -126,10 +122,9 @@ public class DefaultPolicyTest {
 	/**
 	 * Test mit family.
 	 *
-	 * @throws Exception the exception
 	 */
 	@Test
-	public void testMITFamily() throws Exception {
+	public void testMITFamily() {
 		subject.getMetaData().set(
 				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, MIT
 						.getName()));
@@ -140,13 +135,26 @@ public class DefaultPolicyTest {
 	/**
 	 * Test unknown family.
 	 *
-	 * @throws Exception the exception
 	 */
 	@Test
-	public void testUnknownFamily() throws Exception {
+	public void testUnknownFamily() {
 		subject.getMetaData().set(
 				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
 		policy.analyse(subject);
 		assertApproval(false);
+	}
+
+	/**
+	 * Test constructor i license family.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testConstructorILicenseFamily() throws Exception {
+		ILicenseFamily[] approvedLicenses = new ILicenseFamily[1];
+		approvedLicenses[0] = new Apache20LicenseFamily();
+		policy = new DefaultPolicy(approvedLicenses);
+		Assert.assertNotNull(policy);
 	}
 }
