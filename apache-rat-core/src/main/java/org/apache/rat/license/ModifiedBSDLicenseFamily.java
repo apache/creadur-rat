@@ -20,7 +20,14 @@ package org.apache.rat.license;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.DOJO;
 
+/**
+ * The Class ModifiedBSDLicenseFamily.
+ */
 public class ModifiedBSDLicenseFamily extends SimpleLicenseFamily {
+
+	/**
+	 * Instantiates a new modified bsd license family.
+	 */
 	public ModifiedBSDLicenseFamily() {
 		super(DOJO.getName());
 	}
