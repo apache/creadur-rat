@@ -18,20 +18,34 @@
  */
 package org.apache.rat.header;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.StringReader;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.StringReader;
+
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * The Class FilteringSequenceFactoryTest.
+ */
 public class FilteringSequenceFactoryTest {
 
+	/** The capacity. */
 	int capacity;
+
+	/** The factory. */
 	FilteringSequenceFactory factory;
+
+	/** The filter. */
 	SimpleCharFilter filter;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		capacity = 50;
@@ -39,6 +53,12 @@ public class FilteringSequenceFactoryTest {
 		factory = new FilteringSequenceFactory(capacity, filter);
 	}
 
+	/**
+	 * No filtering.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void noFiltering() throws Exception {
 		final String INPUT = "Whatever";
@@ -56,6 +76,12 @@ public class FilteringSequenceFactoryTest {
 				INPUT, output);
 	}
 
+	/**
+	 * Filtering.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void filtering() throws Exception {
 		final String INPUT = "Whatever";
@@ -73,6 +99,12 @@ public class FilteringSequenceFactoryTest {
 				0, result.length());
 	}
 
+	/**
+	 * Over capacity.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void overCapacity() throws Exception {
 		final String INPUT = "WhateverWhateverWhateverWhateverWhateverWhateverWhateverWhateverWhateverWhatever";
