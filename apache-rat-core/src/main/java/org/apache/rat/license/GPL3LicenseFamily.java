@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.license;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.GPL3;
@@ -24,8 +24,8 @@ import static org.apache.rat.api.domain.RatLicenseFamily.GPL3;
  * Base implementation for GPLv3 or later.
  */
 public class GPL3LicenseFamily extends SimpleLicenseFamily {
-    public GPL3LicenseFamily() {
+	public GPL3LicenseFamily() {
 		super(GPL3.getName());
-    }
+	}
 
 }
