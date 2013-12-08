@@ -15,29 +15,29 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.header;
 
 class ArrayCharFilter implements CharFilter {
 
-    private final char[] filtered;
-    private final int length;
-    
-    protected ArrayCharFilter(final char[] filtered) {
-        super();
-        this.filtered = filtered;
-        length = filtered.length;
-    }
+	private final char[] filtered;
+	private final int length;
 
-    public boolean isFilteredOut(char character) {
-        boolean result = false;
-        for(int i=0; i<length ;i++) {
-            if (character == filtered[i]) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
+	protected ArrayCharFilter(final char[] filtered) {
+		super();
+		this.filtered = filtered;
+		length = filtered.length;
+	}
+
+	public boolean isFilteredOut(char character) {
+		boolean result = false;
+		for (int i = 0; i < length; i++) {
+			if (character == filtered[i]) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
 
 }
