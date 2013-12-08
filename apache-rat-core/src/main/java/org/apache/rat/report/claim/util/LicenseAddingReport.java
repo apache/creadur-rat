@@ -28,15 +28,34 @@ import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
 
+/**
+ * The Class LicenseAddingReport.
+ */
 public class LicenseAddingReport extends AbstractReport {
+
+	/** The appender. */
 	private final AbstractLicenceAppender appender;
 
+	/**
+	 * Instantiates a new license adding report.
+	 * 
+	 * @param pCopyrightMsg
+	 *            the copyright msg
+	 * @param pForced
+	 *            the forced
+	 */
 	public LicenseAddingReport(String pCopyrightMsg, boolean pForced) {
 		appender = pCopyrightMsg == null ? new ApacheV2LicenceAppender()
 				: new ApacheV2LicenceAppender(pCopyrightMsg);
 		appender.setForce(pForced);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.report.AbstractReport#report(org.apache.rat.api.Document)
+	 */
 	@Override
 	public void report(org.apache.rat.api.Document document)
 			throws RatException {
