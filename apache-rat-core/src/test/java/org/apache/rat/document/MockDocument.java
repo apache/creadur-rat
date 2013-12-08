@@ -52,7 +52,7 @@ public class MockDocument implements Document {
 	 * @param name
 	 *            the name
 	 */
-	public MockDocument(String name) {
+	public MockDocument(final String name) {
 		this(null, name);
 	}
 
@@ -64,7 +64,7 @@ public class MockDocument implements Document {
 	 * @param name
 	 *            the name
 	 */
-	public MockDocument(Reader reader, String name) {
+	public MockDocument(final Reader reader, final String name) {
 		super();
 		this.reader = reader;
 		this.name = name;
