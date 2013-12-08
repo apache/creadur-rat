@@ -39,6 +39,8 @@ class HeaderCheckWorker {
 	/** The Constant DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES. */
 	public static final int DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES = 50;
 
+	private static final int ZERO = 0;
+
 	/** The number of retained header lines. */
 	private final int numberOfRetainedHeaderLines;
 
@@ -52,13 +54,13 @@ class HeaderCheckWorker {
 	private final Document subject;
 
 	/** The match. */
-	private boolean match = false;
+	private boolean match;
 
 	/** The header lines to read. */
 	private int headerLinesToRead;
 
 	/** The finished. */
-	private boolean finished = false;
+	private boolean finished;
 
 	/**
 	 * Instantiates a new header check worker.
@@ -72,7 +74,8 @@ class HeaderCheckWorker {
 	 * @param name
 	 *            the name
 	 */
-	public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine,
+	public HeaderCheckWorker(final Reader reader,
+			final int numberOfRetainedHeaderLine,
 			final IHeaderMatcher matcher, final Document name) {
 		this(new BufferedReader(reader), numberOfRetainedHeaderLine, matcher,
 				name);
@@ -89,7 +92,7 @@ class HeaderCheckWorker {
 	 * @param name
 	 *            the name of the checked content, possibly null
 	 */
-	public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher,
+	public HeaderCheckWorker(final Reader reader, final IHeaderMatcher matcher,
 			final Document name) {
 		this(new BufferedReader(reader), matcher, name);
 	}
@@ -104,7 +107,7 @@ class HeaderCheckWorker {
 	 * @param name
 	 *            the name
 	 */
-	public HeaderCheckWorker(BufferedReader reader,
+	public HeaderCheckWorker(final BufferedReader reader,
 			final IHeaderMatcher matcher, final Document name) {
 		this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, matcher, name);
 	}
@@ -121,8 +124,8 @@ class HeaderCheckWorker {
 	 * @param name
 	 *            the name
 	 */
-	public HeaderCheckWorker(BufferedReader reader,
-			int numberOfRetainedHeaderLine, final IHeaderMatcher matcher,
+	public HeaderCheckWorker(final BufferedReader reader,
+			final int numberOfRetainedHeaderLine, final IHeaderMatcher matcher,
 			final Document name) {
 		this.reader = reader;
 		this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
@@ -149,8 +152,9 @@ class HeaderCheckWorker {
 		if (!finished) {
 			final StringBuilder headers = new StringBuilder();
 			headerLinesToRead = numberOfRetainedHeaderLines;
-			while (readLine(headers)) {
-				// do nothing
+			boolean goOn = true;
+			while (goOn) {
+				goOn = readLine(headers);
 			}
 			if (!match) {
 				final String notes = headers.toString();
@@ -162,11 +166,7 @@ class HeaderCheckWorker {
 						MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
 				metaData.set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
 			}
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// swallow
-			}
+			reader.close();
 			matcher.reset();
 		}
 		finished = true;
@@ -181,16 +181,16 @@ class HeaderCheckWorker {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	boolean readLine(StringBuilder headers) throws IOException {
+	private boolean readLine(final StringBuilder headers) throws IOException {
 		String line = reader.readLine();
 		boolean result = line != null;
 		if (result) {
-			if (headerLinesToRead-- > 0) {
+			if (headerLinesToRead-- > ZERO) {
 				headers.append(line);
 				headers.append('\n');
 			}
 			match = matcher.match(subject, line);
-			result = !match;
+			result ^= match;
 		}
 		return result;
 	}
