@@ -18,22 +18,37 @@
  */
 package org.apache.rat.header;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * The Class ArrayCharFilterTest.
+ */
 public class ArrayCharFilterTest {
 
+	/** The Constant filtered. */
 	private static final char[] filtered = { 'd', 'o', 'a' };
+
+	/** The filter. */
 	ArrayCharFilter filter;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		filter = new ArrayCharFilter(filtered);
 	}
 
+	/**
+	 * Checks if is filtered out.
+	 */
 	@Test
 	public void isFilteredOut() {
 		assertTrue(filter.isFilteredOut('a'));
