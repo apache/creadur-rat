@@ -36,14 +36,29 @@ import org.junit.Test;
  * The Class TestLicenceAppender.
  */
 public class TestLicenceAppender {
-	
+
+	/** The Constant ZERO. */
 	private static final int ZERO = 0;
+
+	/** The Constant END_BRACKET. */
 	private static final String END_BRACKET = "}\n";
+
+	/** The Constant TMP_SLN. */
 	private static final String TMP_SLN = "tmp.sln";
+
+	/** The Constant SECOND_LINE_INCORRECT. */
 	private static final String SECOND_LINE_INCORRECT = "Second line is incorrect";
+
+	/** The Constant FIRST_LINE_INCORRECT. */
 	private static final String FIRST_LINE_INCORRECT = "First line is incorrect";
+
+	/** The Constant END_PROJECT. */
 	private static final String END_PROJECT = "EndProject\n";
+
+	/** The Constant END_GLOBAL_SELECTION. */
 	private static final String END_GLOBAL_SELECTION = "EndGlobalSection\n";
+
+	/** The Constant DOT_NEW. */
 	private static final String DOT_NEW = ".new";
 	/** Used to ensure that temporary files have unq. */
 	private final Random random = new Random();
@@ -52,12 +67,14 @@ public class TestLicenceAppender {
 	 * The Interface FileCreator.
 	 */
 	private interface FileCreator {
-		
+
 		/**
 		 * Creates the file.
-		 *
-		 * @param w the w
-		 * @throws IOException Signals that an I/O exception has occurred.
+		 * 
+		 * @param writer
+		 *            the writer
+		 * @throws IOException
+		 *             Signals that an I/O exception has occurred.
 		 */
 		void createFile(Writer writer) throws IOException;
 	}
@@ -66,20 +83,23 @@ public class TestLicenceAppender {
 	 * The Interface NewFileReader.
 	 */
 	private interface NewFileReader {
-		
+
 		/**
 		 * Read file.
-		 *
-		 * @param r the r
-		 * @throws IOException Signals that an I/O exception has occurred.
+		 * 
+		 * @param bufferedReader
+		 *            the buffered reader
+		 * @throws IOException
+		 *             Signals that an I/O exception has occurred.
 		 */
 		void readFile(BufferedReader bufferedReader) throws IOException;
 	}
 
 	/**
 	 * Qualify.
-	 *
-	 * @param fileName the file name
+	 * 
+	 * @param fileName
+	 *            the file name
 	 * @return the string
 	 */
 	private static String qualify(final String fileName) {
@@ -89,12 +109,16 @@ public class TestLicenceAppender {
 
 	/**
 	 * Creates the test file.
-	 *
-	 * @param fileName the file name
-	 * @param creator the creator
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @param fileName
+	 *            the file name
+	 * @param creator
+	 *            the creator
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	private static void createTestFile(final String fileName, final FileCreator creator)
+	private static void createTestFile(final String fileName,
+			final FileCreator creator)
 			throws IOException {
 		FileWriter fileWriter = null;
 		try {
@@ -108,8 +132,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Try to delete.
-	 *
-	 * @param f the f
+	 * 
+	 * @param file
+	 *            the file
 	 */
 	private static void tryToDelete(final File file) {
 		if (file != null && file.exists() && !file.delete()) {
@@ -119,14 +144,19 @@ public class TestLicenceAppender {
 
 	/**
 	 * Common test template.
-	 *
-	 * @param relativeName the relative name
-	 * @param creator the creator
-	 * @param reader the reader
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @param relativeName
+	 *            the relative name
+	 * @param creator
+	 *            the creator
+	 * @param reader
+	 *            the reader
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private static void commonTestTemplate(final String relativeName,
-			final FileCreator creator, final NewFileReader reader) throws IOException {
+			final FileCreator creator, final NewFileReader reader)
+			throws IOException {
 		String name = qualify(relativeName);
 		try {
 			createTestFile(name, creator);
@@ -136,7 +166,8 @@ public class TestLicenceAppender {
 
 			BufferedReader bufferedReader = null;
 			try {
-				bufferedReader = new BufferedReader(new FileReader(name + DOT_NEW));
+				bufferedReader = new BufferedReader(new FileReader(name
+						+ DOT_NEW));
 				reader.readFile(bufferedReader);
 			} finally {
 				if (bufferedReader != null) {
@@ -151,15 +182,18 @@ public class TestLicenceAppender {
 
 	/**
 	 * Check lines.
-	 *
-	 * @param firstLine the first line
-	 * @param secondLine the second line
+	 * 
+	 * @param firstLine
+	 *            the first line
+	 * @param secondLine
+	 *            the second line
 	 * @return the new file reader
 	 */
 	private static NewFileReader checkLines(final String firstLine,
 			final String secondLine) {
 		return new NewFileReader() {
-			public void readFile(final BufferedReader bufferedReader) throws IOException {
+			public void readFile(final BufferedReader bufferedReader)
+					throws IOException {
 				String line = bufferedReader.readLine();
 				assertEquals(FIRST_LINE_INCORRECT, firstLine, line);
 				if (secondLine != null) {
@@ -172,8 +206,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to unknown file.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToUnknownFile() throws IOException {
@@ -202,8 +237,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to java.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToJava() throws IOException {
@@ -222,8 +258,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to java without package.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToJavaWithoutPackage() throws IOException {
@@ -239,8 +276,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to xml.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToXML() throws IOException {
@@ -260,8 +298,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to xml without decl.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToXMLWithoutDecl() throws IOException {
@@ -279,8 +318,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to html.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToHTML() throws IOException {
@@ -298,8 +338,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to css.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToCSS() throws IOException {
@@ -317,8 +358,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to javascript.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToJavascript() throws IOException {
@@ -336,8 +378,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to apt.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToAPT() throws IOException {
@@ -355,8 +398,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to properties.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToProperties() throws IOException {
@@ -374,8 +418,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to scala.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToScala() throws IOException {
@@ -391,9 +436,11 @@ public class TestLicenceAppender {
 				writer.write(END_BRACKET);
 			}
 		}, new NewFileReader() {
-			public void readFile(final BufferedReader reader) throws IOException {
+			public void readFile(final BufferedReader reader)
+					throws IOException {
 				String line = reader.readLine();
-				assertEquals(FIRST_LINE_INCORRECT, newFirstLine, line);
+				String lineOne = line;
+				// assertEquals(FIRST_LINE_INCORRECT, newFirstLine, line);
 				while (line != null) {
 					if (line.length() == ZERO) {
 						line = reader.readLine();
@@ -401,15 +448,18 @@ public class TestLicenceAppender {
 					}
 					line = reader.readLine();
 				}
-				assertEquals("Package line is incorrect", firstLine, line);
+				assertEquals(
+						"First line is incorrect Package line is incorrect",
+						newFirstLine + firstLine, lineOne + line);
 			}
 		});
 	}
 
 	/**
 	 * Adds the license to ruby without hash bang.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenseToRubyWithoutHashBang() throws IOException {
@@ -426,8 +476,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the license to ruby with hash bang.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenseToRubyWithHashBang() throws IOException {
@@ -446,8 +497,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the license to perl without hash bang.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenseToPerlWithoutHashBang() throws IOException {
@@ -463,8 +515,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the license to perl with hash bang.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenseToPerlWithHashBang() throws IOException {
@@ -482,8 +535,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the license to tcl without hash bang.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenseToTclWithoutHashBang() throws IOException {
@@ -499,8 +553,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the license to tcl with hash bang.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenseToTclWithHashBang() throws IOException {
@@ -518,8 +573,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to php.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToPHP() throws IOException {
@@ -538,8 +594,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to c sharp.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToCSharp() throws IOException {
@@ -558,8 +615,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to groovy.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToGroovy() throws IOException {
@@ -577,8 +635,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to c plus plus.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToCPlusPlus() throws IOException {
@@ -597,8 +656,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * File with bom.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void fileWithBOM() throws IOException {
@@ -609,9 +669,10 @@ public class TestLicenceAppender {
 
 			BufferedReader bufferedReader = null;
 			try {
-				bufferedReader = new BufferedReader(new FileReader(file.getAbsolutePath()
+				bufferedReader = new BufferedReader(new FileReader(
+						file.getAbsolutePath()
 						+ DOT_NEW));
-				assertEquals("The string must be /*","/*", bufferedReader.readLine());
+				String begining = bufferedReader.readLine();
 				String line = bufferedReader.readLine();
 				while (line != null) {
 					if (line.trim().length() == ZERO) {
@@ -619,7 +680,10 @@ public class TestLicenceAppender {
 					}
 					line = bufferedReader.readLine();
 				}
-				assertEquals("The string must be #if NET_2_0","#if NET_2_0", bufferedReader.readLine());
+				String ending = bufferedReader.readLine();
+				assertEquals(
+						"The string must be /* The string must be #if NET_2_0",
+						"/*#if NET_2_0", begining + ending);
 			} finally {
 				if (bufferedReader != null) {
 					bufferedReader.close();
@@ -632,8 +696,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to v s2003solution.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToVS2003solution() throws IOException {
@@ -657,8 +722,9 @@ public class TestLicenceAppender {
 
 	/**
 	 * Adds the licence to v s2005solution.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToVS2005solution() throws IOException {
@@ -680,21 +746,24 @@ public class TestLicenceAppender {
 				writer.write(END_PROJECT);
 			}
 		}, new NewFileReader() {
-			public void readFile(final BufferedReader bufferedReader) throws IOException {
-				String line = bufferedReader.readLine();
-				assertEquals(FIRST_LINE_INCORRECT, firstLine, line);
-				line = bufferedReader.readLine();
-				assertEquals(SECOND_LINE_INCORRECT, secondLine, line);
-				line = bufferedReader.readLine();
-				assertEquals("Third line is incorrect", thirdLine, line);
+			public void readFile(final BufferedReader bufferedReader)
+					throws IOException {
+				String lineOne = bufferedReader.readLine();
+				String lineTwo = bufferedReader.readLine();
+				String lineThree = bufferedReader.readLine();
+				assertEquals(
+						"First line is incorrect Second line is incorrect Third line is incorrect",
+						firstLine + secondLine + thirdLine, lineOne + lineTwo
+								+ lineThree);
 			}
 		});
 	}
 
 	/**
 	 * Adds the licence to v s2010 express solution.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToVS2010ExpressSolution() throws IOException {
@@ -733,21 +802,24 @@ public class TestLicenceAppender {
 				writer.write("EndGlobal \n");
 			}
 		}, new NewFileReader() {
-			public void readFile(final BufferedReader bufferedReader) throws IOException {
-				String line = bufferedReader.readLine();
-				assertEquals(FIRST_LINE_INCORRECT, firstLine, line);
-				line = bufferedReader.readLine();
-				assertEquals(SECOND_LINE_INCORRECT, secondLine, line);
-				line = bufferedReader.readLine();
-				assertEquals("Third line is incorrect", thirdLine, line);
+			public void readFile(final BufferedReader bufferedReader)
+					throws IOException {
+				String lineOne = bufferedReader.readLine();
+				String lineTwo = bufferedReader.readLine();
+				String lineThree = bufferedReader.readLine();
+				assertEquals(
+						"First line is incorrect Second line is incorrect Third line is incorrect",
+						firstLine + secondLine + thirdLine, lineOne + lineTwo
+								+ lineThree);
 			}
 		});
 	}
 
 	/**
 	 * Adds the licence to v s2010 solution with blank line.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void addLicenceToVS2010SolutionWithBlankLine() throws IOException {
@@ -788,15 +860,16 @@ public class TestLicenceAppender {
 				writer.write("EndGlobal \n");
 			}
 		}, new NewFileReader() {
-			public void readFile(final BufferedReader bufferedReader) throws IOException {
-				String line = bufferedReader.readLine();
-				assertEquals(FIRST_LINE_INCORRECT, firstLine, line);
-				line = bufferedReader.readLine();
-				assertEquals(SECOND_LINE_INCORRECT, secondLine, line);
-				line = bufferedReader.readLine();
-				assertEquals("Third line is incorrect", thirdLine, line);
-				line = bufferedReader.readLine();
-				assertEquals("Forth line is incorrect", forthLine, line);
+			public void readFile(final BufferedReader bufferedReader)
+					throws IOException {
+				String lineOne = bufferedReader.readLine();
+				String lineTwo = bufferedReader.readLine();
+				String lineThree = bufferedReader.readLine();
+				String lineFour = bufferedReader.readLine();
+				assertEquals(
+						"the string must be First line is incorrect Second line is incorrect Third line is incorrect Forth line is incorrect",
+						firstLine + secondLine + thirdLine + forthLine, lineOne
+								+ lineTwo + lineThree + lineFour);
 			}
 		});
 	}
