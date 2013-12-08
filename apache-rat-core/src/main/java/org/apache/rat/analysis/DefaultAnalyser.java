@@ -28,33 +28,32 @@ import java.io.IOException;
 
 final class DefaultAnalyser implements IDocumentAnalyser {
 
-    private final IHeaderMatcher matcher;
-    private final ArchiveGuesser archiveGuesser = new ArchiveGuesser();
-    private final NoteGuesser noteGuessor = new NoteGuesser();
-    private final BinaryGuesser binaryGuessor = new BinaryGuesser();
+	private final IHeaderMatcher matcher;
+	private final ArchiveGuesser archiveGuesser = new ArchiveGuesser();
+	private final NoteGuesser noteGuessor = new NoteGuesser();
+	private final BinaryGuesser binaryGuessor = new BinaryGuesser();
 
-    public DefaultAnalyser(final IHeaderMatcher matcher) {
-        super();
-        this.matcher = matcher;
-    }
+	public DefaultAnalyser(final IHeaderMatcher matcher) {
+		super();
+		this.matcher = matcher;
+	}
 
-    public void analyse(final Document subject) throws IOException{
-        final MetaData.Datum documentCategory;
-        if (this.noteGuessor.matches(subject)) {
-            documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
-        } else {
-            if (this.archiveGuesser.matches(subject)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
-            } else if (this.binaryGuessor.matches(subject)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
-            } else {
-                documentCategory =
-                        MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-                final DocumentHeaderAnalyser headerAnalyser =
-                        new DocumentHeaderAnalyser(this.matcher);
-                headerAnalyser.analyse(subject);
-            }
-        }
-        subject.getMetaData().set(documentCategory);
-    }
+	public void analyse(final Document subject) throws IOException {
+		final MetaData.Datum documentCategory;
+		if (this.noteGuessor.matches(subject)) {
+			documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
+		} else {
+			if (this.archiveGuesser.matches(subject)) {
+				documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
+			} else if (this.binaryGuessor.matches(subject)) {
+				documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
+			} else {
+				documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
+				final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(
+						this.matcher);
+				headerAnalyser.analyse(subject);
+			}
+		}
+		subject.getMetaData().set(documentCategory);
+	}
 }
