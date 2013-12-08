@@ -32,52 +32,50 @@ import org.apache.rat.document.impl.guesser.NoteGuesser;
  */
 final class DefaultAnalyser implements IDocumentAnalyser {
 
-	/** The matcher. */
-	private final IHeaderMatcher matcher;
+    /** The matcher. */
+    private final IHeaderMatcher matcher;
 
-	/** The archive guesser. */
-	private final ArchiveGuesser archiveGuesser = new ArchiveGuesser();
+    /** The archive guesser. */
+    private final ArchiveGuesser archiveGuesser = new ArchiveGuesser();
 
-	/** The note guessor. */
-	private final NoteGuesser noteGuessor = new NoteGuesser();
+    /** The note guessor. */
+    private final NoteGuesser noteGuessor = new NoteGuesser();
 
-	/** The binary guessor. */
-	private final BinaryGuesser binaryGuessor = new BinaryGuesser();
+    /** The binary guessor. */
+    private final BinaryGuesser binaryGuessor = new BinaryGuesser();
 
-	/**
-	 * Instantiates a new default analyser.
-	 * 
-	 * @param matcher
-	 *            the matcher
-	 */
-	public DefaultAnalyser(final IHeaderMatcher matcher) {
-		super();
-		this.matcher = matcher;
-	}
+    /**
+     * Instantiates a new default analyser.
+     *
+     * @param matcher
+     *            the matcher
+     */
+    public DefaultAnalyser(final IHeaderMatcher matcher) {
+        super();
+        this.matcher = matcher;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.rat.document.IDocumentAnalyser#analyse(org.apache.rat.api.
-	 * Document)
-	 */
-	public void analyse(final Document subject) throws IOException {
-		MetaData.Datum documentCategory;
-		if (this.noteGuessor.matches(subject)) {
-			documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
-		} else {
-			if (this.archiveGuesser.matches(subject)) {
-				documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
-			} else if (this.binaryGuessor.matches(subject)) {
-				documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
-			} else {
-				documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-				final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(
-						this.matcher);
-				headerAnalyser.analyse(subject);
-			}
-		}
-		subject.getMetaData().set(documentCategory);
-	}
+    /**
+     *
+     * @see org.apache.rat.document.IDocumentAnalyser#analyse(org.apache.rat.api.
+     *      Document)
+     */
+    public void analyse(final Document subject) throws IOException {
+        MetaData.Datum documentCategory;
+        if (this.noteGuessor.matches(subject)) {
+            documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
+        } else {
+            if (this.archiveGuesser.matches(subject)) {
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
+            } else if (this.binaryGuessor.matches(subject)) {
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
+            } else {
+                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
+                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(
+                        this.matcher);
+                headerAnalyser.analyse(subject);
+            }
+        }
+        subject.getMetaData().set(documentCategory);
+    }
 }
