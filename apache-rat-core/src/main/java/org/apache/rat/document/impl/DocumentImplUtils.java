@@ -35,7 +35,7 @@ public final class DocumentImplUtils {
 	/**
 	 * Instantiates a new document impl utils.
 	 */
-	private DocumentImplUtils() {
+	public DocumentImplUtils() {
 		super();
 	}
 
@@ -80,7 +80,7 @@ public final class DocumentImplUtils {
 	 *            the file
 	 * @return true, if is zip
 	 */
-	public boolean isZip(final File file) {
+	public static boolean isZip(final File file) {
 		boolean result;
 		try {
 			result = isZipStream(new FileInputStream(file));
