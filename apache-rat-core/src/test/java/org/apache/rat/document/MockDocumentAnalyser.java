@@ -18,15 +18,26 @@
  */
 package org.apache.rat.document;
 
-import org.apache.rat.api.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.rat.api.Document;
+
+/**
+ * The Class MockDocumentAnalyser.
+ */
 public class MockDocumentAnalyser implements IDocumentAnalyser {
 
+	/** The matches. */
 	public List<Document> matches = new ArrayList<Document>();
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.document.IDocumentAnalyser#analyse(org.apache.rat.api.
+	 * Document)
+	 */
 	public void analyse(Document document) {
 		matches.add(document);
 	}
