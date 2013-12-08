@@ -26,9 +26,9 @@ import org.apache.rat.document.IDocumentAnalyser;
  */
 public class DefaultAnalyserFactory {
 
-    public static final IDocumentAnalyser createDefaultAnalyser(
-            final IHeaderMatcher matcher) {
+	public static final IDocumentAnalyser createDefaultAnalyser(
+			final IHeaderMatcher matcher) {
 
-        return new DefaultAnalyser(matcher);
-    }
+		return new DefaultAnalyser(matcher);
+	}
 }
