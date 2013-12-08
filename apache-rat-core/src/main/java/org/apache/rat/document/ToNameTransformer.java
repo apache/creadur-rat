@@ -21,14 +21,29 @@ package org.apache.rat.document;
 import org.apache.commons.collections.Transformer;
 import org.apache.rat.api.Document;
 
+/**
+ * The Class ToNameTransformer.
+ */
 public class ToNameTransformer implements Transformer {
 
+	/** The Constant TO_NAME_TRANSFORMER. */
 	private static final Transformer TO_NAME_TRANSFORMER = new ToNameTransformer();
 
+	/**
+	 * To name transformer.
+	 * 
+	 * @return the transformer
+	 */
 	public static final Transformer toNameTransformer() {
 		return TO_NAME_TRANSFORMER;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.commons.collections.Transformer#transform(java.lang.Object)
+	 */
 	public Object transform(Object subject) {
 		Object result = null;
 		if (subject != null && subject instanceof Document) {
