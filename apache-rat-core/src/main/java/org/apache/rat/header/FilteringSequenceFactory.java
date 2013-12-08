@@ -68,7 +68,7 @@ class FilteringSequenceFactory {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public CharSequence filter(Reader reader) throws IOException {
+	public CharSequence filter(final Reader reader) throws IOException {
 		buffer.clear();
 		boolean eof = false;
 		while (!eof) {
