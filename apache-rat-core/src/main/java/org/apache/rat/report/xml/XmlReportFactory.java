@@ -37,23 +37,23 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
  * 
  */
 public class XmlReportFactory {
-    public static final RatReport createStandardReport(final IXmlWriter writer,
-            final ClaimStatistic pStatistic,
-            final ReportConfiguration pConfiguration) {
-        final List<RatReport> reporters = new ArrayList<RatReport>();
-        if (pStatistic != null) {
-            reporters.add(new ClaimAggregator(pStatistic));
-        }
-        if (pConfiguration.isAddingLicenses()) {
-            reporters.add(new LicenseAddingReport(pConfiguration
-                    .getCopyrightMessage(), pConfiguration
-                    .isAddingLicensesForced()));
-        }
-        reporters.add(new SimpleXmlClaimReporter(writer));
-        final DefaultAnalyser analyser =
-                new DefaultAnalyser(pConfiguration.getHeaderMatcher());
-        final DefaultPolicy policy =
-                new DefaultPolicy(pConfiguration.getApprovedLicenseNames());
-        return new Pipeline(analyser, policy, reporters);
-    }
+	public static final RatReport createStandardReport(final IXmlWriter writer,
+			final ClaimStatistic pStatistic,
+			final ReportConfiguration pConfiguration) {
+		final List<RatReport> reporters = new ArrayList<RatReport>();
+		if (pStatistic != null) {
+			reporters.add(new ClaimAggregator(pStatistic));
+		}
+		if (pConfiguration.isAddingLicenses()) {
+			reporters.add(new LicenseAddingReport(pConfiguration
+					.getCopyrightMessage(), pConfiguration
+					.isAddingLicensesForced()));
+		}
+		reporters.add(new SimpleXmlClaimReporter(writer));
+		final DefaultAnalyser analyser = new DefaultAnalyser(
+				pConfiguration.getHeaderMatcher());
+		final DefaultPolicy policy = new DefaultPolicy(
+				pConfiguration.getApprovedLicenseNames());
+		return new Pipeline(analyser, policy, reporters);
+	}
 }
