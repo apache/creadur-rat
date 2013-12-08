@@ -18,6 +18,13 @@
  */ 
 package org.apache.rat.report.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.StringWriter;
+import java.util.regex.Pattern;
+
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.MetaData;
@@ -29,13 +36,6 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.StringWriter;
-import java.util.regex.Pattern;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class XmlReportFactoryTest {
 
@@ -63,7 +63,8 @@ public class XmlReportFactoryTest {
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(mockLicenseMatcher);
-        RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
+		RatReport report = new XmlReportFactory().createStandardReport(writer,
+				statistic, configuration);
         report.startReport();
         report(directory, report);
         report.endReport();

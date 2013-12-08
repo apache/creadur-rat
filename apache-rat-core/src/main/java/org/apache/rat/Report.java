@@ -393,7 +393,7 @@ public class Report {
             ReportConfiguration pConfiguration) throws IOException, RatException {
         IXmlWriter writer = new XmlWriter(out);
         final ClaimStatistic statistic = new ClaimStatistic();
-        RatReport report = XmlReportFactory.createStandardReport(writer, statistic, pConfiguration);
+        RatReport report = new XmlReportFactory().createStandardReport(writer, statistic, pConfiguration);
         report.startReport();
         container.run(report);
         report.endReport();
