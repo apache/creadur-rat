@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -1002,6 +1003,33 @@ public class LicenceAppenderTest {
 		InputStream fis = new FileInputStream(new File(document));
 		BOMInputStream bomInputStream = new BOMInputStream(fis);
 		Assert.assertEquals(65, bomInputStream.read());
+		bomInputStream.close();
+	}
+
+	/**
+	 * Test bom input stream read byte.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testBOMInputStreamReadByte() throws IOException {
+		String document = qualify("tmp.apt");
+		FileCreator creator = new FileCreator() {
+			public void createFile(final Writer writer) throws IOException {
+				writer.write("A Simple APT file");
+				writer.write(" This file contains nothing\n");
+				writer.write(" of any importance\n");
+			}
+		};
+		createTestFile(document, creator);
+		InputStream fis = new FileInputStream(new File(document));
+		BOMInputStream bomInputStream = new BOMInputStream(fis);
+		FileOutputStream fos = new FileOutputStream(document);
+		byte[] buf = new byte[1000];
+		fos.write(buf);
+		fos.close();
+		Assert.assertEquals(1000, bomInputStream.read(buf));
 		bomInputStream.close();
 	}
 }
