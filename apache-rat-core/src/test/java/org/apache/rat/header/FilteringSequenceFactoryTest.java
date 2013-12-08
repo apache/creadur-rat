@@ -100,4 +100,14 @@ public class FilteringSequenceFactoryTest {
 		assertEquals("No filtering so input equals output.",
 				input.substring(0, capacity), output);
 	}
+
+	@Test
+	public void testFilteringContructorOneParameter() throws IOException {
+		String input = "Whatever";
+		factory = new FilteringSequenceFactory(new SimpleCharFilter());
+		StringReader reader = new StringReader(input);
+		CharSequence result = factory.filter(reader);
+		String output = result.toString();
+		assertEquals("No filtering so input equals output.", input, output);
+	}
 }
