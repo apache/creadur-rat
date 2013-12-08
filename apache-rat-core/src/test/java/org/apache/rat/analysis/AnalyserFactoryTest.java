@@ -203,4 +203,23 @@ public class AnalyserFactoryTest {
 				.createDefaultAnalyser(matcherStub);
 		analyser.analyse(document);
 	}
+
+	/**
+	 * Test note guesser file extensions.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws RatException
+	 *             the rat exception
+	 */
+	@Test
+	public void testNoteGuesserFileExtensions() throws IOException,
+			RatException {
+		MonolithicFileDocument document = new MonolithicFileDocument(new File(
+				"src/test/resources/elements/test.LICENSE"));
+		IDocumentAnalyser analyser = DefaultAnalyserFactory
+				.createDefaultAnalyser(matcherStub);
+		analyser.analyse(document);
+		Assert.assertEquals(document.getMetaData().getData().size(), 1);
+	}
 }
