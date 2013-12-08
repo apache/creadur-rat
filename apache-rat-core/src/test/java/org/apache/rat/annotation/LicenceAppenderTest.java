@@ -968,4 +968,15 @@ public class LicenceAppenderTest {
 		Assert.assertEquals("rem" + System.getProperty("line.separator"),
 				appender.getLine(type, ""));
 	}
+
+	/**
+	 * Test get line velocity.
+	 */
+	@Test
+	public void testGetLineVelocity() {
+		ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
+		int type = 13;
+		Assert.assertEquals("##" + System.getProperty("line.separator"),
+				appender.getLine(type, ""));
+	}
 }
