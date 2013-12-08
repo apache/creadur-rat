@@ -25,12 +25,18 @@ import java.util.Map;
  * This class provides a numerical overview about the report.
  */
 public class ClaimStatistic {
+
+	/** The license family name map. */
 	private Map<String, Integer> documentCategoryMap, licenseFamilyCodeMap,
 			licenseFamilyNameMap;
+
+	/** The num unknown. */
 	private int numApproved, numUnApproved, numGenerated, numUnknown;
 
 	/**
 	 * Returns the number of files with approved licenses.
+	 * 
+	 * @return the num approved
 	 */
 	public int getNumApproved() {
 		return numApproved;
@@ -38,6 +44,9 @@ public class ClaimStatistic {
 
 	/**
 	 * Sets the number of files with approved licenses.
+	 * 
+	 * @param pNumApproved
+	 *            the new num approved
 	 */
 	public void setNumApproved(int pNumApproved) {
 		numApproved = pNumApproved;
@@ -47,6 +56,7 @@ public class ClaimStatistic {
 	 * Returns the number of files with unapproved licenses. <em>Note:</em> This
 	 * might include files with unknown licenses.
 	 * 
+	 * @return the num un approved
 	 * @see #getNumUnknown()
 	 */
 	public int getNumUnApproved() {
@@ -57,6 +67,8 @@ public class ClaimStatistic {
 	 * Returns the number of files with unapproved licenses. <em>Note:</em> This
 	 * might include files with unknown licenses.
 	 * 
+	 * @param pNumUnApproved
+	 *            the new num un approved
 	 * @see #setNumUnknown(int)
 	 */
 	public void setNumUnApproved(int pNumUnApproved) {
@@ -65,6 +77,8 @@ public class ClaimStatistic {
 
 	/**
 	 * Returns the number of generated files.
+	 * 
+	 * @return the num generated
 	 */
 	public int getNumGenerated() {
 		return numGenerated;
@@ -72,6 +86,9 @@ public class ClaimStatistic {
 
 	/**
 	 * Returns the number of generated files.
+	 * 
+	 * @param pNumGenerated
+	 *            the new num generated
 	 */
 	public void setNumGenerated(int pNumGenerated) {
 		numGenerated = pNumGenerated;
@@ -80,6 +97,8 @@ public class ClaimStatistic {
 	/**
 	 * Returns the number of files, which are neither generated nor have a known
 	 * license header.
+	 * 
+	 * @return the num unknown
 	 */
 	public int getNumUnknown() {
 		return numUnknown;
@@ -88,6 +107,9 @@ public class ClaimStatistic {
 	/**
 	 * Sets the number of files, which are neither generated nor have a known
 	 * license header.
+	 * 
+	 * @param pNumUnknown
+	 *            the new num unknown
 	 */
 	public void setNumUnknown(int pNumUnknown) {
 		numUnknown = pNumUnknown;
@@ -97,6 +119,9 @@ public class ClaimStatistic {
 	 * Sets a map with the file types. The map keys are file type names and the
 	 * map values are integers with the number of resources matching the file
 	 * type.
+	 * 
+	 * @param pDocumentCategoryMap
+	 *            the document category map
 	 */
 	public void setDocumentCategoryMap(Map<String, Integer> pDocumentCategoryMap) {
 		documentCategoryMap = pDocumentCategoryMap;
@@ -106,6 +131,8 @@ public class ClaimStatistic {
 	 * Returns a map with the file types. The map keys are file type names and
 	 * the map values are integers with the number of resources matching the
 	 * file type.
+	 * 
+	 * @return the document category map
 	 */
 	public Map<String, Integer> getDocumentCategoryMap() {
 		return documentCategoryMap;
@@ -115,6 +142,8 @@ public class ClaimStatistic {
 	 * Returns a map with the license family codes. The map keys are license
 	 * family category names, the map values are integers with the number of
 	 * resources matching the license family code.
+	 * 
+	 * @return the license file code map
 	 */
 	public Map<String, Integer> getLicenseFileCodeMap() {
 		return licenseFamilyCodeMap;
@@ -124,6 +153,9 @@ public class ClaimStatistic {
 	 * Sets a map with the license family codes. The map keys are instances of
 	 * license family category names and the map values are integers with the
 	 * number of resources matching the license family code.
+	 * 
+	 * @param pLicenseFamilyCodeMap
+	 *            the license family code map
 	 */
 	public void setLicenseFileCodeMap(Map<String, Integer> pLicenseFamilyCodeMap) {
 		licenseFamilyCodeMap = pLicenseFamilyCodeMap;
@@ -133,6 +165,8 @@ public class ClaimStatistic {
 	 * Returns a map with the license family codes. The map keys are the names
 	 * of the license families and the map values are integers with the number
 	 * of resources matching the license family name.
+	 * 
+	 * @return the license file name map
 	 */
 	public Map<String, Integer> getLicenseFileNameMap() {
 		return licenseFamilyNameMap;
@@ -142,6 +176,9 @@ public class ClaimStatistic {
 	 * Returns a map with the license family codes. The map keys are the name of
 	 * the license families and the map values are integers with the number of
 	 * resources matching the license family name.
+	 * 
+	 * @param pLicenseFamilyNameMap
+	 *            the license family name map
 	 */
 	public void setLicenseFileNameMap(Map<String, Integer> pLicenseFamilyNameMap) {
 		licenseFamilyNameMap = pLicenseFamilyNameMap;
