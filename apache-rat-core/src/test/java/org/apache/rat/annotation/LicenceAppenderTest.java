@@ -23,9 +23,11 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.util.Random;
 
@@ -978,5 +980,28 @@ public class LicenceAppenderTest {
 		int type = 13;
 		Assert.assertEquals("##" + System.getProperty("line.separator"),
 				appender.getLine(type, ""));
+	}
+
+	/**
+	 * Test bom input stream read.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testBOMInputStreamRead() throws IOException {
+		String document = qualify("tmp.apt");
+		FileCreator creator = new FileCreator() {
+			public void createFile(final Writer writer) throws IOException {
+				writer.write("A Simple APT file");
+				writer.write(" This file contains nothing\n");
+				writer.write(" of any importance\n");
+			}
+		};
+		createTestFile(document, creator);
+		InputStream fis = new FileInputStream(new File(document));
+		BOMInputStream bomInputStream = new BOMInputStream(fis);
+		Assert.assertEquals(65, bomInputStream.read());
+		bomInputStream.close();
 	}
 }
