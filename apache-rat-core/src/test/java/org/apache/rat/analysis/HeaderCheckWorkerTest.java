@@ -15,16 +15,13 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 
 package org.apache.rat.analysis;
 
-import org.apache.rat.analysis.HeaderCheckWorker;
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -33,12 +30,22 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
+import org.apache.rat.api.Document;
+import org.apache.rat.document.MockLocation;
+import org.junit.Test;
 
+/**
+ * The Class HeaderCheckWorkerTest.
+ */
 public class HeaderCheckWorkerTest {
 
+	/**
+	 * Checks if is finished.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
     @Test
     public void isFinished() throws Exception {
         final Document subject = new MockLocation("subject");
