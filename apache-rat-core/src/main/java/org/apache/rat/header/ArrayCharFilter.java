@@ -35,7 +35,7 @@ class ArrayCharFilter implements CharFilter {
 	 * @param filtered
 	 *            the filtered
 	 */
-	protected ArrayCharFilter(final char[] filtered) {
+	protected ArrayCharFilter(final char... filtered) {
 		super();
 		this.filtered = filtered;
 		length = filtered.length;
@@ -46,7 +46,7 @@ class ArrayCharFilter implements CharFilter {
 	 * 
 	 * @see org.apache.rat.header.CharFilter#isFilteredOut(char)
 	 */
-	public boolean isFilteredOut(char character) {
+	public boolean isFilteredOut(final char character) {
 		boolean result = false;
 		for (int i = 0; i < length; i++) {
 			if (character == filtered[i]) {
