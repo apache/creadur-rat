@@ -33,7 +33,7 @@ import org.apache.rat.test.utils.Resources;
 import org.junit.Test;
 
 /**
- * The Class LicenceAppenderTest.
+ * The Class TestLicenceAppender.
  */
 public class LicenceAppenderTest {
 
@@ -211,7 +211,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToUnknownFile() throws IOException {
+	public void testAddLicenceToUnknownFile() throws IOException {
 		String filename = qualify("tmp" + random.nextLong() + ".unknownType");
 		File file = null;
 		File newFile = null;
@@ -242,7 +242,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToJava() throws IOException {
+	public void testAddLicenceToJava() throws IOException {
 		String filename = "tmp.java";
 		final String firstLine = "package foo;";
 		String secondLine = "/*";
@@ -263,7 +263,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToJavaWithoutPackage() throws IOException {
+	public void testAddLicenceToJavaWithoutPackage() throws IOException {
 		String filename = "tmp.java";
 		String commentLine = "/*";
 		commonTestTemplate(filename, new FileCreator() {
@@ -281,7 +281,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToXML() throws IOException {
+	public void testAddLicenceToXML() throws IOException {
 		String filename = "tmp.xml";
 		final String firstLine = "<?xml version='1.0'?>";
 		String secondLine = "<!--";
@@ -303,7 +303,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToXMLWithoutDecl() throws IOException {
+	public void testAddLicenceToXMLWithoutDecl() throws IOException {
 		String filename = "tmp.xml";
 		String firstLine = "<?xml version='1.0'?>";
 		String secondLine = "<!--";
@@ -323,7 +323,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToHTML() throws IOException {
+	public void testAddLicenceToHTML() throws IOException {
 		String filename = "tmp.html";
 		String commentLine = "<!--";
 
@@ -343,7 +343,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToCSS() throws IOException {
+	public void testAddLicenceToCSS() throws IOException {
 		String filename = "tmp.css";
 		String firstLine = "/*";
 
@@ -363,7 +363,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToJavascript() throws IOException {
+	public void testAddLicenceToJavascript() throws IOException {
 		String filename = "tmp.js";
 		String firstLine = "/*";
 
@@ -383,7 +383,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToAPT() throws IOException {
+	public void testAddLicenceToAPT() throws IOException {
 		String filename = "tmp.apt";
 		String firstLine = "~~";
 
@@ -403,7 +403,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToProperties() throws IOException {
+	public void testAddLicenceToProperties() throws IOException {
 		String filename = "tmp.properties";
 		String firstLine = "#";
 
@@ -423,7 +423,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToScala() throws IOException {
+	public void testAddLicenceToScala() throws IOException {
 		String filename = "tmp.scala";
 		final String firstLine = "package foo {";
 		final String newFirstLine = "/*";
@@ -462,7 +462,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenseToRubyWithoutHashBang() throws IOException {
+	public void testAddLicenseToRubyWithoutHashBang() throws IOException {
 		String filename = "tmp.rb";
 		String firstLine = "#";
 
@@ -481,7 +481,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenseToRubyWithHashBang() throws IOException {
+	public void testAddLicenseToRubyWithHashBang() throws IOException {
 		String filename = "tmp.rb";
 		final String firstLine = "#!/usr/bin/env ruby";
 		String secondLine = "#";
@@ -502,7 +502,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenseToPerlWithoutHashBang() throws IOException {
+	public void testAddLicenseToPerlWithoutHashBang() throws IOException {
 		String filename = "tmp.pl";
 		String firstLine = "#";
 
@@ -520,7 +520,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenseToPerlWithHashBang() throws IOException {
+	public void testAddLicenseToPerlWithHashBang() throws IOException {
 		String filename = "tmp.pl";
 		final String firstLine = "#!/usr/bin/env perl";
 		String secondLine = "#";
@@ -540,7 +540,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenseToTclWithoutHashBang() throws IOException {
+	public void testAddLicenseToTclWithoutHashBang() throws IOException {
 		String filename = "tmp.tcl";
 		String firstLine = "#";
 
@@ -558,7 +558,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenseToTclWithHashBang() throws IOException {
+	public void testAddLicenseToTclWithHashBang() throws IOException {
 		String filename = "tmp.tcl";
 		final String firstLine = "#!/usr/bin/env tcl";
 		String secondLine = "#";
@@ -578,7 +578,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToPHP() throws IOException {
+	public void testAddLicenceToPHP() throws IOException {
 		String filename = "tmp.php";
 		final String firstLine = "<?php";
 		String secondLine = "/*";
@@ -599,7 +599,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToCSharp() throws IOException {
+	public void testAddLicenceToCSharp() throws IOException {
 		String filename = "tmp.cs";
 		String firstLine = "/*";
 
@@ -620,7 +620,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToGroovy() throws IOException {
+	public void testAddLicenceToGroovy() throws IOException {
 		String filename = "tmp.groovy";
 		String firstLine = "/*";
 
@@ -640,7 +640,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToCPlusPlus() throws IOException {
+	public void testAddLicenceToCPlusPlus() throws IOException {
 		String filename = "tmp.cpp";
 		String firstLine = "/*";
 
@@ -701,7 +701,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToVS2003solution() throws IOException {
+	public void testAddLicenceToVS2003solution() throws IOException {
 		String filename = TMP_SLN;
 		final String firstLine = "Microsoft Visual Studio Solution File,"
 				+ " Format Version 8.0";
@@ -727,7 +727,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToVS2005solution() throws IOException {
+	public void testAddLicenceToVS2005solution() throws IOException {
 		String filename = TMP_SLN;
 		final String firstLine = "Microsoft Visual Studio Solution File,"
 				+ " Format Version 9.0";
@@ -766,7 +766,7 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToVS2010ExpressSolution() throws IOException {
+	public void testAddLicenceToVS2010ExpressSolution() throws IOException {
 		String filename = TMP_SLN;
 		final String firstLine = "Microsoft Visual Studio Solution File, "
 				+ "Format Version 11.00";
@@ -822,7 +822,8 @@ public class LicenceAppenderTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void addLicenceToVS2010SolutionWithBlankLine() throws IOException {
+	public void testAddLicenceToVS2010SolutionWithBlankLine()
+			throws IOException {
 		String filename = TMP_SLN;
 		final String firstLine = "";
 		final String secondLine = "Microsoft Visual Studio Solution File, "
