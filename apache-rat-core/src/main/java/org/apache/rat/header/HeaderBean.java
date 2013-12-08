@@ -46,7 +46,7 @@ public class HeaderBean {
 	 * @param match
 	 *            the match
 	 */
-	public HeaderBean(Pattern headerPattern, boolean match) {
+	public HeaderBean(final Pattern headerPattern, final boolean match) {
 		super();
 		this.headerPattern = headerPattern;
 		this.match = match;
@@ -67,7 +67,7 @@ public class HeaderBean {
 	 * @param headerPattern
 	 *            <code>Patter</code> or null when no match is to be made
 	 */
-	public void setHeaderPattern(Pattern headerPattern) {
+	public void setHeaderPattern(final Pattern headerPattern) {
 		this.headerPattern = headerPattern;
 	}
 
@@ -86,7 +86,7 @@ public class HeaderBean {
 	 * @param match
 	 *            the new match
 	 */
-	public void setMatch(boolean match) {
+	public void setMatch(final boolean match) {
 		this.match = match;
 	}
 }
