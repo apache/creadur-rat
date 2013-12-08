@@ -43,8 +43,9 @@ public class FileDocumentTest {
 		Assert.assertTrue(fileDocument.isComposite());
 	}
 
+
 	/**
-	 * Test is composite.
+	 * Test non is composite.
 	 * 
 	 * @throws FileNotFoundException
 	 *             the file not found exception
@@ -54,5 +55,21 @@ public class FileDocumentTest {
 		String file = Resources.getResourceDirectory("elements/Source.java");
 		FileDocument fileDocument = new FileDocument(new File(file));
 		Assert.assertFalse(fileDocument.isComposite());
+	}
+
+	/**
+	 * Test to string composite.
+	 * 
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	public void testToStringComposite() throws FileNotFoundException {
+		File file = Resources.getResourceFile("elements/Source.java");
+		FileDocument fileDocument = new FileDocument(file);
+		Assert.assertEquals(
+				"FileDocument ( " + "file = " + fileDocument.getName() + " "
+				+ "name = " + DocumentImplUtils.toName(file) + " "
+				+ "metaData = " + fileDocument.getMetaData() + " " + " )",
+				fileDocument.toString());
 	}
 }
