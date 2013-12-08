@@ -27,12 +27,30 @@ import org.apache.rat.api.RatException;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
 
+/**
+ * The Class Pipeline.
+ */
 public class Pipeline implements RatReport {
 
+	/** The analyser. */
 	private final DefaultAnalyser analyser;
+
+	/** The policy. */
 	private final DefaultPolicy policy;
+
+	/** The reporters. */
 	private final List<? extends RatReport> reporters;
 
+	/**
+	 * Instantiates a new pipeline.
+	 * 
+	 * @param analyser
+	 *            the analyser
+	 * @param policy
+	 *            the policy
+	 * @param reporters
+	 *            the reporters
+	 */
 	public Pipeline(final DefaultAnalyser analyser, final DefaultPolicy policy,
 			final List<? extends RatReport> reporters) {
 		super();
@@ -41,6 +59,11 @@ public class Pipeline implements RatReport {
 		this.reporters = reporters;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.RatReport#report(org.apache.rat.api.Document)
+	 */
 	public void report(final Document document) throws RatException {
 		if (this.analyser != null) {
 			try {
@@ -59,12 +82,22 @@ public class Pipeline implements RatReport {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.RatReport#startReport()
+	 */
 	public void startReport() throws RatException {
 		for (final RatReport report : this.reporters) {
 			report.startReport();
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.RatReport#endReport()
+	 */
 	public void endReport() throws RatException {
 		for (final RatReport report : this.reporters) {
 			report.endReport();
