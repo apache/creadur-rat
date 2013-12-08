@@ -22,28 +22,53 @@ import java.util.Locale;
 
 import org.apache.rat.api.Document;
 
+/**
+ * The Class ArchiveGuesser.
+ */
 public class ArchiveGuesser {
 
+	/** The Constant ARCHIVE_EXTENSIONS. */
 	private static final String[] ARCHIVE_EXTENSIONS = { "jar", "gz", "zip",
 			"tar", "bz", "bz2", "rar", "war", };
 
+	/** The archive extensions. */
 	private final String[] archiveExtensions;
 
+	/**
+	 * Instantiates a new archive guesser.
+	 */
 	public ArchiveGuesser() {
 		this(ARCHIVE_EXTENSIONS);
 	}
 
+	/**
+	 * Instantiates a new archive guesser.
+	 * 
+	 * @param archiveExtensions
+	 *            the archive extensions
+	 */
 	public ArchiveGuesser(final String[] archiveExtensions) {
 		super();
 		this.archiveExtensions = archiveExtensions;
 	}
 
+	/**
+	 * Matches.
+	 * 
+	 * @param subject
+	 *            the subject
+	 * @return true, if successful
+	 */
 	public boolean matches(final Document subject) {
 		return isArchive(subject.getName());
 	}
 
 	/**
-	 * Is a file by that name an archive?
+	 * Is a file by that name an archive?.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is archive
 	 */
 	public boolean isArchive(final String name) {
 		if (name == null) {
