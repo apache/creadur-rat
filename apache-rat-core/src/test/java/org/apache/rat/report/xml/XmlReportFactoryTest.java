@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml;
 
 import static org.junit.Assert.assertEquals;
@@ -39,60 +39,97 @@ import org.junit.Test;
 
 public class XmlReportFactoryTest {
 
-    private static final Pattern IGNORE_EMPTY = Pattern.compile(".svn|Empty.txt");
-    
-    StringWriter out;
-    IXmlWriter writer;
-    
-    @Before
-    public void setUp() throws Exception {
-        out = new StringWriter();
-        writer = new XmlWriter(out);
-        writer.startDocument();
-    }
+	private static final Pattern IGNORE_EMPTY = Pattern
+			.compile(".svn|Empty.txt");
 
-    private void report(DirectoryWalker directory, RatReport report) throws Exception {
-        directory.run(report);
-    }
-    
-    @Test
-    public void standardReport() throws Exception {
-        final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
-        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
-        final ClaimStatistic statistic = new ClaimStatistic();
-        final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(mockLicenseMatcher);
+	StringWriter out;
+	IXmlWriter writer;
+
+	@Before
+	public void setUp() throws Exception {
+		out = new StringWriter();
+		writer = new XmlWriter(out);
+		writer.startDocument();
+	}
+
+	private void report(DirectoryWalker directory, RatReport report)
+			throws Exception {
+		directory.run(report);
+	}
+
+	@Test
+	public void standardReport() throws Exception {
+		final String elementsPath = Resources
+				.getResourceDirectory("elements/Source.java");
+		final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
+		DirectoryWalker directory = new DirectoryWalker(new File(elementsPath),
+				IGNORE_EMPTY);
+		final ClaimStatistic statistic = new ClaimStatistic();
+		final ReportConfiguration configuration = new ReportConfiguration();
+		configuration.setHeaderMatcher(mockLicenseMatcher);
 		RatReport report = new XmlReportFactory().createStandardReport(writer,
 				statistic, configuration);
-        report.startReport();
-        report(directory, report);
-        report.endReport();
-        writer.closeDocument();
-        final String output = out.toString();
-        assertTrue("Preamble and document element are OK",
-                   output.startsWith("<?xml version='1.0'?>" +
-                "<rat-report timestamp="));
-        assertTrue("Part after timestamp attribute is OK",
-                   output.endsWith(">" +
-                "<resource name='" + elementsPath + "/ILoggerFactory.java'><type name='standard'/></resource>" +
-                "<resource name='" + elementsPath + "/Image.png'><type name='binary'/></resource>" +
-                "<resource name='" + elementsPath + "/LICENSE'><type name='notice'/></resource>" +
-                "<resource name='" + elementsPath + "/NOTICE'><type name='notice'/></resource>" +
-                "<resource name='" + elementsPath + "/Source.java'><type name='standard'/>" +
-                "</resource>" +
-                "<resource name='" + elementsPath + "/Text.txt'><type name='standard'/>" +
-                "</resource>" +
-                "<resource name='" + elementsPath + "/Xml.xml'><type name='standard'/>" +
-                "</resource>" +
-                "<resource name='" + elementsPath + "/buildr.rb'><type name='standard'/>" +
-                "</resource>" +
-                "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
-                                   "</rat-report>"));
-        assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
-        assertEquals("Binary files", Integer.valueOf(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
-        assertEquals("Notice files", Integer.valueOf(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
-        assertEquals("Standard files", Integer.valueOf(5), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
-        assertEquals("Archives", Integer.valueOf(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
-    }
+		report.startReport();
+		report(directory, report);
+		report.endReport();
+		writer.closeDocument();
+		final String output = out.toString();
+		assertTrue("Preamble and document element are OK",
+				output.startsWith("<?xml version='1.0'?>"
+						+ "<rat-report timestamp="));
+		assertTrue("Part after timestamp attribute is OK", output.endsWith(">"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/ILoggerFactory.java'><type name='standard'/></resource>"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/Image.png'><type name='binary'/></resource>"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/LICENSE'><type name='notice'/></resource>"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/NOTICE'><type name='notice'/></resource>"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/Source.java'><type name='standard'/>"
+				+ "</resource>"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/Text.txt'><type name='standard'/>"
+				+ "</resource>"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/Xml.xml'><type name='standard'/>"
+				+ "</resource>"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/buildr.rb'><type name='standard'/>"
+				+ "</resource>"
+				+ "<resource name='"
+				+ elementsPath
+				+ "/dummy.jar'><type name='archive'/></resource>"
+				+ "</rat-report>"));
+		assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
+		assertEquals(
+				"Binary files",
+				Integer.valueOf(1),
+				statistic.getDocumentCategoryMap().get(
+						MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
+		assertEquals(
+				"Notice files",
+				Integer.valueOf(2),
+				statistic.getDocumentCategoryMap().get(
+						MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
+		assertEquals(
+				"Standard files",
+				Integer.valueOf(5),
+				statistic.getDocumentCategoryMap().get(
+						MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
+		assertEquals(
+				"Archives",
+				Integer.valueOf(1),
+				statistic.getDocumentCategoryMap().get(
+						MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
+	}
 }
