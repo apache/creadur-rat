@@ -20,8 +20,23 @@ package org.apache.rat.report.xml.writer;
 
 import java.io.IOException;
 
+/**
+ * The Class XmlWriterUtils.
+ */
 public class XmlWriterUtils {
 
+	/**
+	 * Write attribute.
+	 * 
+	 * @param writer
+	 *            the writer
+	 * @param name
+	 *            the name
+	 * @param booleanValue
+	 *            the boolean value
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public static final void writeAttribute(final IXmlWriter writer,
 			final String name, final boolean booleanValue) throws IOException {
 		final String value = Boolean.toString(booleanValue);
