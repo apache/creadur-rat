@@ -1039,8 +1039,8 @@ public class LicenceAppenderTest {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	@Test
-	public void testBOMInputStreamReset() throws IOException {
+	@Test(expected = IOException.class)
+	public void testBOMInputStreamResetException() throws IOException {
 		String document = qualify("tmp.apt");
 		FileCreator creator = new FileCreator() {
 			public void createFile(final Writer writer) throws IOException {
@@ -1052,7 +1052,8 @@ public class LicenceAppenderTest {
 		createTestFile(document, creator);
 		InputStream fis = new FileInputStream(new File(document));
 		BOMInputStream bomInputStream = new BOMInputStream(fis);
-		bomInputStream.mark(10000);
+		// Only supported mark.
+		bomInputStream.reset();
 		bomInputStream.close();
 	}
 
@@ -1064,18 +1065,22 @@ public class LicenceAppenderTest {
 	 */
 	@Test
 	public void testBOMInputStreamMark() throws IOException {
-		String document = qualify("tmp.apt");
+		String document = qualify("tmp.sln");
 		FileCreator creator = new FileCreator() {
 			public void createFile(final Writer writer) throws IOException {
-				writer.write("A Simple APT file");
-				writer.write(" This file contains nothing\n");
-				writer.write(" of any importance\n");
+				writer.write("\n");
+				writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
+				writer.write("	ProjectSection(WebsiteProperties) = preProject\n");
+				writer.write("		Debug.AspNetCompiler.Debug = \"True\"\n");
+				writer.write("		Release.AspNetCompiler.Debug = \"False\"\n");
+				writer.write("	EndProjectSection\n");
+				writer.write(END_PROJECT);
 			}
 		};
 		createTestFile(document, creator);
 		InputStream fis = new FileInputStream(new File(document));
 		BOMInputStream bomInputStream = new BOMInputStream(fis);
-		bomInputStream.mark(10000);
+		// bomInputStream.mark(10000);
 		bomInputStream.close();
 	}
 }
