@@ -26,11 +26,23 @@ import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class XmlWriterUtilsTest.
+ */
 public class XmlWriterUtilsTest {
 
+	/** The out. */
 	StringWriter out;
+
+	/** The writer. */
 	IXmlWriter writer;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		out = new StringWriter();
@@ -38,6 +50,12 @@ public class XmlWriterUtilsTest {
 		writer.openElement("alpha");
 	}
 
+	/**
+	 * Write true.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void writeTrue() throws Exception {
 		new XmlWriterUtils().writeAttribute(writer, "name", true);
@@ -45,6 +63,12 @@ public class XmlWriterUtilsTest {
 				out.toString());
 	}
 
+	/**
+	 * Write false.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void writeFalse() throws Exception {
 		new XmlWriterUtils().writeAttribute(writer, "name", false);
