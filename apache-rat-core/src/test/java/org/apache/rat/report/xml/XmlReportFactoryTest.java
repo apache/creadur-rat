@@ -37,14 +37,27 @@ import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class XmlReportFactoryTest.
+ */
 public class XmlReportFactoryTest {
 
+	/** The Constant IGNORE_EMPTY. */
 	private static final Pattern IGNORE_EMPTY = Pattern
 			.compile(".svn|Empty.txt");
 
+	/** The out. */
 	StringWriter out;
+
+	/** The writer. */
 	IXmlWriter writer;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		out = new StringWriter();
@@ -52,11 +65,27 @@ public class XmlReportFactoryTest {
 		writer.startDocument();
 	}
 
+	/**
+	 * Report.
+	 * 
+	 * @param directory
+	 *            the directory
+	 * @param report
+	 *            the report
+	 * @throws Exception
+	 *             the exception
+	 */
 	private void report(DirectoryWalker directory, RatReport report)
 			throws Exception {
 		directory.run(report);
 	}
 
+	/**
+	 * Standard report.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void standardReport() throws Exception {
 		final String elementsPath = Resources
