@@ -48,7 +48,7 @@ public class ClaimStatistic {
 	 * @param pNumApproved
 	 *            the new num approved
 	 */
-	public void setNumApproved(int pNumApproved) {
+	public void setNumApproved(final int pNumApproved) {
 		numApproved = pNumApproved;
 	}
 
@@ -71,7 +71,7 @@ public class ClaimStatistic {
 	 *            the new num un approved
 	 * @see #setNumUnknown(int)
 	 */
-	public void setNumUnApproved(int pNumUnApproved) {
+	public void setNumUnApproved(final int pNumUnApproved) {
 		numUnApproved = pNumUnApproved;
 	}
 
@@ -90,7 +90,7 @@ public class ClaimStatistic {
 	 * @param pNumGenerated
 	 *            the new num generated
 	 */
-	public void setNumGenerated(int pNumGenerated) {
+	public void setNumGenerated(final int pNumGenerated) {
 		numGenerated = pNumGenerated;
 	}
 
@@ -111,7 +111,7 @@ public class ClaimStatistic {
 	 * @param pNumUnknown
 	 *            the new num unknown
 	 */
-	public void setNumUnknown(int pNumUnknown) {
+	public void setNumUnknown(final int pNumUnknown) {
 		numUnknown = pNumUnknown;
 	}
 
@@ -123,7 +123,7 @@ public class ClaimStatistic {
 	 * @param pDocumentCategoryMap
 	 *            the document category map
 	 */
-	public void setDocumentCategoryMap(Map<String, Integer> pDocumentCategoryMap) {
+	public void setDocumentCategoryMap(final Map<String, Integer> pDocumentCategoryMap) {
 		documentCategoryMap = pDocumentCategoryMap;
 	}
 
@@ -157,7 +157,7 @@ public class ClaimStatistic {
 	 * @param pLicenseFamilyCodeMap
 	 *            the license family code map
 	 */
-	public void setLicenseFileCodeMap(Map<String, Integer> pLicenseFamilyCodeMap) {
+	public void setLicenseFileCodeMap(final Map<String, Integer> pLicenseFamilyCodeMap) {
 		licenseFamilyCodeMap = pLicenseFamilyCodeMap;
 	}
 
@@ -180,7 +180,7 @@ public class ClaimStatistic {
 	 * @param pLicenseFamilyNameMap
 	 *            the license family name map
 	 */
-	public void setLicenseFileNameMap(Map<String, Integer> pLicenseFamilyNameMap) {
+	public void setLicenseFileNameMap(final Map<String, Integer> pLicenseFamilyNameMap) {
 		licenseFamilyNameMap = pLicenseFamilyNameMap;
 	}
 }
