@@ -705,8 +705,7 @@ public abstract class AbstractLicenceAppender {
  */
 class BOMInputStream extends FilterInputStream {
 	private int[] firstBytes;
-	private int fbLength, fbIndex, markFbIndex;
-	private boolean markedAtStart;
+	private int fbLength, fbIndex;
 	private static final int[][] BOMS = { new int[] { 0xEF, 0xBB, 0xBF }, // UTF-8
 			new int[] { 0xFE, 0xFF }, // UTF-16BE
 			new int[] { 0xFF, 0xFE }, // UTF-16LE
@@ -770,27 +769,6 @@ class BOMInputStream extends FilterInputStream {
 					break;
 				}
 			}
-		}
-	}
-
-	@Override
-	public void mark(final int readlimit) {
-		synchronized (this) {
-			markFbIndex = fbIndex;
-			markedAtStart = firstBytes == null;
-			in.mark(readlimit);
-		}
-	}
-
-	@Override
-	public void reset() throws IOException {
-		synchronized (this) {
-			fbIndex = markFbIndex;
-			if (markedAtStart) {
-				firstBytes = null;
-			}
-
-			in.reset();
 		}
 	}
 
