@@ -18,22 +18,38 @@
  */
 package org.apache.rat.header;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
+/**
+ * The Class HeaderMatcherWithBeansTest.
+ */
 public class HeaderMatcherWithBeansTest {
 
+	/** The capacity. */
 	int capacity;
+
+	/** The matcher. */
 	HeaderMatcher matcher;
+
+	/** The filter. */
 	SimpleCharFilter filter;
+
+	/** The beans. */
 	HeaderBean[] beans;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		HeaderBean[] beans = { new HeaderBean(), new HeaderBean(),
@@ -44,6 +60,12 @@ public class HeaderMatcherWithBeansTest {
 		matcher = new HeaderMatcher(filter, 20, beans);
 	}
 
+	/**
+	 * Nulls.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void nulls() throws Exception {
 		beans[0].setMatch(false);
@@ -62,6 +84,12 @@ public class HeaderMatcherWithBeansTest {
 		assertTrue("State preserved", beans[2].isMatch());
 	}
 
+	/**
+	 * Matches.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void matches() throws Exception {
 		beans[0].setHeaderPattern(Pattern.compile("What(.*)"));
