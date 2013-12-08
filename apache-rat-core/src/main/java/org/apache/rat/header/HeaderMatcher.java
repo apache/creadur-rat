@@ -42,15 +42,40 @@ import java.util.regex.Pattern;
  */
 public class HeaderMatcher {
 
+	/** The factory. */
 	private final FilteringSequenceFactory factory;
+
+	/** The headers. */
 	private final HeaderBean[] headers;
+
+	/** The read. */
 	private CharSequence read;
+
+	/** The lines. */
 	private int lines;
 
+	/**
+	 * Instantiates a new header matcher.
+	 * 
+	 * @param filter
+	 *            the filter
+	 * @param capacity
+	 *            the capacity
+	 */
 	public HeaderMatcher(final CharFilter filter, final int capacity) {
 		this(filter, capacity, null);
 	}
 
+	/**
+	 * Instantiates a new header matcher.
+	 * 
+	 * @param filter
+	 *            the filter
+	 * @param capacity
+	 *            the capacity
+	 * @param headers
+	 *            the headers
+	 */
 	public HeaderMatcher(final CharFilter filter, final int capacity,
 			final HeaderBean[] headers) {
 		factory = new FilteringSequenceFactory(capacity, filter);
@@ -58,6 +83,14 @@ public class HeaderMatcher {
 		this.headers = headers;
 	}
 
+	/**
+	 * Read.
+	 * 
+	 * @param reader
+	 *            the reader
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public void read(Reader reader) throws IOException {
 		final LineNumberReader lineNumberReader = new LineNumberReader(reader);
 		read = factory.filter(lineNumberReader);
