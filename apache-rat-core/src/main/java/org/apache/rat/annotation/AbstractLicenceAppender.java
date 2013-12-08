@@ -28,8 +28,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Add a licence header to a document. This appender does not check for the
@@ -154,7 +154,10 @@ public abstract class AbstractLicenceAppender {
 	private static final int[] EXPECTS_MSVSSF_HEADER = new int[] { TYPE_VISUAL_STUDIO_SOLUTION, };
 
 	/** The Constant EXT2TYPE. */
-	private static final Map<String, Integer> EXT2TYPE = new HashMap<String, Integer>();
+	private static final Map<String, Integer> EXT2TYPE = new ConcurrentHashMap<String, Integer>();
+
+	/** The is forced. */
+	private boolean isForced;
 
 	static {
 		// these arrays are used in Arrays.binarySearch so they must
@@ -221,9 +224,6 @@ public abstract class AbstractLicenceAppender {
 		EXT2TYPE.put("xsl", Integer.valueOf(TYPE_XML));
 	}
 
-	/** The is forced. */
-	private boolean isForced;
-
 	/**
 	 * Instantiates a new abstract licence appender.
 	 */
@@ -239,7 +239,7 @@ public abstract class AbstractLicenceAppender {
 	 * @throws IOException
 	 *             if there is a problem either reading or writing the file
 	 */
-	public void append(File document) throws IOException {
+	public void append(final File document) throws IOException {
 		int type = getType(document);
 		if (type == TYPE_UNKNOWN) {
 			return;
@@ -280,8 +280,8 @@ public abstract class AbstractLicenceAppender {
 			document.delete();
 			boolean renamed = newDocument.renameTo(document.getAbsoluteFile());
 			if (!renamed) {
-				System.err
-						.println("Failed to rename new file, original file remains unchanged.");
+				throw new IOException(
+						"Failed to rename new file, original file remains unchanged.");
 			}
 		}
 	}
@@ -310,16 +310,17 @@ public abstract class AbstractLicenceAppender {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private boolean attachLicense(Writer writer, File document,
-			boolean expectsHashPling, boolean expectsAtEcho,
-			boolean expectsPackage, boolean expectsXMLDecl,
-			boolean expectsPhpPI, boolean expectsMSVSSF) throws IOException {
+	private boolean attachLicense(final Writer writer, final File document,
+			final boolean expectsHashPling, final boolean expectsAtEcho,
+			final boolean expectsPackage, final boolean expectsXMLDecl,
+			final boolean expectsPhpPI, final boolean expectsMSVSSF)
+			throws IOException {
 		boolean written = false;
 		try {
 			FileInputStream fis = new FileInputStream(document);
-			BufferedReader br = null;
+			BufferedReader bufferedReader = null;
 			try {
-				br = new BufferedReader(new InputStreamReader(
+				bufferedReader = new BufferedReader(new InputStreamReader(
 						new BOMInputStream(fis)));
 
 				if (!expectsHashPling && !expectsAtEcho && !expectsPackage
@@ -331,7 +332,7 @@ public abstract class AbstractLicenceAppender {
 
 				String line;
 				boolean first = true;
-				while ((line = br.readLine()) != null) {
+				while ((line = bufferedReader.readLine()) != null) {
 					if (first && expectsHashPling) {
 						written = true;
 						doFirstLine(document, writer, line, "#!");
@@ -341,11 +342,13 @@ public abstract class AbstractLicenceAppender {
 					} else if (first && expectsMSVSSF) {
 						written = true;
 						if ("".equals(line)) {
-							line = passThroughReadNext(writer, line, br);
+							line = passThroughReadNext(writer, line,
+									bufferedReader);
 						}
 						if (line.startsWith("Microsoft Visual Studio Solution"
 								+ " File")) {
-							line = passThroughReadNext(writer, line, br);
+							line = passThroughReadNext(writer, line,
+									bufferedReader);
 						}
 						doFirstLine(document, writer, line, "# Visual ");
 					} else {
@@ -369,8 +372,8 @@ public abstract class AbstractLicenceAppender {
 					first = false;
 				}
 			} finally {
-				if (br != null) {
-					br.close();
+				if (bufferedReader != null) {
+					bufferedReader.close();
 				}
 				fis.close();
 			}
@@ -394,8 +397,8 @@ public abstract class AbstractLicenceAppender {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private void doFirstLine(File document, Writer writer, String line,
-			String lookfor) throws IOException {
+	private void doFirstLine(final File document, final Writer writer,
+			final String line, final String lookfor) throws IOException {
 		if (line.startsWith(lookfor)) {
 			writer.write(line);
 			writer.write(LINE_SEP);
@@ -416,17 +419,18 @@ public abstract class AbstractLicenceAppender {
 	 * @TODO use existing mechanism to detect the type of a file and record it
 	 *       in the report output, thus we will not need this duplication here.
 	 */
-	protected int getType(File document) {
+	protected int getType(final File document) {
+		int result = TYPE_UNKNOWN;
 		String path = document.getPath();
-		int lastDot = path.lastIndexOf(".");
+		int lastDot = path.lastIndexOf('.');
 		if (lastDot >= 0 && lastDot < path.length() - 1) {
 			String ext = path.substring(lastDot + 1);
 			Integer type = EXT2TYPE.get(ext);
 			if (type != null) {
-				return type.intValue();
+				result = type.intValue();
 			}
 		}
-		return TYPE_UNKNOWN;
+		return result;
 	}
 
 	/**
@@ -437,8 +441,8 @@ public abstract class AbstractLicenceAppender {
 	 * @param b
 	 *            the new force
 	 */
-	public void setForce(boolean b) {
-		isForced = b;
+	public void setForce(final boolean forced) {
+		isForced = forced;
 	}
 
 	/**
@@ -458,19 +462,20 @@ public abstract class AbstractLicenceAppender {
 	 *            the type of file, see the TYPE_* constants
 	 * @return not null
 	 */
-	protected String getFirstLine(int type) {
+	protected String getFirstLine(final int type) {
+		String result = "";
 		if (isFamilyC(type)) {
-			return "/*" + LINE_SEP;
+			result = "/*" + LINE_SEP;
 		} else if (isFamilySGML(type)) {
-			return "<!--" + LINE_SEP;
+			result = "<!--" + LINE_SEP;
 		} else if (isFamilyAPT(type)) {
-			return "~~" + LINE_SEP;
+			result = "~~" + LINE_SEP;
 		} else if (isFamilySH(type)) {
-			return "#" + LINE_SEP;
+			result = "#" + LINE_SEP;
 		} else if (isFamilyBAT(type)) {
-			return "rem" + LINE_SEP;
+			result = "rem" + LINE_SEP;
 		}
-		return "";
+		return result;
 	}
 
 	/**
@@ -481,19 +486,20 @@ public abstract class AbstractLicenceAppender {
 	 *            the type of file, see the TYPE_* constants
 	 * @return not null
 	 */
-	protected String getLastLine(int type) {
+	protected String getLastLine(final int type) {
+		String result = "";
 		if (isFamilyC(type)) {
-			return "*/" + LINE_SEP;
+			result = "*/" + LINE_SEP;
 		} else if (isFamilySGML(type)) {
-			return "-->" + LINE_SEP;
+			result = "-->" + LINE_SEP;
 		} else if (isFamilyAPT(type)) {
-			return "~~" + LINE_SEP;
+			result = "~~" + LINE_SEP;
 		} else if (isFamilySH(type)) {
-			return "#" + LINE_SEP;
+			result = "#" + LINE_SEP;
 		} else if (isFamilyBAT(type)) {
-			return "rem" + LINE_SEP;
+			result = "rem" + LINE_SEP;
 		}
-		return "";
+		return result;
 	}
 
 	/**
@@ -505,24 +511,25 @@ public abstract class AbstractLicenceAppender {
 	 *            the content for this line
 	 * @return not null
 	 */
-	protected String getLine(int type, String content) {
+	protected String getLine(final int type, String content) {
+		String result = "";
 		if (content != null && content.length() > 0) {
 			content = " " + content;
 		}
 		if (isFamilyC(type)) {
-			return " *" + content + LINE_SEP;
+			result = " *" + content + LINE_SEP;
 		} else if (isFamilySGML(type)) {
-			return content + LINE_SEP;
+			result = content + LINE_SEP;
 		} else if (isFamilyAPT(type)) {
-			return "~~" + content + LINE_SEP;
+			result = "~~" + content + LINE_SEP;
 		} else if (isFamilySH(type)) {
-			return "#" + content + LINE_SEP;
+			result = "#" + content + LINE_SEP;
 		} else if (isFamilyBAT(type)) {
-			return "rem" + content + LINE_SEP;
+			result = "rem" + content + LINE_SEP;
 		} else if (isFamilyVelocity(type)) {
-			return "##" + content + LINE_SEP;
+			result = "##" + content + LINE_SEP;
 		}
-		return "";
+		return result;
 	}
 
 	/**
@@ -532,7 +539,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if is family c
 	 */
-	private static boolean isFamilyC(int type) {
+	private static boolean isFamilyC(final int type) {
 		return isIn(FAMILY_C, type);
 	}
 
@@ -543,7 +550,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if is family sgml
 	 */
-	private static boolean isFamilySGML(int type) {
+	private static boolean isFamilySGML(final int type) {
 		return isIn(FAMILY_SGML, type);
 	}
 
@@ -554,7 +561,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if is family sh
 	 */
-	private static boolean isFamilySH(int type) {
+	private static boolean isFamilySH(final int type) {
 		return isIn(FAMILY_SH, type);
 	}
 
@@ -565,7 +572,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if is family apt
 	 */
-	private static boolean isFamilyAPT(int type) {
+	private static boolean isFamilyAPT(final int type) {
 		return isIn(FAMILY_APT, type);
 	}
 
@@ -576,7 +583,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if is family bat
 	 */
-	private static boolean isFamilyBAT(int type) {
+	private static boolean isFamilyBAT(final int type) {
 		return isIn(FAMILY_BAT, type);
 	}
 
@@ -587,7 +594,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if is family velocity
 	 */
-	private static boolean isFamilyVelocity(int type) {
+	private static boolean isFamilyVelocity(final int type) {
 		return isIn(FAMILY_VELOCITY, type);
 	}
 
@@ -598,7 +605,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if successful
 	 */
-	private static boolean expectsHashPling(int type) {
+	private static boolean expectsHashPling(final int type) {
 		return isIn(EXPECTS_HASH_PLING, type);
 	}
 
@@ -609,7 +616,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if successful
 	 */
-	private static boolean expectsAtEcho(int type) {
+	private static boolean expectsAtEcho(final int type) {
 		return isIn(EXPECTS_AT_ECHO, type);
 	}
 
@@ -620,7 +627,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if successful
 	 */
-	private static boolean expectsPackage(int type) {
+	private static boolean expectsPackage(final int type) {
 		return isIn(EXPECTS_PACKAGE, type);
 	}
 
@@ -631,7 +638,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if successful
 	 */
-	private static boolean expectsXMLDecl(int type) {
+	private static boolean expectsXMLDecl(final int type) {
 		return isIn(EXPECTS_XML_DECL, type);
 	}
 
@@ -642,7 +649,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if successful
 	 */
-	private static boolean expectsPhpPI(int type) {
+	private static boolean expectsPhpPI(final int type) {
 		return isIn(EXPECTS_PHP_PI, type);
 	}
 
@@ -653,7 +660,8 @@ public abstract class AbstractLicenceAppender {
 	 *            the type
 	 * @return true, if successful
 	 */
-	private static boolean expectsMSVisualStudioSolutionFileHeader(int type) {
+	private static boolean expectsMSVisualStudioSolutionFileHeader(
+			final int type) {
 		return isIn(EXPECTS_MSVSSF_HEADER, type);
 	}
 
@@ -666,7 +674,7 @@ public abstract class AbstractLicenceAppender {
 	 *            the key
 	 * @return true, if is in
 	 */
-	private static boolean isIn(int[] arr, int key) {
+	private static boolean isIn(final int[] arr, final int key) {
 		return Arrays.binarySearch(arr, key) >= 0;
 	}
 
@@ -683,12 +691,12 @@ public abstract class AbstractLicenceAppender {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private String passThroughReadNext(Writer writer, String line,
-			BufferedReader br) throws IOException {
+	private String passThroughReadNext(final Writer writer, final String line,
+			final BufferedReader bufferedReader) throws IOException {
 		writer.write(line);
 		writer.write(LINE_SEP);
-		String l = br.readLine();
-		return l == null ? "" : l;
+		String readLine = bufferedReader.readLine();
+		return readLine == null ? "" : readLine;
 	}
 }
 
@@ -703,55 +711,56 @@ class BOMInputStream extends FilterInputStream {
 			new int[] { 0xFE, 0xFF }, // UTF-16BE
 			new int[] { 0xFF, 0xFE }, // UTF-16LE
 	};
+	private static final int ZERO = 0;
 
-	BOMInputStream(InputStream s) {
-		super(s);
+	BOMInputStream(final InputStream inputStream) {
+		super(inputStream);
 	}
 
 	@Override
 	public int read() throws IOException {
-		int b = readFirstBytes();
-		return (b >= 0) ? b : in.read();
+		int value = readFirstBytes();
+		return value >= 0 ? value : in.read();
 	}
 
 	@Override
 	public int read(byte[] buf, int off, int len) throws IOException {
 		int firstCount = 0;
-		int b = 0;
-		while ((len > 0) && (b >= 0)) {
-			b = readFirstBytes();
-			if (b >= 0) {
-				buf[off++] = (byte) (b & 0xFF);
+		int value = 0;
+		while (len > 0 && value >= 0) {
+			value = readFirstBytes();
+			if (value >= ZERO) {
+				buf[off++] = (byte) (value & 0xFF);
 				len--;
 				firstCount++;
 			}
 		}
 		int secondCount = in.read(buf, off, len);
-		return (secondCount < 0) ? (firstCount > 0 ? firstCount : -1)
+		return secondCount < 0 ? firstCount > 0 ? firstCount : -1
 				: firstCount + secondCount;
 	}
 
 	@Override
-	public int read(byte[] buf) throws IOException {
+	public int read(final byte[] buf) throws IOException {
 		return read(buf, 0, buf.length);
 	}
 
 	private int readFirstBytes() throws IOException {
 		getBOM();
-		return (fbIndex < fbLength) ? firstBytes[fbIndex++] : -1;
+		return fbIndex < fbLength ? firstBytes[fbIndex++] : -1;
 	}
 
 	private void getBOM() throws IOException {
 		if (firstBytes == null) {
 			int max = 0;
-			for (int[] BOM : BOMS) {
-				max = Math.max(max, BOM.length);
+			for (int[] bom : BOMS) {
+				max = Math.max(max, bom.length);
 			}
 			firstBytes = new int[max];
 			for (int i = 0; i < firstBytes.length; i++) {
 				firstBytes[i] = in.read();
 				fbLength++;
-				if (firstBytes[i] < 0) {
+				if (firstBytes[i] < ZERO) {
 					break;
 				}
 
@@ -765,49 +774,58 @@ class BOMInputStream extends FilterInputStream {
 	}
 
 	@Override
-	public synchronized void mark(int readlimit) {
-		markFbIndex = fbIndex;
-		markedAtStart = (firstBytes == null);
-		in.mark(readlimit);
+	public void mark(final int readlimit) {
+		synchronized (this) {
+			markFbIndex = fbIndex;
+			markedAtStart = firstBytes == null;
+			in.mark(readlimit);
+		}
 	}
 
 	@Override
-	public synchronized void reset() throws IOException {
-		fbIndex = markFbIndex;
-		if (markedAtStart) {
-			firstBytes = null;
-		}
+	public void reset() throws IOException {
+		synchronized (this) {
+			fbIndex = markFbIndex;
+			if (markedAtStart) {
+				firstBytes = null;
+			}
 
-		in.reset();
+			in.reset();
+		}
 	}
 
 	@Override
-	public long skip(long n) throws IOException {
-		while ((n > 0) && (readFirstBytes() >= 0)) {
-			n--;
+	public long skip(long value) throws IOException {
+		while (value > 0 && readFirstBytes() >= 0) {
+			value--;
 		}
-		return in.skip(n);
+		return in.skip(value);
 	}
 
 	private boolean find() {
-		for (int[] BOM : BOMS) {
-			if (matches(BOM)) {
-				return true;
+		boolean result = false;
+		for (int[] bom : BOMS) {
+			if (matches(bom)) {
+				result = true;
+				break;
 			}
 		}
-		return false;
+		return result;
 	}
 
-	private boolean matches(int[] bom) {
-		if (bom.length != fbLength) {
-			return false;
-		}
-		for (int i = 0; i < bom.length; i++) {
-			if (bom[i] != firstBytes[i]) {
-				return false;
+	private boolean matches(final int... bom) {
+		boolean result = true;
+		if (bom.length == fbLength) {
+			for (int i = 0; i < bom.length; i++) {
+				if (bom[i] != firstBytes[i]) {
+					result = false;
+					break;
+				}
 			}
+		} else {
+			result = false;
 		}
-		return true;
+		return result;
 	}
 
 }
