@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
 import org.junit.Test;
@@ -27,19 +27,19 @@ import org.apache.rat.api.Document;
 
 public class ToNameTransformerTest {
 
-    ToNameTransformer transformer = new ToNameTransformer();
-    
-    @Test
-    public void transformLocation() {
-        Document location = new MockLocation();
-        Object result = transformer.transform(location);
-        assertNotNull("Transform into name", result);
-        assertEquals("Transform into name", location.getName(), result);
-    }
+	ToNameTransformer transformer = new ToNameTransformer();
 
-    @Test
-    public void transformNull() {
-        Object result = transformer.transform(null);
-        assertNull("Null transforms to null", result);
-    }
+	@Test
+	public void transformLocation() {
+		Document location = new MockLocation();
+		Object result = transformer.transform(location);
+		assertNotNull("Transform into name", result);
+		assertEquals("Transform into name", location.getName(), result);
+	}
+
+	@Test
+	public void transformNull() {
+		Object result = transformer.transform(null);
+		assertNull("Null transforms to null", result);
+	}
 }
