@@ -18,26 +18,50 @@
  */
 package org.apache.rat.analysis;
 
+import java.io.IOException;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
-import java.io.IOException;
 
+/**
+ * The Class DefaultAnalyser.
+ */
 final class DefaultAnalyser implements IDocumentAnalyser {
 
+	/** The matcher. */
 	private final IHeaderMatcher matcher;
+
+	/** The archive guesser. */
 	private final ArchiveGuesser archiveGuesser = new ArchiveGuesser();
+
+	/** The note guessor. */
 	private final NoteGuesser noteGuessor = new NoteGuesser();
+
+	/** The binary guessor. */
 	private final BinaryGuesser binaryGuessor = new BinaryGuesser();
 
+	/**
+	 * Instantiates a new default analyser.
+	 * 
+	 * @param matcher
+	 *            the matcher
+	 */
 	public DefaultAnalyser(final IHeaderMatcher matcher) {
 		super();
 		this.matcher = matcher;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.document.IDocumentAnalyser#analyse(org.apache.rat.api.
+	 * Document)
+	 */
 	public void analyse(final Document subject) throws IOException {
 		final MetaData.Datum documentCategory;
 		if (this.noteGuessor.matches(subject)) {
