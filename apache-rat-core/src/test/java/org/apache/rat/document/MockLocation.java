@@ -24,6 +24,7 @@ import java.io.Reader;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+
 /**
  *
  */
