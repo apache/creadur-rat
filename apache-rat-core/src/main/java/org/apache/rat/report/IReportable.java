@@ -20,8 +20,6 @@ package org.apache.rat.report;
 
 import java.io.IOException;
 
-import org.apache.rat.api.RatException;
-
 /**
  * The Interface IReportable.
  */

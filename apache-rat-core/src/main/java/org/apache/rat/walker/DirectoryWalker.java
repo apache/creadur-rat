@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;

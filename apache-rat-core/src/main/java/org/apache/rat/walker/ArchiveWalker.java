@@ -32,7 +32,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.ArchiveEntryDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;

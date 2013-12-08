@@ -21,7 +21,6 @@ package org.apache.rat.report;
 import java.io.IOException;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
 
 /**
  * Abstract base class for deriving implementations of {@link RatReport}.
@@ -33,7 +32,7 @@ public abstract class AbstractReport implements RatReport {
 	 * 
 	 * @see org.apache.rat.report.RatReport#startReport()
 	 */
-	public void startReport() throws RatException {
+	public void startReport() throws IOException {
 		// Does nothing
 	}
 
@@ -49,7 +48,7 @@ public abstract class AbstractReport implements RatReport {
 	 * 
 	 * @see org.apache.rat.report.RatReport#endReport()
 	 */
-	public void endReport() throws RatException {
+	public void endReport() throws IOException {
 		// Does nothing
 	}
 }

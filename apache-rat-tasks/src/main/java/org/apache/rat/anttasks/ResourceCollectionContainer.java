@@ -27,7 +27,6 @@ import java.util.Iterator;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -46,7 +45,7 @@ class ResourceCollectionContainer implements IReportable {
         this.rc = rc;
     }
 
-    public void run(RatReport report) throws RatException {
+    public void run(RatReport report) throws IOException {
         ResourceDocument document = new ResourceDocument();
         for (Iterator<?> iter = rc.iterator(); iter.hasNext(); ) {
             Resource r = (Resource) iter.next();
@@ -89,7 +88,7 @@ class ResourceCollectionContainer implements IReportable {
             if (resource instanceof FileResource) {
                 final FileResource fileResource = (FileResource) resource;
                 final File file = fileResource.getFile();
-                return DocumentImplUtils.isZip(file);
+                return new DocumentImplUtils().isZip(file);
             }
             return false;
         }

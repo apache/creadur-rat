@@ -19,11 +19,11 @@
 
 package org.apache.rat.report.claim.impl;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 /**
@@ -157,7 +157,7 @@ public class ClaimAggregator extends AbstractClaimReporter {
 	 * @see org.apache.rat.report.AbstractReport#endReport()
 	 */
 	@Override
-	public void endReport() throws RatException {
+	public void endReport() throws IOException {
 		super.endReport();
 		fillClaimStatistic(statistic);
 	}

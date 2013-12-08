@@ -30,7 +30,6 @@ import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
-import org.apache.rat.api.RatException;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.claim.ClaimStatistic;
@@ -475,10 +474,6 @@ public abstract class AbstractRatMojo extends AbstractMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( InterruptedException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( RatException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }

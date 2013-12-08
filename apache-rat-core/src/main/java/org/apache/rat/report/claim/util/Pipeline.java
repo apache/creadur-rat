@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.rat.analysis.DefaultAnalyser;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
 
@@ -83,7 +82,7 @@ public class Pipeline implements RatReport {
 	 * 
 	 * @see org.apache.rat.report.RatReport#startReport()
 	 */
-	public void startReport() throws RatException {
+	public void startReport() throws IOException {
 		for (RatReport report : this.reporters) {
 			report.startReport();
 		}
@@ -94,7 +93,7 @@ public class Pipeline implements RatReport {
 	 * 
 	 * @see org.apache.rat.report.RatReport#endReport()
 	 */
-	public void endReport() throws RatException {
+	public void endReport() throws IOException {
 		for (RatReport report : this.reporters) {
 			report.endReport();
 		}

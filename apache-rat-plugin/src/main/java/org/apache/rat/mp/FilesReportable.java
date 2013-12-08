@@ -21,7 +21,6 @@ package org.apache.rat.mp;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -59,7 +58,7 @@ class FilesReportable implements IReportable
         this.files = files;
     }
 
-    public void run( RatReport report ) throws RatException
+    public void run( RatReport report ) throws IOException
     {
         FileDocument document = new FileDocument();
         for (String file : files) {
@@ -80,7 +79,7 @@ class FilesReportable implements IReportable
         }
 
         public boolean isComposite() {
-            return DocumentImplUtils.isZip(file);
+            return new DocumentImplUtils().isZip(file);
         }
 
         public Reader reader() throws IOException

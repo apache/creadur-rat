@@ -18,6 +18,21 @@
  */ 
 package org.apache.rat;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.util.List;
+
+import javax.xml.transform.TransformerConfigurationException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -31,7 +46,6 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.rat.api.RatException;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
@@ -40,10 +54,6 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
-
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.*;
-import java.util.List;
 
 
 public class Report {
@@ -350,7 +360,8 @@ public class Report {
      */
     public static void report(PrintStream out, IReportable base, final InputStream style,
                               ReportConfiguration pConfiguration) 
-            throws IOException, TransformerConfigurationException,  InterruptedException, RatException {
+			throws IOException, TransformerConfigurationException,
+			InterruptedException {
         report(new OutputStreamWriter(out), base, style, pConfiguration);
     }
 
@@ -369,7 +380,8 @@ public class Report {
      */
     public static ClaimStatistic report(Writer out, IReportable base, final InputStream style, 
             ReportConfiguration pConfiguration) 
-    throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatException {
+			throws IOException, TransformerConfigurationException,
+			FileNotFoundException, InterruptedException {
         PipedReader reader = new PipedReader();
         PipedWriter writer = new PipedWriter(reader);
         ReportTransformer transformer = new ReportTransformer(out, style, reader);
@@ -390,7 +402,8 @@ public class Report {
      * @throws RatException
      */
     public static ClaimStatistic report(final IReportable container, final Writer out,
-            ReportConfiguration pConfiguration) throws IOException, RatException {
+ ReportConfiguration pConfiguration)
+			throws IOException {
         IXmlWriter writer = new XmlWriter(out);
         final ClaimStatistic statistic = new ClaimStatistic();
         RatReport report = new XmlReportFactory().createStandardReport(writer, statistic, pConfiguration);

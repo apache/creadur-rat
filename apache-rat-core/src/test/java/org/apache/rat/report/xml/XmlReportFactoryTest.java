@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -91,7 +90,7 @@ public class XmlReportFactoryTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void testStandardReport() throws RatException, IOException {
+	public void testStandardReport() throws IOException {
 		final String elementsPath = Resources
 				.getResourceDirectory("elements/Source.java");
 		final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();

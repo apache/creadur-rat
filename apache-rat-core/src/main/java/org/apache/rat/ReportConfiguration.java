@@ -79,7 +79,7 @@ public class ReportConfiguration {
 	 */
 	public void setApprovedLicenseNames(
 			final ILicenseFamily... approvedLicenseNames) {
-		this.approvedLicenseNames = approvedLicenseNames.clone();
+		this.approvedLicenseNames = approvedLicenseNames;
 	}
 
 	/**
