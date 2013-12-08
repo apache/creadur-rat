@@ -35,9 +35,8 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param documentCategoryName
 	 *            the document category name
 	 */
-	protected void handleDocumentCategoryClaim(final String documentCategoryName) {
-		// Does nothing
-	}
+	protected abstract void handleDocumentCategoryClaim(
+			final String documentCategoryName);
 
 	/**
 	 * Handle approved license claim.
@@ -45,9 +44,8 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param licenseApproved
 	 *            the license approved
 	 */
-	protected void handleApprovedLicenseClaim(final String licenseApproved) {
-		// Does nothing
-	}
+	protected abstract void handleApprovedLicenseClaim(
+			final String licenseApproved);
 
 	/**
 	 * Handle license family name claim.
@@ -55,9 +53,8 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param licenseFamilyName
 	 *            the license family name
 	 */
-	protected void handleLicenseFamilyNameClaim(final String licenseFamilyName) {
-		// Does Nothing
-	}
+	protected abstract void handleLicenseFamilyNameClaim(
+			final String licenseFamilyName);
 
 	/**
 	 * Handle header category claim.
@@ -65,9 +62,8 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param headerCategory
 	 *            the header category
 	 */
-	protected void handleHeaderCategoryClaim(final String headerCategory) {
-		// Does nothing
-	}
+	protected abstract void handleHeaderCategoryClaim(
+			final String headerCategory);
 
 	/**
 	 * Write document claim.
