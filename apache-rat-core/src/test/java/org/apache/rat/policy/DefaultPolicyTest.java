@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.policy;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
@@ -31,31 +31,34 @@ import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class DefaultPolicyTest {
 
-    DefaultPolicy policy;
-    private Document subject;
+	DefaultPolicy policy;
+	private Document subject;
 
-    @Before
-    public void setUp() throws Exception {
-        policy = new DefaultPolicy();
-        subject = new MockLocation("subject");
-    }
+	@Before
+	public void setUp() throws Exception {
+		policy = new DefaultPolicy();
+		subject = new MockLocation("subject");
+	}
 
-    @Test
-    public void testALFamily() throws Exception {
+	@Test
+	public void testALFamily() throws Exception {
 		subject.getMetaData().set(
 				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, APACHE
 						.getName()));
-        policy.analyse(subject);
-        assertApproval(true);
-    }
+		policy.analyse(subject);
+		assertApproval(true);
+	}
 
-    @SuppressWarnings("boxing") // OK in test code
-    private void assertApproval(boolean pApproved) {
-        assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(subject.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
-    }
+	@SuppressWarnings("boxing")
+	// OK in test code
+	private void assertApproval(boolean pApproved) {
+		assertEquals(pApproved,
+				MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE
+						.equals(subject.getMetaData().value(
+								MetaData.RAT_URL_APPROVED_LICENSE)));
+	}
 
 	@Test
 	public void testOASISFamily() throws Exception {
@@ -65,21 +68,25 @@ public class DefaultPolicyTest {
 		policy.analyse(subject);
 		assertApproval(true);
 	}
-    
-    @Test
-    public void testW3CFamily() throws Exception {
-        subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, W3C.getName()));
-        policy.analyse(subject);
-        assertApproval(true);
-    }
-    
-    @Test
-    public void testW3CDocFamily() throws Exception {
-        subject.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, W3C_DOCUMENTATION.getName()));
-        policy.analyse(subject);
-        assertApproval(true);
-    }
-    
+
+	@Test
+	public void testW3CFamily() throws Exception {
+		subject.getMetaData().set(
+				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, W3C
+						.getName()));
+		policy.analyse(subject);
+		assertApproval(true);
+	}
+
+	@Test
+	public void testW3CDocFamily() throws Exception {
+		subject.getMetaData().set(
+				new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME,
+						W3C_DOCUMENTATION.getName()));
+		policy.analyse(subject);
+		assertApproval(true);
+	}
+
 	@Test
 	public void testMITFamily() throws Exception {
 		subject.getMetaData().set(
@@ -90,9 +97,10 @@ public class DefaultPolicyTest {
 	}
 
 	@Test
-    public void testUnknownFamily() throws Exception {
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
-        policy.analyse(subject);
-        assertApproval(false);
-    }
+	public void testUnknownFamily() throws Exception {
+		subject.getMetaData().set(
+				MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
+		policy.analyse(subject);
+		assertApproval(false);
+	}
 }
