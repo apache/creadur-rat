@@ -32,6 +32,8 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
 	/** The copyright. */
 	private String copyright;
 
+	private static final String EMPTY = "";
+
 	/**
 	 * Create a licence appender with the standard ASF licence header.
 	 */
@@ -46,7 +48,7 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
 	 * @param copyright
 	 *            the copyright
 	 */
-	public ApacheV2LicenceAppender(String copyright) {
+	public ApacheV2LicenceAppender(final String copyright) {
 		super();
 		this.copyright = copyright;
 	}
@@ -59,72 +61,88 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
 	 * .io.File)
 	 */
 	@Override
-	public String getLicenceHeader(File document) {
+	public String getLicenceHeader(final File document) {
 		int type = getType(document);
-		StringBuilder sb = new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
 		if (copyright == null) {
-			sb.append(getFirstLine(type));
-			sb.append(getLine(type, ""));
-			sb.append(getLine(type,
+			stringBuilder.append(getFirstLine(type));
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder
+					.append(getLine(type,
 					"Licensed to the Apache Software Foundation (ASF) under one"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"or more contributor license agreements.  See the NOTICE file"));
-			sb.append(getLine(type,
+			stringBuilder.append(getLine(type,
 					"distributed with this work for additional information"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"regarding copyright ownership.  The ASF licenses this file"));
-			sb.append(getLine(type,
+			stringBuilder.append(getLine(type,
 					"to you under the Apache License, Version 2.0 (the"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"\"License\"); you may not use this file except in compliance"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"with the License.  You may obtain a copy of the License at"));
-			sb.append(getLine(type, ""));
-			sb.append(getLine(type,
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder.append(getLine(type,
 					"  http://www.apache.org/licenses/LICENSE-2.0"));
-			sb.append(getLine(type, ""));
-			sb.append(getLine(type,
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder
+					.append(getLine(type,
 					"Unless required by applicable law or agreed to in writing,"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"software distributed under the License is distributed on an"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"\"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"KIND, either express or implied.  See the License for the"));
-			sb.append(getLine(type,
+			stringBuilder.append(getLine(type,
 					"specific language governing permissions and limitations"));
-			sb.append(getLine(type, "under the License."));
-			sb.append(getLine(type, ""));
-			sb.append(getLastLine(type));
+			stringBuilder.append(getLine(type, "under the License."));
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder.append(getLastLine(type));
 		} else {
-			sb.append(getFirstLine(type));
-			sb.append(getLine(type, ""));
-			sb.append(getLine(type, copyright));
-			sb.append(getLine(type, ""));
-			sb.append(getLine(type,
+			stringBuilder.append(getFirstLine(type));
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder.append(getLine(type, copyright));
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder
+					.append(getLine(type,
 					"Licensed under the Apache License, Version 2.0 (the \"License\");"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"you may not use this file except in compliance with the License."));
-			sb.append(getLine(type, "You may obtain a copy of the License at"));
-			sb.append(getLine(type, ""));
-			sb.append(getLine(type,
+			stringBuilder.append(getLine(type,
+					"You may obtain a copy of the License at"));
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder.append(getLine(type,
 					"  http://www.apache.org/licenses/LICENSE-2.0"));
-			sb.append(getLine(type, ""));
-			sb.append(getLine(type,
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder
+					.append(getLine(type,
 					"Unless required by applicable law or agreed to in writing,"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"software distributed under the License is distributed on an"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"\"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY"));
-			sb.append(getLine(type,
+			stringBuilder
+					.append(getLine(type,
 					"KIND, either express or implied.  See the License for the"));
-			sb.append(getLine(type,
+			stringBuilder.append(getLine(type,
 					"specific language governing permissions and limitations"));
-			sb.append(getLine(type, "under the License."));
-			sb.append(getLine(type, ""));
-			sb.append(getLastLine(type));
+			stringBuilder.append(getLine(type, "under the License."));
+			stringBuilder.append(getLine(type, EMPTY));
+			stringBuilder.append(getLastLine(type));
 		}
-		return sb.toString();
+		return stringBuilder.toString();
 	}
 
 }
