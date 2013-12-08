@@ -19,14 +19,22 @@
 
 package org.apache.rat.analysis;
 
+import org.apache.rat.analysis.HeaderCheckWorker;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class HeaderCheckWorkerTest {
@@ -38,5 +46,24 @@ public class HeaderCheckWorkerTest {
         assertFalse(worker.isFinished());
         worker.read();
         assertTrue(worker.isFinished());
+    }
+    
+	/**
+	 * Test header check worker constructor.
+	 * 
+	 * @throws UnsupportedEncodingException
+	 *             the unsupported encoding exception
+	 */
+    @Test
+	public void testHeaderCheckWorkerConstructor()
+			throws UnsupportedEncodingException {
+		InputStream in = new ByteArrayInputStream("Test".getBytes("UTF-8"));
+		Reader reader = new InputStreamReader(in, "UTF-8");
+		IHeaderMatcher matcher = null;
+		int numberOfRetainedHeaderLine = 0;
+		Document name = null;
+		HeaderCheckWorker headerCheckWorker = new HeaderCheckWorker(reader,
+				numberOfRetainedHeaderLine, matcher, name);
+        assertNotNull(headerCheckWorker);
     }
 }
