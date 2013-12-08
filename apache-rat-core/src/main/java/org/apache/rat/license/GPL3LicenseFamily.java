@@ -24,6 +24,10 @@ import static org.apache.rat.api.domain.RatLicenseFamily.GPL3;
  * Base implementation for GPLv3 or later.
  */
 public class GPL3LicenseFamily extends SimpleLicenseFamily {
+
+	/**
+	 * Instantiates a new gP l3 license family.
+	 */
 	public GPL3LicenseFamily() {
 		super(GPL3.getName());
 	}
