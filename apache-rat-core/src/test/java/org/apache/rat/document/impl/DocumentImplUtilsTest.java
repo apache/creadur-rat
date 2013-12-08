@@ -22,8 +22,14 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
+/**
+ * The Class DocumentImplUtilsTest.
+ */
 public class DocumentImplUtilsTest {
 
+	/**
+	 * Test document impl utils constructor.
+	 */
     @Test
 	public void testDocumentImplUtilsConstructor() {
 		assertNotNull(new DocumentImplUtils());
