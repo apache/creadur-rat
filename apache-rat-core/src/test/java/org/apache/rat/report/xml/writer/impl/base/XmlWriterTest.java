@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
 import org.apache.rat.report.xml.writer.InvalidXmlException;
@@ -39,10 +40,10 @@ public class XmlWriterTest {
 	private static final char[] ZERO_CHAR = { (char) 0 };
 
 	/** The writer. */
-	XmlWriter writer;
+	private XmlWriter writer;
 
 	/** The out. */
-	StringWriter out;
+	private StringWriter out;
 
 	/**
 	 * Sets the up.
@@ -59,11 +60,11 @@ public class XmlWriterTest {
 	/**
 	 * Return values.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void returnValues() throws Exception {
+	public void returnValues() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("XmlWriters should always return themselves", writer,
@@ -77,11 +78,11 @@ public class XmlWriterTest {
 	/**
 	 * Open element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void openElement() throws Exception {
+	public void openElement() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -101,11 +102,11 @@ public class XmlWriterTest {
 	/**
 	 * Invalid element name.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void invalidElementName() throws Exception {
+	public void invalidElementName() throws IOException {
 		assertTrue("All strings ok", isValidElementName("alpha"));
 		assertTrue("Strings and digits ok", isValidElementName("alpha77"));
 		assertFalse("Must no start with digit", isValidElementName("5alpha77"));
@@ -128,10 +129,11 @@ public class XmlWriterTest {
 	 * @param elementName
 	 *            the element name
 	 * @return true, if is valid element name
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	private boolean isValidElementName(String elementName) throws Exception {
+	private boolean isValidElementName(final String elementName)
+			throws IOException {
 		boolean result = true;
 		try {
 			writer.openElement(elementName);
@@ -144,11 +146,11 @@ public class XmlWriterTest {
 	/**
 	 * Call open element after last element closed.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void callOpenElementAfterLastElementClosed() throws Exception {
+	public void callOpenElementAfterLastElementClosed() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -166,11 +168,11 @@ public class XmlWriterTest {
 	/**
 	 * Call close element after last element closed.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void callCloseElementAfterLastElementClosed() throws Exception {
+	public void callCloseElementAfterLastElementClosed() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -188,11 +190,11 @@ public class XmlWriterTest {
 	/**
 	 * Close first element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void closeFirstElement() throws Exception {
+	public void closeFirstElement() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -204,11 +206,11 @@ public class XmlWriterTest {
 	/**
 	 * Close element with content.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void closeElementWithContent() throws Exception {
+	public void closeElementWithContent() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -233,11 +235,11 @@ public class XmlWriterTest {
 	/**
 	 * Close element before first element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void closeElementBeforeFirstElement() throws Exception {
+	public void closeElementBeforeFirstElement() throws IOException {
 		try {
 			writer.closeElement();
 			fail("Cannot close elements before the first element has been closed");
@@ -249,11 +251,11 @@ public class XmlWriterTest {
 	/**
 	 * Content after element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void contentAfterElement() throws Exception {
+	public void contentAfterElement() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -289,11 +291,11 @@ public class XmlWriterTest {
 	/**
 	 * Content after last element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void contentAfterLastElement() throws Exception {
+	public void contentAfterLastElement() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -311,11 +313,11 @@ public class XmlWriterTest {
 	/**
 	 * Write content before first element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void writeContentBeforeFirstElement() throws Exception {
+	public void writeContentBeforeFirstElement() throws IOException {
 		try {
 			writer.content("Too early");
 			fail("Cannot close elements before the first element has been closed");
@@ -327,11 +329,11 @@ public class XmlWriterTest {
 	/**
 	 * Content escaping.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void contentEscaping() throws Exception {
+	public void contentEscaping() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -353,11 +355,11 @@ public class XmlWriterTest {
 	/**
 	 * Attribute after last element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void attributeAfterLastElement() throws Exception {
+	public void attributeAfterLastElement() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -375,11 +377,11 @@ public class XmlWriterTest {
 	/**
 	 * Attribute content before first element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void attributeContentBeforeFirstElement() throws Exception {
+	public void attributeContentBeforeFirstElement() throws IOException {
 		try {
 			writer.attribute("foo", "bar");
 			fail("Cannot close elements before the first element has been closed");
@@ -391,11 +393,11 @@ public class XmlWriterTest {
 	/**
 	 * Invalid attribute name.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void invalidAttributeName() throws Exception {
+	public void invalidAttributeName() throws IOException {
 		writer.openElement("alpha");
 		assertTrue("All strings ok", isValidAttributeName("alpha"));
 		assertTrue("Strings and digits ok", isValidAttributeName("alpha77"));
@@ -413,10 +415,10 @@ public class XmlWriterTest {
 	 * @param name
 	 *            the name
 	 * @return true, if is valid attribute name
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	private boolean isValidAttributeName(String name) throws Exception {
+	private boolean isValidAttributeName(final String name) throws IOException {
 		boolean result = true;
 		try {
 			writer.attribute(name, "");
@@ -429,11 +431,11 @@ public class XmlWriterTest {
 	/**
 	 * Escape attribute content.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void escapeAttributeContent() throws Exception {
+	public void escapeAttributeContent() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -470,11 +472,11 @@ public class XmlWriterTest {
 	/**
 	 * Attribute in content.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void attributeInContent() throws Exception {
+	public void attributeInContent() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -491,14 +493,14 @@ public class XmlWriterTest {
 	/**
 	 * Out of range character.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void outOfRangeCharacter() throws Exception {
+	public void outOfRangeCharacter() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
-		assertEquals("Alpha element started", "<alpha", out.toString());
+		assertEquals("Alpha element started", "<alpha", String.valueOf(out));
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.content(new String(ZERO_CHAR)));
 		String out = this.out.toString();
@@ -509,11 +511,11 @@ public class XmlWriterTest {
 	/**
 	 * Attribute after element closed.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void attributeAfterElementClosed() throws Exception {
+	public void attributeAfterElementClosed() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -534,11 +536,11 @@ public class XmlWriterTest {
 	/**
 	 * Close document before open.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void closeDocumentBeforeOpen() throws Exception {
+	public void closeDocumentBeforeOpen() throws IOException {
 		try {
 			writer.closeDocument();
 			fail("Cannot close document before the first element has been opened");
@@ -550,11 +552,11 @@ public class XmlWriterTest {
 	/**
 	 * Close document after root element closed.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void closeDocumentAfterRootElementClosed() throws Exception {
+	public void closeDocumentAfterRootElementClosed() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -571,11 +573,11 @@ public class XmlWriterTest {
 	/**
 	 * Close simple document.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void closeSimpleDocument() throws Exception {
+	public void closeSimpleDocument() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -591,11 +593,11 @@ public class XmlWriterTest {
 	/**
 	 * Close complex document.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void closeComplexDocument() throws Exception {
+	public void closeComplexDocument() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -634,11 +636,11 @@ public class XmlWriterTest {
 	/**
 	 * Write prolog.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void writeProlog() throws Exception {
+	public void writeProlog() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.startDocument());
 		assertEquals("Prolog written", "<?xml version='1.0'?>", out.toString());
@@ -647,11 +649,11 @@ public class XmlWriterTest {
 	/**
 	 * Write after element.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void writeAfterElement() throws Exception {
+	public void writeAfterElement() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
@@ -666,11 +668,11 @@ public class XmlWriterTest {
 	/**
 	 * Write prolog two.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void writePrologTwo() throws Exception {
+	public void writePrologTwo() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.startDocument());
 		assertEquals("Prolog written", "<?xml version='1.0'?>", out.toString());
@@ -685,11 +687,11 @@ public class XmlWriterTest {
 	/**
 	 * Duplicate attributes.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void duplicateAttributes() throws Exception {
+	public void duplicateAttributes() throws IOException {
 		assertEquals("XmlWriters should always return themselves", writer,
 				writer.openElement("alpha"));
 		assertEquals("Alpha element started", "<alpha", out.toString());
