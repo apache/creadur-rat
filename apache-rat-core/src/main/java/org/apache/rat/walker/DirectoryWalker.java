@@ -44,7 +44,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @param file
 	 *            the file
 	 */
-	public DirectoryWalker(File file) {
+	public DirectoryWalker(final File file) {
 		this(file, (FilenameFilter) null);
 	}
 
@@ -57,7 +57,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 *            filters input files (optional), or null when no filtering
 	 *            should be performed
 	 */
-	public DirectoryWalker(File file, final FilenameFilter filter) {
+	public DirectoryWalker(final File file, final FilenameFilter filter) {
 		super(file.getPath(), file, filter);
 	}
 
@@ -69,7 +69,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @param ignoreNameRegex
 	 *            the ignore name regex
 	 */
-	public DirectoryWalker(File file, final Pattern ignoreNameRegex) {
+	public DirectoryWalker(final File file, final Pattern ignoreNameRegex) {
 		super(file.getPath(), file, regexFilter(ignoreNameRegex));
 	}
 
@@ -92,7 +92,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	private void processDirectory(RatReport report, final File file)
+	private void processDirectory(final RatReport report, final File file)
 			throws RatException {
 		if (!isRestricted(file)) {
 			process(report, file);
@@ -144,13 +144,11 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	private void processDirectories(final RatReport report, final File[] files)
+	private void processDirectories(final RatReport report, final File... files)
 			throws RatException {
-		for (final File file : files) {
-			if (!ignored(file)) {
-				if (file.isDirectory()) {
-					processDirectory(report, file);
-				}
+		for (File file : files) {
+			if (!ignored(file) && file.isDirectory()) {
+				processDirectory(report, file);
 			}
 		}
 	}
@@ -167,12 +165,10 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 *             the rat exception
 	 */
 	private void processNonDirectories(final RatReport report,
-			final File[] files) throws RatException {
-		for (final File file : files) {
-			if (!ignored(file)) {
-				if (!file.isDirectory()) {
-					report(report, file);
-				}
+			final File... files) throws RatException {
+		for (File file : files) {
+			if (!ignored(file) && !file.isDirectory()) {
+				report(report, file);
 			}
 		}
 	}
@@ -187,7 +183,8 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	private void report(final RatReport report, File file) throws RatException {
+	private void report(final RatReport report, final File file)
+			throws RatException {
 
 		Document document = new FileDocument(file);
 		report.report(document);
