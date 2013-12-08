@@ -15,12 +15,12 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report;
 
 import org.apache.rat.api.RatException;
 
 public interface IReportable {
 
-    public void run(RatReport report) throws RatException;
+	public void run(RatReport report) throws RatException;
 }
