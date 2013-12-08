@@ -43,7 +43,7 @@ public class ArchiveGuesser {
 
 	/**
 	 * Instantiates a new archive guesser.
-	 * 
+	 *
 	 * @param archiveExtensions
 	 *            the archive extensions
 	 */
@@ -54,7 +54,7 @@ public class ArchiveGuesser {
 
 	/**
 	 * Matches.
-	 * 
+	 *
 	 * @param subject
 	 *            the subject
 	 * @return true, if successful
@@ -65,7 +65,7 @@ public class ArchiveGuesser {
 
 	/**
 	 * Is a file by that name an archive?.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return true, if is archive
