@@ -18,22 +18,36 @@
  */
 package org.apache.rat.header;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.StringReader;
-import java.util.regex.Pattern;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.StringReader;
+import java.util.regex.Pattern;
+
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * The Class HeaderMatcherTest.
+ */
 public class HeaderMatcherTest {
 
+	/** The capacity. */
 	int capacity;
+
+	/** The matcher. */
 	HeaderMatcher matcher;
+
+	/** The filter. */
 	SimpleCharFilter filter;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		capacity = 20;
@@ -41,6 +55,12 @@ public class HeaderMatcherTest {
 		matcher = new HeaderMatcher(filter, 20);
 	}
 
+	/**
+	 * Simple matches.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void simpleMatches() throws Exception {
 		Pattern hatPattern = Pattern.compile("(.*)hat(.*)");
@@ -55,6 +75,12 @@ public class HeaderMatcherTest {
 		assertTrue(matcher.matches(headPattern));
 	}
 
+	/**
+	 * Filtered matches.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void filteredMatches() throws Exception {
 		Pattern capPattern = Pattern.compile("cap(.*)");
@@ -67,6 +93,12 @@ public class HeaderMatcherTest {
 		assertFalse(matcher.matches(capPattern));
 	}
 
+	/**
+	 * No lines.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void noLines() throws Exception {
 		StringReader reader = new StringReader("None");
@@ -74,6 +106,12 @@ public class HeaderMatcherTest {
 		assertEquals("No lines read", 0, matcher.lines());
 	}
 
+	/**
+	 * Lines.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void lines() throws Exception {
 		StringReader reader = new StringReader("One\n");
@@ -90,6 +128,12 @@ public class HeaderMatcherTest {
 		assertEquals("Three lines read", 3, matcher.lines());
 	}
 
+	/**
+	 * Too many lines.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void tooManyLines() throws Exception {
 		StringReader reader = new StringReader(
