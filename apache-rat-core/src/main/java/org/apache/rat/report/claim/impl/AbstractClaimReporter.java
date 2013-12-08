@@ -29,22 +29,53 @@ import org.apache.rat.report.AbstractReport;
  * suggested, that implementations derive from this class.
  */
 public abstract class AbstractClaimReporter extends AbstractReport {
+
+	/**
+	 * Handle document category claim.
+	 * 
+	 * @param documentCategoryName
+	 *            the document category name
+	 */
 	protected void handleDocumentCategoryClaim(String documentCategoryName) {
 		// Does nothing
 	}
 
+	/**
+	 * Handle approved license claim.
+	 * 
+	 * @param licenseApproved
+	 *            the license approved
+	 */
 	protected void handleApprovedLicenseClaim(String licenseApproved) {
 		// Does nothing
 	}
 
+	/**
+	 * Handle license family name claim.
+	 * 
+	 * @param licenseFamilyName
+	 *            the license family name
+	 */
 	protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
 		// Does Nothing
 	}
 
+	/**
+	 * Handle header category claim.
+	 * 
+	 * @param headerCategory
+	 *            the header category
+	 */
 	protected void handleHeaderCategoryClaim(String headerCategory) {
 		// Does nothing
 	}
 
+	/**
+	 * Write document claim.
+	 * 
+	 * @param subject
+	 *            the subject
+	 */
 	private void writeDocumentClaim(Document subject) {
 		final MetaData metaData = subject.getMetaData();
 		writeHeaderCategory(metaData);
@@ -53,6 +84,12 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 		writeApprovedLicenseClaim(metaData);
 	}
 
+	/**
+	 * Write approved license claim.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 */
 	private void writeApprovedLicenseClaim(final MetaData metaData) {
 		final MetaData.Datum approvedLicenseDatum = metaData
 				.get(MetaData.RAT_URL_APPROVED_LICENSE);
@@ -64,6 +101,12 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 		}
 	}
 
+	/**
+	 * Write header category.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 */
 	private void writeHeaderCategory(final MetaData metaData) {
 		final MetaData.Datum headerCategoryDatum = metaData
 				.get(MetaData.RAT_URL_HEADER_CATEGORY);
@@ -75,6 +118,12 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 		}
 	}
 
+	/**
+	 * Write license family name.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 */
 	private void writeLicenseFamilyName(final MetaData metaData) {
 		final MetaData.Datum licenseFamilyNameDatum = metaData
 				.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
@@ -86,6 +135,12 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 		}
 	}
 
+	/**
+	 * Write document category.
+	 * 
+	 * @param metaData
+	 *            the meta data
+	 */
 	private void writeDocumentCategory(final MetaData metaData) {
 		final MetaData.Datum documentCategoryDatum = metaData
 				.get(MetaData.RAT_URL_DOCUMENT_CATEGORY);
@@ -97,6 +152,12 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.report.AbstractReport#report(org.apache.rat.api.Document)
+	 */
 	@Override
 	public void report(Document subject) throws RatException {
 		writeDocumentClaim(subject);
