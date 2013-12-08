@@ -18,6 +18,15 @@
  */
 package org.apache.rat.license;
 
+/**
+ * The Interface ILicenseFamily.
+ */
 public interface ILicenseFamily {
+
+	/**
+	 * Gets the family name.
+	 * 
+	 * @return the family name
+	 */
 	public String getFamilyName();
 }
