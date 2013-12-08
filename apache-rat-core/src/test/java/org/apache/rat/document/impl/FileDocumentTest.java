@@ -42,4 +42,17 @@ public class FileDocumentTest {
 		FileDocument fileDocument = new FileDocument(file);
 		Assert.assertTrue(fileDocument.isComposite());
 	}
+
+	/**
+	 * Test is composite.
+	 * 
+	 * @throws FileNotFoundException
+	 *             the file not found exception
+	 */
+	@Test
+	public void testNonIsComposite() throws FileNotFoundException {
+		String file = Resources.getResourceDirectory("elements/Source.java");
+		FileDocument fileDocument = new FileDocument(new File(file));
+		Assert.assertFalse(fileDocument.isComposite());
+	}
 }
