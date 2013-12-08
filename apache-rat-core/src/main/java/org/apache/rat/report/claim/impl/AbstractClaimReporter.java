@@ -21,7 +21,6 @@ package org.apache.rat.report.claim.impl;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
 
 /**
@@ -36,7 +35,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param documentCategoryName
 	 *            the document category name
 	 */
-	protected void handleDocumentCategoryClaim(String documentCategoryName) {
+	protected void handleDocumentCategoryClaim(final String documentCategoryName) {
 		// Does nothing
 	}
 
@@ -46,7 +45,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param licenseApproved
 	 *            the license approved
 	 */
-	protected void handleApprovedLicenseClaim(String licenseApproved) {
+	protected void handleApprovedLicenseClaim(final String licenseApproved) {
 		// Does nothing
 	}
 
@@ -56,7 +55,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param licenseFamilyName
 	 *            the license family name
 	 */
-	protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
+	protected void handleLicenseFamilyNameClaim(final String licenseFamilyName) {
 		// Does Nothing
 	}
 
@@ -66,7 +65,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param headerCategory
 	 *            the header category
 	 */
-	protected void handleHeaderCategoryClaim(String headerCategory) {
+	protected void handleHeaderCategoryClaim(final String headerCategory) {
 		// Does nothing
 	}
 
@@ -76,7 +75,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * @param subject
 	 *            the subject
 	 */
-	private void writeDocumentClaim(Document subject) {
+	private void writeDocumentClaim(final Document subject) {
 		final MetaData metaData = subject.getMetaData();
 		writeHeaderCategory(metaData);
 		writeLicenseFamilyName(metaData);
@@ -159,7 +158,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
 	 * org.apache.rat.report.AbstractReport#report(org.apache.rat.api.Document)
 	 */
 	@Override
-	public void report(Document subject) throws RatException {
+	public void report(final Document subject) {
 		writeDocumentClaim(subject);
 	}
 }
