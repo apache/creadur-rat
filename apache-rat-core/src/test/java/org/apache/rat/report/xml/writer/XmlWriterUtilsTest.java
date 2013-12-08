@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml.writer;
 
 import static org.junit.Assert.assertEquals;
@@ -28,25 +28,27 @@ import org.junit.Test;
 
 public class XmlWriterUtilsTest {
 
-    StringWriter out;
-    IXmlWriter writer;
+	StringWriter out;
+	IXmlWriter writer;
 
-    @Before
-    public void setUp() throws Exception {
-        out = new StringWriter();
-        writer = new XmlWriter(out);
-        writer.openElement("alpha");
-    }
+	@Before
+	public void setUp() throws Exception {
+		out = new StringWriter();
+		writer = new XmlWriter(out);
+		writer.openElement("alpha");
+	}
 
-    @Test
-    public void writeTrue() throws Exception {
+	@Test
+	public void writeTrue() throws Exception {
 		new XmlWriterUtils().writeAttribute(writer, "name", true);
-        assertEquals("Attribute written as True", "<alpha name='true'", out.toString());
-    }
+		assertEquals("Attribute written as True", "<alpha name='true'",
+				out.toString());
+	}
 
-    @Test
-    public void writeFalse() throws Exception {
+	@Test
+	public void writeFalse() throws Exception {
 		new XmlWriterUtils().writeAttribute(writer, "name", false);
-        assertEquals("Attribute written as False", "<alpha name='false'", out.toString());
-    }
+		assertEquals("Attribute written as False", "<alpha name='false'",
+				out.toString());
+	}
 }
