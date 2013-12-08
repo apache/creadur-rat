@@ -31,17 +31,33 @@ import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class DefaultPolicyTest.
+ */
 public class DefaultPolicyTest {
 
+	/** The policy. */
 	DefaultPolicy policy;
+	
+	/** The subject. */
 	private Document subject;
 
+	/**
+	 * Sets the up.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		policy = new DefaultPolicy();
 		subject = new MockLocation("subject");
 	}
 
+	/**
+	 * Test al family.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testALFamily() throws Exception {
 		subject.getMetaData().set(
@@ -51,6 +67,11 @@ public class DefaultPolicyTest {
 		assertApproval(true);
 	}
 
+	/**
+	 * Assert approval.
+	 *
+	 * @param pApproved the approved
+	 */
 	@SuppressWarnings("boxing")
 	// OK in test code
 	private void assertApproval(boolean pApproved) {
@@ -60,6 +81,11 @@ public class DefaultPolicyTest {
 								MetaData.RAT_URL_APPROVED_LICENSE)));
 	}
 
+	/**
+	 * Test oasis family.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testOASISFamily() throws Exception {
 		subject.getMetaData().set(
@@ -69,6 +95,11 @@ public class DefaultPolicyTest {
 		assertApproval(true);
 	}
 
+	/**
+	 * Test w3 c family.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testW3CFamily() throws Exception {
 		subject.getMetaData().set(
@@ -78,6 +109,11 @@ public class DefaultPolicyTest {
 		assertApproval(true);
 	}
 
+	/**
+	 * Test w3 c doc family.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testW3CDocFamily() throws Exception {
 		subject.getMetaData().set(
@@ -87,6 +123,11 @@ public class DefaultPolicyTest {
 		assertApproval(true);
 	}
 
+	/**
+	 * Test mit family.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testMITFamily() throws Exception {
 		subject.getMetaData().set(
@@ -96,6 +137,11 @@ public class DefaultPolicyTest {
 		assertApproval(true);
 	}
 
+	/**
+	 * Test unknown family.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testUnknownFamily() throws Exception {
 		subject.getMetaData().set(
