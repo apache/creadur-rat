@@ -19,24 +19,31 @@
 
 package org.apache.rat.walker;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.regex.Pattern;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
-import java.util.regex.Pattern;
-
 /**
  * Walks directories.
  */
 public class DirectoryWalker extends Walker implements IReportable {
 
+	/** The Constant COMPARATOR. */
 	protected static final FileNameComparator COMPARATOR = new FileNameComparator();
 
+	/**
+	 * Instantiates a new directory walker.
+	 * 
+	 * @param file
+	 *            the file
+	 */
 	public DirectoryWalker(File file) {
 		this(file, (FilenameFilter) null);
 	}
@@ -54,10 +61,23 @@ public class DirectoryWalker extends Walker implements IReportable {
 		super(file.getPath(), file, filter);
 	}
 
+	/**
+	 * Instantiates a new directory walker.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param ignoreNameRegex
+	 *            the ignore name regex
+	 */
 	public DirectoryWalker(File file, final Pattern ignoreNameRegex) {
 		super(file.getPath(), file, regexFilter(ignoreNameRegex));
 	}
 
+	/**
+	 * Checks if is restricted.
+	 * 
+	 * @return true, if is restricted
+	 */
 	public boolean isRestricted() {
 		return false;
 	}
@@ -70,6 +90,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @param file
 	 *            the directory to process
 	 * @throws RatException
+	 *             the rat exception
 	 */
 	private void processDirectory(RatReport report, final File file)
 			throws RatException {
@@ -84,7 +105,8 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * 
 	 * @param report
 	 *            the defined RatReport to run on this Directory walker.
-	 * 
+	 * @throws RatException
+	 *             the rat exception
 	 */
 	public void run(final RatReport report) throws RatException {
 		process(report, file);
@@ -98,6 +120,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @param file
 	 *            the run the report against
 	 * @throws RatException
+	 *             the rat exception
 	 */
 	private void process(final RatReport report, final File file)
 			throws RatException {
@@ -119,6 +142,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @param files
 	 *            the files to process (only directories will be processed)
 	 * @throws RatException
+	 *             the rat exception
 	 */
 	private void processDirectories(final RatReport report, final File[] files)
 			throws RatException {
@@ -140,6 +164,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @param files
 	 *            the files to process (only files will be processed)
 	 * @throws RatException
+	 *             the rat exception
 	 */
 	private void processNonDirectories(final RatReport report,
 			final File[] files) throws RatException {
@@ -160,6 +185,7 @@ public class DirectoryWalker extends Walker implements IReportable {
 	 * @param file
 	 *            the file to be reported on
 	 * @throws RatException
+	 *             the rat exception
 	 */
 	private void report(final RatReport report, File file) throws RatException {
 
