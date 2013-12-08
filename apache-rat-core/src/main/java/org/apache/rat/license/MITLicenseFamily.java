@@ -24,6 +24,10 @@ import static org.apache.rat.api.domain.RatLicenseFamily.MIT;
  * Base implementation for MIT licenses.
  */
 public class MITLicenseFamily extends SimpleLicenseFamily {
+
+	/**
+	 * Instantiates a new mIT license family.
+	 */
 	public MITLicenseFamily() {
 		super(MIT.getName());
 	}
