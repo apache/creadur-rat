@@ -438,7 +438,7 @@ public abstract class AbstractLicenceAppender {
 	 * files will be modified directly, otherwise new files will be created
 	 * alongside the existing files.
 	 * 
-	 * @param b
+	 * @param forced
 	 *            the new force
 	 */
 	public void setForce(final boolean forced) {
@@ -685,8 +685,8 @@ public abstract class AbstractLicenceAppender {
 	 *            the writer
 	 * @param line
 	 *            the line
-	 * @param br
-	 *            the br
+	 * @param bufferedReader
+	 *            the buffered reader
 	 * @return the string
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
