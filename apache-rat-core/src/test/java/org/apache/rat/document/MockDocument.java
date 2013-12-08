@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
 import java.io.IOException;
@@ -27,42 +27,41 @@ import org.apache.rat.api.MetaData;
 
 public class MockDocument implements Document {
 
-    public Reader reader;
-    public String name;
-    private final MetaData metaData = new MetaData();
+	public Reader reader;
+	public String name;
+	private final MetaData metaData = new MetaData();
 
-    public MockDocument() {
-        this(null, "name");
-    }
+	public MockDocument() {
+		this(null, "name");
+	}
 
-    public MockDocument(String name) {
-        this(null, name);
-    }
-    
-    public MockDocument(Reader reader, String name) {
-        super();
-        this.reader = reader;
-        this.name = name;
-    }
+	public MockDocument(String name) {
+		this(null, name);
+	}
 
-    public Reader reader() throws IOException {
-        return reader;
-    }
+	public MockDocument(Reader reader, String name) {
+		super();
+		this.reader = reader;
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Reader reader() throws IOException {
+		return reader;
+	}
 
-    public boolean isComposite() {
-        return false;
-    }
-    
-    public MetaData getMetaData() {
-        return metaData;
-    }
-    
+	public String getName() {
+		return name;
+	}
 
-    public InputStream inputStream() throws IOException {
-        throw new UnsupportedOperationException();
-    }
+	public boolean isComposite() {
+		return false;
+	}
+
+	public MetaData getMetaData() {
+		return metaData;
+	}
+
+	public InputStream inputStream() throws IOException {
+		throw new UnsupportedOperationException();
+	}
 }
