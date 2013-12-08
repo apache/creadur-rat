@@ -50,7 +50,7 @@ public class DefaultPolicy {
      * @return the string[]
      */
     private static final String[] toNames(
-            final ILicenseFamily[] approvedLicenses) {
+            final ILicenseFamily... approvedLicenses) {
         String[] results = null;
         if (approvedLicenses != null) {
             final int length = approvedLicenses.length;
@@ -78,7 +78,7 @@ public class DefaultPolicy {
      * @param approvedLicenses
      *            the approved licenses
      */
-    public DefaultPolicy(final ILicenseFamily[] approvedLicenses) {
+    public DefaultPolicy(final ILicenseFamily... approvedLicenses) {
         this(toNames(approvedLicenses));
     }
 
@@ -89,7 +89,7 @@ public class DefaultPolicy {
      *            the approved license names
      */
 
-    public DefaultPolicy(final String[] approvedLicenseNames) {
+    public DefaultPolicy(final String... approvedLicenseNames) {
         if (approvedLicenseNames == null) {
             this.approvedLicenseNames = APPROVED_LICENSES;
         } else {
