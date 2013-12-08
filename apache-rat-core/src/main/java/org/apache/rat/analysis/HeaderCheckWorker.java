@@ -36,18 +36,42 @@ import org.apache.rat.api.MetaData;
  */
 class HeaderCheckWorker {
 
+	/** The Constant DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES. */
 	public static final int DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES = 50;
 
+	/** The number of retained header lines. */
 	private final int numberOfRetainedHeaderLines;
+
+	/** The reader. */
 	private final BufferedReader reader;
+
+	/** The matcher. */
 	private final IHeaderMatcher matcher;
+
+	/** The subject. */
 	private final Document subject;
 
+	/** The match. */
 	private boolean match = false;
 
+	/** The header lines to read. */
 	private int headerLinesToRead;
+
+	/** The finished. */
 	private boolean finished = false;
 
+	/**
+	 * Instantiates a new header check worker.
+	 * 
+	 * @param reader
+	 *            the reader
+	 * @param numberOfRetainedHeaderLine
+	 *            the number of retained header line
+	 * @param matcher
+	 *            the matcher
+	 * @param name
+	 *            the name
+	 */
 	public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine,
 			final IHeaderMatcher matcher, final Document name) {
 		this(new BufferedReader(reader), numberOfRetainedHeaderLine, matcher,
@@ -60,6 +84,8 @@ class HeaderCheckWorker {
 	 * 
 	 * @param reader
 	 *            a <code>Reader</code> for the content, not null
+	 * @param matcher
+	 *            the matcher
 	 * @param name
 	 *            the name of the checked content, possibly null
 	 */
@@ -68,11 +94,33 @@ class HeaderCheckWorker {
 		this(new BufferedReader(reader), matcher, name);
 	}
 
+	/**
+	 * Instantiates a new header check worker.
+	 * 
+	 * @param reader
+	 *            the reader
+	 * @param matcher
+	 *            the matcher
+	 * @param name
+	 *            the name
+	 */
 	public HeaderCheckWorker(BufferedReader reader,
 			final IHeaderMatcher matcher, final Document name) {
 		this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, matcher, name);
 	}
 
+	/**
+	 * Instantiates a new header check worker.
+	 * 
+	 * @param reader
+	 *            the reader
+	 * @param numberOfRetainedHeaderLine
+	 *            the number of retained header line
+	 * @param matcher
+	 *            the matcher
+	 * @param name
+	 *            the name
+	 */
 	public HeaderCheckWorker(BufferedReader reader,
 			int numberOfRetainedHeaderLine, final IHeaderMatcher matcher,
 			final Document name) {
@@ -82,10 +130,21 @@ class HeaderCheckWorker {
 		this.subject = name;
 	}
 
+	/**
+	 * Checks if is finished.
+	 * 
+	 * @return true, if is finished
+	 */
 	public boolean isFinished() {
 		return finished;
 	}
 
+	/**
+	 * Read.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public void read() throws IOException {
 		if (!finished) {
 			final StringBuilder headers = new StringBuilder();
@@ -113,6 +172,15 @@ class HeaderCheckWorker {
 		finished = true;
 	}
 
+	/**
+	 * Read line.
+	 * 
+	 * @param headers
+	 *            the headers
+	 * @return true, if successful
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	boolean readLine(StringBuilder headers) throws IOException {
 		String line = reader.readLine();
 		boolean result = line != null;
