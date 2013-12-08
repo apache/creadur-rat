@@ -20,5 +20,8 @@ package org.apache.rat.report.claim.impl.xml;
 
 import org.apache.rat.report.AbstractReport;
 
+/**
+ * The Class MockClaimReporter.
+ */
 public class MockClaimReporter extends AbstractReport {
 }
