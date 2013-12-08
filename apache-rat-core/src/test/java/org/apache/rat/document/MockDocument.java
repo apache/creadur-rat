@@ -25,42 +25,92 @@ import java.io.Reader;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
+/**
+ * The Class MockDocument.
+ */
 public class MockDocument implements Document {
 
+	/** The reader. */
 	public Reader reader;
+
+	/** The name. */
 	public String name;
+
+	/** The meta data. */
 	private final MetaData metaData = new MetaData();
 
+	/**
+	 * Instantiates a new mock document.
+	 */
 	public MockDocument() {
 		this(null, "name");
 	}
 
+	/**
+	 * Instantiates a new mock document.
+	 * 
+	 * @param name
+	 *            the name
+	 */
 	public MockDocument(String name) {
 		this(null, name);
 	}
 
+	/**
+	 * Instantiates a new mock document.
+	 * 
+	 * @param reader
+	 *            the reader
+	 * @param name
+	 *            the name
+	 */
 	public MockDocument(Reader reader, String name) {
 		super();
 		this.reader = reader;
 		this.name = name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#reader()
+	 */
 	public Reader reader() throws IOException {
 		return reader;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#getName()
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#isComposite()
+	 */
 	public boolean isComposite() {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#getMetaData()
+	 */
 	public MetaData getMetaData() {
 		return metaData;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#inputStream()
+	 */
 	public InputStream inputStream() throws IOException {
 		throw new UnsupportedOperationException();
 	}
