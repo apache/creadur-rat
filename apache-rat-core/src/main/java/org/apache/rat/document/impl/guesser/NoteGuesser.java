@@ -66,9 +66,9 @@ public class NoteGuesser {
 	 *            the note file extensions
 	 */
 	public NoteGuesser(final String[] noteFileNames,
-			final String[] noteFileExtensions) {
+			final String... noteFileExtensions) {
 		super();
-		this.noteFileNames = noteFileNames;
+		this.noteFileNames = noteFileNames.clone();
 		this.noteFileExtensions = noteFileExtensions;
 	}
 
@@ -80,24 +80,22 @@ public class NoteGuesser {
 	 * @return true, if is note
 	 */
 	private final boolean isNote(final String name) {
-		if (name == null) {
-			return false;
-		}
-
-		final List<String> l = Arrays.asList(this.noteFileNames);
-		final String normalisedName = GuessUtils.normalise(name);
-
-		if (l.contains(name) || l.contains(normalisedName)) {
-			return true;
-		}
-
-		for (final String element : this.noteFileExtensions) {
-			if (normalisedName.endsWith("." + element)) {
-				return true;
+		boolean result = false;
+		if (name != null) {
+			final List<String> list = Arrays.asList(this.noteFileNames);
+			final String normalisedName = GuessUtils.normalise(name);
+			if (list.contains(name) || list.contains(normalisedName)) {
+				result = true;
+			} else {
+				for (String element : this.noteFileExtensions) {
+					if (normalisedName.endsWith("." + element)) {
+						result = true;
+						break;
+					}
+				}
 			}
 		}
-
-		return false;
+		return result;
 	}
 
 	/**
