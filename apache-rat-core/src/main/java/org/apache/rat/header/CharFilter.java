@@ -15,16 +15,18 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.header;
 
 interface CharFilter {
 
-    /**
-     * Is the given character filtered out?
-     * @param character character to be filtered
-     * @return true if this character should be filtered out,
-     * false if this character should be filtered in
-     */
-    public boolean isFilteredOut(char character);
+	/**
+	 * Is the given character filtered out?
+	 * 
+	 * @param character
+	 *            character to be filtered
+	 * @return true if this character should be filtered out, false if this
+	 *         character should be filtered in
+	 */
+	public boolean isFilteredOut(char character);
 }
