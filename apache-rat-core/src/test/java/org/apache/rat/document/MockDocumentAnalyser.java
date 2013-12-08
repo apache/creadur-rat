@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
 import org.apache.rat.api.Document;
@@ -25,10 +25,10 @@ import java.util.List;
 
 public class MockDocumentAnalyser implements IDocumentAnalyser {
 
-    public List<Document> matches = new ArrayList<Document>();
-    
-    public void analyse(Document document) {
-        matches.add(document);
-    }
+	public List<Document> matches = new ArrayList<Document>();
+
+	public void analyse(Document document) {
+		matches.add(document);
+	}
 
 }
