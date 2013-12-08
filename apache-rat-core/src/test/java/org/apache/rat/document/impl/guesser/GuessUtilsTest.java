@@ -18,23 +18,23 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
+import static org.junit.Assert.assertEquals;
 import junit.framework.Assert;
 
-import org.apache.rat.document.impl.guesser.GuessUtils;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class GuessUtilsTest {
 
     @Test
     public void normalise() throws Exception {
-        assertEquals("LICENSE", GuessUtils.normalise("license"));
-        assertEquals("LICENSE.TXT", GuessUtils.normalise("license.txt"));
-        assertEquals("LICENSE.TXT", GuessUtils.normalise("some/path/license.txt"));
-        assertEquals("LICENSE.TXT", GuessUtils.normalise("/license.txt"));
-        assertEquals("LICENSE.TXT", GuessUtils.normalise("some\\path\\license.txt"));
-        assertEquals("", GuessUtils.normalise("/"));
+		assertEquals("LICENSE", new GuessUtils().normalise("license"));
+		assertEquals("LICENSE.TXT", new GuessUtils().normalise("license.txt"));
+		assertEquals("LICENSE.TXT",
+				new GuessUtils().normalise("some/path/license.txt"));
+		assertEquals("LICENSE.TXT", new GuessUtils().normalise("/license.txt"));
+		assertEquals("LICENSE.TXT",
+				new GuessUtils().normalise("some\\path\\license.txt"));
+		assertEquals("", new GuessUtils().normalise("/"));
     }
     
     @Test

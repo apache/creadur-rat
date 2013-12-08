@@ -109,9 +109,9 @@ public class BinaryGuesser {
 	 * @param bytecodeExtensions
 	 *            the bytecode extensions
 	 */
-	public BinaryGuesser(final String[] dataExtensions, final String[] exeExtensions,
-			final String[] keystoreExtensions, final String[] imageExtensions,
-			final String[] bytecodeExtensions) {
+	public BinaryGuesser(final String[] dataExtensions,
+			final String[] exeExtensions, final String[] keystoreExtensions,
+			final String[] imageExtensions, final String[] bytecodeExtensions) {
 		super();
 		this.dataExtensions = dataExtensions.clone();
 		this.exeExtensions = exeExtensions.clone();
@@ -335,14 +335,16 @@ public class BinaryGuesser {
 	 * @return true, if is binary
 	 */
 	private boolean isBinary(final String name) {
-		if (name == null) {
-			return false;
+		boolean result = false;
+		if (name != null) {
+			final String normalisedName = new GuessUtils().normalise(name);
+			result = BinaryGuesser.JAR_MANIFEST.equals(name)
+					|| isImage(normalisedName) || isKeystore(normalisedName)
+					|| isBytecode(normalisedName)
+					|| isBinaryData(normalisedName)
+					|| isExecutable(normalisedName);
 		}
-		final String normalisedName = GuessUtils.normalise(name);
-		return BinaryGuesser.JAR_MANIFEST.equals(name)
-				|| isImage(normalisedName) || isKeystore(normalisedName)
-				|| isBytecode(normalisedName) || isBinaryData(normalisedName)
-				|| isExecutable(normalisedName);
+		return result;
 	}
 
 }

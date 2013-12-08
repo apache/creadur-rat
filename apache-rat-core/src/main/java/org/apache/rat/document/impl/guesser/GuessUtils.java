@@ -28,14 +28,29 @@ import org.apache.commons.lang.StringUtils;
 public final class GuessUtils {
 
 	/** The Constant SEPARATORS. */
-	private static final String[] SEPARATORS = { "/", "\\" };
+	private static final String[] SEPARATORS_ARRAY = { "/", "\\" };
+
+	/** The separators array. */
+	private final String[] separatorsArray;
 
 	/**
 	 * Instantiates a new guess utils.
 	 */
 	public GuessUtils() {
-		super();
+		this(SEPARATORS_ARRAY);
 	}
+
+	/**
+	 * Instantiates a new guess utils.
+	 * 
+	 * @param separatorsArray
+	 *            the separators array
+	 */
+	public GuessUtils(final String[] separatorsArray) {
+		super();
+		this.separatorsArray = separatorsArray.clone();
+	}
+
 
 	/**
 	 * Converts name to upper case and strips any path.
@@ -44,10 +59,10 @@ public final class GuessUtils {
 	 *            not null
 	 * @return not null
 	 */
-	public static String normalise(final String name) {
+	public String normalise(final String name) {
 		String result = name.toUpperCase(Locale.US);
 		final int lastSeparatorIndex = StringUtils.lastIndexOfAny(result,
-				SEPARATORS);
+				this.separatorsArray);
 		final int length = result.length();
 		if (lastSeparatorIndex >= 0 && lastSeparatorIndex < length) {
 			result = result.substring(lastSeparatorIndex + 1);

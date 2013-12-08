@@ -83,7 +83,7 @@ public class NoteGuesser {
 		boolean result = false;
 		if (name != null) {
 			final List<String> list = Arrays.asList(this.noteFileNames);
-			final String normalisedName = GuessUtils.normalise(name);
+			final String normalisedName = new GuessUtils().normalise(name);
 			if (list.contains(name) || list.contains(normalisedName)) {
 				result = true;
 			} else {
