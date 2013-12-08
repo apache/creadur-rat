@@ -18,10 +18,13 @@
  */
 package org.apache.rat.header;
 
+/**
+ * The Interface CharFilter.
+ */
 interface CharFilter {
 
 	/**
-	 * Is the given character filtered out?
+	 * Is the given character filtered out?.
 	 * 
 	 * @param character
 	 *            character to be filtered
