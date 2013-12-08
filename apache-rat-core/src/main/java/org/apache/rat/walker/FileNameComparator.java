@@ -31,7 +31,7 @@ class FileNameComparator implements Comparator<File> {
 	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	public int compare(File firstFile, File secondFile) {
+	public int compare(final File firstFile, final File secondFile) {
 		int result = 0;
 		if (firstFile == null) {
 			if (secondFile != null) {
