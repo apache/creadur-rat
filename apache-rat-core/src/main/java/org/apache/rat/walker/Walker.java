@@ -30,49 +30,50 @@ import org.apache.rat.report.IReportable;
  */
 public abstract class Walker implements IReportable {
 
-    protected final File file;
-    protected final String name;
+	protected final File file;
+	protected final String name;
 
-    protected final FilenameFilter filter;
+	protected final FilenameFilter filter;
 
-    protected static FilenameFilter regexFilter(final Pattern pattern) {
-        return new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                final boolean result;
-                if (pattern == null) {
-                    result = true;
-                } else {
-                    result = !pattern.matcher(name).matches();
-                }
-                return result;
-            }
-        };
-    }
+	protected static FilenameFilter regexFilter(final Pattern pattern) {
+		return new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				final boolean result;
+				if (pattern == null) {
+					result = true;
+				} else {
+					result = !pattern.matcher(name).matches();
+				}
+				return result;
+			}
+		};
+	}
 
-    protected boolean isRestricted(File file) {
-        String name = file.getName();
-        boolean result = name.startsWith(".");
-        return result;
-    }
- 
-    protected final boolean ignored(final File file) {
-        boolean result = false;
-        if (filter != null) {
-            final String name = file.getName();
-            final File dir = file.getParentFile();
-            result = !filter.accept(dir, name);
-        }
-        return result;
-    }
+	protected boolean isRestricted(File file) {
+		String name = file.getName();
+		boolean result = name.startsWith(".");
+		return result;
+	}
 
-    public Walker(File file, final FilenameFilter filter) {
-        this(file.getPath(), file, filter);
-    }
+	protected final boolean ignored(final File file) {
+		boolean result = false;
+		if (filter != null) {
+			final String name = file.getName();
+			final File dir = file.getParentFile();
+			result = !filter.accept(dir, name);
+		}
+		return result;
+	}
 
-    protected Walker(final String name, final File file, final FilenameFilter filter) {
-        this.name = name;
-        this.file = file;
-        this.filter = filter;
-    }
+	public Walker(File file, final FilenameFilter filter) {
+		this(file.getPath(), file, filter);
+	}
+
+	protected Walker(final String name, final File file,
+			final FilenameFilter filter) {
+		this.name = name;
+		this.file = file;
+		this.filter = filter;
+	}
 
 }
