@@ -22,12 +22,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.regex.Pattern;
 
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.api.RatException;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -47,10 +49,10 @@ public class XmlReportFactoryTest {
 			.compile(".svn|Empty.txt");
 
 	/** The out. */
-	StringWriter out;
+	private StringWriter out;
 
 	/** The writer. */
-	IXmlWriter writer;
+	private IXmlWriter writer;
 
 	/**
 	 * Sets the up.
@@ -72,22 +74,24 @@ public class XmlReportFactoryTest {
 	 *            the directory
 	 * @param report
 	 *            the report
-	 * @throws Exception
-	 *             the exception
+	 * @throws RatException
+	 *             the rat exception
 	 */
-	private void report(DirectoryWalker directory, RatReport report)
-			throws Exception {
+	private void report(final DirectoryWalker directory, final RatReport report)
+			throws RatException {
 		directory.run(report);
 	}
 
 	/**
 	 * Standard report.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws RatException
+	 *             the rat exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void standardReport() throws Exception {
+	public void standardReport() throws RatException, IOException {
 		final String elementsPath = Resources
 				.getResourceDirectory("elements/Source.java");
 		final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
