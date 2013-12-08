@@ -48,12 +48,12 @@ public abstract class Walker implements IReportable {
 	 */
 	protected static FilenameFilter regexFilter(final Pattern pattern) {
 		return new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				final boolean result;
+			public boolean accept(final File dir, final String name) {
+				boolean result = false;
 				if (pattern == null) {
 					result = true;
 				} else {
-					result = !pattern.matcher(name).matches();
+					result ^= pattern.matcher(name).matches();
 				}
 				return result;
 			}
@@ -67,10 +67,9 @@ public abstract class Walker implements IReportable {
 	 *            the file
 	 * @return true, if is restricted
 	 */
-	protected boolean isRestricted(File file) {
+	protected boolean isRestricted(final File file) {
 		String name = file.getName();
-		boolean result = name.startsWith(".");
-		return result;
+		return name.charAt(0) == '.';
 	}
 
 	/**
@@ -85,7 +84,7 @@ public abstract class Walker implements IReportable {
 		if (filter != null) {
 			final String name = file.getName();
 			final File dir = file.getParentFile();
-			result = !filter.accept(dir, name);
+			result ^= filter.accept(dir, name);
 		}
 		return result;
 	}
@@ -98,7 +97,7 @@ public abstract class Walker implements IReportable {
 	 * @param filter
 	 *            the filter
 	 */
-	public Walker(File file, final FilenameFilter filter) {
+	public Walker(final File file, final FilenameFilter filter) {
 		this(file.getPath(), file, filter);
 	}
 
