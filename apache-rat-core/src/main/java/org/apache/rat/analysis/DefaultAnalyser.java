@@ -30,7 +30,7 @@ import org.apache.rat.document.impl.guesser.NoteGuesser;
 /**
  * The Class DefaultAnalyser.
  */
-final class DefaultAnalyser implements IDocumentAnalyser {
+public final class DefaultAnalyser implements IDocumentAnalyser {
 
     /** The matcher. */
     private final IHeaderMatcher matcher;
@@ -70,9 +70,10 @@ final class DefaultAnalyser implements IDocumentAnalyser {
             } else if (this.binaryGuessor.matches(subject)) {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
             } else {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(
-                        this.matcher);
+                documentCategory =
+                        MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
+                final DocumentHeaderAnalyser headerAnalyser =
+                        new DocumentHeaderAnalyser(this.matcher);
                 headerAnalyser.analyse(subject);
             }
         }

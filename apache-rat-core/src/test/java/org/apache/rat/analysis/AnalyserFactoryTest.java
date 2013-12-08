@@ -80,8 +80,7 @@ public class AnalyserFactoryTest {
 	public void testStandardTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/resources/elements/Text.txt"));
-		IDocumentAnalyser analyser = DefaultAnalyserFactory
-				.createDefaultAnalyser(matcherStub);
+		IDocumentAnalyser analyser = new DefaultAnalyser(matcherStub);
 		analyser.analyse(document);
 		reporter.report(document);
 		assertEquals(
@@ -122,8 +121,7 @@ public class AnalyserFactoryTest {
 	public void testNoteTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/LICENSE"));
-		IDocumentAnalyser analyser = DefaultAnalyserFactory
-				.createDefaultAnalyser(matcherStub);
+		IDocumentAnalyser analyser = new DefaultAnalyser(matcherStub);
 		analyser.analyse(document);
 		reporter.report(document);
 		assertEquals(
@@ -144,8 +142,7 @@ public class AnalyserFactoryTest {
 	public void testBinaryTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/Image.png"));
-		IDocumentAnalyser analyser = DefaultAnalyserFactory
-				.createDefaultAnalyser(matcherStub);
+		IDocumentAnalyser analyser = new DefaultAnalyser(matcherStub);
 		analyser.analyse(document);
 		reporter.report(document);
 		assertEquals(
@@ -166,8 +163,7 @@ public class AnalyserFactoryTest {
 	public void testArchiveTypeAnalyser() throws IOException, RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/elements/Dummy.jar"));
-		IDocumentAnalyser analyser = DefaultAnalyserFactory
-				.createDefaultAnalyser(matcherStub);
+		IDocumentAnalyser analyser = new DefaultAnalyser(matcherStub);
 		analyser.analyse(document);
 		reporter.report(document);
 		assertEquals(
@@ -199,8 +195,7 @@ public class AnalyserFactoryTest {
 			RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/resources/elements/Text.txtt"));
-		IDocumentAnalyser analyser = DefaultAnalyserFactory
-				.createDefaultAnalyser(matcherStub);
+		IDocumentAnalyser analyser = new DefaultAnalyser(matcherStub);
 		analyser.analyse(document);
 	}
 
@@ -217,8 +212,7 @@ public class AnalyserFactoryTest {
 			RatException {
 		MonolithicFileDocument document = new MonolithicFileDocument(new File(
 				"src/test/resources/elements/test.LICENSE"));
-		IDocumentAnalyser analyser = DefaultAnalyserFactory
-				.createDefaultAnalyser(matcherStub);
+		IDocumentAnalyser analyser = new DefaultAnalyser(matcherStub);
 		analyser.analyse(document);
 		Assert.assertEquals(document.getMetaData().getData().size(), 1);
 	}
