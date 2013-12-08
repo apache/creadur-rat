@@ -63,7 +63,6 @@ public class ArchiveGuesser {
 		return isArchive(subject.getName());
 	}
 
-
 	/**
 	 * Is a file by that name an archive?.
 	 *
