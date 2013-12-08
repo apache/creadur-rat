@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
@@ -30,7 +29,7 @@ import org.apache.rat.document.impl.guesser.NoteGuesser;
 /**
  * The Class DefaultAnalyser.
  */
-public final class DefaultAnalyser implements IDocumentAnalyser {
+public final class DefaultAnalyser {
 
     /** The matcher. */
     private final IHeaderMatcher matcher;

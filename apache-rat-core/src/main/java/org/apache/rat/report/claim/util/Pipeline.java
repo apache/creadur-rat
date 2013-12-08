@@ -15,48 +15,59 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.claim.util;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
-import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.report.RatReport;
-
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.rat.analysis.DefaultAnalyser;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.policy.DefaultPolicy;
+import org.apache.rat.report.RatReport;
 
-public class ClaimReporterMultiplexer implements RatReport {
-    private final IDocumentAnalyser analyser;
+public class Pipeline implements RatReport {
+
+    private final DefaultAnalyser analyser;
+    private final DefaultPolicy policy;
     private final List<? extends RatReport> reporters;
 
-    public ClaimReporterMultiplexer(final IDocumentAnalyser pAnalyser, final List<? extends RatReport> reporters) {
-        analyser = pAnalyser;
+    public Pipeline(final DefaultAnalyser analyser, final DefaultPolicy policy,
+            final List<? extends RatReport> reporters) {
+        super();
+        this.analyser = analyser;
+        this.policy = policy;
         this.reporters = reporters;
     }
 
-    public void report(Document document) throws RatException {
-        if (analyser != null) {
+    public void report(final Document document) throws RatException {
+        if (this.analyser != null) {
             try {
-                analyser.analyse(document);
-            } catch (Exception e) {
+                this.analyser.analyse(document);
+            } catch (final IOException e) {
                 throw new RatException(e.getMessage(), e);
             }
         }
-        for (RatReport report : reporters) {
+
+        if (this.policy != null) {
+            this.policy.analyse(document);
+        }
+
+        for (final RatReport report : this.reporters) {
             report.report(document);
-        } 
+        }
     }
 
     public void startReport() throws RatException {
-        for (RatReport report : reporters) {
+        for (final RatReport report : this.reporters) {
             report.startReport();
-        } 
+        }
     }
 
     public void endReport() throws RatException {
-        for (RatReport report : reporters) {
+        for (final RatReport report : this.reporters) {
             report.endReport();
-        } 
+        }
     }
 }

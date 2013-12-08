@@ -23,15 +23,13 @@ import java.util.List;
 
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.DefaultAnalyser;
-import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.impl.ClaimAggregator;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
 import org.apache.rat.report.claim.util.LicenseAddingReport;
+import org.apache.rat.report.claim.util.Pipeline;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
@@ -52,13 +50,10 @@ public class XmlReportFactory {
                     .isAddingLicensesForced()));
         }
         reporters.add(new SimpleXmlClaimReporter(writer));
-        final IDocumentAnalyser analyser =
+        final DefaultAnalyser analyser =
                 new DefaultAnalyser(pConfiguration.getHeaderMatcher());
         final DefaultPolicy policy =
                 new DefaultPolicy(pConfiguration.getApprovedLicenseNames());
-        final IDocumentAnalyser[] analysers = { analyser, policy };
-        final DocumentAnalyserMultiplexer analysisMultiplexer =
-                new DocumentAnalyserMultiplexer(analysers);
-        return new ClaimReporterMultiplexer(analysisMultiplexer, reporters);
+        return new Pipeline(analyser, policy, reporters);
     }
 }

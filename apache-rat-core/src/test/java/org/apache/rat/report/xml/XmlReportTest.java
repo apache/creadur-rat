@@ -29,11 +29,10 @@ import java.util.regex.Pattern;
 import org.apache.rat.analysis.DefaultAnalyser;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
-import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
+import org.apache.rat.report.claim.util.Pipeline;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -64,10 +63,10 @@ public class XmlReportTest {
             public void reset() {
             }
         };
-        final IDocumentAnalyser analyser = new DefaultAnalyser(matcher);
+        final DefaultAnalyser analyser = new DefaultAnalyser(matcher);
         final List<AbstractReport> reporters = new ArrayList<AbstractReport>();
         reporters.add(reporter);
-        this.report = new ClaimReporterMultiplexer(analyser, reporters);
+        this.report = new Pipeline(analyser, null, reporters);
     }
 
     private void report(final DirectoryWalker directory) throws Exception {
