@@ -51,11 +51,8 @@ public final class XmlUtils {
 	 * @param string
 	 *            the string
 	 * @return true, if is well formed xml
-	 * @throws Exception
-	 *             the exception
 	 */
-	public static final boolean isWellFormedXml(final String string)
-			throws Exception {
+	public static boolean isWellFormedXml(final String string) {
 		return isWellFormedXml(new InputSource(new StringReader(string)));
 	}
 
@@ -68,7 +65,7 @@ public final class XmlUtils {
 	 * @throws ParserConfigurationException
 	 *             the parser configuration exception
 	 */
-	public static final XMLReader newXMLReader() throws SAXException,
+	public static XMLReader newXMLReader() throws SAXException,
 			ParserConfigurationException {
 		final SAXParserFactory spf = SAXParserFactory.newInstance();
 		spf.setValidating(false);
@@ -83,40 +80,37 @@ public final class XmlUtils {
 	 *            the isource
 	 * @return true, if is well formed xml
 	 */
-	public static final boolean isWellFormedXml(final InputSource isource) {
+	public static boolean isWellFormedXml(final InputSource isource) {
+		boolean result = false;
 		try {
 			newXMLReader().parse(isource);
-			return true;
+			result = true;
 		} catch (SAXException e) {
-			System.out.println(e);
 			e.printStackTrace();
-			return false;
 		} catch (IOException e) {
 			throw new UndeclaredThrowableException(e);
 		} catch (ParserConfigurationException e) {
 			throw new UndeclaredThrowableException(e);
 		}
+		return result;
 	}
 
 	/**
 	 * Checks if is well formed xml.
 	 * 
-	 * @param in
-	 *            the in
+	 * @param inputStream
+	 *            the input stream
 	 * @return true, if is well formed xml
-	 * @throws Exception
-	 *             the exception
 	 */
-	public static final boolean isWellFormedXml(final InputStream in)
-			throws Exception {
-		return isWellFormedXml(new InputSource(in));
+	public static boolean isWellFormedXml(final InputStream inputStream) {
+		return isWellFormedXml(new InputSource(inputStream));
 	}
 
 	/**
 	 * To dom.
 	 * 
-	 * @param in
-	 *            the in
+	 * @param inputStream
+	 *            the input stream
 	 * @return the document
 	 * @throws SAXException
 	 *             the sAX exception
@@ -127,13 +121,13 @@ public final class XmlUtils {
 	 * @throws FactoryConfigurationError
 	 *             the factory configuration error
 	 */
-	public static final Document toDom(final InputStream in)
+	public static Document toDom(final InputStream inputStream)
 			throws SAXException, IOException, ParserConfigurationException,
 			FactoryConfigurationError {
 		final DocumentBuilder builder = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
 		Document result;
-		result = builder.parse(in);
+		result = builder.parse(inputStream);
 		return result;
 	}
 }
