@@ -20,6 +20,7 @@ package org.apache.rat.report.xml.writer;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
@@ -32,19 +33,19 @@ import org.junit.Test;
 public class XmlWriterUtilsTest {
 
 	/** The out. */
-	StringWriter out;
+	private StringWriter out;
 
 	/** The writer. */
-	IXmlWriter writer;
+	private IXmlWriter writer;
 
 	/**
 	 * Sets the up.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws IOException {
 		out = new StringWriter();
 		writer = new XmlWriter(out);
 		writer.openElement("alpha");
@@ -53,11 +54,11 @@ public class XmlWriterUtilsTest {
 	/**
 	 * Write true.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void writeTrue() throws Exception {
+	public void writeTrue() throws IOException {
 		new XmlWriterUtils().writeAttribute(writer, "name", true);
 		assertEquals("Attribute written as True", "<alpha name='true'",
 				out.toString());
@@ -66,11 +67,11 @@ public class XmlWriterUtilsTest {
 	/**
 	 * Write false.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void writeFalse() throws Exception {
+	public void writeFalse() throws IOException {
 		new XmlWriterUtils().writeAttribute(writer, "name", false);
 		assertEquals("Attribute written as False", "<alpha name='false'",
 				out.toString());
