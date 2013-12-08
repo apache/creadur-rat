@@ -45,7 +45,7 @@ public class FileDocument implements Document {
     }
 
     public boolean isComposite() {
-        return DocumentImplUtils.isZip(file);
+		return new DocumentImplUtils().isZip(file);
     }
 
     public Reader reader() throws IOException {

@@ -58,7 +58,7 @@ public final class DocumentImplUtils {
 	 *            the stream
 	 * @return true, if is zip stream
 	 */
-	public static boolean isZipStream(final InputStream stream) {
+	public boolean isZipStream(final InputStream stream) {
 		ZipInputStream zip = new ZipInputStream(stream);
 		boolean result = true;
 		try {
@@ -80,7 +80,7 @@ public final class DocumentImplUtils {
 	 *            the file
 	 * @return true, if is zip
 	 */
-	public static boolean isZip(final File file) {
+	public boolean isZip(final File file) {
 		boolean result;
 		try {
 			result = isZipStream(new FileInputStream(file));

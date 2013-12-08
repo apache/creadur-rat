@@ -56,7 +56,7 @@ public class ArchiveEntryDocument implements Document {
     }
 
     public boolean isComposite() {
-        return DocumentImplUtils.isZipStream(new ByteArrayInputStream(contents));
+        return new DocumentImplUtils().isZipStream(new ByteArrayInputStream(contents));
     }
 
     public Reader reader() throws IOException {
