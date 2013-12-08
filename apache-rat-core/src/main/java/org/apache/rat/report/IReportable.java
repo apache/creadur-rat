@@ -20,7 +20,18 @@ package org.apache.rat.report;
 
 import org.apache.rat.api.RatException;
 
+/**
+ * The Interface IReportable.
+ */
 public interface IReportable {
 
+	/**
+	 * Run.
+	 * 
+	 * @param report
+	 *            the report
+	 * @throws RatException
+	 *             the rat exception
+	 */
 	public void run(RatReport report) throws RatException;
 }
