@@ -18,17 +18,34 @@
  */
 package org.apache.rat.header;
 
+/**
+ * The Class ArrayCharFilter.
+ */
 class ArrayCharFilter implements CharFilter {
 
+	/** The filtered. */
 	private final char[] filtered;
+
+	/** The length. */
 	private final int length;
 
+	/**
+	 * Instantiates a new array char filter.
+	 * 
+	 * @param filtered
+	 *            the filtered
+	 */
 	protected ArrayCharFilter(final char[] filtered) {
 		super();
 		this.filtered = filtered;
 		length = filtered.length;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.header.CharFilter#isFilteredOut(char)
+	 */
 	public boolean isFilteredOut(char character) {
 		boolean result = false;
 		for (int i = 0; i < length; i++) {
