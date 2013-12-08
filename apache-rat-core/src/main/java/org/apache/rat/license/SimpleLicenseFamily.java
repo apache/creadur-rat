@@ -19,25 +19,47 @@
 package org.apache.rat.license;
 
 /**
- * Trivial bean implementing ILicenseFamily
+ * Trivial bean implementing ILicenseFamily.
  * 
  * @since Rat 0.8
  */
 public class SimpleLicenseFamily implements ILicenseFamily {
+
+	/** The family name. */
 	private String familyName;
 
+	/**
+	 * Instantiates a new simple license family.
+	 * 
+	 * @param familyName
+	 *            the family name
+	 */
 	public SimpleLicenseFamily(String familyName) {
 		setFamilyName(familyName);
 	}
 
+	/**
+	 * Instantiates a new simple license family.
+	 */
 	public SimpleLicenseFamily() {
 		this(null);
 	}
 
+	/**
+	 * Sets the family name.
+	 * 
+	 * @param familyName
+	 *            the new family name
+	 */
 	public final void setFamilyName(String familyName) {
 		this.familyName = familyName;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.license.ILicenseFamily#getFamilyName()
+	 */
 	public final String getFamilyName() {
 		return familyName;
 	}
