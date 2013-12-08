@@ -37,7 +37,7 @@ import org.junit.Test;
 public class DefaultPolicyTest {
 
 	/** The policy. */
-	DefaultPolicy policy;
+	private DefaultPolicy policy;
 	
 	/** The subject. */
 	private Document subject;
@@ -74,8 +74,8 @@ public class DefaultPolicyTest {
 	 */
 	@SuppressWarnings("boxing")
 	// OK in test code
-	private void assertApproval(boolean pApproved) {
-		assertEquals(pApproved,
+	private void assertApproval(final boolean pApproved) {
+		assertEquals("Metadata value are equals.", pApproved,
 				MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE
 						.equals(subject.getMetaData().value(
 								MetaData.RAT_URL_APPROVED_LICENSE)));
