@@ -21,8 +21,16 @@ package org.apache.rat.walker;
 import java.io.File;
 import java.util.Comparator;
 
+/**
+ * The Class FileNameComparator.
+ */
 class FileNameComparator implements Comparator<File> {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
 	public int compare(File firstFile, File secondFile) {
 		int result = 0;
 		if (firstFile == null) {
