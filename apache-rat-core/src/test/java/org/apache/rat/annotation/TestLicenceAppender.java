@@ -18,8 +18,8 @@
  */
 package org.apache.rat.annotation;
 
-import org.apache.rat.test.utils.Resources;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,26 +29,63 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import org.apache.rat.test.utils.Resources;
+import org.junit.Test;
 
+/**
+ * The Class TestLicenceAppender.
+ */
 public class TestLicenceAppender {
-	/** Used to ensure that temporary files have unq */
+	
+	/** Used to ensure that temporary files have unq. */
 	private Random random = new Random();
 
+	/**
+	 * The Interface FileCreator.
+	 */
 	private interface FileCreator {
+		
+		/**
+		 * Creates the file.
+		 *
+		 * @param w the w
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 */
 		void createFile(Writer w) throws IOException;
 	}
 
+	/**
+	 * The Interface NewFileReader.
+	 */
 	private interface NewFileReader {
+		
+		/**
+		 * Read file.
+		 *
+		 * @param r the r
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 */
 		void readFile(BufferedReader r) throws IOException;
 	}
 
+	/**
+	 * Qualify.
+	 *
+	 * @param fileName the file name
+	 * @return the string
+	 */
 	private static String qualify(String fileName) {
 		return new File(new File(System.getProperty("java.io.tmpdir")),
 				fileName).getAbsolutePath();
 	}
 
+	/**
+	 * Creates the test file.
+	 *
+	 * @param fileName the file name
+	 * @param creator the creator
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void createTestFile(String fileName, FileCreator creator)
 			throws IOException {
 		FileWriter w = null;
@@ -61,12 +98,25 @@ public class TestLicenceAppender {
 		}
 	}
 
+	/**
+	 * Try to delete.
+	 *
+	 * @param f the f
+	 */
 	private static void tryToDelete(File f) {
 		if (f != null && f.exists() && !f.delete()) {
 			f.deleteOnExit();
 		}
 	}
 
+	/**
+	 * Common test template.
+	 *
+	 * @param relativeName the relative name
+	 * @param creator the creator
+	 * @param reader the reader
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void commonTestTemplate(String relativeName,
 			FileCreator creator, NewFileReader reader) throws IOException {
 		String name = qualify(relativeName);
@@ -91,6 +141,13 @@ public class TestLicenceAppender {
 		}
 	}
 
+	/**
+	 * Check lines.
+	 *
+	 * @param firstLine the first line
+	 * @param secondLine the second line
+	 * @return the new file reader
+	 */
 	private static NewFileReader checkLines(final String firstLine,
 			final String secondLine) {
 		return new NewFileReader() {
@@ -105,6 +162,11 @@ public class TestLicenceAppender {
 		};
 	}
 
+	/**
+	 * Adds the licence to unknown file.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToUnknownFile() throws IOException {
 		String filename = qualify("tmp" + random.nextLong() + ".unknownType");
@@ -130,6 +192,11 @@ public class TestLicenceAppender {
 		}
 	}
 
+	/**
+	 * Adds the licence to java.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToJava() throws IOException {
 		String filename = "tmp.java";
@@ -145,6 +212,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, secondLine));
 	}
 
+	/**
+	 * Adds the licence to java without package.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToJavaWithoutPackage() throws IOException {
 		String filename = "tmp.java";
@@ -157,6 +229,11 @@ public class TestLicenceAppender {
 		}, checkLines(commentLine, null));
 	}
 
+	/**
+	 * Adds the licence to xml.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToXML() throws IOException {
 		String filename = "tmp.xml";
@@ -173,6 +250,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, secondLine));
 	}
 
+	/**
+	 * Adds the licence to xml without decl.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToXMLWithoutDecl() throws IOException {
 		String filename = "tmp.xml";
@@ -187,6 +269,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, secondLine));
 	}
 
+	/**
+	 * Adds the licence to html.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToHTML() throws IOException {
 		String filename = "tmp.html";
@@ -201,6 +288,11 @@ public class TestLicenceAppender {
 		}, checkLines(commentLine, null));
 	}
 
+	/**
+	 * Adds the licence to css.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToCSS() throws IOException {
 		String filename = "tmp.css";
@@ -215,6 +307,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the licence to javascript.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToJavascript() throws IOException {
 		String filename = "tmp.js";
@@ -229,6 +326,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the licence to apt.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToAPT() throws IOException {
 		String filename = "tmp.apt";
@@ -243,6 +345,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the licence to properties.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToProperties() throws IOException {
 		String filename = "tmp.properties";
@@ -257,6 +364,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the licence to scala.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToScala() throws IOException {
 		String filename = "tmp.scala";
@@ -285,6 +397,11 @@ public class TestLicenceAppender {
 		});
 	}
 
+	/**
+	 * Adds the license to ruby without hash bang.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenseToRubyWithoutHashBang() throws IOException {
 		String filename = "tmp.rb";
@@ -298,6 +415,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the license to ruby with hash bang.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenseToRubyWithHashBang() throws IOException {
 		String filename = "tmp.rb";
@@ -313,6 +435,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, secondLine));
 	}
 
+	/**
+	 * Adds the license to perl without hash bang.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenseToPerlWithoutHashBang() throws IOException {
 		String filename = "tmp.pl";
@@ -325,6 +452,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the license to perl with hash bang.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenseToPerlWithHashBang() throws IOException {
 		String filename = "tmp.pl";
@@ -339,6 +471,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, secondLine));
 	}
 
+	/**
+	 * Adds the license to tcl without hash bang.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenseToTclWithoutHashBang() throws IOException {
 		String filename = "tmp.tcl";
@@ -351,6 +488,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the license to tcl with hash bang.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenseToTclWithHashBang() throws IOException {
 		String filename = "tmp.tcl";
@@ -365,6 +507,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, secondLine));
 	}
 
+	/**
+	 * Adds the licence to php.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToPHP() throws IOException {
 		String filename = "tmp.php";
@@ -380,6 +527,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, secondLine));
 	}
 
+	/**
+	 * Adds the licence to c sharp.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToCSharp() throws IOException {
 		String filename = "tmp.cs";
@@ -395,6 +547,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the licence to groovy.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToGroovy() throws IOException {
 		String filename = "tmp.groovy";
@@ -409,6 +566,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * Adds the licence to c plus plus.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToCPlusPlus() throws IOException {
 		String filename = "tmp.cpp";
@@ -424,6 +586,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, null));
 	}
 
+	/**
+	 * File with bom.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void fileWithBOM() throws IOException {
 		File f = Resources.getResourceFile("violations/FilterTest.cs");
@@ -453,6 +620,11 @@ public class TestLicenceAppender {
 		}
 	}
 
+	/**
+	 * Adds the licence to v s2003solution.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToVS2003solution() throws IOException {
 		String filename = "tmp.sln";
@@ -473,6 +645,11 @@ public class TestLicenceAppender {
 		}, checkLines(firstLine, secondLine));
 	}
 
+	/**
+	 * Adds the licence to v s2005solution.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToVS2005solution() throws IOException {
 		String filename = "tmp.sln";
@@ -504,6 +681,11 @@ public class TestLicenceAppender {
 		});
 	}
 
+	/**
+	 * Adds the licence to v s2010 express solution.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToVS2010ExpressSolution() throws IOException {
 		String filename = "tmp.sln";
@@ -552,6 +734,11 @@ public class TestLicenceAppender {
 		});
 	}
 
+	/**
+	 * Adds the licence to v s2010 solution with blank line.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void addLicenceToVS2010SolutionWithBlankLine() throws IOException {
 		String filename = "tmp.sln";
