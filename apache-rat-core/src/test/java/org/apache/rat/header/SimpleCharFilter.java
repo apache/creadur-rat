@@ -24,12 +24,13 @@ package org.apache.rat.header;
 public class SimpleCharFilter implements CharFilter {
 
 	/** The filter out. */
-	public boolean filterOut = false;
+	public boolean filterOut;
 
 	/**
 	 * Instantiates a new simple char filter.
 	 */
 	public SimpleCharFilter() {
+		super();
 	}
 
 	/*
@@ -37,7 +38,7 @@ public class SimpleCharFilter implements CharFilter {
 	 * 
 	 * @see org.apache.rat.header.CharFilter#isFilteredOut(char)
 	 */
-	public boolean isFilteredOut(char character) {
+	public boolean isFilteredOut(final char character) {
 		return filterOut;
 	}
 
