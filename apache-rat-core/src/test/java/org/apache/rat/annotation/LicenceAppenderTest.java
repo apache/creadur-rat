@@ -957,4 +957,15 @@ public class LicenceAppenderTest {
 		Assert.assertEquals("rem" + System.getProperty("line.separator"),
 				appender.getLastLine(type));
 	}
+
+	/**
+	 * Test get line bat.
+	 */
+	@Test
+	public void testGetLineBAT() {
+		ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
+		int type = 12;
+		Assert.assertEquals("rem" + System.getProperty("line.separator"),
+				appender.getLine(type, ""));
+	}
 }
