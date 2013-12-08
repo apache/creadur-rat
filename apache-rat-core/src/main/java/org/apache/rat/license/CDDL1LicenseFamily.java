@@ -25,7 +25,7 @@ import static org.apache.rat.api.domain.RatLicenseFamily.CDDL1;
  */
 public class CDDL1LicenseFamily extends SimpleLicenseFamily {
 
-    public CDDL1LicenseFamily() {
+	public CDDL1LicenseFamily() {
 		super(CDDL1.getName());
-    }
+	}
 }
