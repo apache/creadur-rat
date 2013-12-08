@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Random;
 
+import junit.framework.Assert;
+
 import org.apache.rat.test.utils.Resources;
 import org.junit.Test;
 
@@ -921,8 +923,7 @@ public class LicenceAppenderTest {
 
 			BufferedReader bufferedReader = null;
 			try {
-				bufferedReader = new BufferedReader(new FileReader(name
-						+ DOT_NEW));
+				bufferedReader = new BufferedReader(new FileReader(name));
 				reader.readFile(bufferedReader);
 			} finally {
 				if (bufferedReader != null) {
@@ -933,5 +934,16 @@ public class LicenceAppenderTest {
 			tryToDelete(new File(name));
 			tryToDelete(new File(name + DOT_NEW));
 		}
+	}
+
+	/**
+	 * Test get first line bat.
+	 */
+	@Test
+	public void testGetFirstLineBAT() {
+		ApacheV2LicenceAppender appender = new ApacheV2LicenceAppender();
+		int type = 12;
+		Assert.assertEquals("rem" + System.getProperty("line.separator"),
+				appender.getFirstLine(type));
 	}
 }
