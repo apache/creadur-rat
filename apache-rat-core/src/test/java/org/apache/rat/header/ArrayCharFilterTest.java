@@ -30,10 +30,10 @@ import org.junit.Test;
 public class ArrayCharFilterTest {
 
 	/** The Constant filtered. */
-	private static final char[] filtered = { 'd', 'o', 'a' };
+	private static final char[] FILTERED = { 'd', 'o', 'a' };
 
 	/** The filter. */
-	ArrayCharFilter filter;
+	private ArrayCharFilter filter;
 
 	/**
 	 * Sets the up.
@@ -43,20 +43,20 @@ public class ArrayCharFilterTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		filter = new ArrayCharFilter(filtered);
+		filter = new ArrayCharFilter(FILTERED);
 	}
 
 	/**
 	 * Checks if is filtered out.
 	 */
 	@Test
-	public void isFilteredOut() {
-		assertTrue(filter.isFilteredOut('a'));
-		assertFalse(filter.isFilteredOut('b'));
-		assertFalse(filter.isFilteredOut('c'));
-		assertTrue(filter.isFilteredOut('d'));
-		assertFalse(filter.isFilteredOut('e'));
-		assertFalse(filter.isFilteredOut('f'));
+	public void testIsFilteredOut() {
+		assertTrue("Filter is equal a", filter.isFilteredOut('a'));
+	}
+
+	@Test
+	public void testNotFilteredOut() {
+		assertFalse("Filter is not equal b", filter.isFilteredOut('b'));
 	}
 
 }
