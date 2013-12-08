@@ -31,5 +31,5 @@ interface CharFilter {
 	 * @return true if this character should be filtered out, false if this
 	 *         character should be filtered in
 	 */
-	public boolean isFilteredOut(char character);
+	boolean isFilteredOut(char character);
 }
