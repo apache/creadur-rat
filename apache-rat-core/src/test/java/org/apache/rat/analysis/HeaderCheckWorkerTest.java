@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -40,19 +41,31 @@ import org.junit.Test;
  */
 public class HeaderCheckWorkerTest {
 
+
+	/**
+	 * Not finished.
+	 * 
+	 */
+    @Test
+	public void notFinished() {
+		final Document subject = new MockLocation("subject");
+		HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""),
+				new ApacheSoftwareLicense20(), subject);
+		assertFalse("Work status can´t be finished", worker.isFinished());
+	}
+
 	/**
 	 * Checks if is finished.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-    @Test
-    public void isFinished() throws Exception {
+	@Test
+	public void isFinished() throws IOException {
         final Document subject = new MockLocation("subject");
         HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), new ApacheSoftwareLicense20(), subject);
-        assertFalse(worker.isFinished());
         worker.read();
-        assertTrue(worker.isFinished());
+		assertTrue("Work status must be finished", worker.isFinished());
     }
     
 	/**
@@ -64,13 +77,14 @@ public class HeaderCheckWorkerTest {
     @Test
 	public void testHeaderCheckWorkerConstructor()
 			throws UnsupportedEncodingException {
-		InputStream in = new ByteArrayInputStream("Test".getBytes("UTF-8"));
-		Reader reader = new InputStreamReader(in, "UTF-8");
+		InputStream inputStream = new ByteArrayInputStream(
+				"Test".getBytes("UTF-8"));
+		Reader reader = new InputStreamReader(inputStream, "UTF-8");
 		IHeaderMatcher matcher = null;
 		int numberOfRetainedHeaderLine = 0;
 		Document name = null;
 		HeaderCheckWorker headerCheckWorker = new HeaderCheckWorker(reader,
 				numberOfRetainedHeaderLine, matcher, name);
-        assertNotNull(headerCheckWorker);
+		assertNotNull("Not null", headerCheckWorker);
     }
 }
