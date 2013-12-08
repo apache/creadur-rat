@@ -47,9 +47,9 @@ public class ArchiveGuesser {
 	 * @param archiveExtensions
 	 *            the archive extensions
 	 */
-	public ArchiveGuesser(final String[] archiveExtensions) {
+	public ArchiveGuesser(final String... archiveExtensions) {
 		super();
-		this.archiveExtensions = archiveExtensions;
+		this.archiveExtensions = archiveExtensions.clone();
 	}
 
 	/**
@@ -71,15 +71,16 @@ public class ArchiveGuesser {
 	 * @return true, if is archive
 	 */
 	public boolean isArchive(final String name) {
-		if (name == null) {
-			return false;
-		}
-		final String nameToLower = name.toLowerCase(Locale.US);
-		for (final String element : this.archiveExtensions) {
-			if (nameToLower.endsWith("." + element)) {
-				return true;
+		boolean result = false;
+		if (name != null) {
+			final String nameToLower = name.toLowerCase(Locale.US);
+			for (String element : this.archiveExtensions) {
+				if (nameToLower.endsWith("." + element)) {
+					result = true;
+					break;
+				}
 			}
 		}
-		return false;
+		return result;
 	}
 }
