@@ -30,11 +30,22 @@ import org.apache.rat.report.IReportable;
  */
 public abstract class Walker implements IReportable {
 
+	/** The file. */
 	protected final File file;
+
+	/** The name. */
 	protected final String name;
 
+	/** The filter. */
 	protected final FilenameFilter filter;
 
+	/**
+	 * Regex filter.
+	 * 
+	 * @param pattern
+	 *            the pattern
+	 * @return the filename filter
+	 */
 	protected static FilenameFilter regexFilter(final Pattern pattern) {
 		return new FilenameFilter() {
 			public boolean accept(File dir, String name) {
@@ -49,12 +60,26 @@ public abstract class Walker implements IReportable {
 		};
 	}
 
+	/**
+	 * Checks if is restricted.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return true, if is restricted
+	 */
 	protected boolean isRestricted(File file) {
 		String name = file.getName();
 		boolean result = name.startsWith(".");
 		return result;
 	}
 
+	/**
+	 * Ignored.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return true, if successful
+	 */
 	protected final boolean ignored(final File file) {
 		boolean result = false;
 		if (filter != null) {
@@ -65,10 +90,28 @@ public abstract class Walker implements IReportable {
 		return result;
 	}
 
+	/**
+	 * Instantiates a new walker.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param filter
+	 *            the filter
+	 */
 	public Walker(File file, final FilenameFilter filter) {
 		this(file.getPath(), file, filter);
 	}
 
+	/**
+	 * Instantiates a new walker.
+	 * 
+	 * @param name
+	 *            the name
+	 * @param file
+	 *            the file
+	 * @param filter
+	 *            the filter
+	 */
 	protected Walker(final String name, final File file,
 			final FilenameFilter filter) {
 		this.name = name;
