@@ -18,11 +18,9 @@
  */
 package org.apache.rat.analysis;
 
-import org.apache.rat.document.IDocumentAnalyser;
-
 /**
  * Creates default analysers.
- * 
+ *
  */
 public final class DefaultAnalyserFactory {
 
@@ -35,12 +33,12 @@ public final class DefaultAnalyserFactory {
 
 	/**
 	 * Creates a new DefaultAnalyser object.
-	 * 
+	 *
 	 * @param matcher
 	 *            the matcher
 	 * @return the i document analyser
 	 */
-	public static IDocumentAnalyser createDefaultAnalyser(
+	public static DefaultAnalyser createDefaultAnalyser(
 			final IHeaderMatcher matcher) {
 
 		return new DefaultAnalyser(matcher);
