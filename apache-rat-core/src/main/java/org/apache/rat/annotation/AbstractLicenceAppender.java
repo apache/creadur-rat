@@ -39,51 +39,121 @@ import java.util.Map;
  * 
  */
 public abstract class AbstractLicenceAppender {
+
+	/** The Constant TYPE_UNKNOWN. */
 	private static final int TYPE_UNKNOWN = 0;
+
+	/** The Constant TYPE_JAVA. */
 	private static final int TYPE_JAVA = 1;
+
+	/** The Constant TYPE_XML. */
 	private static final int TYPE_XML = 2;
+
+	/** The Constant TYPE_HTML. */
 	private static final int TYPE_HTML = 3;
+
+	/** The Constant TYPE_CSS. */
 	private static final int TYPE_CSS = 4;
+
+	/** The Constant TYPE_JAVASCRIPT. */
 	private static final int TYPE_JAVASCRIPT = 5;
+
+	/** The Constant TYPE_APT. */
 	private static final int TYPE_APT = 6;
+
+	/** The Constant TYPE_PROPERTIES. */
 	private static final int TYPE_PROPERTIES = 7;
+
+	/** The Constant TYPE_PYTHON. */
 	private static final int TYPE_PYTHON = 8;
+
+	/** The Constant TYPE_C. */
 	private static final int TYPE_C = 9;
+
+	/** The Constant TYPE_H. */
 	private static final int TYPE_H = 10;
+
+	/** The Constant TYPE_SH. */
 	private static final int TYPE_SH = 11;
+
+	/** The Constant TYPE_BAT. */
 	private static final int TYPE_BAT = 12;
+
+	/** The Constant TYPE_VM. */
 	private static final int TYPE_VM = 13;
+
+	/** The Constant TYPE_SCALA. */
 	private static final int TYPE_SCALA = 14;
+
+	/** The Constant TYPE_RUBY. */
 	private static final int TYPE_RUBY = 15;
+
+	/** The Constant TYPE_PERL. */
 	private static final int TYPE_PERL = 16;
+
+	/** The Constant TYPE_TCL. */
 	private static final int TYPE_TCL = 17;
+
+	/** The Constant TYPE_CPP. */
 	private static final int TYPE_CPP = 18;
+
+	/** The Constant TYPE_CSHARP. */
 	private static final int TYPE_CSHARP = 19;
+
+	/** The Constant TYPE_PHP. */
 	private static final int TYPE_PHP = 20;
+
+	/** The Constant TYPE_GROOVY. */
 	private static final int TYPE_GROOVY = 21;
+
+	/** The Constant TYPE_VISUAL_STUDIO_SOLUTION. */
 	private static final int TYPE_VISUAL_STUDIO_SOLUTION = 22;
 
-	/** the line separator for this OS */
+	/** the line separator for this OS. */
 	private static final String LINE_SEP = System.getProperty("line.separator");
 
+	/** The Constant FAMILY_C. */
 	private static final int[] FAMILY_C = new int[] { TYPE_JAVA,
 			TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA, TYPE_CSS, TYPE_CPP,
 			TYPE_CSHARP, TYPE_PHP, TYPE_GROOVY, };
+
+	/** The Constant FAMILY_SGML. */
 	private static final int[] FAMILY_SGML = new int[] { TYPE_XML, TYPE_HTML, };
+
+	/** The Constant FAMILY_SH. */
 	private static final int[] FAMILY_SH = new int[] { TYPE_PROPERTIES,
 			TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL,
 			TYPE_VISUAL_STUDIO_SOLUTION, };
+
+	/** The Constant FAMILY_BAT. */
 	private static final int[] FAMILY_BAT = new int[] { TYPE_BAT, };
+
+	/** The Constant FAMILY_APT. */
 	private static final int[] FAMILY_APT = new int[] { TYPE_APT, };
+
+	/** The Constant FAMILY_VELOCITY. */
 	private static final int[] FAMILY_VELOCITY = new int[] { TYPE_VM, };
+
+	/** The Constant EXPECTS_HASH_PLING. */
 	private static final int[] EXPECTS_HASH_PLING = new int[] { TYPE_PYTHON,
 			TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL };
+
+	/** The Constant EXPECTS_AT_ECHO. */
 	private static final int[] EXPECTS_AT_ECHO = new int[] { TYPE_BAT, };
+
+	/** The Constant EXPECTS_PACKAGE. */
 	private static final int[] EXPECTS_PACKAGE = new int[] { TYPE_JAVA, };
+
+	/** The Constant EXPECTS_XML_DECL. */
 	private static final int[] EXPECTS_XML_DECL = new int[] { TYPE_XML, };
+
+	/** The Constant EXPECTS_PHP_PI. */
 	private static final int[] EXPECTS_PHP_PI = new int[] { TYPE_PHP, };
+
+	/** The Constant EXPECTS_MSVSSF_HEADER. */
 	private static final int[] EXPECTS_MSVSSF_HEADER = new int[] { TYPE_VISUAL_STUDIO_SOLUTION, };
 
+	/** The Constant EXT2TYPE. */
 	private static final Map<String, Integer> EXT2TYPE = new HashMap<String, Integer>();
 
 	static {
@@ -151,8 +221,12 @@ public abstract class AbstractLicenceAppender {
 		EXT2TYPE.put("xsl", Integer.valueOf(TYPE_XML));
 	}
 
+	/** The is forced. */
 	private boolean isForced;
 
+	/**
+	 * Instantiates a new abstract licence appender.
+	 */
 	public AbstractLicenceAppender() {
 		super();
 	}
@@ -161,6 +235,7 @@ public abstract class AbstractLicenceAppender {
 	 * Append the default licence header to the supplied document.
 	 * 
 	 * @param document
+	 *            the document
 	 * @throws IOException
 	 *             if there is a problem either reading or writing the file
 	 */
@@ -215,7 +290,25 @@ public abstract class AbstractLicenceAppender {
 	 * Write document's content to writer attaching the license using the given
 	 * flags as hints for where to put it.
 	 * 
+	 * @param writer
+	 *            the writer
+	 * @param document
+	 *            the document
+	 * @param expectsHashPling
+	 *            the expects hash pling
+	 * @param expectsAtEcho
+	 *            the expects at echo
+	 * @param expectsPackage
+	 *            the expects package
+	 * @param expectsXMLDecl
+	 *            the expects xml decl
+	 * @param expectsPhpPI
+	 *            the expects php pi
+	 * @param expectsMSVSSF
+	 *            the expects msvssf
 	 * @return whether the license has actually been written
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private boolean attachLicense(Writer writer, File document,
 			boolean expectsHashPling, boolean expectsAtEcho,
@@ -289,6 +382,17 @@ public abstract class AbstractLicenceAppender {
 
 	/**
 	 * Check first line for specified text and process.
+	 * 
+	 * @param document
+	 *            the document
+	 * @param writer
+	 *            the writer
+	 * @param line
+	 *            the line
+	 * @param lookfor
+	 *            the lookfor
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private void doFirstLine(File document, Writer writer, String line,
 			String lookfor) throws IOException {
@@ -307,6 +411,7 @@ public abstract class AbstractLicenceAppender {
 	 * Detect the type of document.
 	 * 
 	 * @param document
+	 *            the document
 	 * @return not null
 	 * @TODO use existing mechanism to detect the type of a file and record it
 	 *       in the report output, thus we will not need this duplication here.
@@ -330,6 +435,7 @@ public abstract class AbstractLicenceAppender {
 	 * alongside the existing files.
 	 * 
 	 * @param b
+	 *            the new force
 	 */
 	public void setForce(boolean b) {
 		isForced = b;
@@ -337,6 +443,10 @@ public abstract class AbstractLicenceAppender {
 
 	/**
 	 * Get the licence header for a document.
+	 * 
+	 * @param document
+	 *            the document
+	 * @return the licence header
 	 */
 	public abstract String getLicenceHeader(File document);
 
@@ -415,58 +525,164 @@ public abstract class AbstractLicenceAppender {
 		return "";
 	}
 
+	/**
+	 * Checks if is family c.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if is family c
+	 */
 	private static boolean isFamilyC(int type) {
 		return isIn(FAMILY_C, type);
 	}
 
+	/**
+	 * Checks if is family sgml.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if is family sgml
+	 */
 	private static boolean isFamilySGML(int type) {
 		return isIn(FAMILY_SGML, type);
 	}
 
+	/**
+	 * Checks if is family sh.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if is family sh
+	 */
 	private static boolean isFamilySH(int type) {
 		return isIn(FAMILY_SH, type);
 	}
 
+	/**
+	 * Checks if is family apt.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if is family apt
+	 */
 	private static boolean isFamilyAPT(int type) {
 		return isIn(FAMILY_APT, type);
 	}
 
+	/**
+	 * Checks if is family bat.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if is family bat
+	 */
 	private static boolean isFamilyBAT(int type) {
 		return isIn(FAMILY_BAT, type);
 	}
 
+	/**
+	 * Checks if is family velocity.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if is family velocity
+	 */
 	private static boolean isFamilyVelocity(int type) {
 		return isIn(FAMILY_VELOCITY, type);
 	}
 
+	/**
+	 * Expects hash pling.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if successful
+	 */
 	private static boolean expectsHashPling(int type) {
 		return isIn(EXPECTS_HASH_PLING, type);
 	}
 
+	/**
+	 * Expects at echo.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if successful
+	 */
 	private static boolean expectsAtEcho(int type) {
 		return isIn(EXPECTS_AT_ECHO, type);
 	}
 
+	/**
+	 * Expects package.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if successful
+	 */
 	private static boolean expectsPackage(int type) {
 		return isIn(EXPECTS_PACKAGE, type);
 	}
 
+	/**
+	 * Expects xml decl.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if successful
+	 */
 	private static boolean expectsXMLDecl(int type) {
 		return isIn(EXPECTS_XML_DECL, type);
 	}
 
+	/**
+	 * Expects php pi.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if successful
+	 */
 	private static boolean expectsPhpPI(int type) {
 		return isIn(EXPECTS_PHP_PI, type);
 	}
 
+	/**
+	 * Expects ms visual studio solution file header.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return true, if successful
+	 */
 	private static boolean expectsMSVisualStudioSolutionFileHeader(int type) {
 		return isIn(EXPECTS_MSVSSF_HEADER, type);
 	}
 
+	/**
+	 * Checks if is in.
+	 * 
+	 * @param arr
+	 *            the arr
+	 * @param key
+	 *            the key
+	 * @return true, if is in
+	 */
 	private static boolean isIn(int[] arr, int key) {
 		return Arrays.binarySearch(arr, key) >= 0;
 	}
 
+	/**
+	 * Pass through read next.
+	 * 
+	 * @param writer
+	 *            the writer
+	 * @param line
+	 *            the line
+	 * @param br
+	 *            the br
+	 * @return the string
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private String passThroughReadNext(Writer writer, String line,
 			BufferedReader br) throws IOException {
 		writer.write(line);
