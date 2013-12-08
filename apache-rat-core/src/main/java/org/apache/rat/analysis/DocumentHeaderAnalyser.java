@@ -24,15 +24,32 @@ import java.io.Reader;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 
+/**
+ * The Class DocumentHeaderAnalyser.
+ */
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
+	/** The matcher. */
 	private final IHeaderMatcher matcher;
 
+	/**
+	 * Instantiates a new document header analyser.
+	 * 
+	 * @param matcher
+	 *            the matcher
+	 */
 	public DocumentHeaderAnalyser(final IHeaderMatcher matcher) {
 		super();
 		this.matcher = matcher;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.rat.document.IDocumentAnalyser#analyse(org.apache.rat.api.
+	 * Document)
+	 */
 	public void analyse(Document document) throws IOException {
 		Reader reader = null;
 		try {
