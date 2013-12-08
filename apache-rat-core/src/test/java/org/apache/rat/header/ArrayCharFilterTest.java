@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.header;
 
 import org.junit.Before;
@@ -26,22 +26,22 @@ import static org.junit.Assert.assertTrue;
 
 public class ArrayCharFilterTest {
 
-    private static final char[] filtered = {'d', 'o', 'a'};
-    ArrayCharFilter filter;
-    
-    @Before
-    public void setUp() throws Exception {
-        filter = new ArrayCharFilter(filtered);
-    }
+	private static final char[] filtered = { 'd', 'o', 'a' };
+	ArrayCharFilter filter;
 
-    @Test
-    public void isFilteredOut() {
-        assertTrue(filter.isFilteredOut('a'));
-        assertFalse(filter.isFilteredOut('b'));
-        assertFalse(filter.isFilteredOut('c'));
-        assertTrue(filter.isFilteredOut('d'));
-        assertFalse(filter.isFilteredOut('e'));
-        assertFalse(filter.isFilteredOut('f'));
-    }
+	@Before
+	public void setUp() throws Exception {
+		filter = new ArrayCharFilter(filtered);
+	}
+
+	@Test
+	public void isFilteredOut() {
+		assertTrue(filter.isFilteredOut('a'));
+		assertFalse(filter.isFilteredOut('b'));
+		assertFalse(filter.isFilteredOut('c'));
+		assertTrue(filter.isFilteredOut('d'));
+		assertFalse(filter.isFilteredOut('e'));
+		assertFalse(filter.isFilteredOut('f'));
+	}
 
 }
