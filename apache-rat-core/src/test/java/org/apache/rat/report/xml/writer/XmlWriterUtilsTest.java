@@ -58,7 +58,7 @@ public class XmlWriterUtilsTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void writeTrue() throws IOException {
+	public void testWriteTrue() throws IOException {
 		new XmlWriterUtils().writeAttribute(writer, "name", true);
 		assertEquals("Attribute written as True", "<alpha name='true'",
 				out.toString());
@@ -71,7 +71,7 @@ public class XmlWriterUtilsTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void writeFalse() throws IOException {
+	public void testWriteFalse() throws IOException {
 		new XmlWriterUtils().writeAttribute(writer, "name", false);
 		assertEquals("Attribute written as False", "<alpha name='false'",
 				out.toString());
