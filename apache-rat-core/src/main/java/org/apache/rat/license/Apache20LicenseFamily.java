@@ -20,7 +20,14 @@ package org.apache.rat.license;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
 
+/**
+ * The Class Apache20LicenseFamily.
+ */
 public final class Apache20LicenseFamily extends SimpleLicenseFamily {
+
+	/**
+	 * Instantiates a new apache20 license family.
+	 */
 	public Apache20LicenseFamily() {
 		super(APACHE.getName());
 	}
