@@ -24,9 +24,16 @@ import org.apache.rat.document.IDocumentAnalyser;
  * Creates default analysers.
  * 
  */
-public class DefaultAnalyserFactory {
+public final class DefaultAnalyserFactory {
 
-	public static final IDocumentAnalyser createDefaultAnalyser(
+	/**
+	 * 
+	 */
+	public DefaultAnalyserFactory() {
+		super();
+	}
+
+	public static IDocumentAnalyser createDefaultAnalyser(
 			final IHeaderMatcher matcher) {
 
 		return new DefaultAnalyser(matcher);
