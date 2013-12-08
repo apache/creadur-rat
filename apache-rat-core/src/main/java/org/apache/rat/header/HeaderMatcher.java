@@ -80,7 +80,7 @@ public class HeaderMatcher {
 			final HeaderBean[] headers) {
 		factory = new FilteringSequenceFactory(capacity, filter);
 		read = null;
-		this.headers = headers;
+		this.headers = headers.clone();
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class HeaderMatcher {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void read(Reader reader) throws IOException {
+	public void read(final Reader reader) throws IOException {
 		final LineNumberReader lineNumberReader = new LineNumberReader(reader);
 		read = factory.filter(lineNumberReader);
 		if (lineNumberReader.read() == -1) {
@@ -128,7 +128,7 @@ public class HeaderMatcher {
 	 * @return true if the pattern matches, false otherwise or if
 	 *         {@link #read(Reader)} has not been called
 	 */
-	public boolean matches(Pattern pattern) {
+	public boolean matches(final Pattern pattern) {
 		boolean result = false;
 		if (read != null) {
 			final Matcher matcher = pattern.matcher(read);
