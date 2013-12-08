@@ -20,7 +20,14 @@ package org.apache.rat.license;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.OASIS;
 
+/**
+ * The Class OASISLicenseFamily.
+ */
 public final class OASISLicenseFamily extends SimpleLicenseFamily {
+
+	/**
+	 * Instantiates a new oASIS license family.
+	 */
 	public OASISLicenseFamily() {
 		super(OASIS.getName());
 	}
