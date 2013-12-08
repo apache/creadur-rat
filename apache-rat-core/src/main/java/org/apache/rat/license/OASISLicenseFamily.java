@@ -15,13 +15,13 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.license;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.OASIS;
 
 public final class OASISLicenseFamily extends SimpleLicenseFamily {
-    public OASISLicenseFamily() {
+	public OASISLicenseFamily() {
 		super(OASIS.getName());
-    }
+	}
 }
