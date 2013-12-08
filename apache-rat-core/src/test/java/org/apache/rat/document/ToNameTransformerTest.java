@@ -19,7 +19,6 @@
 package org.apache.rat.document;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.apache.rat.api.Document;
@@ -31,7 +30,7 @@ import org.junit.Test;
 public class ToNameTransformerTest {
 
 	/** The transformer. */
-	ToNameTransformer transformer = new ToNameTransformer();
+	private ToNameTransformer transformer = new ToNameTransformer();
 
 	/**
 	 * Transform location.
@@ -40,7 +39,6 @@ public class ToNameTransformerTest {
 	public void transformLocation() {
 		Document location = new MockLocation();
 		Object result = transformer.transform(location);
-		assertNotNull("Transform into name", result);
 		assertEquals("Transform into name", location.getName(), result);
 	}
 
