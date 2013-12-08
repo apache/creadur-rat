@@ -58,7 +58,7 @@ public class ReportConfiguration {
 	 * @param headerMatcher
 	 *            the new header matcher
 	 */
-	public void setHeaderMatcher(IHeaderMatcher headerMatcher) {
+	public void setHeaderMatcher(final IHeaderMatcher headerMatcher) {
 		this.headerMatcher = headerMatcher;
 	}
 
@@ -77,8 +77,9 @@ public class ReportConfiguration {
 	 * @param approvedLicenseNames
 	 *            the new approved license names
 	 */
-	public void setApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
-		this.approvedLicenseNames = approvedLicenseNames;
+	public void setApprovedLicenseNames(
+			final ILicenseFamily... approvedLicenseNames) {
+		this.approvedLicenseNames = approvedLicenseNames.clone();
 	}
 
 	/**
@@ -100,7 +101,7 @@ public class ReportConfiguration {
 	 *            the new copyright message
 	 * @see #setAddingLicenses(boolean)
 	 */
-	public void setCopyrightMessage(String copyrightMessage) {
+	public void setCopyrightMessage(final String copyrightMessage) {
 		this.copyrightMessage = copyrightMessage;
 	}
 
@@ -123,7 +124,7 @@ public class ReportConfiguration {
 	 *            the new adding licenses forced
 	 * @see #isAddingLicenses()
 	 */
-	public void setAddingLicensesForced(boolean addingLicensesForced) {
+	public void setAddingLicensesForced(final boolean addingLicensesForced) {
 		this.addingLicensesForced = addingLicensesForced;
 	}
 
@@ -146,7 +147,7 @@ public class ReportConfiguration {
 	 * @see #setAddingLicensesForced(boolean)
 	 * @see #setCopyrightMessage(String)
 	 */
-	public void setAddingLicenses(boolean addingLicenses) {
+	public void setAddingLicenses(final boolean addingLicenses) {
 		this.addingLicenses = addingLicenses;
 	}
 
