@@ -50,7 +50,7 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 	 * org.apache.rat.document.IDocumentAnalyser#analyse(org.apache.rat.api.
 	 * Document)
 	 */
-	public void analyse(Document document) throws IOException {
+	public void analyse(final Document document) throws IOException {
 		Reader reader = null;
 		try {
 			reader = document.reader();
@@ -59,11 +59,7 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 			worker.read();
 		} finally {
 			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// SWALLOW
-				}
+				reader.close();
 			}
 		}
 	}
