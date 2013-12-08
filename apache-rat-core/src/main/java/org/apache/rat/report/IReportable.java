@@ -33,5 +33,5 @@ public interface IReportable {
 	 * @throws RatException
 	 *             the rat exception
 	 */
-	public void run(RatReport report) throws RatException;
+	void run(RatReport report) throws RatException;
 }
