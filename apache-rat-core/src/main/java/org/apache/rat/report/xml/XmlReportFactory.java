@@ -37,6 +37,18 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
  * 
  */
 public class XmlReportFactory {
+
+	/**
+	 * Creates a new XmlReport object.
+	 * 
+	 * @param writer
+	 *            the writer
+	 * @param pStatistic
+	 *            the statistic
+	 * @param pConfiguration
+	 *            the configuration
+	 * @return the rat report
+	 */
 	public static final RatReport createStandardReport(final IXmlWriter writer,
 			final ClaimStatistic pStatistic,
 			final ReportConfiguration pConfiguration) {
