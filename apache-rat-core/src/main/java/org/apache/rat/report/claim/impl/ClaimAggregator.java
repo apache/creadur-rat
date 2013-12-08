@@ -22,24 +22,48 @@ package org.apache.rat.report.claim.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.rat.api.RatException;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.api.RatException;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 /**
  * The aggregator is used to create a numerical statistic of claims.
  */
 public class ClaimAggregator extends AbstractClaimReporter {
+
+	/** The statistic. */
 	private final ClaimStatistic statistic;
+
+	/** The nums by license family name. */
 	private final Map<String, Integer> numsByLicenseFamilyName = new HashMap<String, Integer>();
+
+	/** The nums by license family code. */
 	private final Map<String, Integer> numsByLicenseFamilyCode = new HashMap<String, Integer>();
+
+	/** The nums by file type. */
 	private final Map<String, Integer> numsByFileType = new HashMap<String, Integer>();
+
+	/** The num unknown. */
 	private int numApproved, numUnApproved, numGenerated, numUnknown;
 
+	/**
+	 * Instantiates a new claim aggregator.
+	 * 
+	 * @param pStatistic
+	 *            the statistic
+	 */
 	public ClaimAggregator(ClaimStatistic pStatistic) {
 		statistic = pStatistic;
 	}
 
+	/**
+	 * Inc map value.
+	 * 
+	 * @param pMap
+	 *            the map
+	 * @param pKey
+	 *            the key
+	 */
 	private void incMapValue(Map<String, Integer> pMap, String pKey) {
 		final Integer num = pMap.get(pKey);
 		final int newNum;
@@ -51,11 +75,23 @@ public class ClaimAggregator extends AbstractClaimReporter {
 		pMap.put(pKey, new Integer(newNum));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.claim.impl.AbstractClaimReporter#
+	 * handleDocumentCategoryClaim(java.lang.String)
+	 */
 	@Override
 	protected void handleDocumentCategoryClaim(String documentCategoryName) {
 		incMapValue(numsByFileType, documentCategoryName);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.claim.impl.AbstractClaimReporter#
+	 * handleApprovedLicenseClaim(java.lang.String)
+	 */
 	@Override
 	protected void handleApprovedLicenseClaim(String licenseApproved) {
 		if (MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(licenseApproved)) {
@@ -65,11 +101,23 @@ public class ClaimAggregator extends AbstractClaimReporter {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.claim.impl.AbstractClaimReporter#
+	 * handleLicenseFamilyNameClaim(java.lang.String)
+	 */
 	@Override
 	protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
 		incMapValue(numsByLicenseFamilyName, licenseFamilyName);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.claim.impl.AbstractClaimReporter#
+	 * handleHeaderCategoryClaim(java.lang.String)
+	 */
 	@Override
 	protected void handleHeaderCategoryClaim(String headerCategory) {
 
@@ -86,6 +134,12 @@ public class ClaimAggregator extends AbstractClaimReporter {
 		}
 	}
 
+	/**
+	 * Fill claim statistic.
+	 * 
+	 * @param pStatistic
+	 *            the statistic
+	 */
 	public void fillClaimStatistic(ClaimStatistic pStatistic) {
 		pStatistic.setDocumentCategoryMap(numsByFileType);
 		pStatistic.setLicenseFileCodeMap(numsByLicenseFamilyCode);
@@ -96,6 +150,11 @@ public class ClaimAggregator extends AbstractClaimReporter {
 		pStatistic.setNumUnknown(numUnknown);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.report.AbstractReport#endReport()
+	 */
 	@Override
 	public void endReport() throws RatException {
 		super.endReport();
