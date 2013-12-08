@@ -18,13 +18,25 @@
  */
 package org.apache.rat.header;
 
+/**
+ * The Class SimpleCharFilter.
+ */
 public class SimpleCharFilter implements CharFilter {
 
+	/** The filter out. */
 	public boolean filterOut = false;
 
+	/**
+	 * Instantiates a new simple char filter.
+	 */
 	public SimpleCharFilter() {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.header.CharFilter#isFilteredOut(char)
+	 */
 	public boolean isFilteredOut(char character) {
 		return filterOut;
 	}
