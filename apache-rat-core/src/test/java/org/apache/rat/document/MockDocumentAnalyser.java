@@ -38,7 +38,7 @@ public class MockDocumentAnalyser implements IDocumentAnalyser {
 	 * org.apache.rat.document.IDocumentAnalyser#analyse(org.apache.rat.api.
 	 * Document)
 	 */
-	public void analyse(Document document) {
+	public void analyse(final Document document) {
 		matches.add(document);
 	}
 
