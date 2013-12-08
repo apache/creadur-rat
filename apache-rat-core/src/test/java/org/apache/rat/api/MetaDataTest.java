@@ -18,6 +18,7 @@
  */
 package org.apache.rat.api;
 
+import org.apache.rat.api.MetaData.Datum;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,5 +37,15 @@ public class MetaDataTest {
 		metaData.getData().size();
 		Assert.assertEquals(0, metaData.getData().size());
     }
+
+	/**
+	 * Test to string datum.
+	 */
+	@Test
+	public void testToStringDatum() {
+		Datum datum = new Datum("name", "value");
+		Assert.assertEquals("Datum [ name ='name',value ='value ']",
+				datum.toString());
+	}
 
 }
