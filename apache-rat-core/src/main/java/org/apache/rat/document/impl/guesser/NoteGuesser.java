@@ -23,8 +23,12 @@ import java.util.List;
 
 import org.apache.rat.api.Document;
 
+/**
+ * The Class NoteGuesser.
+ */
 public class NoteGuesser {
 
+	/** The Constant NOTE_FILE_NAMES. */
 	private static final String[] NOTE_FILE_NAMES = { "NOTICE", "LICENSE",
 			"LICENSE.TXT", "NOTICE.TXT", "INSTALL", "INSTALL.TXT", "README",
 			"README.TXT", "NEWS", "NEWS.TXT", "AUTHOR", "AUTHOR.TXT",
@@ -35,16 +39,32 @@ public class NoteGuesser {
 			"STATUS.TXT", "THIRD_PARTY_NOTICES", "THIRD_PARTY_NOTICES.TXT",
 			"COPYRIGHT", "COPYRIGHT.TXT", "BUILDING", "BUILDING.TXT", "BUILD",
 			"BUILT.TXT", };
+
+	/** The Constant NOTE_FILE_EXTENSIONS. */
 	private static final String[] NOTE_FILE_EXTENSIONS = { "LICENSE",
 			"LICENSE.TXT", "NOTICE", "NOTICE.TXT", };
 
+	/** The note file names. */
 	private final String[] noteFileNames;
+
+	/** The note file extensions. */
 	private final String[] noteFileExtensions;
 
+	/**
+	 * Instantiates a new note guesser.
+	 */
 	public NoteGuesser() {
 		this(NOTE_FILE_NAMES, NOTE_FILE_EXTENSIONS);
 	}
 
+	/**
+	 * Instantiates a new note guesser.
+	 * 
+	 * @param noteFileNames
+	 *            the note file names
+	 * @param noteFileExtensions
+	 *            the note file extensions
+	 */
 	public NoteGuesser(final String[] noteFileNames,
 			final String[] noteFileExtensions) {
 		super();
@@ -53,7 +73,11 @@ public class NoteGuesser {
 	}
 
 	/**
-	 * Is a file by that name a note file?
+	 * Is a file by that name a note file?.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if is note
 	 */
 	private final boolean isNote(final String name) {
 		if (name == null) {
@@ -76,6 +100,13 @@ public class NoteGuesser {
 		return false;
 	}
 
+	/**
+	 * Matches.
+	 * 
+	 * @param document
+	 *            the document
+	 * @return true, if successful
+	 */
 	public final boolean matches(final Document document) {
 		return isNote(document.getName());
 	}
