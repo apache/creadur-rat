@@ -33,7 +33,7 @@ public final class GuessUtils {
 	/**
 	 * Instantiates a new guess utils.
 	 */
-	private GuessUtils() {
+	public GuessUtils() {
 		super();
 	}
 

@@ -18,6 +18,9 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
+import junit.framework.Assert;
+
+import org.apache.rat.document.impl.guesser.GuessUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -32,5 +35,10 @@ public class GuessUtilsTest {
         assertEquals("LICENSE.TXT", GuessUtils.normalise("/license.txt"));
         assertEquals("LICENSE.TXT", GuessUtils.normalise("some\\path\\license.txt"));
         assertEquals("", GuessUtils.normalise("/"));
+    }
+    
+    @Test
+	public void testGuessUtilsConstructor() {
+		Assert.assertNotNull(new GuessUtils());
     }
 }
