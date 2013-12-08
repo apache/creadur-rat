@@ -15,48 +15,50 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.header;
 
 import java.util.regex.Pattern;
 
 public class HeaderBean {
 
-    private Pattern headerPattern;
-    private boolean match;
-    
-    public HeaderBean() {
-        super();
-    }
-    
-    public HeaderBean(Pattern headerPattern, boolean match) {
-        super();
-        this.headerPattern = headerPattern;
-        this.match = match;
-    }
+	private Pattern headerPattern;
+	private boolean match;
 
-    /**
-     * Gets the header pattern to be matched.
-     * @return <code>Patter</code>
-     * or null when no match is to be made
-     */
-    public Pattern getHeaderPattern() {
-        return headerPattern;
-    }
-    
-    /**
-     * Sets the header pattern to be matched.
-     * @param headerPattern <code>Patter</code>
-     * or null when no match is to be made
-     */
-    public void setHeaderPattern(Pattern headerPattern) {
-        this.headerPattern = headerPattern;
-    }
-    
-    public boolean isMatch() {
-        return match;
-    }
-    public void setMatch(boolean match) {
-        this.match = match;
-    }
+	public HeaderBean() {
+		super();
+	}
+
+	public HeaderBean(Pattern headerPattern, boolean match) {
+		super();
+		this.headerPattern = headerPattern;
+		this.match = match;
+	}
+
+	/**
+	 * Gets the header pattern to be matched.
+	 * 
+	 * @return <code>Patter</code> or null when no match is to be made
+	 */
+	public Pattern getHeaderPattern() {
+		return headerPattern;
+	}
+
+	/**
+	 * Sets the header pattern to be matched.
+	 * 
+	 * @param headerPattern
+	 *            <code>Patter</code> or null when no match is to be made
+	 */
+	public void setHeaderPattern(Pattern headerPattern) {
+		this.headerPattern = headerPattern;
+	}
+
+	public boolean isMatch() {
+		return match;
+	}
+
+	public void setMatch(boolean match) {
+		this.match = match;
+	}
 }
