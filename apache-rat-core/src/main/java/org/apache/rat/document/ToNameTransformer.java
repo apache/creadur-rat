@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
 import org.apache.commons.collections.Transformer;
@@ -23,18 +23,18 @@ import org.apache.rat.api.Document;
 
 public class ToNameTransformer implements Transformer {
 
-    private static final Transformer TO_NAME_TRANSFORMER = new ToNameTransformer();
-    
-    public static final Transformer toNameTransformer() {
-        return TO_NAME_TRANSFORMER;
-    }
-    
-    public Object transform(Object subject) {
-        Object result = null;
-        if (subject != null && subject instanceof Document) {
-            Document location = (Document) subject;
-            result = location.getName();
-        }
-        return result;
-    }
+	private static final Transformer TO_NAME_TRANSFORMER = new ToNameTransformer();
+
+	public static final Transformer toNameTransformer() {
+		return TO_NAME_TRANSFORMER;
+	}
+
+	public Object transform(Object subject) {
+		Object result = null;
+		if (subject != null && subject instanceof Document) {
+			Document location = (Document) subject;
+			result = location.getName();
+		}
+		return result;
+	}
 }
