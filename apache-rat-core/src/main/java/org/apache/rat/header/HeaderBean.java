@@ -20,15 +20,32 @@ package org.apache.rat.header;
 
 import java.util.regex.Pattern;
 
+/**
+ * The Class HeaderBean.
+ */
 public class HeaderBean {
 
+	/** The header pattern. */
 	private Pattern headerPattern;
+
+	/** The match. */
 	private boolean match;
 
+	/**
+	 * Instantiates a new header bean.
+	 */
 	public HeaderBean() {
 		super();
 	}
 
+	/**
+	 * Instantiates a new header bean.
+	 * 
+	 * @param headerPattern
+	 *            the header pattern
+	 * @param match
+	 *            the match
+	 */
 	public HeaderBean(Pattern headerPattern, boolean match) {
 		super();
 		this.headerPattern = headerPattern;
@@ -54,10 +71,21 @@ public class HeaderBean {
 		this.headerPattern = headerPattern;
 	}
 
+	/**
+	 * Checks if is match.
+	 * 
+	 * @return true, if is match
+	 */
 	public boolean isMatch() {
 		return match;
 	}
 
+	/**
+	 * Sets the match.
+	 * 
+	 * @param match
+	 *            the new match
+	 */
 	public void setMatch(boolean match) {
 		this.match = match;
 	}
