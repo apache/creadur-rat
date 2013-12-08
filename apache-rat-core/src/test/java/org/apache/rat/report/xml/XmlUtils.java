@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml;
 
 import org.w3c.dom.Document;
@@ -34,47 +34,53 @@ import java.io.StringReader;
 import java.lang.reflect.UndeclaredThrowableException;
 
 public final class XmlUtils {
-    /**
-     * Private constructor, to prevent accidental instantiation.
-     */
-    private XmlUtils() {
-        // Does nothing
-    }
+	/**
+	 * Private constructor, to prevent accidental instantiation.
+	 */
+	private XmlUtils() {
+		// Does nothing
+	}
 
-    public static final boolean isWellFormedXml(final String string) throws Exception {
-        return isWellFormedXml(new InputSource(new StringReader(string)));
-    }
+	public static final boolean isWellFormedXml(final String string)
+			throws Exception {
+		return isWellFormedXml(new InputSource(new StringReader(string)));
+	}
 
-    public static final XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
-        final SAXParserFactory spf = SAXParserFactory.newInstance();
-        spf.setValidating(false);
-        spf.setNamespaceAware(true);
-        return spf.newSAXParser().getXMLReader();
-    }
+	public static final XMLReader newXMLReader() throws SAXException,
+			ParserConfigurationException {
+		final SAXParserFactory spf = SAXParserFactory.newInstance();
+		spf.setValidating(false);
+		spf.setNamespaceAware(true);
+		return spf.newSAXParser().getXMLReader();
+	}
 
-    public static final boolean isWellFormedXml(final InputSource isource) {
-        try {
-            newXMLReader().parse(isource);
-            return true;
-        } catch (SAXException e) {
-            System.out.println(e);
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            throw new UndeclaredThrowableException(e);
-        } catch (ParserConfigurationException e) {
-            throw new UndeclaredThrowableException(e);
-        }
-    }
+	public static final boolean isWellFormedXml(final InputSource isource) {
+		try {
+			newXMLReader().parse(isource);
+			return true;
+		} catch (SAXException e) {
+			System.out.println(e);
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			throw new UndeclaredThrowableException(e);
+		} catch (ParserConfigurationException e) {
+			throw new UndeclaredThrowableException(e);
+		}
+	}
 
-    public static final boolean isWellFormedXml(final InputStream in) throws Exception {
-        return isWellFormedXml(new InputSource(in));
-    }
-    
-    public static final Document toDom(final InputStream in) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document result;
-        result = builder.parse(in);
-        return result;
-    }
+	public static final boolean isWellFormedXml(final InputStream in)
+			throws Exception {
+		return isWellFormedXml(new InputSource(in));
+	}
+
+	public static final Document toDom(final InputStream in)
+			throws SAXException, IOException, ParserConfigurationException,
+			FactoryConfigurationError {
+		final DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder();
+		Document result;
+		result = builder.parse(in);
+		return result;
+	}
 }
