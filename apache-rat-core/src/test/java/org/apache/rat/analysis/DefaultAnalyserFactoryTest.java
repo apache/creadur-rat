@@ -34,6 +34,6 @@ public class DefaultAnalyserFactoryTest {
     @Test
 	public void testDefaultAnalyserFactoryConstructor() {
 		DefaultAnalyserFactory defaultAnalyserFactory = new DefaultAnalyserFactory();
-		assertNotNull(defaultAnalyserFactory);
+		assertNotNull("Not Null", defaultAnalyserFactory);
     }
 }
