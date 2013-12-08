@@ -22,8 +22,12 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * The Class GuessUtils.
+ */
 public class GuessUtils {
 
+	/** The Constant SEPARATORS. */
 	private static final String[] SEPARATORS = { "/", "\\" };
 
 	/**
