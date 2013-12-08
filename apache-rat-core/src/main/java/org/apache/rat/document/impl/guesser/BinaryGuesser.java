@@ -72,15 +72,57 @@ public class BinaryGuesser {
 	/** The Constant ASCII_CHAR_THREASHOLD. */
 	private static final int ASCII_CHAR_THREASHOLD = 8;
 
+	/** The data extensions. */
+	private final String[] dataExtensions;
+
+	/** The exe extensions. */
+	private final String[] exeExtensions;
+
+	/** The keystore extensions. */
+	private final String[] keystoreExtensions;
+
+	/** The image extensions. */
+	private final String[] imageExtensions;
+
+	/** The bytecode extensions. */
+	private final String[] bytecodeExtensions;
+
 	/**
 	 * Instantiates a new binary guesser.
 	 */
 	public BinaryGuesser() {
+		this(DATA_EXTENSIONS, EXE_EXTENSIONS, KEYSTORE_EXTENSIONS,
+				IMAGE_EXTENSIONS, BYTECODE_EXTENSIONS);
+	}
+
+	/**
+	 * Instantiates a new binary guesser.
+	 *
+	 * @param dataExtensions
+	 *            the data extensions
+	 * @param exeExtensions
+	 *            the exe extensions
+	 * @param keystoreExtensions
+	 *            the keystore extensions
+	 * @param imageExtensions
+	 *            the image extensions
+	 * @param bytecodeExtensions
+	 *            the bytecode extensions
+	 */
+	public BinaryGuesser(final String[] dataExtensions, final String[] exeExtensions,
+			final String[] keystoreExtensions, final String[] imageExtensions,
+			final String[] bytecodeExtensions) {
+		super();
+		this.dataExtensions = dataExtensions.clone();
+		this.exeExtensions = exeExtensions.clone();
+		this.keystoreExtensions = keystoreExtensions.clone();
+		this.imageExtensions = imageExtensions.clone();
+		this.bytecodeExtensions = bytecodeExtensions.clone();
 	}
 
 	/**
 	 * Matches.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 * @return true, if successful
@@ -93,7 +135,7 @@ public class BinaryGuesser {
 
 	/**
 	 * Checks if is binary document.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 * @return true, if is binary document
@@ -120,7 +162,7 @@ public class BinaryGuesser {
 
 	/**
 	 * Checks if is binary.
-	 * 
+	 *
 	 * @param taste
 	 *            the taste
 	 * @return true, if is binary
@@ -141,20 +183,20 @@ public class BinaryGuesser {
 
 	/**
 	 * Do the first few bytes of the stream hint at a binary file?
-	 * 
+	 *
 	 * <p>
 	 * Any IOException is swallowed internally and the test returns false.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method will try to read bytes from the stream and translate them to
 	 * characters according to the platform's default encoding. If any bytes can
 	 * not be translated to characters it will assume the original data must be
 	 * binary and return true.
 	 * </p>
-	 * 
-	 * @param in
-	 *            the in
+	 *
+	 * @param inputStream
+	 *            the input stream
 	 * @return true, if is binary
 	 */
 	private boolean isBinary(final InputStream in) {
@@ -194,31 +236,31 @@ public class BinaryGuesser {
 
 	/**
 	 * Checks if is binary data.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return true, if is binary data
 	 */
 	private boolean isBinaryData(final String name) {
-		return extensionMatches(name, DATA_EXTENSIONS);
+		return extensionMatches(name, this.dataExtensions);
 	}
 
 	/**
 	 * Checks if is executable.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return true, if is executable
 	 */
 	private boolean isExecutable(final String name) {
 		return name.equals(BinaryGuesser.JAVA)
-				|| extensionMatches(name, EXE_EXTENSIONS)
-				|| containsExtension(name, EXE_EXTENSIONS);
+				|| extensionMatches(name, this.exeExtensions)
+				|| containsExtension(name, this.exeExtensions);
 	}
 
 	/**
 	 * Contains extension.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @param exts
@@ -236,7 +278,7 @@ public class BinaryGuesser {
 
 	/**
 	 * Extension matches.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @param exts
@@ -254,40 +296,40 @@ public class BinaryGuesser {
 
 	/**
 	 * Checks if is bytecode.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return true, if is bytecode
 	 */
 	private boolean isBytecode(final String name) {
-		return extensionMatches(name, BYTECODE_EXTENSIONS);
+		return extensionMatches(name, this.bytecodeExtensions);
 	}
 
 	/**
 	 * Checks if is image.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return true, if is image
 	 */
 	private boolean isImage(final String name) {
-		return extensionMatches(name, IMAGE_EXTENSIONS);
+		return extensionMatches(name, this.imageExtensions);
 	}
 
 	/**
 	 * Checks if is keystore.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return true, if is keystore
 	 */
 	private boolean isKeystore(final String name) {
-		return extensionMatches(name, KEYSTORE_EXTENSIONS);
+		return extensionMatches(name, this.keystoreExtensions);
 	}
 
 	/**
 	 * Is a file by that name a known binary file?.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return true, if is binary
