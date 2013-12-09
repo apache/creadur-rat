@@ -26,18 +26,20 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.license.CDDL1License;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 /**
- * 
+ * The Class CDDL1LicenseTest.
  */
 public class CDDL1LicenseTest {
 
+	/** The Constant LICENSE_LINE. */
     private static final String LICENSE_LINE =
             " DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.\n\n"
             + "Copyright 2011-2013 Tirasa. All rights reserved.\n\n"
@@ -53,35 +55,51 @@ public class CDDL1LicenseTest {
      */
     private static Map<IHeaderMatcher, String> licenseStringMap;
 
+	/** The subject. */
     private Document subject;
-    
-    /**
+
+	/**
 	 * Inits the licences under test.
 	 */
     @BeforeClass
     public static void initLicencesUnderTest() {
         licenseStringMap = new HashMap<IHeaderMatcher, String>();
         licenseStringMap.put(new CDDL1License(), LICENSE_LINE);
-        assertEquals("Must be One element", 1, licenseStringMap.entrySet()
+		assertEquals("Must be One element", 1, licenseStringMap.entrySet()
 				.size());
     }
 
+	/**
+	 * Inits the subject.
+	 */
     @Before
     public final void initSubject() {
         this.subject = new MockLocation("subject");
     }
 
-    @Test
-    public void testNegativeMatchCDDL1License() throws Exception {
-    	for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
+	/**
+	 * Test negative match cdd l1 license.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testNegativeMatchCDDL1License() throws Exception {
+		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
 				.entrySet()) {
 			assertFalse(
 					"Not Matches the  CDDL1 License",
 					licenceUnderTest.getKey().match(subject,
 							"'Behold, Telemachus! (nor fear the sight,)"));
 		}
-    }
-    
+	}
+
+	/**
+	 * Test negative match cdd l1 license empty pattern.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void testNegativeMatchCDDL1LicenseEmptyPattern() throws Exception {
 		CDDL1License licenseCDDL1 = new CDDL1License();
@@ -90,15 +108,24 @@ public class CDDL1LicenseTest {
 				subject, "'Behold, Telemachus! (nor fear the sight,)"));
 	}
 
+	/**
+	 * Test positive match cdd l1 license.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
     @Test
-    public void testPositiveMatchCDDL1License() throws Exception {
-    	for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap.entrySet()) {
+	public void testPositiveMatchCDDL1License() throws Exception {
+        for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap.entrySet()) {
 			assertTrue("Not Matches the  CDDL1 License", licenceUnderTest
 					.getKey()
 					.match(subject, "\t" + licenceUnderTest.getValue()));
         }
     }
-    
+
+	/**
+	 * Test notes.
+	 */
 	@Test
 	public void testNotes() {
 		assertThat(
@@ -106,11 +133,17 @@ public class CDDL1LicenseTest {
 				is("Note that CDDL1 requires a NOTICE. All modifications require notes. See https://oss.oracle.com/licenses/CDDL."));
 	}
 
+	/**
+	 * Test category.
+	 */
 	@Test
 	public void testCategory() {
 		assertThat(new CDDL1License().getLicenseFamilyCategory(), is("CDDL1"));
 	}
 
+	/**
+	 * Test name.
+	 */
 	@Test
 	public void testName() {
 		assertThat(new CDDL1License().getLicenseFamilyName(),
