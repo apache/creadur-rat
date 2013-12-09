@@ -25,30 +25,46 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class W3CLicenseTest.
+ */
 public class W3CLicenseTest {
 
+	/** The Constant COPYRIGHT_URL. */
     public static final String COPYRIGHT_URL =
             "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
 
+	/** The Constant COPYRIGHT_URL_COMMENTED. */
     public static final String COPYRIGHT_URL_COMMENTED =
             "# http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 #";
 
+	/** The Constant COPYRIGHT_URL_XML. */
     public static final String COPYRIGHT_URL_XML =
             "<!-- http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 -->";
 
+	/** The license. */
     W3CLicense license;
-    MockClaimReporter reporter;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
     @Before
     public void setUp() throws Exception {
         this.license = new W3CLicense();
-        this.reporter = new MockClaimReporter();
     }
 
+	/**
+	 * Match.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
     @Test
     public void match() throws Exception {
         final Document subject = new MockLocation("subject");
@@ -62,6 +78,9 @@ public class W3CLicenseTest {
                 this.license.match(subject, "Bogus"));
     }
 
+	/**
+	 * Test notes.
+	 */
     @Test
     public void testNotes() {
         assertThat(
@@ -69,11 +88,17 @@ public class W3CLicenseTest {
                 is("Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231."));
     }
 
+	/**
+	 * Test category.
+	 */
     @Test
     public void testCategory() {
         assertThat(this.license.getLicenseFamilyCategory(), is("W3C  "));
     }
 
+	/**
+	 * Test name.
+	 */
     @Test
     public void testName() {
         assertThat(this.license.getLicenseFamilyName(),
