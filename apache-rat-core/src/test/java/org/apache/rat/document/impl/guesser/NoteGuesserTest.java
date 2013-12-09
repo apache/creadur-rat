@@ -28,28 +28,12 @@ import org.junit.Test;
  */
 public class NoteGuesserTest {
 
+
 	/**
-	 * Test matches.
+	 * Test note guesser matches.
 	 */
 	@Test
-	public void testMatches() {
-		assertThatGuesserMatches("LICENSE");
-		assertThatGuesserMatches("LICENSE.txt");
-		assertThatGuesserMatches("NOTICE");
-		assertThatGuesserMatches("NOTICE.txt");
-		assertThatGuesserMatches("README");
-		assertThatGuesserMatches("README.txt");
-		assertThatGuesserMatches("src/test/LICENSE");
-		assertThatGuesserMatches("src/test/LICENSE.txt");
-		assertThatGuesserMatches("src/test/NOTICE");
-		assertThatGuesserMatches("src/test/NOTICE.txt");
-		assertThatGuesserMatches("src/test/README");
-		assertThatGuesserMatches("src/test/README.txt");
-		assertThatGuesserMatches("src\\test\\LICENSE");
-		assertThatGuesserMatches("src\\test\\LICENSE.txt");
-		assertThatGuesserMatches("src\\test\\NOTICE");
-		assertThatGuesserMatches("src\\test\\NOTICE.txt");
-		assertThatGuesserMatches("src\\test\\README");
+	public void testNoteGuesserMatches() {
 		assertThatGuesserMatches("src\\test\\README.txt");
 	}
 
@@ -60,6 +44,7 @@ public class NoteGuesserTest {
 	 *            the name
 	 */
 	private void assertThatGuesserMatches(final String name) {
-		assertTrue(new NoteGuesser().matches(new MockDocument(name)));
+		assertTrue("Value must be True",
+				new NoteGuesser().matches(new MockDocument(name)));
 	}
 }
