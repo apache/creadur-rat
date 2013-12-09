@@ -29,36 +29,76 @@ import java.io.Reader;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
+/**
+ * The Class ArchiveEntryDocument.
+ */
 public class ArchiveEntryDocument implements Document {
 
+	/** The contents. */
 	private byte[] contents;
+
+	/** The name. */
 	private final String name;
 
+	/** The meta data. */
 	private final MetaData metaData = new MetaData();
 
+	/**
+	 * Instantiates a new archive entry document.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param contents
+	 *            the contents
+	 */
 	public ArchiveEntryDocument(File file, byte[] contents) {
 		super();
 		name = DocumentImplUtils.toName(file);
 		this.contents = contents;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#getMetaData()
+	 */
 	public MetaData getMetaData() {
 		return metaData;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#getName()
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#inputStream()
+	 */
 	public InputStream inputStream() throws IOException {
 		return new ByteArrayInputStream(contents);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#isComposite()
+	 */
 	public boolean isComposite() {
 		return new DocumentImplUtils().isZipStream(new ByteArrayInputStream(
 				contents));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.rat.api.Document#reader()
+	 */
 	public Reader reader() throws IOException {
 		return new InputStreamReader(new ByteArrayInputStream(contents));
 	}
