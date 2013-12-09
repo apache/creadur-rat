@@ -20,7 +20,14 @@ package org.apache.rat.license;
 
 import org.apache.rat.api.domain.RatLicenseFamily;
 
+/**
+ * The Class W3CDocumentLicenseFamily.
+ */
 public class W3CDocumentLicenseFamily extends SimpleLicenseFamily {
+
+	/**
+	 * Instantiates a new w3 c document license family.
+	 */
 	public W3CDocumentLicenseFamily() {
 		super(RatLicenseFamily.W3C_DOCUMENTATION.getName());
 	}
