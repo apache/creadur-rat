@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl;
 
 import org.apache.rat.api.Document;
@@ -31,27 +31,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class SingularFileDocumentTest {
-    private Document document;
-    private File file;
-    
-    @Before
-    public void setUp() throws Exception {
-        file = Resources.getResourceFile("elements/Source.java");
-        document = new MonolithicFileDocument(file);
-    }
+	private Document document;
+	private File file;
 
-    @Test
-    public void reader() throws Exception {
-        Reader reader = document.reader();
-        assertNotNull("Reader should be returned", reader);
-        assertEquals("First file line expected", "package elements;", 
-                 new BufferedReader(reader).readLine());
-    }
+	@Before
+	public void setUp() throws Exception {
+		file = Resources.getResourceFile("elements/Source.java");
+		document = new MonolithicFileDocument(file);
+	}
 
-    @Test
-    public void getName() {
-        final String name = document.getName();
-        assertNotNull("Name is set", name);
-        assertEquals("Name is filename", DocumentImplUtils.toName(file), name);
-    }
+	@Test
+	public void reader() throws Exception {
+		Reader reader = document.reader();
+		assertNotNull("Reader should be returned", reader);
+		assertEquals("First file line expected", "package elements;",
+				new BufferedReader(reader).readLine());
+	}
+
+	@Test
+	public void getName() {
+		final String name = document.getName();
+		assertNotNull("Name is set", name);
+		assertEquals("Name is filename", DocumentImplUtils.toName(file), name);
+	}
 }
