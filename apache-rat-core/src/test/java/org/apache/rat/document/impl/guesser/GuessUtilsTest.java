@@ -23,8 +23,17 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+/**
+ * The Class GuessUtilsTest.
+ */
 public class GuessUtilsTest {
 
+	/**
+	 * Normalise.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
     @Test
     public void normalise() throws Exception {
 		assertEquals("LICENSE", new GuessUtils().normalise("license"));
@@ -37,6 +46,9 @@ public class GuessUtilsTest {
 		assertEquals("", new GuessUtils().normalise("/"));
     }
     
+	/**
+	 * Test guess utils constructor.
+	 */
     @Test
 	public void testGuessUtilsConstructor() {
 		Assert.assertNotNull(new GuessUtils());
