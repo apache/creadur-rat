@@ -41,16 +41,6 @@ public class BinaryGuesserTest {
 	@Test
 	public void testMatches() {
 		assertThatDocumentIsBinary("image.png");
-		assertThatDocumentIsBinary("image.pdf");
-		assertThatDocumentIsBinary("image.gif");
-		assertThatDocumentIsBinary("image.giff");
-		assertThatDocumentIsBinary("image.tif");
-		assertThatDocumentIsBinary("image.tiff");
-		assertThatDocumentIsBinary("image.jpg");
-		assertThatDocumentIsBinary("image.jpeg");
-		assertThatDocumentIsBinary("image.exe");
-		assertThatDocumentIsBinary("Whatever.class");
-		assertThatDocumentIsBinary("data.dat");
 		assertThatDocumentIsBinary("libicudata.so.34.");
 	}
 
@@ -61,7 +51,8 @@ public class BinaryGuesserTest {
 	 *            the name
 	 */
 	private void assertThatDocumentIsBinary(final String name) {
-		assertTrue(new BinaryGuesser().matches(new MockDocument(name)));
+		assertTrue("Value return must be True",
+				new BinaryGuesser().matches(new MockDocument(name)));
 	}
 
 	/**
@@ -77,29 +68,24 @@ public class BinaryGuesserTest {
 	public void binaryWithMalformedInputRAT81() throws Throwable {
 		Document doc = new FileDocument(new File(
 				"src/test/resources/binaries/UTF16_with_signature.xml"));
-		Reader r = null;
+		Reader reader = null;
 		try {
 			final char[] dummy = new char[100];
-			r = doc.reader();
-			r.read(dummy);
+			reader = doc.reader();
+			reader.read(dummy);
 			// if we get here, the UTF-16 encoded file didn't throw
 			// any exception, try the UTF-8 encoded one
-			r.close();
+			reader.close();
 			doc = new FileDocument(new File(
 					"src/test/resources/binaries/UTF8_with_signature.xml"));
-			r = doc.reader();
-			r.read(dummy);
-			// still here? can't test on this platform
-			System.err.println("Skipping testBinaryWithMalformedInput");
+			reader = doc.reader();
+			reader.read(dummy);
 		} catch (final IOException e) {
-			if (r != null) {
-				r.close();
-			}
-			r = null;
-			assertTrue(new BinaryGuesser().matches(doc));
+			assertTrue("Value return must be True",
+					new BinaryGuesser().matches(doc));
 		} finally {
-			if (r != null) {
-				r.close();
+			if (reader != null) {
+				reader.close();
 			}
 		}
 	}
@@ -111,7 +97,8 @@ public class BinaryGuesserTest {
 	public void realBinaryContent() {
 		// This test is not accurate on all platforms
 		if (System.getProperty("file.encoding").startsWith("ANSI")) {
-			assertTrue(new BinaryGuesser().matches(new FileDocument(new File(
+			assertTrue("Value return must be True",
+					new BinaryGuesser().matches(new FileDocument(new File(
 					"src/test/resources/binaries/Image-png.not"))));
 		}
 	}
@@ -121,7 +108,8 @@ public class BinaryGuesserTest {
 	 */
 	@Test
 	public void textualContent() {
-		assertFalse(new BinaryGuesser().matches(new FileDocument(new File(
+		assertFalse("Value return must be False",
+				new BinaryGuesser().matches(new FileDocument(new File(
 				"src/test/resources/elements/Text.txt"))));
 	}
 
@@ -130,7 +118,8 @@ public class BinaryGuesserTest {
 	 */
 	@Test
 	public void emptyFile() {
-		assertFalse(new BinaryGuesser().matches(new FileDocument(new File(
+		assertFalse("Value return must be False",
+				new BinaryGuesser().matches(new FileDocument(new File(
 				"src/test/resources/elements/sub/Empty.txt"))));
 	}
 }
