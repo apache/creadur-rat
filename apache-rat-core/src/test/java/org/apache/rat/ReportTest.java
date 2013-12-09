@@ -18,22 +18,34 @@
  */
 package org.apache.rat;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.StringWriter;
+
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.StringWriter;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+/**
+ * The Class ReportTest.
+ */
 public class ReportTest {
+
+	/** The Constant HEADER. */
 	private static final String HEADER = "\n"
 			+ "*****************************************************\n"
 			+ "Summary\n" + "-------\n" + "Generated at: ";
 
+	/**
+	 * Gets the elements reports.
+	 * 
+	 * @param pElementsPath
+	 *            the elements path
+	 * @return the elements reports
+	 */
 	private static String getElementsReports(String pElementsPath) {
 		return "Notes: 2\n" + "Binaries: 1\n" + "Archives: 1\n"
 				+ "Standards: 6\n" + "\n" + "Apache Licensed: 3\n"
@@ -120,6 +132,12 @@ public class ReportTest {
 				+ "\n";
 	}
 
+	/**
+	 * Plain report.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void plainReport() throws Exception {
 		StringWriter out = new StringWriter();
