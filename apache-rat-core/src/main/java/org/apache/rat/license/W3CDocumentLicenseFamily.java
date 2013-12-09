@@ -15,13 +15,13 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.license;
 
 import org.apache.rat.api.domain.RatLicenseFamily;
 
 public class W3CDocumentLicenseFamily extends SimpleLicenseFamily {
-    public W3CDocumentLicenseFamily() {
-        super(RatLicenseFamily.W3C_DOCUMENTATION.getName());
-    }
+	public W3CDocumentLicenseFamily() {
+		super(RatLicenseFamily.W3C_DOCUMENTATION.getName());
+	}
 }
