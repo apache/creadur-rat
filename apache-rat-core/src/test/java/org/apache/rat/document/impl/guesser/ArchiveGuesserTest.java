@@ -29,15 +29,10 @@ import org.junit.Test;
 public class ArchiveGuesserTest {
 
 	/**
-	 * Matches.
+	 * Test archive guesser matches.
 	 */
     @Test
-    public void matches() {
-        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.jar").getName()));
-        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.tar.gz").getName()));
-        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.zip").getName()));
-        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.tar").getName()));
-        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.bz").getName()));
-        assertTrue(new ArchiveGuesser().isArchive(new MockDocument("42.bz2").getName()));
+	public void testArchiveGuesserMatches() {
+		assertTrue(new ArchiveGuesser().matches(new MockDocument("42.jar")));
     }
 }
