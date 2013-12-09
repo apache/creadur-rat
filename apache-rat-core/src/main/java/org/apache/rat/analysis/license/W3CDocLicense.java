@@ -22,11 +22,10 @@ import org.apache.rat.api.domain.RatLicenseFamily;
 
 public class W3CDocLicense extends SimplePatternBasedLicense {
 
-    private static final String COPYRIGHT_URL =
-            "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231";
+	private static final String COPYRIGHT_URL = "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231";
 
-    public W3CDocLicense() {
-        super(RatLicenseFamily.W3C_DOCUMENTATION.licenseFamily(),
-                new String[] { COPYRIGHT_URL });
-    }
+	public W3CDocLicense() {
+		super(RatLicenseFamily.W3C_DOCUMENTATION.licenseFamily(),
+				new String[] { COPYRIGHT_URL });
+	}
 }
