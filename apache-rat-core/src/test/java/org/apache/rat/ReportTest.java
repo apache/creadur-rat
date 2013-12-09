@@ -416,6 +416,28 @@ public class ReportTest {
 	}
 
 	/**
+	 * Test main args h.
+	 * 
+	 * @throws TransformerConfigurationException
+	 *             the transformer configuration exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
+	@Test
+	public void testMainArgsH() throws TransformerConfigurationException,
+			IOException, InterruptedException {
+		try {
+			String[] args = new String[1];
+			args[0] = "-h";
+			Report.main(args);
+		} catch (ExitException e) {
+			assertEquals("Exit status", 0, e.status);
+		}
+	}
+
+	/**
 	 * Sets the down.
 	 * 
 	 * @throws Exception
