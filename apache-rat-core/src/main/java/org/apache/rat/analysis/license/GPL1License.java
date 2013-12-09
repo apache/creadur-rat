@@ -24,14 +24,16 @@ import static org.apache.rat.api.domain.RatLicenseFamily.GPL1;
  * Licence matches GPL1 or later.
  */
 public class GPL1License extends FullTextMatchingLicense {
+
+	/** The Constant FIRST_LICENSE_LINE. */
 	public static final String FIRST_LICENSE_LINE = "This program is free software; you can redistribute it and/or modify\n"
 			+ " it under the terms of the GNU General Public License as published by\n"
 			+ " the Free Software Foundation; either version 1, or (at your option)\n"
 			+ " any later version.";
 
 	/**
-     * 
-     */
+	 * Instantiates a new gP l1 license.
+	 */
 	public GPL1License() {
 		super(GPL1.licenseFamily(),
 				FIRST_LICENSE_LINE);
