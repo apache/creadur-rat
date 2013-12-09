@@ -22,7 +22,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.StringWriter;
+
+import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.test.utils.Resources;
@@ -46,7 +50,7 @@ public class ReportTest {
 	 *            the elements path
 	 * @return the elements reports
 	 */
-	private static String getElementsReports(String pElementsPath) {
+	private static String getElementsReports(final String pElementsPath) {
 		return "Notes: 2\n" + "Binaries: 1\n" + "Archives: 1\n"
 				+ "Standards: 6\n" + "\n" + "Apache Licensed: 3\n"
 				+ "Generated Documents: 0\n" + "\n"
@@ -135,11 +139,18 @@ public class ReportTest {
 	/**
 	 * Plain report.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws TransformerConfigurationException
+	 *             the transformer configuration exception
+	 * @throws FileNotFoundException
+	 *             the file not found exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	@Test
-	public void plainReport() throws Exception {
+	public void plainReport() throws TransformerConfigurationException,
+			FileNotFoundException, IOException, InterruptedException {
 		StringWriter out = new StringWriter();
 		HeaderMatcherMultiplexer matcherMultiplexer = new HeaderMatcherMultiplexer(
 				Defaults.DEFAULT_MATCHERS);
@@ -150,12 +161,14 @@ public class ReportTest {
 		Report.report(out, new DirectoryWalker(new File(elementsPath)),
 				Defaults.getPlainStyleSheet(), configuration);
 		String result = out.getBuffer().toString();
-		final String nl = System.getProperty("line.separator");
+		final String lineSeparator = System.getProperty("line.separator");
 		assertTrue("'Generated at' is present in " + result,
-				result.startsWith(HEADER.replaceAll("\n", nl)));
-		final int generatedAtLineEnd = result.indexOf(nl, HEADER.length());
+				result.startsWith(HEADER.replaceAll("\n", lineSeparator)));
+		final int generatedAtLineEnd = result.indexOf(lineSeparator,
+				HEADER.length());
 		final String elementsReports = getElementsReports(elementsPath);
-		assertEquals("Report created", elementsReports.replaceAll("\n", nl),
-				result.substring(generatedAtLineEnd + nl.length()));
+		assertEquals("Report created",
+				elementsReports.replaceAll("\n", lineSeparator),
+				result.substring(generatedAtLineEnd + lineSeparator.length()));
 	}
 }
