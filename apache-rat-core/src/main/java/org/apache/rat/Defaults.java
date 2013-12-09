@@ -18,10 +18,13 @@
  */
 package org.apache.rat;
 
+import java.io.InputStream;
+
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.generation.GeneratedLicenseNotRequired;
 import org.apache.rat.analysis.generation.JavaDocLicenseNotRequired;
 import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
+import org.apache.rat.analysis.license.CDDL1License;
 import org.apache.rat.analysis.license.DojoLicenseHeader;
 import org.apache.rat.analysis.license.GPL1License;
 import org.apache.rat.analysis.license.GPL2License;
@@ -33,14 +36,14 @@ import org.apache.rat.analysis.license.W3CDocLicense;
 import org.apache.rat.analysis.license.W3CLicense;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 
-import java.io.InputStream;
-import org.apache.rat.analysis.license.CDDL1License;
-
 /**
  * Utility class that holds constants shared by the CLI tool and the Ant tasks.
  */
 public class Defaults {
-	/** no instances */
+
+	/**
+	 * no instances.
+	 */
 	private Defaults() {
 	}
 
@@ -55,19 +58,35 @@ public class Defaults {
 			new DojoLicenseHeader(), new TMF854LicenseHeader(),
 			new CDDL1License(), };
 
+	/** The Constant PLAIN_STYLESHEET. */
 	public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
 
+	/**
+	 * Gets the plain style sheet.
+	 * 
+	 * @return the plain style sheet
+	 */
 	public static InputStream getPlainStyleSheet() {
 		InputStream result = Defaults.class.getClassLoader()
 				.getResourceAsStream(Defaults.PLAIN_STYLESHEET);
 		return result;
 	}
 
+	/**
+	 * Gets the default style sheet.
+	 * 
+	 * @return the default style sheet
+	 */
 	public static InputStream getDefaultStyleSheet() {
 		InputStream result = getPlainStyleSheet();
 		return result;
 	}
 
+	/**
+	 * Creates the default matcher.
+	 * 
+	 * @return the i header matcher
+	 */
 	public static IHeaderMatcher createDefaultMatcher() {
 		return new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
 	}
