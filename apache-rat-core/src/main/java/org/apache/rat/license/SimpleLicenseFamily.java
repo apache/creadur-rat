@@ -20,7 +20,7 @@ package org.apache.rat.license;
 
 /**
  * Trivial bean implementing ILicenseFamily.
- * 
+ *
  * @since Rat 0.8
  */
 public class SimpleLicenseFamily implements ILicenseFamily {
@@ -30,7 +30,7 @@ public class SimpleLicenseFamily implements ILicenseFamily {
 
 	/**
 	 * Instantiates a new simple license family.
-	 * 
+	 *
 	 * @param familyName
 	 *            the family name
 	 */
@@ -42,12 +42,12 @@ public class SimpleLicenseFamily implements ILicenseFamily {
 	 * Instantiates a new simple license family.
 	 */
 	public SimpleLicenseFamily() {
-		this(null);
+		this("");
 	}
 
 	/**
 	 * Sets the family name.
-	 * 
+	 *
 	 * @param familyName
 	 *            the new family name
 	 */
@@ -55,9 +55,9 @@ public class SimpleLicenseFamily implements ILicenseFamily {
 		this.familyName = familyName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 *
+	 *
 	 * @see org.apache.rat.license.ILicenseFamily#getFamilyName()
 	 */
 	public final String getFamilyName() {

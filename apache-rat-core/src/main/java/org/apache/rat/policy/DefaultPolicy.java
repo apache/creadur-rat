@@ -40,7 +40,7 @@ public class DefaultPolicy {
     /** The Constant APPROVED_LICENSES. */
     private static final String[] APPROVED_LICENSES = { APACHE.getName(),
             OASIS.getName(), W3C.getName(), W3C_DOCUMENTATION.getName(),
-            TMF854.getName(), MIT.getName(), CDDL1.getName(), };
+            TMF854.getName(), MIT.getName(), CDDL1.getName()};
 
     /**
      * To names.
