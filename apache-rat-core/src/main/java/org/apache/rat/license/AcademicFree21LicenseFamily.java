@@ -15,13 +15,14 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.license;
 
 import org.apache.rat.api.MetaData;
 
 public class AcademicFree21LicenseFamily extends SimpleLicenseFamily {
-    public AcademicFree21LicenseFamily() {
-        super(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1);
-    }
+	public AcademicFree21LicenseFamily() {
+		super(
+				MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1);
+	}
 }
