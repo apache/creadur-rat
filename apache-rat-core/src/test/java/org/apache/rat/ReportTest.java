@@ -20,18 +20,23 @@ package org.apache.rat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerConfigurationException;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.generation.GeneratedLicenseNotRequired;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Test;
@@ -197,5 +202,79 @@ public class ReportTest {
 		};
 		report.setInputFileFilter(inputFileFilter);
 		assertNotNull(report.getInputFileFilter());
+	}
+
+	/**
+	 * Test report claim statistic.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testReportClaimStatistic() throws IOException {
+		Report report = new Report(
+				Resources.getResourceDirectory("elements/Source.java"));
+		PrintStream out = System.out;
+		ReportConfiguration configuration = new ReportConfiguration();
+		IHeaderMatcher headerMatcher = new GeneratedLicenseNotRequired();
+		configuration.setHeaderMatcher(headerMatcher);
+		ClaimStatistic claimStatistic = report.report(out, configuration);
+		assertNotNull(claimStatistic);
+	}
+
+	/**
+	 * Test report claim statistic file.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testReportClaimStatisticFile() throws IOException {
+		Report report = new Report("src/test/resources/elements/Source.java");
+		PrintStream out = System.out;
+		ReportConfiguration configuration = new ReportConfiguration();
+		IHeaderMatcher headerMatcher = new GeneratedLicenseNotRequired();
+		configuration.setHeaderMatcher(headerMatcher);
+		ClaimStatistic claimStatistic = report.report(out, configuration);
+		assertNotNull(claimStatistic);
+	}
+
+	/**
+	 * Test report claim statistic not file.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testReportClaimStatisticNotFile() throws IOException {
+		Report report = new Report("src/test/resources/elements/Source.txt");
+		PrintStream out = System.out;
+		ReportConfiguration configuration = new ReportConfiguration();
+		IHeaderMatcher headerMatcher = new GeneratedLicenseNotRequired();
+		configuration.setHeaderMatcher(headerMatcher);
+		ClaimStatistic claimStatistic = report.report(out, configuration);
+		assertNull(claimStatistic);
+	}
+
+	/**
+	 * Test style report.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws TransformerConfigurationException
+	 *             the transformer configuration exception
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
+	@Test
+	public void testStyleReport() throws IOException,
+			TransformerConfigurationException, InterruptedException {
+		Report report = new Report(
+				Resources.getResourceDirectory("elements/Source.java"));
+		PrintStream out = System.out;
+		ReportConfiguration configuration = new ReportConfiguration();
+		IHeaderMatcher headerMatcher = new GeneratedLicenseNotRequired();
+		configuration.setHeaderMatcher(headerMatcher);
+		report.styleReport(out, configuration);
 	}
 }
