@@ -24,14 +24,16 @@ import static org.apache.rat.api.domain.RatLicenseFamily.GPL3;
  * Licence matches GPL3 or later.
  */
 public class GPL3License extends FullTextMatchingLicense {
+
+	/** The Constant FIRST_LICENSE_LINE. */
 	public static final String FIRST_LICENSE_LINE = "This program is free software: you can redistribute it and/or modify\n"
 			+ " it under the terms of the GNU General Public License as published by\n"
 			+ " the Free Software Foundation, either version 3 of the License, or\n"
 			+ " (at your option) any later version.";
 
 	/**
-     * 
-     */
+	 * Instantiates a new gP l3 license.
+	 */
 	public GPL3License() {
 		super(GPL3.licenseFamily(),
 				FIRST_LICENSE_LINE);
