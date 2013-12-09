@@ -32,8 +32,12 @@ import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class OASISLicenseTest.
+ */
 public class OASISLicenseTest {
     
+	/** The Constant LICENSE. */
     private static final String LICENSE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<!--\n" +
             "\n" +
@@ -54,13 +58,23 @@ public class OASISLicenseTest {
             "This document and the information contained herein is provided on an \"AS IS\" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.\n" +
             "-->\n";
     
+	/** The license. */
 	private OASISLicense license;
 
+	/**
+	 * Sets the up.
+	 */
     @Before
 	public void setUp() {
         license = new OASISLicense();
     }
 
+	/**
+	 * Test match oasis license.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
     @Test
 	public void testMatchOASISLicense() throws IOException {
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(
@@ -75,6 +89,12 @@ public class OASISLicenseTest {
         assertTrue("OASIS license should be matched", result);
     }
 
+	/**
+	 * Test non match oasis license.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
     @Test
 	public void testNonMatchOASISLicense() throws IOException {
 		final Document subject = new MockLocation("subject");
@@ -83,6 +103,9 @@ public class OASISLicenseTest {
 		assertFalse("After reset, content should build up again", result);
     }
 
+	/**
+	 * Test notes.
+	 */
 	@Test
 	public void testNotes() {
 		assertThat(
@@ -90,11 +113,17 @@ public class OASISLicenseTest {
 				is("Note that OASIS requires a NOTICE. All modifications require notes. See https://www.oasis-open.org/policies-guidelines/ipr."));
 	}
 
+	/**
+	 * Test category.
+	 */
 	@Test
 	public void testCategory() {
 		assertThat(license.getLicenseFamilyCategory(), is("OASIS"));
 	}
 
+	/**
+	 * Test name.
+	 */
 	@Test
 	public void testName() {
 		assertThat(license.getLicenseFamilyName(), is("OASIS Open License"));
