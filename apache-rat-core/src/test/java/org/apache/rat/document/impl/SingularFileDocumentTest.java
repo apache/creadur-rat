@@ -19,10 +19,11 @@
 package org.apache.rat.document.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.rat.api.Document;
@@ -44,38 +45,34 @@ public class SingularFileDocumentTest {
 	/**
 	 * Sets the up.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws FileNotFoundException
+	 *             the file not found exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws FileNotFoundException {
 		file = Resources.getResourceFile("elements/Source.java");
 		document = new MonolithicFileDocument(file);
 	}
 
 	/**
-	 * Reader.
+	 * Test reader.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void reader() throws Exception {
+	public void testReader() throws IOException {
 		Reader reader = document.reader();
-		assertNotNull("Reader should be returned", reader);
 		assertEquals("First file line expected", "package elements;",
 				new BufferedReader(reader).readLine());
 	}
 
 	/**
-	 * Gets the name.
-	 * 
-	 * @return the name
+	 * Test get name.
 	 */
 	@Test
-	public void getName() {
+	public void testGetName() {
 		final String name = document.getName();
-		assertNotNull("Name is set", name);
 		assertEquals("Name is filename", DocumentImplUtils.toName(file), name);
 	}
 }
