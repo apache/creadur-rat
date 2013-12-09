@@ -28,16 +28,16 @@ import static org.junit.Assert.assertEquals;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
+import org.apache.rat.license.AcademicFree21LicenseFamily;
 import org.apache.rat.license.Apache20LicenseFamily;
 import org.apache.rat.license.CDDL1LicenseFamily;
 import org.apache.rat.license.GPL1LicenseFamily;
 import org.apache.rat.license.GPL2LicenseFamily;
 import org.apache.rat.license.GPL3LicenseFamily;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.MITLicenseFamily;
 import org.apache.rat.license.ModifiedBSDLicenseFamily;
 import org.apache.rat.license.OASISLicenseFamily;
-import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.AcademicFree21LicenseFamily;
 import org.apache.rat.license.SimpleLicenseFamily;
 import org.apache.rat.license.W3CDocumentLicenseFamily;
 import org.apache.rat.license.W3CSoftwareLicenseFamily;
@@ -163,7 +163,7 @@ public class DefaultPolicyTest {
 	 */
 	@Test
 	public void testConstructorILicenseFamily() throws Exception {
-		ILicenseFamily[] approvedLicenses = new ILicenseFamily[12];
+		ILicenseFamily[] approvedLicenses = new ILicenseFamily[11];
 		approvedLicenses[0] = new Apache20LicenseFamily();
 		approvedLicenses[1] = new CDDL1LicenseFamily();
 		approvedLicenses[2] = new GPL1LicenseFamily();
@@ -173,10 +173,10 @@ public class DefaultPolicyTest {
 		approvedLicenses[6] = new ModifiedBSDLicenseFamily();
 		approvedLicenses[7] = new OASISLicenseFamily();
 		approvedLicenses[8] = new AcademicFree21LicenseFamily();
-		approvedLicenses[9] = new SimpleLicenseFamily();
-		approvedLicenses[10] = new W3CDocumentLicenseFamily();
-		approvedLicenses[11] = new W3CSoftwareLicenseFamily();
+		approvedLicenses[9] = new W3CDocumentLicenseFamily();
+		approvedLicenses[10] = new W3CSoftwareLicenseFamily();
 		policy = new DefaultPolicy(approvedLicenses);
+		approvedLicenses[0] = new SimpleLicenseFamily();
 		Assert.assertNotNull(policy);
 	}
 }
