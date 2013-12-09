@@ -31,49 +31,46 @@ import org.apache.rat.api.MetaData;
 
 public class ArchiveEntryDocument implements Document {
 
-    private byte[] contents;
-    private final String name;
+	private byte[] contents;
+	private final String name;
 
-    private final MetaData metaData = new MetaData();
+	private final MetaData metaData = new MetaData();
 
 	public ArchiveEntryDocument(File file, byte[] contents) {
-        super();
-        name = DocumentImplUtils.toName(file);
-        this.contents = contents;
-    }
+		super();
+		name = DocumentImplUtils.toName(file);
+		this.contents = contents;
+	}
 
-    public MetaData getMetaData() {
-        return metaData;
-    }
+	public MetaData getMetaData() {
+		return metaData;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public InputStream inputStream() throws IOException {
-        return new ByteArrayInputStream(contents);
-    }
+	public InputStream inputStream() throws IOException {
+		return new ByteArrayInputStream(contents);
+	}
 
-    public boolean isComposite() {
-        return new DocumentImplUtils().isZipStream(new ByteArrayInputStream(contents));
-    }
+	public boolean isComposite() {
+		return new DocumentImplUtils().isZipStream(new ByteArrayInputStream(
+				contents));
+	}
 
-    public Reader reader() throws IOException {
-        return new InputStreamReader(new ByteArrayInputStream(contents));
-    }
+	public Reader reader() throws IOException {
+		return new InputStreamReader(new ByteArrayInputStream(contents));
+	}
 
-
-    /**
-     * Representations suitable for logging.
-     * @return a <code>String</code> representation 
-     * of this object.
-     */
-    @Override
-    public String toString()
-    {
-        return "TarEntryDocument ( "
-            + "name = " + this.name + " "
-            + "metaData = " + this.metaData + " "
-            + " )";
-    }
+	/**
+	 * Representations suitable for logging.
+	 * 
+	 * @return a <code>String</code> representation of this object.
+	 */
+	@Override
+	public String toString() {
+		return "TarEntryDocument ( " + "name = " + this.name + " "
+				+ "metaData = " + this.metaData + " " + " )";
+	}
 }
