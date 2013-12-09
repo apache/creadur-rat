@@ -20,7 +20,14 @@ package org.apache.rat.license;
 
 import org.apache.rat.api.MetaData;
 
+/**
+ * The Class AcademicFree21LicenseFamily.
+ */
 public class AcademicFree21LicenseFamily extends SimpleLicenseFamily {
+
+	/**
+	 * Instantiates a new academic free21 license family.
+	 */
 	public AcademicFree21LicenseFamily() {
 		super(
 				MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1);
