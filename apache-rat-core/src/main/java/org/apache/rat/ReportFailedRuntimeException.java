@@ -23,20 +23,44 @@ package org.apache.rat;
  */
 class ReportFailedRuntimeException extends RuntimeException {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7605175211996815712L;
 
+	/**
+	 * Instantiates a new report failed runtime exception.
+	 */
 	public ReportFailedRuntimeException() {
 		super();
 	}
 
+	/**
+	 * Instantiates a new report failed runtime exception.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param t
+	 *            the t
+	 */
 	public ReportFailedRuntimeException(String message, Throwable t) {
 		super(message, t);
 	}
 
+	/**
+	 * Instantiates a new report failed runtime exception.
+	 * 
+	 * @param message
+	 *            the message
+	 */
 	public ReportFailedRuntimeException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Instantiates a new report failed runtime exception.
+	 * 
+	 * @param t
+	 *            the t
+	 */
 	public ReportFailedRuntimeException(Throwable t) {
 		super(t);
 	}
