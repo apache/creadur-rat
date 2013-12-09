@@ -55,12 +55,29 @@ import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
+/**
+ * The Class Report.
+ */
 public class Report {
+
+	/** The Constant EXCLUDE_CLI. */
 	private static final char EXCLUDE_CLI = 'e';
+
+	/** The Constant EXCLUDE_FILE_CLI. */
 	private static final char EXCLUDE_FILE_CLI = 'E';
+
+	/** The Constant STYLESHEET_CLI. */
 	private static final char STYLESHEET_CLI = 's';
 
 	// @SuppressWarnings("unchecked")
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 * @throws Exception
+	 *             the exception
+	 */
 	public static final void main(String args[]) throws Exception {
 		final ReportConfiguration configuration = new ReportConfiguration();
 		configuration.setHeaderMatcher(new Defaults().createDefaultMatcher());
@@ -139,6 +156,11 @@ public class Report {
 		}
 	}
 
+	/**
+	 * Builds the options.
+	 * 
+	 * @return the options
+	 */
 	private static Options buildOptions() {
 		Options opts = new Options();
 
@@ -213,6 +235,12 @@ public class Report {
 		return opts;
 	}
 
+	/**
+	 * Prints the usage.
+	 * 
+	 * @param opts
+	 *            the opts
+	 */
 	private static final void printUsage(Options opts) {
 		HelpFormatter f = new HelpFormatter();
 		String header = "Options";
@@ -232,10 +260,18 @@ public class Report {
 		System.exit(0);
 	}
 
+	/** The base directory. */
 	private final String baseDirectory;
 
+	/** The input file filter. */
 	private FilenameFilter inputFileFilter = null;
 
+	/**
+	 * Instantiates a new report.
+	 * 
+	 * @param baseDirectory
+	 *            the base directory
+	 */
 	private Report(String baseDirectory) {
 		this.baseDirectory = baseDirectory;
 	}
@@ -260,6 +296,13 @@ public class Report {
 	}
 
 	/**
+	 * Report.
+	 * 
+	 * @param out
+	 *            the out
+	 * @return the claim statistic
+	 * @throws Exception
+	 *             the exception
 	 * @deprecated use {@link #report(PrintStream, ReportConfiguration)} instead
 	 */
 	@Deprecated
@@ -270,6 +313,15 @@ public class Report {
 	}
 
 	/**
+	 * Report.
+	 * 
+	 * @param out
+	 *            the out
+	 * @param configuration
+	 *            the configuration
+	 * @return the claim statistic
+	 * @throws Exception
+	 *             the exception
 	 * @since Rat 0.8
 	 */
 	public ClaimStatistic report(PrintStream out,
@@ -281,6 +333,13 @@ public class Report {
 		return null;
 	}
 
+	/**
+	 * Gets the directory.
+	 * 
+	 * @param out
+	 *            the out
+	 * @return the directory
+	 */
 	private IReportable getDirectory(PrintStream out) {
 		File base = new File(baseDirectory);
 		if (!base.exists()) {
@@ -310,6 +369,7 @@ public class Report {
 	 * @param out
 	 *            - the output stream to recieve the styled report
 	 * @throws Exception
+	 *             the exception
 	 * @deprecated use {@link #styleReport(PrintStream, ReportConfiguration)}
 	 *             instead
 	 */
@@ -328,6 +388,7 @@ public class Report {
 	 * @param configuration
 	 *            the configuration to use
 	 * @throws Exception
+	 *             the exception
 	 * @since Rat 0.8
 	 */
 	public void styleReport(PrintStream out, ReportConfiguration configuration)
@@ -349,10 +410,14 @@ public class Report {
 	 * @param style
 	 *            an input stream representing the stylesheet to use for styling
 	 *            the report
+	 * @param pConfiguration
+	 *            the configuration
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws TransformerConfigurationException
+	 *             the transformer configuration exception
 	 * @throws InterruptedException
-	 * @throws RatException
+	 *             the interrupted exception
 	 */
 	public static void report(PrintStream out, IReportable base,
 			final InputStream style, ReportConfiguration pConfiguration)
@@ -362,7 +427,6 @@ public class Report {
 	}
 
 	/**
-	 * 
 	 * Output a report that is styled using a defined stylesheet.
 	 * 
 	 * @param out
@@ -372,11 +436,17 @@ public class Report {
 	 * @param style
 	 *            an input stream representing the stylesheet to use for styling
 	 *            the report
+	 * @param pConfiguration
+	 *            the configuration
+	 * @return the claim statistic
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws TransformerConfigurationException
+	 *             the transformer configuration exception
 	 * @throws FileNotFoundException
+	 *             the file not found exception
 	 * @throws InterruptedException
-	 * @throws RatException
+	 *             the interrupted exception
 	 */
 	public static ClaimStatistic report(Writer out, IReportable base,
 			final InputStream style, ReportConfiguration pConfiguration)
@@ -396,13 +466,17 @@ public class Report {
 	}
 
 	/**
+	 * Report.
 	 * 
 	 * @param container
 	 *            the files or directories to report on
 	 * @param out
 	 *            the writer to write the report to
+	 * @param pConfiguration
+	 *            the configuration
+	 * @return the claim statistic
 	 * @throws IOException
-	 * @throws RatException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static ClaimStatistic report(final IReportable container,
 			final Writer out, ReportConfiguration pConfiguration)
