@@ -37,6 +37,7 @@ import org.apache.rat.license.MITLicenseFamily;
 import org.apache.rat.license.ModifiedBSDLicenseFamily;
 import org.apache.rat.license.OASISLicenseFamily;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.AcademicFree21LicenseFamily;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -159,7 +160,7 @@ public class DefaultPolicyTest {
 	 */
 	@Test
 	public void testConstructorILicenseFamily() throws Exception {
-		ILicenseFamily[] approvedLicenses = new ILicenseFamily[8];
+		ILicenseFamily[] approvedLicenses = new ILicenseFamily[9];
 		approvedLicenses[0] = new Apache20LicenseFamily();
 		approvedLicenses[1] = new CDDL1LicenseFamily();
 		approvedLicenses[2] = new GPL1LicenseFamily();
@@ -168,6 +169,7 @@ public class DefaultPolicyTest {
 		approvedLicenses[5] = new MITLicenseFamily();
 		approvedLicenses[6] = new ModifiedBSDLicenseFamily();
 		approvedLicenses[7] = new OASISLicenseFamily();
+		approvedLicenses[8] = new AcademicFree21LicenseFamily();
 		policy = new DefaultPolicy(approvedLicenses);
 		Assert.assertNotNull(policy);
 	}
