@@ -34,10 +34,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 
+ * The Class AppliedApacheSoftwareLicense20Test.
  */
 public class AppliedApacheSoftwareLicense20Test {
 
+	/** The Constant HEADER. */
 	private static final String HEADER = "/*\n"
 			+ " *  Copyright 2012-2013 FooBar.\n"
 			+ " *\n"
@@ -53,14 +54,27 @@ public class AppliedApacheSoftwareLicense20Test {
 			+ " *  See the License for the specific language governing permissions and\n"
 			+ " *  limitations under the License.\n" + " */\n";
 
+	/** The license. */
 	private AppliedApacheSoftwareLicense20 license;
 
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		license = new AppliedApacheSoftwareLicense20("FooBar");
 	}
 
+	/**
+	 * Test match applied apache license.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void testMatchAppliedApacheLicense() throws IOException {
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(
@@ -76,6 +90,12 @@ public class AppliedApacheSoftwareLicense20Test {
 		license.reset();
 	}
 
+	/**
+	 * Test no match applied apache license.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void testNoMatchAppliedApacheLicense() throws IOException {
 		BufferedReader bufferedReader = Resources
@@ -91,16 +111,25 @@ public class AppliedApacheSoftwareLicense20Test {
 		license.reset();
 	}
 
+	/**
+	 * Test not null copy right owner.
+	 */
 	@Test
 	public void testNotNullCopyRightOwner() {
 		Assert.assertNotNull(license.getCopyRightOwner());
 	}
 
+	/**
+	 * Test has copyright pattern.
+	 */
 	@Test
 	public void testHasCopyrightPattern() {
 		assertTrue("copyrightPattern not null", license.hasCopyrightPattern());
 	}
 
+	/**
+	 * Test has full text.
+	 */
 	@Test
 	public void testHasFullText() {
 		String fullText = "";
