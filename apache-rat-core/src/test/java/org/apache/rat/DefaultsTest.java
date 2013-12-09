@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DefaultsTest.
  */
