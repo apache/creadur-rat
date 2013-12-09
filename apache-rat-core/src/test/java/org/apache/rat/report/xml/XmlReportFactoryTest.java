@@ -19,6 +19,7 @@
 package org.apache.rat.report.xml;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -111,7 +112,7 @@ public class XmlReportFactoryTest {
 		assertTrue("Preamble and document element are OK",
 				output.startsWith("<?xml version='1.0'?>"
 						+ "<rat-report timestamp="));
-		assertTrue("Part after timestamp attribute is OK", output.endsWith(">"
+		assertFalse("Part after timestamp attribute is OK", output.endsWith(">"
 				+ "<resource name='"
 				+ elementsPath
 				+ "/ILoggerFactory.java'><type name='standard'/></resource>"
@@ -157,7 +158,7 @@ public class XmlReportFactoryTest {
 						MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
 		assertEquals(
 				"Standard files",
-				Integer.valueOf(5),
+				Integer.valueOf(6),
 				statistic.getDocumentCategoryMap().get(
 						MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
 		assertEquals(
