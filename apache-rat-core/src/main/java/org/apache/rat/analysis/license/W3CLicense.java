@@ -20,10 +20,17 @@ package org.apache.rat.analysis.license;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 
+/**
+ * The Class W3CLicense.
+ */
 public class W3CLicense extends SimplePatternBasedLicense {
 
+	/** The Constant COPYRIGHT_URL. */
 	private static final String COPYRIGHT_URL = "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
 
+	/**
+	 * Instantiates a new w3 c license.
+	 */
 	public W3CLicense() {
 		super(W3C.licenseFamily(), new String[] { COPYRIGHT_URL });
 
