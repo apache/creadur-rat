@@ -18,16 +18,25 @@
  */
 package org.apache.rat.walker;
 
-import org.apache.rat.test.utils.Resources;
-import org.junit.Test;
-
-import java.io.IOException;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
+import org.apache.rat.test.utils.Resources;
+import org.junit.Test;
+
+/**
+ * The Class FileNameComparatorTest.
+ */
 public class FileNameComparatorTest {
 
+	/**
+	 * Compare.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void compare() throws IOException {
 		FileNameComparator comparator = new FileNameComparator();
