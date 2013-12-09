@@ -29,12 +29,32 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+/**
+ * The Class ReportTransformer.
+ */
 class ReportTransformer implements Runnable {
 
+	/** The out. */
 	private final Writer out;
+
+	/** The transformer. */
 	private final Transformer transformer;
+
+	/** The in. */
 	private final Reader in;
 
+	/**
+	 * Instantiates a new report transformer.
+	 * 
+	 * @param out
+	 *            the out
+	 * @param style
+	 *            the style
+	 * @param in
+	 *            the in
+	 * @throws TransformerConfigurationException
+	 *             the transformer configuration exception
+	 */
 	public ReportTransformer(final Writer out, final Reader style,
 			final Reader in) throws TransformerConfigurationException {
 		this.out = out;
@@ -43,6 +63,18 @@ class ReportTransformer implements Runnable {
 		this.in = in;
 	}
 
+	/**
+	 * Instantiates a new report transformer.
+	 * 
+	 * @param out
+	 *            the out
+	 * @param style
+	 *            the style
+	 * @param in
+	 *            the in
+	 * @throws TransformerConfigurationException
+	 *             the transformer configuration exception
+	 */
 	public ReportTransformer(final Writer out, final InputStream style,
 			final Reader in) throws TransformerConfigurationException {
 		this.out = out;
@@ -51,6 +83,11 @@ class ReportTransformer implements Runnable {
 		this.in = in;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	public void run() {
 		try {
 			transform();
@@ -59,6 +96,12 @@ class ReportTransformer implements Runnable {
 		}
 	}
 
+	/**
+	 * Transform.
+	 * 
+	 * @throws TransformerException
+	 *             the transformer exception
+	 */
 	public void transform() throws TransformerException {
 		transformer.transform(new StreamSource(in), new StreamResult(out));
 	}
