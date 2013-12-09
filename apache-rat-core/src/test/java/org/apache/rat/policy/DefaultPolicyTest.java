@@ -29,6 +29,13 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.license.Apache20LicenseFamily;
+import org.apache.rat.license.CDDL1LicenseFamily;
+import org.apache.rat.license.GPL1LicenseFamily;
+import org.apache.rat.license.GPL2LicenseFamily;
+import org.apache.rat.license.GPL3LicenseFamily;
+import org.apache.rat.license.MITLicenseFamily;
+import org.apache.rat.license.ModifiedBSDLicenseFamily;
+import org.apache.rat.license.OASISLicenseFamily;
 import org.apache.rat.license.ILicenseFamily;
 import org.junit.Assert;
 import org.junit.Before;
@@ -152,8 +159,15 @@ public class DefaultPolicyTest {
 	 */
 	@Test
 	public void testConstructorILicenseFamily() throws Exception {
-		ILicenseFamily[] approvedLicenses = new ILicenseFamily[1];
+		ILicenseFamily[] approvedLicenses = new ILicenseFamily[8];
 		approvedLicenses[0] = new Apache20LicenseFamily();
+		approvedLicenses[1] = new CDDL1LicenseFamily();
+		approvedLicenses[2] = new GPL1LicenseFamily();
+		approvedLicenses[3] = new GPL2LicenseFamily();
+		approvedLicenses[4] = new GPL3LicenseFamily();
+		approvedLicenses[5] = new MITLicenseFamily();
+		approvedLicenses[6] = new ModifiedBSDLicenseFamily();
+		approvedLicenses[7] = new OASISLicenseFamily();
 		policy = new DefaultPolicy(approvedLicenses);
 		Assert.assertNotNull(policy);
 	}
