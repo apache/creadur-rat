@@ -19,7 +19,6 @@
 package org.apache.rat.document.impl.guesser;
 
 import static org.junit.Assert.assertEquals;
-import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -28,29 +27,13 @@ import org.junit.Test;
  */
 public class GuessUtilsTest {
 
+
 	/**
-	 * Normalise.
-	 * 
-	 * @throws Exception
-	 *             the exception
+	 * Test gess utils normalise.
 	 */
     @Test
-    public void normalise() throws Exception {
-		assertEquals("LICENSE", new GuessUtils().normalise("license"));
-		assertEquals("LICENSE.TXT", new GuessUtils().normalise("license.txt"));
-		assertEquals("LICENSE.TXT",
-				new GuessUtils().normalise("some/path/license.txt"));
-		assertEquals("LICENSE.TXT", new GuessUtils().normalise("/license.txt"));
-		assertEquals("LICENSE.TXT",
-				new GuessUtils().normalise("some\\path\\license.txt"));
-		assertEquals("", new GuessUtils().normalise("/"));
-    }
-    
-	/**
-	 * Test guess utils constructor.
-	 */
-    @Test
-	public void testGuessUtilsConstructor() {
-		Assert.assertNotNull(new GuessUtils());
+	public void testGessUtilsNormalise() {
+		 assertEquals("The both values must be equal", "",
+				new GuessUtils().normalise("/"));
     }
 }
