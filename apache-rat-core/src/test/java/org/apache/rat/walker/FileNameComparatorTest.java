@@ -37,11 +37,39 @@ public class FileNameComparatorTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void compare() throws IOException {
+	public void testCompare() throws IOException {
 		FileNameComparator comparator = new FileNameComparator();
 		final int compare = comparator.compare(
 				Resources.getResourceFile("elements/LICENSE"),
 				Resources.getResourceFile("elements/NOTICE"));
+		assertTrue("LICENSE is before NOTICE", compare < 0);
+	}
+
+	/**
+	 * Test compare first file null.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testCompareFirstFileNull() throws IOException {
+		FileNameComparator comparator = new FileNameComparator();
+		final int compare = comparator.compare(null,
+				Resources.getResourceFile("elements/NOTICE"));
+		assertTrue("LICENSE is before NOTICE", compare > 0);
+	}
+
+	/**
+	 * Test compare second file null.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testCompareSecondFileNull() throws IOException {
+		FileNameComparator comparator = new FileNameComparator();
+		final int compare = comparator.compare(
+				Resources.getResourceFile("elements/LICENSE"), null);
 		assertTrue("LICENSE is before NOTICE", compare < 0);
 	}
 }
