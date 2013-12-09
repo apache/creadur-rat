@@ -23,8 +23,14 @@ import static org.junit.Assert.assertTrue;
 import org.apache.rat.document.MockDocument;
 import org.junit.Test;
 
+/**
+ * The Class NoteGuesserTest.
+ */
 public class NoteGuesserTest {
 
+	/**
+	 * Test matches.
+	 */
 	@Test
 	public void testMatches() {
 		assertThatGuesserMatches("LICENSE");
@@ -47,6 +53,12 @@ public class NoteGuesserTest {
 		assertThatGuesserMatches("src\\test\\README.txt");
 	}
 
+	/**
+	 * Assert that guesser matches.
+	 * 
+	 * @param name
+	 *            the name
+	 */
 	private void assertThatGuesserMatches(final String name) {
 		assertTrue(new NoteGuesser().matches(new MockDocument(name)));
 	}
