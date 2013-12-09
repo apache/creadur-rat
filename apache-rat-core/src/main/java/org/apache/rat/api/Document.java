@@ -23,13 +23,14 @@ import java.io.InputStream;
 import java.io.Reader;
 
 /**
- * 
+ * The Interface Document.
  */
 public interface Document {
 
 	/**
+	 * Gets the name.
 	 * 
-	 * @return
+	 * @return the name
 	 */
 	String getName();
 
@@ -59,7 +60,7 @@ public interface Document {
 	MetaData getMetaData();
 
 	/**
-	 * Is this a composite document?
+	 * Is this a composite document?.
 	 * 
 	 * @return true if composite, false otherwise
 	 */
