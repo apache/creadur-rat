@@ -33,9 +33,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 
+ * The Class MITLicenseTest.
  */
 public class MITLicenseTest {
+
+	/** The subject. */
 	private Document subject;
 
 	/**
@@ -57,6 +59,9 @@ public class MITLicenseTest {
 		this.subject = new MockLocation("subject");
 	}
 
+	/**
+	 * Test negative match mit license.
+	 */
 	@Test
 	public void testNegativeMatchMITLicense() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
@@ -68,6 +73,9 @@ public class MITLicenseTest {
 		}
 	}
 
+	/**
+	 * Test positive match mit license.
+	 */
 	@Test
 	public void testPositiveMatchMITLicense() {
 		for (Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap
@@ -79,6 +87,9 @@ public class MITLicenseTest {
 		}
 	}
 
+	/**
+	 * Test notes.
+	 */
 	@Test
 	public void testNotes() {
 		assertThat(
@@ -86,11 +97,17 @@ public class MITLicenseTest {
 				is("Note that MIT requires a NOTICE. All modifications require notes. See http://opensource.org/licenses/MIT."));
 	}
 
+	/**
+	 * Test category.
+	 */
 	@Test
 	public void testCategory() {
 		assertThat(new MITLicense().getLicenseFamilyCategory(), is("MIT  "));
 	}
 
+	/**
+	 * Test name.
+	 */
 	@Test
 	public void testName() {
 		assertThat(new MITLicense().getLicenseFamilyName(),
