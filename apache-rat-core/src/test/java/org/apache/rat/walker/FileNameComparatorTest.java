@@ -18,7 +18,6 @@
  */
 package org.apache.rat.walker;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -40,7 +39,6 @@ public class FileNameComparatorTest {
 	@Test
 	public void compare() throws IOException {
 		FileNameComparator comparator = new FileNameComparator();
-		assertNotNull(comparator);
 		final int compare = comparator.compare(
 				Resources.getResourceFile("elements/LICENSE"),
 				Resources.getResourceFile("elements/NOTICE"));
