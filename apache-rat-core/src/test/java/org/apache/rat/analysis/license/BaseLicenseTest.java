@@ -24,8 +24,14 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+/**
+ * The Class BaseLicenseTest.
+ */
 public class BaseLicenseTest {
 
+	/**
+	 * Test license family constructor sets notes.
+	 */
     @Test
     public void testLicenseFamilyConstructorSetsNotes() {
         final String someNotes = "Some notes about a license family";
@@ -33,6 +39,9 @@ public class BaseLicenseTest {
                 .build()).getNotes(), is(someNotes));
     }
 
+	/**
+	 * Test license family constructor sets category.
+	 */
     @Test
     public void testLicenseFamilyConstructorSetsCategory() {
         final String someCategory = "http://some.category.org";
@@ -40,6 +49,9 @@ public class BaseLicenseTest {
                 .build()).getLicenseFamilyCategory(), is(someCategory));
     }
 
+	/**
+	 * Test license family constructor sets name.
+	 */
     @Test
     public void testLicenseFamilyConstructorSetsName() {
         final String someName = "http://some.name.org";
@@ -49,6 +61,9 @@ public class BaseLicenseTest {
                 is(someName));
     }
 
+	/**
+	 * Test sets category.
+	 */
 	@Test
 	public void testSetsCategory() {
 		final String someName = "http://some.name.org";
@@ -57,6 +72,9 @@ public class BaseLicenseTest {
 		assertThat(baseLicense.getLicenseFamilyCategory(), is(someName));
 	}
 
+	/**
+	 * Test sets name.
+	 */
 	@Test
 	public void testSetsName() {
 		final String someName = "http://some.name.org";
@@ -65,6 +83,9 @@ public class BaseLicenseTest {
 		assertThat(baseLicense.getLicenseFamilyName(), is(someName));
 	}
 
+	/**
+	 * Test sets notes.
+	 */
 	@Test
 	public void testSetsNotes() {
 		final String someName = "http://some.name.org";
