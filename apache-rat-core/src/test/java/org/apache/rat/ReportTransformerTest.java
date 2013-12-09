@@ -18,7 +18,7 @@
  */
 package org.apache.rat;
 
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,10 +26,14 @@ import java.io.FileReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 
+/**
+ * The Class ReportTransformerTest.
+ */
 public class ReportTransformerTest {
 
+	/** The Constant SIMPLE_CONTENT. */
 	private static final String SIMPLE_CONTENT = "<?xml version='1.0'?>"
 			+ "<directory name='sub'>"
 			+ "<standard name='Empty.txt'>"
@@ -37,6 +41,12 @@ public class ReportTransformerTest {
 			+ "</standard>" + "<directory name='.svn' restricted='true'/>"
 			+ "</directory>";
 
+	/**
+	 * Test transform.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void testTransform() throws Exception {
 		StringWriter writer = new StringWriter();
