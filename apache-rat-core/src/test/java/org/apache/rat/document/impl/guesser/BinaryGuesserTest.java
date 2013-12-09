@@ -39,7 +39,7 @@ public class BinaryGuesserTest {
 	 * Test matches.
 	 */
 	@Test
-	public void testMatches() {
+	public void testBinaryGuesserMatches() {
 		assertThatDocumentIsBinary("image.png");
 		assertThatDocumentIsBinary("libicudata.so.34.");
 	}
@@ -65,7 +65,7 @@ public class BinaryGuesserTest {
 	 * @see "RAT-81"
 	 */
 	@Test
-	public void binaryWithMalformedInputRAT81() throws Throwable {
+	public void testBinaryWithMalformedInputRAT81() throws Throwable {
 		Document doc = new FileDocument(new File(
 				"src/test/resources/binaries/UTF16_with_signature.xml"));
 		Reader reader = null;
@@ -94,7 +94,7 @@ public class BinaryGuesserTest {
 	 * Real binary content.
 	 */
 	@Test
-	public void realBinaryContent() {
+	public void testRealBinaryContent() {
 		// This test is not accurate on all platforms
 		if (System.getProperty("file.encoding").startsWith("ANSI")) {
 			assertTrue("Value return must be True",
@@ -107,7 +107,7 @@ public class BinaryGuesserTest {
 	 * Textual content.
 	 */
 	@Test
-	public void textualContent() {
+	public void testTextualContent() {
 		assertFalse("Value return must be False",
 				new BinaryGuesser().matches(new FileDocument(new File(
 				"src/test/resources/elements/Text.txt"))));
@@ -117,7 +117,7 @@ public class BinaryGuesserTest {
 	 * Empty file.
 	 */
 	@Test
-	public void emptyFile() {
+	public void testEmptyFile() {
 		assertFalse("Value return must be False",
 				new BinaryGuesser().matches(new FileDocument(new File(
 				"src/test/resources/elements/sub/Empty.txt"))));
