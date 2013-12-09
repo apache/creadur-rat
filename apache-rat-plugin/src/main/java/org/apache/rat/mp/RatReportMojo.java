@@ -145,7 +145,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
         try
         {
             pw = new PrintWriter( sw );
-            createReport( new PrintWriter( sw ), Defaults.getDefaultStyleSheet() );
+            createReport( new PrintWriter( sw ), new Defaults().getDefaultStyleSheet() );
             final String result = sw.toString();
             pw.close();
             pw = null;

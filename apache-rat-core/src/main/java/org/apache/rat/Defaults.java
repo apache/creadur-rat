@@ -42,12 +42,6 @@ import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 public class Defaults {
 
 	/**
-	 * no instances.
-	 */
-	private Defaults() {
-	}
-
-	/**
 	 * The standard list of licenses to include in the reports.
 	 */
 	public static final IHeaderMatcher[] DEFAULT_MATCHERS = new IHeaderMatcher[] {
@@ -62,11 +56,18 @@ public class Defaults {
 	public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
 
 	/**
+	 * no instances.
+	 */
+	public Defaults() {
+		super();
+	}
+
+	/**
 	 * Gets the plain style sheet.
 	 * 
 	 * @return the plain style sheet
 	 */
-	public static InputStream getPlainStyleSheet() {
+	public InputStream getPlainStyleSheet() {
 		InputStream result = Defaults.class.getClassLoader()
 				.getResourceAsStream(Defaults.PLAIN_STYLESHEET);
 		return result;
@@ -77,9 +78,8 @@ public class Defaults {
 	 * 
 	 * @return the default style sheet
 	 */
-	public static InputStream getDefaultStyleSheet() {
-		InputStream result = getPlainStyleSheet();
-		return result;
+	public InputStream getDefaultStyleSheet() {
+		return getPlainStyleSheet();
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class Defaults {
 	 * 
 	 * @return the i header matcher
 	 */
-	public static IHeaderMatcher createDefaultMatcher() {
+	public IHeaderMatcher createDefaultMatcher() {
 		return new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
 	}
 }

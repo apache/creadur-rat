@@ -132,7 +132,7 @@ public class RatCheckMojo extends AbstractRatMojo
     private InputStream getStyleSheet() throws MojoExecutionException {
         if ( reportStyle == null || reportStyle.equals( "plain" ) )
         {
-            return Defaults.getPlainStyleSheet();
+            return new Defaults().getPlainStyleSheet();
         }
         else if ( reportStyle.equals( "xml" ) )
         {

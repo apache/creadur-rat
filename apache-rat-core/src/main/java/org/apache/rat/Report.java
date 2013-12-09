@@ -64,7 +64,7 @@ public class Report {
     //@SuppressWarnings("unchecked")
     public static final void main(String args[]) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+        configuration.setHeaderMatcher(new Defaults().createDefaultMatcher());
         Options opts = buildOptions();
 
         PosixParser parser = new PosixParser();
@@ -273,7 +273,7 @@ public class Report {
     @Deprecated
     public ClaimStatistic report(PrintStream out) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+        configuration.setHeaderMatcher(new Defaults().createDefaultMatcher());
         return report(out, configuration);
     }
 
@@ -324,7 +324,7 @@ public class Report {
     @Deprecated
     public void styleReport(PrintStream out) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+        configuration.setHeaderMatcher(new Defaults().createDefaultMatcher());
         styleReport(out, configuration);
     }
 
@@ -342,7 +342,7 @@ public class Report {
         throws Exception {
         final IReportable base = getDirectory(out);
         if (base != null) {
-            InputStream style = Defaults.getDefaultStyleSheet();
+            InputStream style = new Defaults().getDefaultStyleSheet();
             report(out, base, style, configuration);
         }
     }

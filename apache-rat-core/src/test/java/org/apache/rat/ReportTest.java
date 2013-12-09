@@ -159,7 +159,7 @@ public class ReportTest {
 		final ReportConfiguration configuration = new ReportConfiguration();
 		configuration.setHeaderMatcher(matcherMultiplexer);
 		Report.report(out, new DirectoryWalker(new File(elementsPath)),
-				Defaults.getPlainStyleSheet(), configuration);
+				new Defaults().getPlainStyleSheet(), configuration);
 		String result = out.getBuffer().toString();
 		final String lineSeparator = System.getProperty("line.separator");
 		assertTrue("'Generated at' is present in " + result,

@@ -260,7 +260,7 @@ public class Report extends Task {
             InputStream style = null;
             try {
                 if (format.getValue().equals(Format.PLAIN_KEY)) {
-                    style = Defaults.getPlainStyleSheet();
+                    style = new Defaults().getPlainStyleSheet();
                 } else if (format.getValue().equals(Format.STYLED_KEY)) {
                     style = stylesheet.getInputStream();
                 } else {
