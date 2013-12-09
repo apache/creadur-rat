@@ -35,7 +35,7 @@ import org.apache.rat.api.MetaData;
 public class ArchiveEntryDocument implements Document {
 
 	/** The contents. */
-	private byte[] contents;
+	final private byte[] contents;
 
 	/** The name. */
 	private final String name;
@@ -51,10 +51,10 @@ public class ArchiveEntryDocument implements Document {
 	 * @param contents
 	 *            the contents
 	 */
-	public ArchiveEntryDocument(File file, byte[] contents) {
+	public ArchiveEntryDocument(final File file, final byte... contents) {
 		super();
 		name = DocumentImplUtils.toName(file);
-		this.contents = contents;
+		this.contents = contents.clone();
 	}
 
 	/*
