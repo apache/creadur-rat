@@ -27,30 +27,44 @@ import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
+
 /**
- * 
+ * The Class ApacheSoftwareLicense20Test.
  */
 public class ApacheSoftwareLicense20Test {
 	
+	/** The worker. */
 	private ApacheSoftwareLicense20 worker;
 
+	/**
+	 * Sets the up.
+	 */
     @Before
     public void setUp() {
     	worker = new ApacheSoftwareLicense20();
     }
 
+	/**
+	 * Test matches apache license.
+	 */
     @Test
     public void testMatchesApacheLicense() {
 		assertTrue("Matches the apache license",
 				worker.matches(ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
     }
     
+	/**
+	 * Test matches non apache license.
+	 */
     @Test
     public void testMatchesNonApacheLicense() {
 		assertFalse("Not Matches the reference apache license",
 				worker.matches("'Behold, Telemachus! (nor fear the sight,)"));
     }
     
+	/**
+	 * Test match apache license line.
+	 */
     @Test
     public void testMatchApacheLicenseLine() {
         final Document subject = new MockLocation("subject");
@@ -58,6 +72,9 @@ public class ApacheSoftwareLicense20Test {
 				ApacheSoftwareLicense20.FIRST_LICENSE_LINE));
 	}
     
+	/**
+	 * Test match non apache license.
+	 */
 	@Test
 	public void testMatchNonApacheLicense() {
 		final Document subject = new MockLocation("subject");
@@ -67,6 +84,9 @@ public class ApacheSoftwareLicense20Test {
 		}
 	}
 
+	/**
+	 * Test notes.
+	 */
 	@Test
 	public void testNotes() {
 		assertThat(
@@ -74,11 +94,17 @@ public class ApacheSoftwareLicense20Test {
 				is("Note that APACHE requires a NOTICE. All modifications require notes. See http://www.apache.org/licenses/LICENSE-2.0."));
 	}
 
+	/**
+	 * Test category.
+	 */
 	@Test
 	public void testCategory() {
 		assertThat(this.worker.getLicenseFamilyCategory(), is("AL   "));
 	}
 
+	/**
+	 * Test name.
+	 */
 	@Test
 	public void testName() {
 		assertThat(this.worker.getLicenseFamilyName(),
