@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class DefaultsTest.
  */
@@ -34,5 +35,14 @@ public class DefaultsTest {
 	public void testGetDefaultStyleSheet() {
 		Defaults defaults = new Defaults();
 		assertNotNull("Not to be null", defaults.getDefaultStyleSheet());
+	}
+
+	/**
+	 * Test create default matcher.
+	 */
+	@Test
+	public void testCreateDefaultMatcher() {
+		Defaults defaults = new Defaults();
+		assertNotNull("Not to be null", defaults.createDefaultMatcher());
 	}
 }
