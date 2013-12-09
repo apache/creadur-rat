@@ -24,15 +24,28 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class W3CDocLicenseTest.
+ */
 public class W3CDocLicenseTest {
 
+	/** The license. */
     W3CDocLicense license;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
     @Before
     public void setUp() throws Exception {
         this.license = new W3CDocLicense();
     }
 
+	/**
+	 * Test notes.
+	 */
     @Test
     public void testNotes() {
         assertThat(
@@ -40,11 +53,17 @@ public class W3CDocLicenseTest {
                 is("Note that W3CD does not allow modifications. See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231."));
     }
 
+	/**
+	 * Test category.
+	 */
     @Test
     public void testCategory() {
         assertThat(this.license.getLicenseFamilyCategory(), is("W3CD "));
     }
 
+	/**
+	 * Test name.
+	 */
     @Test
     public void testName() {
         assertThat(this.license.getLicenseFamilyName(),
