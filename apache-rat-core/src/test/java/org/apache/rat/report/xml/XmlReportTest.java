@@ -119,7 +119,7 @@ public class XmlReportTest {
 		assertTrue("Preamble and document element are OK",
 				output.startsWith("<?xml version='1.0'?>"
 						+ "<rat-report timestamp="));
-		assertFalse(
+		assertTrue(
 				"Part after timestamp attribute is OK",
 				output.endsWith(">" + "<resource name='"
 						+ elementsPath
