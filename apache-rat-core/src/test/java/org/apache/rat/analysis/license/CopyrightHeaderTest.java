@@ -26,28 +26,44 @@ import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.junit.Before;
 import org.junit.Test;
+
 /**
- * 
+ * The Class CopyrightHeaderTest.
  */
 public class CopyrightHeaderTest {
 
+	/** The Constant MATCHING_HEADERS. */
 	private static final String[] MATCHING_HEADERS = {
 			"/*  Copyright 2012 FooBar.*/", "/*  copyright 2012 foobar.*/",
 			"/*  Copyright 2012-2013 FooBar.*/" };
+
+	/** The Constant NON_MATCHING_HEADERS. */
 	private static final String[] NON_MATCHING_HEADERS = { "/*  Copyright*/",
 			"/*  Copyright FooBar.*/", "/*  Copyright 2013*/",
 			"/*  Copyright 123a*/", "/*  Copyright 123f oobar*/",
 			"/*  Copyright 2013FooBar*/", "/*  Copyright 2012 2013 FooBar.*/" };
 
+	/** The header. */
 	private CopyrightHeader header;
+
+	/** The subject. */
 	private Document subject = new MockLocation("subject");
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		header = new CopyrightHeader(APACHE.licenseFamily(), "FooBar");
 		subject = new MockLocation("subject");
 	}
 
+	/**
+	 * Test match copyright header.
+	 */
 	@Test
 	public void testMatchCopyrightHeader() {
 		for (String line : MATCHING_HEADERS) {
@@ -57,6 +73,9 @@ public class CopyrightHeaderTest {
 		}
 	}
 
+	/**
+	 * Test no match copyright header.
+	 */
 	@Test
 	public void testNoMatchCopyrightHeader() {
 		for (String line : NON_MATCHING_HEADERS) {
