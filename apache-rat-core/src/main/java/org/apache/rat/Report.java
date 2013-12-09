@@ -58,7 +58,7 @@ import org.apache.rat.walker.DirectoryWalker;
 /**
  * The Class Report.
  */
-public class Report {
+public final class Report {
 
 	/** The Constant EXCLUDE_CLI. */
 	private static final char EXCLUDE_CLI = 'e';
@@ -69,24 +69,32 @@ public class Report {
 	/** The Constant STYLESHEET_CLI. */
 	private static final char STYLESHEET_CLI = 's';
 
-	// @SuppressWarnings("unchecked")
+	/** The base directory. */
+	private final String baseDirectory;
+
+	/** The input file filter. */
+	private FilenameFilter inputFileFilter;
+
+
 	/**
 	 * The main method.
 	 * 
 	 * @param args
 	 *            the arguments
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws TransformerConfigurationException
 	 */
-	public static final void main(String args[]) throws Exception {
+	public static void main(String args[]) throws IOException,
+			TransformerConfigurationException, InterruptedException {
 		final ReportConfiguration configuration = new ReportConfiguration();
 		configuration.setHeaderMatcher(new Defaults().createDefaultMatcher());
 		Options opts = buildOptions();
 
 		PosixParser parser = new PosixParser();
-		CommandLine cl = null;
+		CommandLine commandLine = null;
 		try {
-			cl = parser.parse(opts, args);
+			commandLine = parser.parse(opts, args);
 		} catch (ParseException e) {
 			System.err
 					.println("Please use the \"--help\" option to see a list of valid commands and options");
@@ -95,31 +103,34 @@ public class Report {
 					// complaint about possible NPE for "cl"
 		}
 
-		if (cl.hasOption('h')) {
+		if (commandLine.hasOption('h')) {
 			printUsage(opts);
 		}
 
-		args = cl.getArgs();
+		args = commandLine.getArgs();
 		if (args == null || args.length != 1) {
 			printUsage(opts);
 		} else {
 			Report report = new Report(args[0]);
 
-			if (cl.hasOption('a') || cl.hasOption('A')) {
+			if (commandLine.hasOption('a') || commandLine.hasOption('A')) {
 				configuration.setAddingLicenses(true);
-				configuration.setAddingLicensesForced(cl.hasOption('f'));
-				configuration.setCopyrightMessage(cl.getOptionValue("c"));
+				configuration.setAddingLicensesForced(commandLine
+						.hasOption('f'));
+				configuration.setCopyrightMessage(commandLine
+						.getOptionValue("c"));
 			}
 
-			if (cl.hasOption(EXCLUDE_CLI)) {
-				String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
+			if (commandLine.hasOption(EXCLUDE_CLI)) {
+				String[] excludes = commandLine.getOptionValues(EXCLUDE_CLI);
 				if (excludes != null) {
 					final FilenameFilter filter = new NotFileFilter(
 							new WildcardFileFilter(excludes));
 					report.setInputFileFilter(filter);
 				}
-			} else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
-				String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
+			} else if (commandLine.hasOption(EXCLUDE_FILE_CLI)) {
+				String excludeFileName = commandLine
+						.getOptionValue(EXCLUDE_FILE_CLI);
 				if (excludeFileName != null) {
 					List<String> excludes = FileUtils.readLines(new File(
 							excludeFileName));
@@ -131,13 +142,12 @@ public class Report {
 					report.setInputFileFilter(filter);
 				}
 			}
-			if (cl.hasOption('x')) {
+			if (commandLine.hasOption('x')) {
 				report.report(System.out, configuration);
 			} else {
-				if (!cl.hasOption(STYLESHEET_CLI)) {
-					report.styleReport(System.out, configuration);
-				} else {
-					String[] style = cl.getOptionValues(STYLESHEET_CLI);
+				if (commandLine.hasOption(STYLESHEET_CLI)) {
+					String[] style = commandLine
+							.getOptionValues(STYLESHEET_CLI);
 					if (style.length != 1) {
 						System.err
 								.println("please specify a single stylesheet");
@@ -151,6 +161,8 @@ public class Report {
 								+ " doesn't exist");
 						System.exit(1);
 					}
+				} else {
+					report.styleReport(System.out, configuration);
 				}
 			}
 		}
@@ -241,8 +253,8 @@ public class Report {
 	 * @param opts
 	 *            the opts
 	 */
-	private static final void printUsage(Options opts) {
-		HelpFormatter f = new HelpFormatter();
+	private static void printUsage(final Options opts) {
+		HelpFormatter helpFormatter = new HelpFormatter();
 		String header = "Options";
 
 		StringBuilder footer = new StringBuilder("\n");
@@ -255,16 +267,11 @@ public class Report {
 		footer.append("Rat often requires some tuning before it runs well against a project\n");
 		footer.append("Rat relies on heuristics: it may miss issues\n");
 
-		f.printHelp("java rat.report [options] [DIR|TARBALL]", header, opts,
+		helpFormatter.printHelp("java rat.report [options] [DIR|TARBALL]",
+				header, opts,
 				footer.toString(), false);
 		System.exit(0);
 	}
-
-	/** The base directory. */
-	private final String baseDirectory;
-
-	/** The input file filter. */
-	private FilenameFilter inputFileFilter = null;
 
 	/**
 	 * Instantiates a new report.
@@ -272,7 +279,7 @@ public class Report {
 	 * @param baseDirectory
 	 *            the base directory
 	 */
-	private Report(String baseDirectory) {
+	private Report(final String baseDirectory) {
 		this.baseDirectory = baseDirectory;
 	}
 
@@ -291,25 +298,8 @@ public class Report {
 	 * @param inputFileFilter
 	 *            filter, or null when no filter has been set
 	 */
-	public void setInputFileFilter(FilenameFilter inputFileFilter) {
+	public void setInputFileFilter(final FilenameFilter inputFileFilter) {
 		this.inputFileFilter = inputFileFilter;
-	}
-
-	/**
-	 * Report.
-	 * 
-	 * @param out
-	 *            the out
-	 * @return the claim statistic
-	 * @throws Exception
-	 *             the exception
-	 * @deprecated use {@link #report(PrintStream, ReportConfiguration)} instead
-	 */
-	@Deprecated
-	public ClaimStatistic report(PrintStream out) throws Exception {
-		final ReportConfiguration configuration = new ReportConfiguration();
-		configuration.setHeaderMatcher(new Defaults().createDefaultMatcher());
-		return report(out, configuration);
 	}
 
 	/**
@@ -320,17 +310,17 @@ public class Report {
 	 * @param configuration
 	 *            the configuration
 	 * @return the claim statistic
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
 	 * @since Rat 0.8
 	 */
-	public ClaimStatistic report(PrintStream out,
-			ReportConfiguration configuration) throws Exception {
+	public ClaimStatistic report(final PrintStream out,
+			final ReportConfiguration configuration) throws IOException {
+		ClaimStatistic result = null;
 		final IReportable base = getDirectory(out);
 		if (base != null) {
-			return report(base, new OutputStreamWriter(out), configuration);
+			result = report(base, new OutputStreamWriter(out), configuration);
 		}
-		return null;
+		return result;
 	}
 
 	/**
@@ -340,44 +330,27 @@ public class Report {
 	 *            the out
 	 * @return the directory
 	 */
-	private IReportable getDirectory(PrintStream out) {
+	private IReportable getDirectory(final PrintStream out) {
 		File base = new File(baseDirectory);
-		if (!base.exists()) {
+		IReportable result = null;
+		if (base.exists()) {
+			if (base.isDirectory()) {
+				result = new DirectoryWalker(base, inputFileFilter);
+			} else {
+				try {
+					result = new ArchiveWalker(base, inputFileFilter);
+				} catch (IOException ex) {
+					out.print("ERROR: ");
+					out.print(baseDirectory);
+					out.print(" is not valid gzip data.\n");
+				}
+			}
+		} else {
 			out.print("ERROR: ");
 			out.print(baseDirectory);
 			out.print(" does not exist.\n");
-			return null;
 		}
-
-		if (base.isDirectory()) {
-			return new DirectoryWalker(base, inputFileFilter);
-		}
-
-		try {
-			return new ArchiveWalker(base, inputFileFilter);
-		} catch (IOException ex) {
-			out.print("ERROR: ");
-			out.print(baseDirectory);
-			out.print(" is not valid gzip data.\n");
-			return null;
-		}
-	}
-
-	/**
-	 * Output a report in the default style and default licence header matcher.
-	 * 
-	 * @param out
-	 *            - the output stream to recieve the styled report
-	 * @throws Exception
-	 *             the exception
-	 * @deprecated use {@link #styleReport(PrintStream, ReportConfiguration)}
-	 *             instead
-	 */
-	@Deprecated
-	public void styleReport(PrintStream out) throws Exception {
-		final ReportConfiguration configuration = new ReportConfiguration();
-		configuration.setHeaderMatcher(new Defaults().createDefaultMatcher());
-		styleReport(out, configuration);
+		return result;
 	}
 
 	/**
@@ -387,12 +360,17 @@ public class Report {
 	 *            - the output stream to recieve the styled report
 	 * @param configuration
 	 *            the configuration to use
-	 * @throws Exception
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws TransformerConfigurationException
 	 *             the exception
 	 * @since Rat 0.8
 	 */
-	public void styleReport(PrintStream out, ReportConfiguration configuration)
-			throws Exception {
+	public void styleReport(final PrintStream out,
+			final ReportConfiguration configuration)
+			throws TransformerConfigurationException, IOException,
+			InterruptedException
+ {
 		final IReportable base = getDirectory(out);
 		if (base != null) {
 			InputStream style = new Defaults().getDefaultStyleSheet();
@@ -419,8 +397,8 @@ public class Report {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
-	public static void report(PrintStream out, IReportable base,
-			final InputStream style, ReportConfiguration pConfiguration)
+	public static void report(final PrintStream out, final IReportable base,
+			final InputStream style, final ReportConfiguration pConfiguration)
 			throws IOException, TransformerConfigurationException,
 			InterruptedException {
 		report(new OutputStreamWriter(out), base, style, pConfiguration);
@@ -448,8 +426,9 @@ public class Report {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
-	public static ClaimStatistic report(Writer out, IReportable base,
-			final InputStream style, ReportConfiguration pConfiguration)
+	public static ClaimStatistic report(final Writer out,
+			final IReportable base, final InputStream style,
+			final ReportConfiguration pConfiguration)
 			throws IOException, TransformerConfigurationException,
 			FileNotFoundException, InterruptedException {
 		PipedReader reader = new PipedReader();
@@ -479,7 +458,7 @@ public class Report {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static ClaimStatistic report(final IReportable container,
-			final Writer out, ReportConfiguration pConfiguration)
+			final Writer out, final ReportConfiguration pConfiguration)
 			throws IOException {
 		IXmlWriter writer = new XmlWriter(out);
 		final ClaimStatistic statistic = new ClaimStatistic();
