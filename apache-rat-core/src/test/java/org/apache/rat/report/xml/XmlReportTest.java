@@ -40,13 +40,29 @@ import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class XmlReportTest.
+ */
 public class XmlReportTest {
 
+	/** The Constant IGNORE. */
 	private static final Pattern IGNORE = Pattern.compile(".svn");
+
+	/** The out. */
 	StringWriter out;
+
+	/** The writer. */
 	IXmlWriter writer;
+
+	/** The report. */
 	RatReport report;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		this.out = new StringWriter();
@@ -69,10 +85,24 @@ public class XmlReportTest {
 		this.report = new Pipeline(analyser, null, reporters);
 	}
 
+	/**
+	 * Report.
+	 * 
+	 * @param directory
+	 *            the directory
+	 * @throws Exception
+	 *             the exception
+	 */
 	private void report(final DirectoryWalker directory) throws Exception {
 		directory.run(this.report);
 	}
 
+	/**
+	 * Base report.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void baseReport() throws Exception {
 		final String elementsPath = Resources
