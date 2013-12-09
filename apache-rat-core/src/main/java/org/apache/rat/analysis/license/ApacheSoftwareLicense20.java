@@ -25,12 +25,16 @@ import static org.apache.rat.api.domain.RatLicenseFamily.APACHE;
  * 
  */
 public final class ApacheSoftwareLicense20 extends SimplePatternBasedLicense {
+
+	/** The Constant FIRST_LICENSE_LINE. */
 	public static final String FIRST_LICENSE_LINE = "Licensed under the Apache License, Version 2.0 (the \"License\")";
+
+	/** The Constant LICENSE_REFERENCE_LINE. */
 	public static final String LICENSE_REFERENCE_LINE = "http://www.apache.org/licenses/LICENSE-2.0";
 
 	/**
-     * 
-     */
+	 * Instantiates a new apache software license20.
+	 */
 	public ApacheSoftwareLicense20() {
 		super(APACHE.licenseFamily(), new String[] {
 				FIRST_LICENSE_LINE, LICENSE_REFERENCE_LINE });
