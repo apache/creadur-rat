@@ -25,13 +25,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.impl.FileDocument;
-import org.apache.rat.api.Document;
 import org.junit.Test;
 
+/**
+ * The Class BinaryGuesserTest.
+ */
 public class BinaryGuesserTest {
 
+	/**
+	 * Test matches.
+	 */
 	@Test
 	public void testMatches() {
 		assertThatDocumentIsBinary("image.png");
@@ -48,6 +54,12 @@ public class BinaryGuesserTest {
 		assertThatDocumentIsBinary("libicudata.so.34.");
 	}
 
+	/**
+	 * Assert that document is binary.
+	 * 
+	 * @param name
+	 *            the name
+	 */
 	private void assertThatDocumentIsBinary(final String name) {
 		assertTrue(new BinaryGuesser().matches(new MockDocument(name)));
 	}
@@ -57,6 +69,8 @@ public class BinaryGuesserTest {
 	 * encoding of the stream was different from the platform's default
 	 * encoding.
 	 * 
+	 * @throws Throwable
+	 *             the throwable
 	 * @see "RAT-81"
 	 */
 	@Test
@@ -90,6 +104,9 @@ public class BinaryGuesserTest {
 		}
 	}
 
+	/**
+	 * Real binary content.
+	 */
 	@Test
 	public void realBinaryContent() {
 		// This test is not accurate on all platforms
@@ -99,12 +116,18 @@ public class BinaryGuesserTest {
 		}
 	}
 
+	/**
+	 * Textual content.
+	 */
 	@Test
 	public void textualContent() {
 		assertFalse(new BinaryGuesser().matches(new FileDocument(new File(
 				"src/test/resources/elements/Text.txt"))));
 	}
 
+	/**
+	 * Empty file.
+	 */
 	@Test
 	public void emptyFile() {
 		assertFalse(new BinaryGuesser().matches(new FileDocument(new File(
