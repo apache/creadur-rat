@@ -21,6 +21,7 @@ package org.apache.rat.report.xml;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +50,13 @@ public class XmlReportTest {
 	private static final Pattern IGNORE = Pattern.compile(".svn");
 
 	/** The out. */
-	StringWriter out;
+	private StringWriter out;
 
 	/** The writer. */
-	IXmlWriter writer;
+	private IXmlWriter writer;
 
 	/** The report. */
-	RatReport report;
+	private RatReport report;
 
 	/**
 	 * Sets the up.
@@ -90,21 +91,21 @@ public class XmlReportTest {
 	 * 
 	 * @param directory
 	 *            the directory
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	private void report(final DirectoryWalker directory) throws Exception {
+	private void report(final DirectoryWalker directory) throws IOException {
 		directory.run(this.report);
 	}
 
 	/**
 	 * Base report.
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void baseReport() throws Exception {
+	public void baseReport() throws IOException {
 		final String elementsPath = Resources
 				.getResourceDirectory("elements/Source.java");
 		final DirectoryWalker directory = new DirectoryWalker(new File(
