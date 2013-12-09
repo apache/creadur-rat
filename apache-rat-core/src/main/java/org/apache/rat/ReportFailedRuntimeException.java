@@ -41,8 +41,9 @@ class ReportFailedRuntimeException extends RuntimeException {
 	 * @param t
 	 *            the t
 	 */
-	public ReportFailedRuntimeException(String message, Throwable t) {
-		super(message, t);
+	public ReportFailedRuntimeException(final String message,
+			final Throwable throwable) {
+		super(message, throwable);
 	}
 
 	/**
@@ -51,7 +52,7 @@ class ReportFailedRuntimeException extends RuntimeException {
 	 * @param message
 	 *            the message
 	 */
-	public ReportFailedRuntimeException(String message) {
+	public ReportFailedRuntimeException(final String message) {
 		super(message);
 	}
 
@@ -61,7 +62,7 @@ class ReportFailedRuntimeException extends RuntimeException {
 	 * @param t
 	 *            the t
 	 */
-	public ReportFailedRuntimeException(Throwable t) {
-		super(t);
+	public ReportFailedRuntimeException(final Throwable throwable) {
+		super(throwable);
 	}
 }
