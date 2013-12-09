@@ -29,6 +29,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
+import java.security.Permission;
 import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerConfigurationException;
@@ -39,6 +40,8 @@ import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -46,10 +49,123 @@ import org.junit.Test;
  */
 public class ReportTest {
 
+	/**
+	 * The Class ExitException.
+	 */
+	protected static class ExitException extends SecurityException {
+
+		/** The Constant serialVersionUID. */
+		private static final long serialVersionUID = 1L;
+
+		/** The status. */
+		public final int status;
+
+		/**
+		 * Instantiates a new exit exception.
+		 * 
+		 * @param status
+		 *            the status
+		 */
+		public ExitException(int status) {
+			super("There is no escape!");
+			this.status = status;
+		}
+	}
+
+	/**
+	 * The Class NoExitSecurityManager.
+	 */
+	private static class NoExitSecurityManager extends SecurityManager {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * java.lang.SecurityManager#checkPermission(java.security.Permission)
+		 */
+		@Override
+		public void checkPermission(Permission perm) {
+			// allow anything.
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * java.lang.SecurityManager#checkPermission(java.security.Permission,
+		 * java.lang.Object)
+		 */
+		@Override
+		public void checkPermission(Permission perm, Object context) {
+			// allow anything.
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.SecurityManager#checkExit(int)
+		 */
+		@Override
+		public void checkExit(int status) {
+			super.checkExit(status);
+			throw new ExitException(status);
+		}
+	}
+
+	/**
+	 * The Class ExitSecurityManager.
+	 */
+	private static class ExitSecurityManager extends SecurityManager {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * java.lang.SecurityManager#checkPermission(java.security.Permission)
+		 */
+		@Override
+		public void checkPermission(Permission perm) {
+			// allow anything.
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * java.lang.SecurityManager#checkPermission(java.security.Permission,
+		 * java.lang.Object)
+		 */
+		@Override
+		public void checkPermission(Permission perm, Object context) {
+			// allow anything.
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.SecurityManager#checkExit(int)
+		 */
+		@Override
+		public void checkExit(int status) {
+			super.checkExit(status);
+		}
+	}
+
 	/** The Constant HEADER. */
 	private static final String HEADER = "\n"
 			+ "*****************************************************\n"
 			+ "Summary\n" + "-------\n" + "Generated at: ";
+
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		System.setSecurityManager(new NoExitSecurityManager());
+	}
 
 	/**
 	 * Gets the elements reports.
@@ -277,4 +393,37 @@ public class ReportTest {
 		configuration.setHeaderMatcher(headerMatcher);
 		report.styleReport(out, configuration);
 	}
+
+	/**
+	 * Test main.
+	 * 
+	 * @throws TransformerConfigurationException
+	 *             the transformer configuration exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
+	@Test
+	public void testMain() throws TransformerConfigurationException,
+			IOException, InterruptedException {
+		try {
+			String[] args = null;
+			Report.main(args);
+		} catch (ExitException e) {
+			assertEquals("Exit status", 0, e.status);
+		}
+	}
+
+	/**
+	 * Sets the down.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@After
+	public void setDown() throws Exception {
+		System.setSecurityManager(new ExitSecurityManager());
+	}
+
 }
