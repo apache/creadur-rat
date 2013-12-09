@@ -20,7 +20,13 @@ package org.apache.rat.license;
 
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 
+/**
+ * The Class W3CSoftwareLicenseFamily.
+ */
 public class W3CSoftwareLicenseFamily extends SimpleLicenseFamily {
+    /**
+     * The Class W3CSoftwareLicenseFamily.
+     */
     public W3CSoftwareLicenseFamily() {
         super(W3C.getName());
     }
