@@ -35,6 +35,7 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,8 +74,8 @@ public class XmlReportFactoryTest {
 	 *            the directory
 	 * @param report
 	 *            the report
-	 * @throws RatException
-	 *             the rat exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private void report(final DirectoryWalker directory, final RatReport report)
 			throws IOException {
@@ -84,8 +85,6 @@ public class XmlReportFactoryTest {
 	/**
 	 * Standard report.
 	 * 
-	 * @throws RatException
-	 *             the rat exception
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -166,5 +165,23 @@ public class XmlReportFactoryTest {
 				Integer.valueOf(1),
 				statistic.getDocumentCategoryMap().get(
 						MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
+	}
+
+	/**
+	 * Test standard report with licenses.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testStandardReportWithLicenses() throws IOException {
+		final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
+		final ClaimStatistic statistic = new ClaimStatistic();
+		final ReportConfiguration configuration = new ReportConfiguration();
+		configuration.setHeaderMatcher(mockLicenseMatcher);
+		configuration.setAddingLicenses(true);
+		RatReport report = new XmlReportFactory().createStandardReport(writer,
+				statistic, configuration);
+		Assert.assertNotNull(report);
 	}
 }
