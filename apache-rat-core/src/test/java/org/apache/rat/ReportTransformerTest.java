@@ -50,12 +50,12 @@ public class ReportTransformerTest {
 	@Test
 	public void testTransform() throws Exception {
 		StringWriter writer = new StringWriter();
-		assertNotNull(writer);
-		StringReader in = new StringReader(SIMPLE_CONTENT);
+		assertNotNull("Writer no to be null", writer);
+		StringReader stringReader = new StringReader(SIMPLE_CONTENT);
 		ReportTransformer transformer = new ReportTransformer(writer,
 				new BufferedReader(new FileReader(new File(
 						"src/main/resources/org/apache/rat/plain-rat.xsl"))),
-				in);
+				stringReader);
 		transformer.transform();
 	}
 
