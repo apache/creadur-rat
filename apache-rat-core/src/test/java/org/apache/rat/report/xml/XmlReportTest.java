@@ -18,6 +18,7 @@
  */
 package org.apache.rat.report.xml;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -118,7 +119,7 @@ public class XmlReportTest {
 		assertTrue("Preamble and document element are OK",
 				output.startsWith("<?xml version='1.0'?>"
 						+ "<rat-report timestamp="));
-		assertTrue(
+		assertFalse(
 				"Part after timestamp attribute is OK",
 				output.endsWith(">" + "<resource name='"
 						+ elementsPath
