@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.walker;
 
 import org.apache.rat.test.utils.Resources;
@@ -28,11 +28,13 @@ import static org.junit.Assert.assertTrue;
 
 public class FileNameComparatorTest {
 
-    @Test
-    public void compare() throws IOException {
-        FileNameComparator comparator = new FileNameComparator();
-        assertNotNull(comparator);
-        final int compare = comparator.compare(Resources.getResourceFile("elements/LICENSE"), Resources.getResourceFile("elements/NOTICE"));
-        assertTrue("LICENSE is before NOTICE", compare < 0);
-    }
+	@Test
+	public void compare() throws IOException {
+		FileNameComparator comparator = new FileNameComparator();
+		assertNotNull(comparator);
+		final int compare = comparator.compare(
+				Resources.getResourceFile("elements/LICENSE"),
+				Resources.getResourceFile("elements/NOTICE"));
+		assertTrue("LICENSE is before NOTICE", compare < 0);
+	}
 }
