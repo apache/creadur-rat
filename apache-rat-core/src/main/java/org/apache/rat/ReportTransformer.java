@@ -41,7 +41,7 @@ class ReportTransformer implements Runnable {
 	private final Transformer transformer;
 
 	/** The in. */
-	private final Reader in;
+	private final Reader reader;
 
 	/**
 	 * Instantiates a new report transformer.
@@ -56,11 +56,11 @@ class ReportTransformer implements Runnable {
 	 *             the transformer configuration exception
 	 */
 	public ReportTransformer(final Writer out, final Reader style,
-			final Reader in) throws TransformerConfigurationException {
+			final Reader reader) throws TransformerConfigurationException {
 		this.out = out;
 		transformer = TransformerFactory.newInstance().newTransformer(
 				new StreamSource(style));
-		this.in = in;
+		this.reader = reader;
 	}
 
 	/**
@@ -76,11 +76,11 @@ class ReportTransformer implements Runnable {
 	 *             the transformer configuration exception
 	 */
 	public ReportTransformer(final Writer out, final InputStream style,
-			final Reader in) throws TransformerConfigurationException {
+			final Reader reader) throws TransformerConfigurationException {
 		this.out = out;
 		transformer = TransformerFactory.newInstance().newTransformer(
 				new StreamSource(style));
-		this.in = in;
+		this.reader = reader;
 	}
 
 	/*
@@ -103,7 +103,7 @@ class ReportTransformer implements Runnable {
 	 *             the transformer exception
 	 */
 	public void transform() throws TransformerException {
-		transformer.transform(new StreamSource(in), new StreamResult(out));
+		transformer.transform(new StreamSource(reader), new StreamResult(out));
 	}
 
 }
