@@ -279,7 +279,7 @@ public final class Report {
 	 * @param baseDirectory
 	 *            the base directory
 	 */
-	private Report(final String baseDirectory) {
+	public Report(final String baseDirectory) {
 		this.baseDirectory = baseDirectory;
 	}
 
