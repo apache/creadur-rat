@@ -19,12 +19,15 @@
 package org.apache.rat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -149,7 +152,7 @@ public class ReportTest {
 	 *             the interrupted exception
 	 */
 	@Test
-	public void plainReport() throws TransformerConfigurationException,
+	public void testPlainReport() throws TransformerConfigurationException,
 			FileNotFoundException, IOException, InterruptedException {
 		StringWriter out = new StringWriter();
 		HeaderMatcherMultiplexer matcherMultiplexer = new HeaderMatcherMultiplexer(
@@ -170,5 +173,29 @@ public class ReportTest {
 		assertEquals("Report created",
 				elementsReports.replaceAll("\n", lineSeparator),
 				result.substring(generatedAtLineEnd + lineSeparator.length()));
+	}
+
+	/**
+	 * Test input file filter.
+	 */
+	@Test
+	public void testInputFileFilter() {
+		Report report = new Report(null);
+		final Pattern pattern = Pattern.compile(
+				".*Copyright [0-9]{4}(\\-[0-9]{4})? " + ".*",
+				Pattern.CASE_INSENSITIVE);
+		FilenameFilter inputFileFilter = new FilenameFilter() {
+			public boolean accept(final File dir, final String name) {
+				boolean result = false;
+				if (pattern == null) {
+					result = true;
+				} else {
+					result ^= pattern.matcher(name).matches();
+				}
+				return result;
+			}
+		};
+		report.setInputFileFilter(inputFileFilter);
+		assertNotNull(report.getInputFileFilter());
 	}
 }
