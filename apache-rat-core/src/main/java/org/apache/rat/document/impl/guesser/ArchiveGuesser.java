@@ -31,6 +31,9 @@ public class ArchiveGuesser {
         "rar", "war",
         "ear", "mar",
         "par", "xar",
+        "odb", "odf",
+        "odg", "odp",
+        "ods", "odt",
     };
 
     public static final boolean isArchive(final Document document) {

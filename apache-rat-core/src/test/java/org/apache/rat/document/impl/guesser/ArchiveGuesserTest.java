@@ -33,6 +33,12 @@ public class ArchiveGuesserTest {
         assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.tar")));
         assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.bz")));
         assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.bz2")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.odb")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.odf")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.odg")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.odp")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.ods")));
+        assertTrue(ArchiveGuesser.isArchive(new MockDocument("42.odt")));
     }
     
     @Test
@@ -43,7 +49,12 @@ public class ArchiveGuesserTest {
         assertTrue(ArchiveGuesser.isArchive("42.tar"));
         assertTrue(ArchiveGuesser.isArchive("42.bz"));
         assertTrue(ArchiveGuesser.isArchive("42.bz2"));
+        assertTrue(ArchiveGuesser.isArchive("42.odb"));
+        assertTrue(ArchiveGuesser.isArchive("42.odf"));
+        assertTrue(ArchiveGuesser.isArchive("42.odg"));
+        assertTrue(ArchiveGuesser.isArchive("42.odp"));
+        assertTrue(ArchiveGuesser.isArchive("42.ods"));
+        assertTrue(ArchiveGuesser.isArchive("42.odt"));
     }
-    
 
 }
