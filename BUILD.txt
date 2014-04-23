@@ -16,4 +16,3 @@ Normal development, eating dog food:
 Build apache release
 
     mvn clean install -Papache-release
-
