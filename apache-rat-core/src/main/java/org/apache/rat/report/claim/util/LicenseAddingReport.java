@@ -39,8 +39,7 @@ public class LicenseAddingReport extends AbstractReport {
 
     @Override
     public void report(org.apache.rat.api.Document document) throws RatException {
-        final MetaData metaData = document.getMetaData();
-        final Datum licenseHeader = metaData.get(MetaData.RAT_URL_HEADER_CATEGORY);
+        final Datum licenseHeader = document.getMetaData().get(MetaData.RAT_URL_HEADER_CATEGORY);
         if (licenseHeader == null
                 ||  MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_UNKNOWN.getValue().equals(licenseHeader.getValue())) {
             final File file = new File(document.getName());
@@ -52,6 +51,5 @@ public class LicenseAddingReport extends AbstractReport {
                 }
             }
         }
-        metaData.getData();
     }
 }
