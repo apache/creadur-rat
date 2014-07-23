@@ -19,7 +19,6 @@
 package org.apache.rat.analysis.license;
 
 import java.util.regex.Pattern;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.rat.api.MetaData;
 
 /**
@@ -31,42 +30,26 @@ public class CDDL1License extends SimplePatternBasedLicense {
             "The contents of this file are subject to the terms of the Common Development[\\\\r\\\\n\\\\s]+"
             + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file[\\\\r\\\\n\\\\s]+"
             + "except in compliance with the License.";
+    private static final Pattern LICENSE_LINE_PATTERN = Pattern.compile(LICENSE_LINE);
 
     public static final String LICENSE_URL =
             ".*https://oss.oracle.com/licenses/CDDL.*";
+    private static final Pattern LICENSE_URL_PATTERN = Pattern.compile(LICENSE_URL);    
+
 
     public CDDL1License() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_CDLL1,
                 MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1,
-                "", new String[]{LICENSE_LINE, LICENSE_URL});
-    }
-
-    private Pattern[] getRegExPatterns() {
-        final Pattern[] result;
-        final String[] pttrns = getPatterns();
-        if (ArrayUtils.isEmpty(pttrns)) {
-            result = new Pattern[0];
-        } else {
-            result = new Pattern[pttrns.length];
-            for (int i = 0; i < pttrns.length; i++) {
-                result[i] = Pattern.compile(pttrns[i]);
-            }
-        }
-
-        return result;
+                "", new String[]{});
     }
 
     @Override
     protected boolean matches(final String pLine) {
         if (pLine != null) {
-            final String[] pttrns = getPatterns();
-            if (pttrns != null) {
-                for (Pattern pttrn : getRegExPatterns()) {
-                    if (pttrn.matcher(pLine).find()) {
-                        return true;
-                    }
-                }
-            }
+        	return 
+        			super.matches(pLine) ||
+        			LICENSE_LINE_PATTERN.matcher(pLine).find() ||
+        			LICENSE_URL_PATTERN.matcher(pLine).find();
         }
         return false;
     }
