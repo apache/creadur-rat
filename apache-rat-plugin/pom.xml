@@ -36,7 +36,7 @@
     <currentVersion>${project.version}</currentVersion>
     <doxiaVersion>1.2</doxiaVersion>
     <doxiaSitetoolsVersion>1.2</doxiaSitetoolsVersion>
-    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
   </properties>
   
   <build>

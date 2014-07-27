@@ -1,3 +1,18 @@
+Rat 0.11 - SNAPSHOT (not yet released)
+========
+tbd
+
+ * tbd
+ * Issues resolved (see http://issues.apache.org/jira):
+   * New feature
+     * [RAT-164] New boolean system property 'rat.skip' to skip RAT plugin execution externally.  
+   * Bugs fixed:
+     * [RAT-162] CDDL1License matches slow with large inputs, use cache instead of recompiling patterns (thanks to Andrew Gaul)
+   * Improvements
+     * [RAT-165] Introduce mvn default goal to ease build process, you can run the build by just launching mvn without any arguments. 
+     * [RAT-148] Remove unnecessary method call in LicenseAddingReport (thanks to Chris A. Mattmann)
+ * Fixed javadoc warnings during build, upgraded maven's generation plugins to avoid warnings in generated code (https://jira.codehaus.org/browse/MPLUGIN-237)
+ 
 Rat 0.10
 ========
 The main change is RAT-138 - Rat 0.9 could run much slower than 0.8 on some input.

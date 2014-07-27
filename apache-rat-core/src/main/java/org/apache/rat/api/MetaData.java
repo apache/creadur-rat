@@ -178,7 +178,7 @@ public class MetaData {
     /**
      * Adds a new datum.
      * Existing data with the same name are not replaced.
-     * @param datum
+     * @param datum datum to add.
      * @see #set(org.apache.rat.api.MetaData.Datum)
      */
     public void add(final Datum datum) {

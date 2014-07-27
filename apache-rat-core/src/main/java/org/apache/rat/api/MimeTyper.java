@@ -30,8 +30,8 @@ public interface MimeTyper {
      * Guesses the mime type for the given content.
      * @param inputStream not null
      * @param name possibly null
-     * @return not null
-     * @throws IOException
+     * @return guessed content type, not null.
+     * @throws IOException in case of I/O errors.
      */
-    public ContentType type(final InputStream inputStream, String name) throws IOException;
+    ContentType type(final InputStream inputStream, String name) throws IOException;
 }

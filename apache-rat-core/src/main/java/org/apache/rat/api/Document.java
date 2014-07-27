@@ -26,7 +26,7 @@ import org.apache.rat.document.CompositeDocumentException;
 
 public interface Document {
 
-    public String getName();
+    String getName();
     
     /**
      * Reads the content of this document.
@@ -35,24 +35,24 @@ public interface Document {
      * @throws CompositeDocumentException if this document can only be read as
      * a composite archive
      */
-    public Reader reader() throws IOException;
+    Reader reader() throws IOException;
     
     /**
      * Streams the document's contents.
      * @return not null
      * @throws IOException when stream could not be opened
      */
-    public InputStream inputStream() throws IOException;
+    InputStream inputStream() throws IOException;
 
     /**
      * Gets data describing this resource.
      * @return not null
      */
-    public MetaData getMetaData();
+    MetaData getMetaData();
     
     /**
      * Is this a composite document?
      * @return true if composite, false otherwise
      */
-    public boolean isComposite();
+    boolean isComposite();
 }

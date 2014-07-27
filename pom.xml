@@ -162,7 +162,7 @@ agnostic home for software distribution comprehension and audit tools.
             <tagletArtifact>
               <groupId>org.apache.maven.plugin-tools</groupId>
               <artifactId>maven-plugin-tools-javadoc</artifactId>
-              <version>3.2</version>
+              <version>3.3</version>
             </tagletArtifact>
           </tagletArtifacts>
           <tags>

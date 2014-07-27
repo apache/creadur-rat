@@ -31,20 +31,24 @@ import org.apache.rat.api.Document;
 
 
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
-    private final File file;
+    private static final String UTF_8 = "UTF-8";
+	private static final String FILE_URL_PREFIX = "file";
+	
+	private final File file;
 
     /**
-     * Creates a new instance. The document is read from the
-     * given URL.
+     * @return Creates and returns a new instance. 
+     * 
+     * @param url The document is read from the given URL.
      */
     public static Document newInstance(final URL url) {
-        if ("file".equals(url.getProtocol())) {
+        if (FILE_URL_PREFIX.equals(url.getProtocol())) {
             final File f = new File(url.getFile());
             return new MonolithicFileDocument(f);
         }
         return new AbstractMonolithicDocument(url.toExternalForm()){
             public Reader reader() throws IOException {
-                return new InputStreamReader(inputStream(), "UTF-8");
+                return new InputStreamReader(inputStream(), UTF_8);
            }
 
             public InputStream inputStream() throws IOException {
@@ -53,16 +57,16 @@ public class MonolithicFileDocument extends AbstractMonolithicDocument {
         };
     }
 
-    public MonolithicFileDocument(final File file) {
+     public MonolithicFileDocument(final File file) {
         super(DocumentImplUtils.toName(file));
         this.file = file;
     }
 
-    public Reader reader() throws IOException {
+     public Reader reader() throws IOException {
         return new FileReader(file);
     }
 
-    public InputStream inputStream() throws IOException {
+     public InputStream inputStream() throws IOException {
         return new FileInputStream(file);
     }
 }

@@ -258,7 +258,12 @@ public class Report {
     }
 
     /**
+     * @param out - the output stream to receive the styled report
+     * @throws Exception in case of errors.
+     * 
      * @deprecated use {@link #report(PrintStream, ReportConfiguration)} instead
+     * 
+     * @return the currently collected numerical statistics.
      */
     @Deprecated
     public ClaimStatistic report(PrintStream out) throws Exception {
@@ -268,7 +273,12 @@ public class Report {
     }
 
     /**
+     * @param out - the output stream to receive the styled report
+     * @param configuration - current configuration options.
+     * @throws Exception in case of errors.
+     * 
      * @since Rat 0.8
+     * @return the currently collected numerical statistics.
      */
     public ClaimStatistic report(PrintStream out,
                                  ReportConfiguration configuration)
@@ -307,8 +317,8 @@ public class Report {
      * Output a report in the default style and default licence
      * header matcher. 
      * 
-     * @param out - the output stream to recieve the styled report
-     * @throws Exception
+     * @param out - the output stream to receive the styled report
+     * @throws Exception in case of errors.
      * @deprecated use {@link #styleReport(PrintStream, ReportConfiguration)} instead
      */
     @Deprecated
@@ -324,7 +334,7 @@ public class Report {
      * 
      * @param out - the output stream to recieve the styled report
      * @param configuration the configuration to use
-     * @throws Exception
+     * @throws Exception in case of errors.
      * @since Rat 0.8
      */
     public void styleReport(PrintStream out,
@@ -343,10 +353,12 @@ public class Report {
      * @param out the stream to write the report to
      * @param base the files or directories to report on
      * @param style an input stream representing the stylesheet to use for styling the report
-     * @throws IOException
-     * @throws TransformerConfigurationException
-     * @throws InterruptedException
-     * @throws RatException
+     * @param pConfiguration current report configuration.
+     * 
+     * @throws IOException in case of I/O errors.
+     * @throws TransformerConfigurationException in case of XML errors.
+     * @throws InterruptedException in case of threading errors.
+     * @throws RatException in case of internal errors.
      */
     public static void report(PrintStream out, IReportable base, final InputStream style,
                               ReportConfiguration pConfiguration) 
@@ -361,11 +373,15 @@ public class Report {
      * @param out the writer to write the report to
      * @param base the files or directories to report on
      * @param style an input stream representing the stylesheet to use for styling the report
-     * @throws IOException
-     * @throws TransformerConfigurationException
-     * @throws FileNotFoundException
-     * @throws InterruptedException
-     * @throws RatException
+     * @param pConfiguration current report configuration.
+     * 
+     * @throws FileNotFoundException in case of I/O errors.
+     * @throws IOException in case of I/O errors.
+     * @throws TransformerConfigurationException in case of XML errors.
+     * @throws InterruptedException in case of threading errors.
+     * @throws RatException in case of internal errors.
+     * 
+     * @return the currently collected numerical statistics.
      */
     public static ClaimStatistic report(Writer out, IReportable base, final InputStream style, 
             ReportConfiguration pConfiguration) 
@@ -386,8 +402,12 @@ public class Report {
      * 
      * @param container the files or directories to report on
      * @param out the writer to write the report to
-     * @throws IOException
-     * @throws RatException
+     * @param pConfiguration current report configuration.
+     * 
+     * @throws IOException in case of I/O errors.
+     * @throws RatException in case of internal errors.
+     * 
+     * @return the currently collected numerical statistics.
      */
     public static ClaimStatistic report(final IReportable container, final Writer out,
             ReportConfiguration pConfiguration) throws IOException, RatException {

@@ -47,7 +47,7 @@ public class ArchiveWalker extends Walker implements IReportable {
      * @param file not null
      * @param filter filters input files (optional), 
      * or null when no filtering should be performed
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException in case of I/O errors. 
      */
     public ArchiveWalker(File file, final FilenameFilter filter) throws FileNotFoundException {
         super(file, filter);

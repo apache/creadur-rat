@@ -178,13 +178,13 @@ public abstract class AbstractRatMojo extends AbstractMojo
     private boolean excludeSubProjects;
 
     /**
-     *
+     * 
      */
-    @Component
+    @Parameter(name = "project", readonly = true)
     private MavenProject project;
 
     /**
-     * Returns the Maven project.
+     * @return Returns the Maven project.
      */
     protected MavenProject getProject()
     {
@@ -450,6 +450,9 @@ public abstract class AbstractRatMojo extends AbstractMojo
      *
      * @param out The target writer, to which the report is being written.
      * @param style The stylesheet to use, or <code>null</code> for raw XML
+     * 
+     * @return the current statistic.
+     * 
      * @throws MojoFailureException
      *             An error in the plugin configuration was detected.
      * @throws MojoExecutionException

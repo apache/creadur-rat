@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
 
 import org.apache.tools.ant.BuildException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class ReportTest extends AbstractRatAntTaskTest {
     private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();

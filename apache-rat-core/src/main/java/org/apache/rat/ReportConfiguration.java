@@ -36,6 +36,7 @@ public class ReportConfiguration {
 
     /**
      * Returns the header matcher.
+     * @return the header matcher.
      */
     public IHeaderMatcher getHeaderMatcher() {
         return headerMatcher;
@@ -43,6 +44,7 @@ public class ReportConfiguration {
 
     /**
      * Sets the header matcher.
+     * @param headerMatcher header matcher.
      */
     public void setHeaderMatcher(IHeaderMatcher headerMatcher) {
         this.headerMatcher = headerMatcher;
@@ -50,6 +52,7 @@ public class ReportConfiguration {
 
     /**
      * Returns the set of approved license names.
+     * @return the set of approved license names.
      */
     public ILicenseFamily[] getApprovedLicenseNames() {
         return approvedLicenseNames;
@@ -57,13 +60,14 @@ public class ReportConfiguration {
 
     /**
      * Sets the set of approved license names.
+     * @param approvedLicenseNames set of approved license names.
      */
     public void setApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
         this.approvedLicenseNames = approvedLicenseNames;
     }
 
     /**
-     * If Rat is adding license headers: Returns the optional
+     * @return If Rat is adding license headers: Returns the optional
      * copyright message. This value is ignored, if no
      * license headers are added.
      * @see #isAddingLicenses()
@@ -77,13 +81,14 @@ public class ReportConfiguration {
      * copyright message. This value is ignored, if no
      * license headers are added.
      * @see #setAddingLicenses(boolean)
+     * @param copyrightMessage message to set.
      */
     public void setCopyrightMessage(String copyrightMessage) {
         this.copyrightMessage = copyrightMessage;
     }
 
     /**
-     * If Rat is adding license headers: Returns, whether adding
+     * @return If Rat is adding license headers: Returns, whether adding
      * license headers is enforced. This value is ignored, if no
      * license headers are added.
      * @see #isAddingLicenses()
@@ -97,13 +102,14 @@ public class ReportConfiguration {
      * license headers is enforced. This value is ignored, if no
      * license headers are added.
      * @see #isAddingLicenses()
+     * @param addingLicensesForced enable/disable forcibly adding licenses.
      */
     public void setAddingLicensesForced(boolean addingLicensesForced) {
         this.addingLicensesForced = addingLicensesForced;
     }
 
     /**
-     * Returns, whether Rat should add missing license headers.
+     * @return Returns, whether Rat should add missing license headers.
      * @see #isAddingLicensesForced()
      * @see #getCopyrightMessage()
      */
@@ -115,10 +121,10 @@ public class ReportConfiguration {
      * Returns, whether Rat should add missing license headers.
      * @see #setAddingLicensesForced(boolean)
      * @see #setCopyrightMessage(String)
+     * @param addingLicenses enabled/disables adding of licenses.
      */
     public void setAddingLicenses(boolean addingLicenses) {
         this.addingLicenses = addingLicenses;
     }
-
     
 }

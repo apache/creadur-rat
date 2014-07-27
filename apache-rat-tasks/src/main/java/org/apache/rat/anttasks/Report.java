@@ -102,6 +102,7 @@ public class Report extends Task {
 
     /**
      * Adds resources that will be checked.
+     * @param rc resource to check.
      */
     public void add(ResourceCollection rc) {
         if (nestedResources == null) {
@@ -111,7 +112,7 @@ public class Report extends Task {
     }
 
     /**
-     * Adds a license matcher.
+     * @param matcher Adds a license matcher.
      */
     public void add(IHeaderMatcher matcher) {
         licenseMatchers.add(matcher);
@@ -122,14 +123,15 @@ public class Report extends Task {
     }
 
     /**
-     * Whether to add the default list of license matchers.
+     * @param addDefaultLicenseMatchers Whether to add the default list of license matchers.
      */
-    public void setAddDefaultLicenseMatchers(boolean b) {
-        addDefaultLicenseMatchers = b;
+    public void setAddDefaultLicenseMatchers(boolean addDefaultLicenseMatchers) {
+        this.addDefaultLicenseMatchers = addDefaultLicenseMatchers;
     }
 
     /**
      * Where to send the report to.
+     * @param f report output file.
      */
     public void setReportFile(File f) {
         reportFile = f;
@@ -137,6 +139,7 @@ public class Report extends Task {
 
     /**
      * Which format to use.
+     * @param f format. 
      */
     public void setFormat(Format f) {
         if (f == null) {
@@ -146,7 +149,7 @@ public class Report extends Task {
     }
 
     /**
-     * Whether to add license headers.
+     * @param pAdd Whether to add license headers. 
      */
     public void setAddLicenseHeaders(AddLicenseHeaders pAdd) {
         if (pAdd == null) {
@@ -156,7 +159,7 @@ public class Report extends Task {
     }
 
     /**
-     * Sets the copyright message.
+     * @param pMessage copyright message to set.
      */
     public void setCopyrightMessage(String pMessage) {
         copyrightMessage = pMessage;
@@ -164,6 +167,7 @@ public class Report extends Task {
     
     /**
      * Which stylesheet to use (only meaningful with format='styled').
+     * @param u stylesheet.
      */
     public void addConfiguredStylesheet(Union u) {
         if (stylesheet != null || u.size() != 1) {
@@ -237,9 +241,13 @@ public class Report extends Task {
 
     /**
      * Writes the report to the given stream.
-     * @throws InterruptedException 
-     * @throws TransformerException 
-     * @throws RatException 
+     * 
+     * @param out stream to write report to.
+     * 
+     * @throws IOException in case of I/O errors.
+     * @throws InterruptedException in case of threading errors.
+     * @throws TransformerException in case of XML errors.
+     * @throws RatException in case of general errors.
      */
     private void createReport(PrintWriter out) throws IOException, TransformerException, InterruptedException, RatException {
         final ReportConfiguration configuration = new ReportConfiguration();
@@ -347,7 +355,6 @@ public class Report extends Task {
         public AddLicenseHeaders(String s) {
             setValue(s);
         }
-        
         
         @Override
         public String[] getValues() {

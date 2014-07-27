@@ -129,7 +129,9 @@ svn co http://svn.apache.org/repos/asf/creadur/rat/trunk/
 
  Quick start
 
+ If you want to build RAT just launch 'mvn' inside the root folder. It will automatically perform a 
+
 +------------------------------------------+
-mvn install
+mvn clean install
 +------------------------------------------+
 

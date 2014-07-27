@@ -22,5 +22,5 @@ import org.apache.rat.api.RatException;
 
 public interface IReportable {
 
-    public void run(RatReport report) throws RatException;
+    void run(RatReport report) throws RatException;
 }

@@ -42,9 +42,9 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
 
   /**
    * Create a licence appender with the given copyright line. This should be of
-   * the form "Copyright 2008 Foo"
+   * the form &quot;Copyright 2008 Foo&quot;
    * 
-   * @param copyright
+   * @param copyright copyright line. 
    */
   public ApacheV2LicenceAppender(String copyright) {
     super();

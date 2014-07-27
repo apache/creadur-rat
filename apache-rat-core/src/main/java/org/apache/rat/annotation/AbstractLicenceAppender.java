@@ -39,7 +39,8 @@ import java.util.Map;
  * 
  */
 public abstract class AbstractLicenceAppender {
-    private static final int TYPE_UNKNOWN = 0;
+    private static final String DOT = ".";
+	private static final int TYPE_UNKNOWN = 0;
     private static final int TYPE_JAVA = 1;
     private static final int TYPE_XML = 2;
     private static final int TYPE_HTML = 3;
@@ -188,9 +189,9 @@ public abstract class AbstractLicenceAppender {
     /**
      * Append the default licence header to the supplied document.
      * 
-     * @param document
+     * @param document document to append to.
      * @throws IOException
-     *           if there is a problem either reading or writing the file
+     *           if there is a problem while reading or writing the file
      */
     public void append(File document) throws IOException {
         int type = getType(document);
@@ -341,13 +342,13 @@ public abstract class AbstractLicenceAppender {
     /**
      * Detect the type of document.
      * 
-     * @param document
+     * @param document to retrieve type from.
      * @return not null
      * @TODO use existing mechanism to detect the type of a file and record it in the report output, thus we will not need this duplication here.
      */
     protected int getType(File document) {
         String path = document.getPath();
-        int lastDot = path.lastIndexOf(".");
+        int lastDot = path.lastIndexOf(DOT);
         if (lastDot >= 0 && lastDot < path.length() - 1) {
             String ext = path.substring(lastDot + 1);
             Integer type = EXT2TYPE.get(ext);
@@ -363,14 +364,15 @@ public abstract class AbstractLicenceAppender {
      * to true then files will be modified directly, otherwise
      * new files will be created alongside the existing files.
      * 
-     * @param b
+     * @param force force flag.
      */
-    public void setForce(boolean b) {
-        isForced = b;
+    public void setForce(boolean force) {
+        isForced = force;
     }
 
     /**
-     * Get the licence header for a document.
+     * @return Get the licence header of a document.
+     * @param document document to extract from. 
      */
     public abstract String getLicenceHeader(File document);
 

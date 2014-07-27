@@ -23,9 +23,9 @@ import org.apache.rat.api.RatException;
 
 public interface RatReport {
 
-    public void startReport() throws RatException;
+    void startReport() throws RatException;
     
-    public void report(Document document) throws RatException;
+    void report(Document document) throws RatException;
     
-    public void endReport() throws RatException;
+    void endReport() throws RatException;
 }

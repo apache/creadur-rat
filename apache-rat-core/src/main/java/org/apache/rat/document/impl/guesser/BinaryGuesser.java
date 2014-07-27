@@ -32,11 +32,13 @@ import java.util.Locale;
 import org.apache.rat.api.Document;
 
 /**
- * TODO: factor into MIME guesser and MIME->binary guesser
+ * TODO: factor into MIME guesser and MIME-&gt;binary guesser
  */
 public class BinaryGuesser {
 
-    private static boolean isBinaryDocument(Document document) {
+    private static final String DOT = ".";
+
+	private static boolean isBinaryDocument(Document document) {
         boolean result = false;
         InputStream stream = null;
         try
@@ -80,7 +82,9 @@ public class BinaryGuesser {
     }
 
     /**
-     * Do the first few bytes of the stream hint at a binary file?
+     * @param in the file to check.
+     * 
+     * @return Do the first few bytes of the stream hint at a binary file?
      *
      * <p>Any IOException is swallowed internally and the test returns
      * false.</p>
@@ -103,7 +107,9 @@ public class BinaryGuesser {
     }
 
     /**
-     * Do the first few bytes of the stream hint at a binary file?
+     * @param in the file to check.
+     * 
+     * @return Do the first few bytes of the stream hint at a binary file?
      *
      * <p>Any IOException is swallowed internally and the test returns
      * false.</p>
@@ -148,12 +154,19 @@ public class BinaryGuesser {
         return false;
     }
 
+    
+    /**
+     * 
+     * @param name current file name.
+     * @return whether given name is binary.
+     */
     public static final boolean isBinaryData(final String name) {
         return extensionMatches(name, DATA_EXTENSIONS);
     }
 
     /**
-     * Is a file by that name a known non-binary file?
+     * @return Is a file by that name a known non-binary file?
+     * @param name current file name.
      */
     public static final boolean isNonBinary(final String name) {
         if (name == null) {return false;}
@@ -161,6 +174,10 @@ public class BinaryGuesser {
                                 BinaryGuesser.NON_BINARY_EXTENSIONS);
     }
 
+    /**
+     * @return Is a file by that name an executable/binary file?
+     * @param name current file name.
+     */
     public static final boolean isExecutable(final String name) {
         return name.equals(BinaryGuesser.JAVA) || extensionMatches(name, EXE_EXTENSIONS)
             || containsExtension(name, EXE_EXTENSIONS);
@@ -169,7 +186,7 @@ public class BinaryGuesser {
     public static boolean containsExtension(final String name,
                                              final String[] exts) {
         for (int i = 0; i < exts.length; i++) {
-            if (name.indexOf("." + exts[i] + ".") >= 0) {
+            if (name.indexOf(DOT + exts[i] + DOT) >= 0) {
                 return true;
             }
         }
@@ -179,7 +196,7 @@ public class BinaryGuesser {
     public static boolean extensionMatches(final String name,
                                             final String[] exts) {
         for (int i = 0; i < exts.length; i++) {
-            if (name.endsWith("." + exts[i])) {
+            if (name.endsWith(DOT + exts[i])) {
                 return true;
             }
         }
@@ -199,7 +216,8 @@ public class BinaryGuesser {
     }
     
     /**
-     * Is a file by that name a known binary file?
+     * @return Is a file by that name a known binary file?
+     * @param name file name.
      */
     public static final boolean isBinary(final String name) {
         if (name == null) {return false;}

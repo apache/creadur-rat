@@ -16,7 +16,7 @@
 */
 package org.apache.rat.anttasks;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.util.FileUtils;
 

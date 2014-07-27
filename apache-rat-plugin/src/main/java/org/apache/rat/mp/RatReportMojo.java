@@ -61,18 +61,12 @@ import java.util.ResourceBundle;
 
 /**
  * Generates a report with Rat's output.
- * 
  */
+// MavenReport.java induces the deprecated Sink implementation
+@SuppressWarnings("deprecation")
 @Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST)
 public class RatReportMojo extends AbstractRatMojo implements MavenReport
 {
-    /**
-     * Specifies the directory where the report will be generated
-     * 
-     */
-    @Parameter(defaultValue = "${project.reporting.outputDirectory}", required = true)
-    private File outputDirectory;
-
     @Component
     private Renderer siteRenderer;
 
@@ -81,6 +75,12 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     @Component
     private ArtifactResolver resolver;
+	
+	/**
+     * Specifies the directory where the report will be generated
+     */
+    @Parameter(defaultValue = "${project.reporting.outputDirectory}", required = true)
+    private File outputDirectory;
 
     @Parameter(defaultValue = "${localRepository}", required = true, readonly = true)
     private ArtifactRepository localRepository;
@@ -267,6 +267,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
     /**
      * Writes the report to the Doxia sink.
      * 
+     * 
      * @param sink
      *            The doxia sink, kind of a SAX handler.
      * @param locale
@@ -274,7 +275,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
      * @throws MavenReportException
      *             Writing the report failed.
      */
-    public void generate( Sink sink, Locale locale ) throws MavenReportException
+    public void generate(Sink sink, Locale locale ) throws MavenReportException
     {
         ResourceBundle bundle = getBundle( locale );
         final String title = bundle.getString( "report.rat.title" );

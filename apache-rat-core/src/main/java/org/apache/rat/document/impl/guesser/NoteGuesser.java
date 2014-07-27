@@ -25,8 +25,8 @@ import org.apache.rat.api.Document;
 
 public class NoteGuesser {
 
-
-    public static final String[] NOTE_FILE_NAMES = {
+    private static final String DOT = ".";
+	public static final String[] NOTE_FILE_NAMES = {
         "NOTICE", "LICENSE",
         "LICENSE.TXT", "NOTICE.TXT",
         "INSTALL", "INSTALL.TXT",
@@ -52,7 +52,8 @@ public class NoteGuesser {
     };
     
     /**
-     * Is a file by that name a note file?
+     * @return Is a file by that name a note file?
+     * @param name file name.
      */
     public static final boolean isNote(final String name) {
         if (name == null) {return false;}
@@ -65,7 +66,7 @@ public class NoteGuesser {
         }
 
         for (int i = 0; i < NoteGuesser.NOTE_FILE_EXTENSIONS.length; i++) {
-            if (normalisedName.endsWith("." + NoteGuesser.NOTE_FILE_EXTENSIONS[i])) {
+            if (normalisedName.endsWith(DOT + NoteGuesser.NOTE_FILE_EXTENSIONS[i])) {
                 return true;
             }
         }

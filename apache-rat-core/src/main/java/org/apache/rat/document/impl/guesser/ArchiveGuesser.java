@@ -24,7 +24,8 @@ import org.apache.rat.api.Document;
 
 public class ArchiveGuesser {
     
-    public static final String[] ARCHIVE_EXTENSIONS = {
+    private static final String DOT = ".";
+	public static final String[] ARCHIVE_EXTENSIONS = {
         "jar", "gz",
         "zip", "tar",
         "bz", "bz2",
@@ -36,18 +37,23 @@ public class ArchiveGuesser {
         "ods", "odt",
     };
 
+    /**
+     * @param document the current document. 
+     * @return whether the given document is an archive.
+     */
     public static final boolean isArchive(final Document document) {
         return isArchive(document.getName());
     }
 
     /**
-     * Is a file by that name an archive?
+     * @return Is a file by that name an archive?
+     * @param name file name to check against.
      */
     public static final boolean isArchive(final String name) {
         if (name == null) {return false;}
         String nameToLower = name.toLowerCase(Locale.US);
         for (int i = 0; i < ArchiveGuesser.ARCHIVE_EXTENSIONS.length; i++) {
-            if (nameToLower.endsWith("." + ArchiveGuesser.ARCHIVE_EXTENSIONS[i])) {
+            if (nameToLower.endsWith(DOT + ArchiveGuesser.ARCHIVE_EXTENSIONS[i])) {
                 return true;
             }
         }

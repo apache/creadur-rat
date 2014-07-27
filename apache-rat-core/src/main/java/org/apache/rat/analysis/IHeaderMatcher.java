@@ -22,7 +22,6 @@ import org.apache.rat.api.Document;
 
 /**
  * Matches text headers to known licenses.
- *
  */
 public interface IHeaderMatcher {
 
@@ -30,14 +29,17 @@ public interface IHeaderMatcher {
      * Resets this matches.
      * Subsequent calls to {@link #match} will accumulate new text.
      */
-    public void reset();
+    void reset();
 
     /**
      * Matches the text accumulated to licenses.
      * TODO probably a poor design choice - hope to fix later
-     * @param subject TODO
+     * @param subject current document.
      * @param line next line of text, not null
-     * @return TODO
+     * 
+     * @return whether the current line matched in the document.
+     * 
+     * @throws RatHeaderAnalysisException in case of internal RAT errors.
      */
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException;
+    boolean match(Document subject, String line) throws RatHeaderAnalysisException;
 }
