@@ -413,6 +413,11 @@ agnostic home for software distribution comprehension and audit tools.
       <name>David Blevins</name>
       <email>dblevins@apache.org</email>
     </developer>
+    <developer>
+      <id>pottlinger</id>
+      <name>Philipp Ottlinger</name>
+      <email>pottlinger@apache.org</email>
+    </developer>
   </developers>
   <contributors>
     <contributor>
@@ -442,9 +447,6 @@ agnostic home for software distribution comprehension and audit tools.
     <contributor>
       <name>Garrett Rooney</name>
       <email>rooneg@apache.org</email>
-    </contributor>
-    <contributor>
-      <name>Hugo Hirsch</name>
     </contributor>
   </contributors>
 
