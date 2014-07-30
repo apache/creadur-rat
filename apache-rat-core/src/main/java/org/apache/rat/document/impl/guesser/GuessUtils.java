@@ -20,7 +20,7 @@ package org.apache.rat.document.impl.guesser;
 
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class GuessUtils {
     
