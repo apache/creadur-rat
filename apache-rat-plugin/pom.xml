@@ -36,7 +36,6 @@
     <currentVersion>${project.version}</currentVersion>
     <doxiaVersion>1.2</doxiaVersion>
     <doxiaSitetoolsVersion>1.2</doxiaSitetoolsVersion>
-    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
   </properties>
   
   <build>
@@ -62,7 +61,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
+          <version>3.3</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -70,7 +69,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
         <configuration>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
         </configuration>
@@ -93,7 +91,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.8</version>
         <configuration>
           <projectsDirectory>src/test/invoker</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/invoker</cloneProjectsTo>
@@ -159,7 +156,8 @@
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
+      <!-- keep in sync with maven-plugin-plugin version derived from parent pom -->
+      <version>3.3</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
