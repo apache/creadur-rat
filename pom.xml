@@ -333,6 +333,10 @@ agnostic home for software distribution comprehension and audit tools.
 	<ciManagement>
 		<system>Buildbot</system>
 		<url>http://ci.apache.org/builders/rat_trunk</url>
+		<!--  Jenkins builds are at:
+		https://builds.apache.org/job/Creadur-Rat/ - check Java5 compliance and run all tests
+		https://builds.apache.org/job/Creadur-Rat-Site/ - generate mvn site
+		 -->
 	</ciManagement>
 
 	<mailingLists>
