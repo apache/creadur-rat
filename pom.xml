@@ -61,6 +61,7 @@ agnostic home for software distribution comprehension and audit tools.
 		<rat.site.id>org.apache.rat.site</rat.site.id>
 
 		<!-- maven plugin versions -->
+		<maven.plugin.version>3.3</maven.plugin.version>
 		<surefire.version>2.15</surefire.version>
 	</properties>
 
