@@ -21,8 +21,7 @@ package org.apache.rat.report.claim.impl.xml;
 import java.io.IOException;
 import java.util.Calendar;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;

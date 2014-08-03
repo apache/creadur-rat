@@ -3,6 +3,7 @@ Rat 0.11 - SNAPSHOT (not yet released)
 tbd
 
  * tbd
+ * RAT stays at compiler level 5 to be more compliant with other Maven plugins, fixed build/CI environment to reflect and ensure that.
  * Issues resolved (see http://issues.apache.org/jira):
    * New feature
      * [RAT-164] New boolean system property 'rat.skip' to skip RAT plugin execution externally.  
@@ -11,7 +12,6 @@ tbd
    * Improvements
      * [RAT-165] Introduce mvn default goal to ease build process, you can run the build by just launching mvn without any arguments. 
      * [RAT-148] Remove unnecessary method call in LicenseAddingReport (thanks to Chris A. Mattmann)
-     * [RAT-136] Update to commons-lang3 (thanks to Stevo Slavic)
  * Fixed javadoc warnings during build, upgraded maven's generation plugins to avoid warnings in generated code (https://jira.codehaus.org/browse/MPLUGIN-237)
  
 Rat 0.10
