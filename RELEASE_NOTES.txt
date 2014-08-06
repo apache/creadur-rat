@@ -1,19 +1,30 @@
-Rat 0.11 - SNAPSHOT (not yet released)
+Rat 0.11
 ========
-tbd
 
- * tbd
- * RAT stays at compiler level 5 to be more compliant with other Maven plugins, fixed build/CI environment to reflect and ensure that.
+ * RAT stays at compiler level 1.5 to be more compliant with other Maven plugins,
+   fixed build/CI environment to reflect and ensure that.
+ * Fixed Javadoc warnings during build, upgraded Maven Plugin Plugin to avoid
+   warnings in generated code (https://jira.codehaus.org/browse/MPLUGIN-237)
  * Issues resolved (see http://issues.apache.org/jira):
-   * New feature
-     * [RAT-164] New boolean system property 'rat.skip' to skip RAT plugin execution externally.  
-   * Bugs fixed:
-     * [RAT-162] CDDL1License matches slow with large inputs, use cache instead of recompiling patterns (thanks to Andrew Gaul)
-   * Improvements
-     * [RAT-165] Introduce mvn default goal to ease build process, you can run the build by just launching mvn without any arguments. 
-     * [RAT-148] Remove unnecessary method call in LicenseAddingReport (thanks to Chris A. Mattmann)
- * Fixed javadoc warnings during build, upgraded maven's generation plugins to avoid warnings in generated code (https://jira.codehaus.org/browse/MPLUGIN-237)
- 
+   Bug
+    * [RAT-135] - addLicenseHeaders is missing a space on license header.
+    * [RAT-144] - AbstractRatMojo String constant arrays should be private
+    * [RAT-148] - LicenseAddingReport#report has useless call to metaData.getData
+                  (thanks to Chris A. Mattmann)
+    * [RAT-151] - Detect more archive file formats
+    * [RAT-152] - Recognize the format for .bsh, .fml and .jsp file types
+    * [RAT-153] - Do not add extra empty lines when appending headers for the Apache License
+    * [RAT-154] - Indentation of the license header should be decided per family
+    * [RAT-155] - Do not add empty first and last lines in the license header for certain families
+    * [RAT-156] - Add some symmetry when applying license headers to files with file type specific headers
+    * [RAT-159] - Detect OpenOffice documents as being archives
+  Improvement
+    * [RAT-129] - Add support for CDDL 1.0
+    * [RAT-162] - CDDL1License.matches slow with large inputs
+                  (thanks to Andrew Gaul)
+    * [RAT-164] - Allow skipping execution entirely
+    * [RAT-165] - Use a maven defaultGoal for RAT's base pom.xml
+
 Rat 0.10
 ========
 The main change is RAT-138 - Rat 0.9 could run much slower than 0.8 on some input.
