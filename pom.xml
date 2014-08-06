@@ -78,7 +78,7 @@ agnostic home for software distribution comprehension and audit tools.
 
     <!-- maven plugin versions -->
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
-    <surefire.version>2.15</surefire.version>
+    <surefire.version>2.17</surefire.version>
   </properties>
 
   <dependencyManagement>
@@ -197,12 +197,12 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.3</version>
+        <version>2.4</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>3.2</version>
         <configuration>
           <targetJdk>${javaVersion}</targetJdk>
         </configuration>
@@ -268,7 +268,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.2</version>
           <configuration>
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>
@@ -281,7 +281,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.3</version>
+          <version>3.4</version>
           <configuration>
             <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
             <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
@@ -297,7 +297,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
-          <version>1.0-beta-2</version>
+          <version>1.0</version>
           <extensions>true</extensions>
           <configuration>
             <!-- svn location for publication -->
@@ -393,7 +393,7 @@ agnostic home for software distribution comprehension and audit tools.
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh</artifactId>
-        <version>1.0-beta-7</version>
+        <version>2.6</version>
       </extension>
     </extensions>
   </build>
