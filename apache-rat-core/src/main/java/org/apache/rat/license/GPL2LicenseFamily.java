@@ -21,7 +21,7 @@ package org.apache.rat.license;
 import org.apache.rat.api.MetaData;
 
 /**
- * Base implementation for GPLv3 or later.
+ * Base implementation for GPLv2 or later.
  */
 public class GPL2LicenseFamily extends SimpleLicenseFamily {
     public GPL2LicenseFamily() {
