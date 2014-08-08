@@ -1,6 +1,8 @@
-How to build
-============
+How to build RAT
+================
 
+There is a default goal that just builds a clean install. Just launch Maven in the project root directory.
+or
 Normal development:
 
     mvn install
