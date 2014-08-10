@@ -52,8 +52,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -111,7 +113,15 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
                 factory.createDependencyArtifact( skin.getGroupId(), skin.getArtifactId(), versionSpec, "jar", null,
                                                   null );
 
-            resolver.resolve( artifact, getProject().getRemoteArtifactRepositories(), localRepository );
+            // FIXME Try to avoid NPE / found during 0.11-build checks
+            // API is so old/without type information
+			@SuppressWarnings("unchecked")
+			List<ArtifactRepository> remoteArtifactRepositories = getProject().getRemoteArtifactRepositories();
+            if(remoteArtifactRepositories == null) {
+            	remoteArtifactRepositories = Collections.emptyList();
+            }
+            
+			resolver.resolve( artifact, remoteArtifactRepositories, localRepository );
         }
         catch ( InvalidVersionSpecificationException e )
         {
