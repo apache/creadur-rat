@@ -113,15 +113,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
                 factory.createDependencyArtifact( skin.getGroupId(), skin.getArtifactId(), versionSpec, "jar", null,
                                                   null );
 
-            // FIXME Try to avoid NPE / found during 0.11-build checks
-            // API is so old/without type information
-			@SuppressWarnings("unchecked")
-			List<ArtifactRepository> remoteArtifactRepositories = getProject().getRemoteArtifactRepositories();
-            if(remoteArtifactRepositories == null) {
-            	remoteArtifactRepositories = Collections.emptyList();
-            }
-            
-			resolver.resolve( artifact, remoteArtifactRepositories, localRepository );
+			resolver.resolve( artifact, getProject().getRemoteArtifactRepositories(), localRepository );
         }
         catch ( InvalidVersionSpecificationException e )
         {

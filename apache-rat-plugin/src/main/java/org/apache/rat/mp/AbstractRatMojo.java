@@ -34,6 +34,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.rat.Defaults;
@@ -199,7 +200,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 	/**
      * 
      */
-	@Parameter(name = "project", readonly = true)
+	//@Parameter(name = "project", readonly = true)
+	@Component
 	private MavenProject project;
 
 	/**
