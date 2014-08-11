@@ -198,9 +198,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 	private boolean excludeSubProjects;
 
 	/**
-     * 
-     */
-	//@Parameter(name = "project", readonly = true)
+        * Holds the maven-internal project to allow resolution of artifact properties during mojo runs. 
+        */
 	@Component
 	private MavenProject project;
 
