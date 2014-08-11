@@ -91,6 +91,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
+        <version>${mavenInvokerPluginVersion}</version>
         <configuration>
           <projectsDirectory>src/test/invoker</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/invoker</cloneProjectsTo>
