@@ -177,9 +177,9 @@ public class RatCheckMojoTest extends AbstractMojoTestCase
             }
         };
         setVariableValueToObject( mojo, "project", project );
-        assertNotNull("RAT-168: Problem in test setup - you are missing a project in your mojo.", project);
-        assertNotNull("RAT-168: The mojo is missing its MavenProject, which will result in an NPE during rat runs.", mojo.getProject());
-        assertNotNull("RAT-168: No artifactRepos found, which will result in an NPE during rat runs.", project.getRemoteArtifactRepositories());
+        assertNotNull("Problem in test setup - you are missing a project in your mojo.", project);
+        assertNotNull("The mojo is missing its MavenProject, which will result in an NPE during rat runs.", mojo.getProject());
+        assertNotNull("No artifactRepos found, which will result in an NPE during rat runs.", project.getRemoteArtifactRepositories());
         if (mojo instanceof RatReportMojo)
         {
             setVariableValueToObject( mojo, "localRepository", newArtifactRepository() );
