@@ -62,8 +62,7 @@ import org.codehaus.doxia.sink.Sink;
 /**
  * Generates a report with Rat's output.
  */
-// MavenReport.java induces the deprecated Sink implementation
-@SuppressWarnings("deprecation")
+@SuppressWarnings("deprecation") // MavenReport invokes the deprecated Sink implementation
 @Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST)
 public class RatReportMojo extends AbstractRatMojo implements MavenReport
 {

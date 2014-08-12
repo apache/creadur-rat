@@ -245,8 +245,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 		try {
 			final ClassLoader cl = Thread.currentThread()
 					.getContextClassLoader();
-			@SuppressWarnings("unchecked")
-			// incorrect cast will be caught below
+			@SuppressWarnings("unchecked") // incorrect cast will be caught below
 			final T o = (T) cl.loadClass(className).newInstance();
 
 			if (!clazz.isAssignableFrom(o.getClass())) {
