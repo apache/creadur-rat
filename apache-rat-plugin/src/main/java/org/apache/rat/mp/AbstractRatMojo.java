@@ -83,7 +83,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 	 *
 	 */
 	@Parameter(property = "rat.basedir", defaultValue = "${basedir}", required = true)
-	protected File basedir;
+	private File basedir;
 
 	/**
 	 * Specifies the licenses to accept. Deprecated, use {@link #licenses}
