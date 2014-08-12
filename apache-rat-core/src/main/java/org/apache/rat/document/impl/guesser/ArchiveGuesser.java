@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl.guesser;
 
 import java.util.Locale;
@@ -23,9 +23,10 @@ import java.util.Locale;
 import org.apache.rat.api.Document;
 
 public class ArchiveGuesser {
-    
+
     private static final String DOT = ".";
-	public static final String[] ARCHIVE_EXTENSIONS = {
+
+    public static final String[] ARCHIVE_EXTENSIONS = {
         "jar", "gz",
         "zip", "tar",
         "bz", "bz2",
@@ -38,7 +39,7 @@ public class ArchiveGuesser {
     };
 
     /**
-     * @param document the current document. 
+     * @param document the current document.
      * @return whether the given document is an archive.
      */
     public static final boolean isArchive(final Document document) {

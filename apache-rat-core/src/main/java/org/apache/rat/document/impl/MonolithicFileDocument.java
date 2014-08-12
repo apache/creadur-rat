@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl;
 
 import java.io.File;
@@ -32,13 +32,14 @@ import org.apache.rat.api.Document;
 
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
     private static final String UTF_8 = "UTF-8";
-	private static final String FILE_URL_PREFIX = "file";
-	
-	private final File file;
+
+    private static final String FILE_URL_PREFIX = "file";
+
+    private final File file;
 
     /**
-     * @return Creates and returns a new instance. 
-     * 
+     * @return Creates and returns a new instance.
+     *
      * @param url The document is read from the given URL.
      */
     public static Document newInstance(final URL url) {

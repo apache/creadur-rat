@@ -28,7 +28,7 @@
   <description>The core functionality, shared by the Ant tasks
     and the Maven plugin.</description>
 
-  <build>   
+  <build>
     <resources>
       <resource>
         <filtering>false</filtering>
@@ -89,7 +89,7 @@
       <artifactId>commons-collections</artifactId>
     </dependency>
     <dependency>
-	  <groupId>commons-lang</groupId>
+      <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
     <dependency>

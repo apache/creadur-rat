@@ -168,11 +168,11 @@ public class RatCheckMojo extends AbstractRatMojo
      */
     public void execute() throws MojoExecutionException, MojoFailureException
     {
-    	if(skip) {
-    		getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
-    		return;
-    	}
-    	
+        if(skip) {
+            getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
+            return;
+        }
+
         final File parent = reportFile.getParentFile();
         if(!parent.mkdirs() && !parent.isDirectory()) {
             throw new MojoExecutionException("Could not create report parent directory " + parent);

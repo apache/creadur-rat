@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl.guesser;
 
 import java.util.Arrays;
@@ -26,11 +26,12 @@ import org.apache.rat.api.Document;
 public class NoteGuesser {
 
     private static final String DOT = ".";
-	public static final String[] NOTE_FILE_NAMES = {
+
+    public static final String[] NOTE_FILE_NAMES = {
         "NOTICE", "LICENSE",
         "LICENSE.TXT", "NOTICE.TXT",
         "INSTALL", "INSTALL.TXT",
-        "README", "README.TXT", 
+        "README", "README.TXT",
         "NEWS", "NEWS.TXT",
         "AUTHOR", "AUTHOR.TXT",
         "AUTHORS", "AUTHORS.txt",
@@ -50,17 +51,17 @@ public class NoteGuesser {
         "LICENSE", "LICENSE.TXT",
         "NOTICE", "NOTICE.TXT",
     };
-    
+
     /**
      * @return Is a file by that name a note file?
      * @param name file name.
      */
     public static final boolean isNote(final String name) {
         if (name == null) {return false;}
-    
+
         List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
         String normalisedName = GuessUtils.normalise(name);
-        
+
         if (l.contains(name) || l.contains(normalisedName)) {
             return true;
         }
@@ -70,7 +71,7 @@ public class NoteGuesser {
                 return true;
             }
         }
-        
+
         return false;
     }
 

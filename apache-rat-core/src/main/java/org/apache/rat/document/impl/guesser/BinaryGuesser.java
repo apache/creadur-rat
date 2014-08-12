@@ -38,7 +38,7 @@ public class BinaryGuesser {
 
     private static final String DOT = ".";
 
-	private static boolean isBinaryDocument(Document document) {
+    private static boolean isBinaryDocument(Document document) {
         boolean result = false;
         InputStream stream = null;
         try
