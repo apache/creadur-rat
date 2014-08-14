@@ -93,13 +93,13 @@
         <artifactId>maven-invoker-plugin</artifactId>
         <version>${mavenInvokerPluginVersion}</version>
         <configuration>
-          <projectsDirectory>src/test/invoker</projectsDirectory>
+          <projectsDirectory>src/it</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/invoker</cloneProjectsTo>
           <pomIncludes>
             <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-          <settingsFile>src/test/invoker/settings.xml</settingsFile>
+          <settingsFile>src/it/settings.xml</settingsFile>
           <postBuildHookScript>verify</postBuildHookScript>
         </configuration>
         <executions>
