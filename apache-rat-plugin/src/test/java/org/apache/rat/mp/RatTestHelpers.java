@@ -219,7 +219,7 @@ public final class RatTestHelpers {
     public static File getSourceDirectory(String mvnBaseDir, String pDir,
             boolean pCreateCopy, final File baseDir) throws IOException {
         return makeSourceDirectory(mvnBaseDir, new File(new File(baseDir,
-                "src/test"), pDir), pDir, pCreateCopy);
+                "src/test/resources/unit"), pDir), pDir, pCreateCopy);
     }
 
     /**
