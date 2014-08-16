@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.annotation;
 
 import java.io.BufferedReader;
@@ -36,11 +36,11 @@ import java.util.Map;
  * existence of an existing licence header, it is assumed that either a second
  * licence header is intentional or that there is no licence header present
  * already.
- * 
+ *
  */
 public abstract class AbstractLicenceAppender {
     private static final String DOT = ".";
-	private static final int TYPE_UNKNOWN = 0;
+    private static final int TYPE_UNKNOWN = 0;
     private static final int TYPE_JAVA = 1;
     private static final int TYPE_XML = 2;
     private static final int TYPE_HTML = 3;
@@ -188,7 +188,7 @@ public abstract class AbstractLicenceAppender {
 
     /**
      * Append the default licence header to the supplied document.
-     * 
+     *
      * @param document document to append to.
      * @throws IOException
      *           if there is a problem while reading or writing the file
@@ -341,7 +341,7 @@ public abstract class AbstractLicenceAppender {
 
     /**
      * Detect the type of document.
-     * 
+     *
      * @param document to retrieve type from.
      * @return not null
      * @TODO use existing mechanism to detect the type of a file and record it in the report output, thus we will not need this duplication here.
@@ -363,7 +363,7 @@ public abstract class AbstractLicenceAppender {
      * Set the force flag on this appender. If this flag is set
      * to true then files will be modified directly, otherwise
      * new files will be created alongside the existing files.
-     * 
+     *
      * @param force force flag.
      */
     public void setForce(boolean force) {
@@ -372,14 +372,14 @@ public abstract class AbstractLicenceAppender {
 
     /**
      * @return Get the licence header of a document.
-     * @param document document to extract from. 
+     * @param document document to extract from.
      */
     public abstract String getLicenceHeader(File document);
 
     /**
      * Get the first line of the licence header formatted
      * for the given type of file.
-     * 
+     *
      * @param type the type of file, see the TYPE_* constants
      * @return not null
      */
@@ -396,7 +396,7 @@ public abstract class AbstractLicenceAppender {
     /**
      * Get the last line of the licence header formatted
      * for the given type of file.
-     * 
+     *
      * @param type the type of file, see the TYPE_* constants
      * @return not null
      */
@@ -413,7 +413,7 @@ public abstract class AbstractLicenceAppender {
     /**
      * Get a line of the licence header formatted
      * for the given type of file.
-     * 
+     *
      * @param type the type of file, see the TYPE_* constants
      * @param content the content for this line
      * @return not null

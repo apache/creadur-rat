@@ -57,7 +57,7 @@ agnostic home for software distribution comprehension and audit tools.
     <!--
     Publication to the website is a two phase operation:
 
-     1. Deploy to local stage: mvn site:deploy
+     1. Deploy to local stage: mvn site-deploy
      2. Publish to Apache CMS: mvn scm-publish:publish-scm
 
     This will only work when the origin for scm-publish:publish-scm
@@ -77,6 +77,7 @@ agnostic home for software distribution comprehension and audit tools.
     <rat.site.id>org.apache.rat.site</rat.site.id>
 
     <!-- maven plugin versions -->
+    <mavenInvokerPluginVersion>1.9</mavenInvokerPluginVersion>
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
     <surefire.version>2.17</surefire.version>
   </properties>

@@ -34,7 +34,7 @@ public class CDDL1License extends SimplePatternBasedLicense {
 
     public static final String LICENSE_URL =
             ".*https://oss.oracle.com/licenses/CDDL.*";
-    private static final Pattern LICENSE_URL_PATTERN = Pattern.compile(LICENSE_URL);    
+    private static final Pattern LICENSE_URL_PATTERN = Pattern.compile(LICENSE_URL);
 
 
     public CDDL1License() {
@@ -46,10 +46,10 @@ public class CDDL1License extends SimplePatternBasedLicense {
     @Override
     protected boolean matches(final String pLine) {
         if (pLine != null) {
-        	return 
-        			super.matches(pLine) ||
-        			LICENSE_LINE_PATTERN.matcher(pLine).find() ||
-        			LICENSE_URL_PATTERN.matcher(pLine).find();
+            return
+                    super.matches(pLine) ||
+                    LICENSE_LINE_PATTERN.matcher(pLine).find() ||
+                    LICENSE_URL_PATTERN.matcher(pLine).find();
         }
         return false;
     }

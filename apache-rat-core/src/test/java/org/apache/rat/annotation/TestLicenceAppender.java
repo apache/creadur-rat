@@ -549,10 +549,10 @@ public class TestLicenceAppender {
                     throws IOException {
                     writer.write(firstLine + "\n");
                     writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
-                    writer.write("	ProjectSection(WebsiteProperties) = preProject\n");
-                    writer.write("		Debug.AspNetCompiler.Debug = \"True\"\n");
-                    writer.write("		Release.AspNetCompiler.Debug = \"False\"\n");
-                    writer.write("	EndProjectSection\n");
+                    writer.write("\tProjectSection(WebsiteProperties) = preProject\n");
+                    writer.write("\t\tDebug.AspNetCompiler.Debug = \"True\"\n");
+                    writer.write("\t\tRelease.AspNetCompiler.Debug = \"False\"\n");
+                    writer.write("\tEndProjectSection\n");
                     writer.write("EndProject\n");
                 }
             },
@@ -573,10 +573,10 @@ public class TestLicenceAppender {
                     writer.write(firstLine + "\n");
                     writer.write(secondLine + "\n");
                     writer.write("Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
-                    writer.write("	ProjectSection(WebsiteProperties) = preProject\n");
-                    writer.write("		Debug.AspNetCompiler.Debug = \"True\"\n");
-                    writer.write("		Release.AspNetCompiler.Debug = \"False\"\n");
-                    writer.write("	EndProjectSection\n");
+                    writer.write("\tProjectSection(WebsiteProperties) = preProject\n");
+                    writer.write("\t\tDebug.AspNetCompiler.Debug = \"True\"\n");
+                    writer.write("\t\tRelease.AspNetCompiler.Debug = \"False\"\n");
+                    writer.write("\tEndProjectSection\n");
                     writer.write("EndProject\n");
                 }
             },

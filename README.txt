@@ -47,7 +47,7 @@ For Maven builds, the plugin is recommended.
 
 In response to demands from project quality tool developers, Rat is available as a
 library (rat-lib jar) suitable for inclusion in tools. Note that binary compatibility
-is not gauranteed between 0.x releases. The XML output format is not yet in it's
+is not guaranteed between 0.x releases. The XML output format is not yet in it's
 final form and so library users are recommended to either use the supplied
 stylesheets or keep in close touch with the code.
 

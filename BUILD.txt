@@ -1,6 +1,8 @@
-How to build
-============
+How to build RAT
+================
 
+There is a maven default goal configured that builds and installs a fresh artifact. Just launch maven without any goals in the project root directory.
+or
 Normal development:
 
     mvn install

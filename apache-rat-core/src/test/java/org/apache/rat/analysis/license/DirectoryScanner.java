@@ -32,7 +32,7 @@ import org.junit.Assert;
 
 class DirectoryScanner {
 
-    @SuppressWarnings("boxing")
+    @SuppressWarnings("boxing") // OK in test code
     /**
      * Get list of files in a directory, and scan for license matches
      * @param directory the directory containing the files

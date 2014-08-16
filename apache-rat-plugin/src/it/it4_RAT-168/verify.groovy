@@ -1,5 +1,3 @@
-package org.apache.rat.mp;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -8,7 +6,7 @@ package org.apache.rat.mp;
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,18 +14,15 @@ package org.apache.rat.mp;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+content = new File( basedir, 'build.log' ).text;
 
-import static org.junit.Assert.*;
+assert content.contains( 'BUILD SUCCESS' );
 
-import org.junit.Test;
+/*
+ * [WARNING] No resources included
+ */
+assert ! content.contains( '[WARNING]' );
 
-public class AbstractRatMojoTest {
+report = new File( basedir, 'target/site/rat-report.html' ).text;
 
-    @Test
-    public void testNumberOfExclusions() {
-        assertEquals("Did you change the number of eclipse excludes?", 3, AbstractRatMojo.ECLIPSE_DEFAULT_EXCLUDES.size());
-        assertEquals("Did you change the number of idea excludes?", 4, AbstractRatMojo.IDEA_DEFAULT_EXCLUDES.size());
-        assertEquals("Did you change the number of mvn excludes?", 4, AbstractRatMojo.MAVEN_DEFAULT_EXCLUDES.size());
-    }
-
-}
+assert report.contains( 'AL    pom.xml' );

@@ -91,14 +91,15 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
+        <version>${mavenInvokerPluginVersion}</version>
         <configuration>
-          <projectsDirectory>src/test/invoker</projectsDirectory>
+          <projectsDirectory>src/it</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/invoker</cloneProjectsTo>
           <pomIncludes>
             <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-          <settingsFile>src/test/invoker/settings.xml</settingsFile>
+          <settingsFile>src/it/settings.xml</settingsFile>
           <postBuildHookScript>verify</postBuildHookScript>
         </configuration>
         <executions>
@@ -125,9 +126,9 @@
             <configuration>
               <excludes>
                 <!-- These files does not have license headers because they are used to test license headers -->
-                <exclude>src/test/invoker/it1/src.apt</exclude>
-                <exclude>src/test/it2/src.txt</exclude>
-                <exclude>src/test/it3/src.apt</exclude>
+                <exclude>src/it/it1/src.apt</exclude>
+                <exclude>src/test/resources/unit/it2/src.txt</exclude>
+                <exclude>src/test/resources/unit/it3/src.apt</exclude>
               </excludes>
             </configuration>
             <executions>

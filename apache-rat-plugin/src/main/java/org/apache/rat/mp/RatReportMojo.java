@@ -19,6 +19,18 @@ package org.apache.rat.mp;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -46,24 +58,11 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.rat.Defaults;
 import org.codehaus.doxia.sink.Sink;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 
 /**
  * Generates a report with Rat's output.
  */
-// MavenReport.java induces the deprecated Sink implementation
-@SuppressWarnings("deprecation")
+@SuppressWarnings("deprecation") // MavenReport invokes the deprecated Sink implementation
 @Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST)
 public class RatReportMojo extends AbstractRatMojo implements MavenReport
 {
@@ -75,8 +74,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     @Component
     private ArtifactResolver resolver;
-	
-	/**
+
+    /**
      * Specifies the directory where the report will be generated
      */
     @Parameter(defaultValue = "${project.reporting.outputDirectory}", required = true)
@@ -87,7 +86,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns the skins artifact file.
-     * 
+     *
      * @throws MojoFailureException
      *             An error in the plugin configuration was detected.
      * @throws MojoExecutionException
@@ -131,7 +130,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Creates the report as a string. Currently, this string will be embedded verbatimly into the report document.
-     * 
+     *
      * @throws MojoFailureException
      *             An error in the plugin configuration was detected.
      * @throws MojoExecutionException
@@ -186,7 +185,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Called from Maven to invoke the plugin.
-     * 
+     *
      * @throws MojoFailureException
      *             An error in the plugin configuration was detected.
      * @throws MojoExecutionException
@@ -237,7 +236,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns, whether the report may be generated.
-     * 
+     *
      * @return Always true.
      */
     public boolean canGenerateReport()
@@ -247,7 +246,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Searches for a Rat artifact in the dependency list and returns its version.
-     * 
+     *
      * @return Version number, if found, or null.
      */
     private String getRatVersion()
@@ -266,8 +265,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Writes the report to the Doxia sink.
-     * 
-     * 
+     *
+     *
      * @param sink
      *            The doxia sink, kind of a SAX handler.
      * @param locale
@@ -327,7 +326,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns the reports category name.
-     * 
+     *
      * @return {@link MavenReport#CATEGORY_PROJECT_REPORTS}
      */
     public String getCategoryName()
@@ -337,7 +336,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns the reports bundle
-     * 
+     *
      * @param locale
      *            Requested locale of the bundle
      * @return The bundle, which is used to read localized strings.
@@ -349,7 +348,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns the reports description.
-     * 
+     *
      * @param locale
      *            Requested locale of the bundle
      * @return Report description, as given by the key "report.rat.description" in the bundle.
@@ -361,7 +360,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns the reports name.
-     * 
+     *
      * @param locale
      *            Requested locale of the bundle
      * @return Report name, as given by the key "report.rat.name" in the bundle.
@@ -373,7 +372,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns the reports file name.
-     * 
+     *
      * @return "rat-report"
      */
     public String getOutputName()
@@ -383,7 +382,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns the reports output directory.
-     * 
+     *
      * @return Value of the "outputDirectory" parameter.
      */
     public File getReportOutputDirectory()
@@ -393,7 +392,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Returns, whether this is an external report.
-     * 
+     *
      * @return Always false.
      */
     public boolean isExternalReport()
@@ -403,7 +402,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
 
     /**
      * Sets the reports output directory.
-     * 
+     *
      * @param pOutputDirectory
      *            Reports target directory.
      */
