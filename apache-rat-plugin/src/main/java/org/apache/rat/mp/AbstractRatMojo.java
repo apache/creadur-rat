@@ -199,7 +199,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     /**
     * Holds the maven-internal project to allow resolution of artifact properties during mojo runs.
     */
-    @Parameter(defaultValue = "${project}", required = true, readonly = true)
+    @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
 
     /**
