@@ -2,8 +2,11 @@
 **/target/*
 .svn
 **/.svn
+.project
 */.project
+.classpath
 */.classpath
+.settings
 */.settings
 *.iml
 */*.iml
