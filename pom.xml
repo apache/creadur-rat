@@ -42,11 +42,9 @@ Apache Rat is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
-
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
-
   <properties>
     <javaVersion>1.5</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
@@ -75,13 +73,11 @@ agnostic home for software distribution comprehension and audit tools.
     <rat.site.url>file:${rat.LocalSiteStaging}</rat.site.url>
     <rat.site.name>Apache Rat Website</rat.site.name>
     <rat.site.id>org.apache.rat.site</rat.site.id>
-
     <!-- maven plugin versions -->
     <mavenInvokerPluginVersion>1.9</mavenInvokerPluginVersion>
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
     <surefire.version>2.17</surefire.version>
   </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -128,6 +124,12 @@ agnostic home for software distribution comprehension and audit tools.
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>1.9.5</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant</artifactId>
         <version>1.7.1</version>
@@ -147,7 +149,6 @@ agnostic home for software distribution comprehension and audit tools.
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <reporting>
     <plugins>
       <plugin>
@@ -229,7 +230,6 @@ agnostic home for software distribution comprehension and audit tools.
       </plugin>
     </plugins>
   </reporting>
-
   <build>
     <defaultGoal>clean install</defaultGoal>
     <pluginManagement>
@@ -329,7 +329,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <configuration>
               <target>
-                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
+                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false"/>
               </target>
             </configuration>
           </execution>
@@ -400,12 +400,10 @@ agnostic home for software distribution comprehension and audit tools.
       </extension>
     </extensions>
   </build>
-
   <issueManagement>
     <system>JIRA</system>
     <url>https://issues.apache.org/jira/browse/RAT</url>
   </issueManagement>
-
   <ciManagement>
     <system>Buildbot</system>
     <url>http://ci.apache.org/builders/rat_trunk</url>
@@ -414,7 +412,6 @@ agnostic home for software distribution comprehension and audit tools.
     https://builds.apache.org/job/Creadur-Rat-Site/ - generate mvn site
      -->
   </ciManagement>
-
   <mailingLists>
     <mailingList>
       <name>Rat Development (Apache Creadur project)</name>
@@ -512,13 +509,11 @@ agnostic home for software distribution comprehension and audit tools.
       <email>rooneg@apache.org</email>
     </contributor>
   </contributors>
-
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/trunk</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/trunk</developerConnection>
     <url>http://svn.apache.org/repos/asf/creadur/rat/trunk</url>
   </scm>
-
   <distributionManagement>
     <site>
       <id>${rat.site.id}</id>
@@ -526,14 +521,12 @@ agnostic home for software distribution comprehension and audit tools.
       <url>${rat.site.url}</url>
     </site>
   </distributionManagement>
-
   <modules>
     <module>apache-rat-core</module>
     <module>apache-rat-plugin</module>
     <module>apache-rat-tasks</module>
     <module>apache-rat</module>
   </modules>
-
   <licenses>
     <license>
       <name>Apache License, Version 2</name>
@@ -542,12 +535,10 @@ agnostic home for software distribution comprehension and audit tools.
       <comments>An OSI approved open source license.</comments>
     </license>
   </licenses>
-
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org</url>
   </organization>
-
   <profiles>
     <profile>
       <id>apache-release</id>

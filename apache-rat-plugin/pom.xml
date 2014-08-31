@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -31,13 +31,11 @@
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
-
   <properties>
     <currentVersion>${project.version}</currentVersion>
     <doxiaVersion>1.2</doxiaVersion>
     <doxiaSitetoolsVersion>1.2</doxiaSitetoolsVersion>
   </properties>
-  
   <build>
     <resources>
       <resource>
@@ -114,7 +112,6 @@
       </plugin>
     </plugins>
   </build>
-
   <profiles>
     <profile>
       <id>rat</id>
@@ -143,7 +140,6 @@
       </build>
     </profile>
   </profiles>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
@@ -153,7 +149,10 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
@@ -228,7 +227,6 @@
       <version>3.0.8</version>
     </dependency>
   </dependencies>
-
   <reporting>
     <plugins>
       <plugin>
@@ -242,7 +240,6 @@
       </plugin>
     </plugins>
   </reporting>
-
   <developers>
     <developer>
       <id>jochen</id>
@@ -250,7 +247,6 @@
       <email>jochen.wiedmann@gmail.com</email>
     </developer>
   </developers>
-
   <contributors>
     <contributor>
       <name>Bernd Bohmann</name>
@@ -265,8 +261,7 @@
       <email>jukka@apache.org</email>
     </contributor>
   </contributors>
-
-<!--
+  <!--
   <profiles>
     <profile>
       <id>apache-release</id>

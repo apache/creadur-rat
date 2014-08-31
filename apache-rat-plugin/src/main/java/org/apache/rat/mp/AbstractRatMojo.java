@@ -19,6 +19,11 @@ package org.apache.rat.mp;
  * under the License.
  */
 
+import static org.apache.rat.mp.ExclusionHelper.addEclipseDefaults;
+import static org.apache.rat.mp.ExclusionHelper.addIdeaDefaults;
+import static org.apache.rat.mp.ExclusionHelper.addMavenDefaults;
+import static org.apache.rat.mp.ExclusionHelper.addPlexusAndScmDefaults;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +32,9 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -42,42 +49,16 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.api.RatException;
+import org.apache.rat.config.SourceCodeManagementSystems;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.codehaus.plexus.util.DirectoryScanner;
-
 /**
  * Abstract base class for Mojos, which are running Rat.
  */
 public abstract class AbstractRatMojo extends AbstractMojo {
-    /**
-     * The Maven specific default excludes.
-     */
-    static final List<String> MAVEN_DEFAULT_EXCLUDES = Collections
-            .unmodifiableList(Arrays.asList("target/**/*", //
-                    "cobertura.ser", //
-                    "release.properties", //
-                    "pom.xml.releaseBackup"));
-
-    /**
-     * The Eclipse specific default excludes.
-     */
-    static final List<String> ECLIPSE_DEFAULT_EXCLUDES = Collections
-            .unmodifiableList(Arrays.asList(".classpath",//
-                    ".project", //
-                    ".settings/**/*"));
-
-    /**
-     * The IDEA specific default excludes.
-     */
-    static final List<String> IDEA_DEFAULT_EXCLUDES = Collections
-            .unmodifiableList(Arrays.asList(//
-                    "*.iml", //
-                    "*.ipr", //
-                    "*.iws", //
-                    ".idea/**/*"));
-
+    
     /**
      * The base directory, in which to search for files.
      *
@@ -148,7 +129,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      * Whether to use the default excludes when scanning for files. The default
      * excludes are:
      * <ul>
-     * <li>meta data files for version control systems</li>
+     * <li>meta data files for source code management / revision control systems,
+     *  see {@link SourceCodeManagementSystems}</li>
      * <li>temporary files used by Maven, see <a
      * href="#useMavenDefaultExcludes">useMavenDefaultExcludes</a></li>
      * <li>configuration files for Eclipse, see <a
@@ -254,17 +236,17 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                         + clazz.getName());
             }
             return o;
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
             throw new MojoExecutionException("Failed to instantiate class "
                     + className + ": " + e.getMessage(), e);
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             throw new MojoExecutionException("The class " + className
                     + " is not implementing " + clazz.getName() + ": "
                     + e.getMessage(), e);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new MojoExecutionException("Illegal access to class "
                     + className + ": " + e.getMessage(), e);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new MojoExecutionException("Class " + className
                     + " not found: " + e.getMessage(), e);
         }
@@ -300,7 +282,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         logAboutIncludedFiles(files);
         try {
             return new FilesReportable(basedir, files);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new UndeclaredThrowableException(e);
         }
     }
@@ -313,7 +295,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     files.length
                             + " resources included (use -debug for more details)");
             if (getLog().isDebugEnabled()) {
-                for (String resource : files) {
+                for (final String resource : files) {
                     getLog().debug(" - included " + resource);
                 }
             }
@@ -346,33 +328,30 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         if (excludes == null || excludes.length == 0) {
             getLog().info("No excludes explicitly specified.");
         } else {
-            for (String exclude : excludes) {
+            for (final String exclude : excludes) {
                 getLog().info("Exclude: " + exclude);
             }
         }
         add(excludeList, excludes);
         if (!excludeList.isEmpty()) {
-            String[] allExcludes = excludeList.toArray(new String[excludeList
+            final String[] allExcludes = excludeList.toArray(new String[excludeList
                     .size()]);
             ds.setExcludes(allExcludes);
         }
     }
 
     private List<String> buildDefaultExclusions() {
-        final List<String> results = new ArrayList<String>();
+        final Set<String> results = new HashSet<String>();
 
-        addPlexusDefaults(results);
-
-        addMavenDefaults(results);
-
-        addEclipseDefaults(results);
-
-        addIdeaDefaults(results);
+        addPlexusAndScmDefaults(getLog(), useDefaultExcludes, results);
+        addMavenDefaults(getLog(), useMavenDefaultExcludes, results);
+        addEclipseDefaults(getLog(), useEclipseDefaultExcludes, results);
+        addIdeaDefaults(getLog(), useIdeaDefaultExcludes, results);
 
         if (excludeSubProjects && project != null
                 && project.getModules() != null) {
-            for (Object o : project.getModules()) {
-                String moduleSubPath = (String) o;
+            for (final Object o : project.getModules()) {
+                final String moduleSubPath = (String) o;
                 results.add(moduleSubPath + "/**/*");
             }
         }
@@ -389,58 +368,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             }
         }
 
-        return results;
-    }
-
-    private void addPlexusDefaults(final List<String> excludeList1) {
-        if (useDefaultExcludes) {
-            getLog().debug("Adding plexus default exclusions...");
-            Collections.addAll(excludeList1, DirectoryScanner.DEFAULTEXCLUDES);
-        } else {
-            getLog().debug(
-                    "rat.useDefaultExcludes set to false. "
-                            + "Plexus default exclusions will not be added");
-        }
-    }
-
-    private void addMavenDefaults(final List<String> excludeList1) {
-        if (useMavenDefaultExcludes) {
-            getLog().debug(
-                    "Adding exclusions often needed by Maven projects...");
-            excludeList1.addAll(MAVEN_DEFAULT_EXCLUDES);
-        } else {
-            getLog().debug(
-                    "rat.useMavenDefaultExcludes set to false. "
-                            + "Exclusions often needed by Maven projects will not be added.");
-        }
-    }
-
-    private void addEclipseDefaults(final List<String> excludeList1) {
-        if (useEclipseDefaultExcludes) {
-            getLog().debug(
-                    "Adding exclusions often needed by projects "
-                            + "developed in Eclipse...");
-            excludeList1.addAll(ECLIPSE_DEFAULT_EXCLUDES);
-        } else {
-            getLog().debug(
-                    "rat.useEclipseDefaultExcludes set to false. "
-                            + "Exclusions often needed by projects developed in "
-                            + "Eclipse will not be added.");
-        }
-    }
-
-    private void addIdeaDefaults(final List<String> excludeList1) {
-        if (useIdeaDefaultExcludes) {
-            getLog().debug(
-                    "Adding exclusions often needed by projects "
-                            + "developed in IDEA...");
-            excludeList1.addAll(IDEA_DEFAULT_EXCLUDES);
-        } else {
-            getLog().debug(
-                    "rat.useIdeaDefaultExcludes set to false. "
-                            + "Exclusions often needed by projects developed in "
-                            + "IDEA will not be added.");
-        }
+        return new ArrayList<String>(results);
     }
 
     /**
@@ -467,13 +395,13 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             } else {
                 return Report.report(getResources(), out, configuration);
             }
-        } catch (TransformerConfigurationException e) {
+        } catch (final TransformerConfigurationException e) {
             throw new MojoExecutionException(e.getMessage(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new MojoExecutionException(e.getMessage(), e);
-        } catch (RatException e) {
+        } catch (final RatException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
@@ -494,7 +422,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             list.addAll(Arrays.asList(licenseFamilies));
         }
         if (licenseFamilyNames != null) {
-            for (LicenseFamilySpecification spec : licenseFamilyNames) {
+            for (final LicenseFamilySpecification spec : licenseFamilyNames) {
                 list.add(newInstance(ILicenseFamily.class, spec.getClassName()));
             }
         }
