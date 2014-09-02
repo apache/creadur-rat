@@ -43,12 +43,14 @@ agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <!-- This is the version of Maven required to build Rat -->
+    <maven>3.0.5</maven>
   </prerequisites>
   <properties>
     <javaVersion>1.5</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
+    <!-- This is the version of Maven required to use the Rat Maven Plugin -->
     <mavenVersion>2.2.1</mavenVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

@@ -1,7 +1,13 @@
+Rat 0.12
+========
+
+ * We now require Maven 3.0.5+ to build Rat, but as before we only require
+   Maven 2.2.1+ if you want to use Rat in your own Maven projects.
+
 Rat 0.11
 ========
 
- * RAT stays at compiler level 1.5 to be more compliant with other Maven plugins,
+ * Rat stays at compiler level 1.5 to be more compliant with other Maven plugins,
    fixed build/CI environment to reflect and ensure that.
  * Fixed Javadoc warnings during build, upgraded Maven Plugin Plugin to avoid
    warnings in generated code (https://jira.codehaus.org/browse/MPLUGIN-237)
