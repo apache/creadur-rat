@@ -61,6 +61,18 @@
           <artifactId>maven-plugin-plugin</artifactId>
           <version>${mavenPluginPluginVersion}</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <!-- These files does not have license headers because they are used to test license headers -->
+              <exclude>src/it/it1/src.apt</exclude>
+              <exclude>src/test/resources/unit/it2/src.txt</exclude>
+              <exclude>src/test/resources/unit/it3/src.apt</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -106,25 +118,6 @@
             <goals>
               <goal>install</goal>
               <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <!-- These files does not have license headers because they are used to test license headers -->
-            <exclude>src/it/it1/src.apt</exclude>
-            <exclude>src/test/resources/unit/it2/src.txt</exclude>
-            <exclude>src/test/resources/unit/it3/src.apt</exclude>
-          </excludes>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
             </goals>
           </execution>
         </executions>

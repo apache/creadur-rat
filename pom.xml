@@ -52,6 +52,7 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
     <mavenVersion>2.2.1</mavenVersion>
+    <previousRatVersion>0.11</previousRatVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!--
@@ -230,6 +231,12 @@ agnostic home for software distribution comprehension and audit tools.
           </reportSet>
         </reportSets>
       </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <!-- Must use previous version, to avoid a cyclic reference -->
+        <version>${previousRatVersion}</version>
+      </plugin>
     </plugins>
   </reporting>
   <build>
@@ -296,7 +303,13 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <!-- Must use previous version, to avoid a cyclic reference -->
-          <version>0.11</version>
+          <version>${previousRatVersion}</version>
+          <configuration>
+            <excludes>
+              <!-- This file only describes how to build the project and it has no license header -->
+              <exclude>BUILD.txt</exclude>
+            </excludes>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -368,16 +381,8 @@ agnostic home for software distribution comprehension and audit tools.
         </dependencies>
       </plugin>
       <plugin>
-        <!-- We don't want this to propagate to the modules, because they all have their own excludes -->
-        <inherited>false</inherited>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <!-- This file only describes how to build the project and it has no license header -->
-            <exclude>BUILD.txt</exclude>
-          </excludes>
-        </configuration>
         <executions>
           <execution>
             <goals>

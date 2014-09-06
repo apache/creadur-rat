@@ -47,32 +47,27 @@
       </resource>
     </resources>
 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <!-- These files have bad license headers because they are used to test bad license headers -->
-            <exclude>src/test/resources/appliedAL20/bad/*.*</exclude>
-            <exclude>src/test/resources/oasis/bad/*.*</exclude>
-            <!-- These files does not have license headers because they are used to test license headers -->
-            <exclude>src/test/resources/elements/Source.java</exclude>
-            <exclude>src/test/resources/elements/ILoggerFactory.java</exclude>
-            <exclude>src/test/resources/elements/sub/Empty.txt</exclude>
-            <exclude>src/test/resources/violations/bad.txt</exclude>
-            <exclude>src/test/resources/violations/FilterTest.cs</exclude>
-          </excludes>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <!-- These files have bad license headers because they are used to test bad license headers -->
+              <exclude>src/test/resources/appliedAL20/bad/*.*</exclude>
+              <exclude>src/test/resources/oasis/bad/*.*</exclude>
+              <!-- These files does not have license headers because they are used to test license headers -->
+              <exclude>src/test/resources/elements/Source.java</exclude>
+              <exclude>src/test/resources/elements/ILoggerFactory.java</exclude>
+              <exclude>src/test/resources/elements/sub/Empty.txt</exclude>
+              <exclude>src/test/resources/violations/bad.txt</exclude>
+              <exclude>src/test/resources/violations/FilterTest.cs</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
 
