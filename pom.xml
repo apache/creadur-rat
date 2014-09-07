@@ -436,8 +436,11 @@ agnostic home for software distribution comprehension and audit tools.
     <system>Buildbot</system>
     <url>http://ci.apache.org/builders/rat_trunk</url>
     <!--  Jenkins builds are at:
+    https://builds.apache.org/job/Creadur-Rat-ParentPom/ - build the parent pom for all RAT submodules
     https://builds.apache.org/job/Creadur-Rat/ - check Java5 compliance and run all tests
     https://builds.apache.org/job/Creadur-Rat-Site/ - generate mvn site
+    https://builds.apache.org/job/Creadur-Rat-Latest-Jdk/ - run with Java8 and mvn3 latest
+    https://builds.apache.org/job/Creadur-Rat-Site-Latest-Jdk/ - ensure that a site can be generated with mvn3 and Java8
      -->
   </ciManagement>
   <mailingLists>
