@@ -1,8 +1,13 @@
-Rat 0.12
-========
+Rat 0.12 (SNAPSHOT)
+===================
 
  * We now require Maven 3.0.5+ to build Rat, but as before we only require
    Maven 2.2.1+ if you want to use Rat in your own Maven projects.
+ * We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
+ * Issues resolved (see http://issues.apache.org/jira):
+   * Bugs:
+     * [RAT-173] - Allow complete skip of RAT plugin with rat.skip property
+                   (thanks to Chris Burroughs) 
 
 Rat 0.11
 ========

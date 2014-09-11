@@ -179,6 +179,13 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     private boolean excludeSubProjects;
 
     /**
+     * Will skip the plugin execution, e.g. for technical builds that do not take licence compliance into account.
+     * @since 0.11
+     */
+    @Parameter(property = "rat.skip", defaultValue = "false")
+    protected boolean skip;
+
+    /**
     * Holds the maven-internal project to allow resolution of artifact properties during mojo runs.
     */
     @Parameter(defaultValue = "${project}", required = true, readonly = true)

@@ -193,6 +193,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
      */
     public void execute() throws MojoExecutionException, MojoFailureException
     {
+        if(skip) {
+            getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
+            return;
+        }
+
         DecorationModel model = new DecorationModel();
         model.setBody( new Body() );
         Map<String, String> attributes = new HashMap<String, String>();

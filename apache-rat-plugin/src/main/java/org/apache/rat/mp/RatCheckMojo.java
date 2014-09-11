@@ -89,13 +89,6 @@ public class RatCheckMojo extends AbstractRatMojo
     @Parameter(property = "rat.ignoreErrors", defaultValue = "false")
     private boolean ignoreErrors;
 
-    /**
-     * Will skip the plugin execution, e.g. for technical builds that do not take licence compliance into account.
-     * @since 0.11
-     */
-    @Parameter(property = "rat.skip", defaultValue = "false")
-    private boolean skip;
-
     private ClaimStatistic getRawReport()
         throws MojoExecutionException, MojoFailureException
     {
