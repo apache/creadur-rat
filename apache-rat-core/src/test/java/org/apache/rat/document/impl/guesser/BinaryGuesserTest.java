@@ -90,7 +90,7 @@ public class BinaryGuesserTest {
                 r.close();
             }
             r = null;
-            assertTrue(BinaryGuesser.isBinary(doc));
+            assertTrue("Expected binary for "+ doc.getName(),BinaryGuesser.isBinary(doc));
         } finally {
             if (r != null) {
                 r.close();
