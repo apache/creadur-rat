@@ -80,6 +80,7 @@ public class BinaryGuesserTest {
             // if we get here, the UTF-16 encoded file didn't throw
             // any exception, try the UTF-8 encoded one
             r.close();
+            r = null; // ensure we detect failure to read second file
             doc = new FileDocument(new File("src/test/resources/binaries/UTF8_with_signature.xml"));
             r = doc.reader();
             r.read(dummy);
@@ -88,6 +89,8 @@ public class BinaryGuesserTest {
         } catch (IOException e) {
             if (r!= null) {
                 r.close();
+            } else {
+                throw e; // could not open the second file
             }
             r = null;
             assertTrue("Expected binary for "+ doc.getName(),BinaryGuesser.isBinary(doc));
