@@ -66,16 +66,16 @@ public class BinaryGuesserTest {
      * Used to swallow a MalformedInputException and return false
      * because the encoding of the stream was different from the
      * platform's default encoding.
+     * @throws Exception 
      *
      * @see "RAT-81"
      */
     @Test
-    public void binaryWithMalformedInputRAT81() throws Throwable {
+    public void binaryWithMalformedInputRAT81() throws Exception {
         FileDocument doc = new FileDocument(new File("src/test/resources/binaries/UTF16_with_signature.xml"));
-        Reader r = null;
+        Reader r = doc.reader(); // this will fail test if file is not readable
         try {
             char[] dummy = new char[100];
-            r = doc.reader();
             r.read(dummy);
             // if we get here, the UTF-16 encoded file didn't throw
             // any exception, try the UTF-8 encoded one
