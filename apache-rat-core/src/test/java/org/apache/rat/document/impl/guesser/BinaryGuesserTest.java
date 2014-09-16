@@ -101,8 +101,16 @@ public class BinaryGuesserTest {
     @Test
     public void realBinaryContent() {
         // This test is not accurate on all platforms
-        if (System.getProperty("file.encoding").startsWith("ANSI")) {
-            assertTrue(BinaryGuesser.isBinary(new FileDocument(new File("src/test/resources/binaries/Image-png.not"))));
+        final String encoding = System.getProperty("file.encoding");
+        final boolean isBinary = BinaryGuesser.isBinary(new FileDocument(new File("src/test/resources/binaries/Image-png.not")));
+        if (encoding.startsWith("ANSI")) {
+            assertTrue(isBinary);
+        } else {
+            if (isBinary) {
+                System.out.println("BinaryGuesserTest.realBinaryContent() succeeded when using encoding "+encoding);
+            } else {
+                System.err.println("BinaryGuesserTest.realBinaryContent() failed when using encoding "+encoding);
+            }
         }
     }
 
