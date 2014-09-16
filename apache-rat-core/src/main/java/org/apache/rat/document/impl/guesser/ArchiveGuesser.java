@@ -26,7 +26,7 @@ public class ArchiveGuesser {
 
     private static final String DOT = ".";
 
-    public static final String[] ARCHIVE_EXTENSIONS = {
+    private static final String[] ARCHIVE_EXTENSIONS = {
         "jar", "gz",
         "zip", "tar",
         "bz", "bz2",

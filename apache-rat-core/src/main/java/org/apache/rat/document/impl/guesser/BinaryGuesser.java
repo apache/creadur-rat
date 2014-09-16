@@ -227,7 +227,7 @@ public class BinaryGuesser {
             || BinaryGuesser.isBinaryData(normalisedName) || BinaryGuesser.isExecutable(normalisedName);
     }
 
-    public static final String[] DATA_EXTENSIONS = {
+    private static final String[] DATA_EXTENSIONS = {
         "DAT", "DOC",
         "NCB", "IDB",
         "SUO", "XCF",
@@ -235,22 +235,26 @@ public class BinaryGuesser {
         "KS", "TS",
         "ODP",
     };
-    public static final String[] EXE_EXTENSIONS = {
+
+    private static final String[] EXE_EXTENSIONS = {
         "EXE", "DLL",
         "LIB", "SO",
         "A", "EXP",
     };
-    public static final String[] KEYSTORE_EXTENSIONS = {
+
+    private static final String[] KEYSTORE_EXTENSIONS = {
         "JKS", "KEYSTORE", "PEM", "CRL"
     };
-    public static final String[] IMAGE_EXTENSIONS = {
+
+    private static final String[] IMAGE_EXTENSIONS = {
         "PNG", "PDF",
         "GIF", "GIFF",
         "TIF", "TIFF",
         "JPG", "JPEG",
         "ICO", "ICNS",
     };
-    public static final String[] BYTECODE_EXTENSIONS = {
+
+    private static final String[] BYTECODE_EXTENSIONS = {
         "CLASS", "PYD",
         "OBJ", "PYC",
     };
@@ -258,7 +262,7 @@ public class BinaryGuesser {
     /**
      * Based on http://www.apache.org/dev/svn-eol-style.txt
      */
-    public static final String[] NON_BINARY_EXTENSIONS = {
+    private static final String[] NON_BINARY_EXTENSIONS = {
         "AART",
         "AC",
         "AM",

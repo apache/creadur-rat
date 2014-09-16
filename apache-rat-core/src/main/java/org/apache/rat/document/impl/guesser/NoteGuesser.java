@@ -27,7 +27,7 @@ public class NoteGuesser {
 
     private static final String DOT = ".";
 
-    public static final String[] NOTE_FILE_NAMES = {
+    private static final String[] NOTE_FILE_NAMES = {
         "NOTICE", "LICENSE",
         "LICENSE.TXT", "NOTICE.TXT",
         "INSTALL", "INSTALL.TXT",
@@ -47,7 +47,8 @@ public class NoteGuesser {
         "BUILDING", "BUILDING.TXT",
         "BUILD", "BUILT.TXT",
     };
-    public static final String[] NOTE_FILE_EXTENSIONS = {
+
+    private static final String[] NOTE_FILE_EXTENSIONS = {
         "LICENSE", "LICENSE.TXT",
         "NOTICE", "NOTICE.TXT",
     };
