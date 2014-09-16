@@ -79,7 +79,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     /**
      * Specifies the licenses to accept. By default, these are added to the
      * default licenses, unless you set {@link #addDefaultLicenseMatchers} to
-     * true.
+     * false.
      *
      * @since 0.8
      */
