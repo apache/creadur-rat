@@ -25,32 +25,32 @@ import org.junit.Test;
 
 public class SourceCodeManagementSystemsTest {
 
-	@Test
-	public void testSubversionAndNumberOfSCMSystems() {
-		assertFalse("SVN does not have any external ignore files.", SUBVERSION.hasIgnoreFile());
-		
-		int hasIgnore = 0;
-		int hasNoIgnore = 0;
-		for(SourceCodeManagementSystems scm : values()) {
-			if(scm.hasIgnoreFile()) {
-				hasIgnore++;
-			} else {
-				hasNoIgnore++;
-			}
-		}
-		
-		assertEquals("Did you change the number of SCMs?", 4, hasIgnore);
-		assertEquals("Did you add a new SCM without ignoreFile?", 1, hasNoIgnore);
-		assertEquals("Amount of SCM has changed.", values().length, hasIgnore+hasNoIgnore);
-	}
-	
-	@Test
-	public void testPluginExcludeLists()  {
-		assertEquals(1, SUBVERSION.getExclusions().size());
-		assertEquals(2, GIT.getExclusions().size());
-		
-		assertEquals("Did you change the number of SCM systems?", 9, getPluginExclusions().size());
-		assertEquals("Did you change the number of SCM systems?", 5, values().length);
-	}
+    @Test
+    public void testSubversionAndNumberOfSCMSystems() {
+        assertFalse("SVN does not have any external ignore files.", SUBVERSION.hasIgnoreFile());
+        
+        int hasIgnore = 0;
+        int hasNoIgnore = 0;
+        for(SourceCodeManagementSystems scm : values()) {
+            if(scm.hasIgnoreFile()) {
+                hasIgnore++;
+            } else {
+                hasNoIgnore++;
+            }
+        }
+        
+        assertEquals("Did you change the number of SCMs?", 4, hasIgnore);
+        assertEquals("Did you add a new SCM without ignoreFile?", 1, hasNoIgnore);
+        assertEquals("Amount of SCM has changed.", values().length, hasIgnore+hasNoIgnore);
+    }
+    
+    @Test
+    public void testPluginExcludeLists()  {
+        assertEquals(1, SUBVERSION.getExclusions().size());
+        assertEquals(2, GIT.getExclusions().size());
+        
+        assertEquals("Did you change the number of SCM systems?", 9, getPluginExclusions().size());
+        assertEquals("Did you change the number of SCM systems?", 5, values().length);
+    }
 
 }

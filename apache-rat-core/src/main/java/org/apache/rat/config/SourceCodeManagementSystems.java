@@ -22,74 +22,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum SourceCodeManagementSystems {
-	SUBVERSION(".svn", null), //
-	GIT(".git", ".gitignore"), //
-	BAZAAR(".bzr", ".bzrignore"), //
-	MERCURIAL(".hg", ".hgignore"), //
-	CVS("CVS", ".cvsignore")
-	//
-	;
+    SUBVERSION(".svn", null), //
+    GIT(".git", ".gitignore"), //
+    BAZAAR(".bzr", ".bzrignore"), //
+    MERCURIAL(".hg", ".hgignore"), //
+    CVS("CVS", ".cvsignore")
+    //
+    ;
 
-	/**
-	 * Technical directory of that SCM which contains SCM internals.
-	 */
-	private String directory;
-	/**
-	 * If there is a external way to configure files to be ignored: name of this
-	 * file, <code>null</code> otherwise.
-	 */
-	private String ignoreFile;
+    /**
+     * Technical directory of that SCM which contains SCM internals.
+     */
+    private String directory;
+    /**
+     * If there is a external way to configure files to be ignored: name of this
+     * file, <code>null</code> otherwise.
+     */
+    private String ignoreFile;
 
-	private SourceCodeManagementSystems(String directory, String ignoreFile) {
-		this.directory = directory;
-		this.ignoreFile = ignoreFile;
-	}
+    private SourceCodeManagementSystems(String directory, String ignoreFile) {
+        this.directory = directory;
+        this.ignoreFile = ignoreFile;
+    }
 
-	/**
-	 * If an ignore file exists it's added as
-	 * 
-	 * <pre>
-	 * *&frasl;.scm&frasl;*
-	 * </pre>
-	 * 
-	 * . Otherwise the technical directory of the SCM is added as
-	 * 
-	 * <pre>
-	 * **&frasl;.scmignore
-	 * </pre>
-	 * 
-	 * to be used as exclusion during RAT runs.
-	 * 
-	 * @return list of excludes if the current SCM is used.
-	 */
-	public List<String> getExclusions() {
-		List<String> excludes = new ArrayList<String>(2);
+    /**
+     * If an ignore file exists it's added as
+     * 
+     * <pre>
+     * *&frasl;.scm&frasl;*
+     * </pre>
+     * 
+     * . Otherwise the technical directory of the SCM is added as
+     * 
+     * <pre>
+     * **&frasl;.scmignore
+     * </pre>
+     * 
+     * to be used as exclusion during RAT runs.
+     * 
+     * @return list of excludes if the current SCM is used.
+     */
+    public List<String> getExclusions() {
+        List<String> excludes = new ArrayList<String>(2);
 
-		if (hasIgnoreFile()) {
-			excludes.add("**/" + ignoreFile);
-		}
-		excludes.add("*/" + directory + "/*");
+        if (hasIgnoreFile()) {
+            excludes.add("**/" + ignoreFile);
+        }
+        excludes.add("*/" + directory + "/*");
 
-		return excludes;
-	}
+        return excludes;
+    }
 
-	public Boolean hasIgnoreFile() {
-		return ignoreFile != null && ignoreFile.length() != 0;
-	}
+    public Boolean hasIgnoreFile() {
+        return ignoreFile != null && ignoreFile.length() != 0;
+    }
 
-	/**
-	 * Calls {@link #getExclusions()} on each SCM to generate a global list of
-	 * exclusions to be used during RAT runs.
-	 * 
-	 * @return the global list of exclusions usable for all known SCM.
-	 */
-	public static List<String> getPluginExclusions() {
-		List<String> pluginExclusions = new ArrayList<String>();
+    /**
+     * Calls {@link #getExclusions()} on each SCM to generate a global list of
+     * exclusions to be used during RAT runs.
+     * 
+     * @return the global list of exclusions usable for all known SCM.
+     */
+    public static List<String> getPluginExclusions() {
+        List<String> pluginExclusions = new ArrayList<String>();
 
-		for (SourceCodeManagementSystems scm : values()) {
-			pluginExclusions.addAll(scm.getExclusions());
-		}
+        for (SourceCodeManagementSystems scm : values()) {
+            pluginExclusions.addAll(scm.getExclusions());
+        }
 
-		return pluginExclusions;
-	}
+        return pluginExclusions;
+    }
 }

@@ -63,15 +63,15 @@ Archives:
   Notices, licenses etc will be marked N
  <xsl:for-each select='descendant::resource'>
   <xsl:choose>
-	 <xsl:when test='license-approval/@name="false"'>!</xsl:when>
-	 <xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise>
+     <xsl:when test='license-approval/@name="false"'>!</xsl:when>
+     <xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise>
  </xsl:choose>
  <xsl:choose>
-	 <xsl:when test='type/@name="notice"'>N    </xsl:when>
-	 <xsl:when test='type/@name="archive"'>A    </xsl:when>
-	 <xsl:when test='type/@name="binary"'>B    </xsl:when>
-	 <xsl:when test='type/@name="standard"'><xsl:value-of select='header-type/@name'/></xsl:when>
-	 <xsl:otherwise>!!!!!</xsl:otherwise>
+     <xsl:when test='type/@name="notice"'>N    </xsl:when>
+     <xsl:when test='type/@name="archive"'>A    </xsl:when>
+     <xsl:when test='type/@name="binary"'>B    </xsl:when>
+     <xsl:when test='type/@name="standard"'><xsl:value-of select='header-type/@name'/></xsl:when>
+     <xsl:otherwise>!!!!!</xsl:otherwise>
  </xsl:choose>
  <xsl:text> </xsl:text>
  <xsl:value-of select='@name'/>
