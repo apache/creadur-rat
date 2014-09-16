@@ -63,6 +63,8 @@
               <exclude>src/test/resources/elements/sub/Empty.txt</exclude>
               <exclude>src/test/resources/violations/bad.txt</exclude>
               <exclude>src/test/resources/violations/FilterTest.cs</exclude>
+              <!-- used to test for binary files; does not work on UTF-8 (e.g. MacOSX) -->
+              <exclude>src/test/resources/binaries/Image-png.not</exclude>
             </excludes>
           </configuration>
         </plugin>
