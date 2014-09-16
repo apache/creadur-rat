@@ -73,7 +73,7 @@ public enum SourceCodeManagementSystems {
         return excludes;
     }
 
-    public Boolean hasIgnoreFile() {
+    public boolean hasIgnoreFile() {
         return ignoreFile != null && ignoreFile.length() != 0;
     }
 
