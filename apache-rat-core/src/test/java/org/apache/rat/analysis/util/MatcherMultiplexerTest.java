@@ -26,6 +26,8 @@ import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 
+import java.util.Arrays;
+
 public class MatcherMultiplexerTest extends TestCase {
 
     private static final String LINE_ONE = "Line One";
@@ -42,8 +44,7 @@ public class MatcherMultiplexerTest extends TestCase {
         super.setUp();
         matcherOne = new MockLicenseMatcher();
         matcherTwo = new MockLicenseMatcher();
-        IHeaderMatcher[] matchers = {matcherOne, matcherTwo};
-        multiplexer = new HeaderMatcherMultiplexer(matchers);
+        multiplexer = new HeaderMatcherMultiplexer(Arrays.<IHeaderMatcher>asList(matcherOne, matcherTwo));
         reporter = new MockClaimReporter();
     }
 

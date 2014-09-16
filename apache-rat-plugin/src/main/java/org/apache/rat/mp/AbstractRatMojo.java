@@ -19,25 +19,6 @@ package org.apache.rat.mp;
  * under the License.
  */
 
-import static org.apache.rat.mp.ExclusionHelper.addEclipseDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addIdeaDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addMavenDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addPlexusAndScmDefaults;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.lang.reflect.UndeclaredThrowableException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.xml.transform.TransformerConfigurationException;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -54,6 +35,24 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.codehaus.plexus.util.DirectoryScanner;
+
+import javax.xml.transform.TransformerConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.apache.rat.mp.ExclusionHelper.addEclipseDefaults;
+import static org.apache.rat.mp.ExclusionHelper.addIdeaDefaults;
+import static org.apache.rat.mp.ExclusionHelper.addMavenDefaults;
+import static org.apache.rat.mp.ExclusionHelper.addPlexusAndScmDefaults;
 /**
  * Abstract base class for Mojos, which are running Rat.
  */
@@ -205,13 +204,13 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      *             An error in the plugin configuration was detected.
      * @throws MojoExecutionException
      *             An error occurred while calculating the result.
-     * @return Array of license matchers to use
+     * @return list of license matchers to use
      */
-    protected IHeaderMatcher[] getLicenseMatchers()
+    protected List<IHeaderMatcher> getLicenseMatchers()
             throws MojoFailureException, MojoExecutionException {
-        final List<IHeaderMatcher> list = new ArrayList<IHeaderMatcher>();
+        final List<IHeaderMatcher> matchers = new ArrayList<IHeaderMatcher>();
         if (licenses != null) {
-            list.addAll(Arrays.asList(licenses));
+            matchers.addAll(Arrays.asList(licenses));
         }
 
         if (licenseMatchers != null) {
@@ -219,14 +218,14 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 final String className = spec.getClassName();
                 final IHeaderMatcher headerMatcher = newInstance(
                         IHeaderMatcher.class, className);
-                list.add(headerMatcher);
+                matchers.add(headerMatcher);
             }
         }
 
         if (addDefaultLicenseMatchers) {
-            list.addAll(Arrays.asList(Defaults.DEFAULT_MATCHERS));
+            matchers.addAll(Defaults.DEFAULT_MATCHERS);
         }
-        return list.toArray(new IHeaderMatcher[list.size()]);
+        return matchers;
     }
 
     private <T> T newInstance(final Class<T> clazz, final String className)

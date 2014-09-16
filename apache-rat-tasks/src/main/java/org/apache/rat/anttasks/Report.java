@@ -18,32 +18,31 @@
  */ 
 package org.apache.rat.anttasks;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
+ import org.apache.rat.Defaults;
+ import org.apache.rat.ReportConfiguration;
+ import org.apache.rat.analysis.IHeaderMatcher;
+ import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
+ import org.apache.rat.api.RatException;
+ import org.apache.rat.license.ILicenseFamily;
+ import org.apache.tools.ant.BuildException;
+ import org.apache.tools.ant.Project;
+ import org.apache.tools.ant.Task;
+ import org.apache.tools.ant.taskdefs.LogOutputStream;
+ import org.apache.tools.ant.types.EnumeratedAttribute;
+ import org.apache.tools.ant.types.Resource;
+ import org.apache.tools.ant.types.ResourceCollection;
+ import org.apache.tools.ant.types.resources.Union;
+ import org.apache.tools.ant.util.FileUtils;
 
-import javax.xml.transform.TransformerException;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.taskdefs.LogOutputStream;
-import org.apache.tools.ant.types.EnumeratedAttribute;
-import org.apache.tools.ant.types.Resource;
-import org.apache.tools.ant.types.ResourceCollection;
-import org.apache.tools.ant.types.resources.Union;
-import org.apache.tools.ant.util.FileUtils;
-
-import org.apache.rat.Defaults;
-import org.apache.rat.ReportConfiguration;
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
-import org.apache.rat.api.RatException;
-import org.apache.rat.license.ILicenseFamily;
+ import javax.xml.transform.TransformerException;
+ import java.io.File;
+ import java.io.FileWriter;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.OutputStreamWriter;
+ import java.io.PrintWriter;
+ import java.util.ArrayList;
+ import java.util.List;
 
 /**
  * A basic Ant task that generates a report on all files specified by
@@ -290,21 +289,15 @@ public class Report extends Task {
      * Flattens all nested matchers plus the default matchers (if
      * required) into a single array.
      */
-    private IHeaderMatcher[] getLicenseMatchers() {
-        IHeaderMatcher[] matchers = null;
+    private List<IHeaderMatcher> getLicenseMatchers() {
+        List<IHeaderMatcher> matchers = new ArrayList<IHeaderMatcher>(Defaults.DEFAULT_MATCHERS);
         if (addDefaultLicenseMatchers) {
             int nestedSize = licenseMatchers.size();
-            if (nestedSize == 0) {
-                matchers = Defaults.DEFAULT_MATCHERS;
-            } else {
-                matchers = new IHeaderMatcher[Defaults.DEFAULT_MATCHERS.length
-                                               + nestedSize];
-                licenseMatchers.toArray(matchers);
-                System.arraycopy(Defaults.DEFAULT_MATCHERS, 0, matchers,
-                                 nestedSize, Defaults.DEFAULT_MATCHERS.length);
+            if (nestedSize != 0) {
+                matchers.addAll(licenseMatchers);
             }
         } else {
-            matchers = licenseMatchers.toArray(new IHeaderMatcher[0]);
+            matchers = new ArrayList<IHeaderMatcher>();
         }
         return matchers;
     }

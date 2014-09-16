@@ -22,6 +22,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.generation.GeneratedLicenseNotRequired;
 import org.apache.rat.analysis.generation.JavaDocLicenseNotRequired;
 import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
+import org.apache.rat.analysis.license.CDDL1License;
 import org.apache.rat.analysis.license.DojoLicenseHeader;
 import org.apache.rat.analysis.license.GPL1License;
 import org.apache.rat.analysis.license.GPL2License;
@@ -34,7 +35,9 @@ import org.apache.rat.analysis.license.W3CLicense;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 
 import java.io.InputStream;
-import org.apache.rat.analysis.license.CDDL1License;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 
@@ -48,8 +51,8 @@ public class Defaults {
     /**
      * The standard list of licenses to include in the reports.
      */
-    public static final IHeaderMatcher[] DEFAULT_MATCHERS =
-        new IHeaderMatcher[] {
+    public static final List<IHeaderMatcher> DEFAULT_MATCHERS = Collections.unmodifiableList(
+            Arrays.asList(new IHeaderMatcher[] {
             new ApacheSoftwareLicense20(),
             new GPL1License(),
             new GPL2License(),
@@ -63,7 +66,7 @@ public class Defaults {
             new DojoLicenseHeader(),
             new TMF854LicenseHeader(),
             new CDDL1License(),
-    };
+            }));
     
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
     

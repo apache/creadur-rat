@@ -22,15 +22,17 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 
+import java.util.List;
+
 /**
  * Delegates to an ordered set of matchers.
  *
  */
 public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 
-    private final IHeaderMatcher[] matchers;
+    private final List<IHeaderMatcher> matchers;
 
-    public HeaderMatcherMultiplexer(final IHeaderMatcher[] matchers) {
+    public HeaderMatcherMultiplexer(final List<IHeaderMatcher> matchers) {
         this.matchers = matchers;
     }
 
