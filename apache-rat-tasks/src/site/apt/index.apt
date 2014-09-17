@@ -47,9 +47,7 @@ Installation
 <taskdef
     resource="org/apache/rat/anttasks/antlib.xml">
     <classpath>
-        <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
-        <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
-        ... other dependencies ...
+        <pathelement location="YOUR-PATH-TO/apache-rat-${version}.jar"/>
     </classpath>
 </taskdef>
 -------
@@ -66,9 +64,7 @@ Installation
     uri="antlib:org.apache.rat.anttasks"
     resource="org/apache/rat/anttasks/antlib.xml">
     <classpath>
-        <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
-        <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
-        ... other dependencies ...
+        <pathelement location="YOUR-PATH-TO/apache-rat-${version}.jar"/>
     </classpath>
 </taskdef>
 -------

@@ -121,9 +121,7 @@ public class YASLMatcher implements IHeaderMatcher {
 
 -------
 <path id="rat-classpath">
-    <pathelement location="YOUR-PATH-TO/apache-rat-tasks.jar"/>
-    <pathelement location="YOUR-PATH-TO/apache-rat-core.jar"/>
-    ... other dependencies ...
+    <pathelement location="YOUR-PATH-TO/apache-rat-${version}.jar"/>
     <pathelement location="YOUR-PATH-TO/yasl-matcher.jar"/>
 </path>
 <taskdef
