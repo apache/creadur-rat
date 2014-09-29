@@ -52,21 +52,19 @@ public class Defaults {
      * The standard list of licenses to include in the reports.
      */
     public static final List<IHeaderMatcher> DEFAULT_MATCHERS = Collections.unmodifiableList(
-            Arrays.asList(new IHeaderMatcher[] {
-            new ApacheSoftwareLicense20(),
-            new GPL1License(),
-            new GPL2License(),
-            new GPL3License(),
-            new MITLicense(),
-            new W3CLicense(),
-            new W3CDocLicense(),
-            new OASISLicense(),
-            new JavaDocLicenseNotRequired(), 
-            new GeneratedLicenseNotRequired(),
-            new DojoLicenseHeader(),
-            new TMF854LicenseHeader(),
-            new CDDL1License(),
-            }));
+            Arrays.asList(new ApacheSoftwareLicense20(),
+                    new GPL1License(),
+                    new GPL2License(),
+                    new GPL3License(),
+                    new MITLicense(),
+                    new W3CLicense(),
+                    new W3CDocLicense(),
+                    new OASISLicense(),
+                    new JavaDocLicenseNotRequired(),
+                    new GeneratedLicenseNotRequired(),
+                    new DojoLicenseHeader(),
+                    new TMF854LicenseHeader(),
+                    new CDDL1License()));
     
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
     
