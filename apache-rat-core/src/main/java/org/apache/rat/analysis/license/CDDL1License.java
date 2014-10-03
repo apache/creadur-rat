@@ -18,8 +18,6 @@
  */
 package org.apache.rat.analysis.license;
 
-import java.util.regex.Pattern;
-
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
@@ -56,7 +54,6 @@ public class CDDL1License extends BaseLicense implements IHeaderMatcher {
                                                               "", CDDL1_LICENSE_DEFN_ILLUMOS_STYLE);
     }
 
-    @Override
     public boolean match(Document subject, String s) throws RatHeaderAnalysisException {
         return (textMatcherBase.match(subject, s) ||
                 textMatcherIllumosStyle.match(subject, s));
