@@ -19,38 +19,52 @@
 package org.apache.rat.analysis.license;
 
 import java.util.regex.Pattern;
+
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 /**
  * Base CDDL 1.0 license.
  */
-public class CDDL1License extends SimplePatternBasedLicense {
+public class CDDL1License extends BaseLicense implements IHeaderMatcher {
 
-    public static final String LICENSE_LINE =
-            "The contents of this file are subject to the terms of the Common Development[\\\\r\\\\n\\\\s]+"
-            + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file[\\\\r\\\\n\\\\s]+"
-            + "except in compliance with the License.";
-    private static final Pattern LICENSE_LINE_PATTERN = Pattern.compile(LICENSE_LINE);
+    public static final String CDDL1_LICENSE_DEFN
+        = "The contents of this file are subject to the terms of the Common Development\n"
+        + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file\n"
+        + "except in compliance with the License.\n\n";
 
-    public static final String LICENSE_URL =
-            ".*https://oss.oracle.com/licenses/CDDL.*";
-    private static final Pattern LICENSE_URL_PATTERN = Pattern.compile(LICENSE_URL);
+    public static final String CDDL1_LICENSE_DEFN_ILLUMOS_STYLE
+        = "The contents of this file are subject to the terms of the\n"
+        + "Common Development and Distribution License (the \"License\")\n"
+        + "You may not use this file except in compliance with the License.\n";
+
+    private final FullTextMatchingLicense textMatcherBase;
+    private final FullTextMatchingLicense textMatcherIllumosStyle;
 
 
     public CDDL1License() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_CDLL1,
-                MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1,
-                "", new String[]{});
+              MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1,
+              "");
+        textMatcherBase = new FullTextMatchingLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_CDLL1,
+                                                      MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1,
+                                                      "", CDDL1_LICENSE_DEFN);
+        textMatcherIllumosStyle = new FullTextMatchingLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_CDLL1,
+                                                              MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1,
+                                                              "", CDDL1_LICENSE_DEFN_ILLUMOS_STYLE);
     }
 
     @Override
-    protected boolean matches(final String pLine) {
-        if (pLine != null) {
-            return
-                    super.matches(pLine) ||
-                    LICENSE_LINE_PATTERN.matcher(pLine).find() ||
-                    LICENSE_URL_PATTERN.matcher(pLine).find();
-        }
-        return false;
+    public boolean match(Document subject, String s) throws RatHeaderAnalysisException {
+        return (textMatcherBase.match(subject, s) ||
+                textMatcherIllumosStyle.match(subject, s));
     }
+
+    public void reset() {
+        textMatcherBase.reset();
+        textMatcherIllumosStyle.reset();
+    }
+
 }
