@@ -243,7 +243,7 @@ public class BinaryGuesser {
     };
 
     private static final String[] KEYSTORE_EXTENSIONS = {
-        "JKS", "KEYSTORE", "PEM", "CRL"
+        "JKS", "KEYSTORE", "PEM", "CRL", "TRUSTSTORE"
     };
 
     private static final String[] IMAGE_EXTENSIONS = {
