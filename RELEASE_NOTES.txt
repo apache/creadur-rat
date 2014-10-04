@@ -10,6 +10,8 @@ Rat 0.12 (SNAPSHOT)
                    (thanks to Chris Burroughs)
      * [RAT-175] - SourceCodeManagementSystems.hasIgnoreFile() should return boolean
      * [RAT-181] - BinaryGuesser should treat *.truststore as binary
+     * [RAT-174] - CDDL1License still very slow, replace Pattern matching with simple String comparison
+                   (thanks to Chris Burroughs)
 
 Rat 0.11
 ========
