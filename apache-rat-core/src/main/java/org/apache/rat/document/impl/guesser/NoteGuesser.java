@@ -45,7 +45,8 @@ public class NoteGuesser {
         "THIRD_PARTY_NOTICES", "THIRD_PARTY_NOTICES.TXT",
         "COPYRIGHT", "COPYRIGHT.TXT",
         "BUILDING", "BUILDING.TXT",
-        "BUILD", "BUILT.TXT",
+        "BUILD", "BUILT.TXT",//
+        "DEPENDENCIES"
     };
 
     private static final String[] NOTE_FILE_EXTENSIONS = {
