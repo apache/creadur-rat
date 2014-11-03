@@ -12,6 +12,8 @@ Rat 0.12 (SNAPSHOT)
      * [RAT-181] - BinaryGuesser should treat *.truststore as binary
      * [RAT-174] - CDDL1License still very slow, replace Pattern matching with simple String comparison
                    (thanks to Chris Burroughs)
+     * [RAT-184] - Add DEPENDENCIES to the list of ignored files in NoteGuesser.
+                   (thanks to Karl Heinz Marbaise)
 
 Rat 0.11
 ========
