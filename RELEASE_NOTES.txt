@@ -5,17 +5,19 @@ Rat 0.12 (SNAPSHOT)
    Maven 2.2.1+ if you want to use Rat in your own Maven projects.
  * We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
  * Issues resolved (see http://issues.apache.org/jira):
-   * Bugs:
-     * [RAT-173] - Allow complete skip of RAT plugin with rat.skip property
-                   (thanks to Chris Burroughs)
-     * [RAT-175] - SourceCodeManagementSystems.hasIgnoreFile() should return boolean
-     * [RAT-181] - BinaryGuesser should treat *.truststore as binary
-     * [RAT-174] - CDDL1License still very slow, replace Pattern matching with simple String comparison
-                   (thanks to Chris Burroughs)
-   * Imprvements:
-     * [RAT-184] - Add DEPENDENCIES to the list of ignored files in NoteGuesser.
-                   (thanks to Karl Heinz Marbaise)
-     * [RAT-186] - BinaryGuesser should recognize PSD files as images
+   Bug
+    * [RAT-173] - Allow complete skip of RAT plugin with rat.skip property
+                  (thanks to Chris Burroughs)
+    * [RAT-174] - CDDL1License still very slow, replace Pattern matching with simple String comparison
+                  (thanks to Chris Burroughs)
+    * [RAT-175] - SourceCodeManagementSystems.hasIgnoreFile() should return boolean
+    * [RAT-177] - final arrays should be private
+   Improvement
+    * [RAT-170] - RAT should use itself during build and site generation
+    * [RAT-181] - BinaryGuesser should treat *.truststore as binary
+    * [RAT-184] - Add DEPENDENCIES to the list of ignored files in NoteGuesser.
+                  (thanks to Karl Heinz Marbaise)
+    * [RAT-186] - BinaryGuesser should recognize PSD files as images
 
 Rat 0.11
 ========
