@@ -252,6 +252,7 @@ public class BinaryGuesser {
         "TIF", "TIFF",
         "JPG", "JPEG",
         "ICO", "ICNS",
+        "PSD",
     };
 
     private static final String[] BYTECODE_EXTENSIONS = {

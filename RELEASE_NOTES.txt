@@ -15,6 +15,7 @@ Rat 0.12 (SNAPSHOT)
    * Imprvements:
      * [RAT-184] - Add DEPENDENCIES to the list of ignored files in NoteGuesser.
                    (thanks to Karl Heinz Marbaise)
+     * [RAT-186] - BinaryGuesser should recognize PSD files as images
 
 Rat 0.11
 ========
