@@ -18,6 +18,8 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-184] - Add DEPENDENCIES to the list of ignored files in NoteGuesser.
                   (thanks to Karl Heinz Marbaise)
     * [RAT-186] - BinaryGuesser should recognize PSD files as images
+    * [RAT-187] - Add 'SAR', 'HAR', 'WSR' as archives which should be ignored.
+                  (thanks to Karl Heinz Marbaise)
 
 Rat 0.11
 ========

@@ -36,6 +36,8 @@ public class ArchiveGuesser {
         "odb", "odf",
         "odg", "odp",
         "ods", "odt",
+        "har", "sar",
+        "wsr",
     };
 
     /**
