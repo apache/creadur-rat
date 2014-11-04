@@ -35,6 +35,7 @@ public class BinaryGuesserTest {
     public void testMatches() {
         assertTrue(BinaryGuesser.isBinary(new MockDocument("image.png")));
         assertTrue(BinaryGuesser.isBinary(new MockDocument("image.pdf")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.psd")));
         assertTrue(BinaryGuesser.isBinary(new MockDocument("image.gif")));
         assertTrue(BinaryGuesser.isBinary(new MockDocument("image.giff")));
         assertTrue(BinaryGuesser.isBinary(new MockDocument("image.tif")));
@@ -45,11 +46,13 @@ public class BinaryGuesserTest {
         assertTrue(BinaryGuesser.isBinary(new MockDocument("Whatever.class")));
         assertTrue(BinaryGuesser.isBinary(new MockDocument("data.dat")));
         assertTrue(BinaryGuesser.isBinary(new MockDocument("libicudata.so.34.")));
+        assertTrue(BinaryGuesser.isBinary(new MockDocument("my.truststore")));
     }
 
     public void testIsBinary() {
         assertTrue(BinaryGuesser.isBinary("image.png"));
         assertTrue(BinaryGuesser.isBinary("image.pdf"));
+        assertTrue(BinaryGuesser.isBinary("image.psd"));
         assertTrue(BinaryGuesser.isBinary("image.gif"));
         assertTrue(BinaryGuesser.isBinary("image.giff"));
         assertTrue(BinaryGuesser.isBinary("image.tif"));
@@ -60,6 +63,7 @@ public class BinaryGuesserTest {
         assertTrue(BinaryGuesser.isBinary("Whatever.class"));
         assertTrue(BinaryGuesser.isBinary("data.dat"));
         assertTrue(BinaryGuesser.isBinary("libicudata.so.34."));
+        assertTrue(BinaryGuesser.isBinary("my.truststore"));
     }
 
     /**

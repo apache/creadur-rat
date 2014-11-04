@@ -27,6 +27,7 @@ public class NoteGuesserTest {
 
     @Test
     public void testMatches() {
+        assertTrue(NoteGuesser.isNote(new MockDocument("DEPENDENCIES")));
         assertTrue(NoteGuesser.isNote(new MockDocument("LICENSE")));
         assertTrue(NoteGuesser.isNote(new MockDocument("LICENSE.txt")));
         assertTrue(NoteGuesser.isNote(new MockDocument("NOTICE")));
@@ -37,6 +38,7 @@ public class NoteGuesserTest {
 
     @Test
     public void isNote() {
+        assertTrue(NoteGuesser.isNote("DEPENDENCIES"));
         assertTrue(NoteGuesser.isNote("LICENSE"));
         assertTrue(NoteGuesser.isNote("LICENSE.txt"));
         assertTrue(NoteGuesser.isNote("NOTICE"));
@@ -47,12 +49,14 @@ public class NoteGuesserTest {
     
     @Test
     public void isNoteWithPath() {
+        assertTrue(NoteGuesser.isNote("src/test/DEPENDENCIES"));
         assertTrue(NoteGuesser.isNote("src/test/LICENSE"));
         assertTrue(NoteGuesser.isNote("src/test/LICENSE.txt"));
         assertTrue(NoteGuesser.isNote("src/test/NOTICE"));
         assertTrue(NoteGuesser.isNote("src/test/NOTICE.txt"));
         assertTrue(NoteGuesser.isNote("src/test/README"));
         assertTrue(NoteGuesser.isNote("src/test/README.txt"));
+        assertTrue(NoteGuesser.isNote("src\\test\\DEPENDENCIES"));
         assertTrue(NoteGuesser.isNote("src\\test\\LICENSE"));
         assertTrue(NoteGuesser.isNote("src\\test\\LICENSE.txt"));
         assertTrue(NoteGuesser.isNote("src\\test\\NOTICE"));
