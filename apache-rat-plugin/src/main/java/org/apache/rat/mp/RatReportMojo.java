@@ -22,8 +22,6 @@ package org.apache.rat.mp;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -126,61 +124,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
         }
 
         return artifact.getFile();
-    }
-
-    /**
-     * Creates the report as a string. Currently, this string will be embedded verbatimly into the report document.
-     *
-     * @throws MojoFailureException
-     *             An error in the plugin configuration was detected.
-     * @throws MojoExecutionException
-     *             An error occurred while creating the report.
-     * @return Report contents
-     */
-    private String createReport() throws MojoExecutionException, MojoFailureException
-    {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = null;
-        try
-        {
-            pw = new PrintWriter( sw );
-            createReport( new PrintWriter( sw ), Defaults.getDefaultStyleSheet() );
-            final String result = sw.toString();
-            pw.close();
-            pw = null;
-            sw.close();
-            sw = null;
-            return result;
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        finally
-        {
-            if ( pw != null )
-            {
-                try
-                {
-                    pw.close();
-                }
-                catch ( Throwable t )
-                {
-                    // Ignore me
-                }
-            }
-            if ( sw != null )
-            {
-                try
-                {
-                    sw.close();
-                }
-                catch ( Throwable t )
-                {
-                    // Ignore me
-                }
-            }
-        }
     }
 
     /**
@@ -313,7 +256,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport
         sink.verbatim( true );
         try
         {
-            sink.text( createReport() );
+            sink.text( createReport( Defaults.getDefaultStyleSheet() ) );
         }
         catch ( MojoExecutionException e )
         {

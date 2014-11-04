@@ -67,12 +67,18 @@ public class Defaults {
                     new CDDL1License()));
     
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
-    
+    public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
+
     public static InputStream getPlainStyleSheet() {
         InputStream result = Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
         return result;
     }
     
+    public static InputStream getUnapprovedLicensesStyleSheet() {
+        InputStream result = Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
+        return result;
+    }
+
     public static InputStream getDefaultStyleSheet() {
         InputStream result = getPlainStyleSheet();
         return result;

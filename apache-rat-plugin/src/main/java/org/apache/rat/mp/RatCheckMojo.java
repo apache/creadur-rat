@@ -89,6 +89,15 @@ public class RatCheckMojo extends AbstractRatMojo
     @Parameter(property = "rat.ignoreErrors", defaultValue = "false")
     private boolean ignoreErrors;
 
+    /**
+     * Whether to output the names of files that have unapproved licenses to the
+     * console.
+     *
+     * @since 0.12
+     */
+    @Parameter(property = "rat.consoleOutput", defaultValue = "false")
+    private boolean consoleOutput;
+
     private ClaimStatistic getRawReport()
         throws MojoExecutionException, MojoFailureException
     {
@@ -181,6 +190,18 @@ public class RatCheckMojo extends AbstractRatMojo
         getLog().info("Rat check: Summary of files. Unapproved: " + statistics.getNumUnApproved() + " unknown: " + statistics.getNumUnknown() + " generated: " + statistics.getNumGenerated() + " approved: " + statistics.getNumApproved() + " licence.");
         if ( numUnapprovedLicenses < statistics.getNumUnApproved() )
         {
+            if ( consoleOutput )
+            {
+                try
+                {
+                    getLog().warn( createReport( Defaults.getUnapprovedLicensesStyleSheet() ).trim() );
+                }
+                catch( MojoExecutionException e )
+                {
+                    getLog().warn( "Unable to print the files with unapproved licenses to the console." );
+                }
+            }
+
             final String seeReport = " See RAT report in: " + reportFile;
             if ( !ignoreErrors )
             {

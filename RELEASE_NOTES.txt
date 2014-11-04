@@ -13,6 +13,7 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-175] - SourceCodeManagementSystems.hasIgnoreFile() should return boolean
     * [RAT-177] - final arrays should be private
    Improvement
+    * [RAT-61]  - List files with unapproved licenses in Maven output
     * [RAT-170] - RAT should use itself during build and site generation
     * [RAT-181] - BinaryGuesser should treat *.truststore as binary
     * [RAT-184] - Add DEPENDENCIES to the list of ignored files in NoteGuesser.
