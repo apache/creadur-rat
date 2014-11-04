@@ -49,7 +49,7 @@ public class ExclusionHelperTest {
                 ECLIPSE_DEFAULT_EXCLUDES.size());
         assertEquals("Did you change the number of idea excludes?", 4,
                 IDEA_DEFAULT_EXCLUDES.size());
-        assertEquals("Did you change the number of mvn excludes?", 4,
+        assertEquals("Did you change the number of mvn excludes?", 5,
                 MAVEN_DEFAULT_EXCLUDES.size());
     }
 
@@ -81,9 +81,9 @@ public class ExclusionHelperTest {
         addMavenDefaults(log, false, exclusion);
         assertTrue(exclusion.isEmpty());
         addMavenDefaults(log, true, exclusion);
-        assertEquals(4, exclusion.size());
+        assertEquals(5, exclusion.size());
         addMavenDefaults(log, true, exclusion);
-        assertEquals(4, exclusion.size());
+        assertEquals(5, exclusion.size());
     }
 
     @Test

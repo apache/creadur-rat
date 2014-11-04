@@ -40,6 +40,7 @@ public final class ExclusionHelper {
                     "target/**/*", //
                     "cobertura.ser", //
                     "release.properties", //
+                    ".repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
                     "pom.xml.releaseBackup"));
 
     /**
