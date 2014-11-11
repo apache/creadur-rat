@@ -12,6 +12,9 @@ Rat 0.12 (SNAPSHOT)
                   (thanks to Chris Burroughs)
     * [RAT-175] - SourceCodeManagementSystems.hasIgnoreFile() should return boolean
     * [RAT-177] - final arrays should be private
+    * [RAT-188] - Fix problems with AnimalSniffer-plugin when running in GUMP with Java 8.
+                  Workaround for https://jira.codehaus.org/browse/MANIMALSNIFFER-45
+                  (thanks to Mark Thomas)
    Improvement
     * [RAT-61]  - List files with unapproved licenses in Maven output
     * [RAT-170] - RAT should use itself during build and site generation
