@@ -19,6 +19,7 @@ package org.apache.rat.mp;
  * under the License.
  */
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -37,6 +38,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 import javax.xml.transform.TransformerConfigurationException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -411,28 +413,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         }
         finally
         {
-            if ( pw != null )
-            {
-                try
-                {
-                    pw.close();
-                }
-                catch ( Throwable t )
-                {
-                    // Ignore me
-                }
-            }
-            if ( sw != null )
-            {
-                try
-                {
-                    sw.close();
-                }
-                catch ( Throwable t )
-                {
-                    // Ignore me
-                }
-            }
+            IOUtils.closeQuietly( pw );
+            IOUtils.closeQuietly( sw );
         }
     }
 

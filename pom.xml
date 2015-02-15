@@ -161,13 +161,6 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <tagletArtifacts>
-            <tagletArtifact>
-              <groupId>org.apache.maven.plugin-tools</groupId>
-              <artifactId>maven-plugin-tools-javadoc</artifactId>
-              <version>${mavenPluginPluginVersion}</version>
-            </tagletArtifact>
-          </tagletArtifacts>
           <tags>
             <tag>
               <name>TODO</name>

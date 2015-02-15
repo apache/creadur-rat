@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -116,17 +117,7 @@ public class RatCheckMojo extends AbstractRatMojo
         }
         finally
         {
-            if ( fw != null )
-            {
-                try
-                {
-                    fw.close();
-                }
-                catch ( Throwable t )
-                {
-                    /* Ignore me */
-                }
-            }
+            IOUtils.closeQuietly( fw );
         }
     }
 
