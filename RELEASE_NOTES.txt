@@ -6,6 +6,8 @@ Rat 0.12 (SNAPSHOT)
  * We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
  * Issues resolved (see http://issues.apache.org/jira):
    Bug
+    * [RAT-158] - Fix SAX-Parser warning by explicitly excluding xerces in Doxia 1.2.
+                  (thanks to Hervé Boutemy)
     * [RAT-173] - Allow complete skip of RAT plugin with rat.skip property
                   (thanks to Chris Burroughs)
     * [RAT-174] - CDDL1License still very slow, replace Pattern matching with simple String comparison

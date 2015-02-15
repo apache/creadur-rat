@@ -298,6 +298,19 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>apache-rat-plugin</artifactId>
           <!-- Must use previous version, to avoid a cyclic reference -->
           <version>${previousRatVersion}</version>
+          <dependencies><!-- TODO remove exclusion when upgrading to new ASF parent or doxia release (RAT-158) -->
+            <dependency>
+              <groupId>org.apache.maven.doxia</groupId>
+              <artifactId>doxia-core</artifactId>
+              <version>1.2</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>xerces</groupId>
+                  <artifactId>xercesImpl</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
           <configuration>
             <excludes>
               <!-- This file only describes how to build the project and it has no license header -->
