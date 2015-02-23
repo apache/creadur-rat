@@ -332,7 +332,7 @@ public class Report {
      * Output a report in the default style and default licence
      * header matcher. 
      * 
-     * @param out - the output stream to recieve the styled report
+     * @param out - the output stream to receive the styled report
      * @param configuration the configuration to use
      * @throws Exception in case of errors.
      * @since Rat 0.8
@@ -375,7 +375,6 @@ public class Report {
      * @param style an input stream representing the stylesheet to use for styling the report
      * @param pConfiguration current report configuration.
      * 
-     * @throws FileNotFoundException in case of I/O errors.
      * @throws IOException in case of I/O errors.
      * @throws TransformerConfigurationException in case of XML errors.
      * @throws InterruptedException in case of threading errors.
@@ -385,7 +384,7 @@ public class Report {
      */
     public static ClaimStatistic report(Writer out, IReportable base, final InputStream style, 
             ReportConfiguration pConfiguration) 
-    throws IOException, TransformerConfigurationException, FileNotFoundException, InterruptedException, RatException {
+    throws IOException, TransformerConfigurationException, InterruptedException, RatException {
         PipedReader reader = new PipedReader();
         PipedWriter writer = new PipedWriter(reader);
         ReportTransformer transformer = new ReportTransformer(out, style, reader);

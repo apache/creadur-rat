@@ -70,6 +70,7 @@
               <exclude>src/it/it1/src.apt</exclude>
               <exclude>src/test/resources/unit/it2/src.txt</exclude>
               <exclude>src/test/resources/unit/it3/src.apt</exclude>
+              <exclude>**/*.iml</exclude>
             </excludes>
           </configuration>
         </plugin>

@@ -83,6 +83,11 @@ agnostic home for software distribution comprehension and audit tools.
     <dependencies>
       <dependency>
         <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-core</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -126,8 +131,20 @@ agnostic home for software distribution comprehension and audit tools.
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>1.9.5</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>
         <version>1.9.5</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-library</artifactId>
+        <version>1.2.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -568,6 +585,7 @@ agnostic home for software distribution comprehension and audit tools.
     </site>
   </distributionManagement>
   <modules>
+    <module>apache-rat-api</module>
     <module>apache-rat-core</module>
     <module>apache-rat-plugin</module>
     <module>apache-rat-tasks</module>
