@@ -75,9 +75,7 @@ agnostic home for software distribution comprehension and audit tools.
     <rat.site.name>Apache Rat Website</rat.site.name>
     <rat.site.id>org.apache.rat.site</rat.site.id>
     <!-- maven plugin versions -->
-    <mavenInvokerPluginVersion>1.9</mavenInvokerPluginVersion>
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
-    <surefire.version>2.17</surefire.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -169,11 +167,6 @@ agnostic home for software distribution comprehension and audit tools.
   </dependencyManagement>
   <reporting>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>${surefire.version}</version>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -289,11 +282,6 @@ agnostic home for software distribution comprehension and audit tools.
           <configuration>
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${surefire.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

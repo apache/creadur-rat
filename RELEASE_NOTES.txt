@@ -18,6 +18,8 @@ Rat 0.12 (SNAPSHOT)
                   Workaround for https://jira.codehaus.org/browse/MANIMALSNIFFER-45
                   (thanks to Mark Thomas)
    Improvement
+    * [RAT-196] - Minor refactoring in pom.xml.
+                  (thanks to Karl Heinz Marbaise) 
     * [RAT-194] - Upgrade to Doxia 1.6 if called directly, does not affect problems reported in RAT-158. Minor improvements.
                   (thanks to Hervé Boutemy)
     * [RAT-61]  - List files with unapproved licenses in Maven output
