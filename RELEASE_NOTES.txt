@@ -31,6 +31,8 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-186] - BinaryGuesser should recognize PSD files as images
     * [RAT-187] - Add 'SAR', 'HAR', 'WSR' as archives which should be ignored.
                   (thanks to Karl Heinz Marbaise)
+    * [RAT-198] - Upgrade to plexus-utils 3.0.20.
+                  (thanks to Karl Heinz Marbaise)
 
 Rat 0.11
 ========
