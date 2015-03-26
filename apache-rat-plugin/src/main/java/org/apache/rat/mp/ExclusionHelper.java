@@ -41,6 +41,7 @@ public final class ExclusionHelper {
                     "cobertura.ser", //
                     "release.properties", //
                     ".repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
+                    ".mvn", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
                     "pom.xml.releaseBackup"));
 
     /**
