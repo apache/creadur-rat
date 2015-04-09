@@ -1,13 +1,13 @@
 package org.apache.rat.mp;
 
+import org.apache.maven.plugin.logging.Log;
+import org.apache.rat.config.SourceCodeManagementSystems;
+import org.codehaus.plexus.util.DirectoryScanner;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.maven.plugin.logging.Log;
-import org.apache.rat.config.SourceCodeManagementSystems;
-import org.codehaus.plexus.util.DirectoryScanner;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
