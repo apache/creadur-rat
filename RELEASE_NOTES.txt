@@ -17,6 +17,10 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-188] - Fix problems with AnimalSniffer-plugin when running in GUMP with Java 8.
                   Workaround for https://jira.codehaus.org/browse/MANIMALSNIFFER-45
                   (thanks to Mark Thomas)
+
+   New features
+    * [RAT-171] - Maven plugin allows scanning of source code management ignore files. Their contents is added as exclusion/ignored during RAT runs.
+
    Improvement
     * [RAT-196] - Minor refactoring in pom.xml.
                   (thanks to Karl Heinz Marbaise) 
@@ -36,7 +40,7 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-198] - Upgrade to plexus-utils 3.0.20.
                   (thanks to Karl Heinz Marbaise)
     * [RAT-172] - Exclude technical directories of source code management systems and their ignore files from RAT scans. 
-                  Enabled for SVN,Git,Mercurial,Bazari and CVS.
+                  Enabled for SVN,Git,Mercurial,Bazar and CVS.
 
 Rat 0.11
 ========

@@ -1,4 +1,4 @@
-package org.apache.rat.mp;
+package org.apache.rat.mp.util;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.config.SourceCodeManagementSystems;
@@ -30,6 +30,7 @@ import java.util.Set;
 
 /**
  * This class encapsulates the file/directory exclusion handling of RAT.
+ * Visibility is to allow testing and usage in the maven plugin itself.
  */
 public final class ExclusionHelper {
     /**
@@ -62,8 +63,8 @@ public final class ExclusionHelper {
                     "*.iws", //
                     ".idea/**/*"));
 
-    static void addPlexusAndScmDefaults(Log log, final boolean useDefaultExcludes,
-            final Set<String> excludeList1) {
+    public static void addPlexusAndScmDefaults(Log log, final boolean useDefaultExcludes,
+                                               final Set<String> excludeList1) {
         if (useDefaultExcludes) {
             log.debug("Adding plexus default exclusions...");
             Collections.addAll(excludeList1, DirectoryScanner.DEFAULTEXCLUDES);
@@ -76,8 +77,8 @@ public final class ExclusionHelper {
         }
     }
 
-    static void addMavenDefaults(Log log, boolean useMavenDefaultExcludes,
-            final Set<String> excludeList) {
+    public static void addMavenDefaults(Log log, boolean useMavenDefaultExcludes,
+                                        final Set<String> excludeList) {
         if (useMavenDefaultExcludes) {
             log.debug("Adding exclusions often needed by Maven projects...");
             excludeList.addAll(MAVEN_DEFAULT_EXCLUDES);
@@ -87,8 +88,8 @@ public final class ExclusionHelper {
         }
     }
 
-    static void addEclipseDefaults(Log log, boolean useEclipseDefaultExcludes,
-            final Set<String> excludeList) {
+    public static void addEclipseDefaults(Log log, boolean useEclipseDefaultExcludes,
+                                          final Set<String> excludeList) {
         if (useEclipseDefaultExcludes) {
             log.debug("Adding exclusions often needed by projects "
                     + "developed in Eclipse...");
@@ -100,8 +101,8 @@ public final class ExclusionHelper {
         }
     }
 
-    static void addIdeaDefaults(Log log, boolean useIdeaDefaultExcludes,
-            final Set<String> excludeList) {
+    public static void addIdeaDefaults(Log log, boolean useIdeaDefaultExcludes,
+                                       final Set<String> excludeList) {
         if (useIdeaDefaultExcludes) {
             log.debug("Adding exclusions often needed by projects "
                     + "developed in IDEA...");

@@ -92,4 +92,14 @@ public enum SourceCodeManagementSystems {
 
         return pluginExclusions;
     }
+
+    /**
+     * Maybe <code>null</code>, check before with
+     * @see #hasIgnoreFile()
+     *
+     * @return the ignore file of the SCM.
+     */
+    public String getIgnoreFile() {
+        return ignoreFile;
+    }
 }

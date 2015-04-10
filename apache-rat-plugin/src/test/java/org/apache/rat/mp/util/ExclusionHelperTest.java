@@ -1,4 +1,4 @@
-package org.apache.rat.mp;
+package org.apache.rat.mp.util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,19 +17,6 @@ package org.apache.rat.mp;
  * limitations under the License.
  */
 
-import static org.apache.rat.mp.ExclusionHelper.ECLIPSE_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.ExclusionHelper.IDEA_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.ExclusionHelper.MAVEN_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.ExclusionHelper.addEclipseDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addIdeaDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addMavenDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addPlexusAndScmDefaults;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.config.SourceCodeManagementSystems;
 import org.junit.Test;
@@ -37,11 +24,24 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.apache.rat.mp.util.ExclusionHelper.ECLIPSE_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.IDEA_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.MAVEN_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ExclusionHelperTest {
 
     @Mock
-    Log log;
+    private Log log;
 
     @Test
     public void testNumberOfExclusions() {

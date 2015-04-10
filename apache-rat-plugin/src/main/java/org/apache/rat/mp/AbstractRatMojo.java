@@ -33,12 +33,12 @@ import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.api.RatException;
 import org.apache.rat.config.SourceCodeManagementSystems;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.mp.util.ScmIgnoreParser;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 import javax.xml.transform.TransformerConfigurationException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,18 +53,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.apache.rat.mp.ExclusionHelper.addEclipseDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addIdeaDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addMavenDefaults;
-import static org.apache.rat.mp.ExclusionHelper.addPlexusAndScmDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
+
 /**
  * Abstract base class for Mojos, which are running Rat.
  */
 public abstract class AbstractRatMojo extends AbstractMojo {
-    
+
     /**
      * The base directory, in which to search for files.
-     *
      */
     @Parameter(property = "rat.basedir", defaultValue = "${basedir}", required = true)
     private File basedir;
@@ -107,7 +107,6 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
     /**
      * Whether to add the default list of license matchers.
-     *
      */
     @Parameter(property = "rat.addDefaultLicenseMatchers", defaultValue = "true")
     private boolean addDefaultLicenseMatchers;
@@ -115,7 +114,6 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     /**
      * Specifies files, which are included in the report. By default, all files
      * are included.
-     *
      */
     @Parameter
     private String[] includes;
@@ -123,7 +121,6 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     /**
      * Specifies files, which are excluded in the report. By default, no files
      * are excluded.
-     *
      */
     @Parameter
     private String[] excludes;
@@ -133,7 +130,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      * excludes are:
      * <ul>
      * <li>meta data files for source code management / revision control systems,
-     *  see {@link SourceCodeManagementSystems}</li>
+     * see {@link SourceCodeManagementSystems}</li>
      * <li>temporary files used by Maven, see <a
      * href="#useMavenDefaultExcludes">useMavenDefaultExcludes</a></li>
      * <li>configuration files for Eclipse, see <a
@@ -153,6 +150,15 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      */
     @Parameter(property = "rat.useMavenDefaultExcludes", defaultValue = "true")
     private boolean useMavenDefaultExcludes;
+
+    /**
+     * Whether to parse source code management system (SCM) ignore files and use their contents as excludes.
+     * At the moment this works for the following SCMs:
+     *
+     * @see org.apache.rat.config.SourceCodeManagementSystems
+     */
+    @Parameter(property = "rat.parseSCMIgnoresAsExcludes", defaultValue = "false")
+    private boolean parseSCMIgnoresAsExcludes;
 
     /**
      * Whether to use the Eclipse specific default excludes when scanning for
@@ -176,21 +182,21 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     /**
      * Whether to exclude subprojects. This is recommended, if you want a
      * separate apache-rat-plugin report for each subproject.
-     *
      */
     @Parameter(property = "rat.excludeSubprojects", defaultValue = "true")
     private boolean excludeSubProjects;
 
     /**
      * Will skip the plugin execution, e.g. for technical builds that do not take licence compliance into account.
+     *
      * @since 0.11
      */
     @Parameter(property = "rat.skip", defaultValue = "false")
     protected boolean skip;
 
     /**
-    * Holds the maven-internal project to allow resolution of artifact properties during mojo runs.
-    */
+     * Holds the maven-internal project to allow resolution of artifact properties during mojo runs.
+     */
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
 
@@ -204,11 +210,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     /**
      * Returns the set of {@link IHeaderMatcher header matchers} to use.
      *
-     * @throws MojoFailureException
-     *             An error in the plugin configuration was detected.
-     * @throws MojoExecutionException
-     *             An error occurred while calculating the result.
      * @return list of license matchers to use
+     * @throws MojoFailureException   An error in the plugin configuration was detected.
+     * @throws MojoExecutionException An error occurred while calculating the result.
      */
     protected List<IHeaderMatcher> getLicenseMatchers()
             throws MojoFailureException, MojoExecutionException {
@@ -265,10 +269,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     /**
      * Adds the given string array to the list.
      *
-     * @param pList
-     *            The list to which the array elements are being added.
-     * @param pArray
-     *            The strings to add to the list.
+     * @param pList  The list to which the array elements are being added.
+     * @param pArray The strings to add to the list.
      */
     private static void add(List<String> pList, String[] pArray) {
         if (pArray != null) {
@@ -358,6 +360,12 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         addEclipseDefaults(getLog(), useEclipseDefaultExcludes, results);
         addIdeaDefaults(getLog(), useIdeaDefaultExcludes, results);
 
+        if(parseSCMIgnoresAsExcludes) {
+            getLog().info("Will parse SCM ignores for exclusions...");
+            results.addAll(ScmIgnoreParser.getExclusionsFromSCM(getLog(), project.getBasedir()));
+            getLog().info("Finished adding exclusions from SCM ignore files.");
+        }
+
         if (excludeSubProjects && project != null
                 && project.getModules() != null) {
             for (final Object o : project.getModules()) {
@@ -385,53 +393,39 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      * Creates the report as a string.
      *
      * @param styleSheet The style sheet to use when formatting the report
-     * @throws MojoFailureException
-     *             An error in the plugin configuration was detected.
-     * @throws MojoExecutionException
-     *             An error occurred while creating the report.
      * @return Report contents
+     * @throws MojoFailureException   An error in the plugin configuration was detected.
+     * @throws MojoExecutionException An error occurred while creating the report.
      */
-    protected String createReport( InputStream styleSheet )
-        throws MojoExecutionException, MojoFailureException
-    {
+    protected String createReport(InputStream styleSheet)
+            throws MojoExecutionException, MojoFailureException {
         StringWriter sw = new StringWriter();
         PrintWriter pw = null;
-        try
-        {
-            pw = new PrintWriter( sw );
-            createReport( new PrintWriter( sw ), styleSheet );
+        try {
+            pw = new PrintWriter(sw);
+            createReport(new PrintWriter(sw), styleSheet);
             final String result = sw.toString();
             pw.close();
             pw = null;
             sw.close();
             sw = null;
             return result;
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        finally
-        {
-            IOUtils.closeQuietly( pw );
-            IOUtils.closeQuietly( sw );
+        } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(pw);
+            IOUtils.closeQuietly(sw);
         }
     }
 
     /**
      * Writes the report to the given stream.
      *
-     * @param out
-     *            The target writer, to which the report is being written.
-     * @param style
-     *            The stylesheet to use, or <code>null</code> for raw XML
-     *
+     * @param out   The target writer, to which the report is being written.
+     * @param style The stylesheet to use, or <code>null</code> for raw XML
      * @return the current statistic.
-     *
-     * @throws MojoFailureException
-     *             An error in the plugin configuration was detected.
-     * @throws MojoExecutionException
-     *             Another error occurred while creating the report.
+     * @throws MojoFailureException   An error in the plugin configuration was detected.
+     * @throws MojoExecutionException Another error occurred while creating the report.
      */
     protected ClaimStatistic createReport(Writer out, InputStream style)
             throws MojoExecutionException, MojoFailureException {
