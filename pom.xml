@@ -124,7 +124,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.12</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -264,7 +264,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
+          <version>3.2</version>
           <configuration>
             <source>${javaVersion}</source>
             <target>${javaVersion}</target>
@@ -336,7 +336,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.4.1</version>
+          <version>2.5.1</version>
           <configuration>
             <!-- Only prompt once for the release version -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
