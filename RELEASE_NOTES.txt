@@ -20,7 +20,7 @@ Rat 0.12 (SNAPSHOT)
 
    New features
     * [RAT-171] - Maven plugin allows scanning of source code management ignore files. Their contents is added as exclusion/ignored during RAT runs.
-
+                  Supported source code management systems are: SVN, Git, Bazaar, Mercurial and CVS.
    Improvement
     * [RAT-196] - Minor refactoring in pom.xml.
                   (thanks to Karl Heinz Marbaise) 

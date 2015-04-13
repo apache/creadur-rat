@@ -157,7 +157,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      *
      * @see org.apache.rat.config.SourceCodeManagementSystems
      */
-    @Parameter(property = "rat.parseSCMIgnoresAsExcludes", defaultValue = "false")
+    @Parameter(property = "rat.parseSCMIgnoresAsExcludes", defaultValue = "true")
     private boolean parseSCMIgnoresAsExcludes;
 
     /**
