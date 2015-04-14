@@ -17,6 +17,9 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-188] - Fix problems with AnimalSniffer-plugin when running in GUMP with Java 8.
                   Workaround for https://jira.codehaus.org/browse/MANIMALSNIFFER-45
                   (thanks to Mark Thomas)
+    * [RAT-160] - Ignore build.log that is created by maven-invoker-plugin runs. Temporary fix until invoker plugin improves
+                  configurability of that file. 
+                  (thanks to Christopher Tubbs)
 
    New features
     * [RAT-171] - Maven plugin allows scanning of source code management ignore files. Their contents is added as exclusion/ignored during RAT runs.
