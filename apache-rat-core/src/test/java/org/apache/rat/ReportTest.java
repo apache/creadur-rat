@@ -110,9 +110,11 @@ public class ReportTest {
         HeaderMatcherMultiplexer matcherMultiplexer = new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setApproveDefaultLicenses(true);
         configuration.setHeaderMatcher(matcherMultiplexer);
         Report.report(out, new DirectoryWalker(new File(elementsPath)),
                 Defaults.getPlainStyleSheet(), configuration);
+
         String result = out.getBuffer().toString();
         final String nl = System.getProperty("line.separator");
         assertTrue("'Generated at' is present in " + result,

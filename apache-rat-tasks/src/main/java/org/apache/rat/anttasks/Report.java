@@ -252,6 +252,7 @@ public class Report extends Task {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(new HeaderMatcherMultiplexer(getLicenseMatchers()));
         configuration.setApprovedLicenseNames(getApprovedLicenseNames());
+        configuration.setApproveDefaultLicenses(true);
         
         if (AddLicenseHeaders.FORCED.equalsIgnoreCase(addLicenseHeaders.getValue())) {
             configuration.setAddingLicenses(true);

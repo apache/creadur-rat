@@ -15,8 +15,10 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.test.utils;
+
+import org.apache.rat.document.impl.DocumentImplUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
-import org.apache.rat.document.impl.DocumentImplUtils;
 
 
 /**
@@ -43,11 +43,14 @@ public class Resources {
         // Does nothing
     }
 
+    // Does not work from within IntelliJ since root path is not module, but apache-rat-trunk
+    private static File RESOURCE_BASE_PATH = new File("src/test/resources");
+
     /**
      * Locates a resource file in the class path.
      */
     public static File getResourceFile(String pResource) throws IOException {
-        final File f = new File("src/test/resources", pResource);
+        final File f = new File(RESOURCE_BASE_PATH, pResource);
         if (!f.isFile()) {
             throw new FileNotFoundException("Unable to locate resource file: " + pResource);
         }
@@ -58,14 +61,15 @@ public class Resources {
      * Locates a set of resource files in the class path.
      */
     public static File[] getResourceFiles(String pResource) throws IOException {
-        final File f = new File("src/test/resources", pResource);
+        final File f = new File(RESOURCE_BASE_PATH, pResource);
         if (!f.isDirectory()) {
             throw new FileNotFoundException("Unable to locate resource directory: " + f);
         }
-        return f.listFiles(new FileFilter(){
+        return f.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
                 return pathname.isFile();
-            }});
+            }
+        });
     }
 
     /**

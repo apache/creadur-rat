@@ -20,5 +20,5 @@ package org.apache.rat.license;
 
 
 public interface ILicenseFamily {
-    public String getFamilyName();
+    String getFamilyName();
 }

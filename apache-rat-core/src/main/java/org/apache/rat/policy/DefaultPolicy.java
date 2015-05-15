@@ -15,79 +15,73 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.policy;
 
+import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.MetaData.Datum;
+import org.apache.rat.config.ConfigurationUtil;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicenseFamily;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class DefaultPolicy implements IDocumentAnalyser {
-    private static final String[] APPROVED_LICENSES = {
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MIT,
-        MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1,
-    };
-    
-    private static final String[] toNames(final ILicenseFamily[] approvedLicenses) {
-        String[] results = null;
-        if (approvedLicenses != null) {
-            final int length = approvedLicenses.length;
-            results = new String[length];
-            for (int i=0;i<length;i++) {
-                results[i] = approvedLicenses[i].getFamilyName();
+    private List<String> approvedLicenseNames;
+
+    /**
+     * Creates a policy that matches the default licenses.
+     * Mainly used for testing purposes.
+     */
+    DefaultPolicy() {
+        this(new ArrayList<String>(0), true);
+    }
+
+    public DefaultPolicy(final ILicenseFamily[] approvedLicenses, boolean mergeWithDefault) {
+        this(ConfigurationUtil.toNames(approvedLicenses), mergeWithDefault);
+    }
+
+    public DefaultPolicy(final List<String> approvedLicenseNames, boolean mergeWithDefault) {
+        this.approvedLicenseNames = new ArrayList<String>();
+
+        if (approvedLicenseNames == null || approvedLicenseNames.isEmpty()) {
+            // used in tests only, no additional licenses given but defaults requested
+            if(mergeWithDefault) {
+                this.approvedLicenseNames = new ArrayList<String>(Defaults.DEFAULT_LICENSE_FAMILIES);
             }
-        }
-        return results;
-    }
-
-    private final String[] approvedLicenseNames;
-    
-    public DefaultPolicy() {
-        this(APPROVED_LICENSES);
-    }
-    
-    public DefaultPolicy(final ILicenseFamily[] approvedLicenses) {
-        this(toNames(approvedLicenses));
-    }
-
-    public DefaultPolicy(final String[] approvedLicenseNames) {
-        if (approvedLicenseNames == null) {
-            this.approvedLicenseNames = APPROVED_LICENSES;
         } else {
-            final int length = approvedLicenseNames.length;
-            this.approvedLicenseNames = new String[length];
-            System.arraycopy(approvedLicenseNames, 0, this.approvedLicenseNames, 0, length);
+            // avoid duplicate entries and merge with defaults if requested
+            Set<String> mergedLicenses = new HashSet<String>(approvedLicenseNames);
+            if(mergeWithDefault) {
+                mergedLicenses.addAll(Defaults.DEFAULT_LICENSE_FAMILIES);
+            }
+            this.approvedLicenseNames = new ArrayList<String>(mergedLicenses);
         }
-        Arrays.sort(this.approvedLicenseNames);
+        Collections.sort(this.approvedLicenseNames);
     }
 
-    public void reportLicenseApprovalClaim(final Document subject, final boolean isAcceptable) {
-        final Datum datum;
-        if (isAcceptable) {
-            datum = MetaData.RAT_APPROVED_LICENSE_DATIM_TRUE;
-        } else {
-            datum = MetaData.RAT_APPROVED_LICENSE_DATIM_FALSE;
-        }
-        subject.getMetaData().set(datum);
-    }
-    
     public void analyse(final Document subject) throws RatDocumentAnalysisException {
         if (subject != null) {
             final String name = subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
             if (name != null) {
-                final boolean isApproved = Arrays.binarySearch(approvedLicenseNames, name) >= 0;
+                final boolean isApproved = (Collections.binarySearch(approvedLicenseNames, name) >= 0);
                 reportLicenseApprovalClaim(subject, isApproved);
             }
         }
+    }
+
+    public void reportLicenseApprovalClaim(final Document subject, final boolean isAcceptable) {
+        subject.getMetaData().set(//
+         isAcceptable ? MetaData.RAT_APPROVED_LICENSE_DATIM_TRUE: MetaData.RAT_APPROVED_LICENSE_DATIM_FALSE);
+    }
+
+    public List<String> getApprovedLicenseNames() {
+        return Collections.unmodifiableList(approvedLicenseNames);
     }
 }

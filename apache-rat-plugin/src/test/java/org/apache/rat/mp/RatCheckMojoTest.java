@@ -17,12 +17,10 @@ package org.apache.rat.mp;
  * limitations under the License.
  */
 
-import static org.apache.rat.mp.RatTestHelpers.ensureRatReportIsCorrect;
-import static org.apache.rat.mp.RatTestHelpers.getSourceDirectory;
-import static org.apache.rat.mp.RatTestHelpers.newArtifactFactory;
-import static org.apache.rat.mp.RatTestHelpers.newArtifactRepository;
-import static org.apache.rat.mp.RatTestHelpers.newArtifactResolver;
-import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
+import org.apache.maven.model.Build;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.rat.config.AddLicenseHeaders;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,9 +28,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.apache.maven.model.Build;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import static org.apache.rat.mp.RatTestHelpers.ensureRatReportIsCorrect;
+import static org.apache.rat.mp.RatTestHelpers.getSourceDirectory;
+import static org.apache.rat.mp.RatTestHelpers.newArtifactFactory;
+import static org.apache.rat.mp.RatTestHelpers.newArtifactRepository;
+import static org.apache.rat.mp.RatTestHelpers.newArtifactResolver;
+import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
 
 /**
  * Test case for the {@link RatCheckMojo} and {@link RatReportMojo}.
@@ -80,7 +81,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "useMavenDefaultExcludes", Boolean.TRUE);
         setVariableValueToObject(mojo, "useEclipseDefaultExcludes",
                 Boolean.TRUE);
-        setVariableValueToObject(mojo, "addLicenseHeaders", "false");
+        setVariableValueToObject(mojo, "addLicenseHeaders", AddLicenseHeaders.FALSE.name());
         final Build build = new Build();
         build.setDirectory(buildDirectory.getPath());
         final MavenProjectStub project = new MavenProjectStub() {
@@ -180,7 +181,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
     public void testIt3() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it3", "check",
                 true);
-        setVariableValueToObject(mojo, "addLicenseHeaders", "true");
+        setVariableValueToObject(mojo, "addLicenseHeaders", AddLicenseHeaders.TRUE.name());
         setVariableValueToObject(mojo, "numUnapprovedLicenses",
                 Integer.valueOf(1));
         mojo.execute();

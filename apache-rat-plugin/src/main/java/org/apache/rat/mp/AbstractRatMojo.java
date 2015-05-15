@@ -53,6 +53,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.rat.mp.util.ConfigurationHelper.newInstance;
 import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
 import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
 import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
@@ -214,68 +215,38 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      * @throws MojoFailureException   An error in the plugin configuration was detected.
      * @throws MojoExecutionException An error occurred while calculating the result.
      */
-    protected List<IHeaderMatcher> getLicenseMatchers()
+    private List<IHeaderMatcher> mergeLicenseMatchers()
             throws MojoFailureException, MojoExecutionException {
-        final List<IHeaderMatcher> matchers = new ArrayList<IHeaderMatcher>();
+        List<IHeaderMatcher> matchers = new ArrayList<IHeaderMatcher>();
+
         if (licenses != null) {
             matchers.addAll(Arrays.asList(licenses));
+            getLog().info("Added " + licenses.length + " additional default licenses.");
         }
 
         if (licenseMatchers != null) {
             for (final HeaderMatcherSpecification spec : licenseMatchers) {
-                final String className = spec.getClassName();
-                final IHeaderMatcher headerMatcher = newInstance(
-                        IHeaderMatcher.class, className);
-                matchers.add(headerMatcher);
+                matchers.add(newInstance(IHeaderMatcher.class, spec.getClassName()));
             }
         }
 
         if (addDefaultLicenseMatchers) {
+            getLog().info("Enabled default license matchers.");
             matchers.addAll(Defaults.DEFAULT_MATCHERS);
         }
+        logLicenseMatchers(matchers);
+
         return matchers;
     }
 
-    private <T> T newInstance(final Class<T> clazz, final String className)
-            throws MojoExecutionException, MojoFailureException {
-        try {
-            final ClassLoader cl = Thread.currentThread()
-                    .getContextClassLoader();
-            @SuppressWarnings("unchecked") // incorrect cast will be caught below
-            final T o = (T) cl.loadClass(className).newInstance();
-
-            if (!clazz.isAssignableFrom(o.getClass())) {
-                throw new MojoFailureException("The class "
-                        + o.getClass().getName() + " does not implement "
-                        + clazz.getName());
+    private void logLicenseMatchers(List<IHeaderMatcher> matchers) {
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("The following license matchers are activated:");
+            for (IHeaderMatcher matcher : matchers) {
+                getLog().debug("* " + matcher.toString());
             }
-            return o;
-        } catch (final InstantiationException e) {
-            throw new MojoExecutionException("Failed to instantiate class "
-                    + className + ": " + e.getMessage(), e);
-        } catch (final ClassCastException e) {
-            throw new MojoExecutionException("The class " + className
-                    + " is not implementing " + clazz.getName() + ": "
-                    + e.getMessage(), e);
-        } catch (final IllegalAccessException e) {
-            throw new MojoExecutionException("Illegal access to class "
-                    + className + ": " + e.getMessage(), e);
-        } catch (final ClassNotFoundException e) {
-            throw new MojoExecutionException("Class " + className
-                    + " not found: " + e.getMessage(), e);
         }
-    }
 
-    /**
-     * Adds the given string array to the list.
-     *
-     * @param pList  The list to which the array elements are being added.
-     * @param pArray The strings to add to the list.
-     */
-    private static void add(List<String> pList, String[] pArray) {
-        if (pArray != null) {
-            Collections.addAll(pList, pArray);
-        }
     }
 
     /**
@@ -336,7 +307,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     }
 
     private void setExcludes(DirectoryScanner ds) {
-        final List<String> excludeList = buildDefaultExclusions();
+        final List<String> excludeList = mergeDefaultExclusions();
         if (excludes == null || excludes.length == 0) {
             getLog().info("No excludes explicitly specified.");
         } else {
@@ -344,7 +315,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 getLog().info("Exclude: " + exclude);
             }
         }
-        add(excludeList, excludes);
+        if (excludes != null) {
+            Collections.addAll(excludeList, excludes);
+        }
         if (!excludeList.isEmpty()) {
             final String[] allExcludes = excludeList.toArray(new String[excludeList
                     .size()]);
@@ -352,7 +325,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         }
     }
 
-    private List<String> buildDefaultExclusions() {
+    private List<String> mergeDefaultExclusions() {
         final Set<String> results = new HashSet<String>();
 
         addPlexusAndScmDefaults(getLog(), useDefaultExcludes, results);
@@ -360,7 +333,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         addEclipseDefaults(getLog(), useEclipseDefaultExcludes, results);
         addIdeaDefaults(getLog(), useIdeaDefaultExcludes, results);
 
-        if(parseSCMIgnoresAsExcludes) {
+        if (parseSCMIgnoresAsExcludes) {
             getLog().info("Will parse SCM ignores for exclusions...");
             results.addAll(ScmIgnoreParser.getExclusionsFromSCM(getLog(), project.getBasedir()));
             getLog().info("Finished adding exclusions from SCM ignore files.");
@@ -451,15 +424,18 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             throws MojoFailureException, MojoExecutionException {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(new HeaderMatcherMultiplexer(
-                getLicenseMatchers()));
-        configuration.setApprovedLicenseNames(getApprovedLicenseNames());
+                mergeLicenseMatchers()));
+        configuration.setApprovedLicenseNames(mergeApprovedLicenseNames());
+        configuration.setApproveDefaultLicenses(addDefaultLicenseMatchers);
         return configuration;
     }
 
-    private ILicenseFamily[] getApprovedLicenseNames()
+    private List<ILicenseFamily> mergeApprovedLicenseNames()
             throws MojoExecutionException, MojoFailureException {
         final List<ILicenseFamily> list = new ArrayList<ILicenseFamily>();
         if (licenseFamilies != null) {
+            int numberOfAddedApprovals = licenseFamilies == null ? 0 : licenseFamilies.length;
+            getLog().info("Added " + numberOfAddedApprovals + " custom approved licenses.");
             list.addAll(Arrays.asList(licenseFamilies));
         }
         if (licenseFamilyNames != null) {
@@ -467,10 +443,6 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 list.add(newInstance(ILicenseFamily.class, spec.getClassName()));
             }
         }
-
-        if (list.isEmpty()) {
-            return null;
-        }
-        return list.toArray(new ILicenseFamily[list.size()]);
+        return list;
     }
 }

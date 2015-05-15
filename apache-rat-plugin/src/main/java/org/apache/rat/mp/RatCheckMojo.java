@@ -19,13 +19,6 @@ package org.apache.rat.mp;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -34,7 +27,15 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.report.claim.ClaimStatistic;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Run Rat to perform a violation check.
@@ -209,14 +210,15 @@ public class RatCheckMojo extends AbstractRatMojo
     protected ReportConfiguration getConfiguration()
             throws MojoFailureException, MojoExecutionException {
         final ReportConfiguration configuration = super.getConfiguration();
-        if ("forced".equals(addLicenseHeaders)) {
+
+        if (AddLicenseHeaders.FORCED.name().equalsIgnoreCase(addLicenseHeaders)) {
             configuration.setAddingLicenses(true);
             configuration.setAddingLicensesForced(true);
             configuration.setCopyrightMessage(copyrightMessage);
-        } else if ("true".equals(addLicenseHeaders)) {
+        } else if (AddLicenseHeaders.TRUE.name().equalsIgnoreCase(addLicenseHeaders)) {
             configuration.setAddingLicenses(true);
             configuration.setCopyrightMessage(copyrightMessage);
-        } else if ("false".equals(addLicenseHeaders)) {
+        } else if (AddLicenseHeaders.FALSE.name().equalsIgnoreCase(addLicenseHeaders)) {
             // Nothing to do
         } else {
             throw new MojoFailureException("Invalid value for addLicenseHeaders: Expected forced|true|false, got "

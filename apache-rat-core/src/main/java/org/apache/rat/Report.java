@@ -55,6 +55,7 @@ public class Report {
     public static final void main(String args[]) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+        configuration.setApproveDefaultLicenses(true);
         Options opts = buildOptions();
 
         PosixParser parser = new PosixParser();
@@ -269,6 +270,7 @@ public class Report {
     public ClaimStatistic report(PrintStream out) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+        configuration.setApproveDefaultLicenses(true);
         return report(out, configuration);
     }
 
@@ -325,6 +327,7 @@ public class Report {
     public void styleReport(PrintStream out) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
+        configuration.setApproveDefaultLicenses(true);
         styleReport(out, configuration);
     }
 

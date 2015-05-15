@@ -18,9 +18,6 @@
  */ 
 package org.apache.rat.report.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.document.IDocumentAnalyser;
@@ -33,6 +30,9 @@ import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
 import org.apache.rat.report.claim.util.LicenseAddingReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates reports.
@@ -49,9 +49,11 @@ public class XmlReportFactory {
             reporters.add(new LicenseAddingReport(pConfiguration.getCopyrightMessage(), pConfiguration.isAddingLicensesForced()));
         }
         reporters.add(new SimpleXmlClaimReporter(writer));
-        final IDocumentAnalyser analyser = 
+
+        final IDocumentAnalyser analyser =
             DefaultAnalyserFactory.createDefaultAnalyser(pConfiguration.getHeaderMatcher());
-        final DefaultPolicy policy = new DefaultPolicy(pConfiguration.getApprovedLicenseNames());
+        final DefaultPolicy policy = new DefaultPolicy(pConfiguration.getApprovedLicenseNames(), pConfiguration.isApproveDefaultLicenses());
+
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);
         return new ClaimReporterMultiplexer(analysisMultiplexer, reporters);

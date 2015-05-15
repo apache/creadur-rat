@@ -23,5 +23,5 @@ import org.apache.rat.api.Document;
 
 public interface IDocumentAnalyser {
 
-    public void analyse(Document document) throws RatDocumentAnalysisException;
+    void analyse(Document document) throws RatDocumentAnalysisException;
 }

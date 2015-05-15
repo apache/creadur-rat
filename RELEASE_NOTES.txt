@@ -20,6 +20,7 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-160] - Ignore build.log that is created by maven-invoker-plugin runs. Temporary fix until invoker plugin improves
                   configurability of that file. 
                   (thanks to Christopher Tubbs)
+    * [RAT-179] - Maven plugin and Ant task do not support adding extra approved licenses.
 
    New features
     * [RAT-171] - Maven plugin allows scanning of source code management ignore files. Their contents is added as exclusion to be ignored during RAT runs.

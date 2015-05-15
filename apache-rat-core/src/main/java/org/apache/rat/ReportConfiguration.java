@@ -15,11 +15,13 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicenseFamily;
+
+import java.util.List;
 
 
 /**
@@ -33,9 +35,22 @@ public class ReportConfiguration {
     private boolean addingLicenses;
     private boolean addingLicensesForced;
     private String copyrightMessage;
+    private boolean approveDefaultLicenses = true;
+
+    /**
+     * @return whether default licenses shall be approved by default.
+     */
+    public boolean isApproveDefaultLicenses() {
+        return approveDefaultLicenses;
+    }
+
+    public void setApproveDefaultLicenses(boolean approveDefaultLicenses) {
+        this.approveDefaultLicenses = approveDefaultLicenses;
+    }
 
     /**
      * Returns the header matcher.
+     *
      * @return the header matcher.
      */
     public IHeaderMatcher getHeaderMatcher() {
@@ -44,6 +59,7 @@ public class ReportConfiguration {
 
     /**
      * Sets the header matcher.
+     *
      * @param headerMatcher header matcher.
      */
     public void setHeaderMatcher(IHeaderMatcher headerMatcher) {
@@ -52,6 +68,7 @@ public class ReportConfiguration {
 
     /**
      * Returns the set of approved license names.
+     *
      * @return the set of approved license names.
      */
     public ILicenseFamily[] getApprovedLicenseNames() {
@@ -60,10 +77,22 @@ public class ReportConfiguration {
 
     /**
      * Sets the set of approved license names.
+     *
      * @param approvedLicenseNames set of approved license names.
      */
     public void setApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
         this.approvedLicenseNames = approvedLicenseNames;
+    }
+
+    /**
+     * Sets the set of approved license names (convenience).
+     *
+     * @param approvedLicenseNames set of approved license names.
+     */
+    public void setApprovedLicenseNames(List<ILicenseFamily> approvedLicenseNames) {
+        if (approvedLicenseNames != null && approvedLicenseNames.size() > 0) {
+            setApprovedLicenseNames(approvedLicenseNames.toArray(new ILicenseFamily[approvedLicenseNames.size()]));
+        }
     }
 
     /**
@@ -80,8 +109,9 @@ public class ReportConfiguration {
      * If Rat is adding license headers: Sets the optional
      * copyright message. This value is ignored, if no
      * license headers are added.
-     * @see #setAddingLicenses(boolean)
+     *
      * @param copyrightMessage message to set.
+     * @see #setAddingLicenses(boolean)
      */
     public void setCopyrightMessage(String copyrightMessage) {
         this.copyrightMessage = copyrightMessage;
@@ -101,8 +131,9 @@ public class ReportConfiguration {
      * If Rat is adding license headers: Sets, whether adding
      * license headers is enforced. This value is ignored, if no
      * license headers are added.
-     * @see #isAddingLicenses()
+     *
      * @param addingLicensesForced enable/disable forcibly adding licenses.
+     * @see #isAddingLicenses()
      */
     public void setAddingLicensesForced(boolean addingLicensesForced) {
         this.addingLicensesForced = addingLicensesForced;
@@ -119,12 +150,13 @@ public class ReportConfiguration {
 
     /**
      * Returns, whether Rat should add missing license headers.
+     *
+     * @param addingLicenses enables/disables adding of licenses.
      * @see #setAddingLicensesForced(boolean)
      * @see #setCopyrightMessage(String)
-     * @param addingLicenses enabled/disables adding of licenses.
      */
     public void setAddingLicenses(boolean addingLicenses) {
         this.addingLicenses = addingLicenses;
     }
-    
+
 }
