@@ -20,9 +20,9 @@ package org.apache.rat.document.impl.guesser;
 
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.test.utils.Resources;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -76,7 +76,7 @@ public class BinaryGuesserTest {
      */
     @Test
     public void binaryWithMalformedInputRAT81() throws Exception {
-        FileDocument doc = new FileDocument(new File("src/test/resources/binaries/UTF16_with_signature.xml"));
+        FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/UTF16_with_signature.xml"));
         Reader r = doc.reader(); // this will fail test if file is not readable
         try {
             char[] dummy = new char[100];
@@ -85,7 +85,7 @@ public class BinaryGuesserTest {
             // any exception, try the UTF-8 encoded one
             r.close();
             r = null; // ensure we detect failure to read second file
-            doc = new FileDocument(new File("src/test/resources/binaries/UTF8_with_signature.xml"));
+            doc = new FileDocument(Resources.getResourceFile("/binaries/UTF8_with_signature.xml"));
             r = doc.reader();
             r.read(dummy);
             // still here?  can't test on this platform
@@ -106,10 +106,10 @@ public class BinaryGuesserTest {
     }
 
     @Test
-    public void realBinaryContent() {
+    public void realBinaryContent() throws IOException {
         // This test is not accurate on all platforms
         final String encoding = System.getProperty("file.encoding");
-        final boolean isBinary = BinaryGuesser.isBinary(new FileDocument(new File("src/test/resources/binaries/Image-png.not")));
+        final boolean isBinary = BinaryGuesser.isBinary(new FileDocument(Resources.getResourceFile("/binaries/Image-png.not")));
         if (encoding.startsWith("ANSI")) {
             assertTrue(isBinary);
         } else {
@@ -122,12 +122,12 @@ public class BinaryGuesserTest {
     }
 
     @Test
-    public void textualContent() {
-        assertFalse(BinaryGuesser.isBinary(new FileDocument(new File("src/test/resources/elements/Text.txt"))));
+    public void textualContent() throws IOException {
+        assertFalse(BinaryGuesser.isBinary(new FileDocument(Resources.getResourceFile("/elements/Text.txt"))));
     }
 
     @Test
-    public void emptyFile() {
-        assertFalse(BinaryGuesser.isBinary(new FileDocument(new File("src/test/resources/elements/sub/Empty.txt"))));
+    public void emptyFile() throws IOException {
+        assertFalse(BinaryGuesser.isBinary(new FileDocument(Resources.getResourceFile("/elements/sub/Empty.txt"))));
     }
 }

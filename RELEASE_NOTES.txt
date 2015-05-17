@@ -21,6 +21,7 @@ Rat 0.12 (SNAPSHOT)
                   configurability of that file. 
                   (thanks to Christopher Tubbs)
     * [RAT-179] - Maven plugin and Ant task do not support adding extra approved licenses.
+    * [RAT-180] - Generify and beautify texts in RAT report. 
 
    New features
     * [RAT-171] - Maven plugin allows scanning of source code management ignore files. Their contents is added as exclusion to be ignored during RAT runs.

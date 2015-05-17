@@ -43,14 +43,28 @@ public class Resources {
         // Does nothing
     }
 
-    // Does not work from within IntelliJ since root path is not module, but apache-rat-trunk
-    private static File RESOURCE_BASE_PATH = new File("src/test/resources");
+    // DevHint: needs to be prefix with apache-rat-core to work properly from within IntelliJ
+    public static final String SRC_TEST_RESOURCES = "src/test/resources";
+    public static final String SRC_MAIN_RESOURCES = "src/main/resources";
+    private static File TEST_RESOURCE_BASE_PATH = new File(SRC_TEST_RESOURCES);
+    private static File RESOURCE_BASE_PATH =  new File(SRC_MAIN_RESOURCES);
 
     /**
-     * Locates a resource file in the class path.
+     * Locates a test resource file in the class path.
      */
     public static File getResourceFile(String pResource) throws IOException {
-        final File f = new File(RESOURCE_BASE_PATH, pResource);
+        return getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+    }
+
+    /**
+     * Locates a main resource file in the class path.
+     */
+    public static File getMainResourceFile(String pResource) throws IOException {
+        return getResourceFromBase(RESOURCE_BASE_PATH, pResource);
+    }
+
+    private static File getResourceFromBase(File baseDir, String pResource) throws IOException {
+        final File f = new File(baseDir, pResource);
         if (!f.isFile()) {
             throw new FileNotFoundException("Unable to locate resource file: " + pResource);
         }
@@ -61,7 +75,7 @@ public class Resources {
      * Locates a set of resource files in the class path.
      */
     public static File[] getResourceFiles(String pResource) throws IOException {
-        final File f = new File(RESOURCE_BASE_PATH, pResource);
+        final File f = new File(TEST_RESOURCE_BASE_PATH, pResource);
         if (!f.isDirectory()) {
             throw new FileNotFoundException("Unable to locate resource directory: " + f);
         }

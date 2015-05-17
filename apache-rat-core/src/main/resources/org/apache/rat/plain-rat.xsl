@@ -25,6 +25,7 @@
 Summary
 -------
 Generated at: <xsl:value-of select='rat-report/@timestamp'/>
+
 Notes: <xsl:value-of select='count(descendant::type[attribute::name="notice"])'/>
 Binaries: <xsl:value-of select='count(descendant::type[attribute::name="binary"])'/>
 Archives: <xsl:value-of select='count(descendant::type[attribute::name="archive"])'/>
@@ -33,14 +34,14 @@ Standards: <xsl:value-of select='count(descendant::type[attribute::name="standar
 Apache Licensed: <xsl:value-of select='count(descendant::header-type[attribute::name="AL   "])'/>
 Generated Documents: <xsl:value-of select='count(descendant::header-type[attribute::name="GEN  "])'/>
 
-JavaDocs are generated and so license header is optional
-Generated files do not required license headers
+JavaDocs are generated, thus a license header is optional.
+Generated files do not require license headers.
 
 <xsl:value-of select='count(descendant::header-type[attribute::name="?????"])'/> Unknown Licenses
 
 *******************************
 
-Unapproved licenses:
+Files with unapproved licenses:
 
 <xsl:for-each select='descendant::resource[license-approval/@name="false"]'>
   <xsl:text>  </xsl:text>
@@ -58,9 +59,9 @@ Archives:
  </xsl:for-each>
 *****************************************************
   Files with Apache License headers will be marked AL
-  Binary files (which do not require AL headers) will be marked B
+  Binary files (which do not require any license headers) will be marked B
   Compressed archives will be marked A
-  Notices, licenses etc will be marked N
+  Notices, licenses etc. will be marked N
  <xsl:for-each select='descendant::resource'>
   <xsl:choose>
      <xsl:when test='license-approval/@name="false"'>!</xsl:when>
@@ -79,11 +80,10 @@ Archives:
  </xsl:text>
  </xsl:for-each>
 *****************************************************
- Printing headers for files without AL header...
- 
+ Printing headers for text files without a valid license header...
  <xsl:for-each select='descendant::resource[header-type/@name="?????"]'>
 =======================================================================
-==<xsl:value-of select='@name'/>
+== File: <xsl:value-of select='@name'/>
 =======================================================================
 <xsl:value-of select='header-sample'/>
 </xsl:for-each>

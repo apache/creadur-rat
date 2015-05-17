@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis;
 
 import org.apache.rat.api.Document;
@@ -23,40 +23,40 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.test.utils.Resources;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
 
 public class AnalyserFactoryTest {
 
-    StringWriter out;
-    SimpleXmlClaimReporter reporter;
-    IHeaderMatcher matcherStub;
+    private static final IHeaderMatcher MATCHES_NOTHING_MATCHER = new IHeaderMatcher() {
+        public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+            return false;
+        }
+
+        public void reset() {
+        }
+    };
+
+    private StringWriter out;
+    private SimpleXmlClaimReporter reporter;
+    private IDocumentAnalyser analyser;
 
     @Before
     public void setUp() throws Exception {
         out = new StringWriter();
         XmlWriter writer = new XmlWriter(out);
         reporter = new SimpleXmlClaimReporter(writer);
-        matcherStub = new IHeaderMatcher() {
-
-            public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-                return false;
-            }
-
-            public void reset() {
-            }            
-        };
-     }
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(MATCHES_NOTHING_MATCHER);
+    }
 
     @Test
     public void standardTypeAnalyser() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/resources/elements/Text.txt"));
-        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcherStub);
+        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/Text.txt"));
         analyser.analyse(document);
         reporter.report(document);
         assertEquals("Open standard element", "<resource name='src/test/resources/elements/Text.txt'><header-sample>/*\n" +
@@ -80,32 +80,30 @@ public class AnalyserFactoryTest {
                 "\n" +
                 "            \n" +
                 "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/>", out.toString());
+
     }
 
     @Test
     public void noteTypeAnalyser() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/LICENSE"));
-        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcherStub);
+        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/LICENSE"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("Open note element", "<resource name='src/test/elements/LICENSE'><type name='notice'/>", out.toString());
+        assertEquals("Open note element", "<resource name='src/test/resources/elements/LICENSE'><type name='notice'/>", out.toString());
     }
 
     @Test
     public void binaryTypeAnalyser() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/Image.png"));
-        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcherStub);
+        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/Image.png"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("Open binary element", "<resource name='src/test/elements/Image.png'><type name='binary'/>", out.toString());
+        assertEquals("Open binary element", "<resource name='src/test/resources/elements/Image.png'><type name='binary'/>", out.toString());
     }
 
     @Test
     public void archiveTypeAnalyser() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(new File("src/test/elements/Dummy.jar"));
-        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcherStub);
+        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("Open archive element", "<resource name='src/test/elements/Dummy.jar'><type name='archive'/>", out.toString());
+        assertEquals("Open archive element", "<resource name='src/test/resources/elements/dummy.jar'><type name='archive'/>", out.toString());
     }
 }

@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat;
 
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
@@ -30,80 +30,81 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ReportTest {
+    private static final String NL = System.getProperty("line.separator");
+
     private static final String HEADER =
-            "\n" + 
-            "*****************************************************\n" + 
-            "Summary\n" + 
-            "-------\n" + 
-            "Generated at: ";
+            NL +
+                    "*****************************************************" + NL +//
+                    "Summary" + NL +//
+                    "-------" + NL +//
+                    "Generated at: ";
 
     private static String getElementsReports(String pElementsPath) {
         return
-            "Notes: 2\n" + 
-            "Binaries: 1\n" + 
-            "Archives: 1\n" + 
-            "Standards: 6\n" + 
-            "\n" + 
-            "Apache Licensed: 3\n" + 
-            "Generated Documents: 0\n" + 
-            "\n" + 
-            "JavaDocs are generated and so license header is optional\n" + 
-            "Generated files do not required license headers\n" + 
-            "\n" + 
-            "2 Unknown Licenses\n" + 
-            "\n" + 
-            "*******************************\n" + 
-            "\n" + 
-            "Unapproved licenses:\n" + 
-            "\n" +
-            "  " + pElementsPath + "/Source.java\n" +
-            "  " + pElementsPath + "/sub/Empty.txt\n" +
-            "\n" +
-            "*******************************\n" + 
-            "\n" + 
-            "Archives:\n" + 
-            "\n" + 
-            " + " + pElementsPath + "/dummy.jar\n" + 
-            " \n" + 
-            "*****************************************************\n" + 
-            "  Files with Apache License headers will be marked AL\n" + 
-            "  Binary files (which do not require AL headers) will be marked B\n" + 
-            "  Compressed archives will be marked A\n" + 
-            "  Notices, licenses etc will be marked N\n" + 
-            "  MIT   " + pElementsPath + "/ILoggerFactory.java\n" + 
-            "  B     " + pElementsPath + "/Image.png\n" + 
-            "  N     " + pElementsPath + "/LICENSE\n" + 
-            "  N     " + pElementsPath + "/NOTICE\n" + 
-            " !????? " + pElementsPath + "/Source.java\n" + 
-            "  AL    " + pElementsPath + "/Text.txt\n" + 
-            "  AL    " + pElementsPath + "/Xml.xml\n" + 
-            "  AL    " + pElementsPath + "/buildr.rb\n" + 
-            "  A     " + pElementsPath + "/dummy.jar\n" + 
-            " !????? " + pElementsPath + "/sub/Empty.txt\n" + 
-            " \n" + 
-            "*****************************************************\n" + 
-            " Printing headers for files without AL header...\n" + 
-            " \n" + 
-            " \n" + 
-            "=======================================================================\n" + 
-            "==" + pElementsPath + "/Source.java\n" + 
-            "=======================================================================\n" + 
-            "package elements;\n" + 
-            "\n" +
-            "/*\n" +
-            " * This file does intentionally *NOT* contain an AL license header,\n" +
-            " * because it is used in the test suite.\n" +
-            " */\n" +
-            "public class Source {\n" + 
-            "\n" + 
-            "}\n" + 
-            "\n" + 
-            "=======================================================================\n" + 
-            "==" + pElementsPath + "/sub/Empty.txt\n" + 
-            "=======================================================================\n" + 
-            "\n";
+                NL + "Notes: 2" + NL +//
+                        "Binaries: 1" + NL +//
+                        "Archives: 1" + NL +//
+                        "Standards: 6" + NL +//
+                        "" + NL +//
+                        "Apache Licensed: 3" + NL +//
+                        "Generated Documents: 0" + NL +//
+                        "" + NL +//
+                        "JavaDocs are generated, thus a license header is optional." + NL +//
+                        "Generated files do not require license headers." + NL +//
+                        "" + NL +//
+                        "2 Unknown Licenses" + NL +//
+                        "" + NL +//
+                        "*******************************" + NL +//
+                        "" + NL +//
+                        "Files with unapproved licenses:" + NL +//
+                        "" + NL +//
+                        "  " + pElementsPath + "/Source.java" + NL +//
+                        "  " + pElementsPath + "/sub/Empty.txt" + NL +//
+                        "" + NL +//
+                        "*******************************" + NL +//
+                        "" + NL +//
+                        "Archives:" + NL +//
+                        "" + NL +//
+                        " + " + pElementsPath + "/dummy.jar" + NL +//
+                        " " + NL +//
+                        "*****************************************************" + NL +//
+                        "  Files with Apache License headers will be marked AL" + NL +//
+                        "  Binary files (which do not require any license headers) will be marked B" + NL +//
+                        "  Compressed archives will be marked A" + NL +//
+                        "  Notices, licenses etc. will be marked N" + NL +//
+                        "  MIT   " + pElementsPath + "/ILoggerFactory.java" + NL +//
+                        "  B     " + pElementsPath + "/Image.png" + NL +//
+                        "  N     " + pElementsPath + "/LICENSE" + NL +//
+                        "  N     " + pElementsPath + "/NOTICE" + NL +//
+                        " !????? " + pElementsPath + "/Source.java" + NL +//
+                        "  AL    " + pElementsPath + "/Text.txt" + NL +//
+                        "  AL    " + pElementsPath + "/Xml.xml" + NL +//
+                        "  AL    " + pElementsPath + "/buildr.rb" + NL +//
+                        "  A     " + pElementsPath + "/dummy.jar" + NL +//
+                        " !????? " + pElementsPath + "/sub/Empty.txt" + NL +//
+                        " " + NL +//
+                        "*****************************************************" + NL +//
+                        " Printing headers for text files without a valid license header..." + NL +//
+                        " " + NL +//
+                        "=======================================================================" + NL +//
+                        "== File: " + pElementsPath + "/Source.java" + NL +//
+                        "=======================================================================" + NL + //
+                        "package elements;" + NL +//
+                        "" + NL +//
+                        "/*" + NL +//
+                        " * This file does intentionally *NOT* contain an AL license header," + NL +//
+                        " * because it is used in the test suite." + NL +//
+                        " */" + NL +//
+                        "public class Source {" + NL +//
+                        "" + NL +//
+                        "}" + NL +//
+                        "" + NL +//
+                        "=======================================================================" + NL +//
+                        "== File: " + pElementsPath + "/sub/Empty.txt" + NL +//
+                        "=======================================================================" + NL +//
+                        NL;
     }
-    
+
     @Test
     public void plainReport() throws Exception {
         StringWriter out = new StringWriter();
@@ -116,13 +117,14 @@ public class ReportTest {
                 Defaults.getPlainStyleSheet(), configuration);
 
         String result = out.getBuffer().toString();
-        final String nl = System.getProperty("line.separator");
         assertTrue("'Generated at' is present in " + result,
-                   result.startsWith(HEADER.replaceAll("\n", nl)));
-        final int generatedAtLineEnd = result.indexOf(nl, HEADER.length());
+                result.startsWith(HEADER));
+
+        final int generatedAtLineEnd = result.indexOf(NL, HEADER.length());
+
         final String elementsReports = getElementsReports(elementsPath);
-        assertEquals("Report created",
-                     elementsReports.replaceAll("\n", nl),
-                     result.substring(generatedAtLineEnd + nl.length()));
+        assertEquals("Report created was: " + result,
+                elementsReports,
+                result.substring(generatedAtLineEnd + NL.length()));
     }
 }

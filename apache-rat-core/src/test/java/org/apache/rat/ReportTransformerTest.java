@@ -18,10 +18,10 @@
  */ 
 package org.apache.rat;
 
+import org.apache.rat.test.utils.Resources;
 import org.junit.Test;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -45,7 +45,7 @@ public class ReportTransformerTest {
         assertNotNull(writer);
         StringReader in = new StringReader(SIMPLE_CONTENT);
         ReportTransformer transformer = new ReportTransformer(writer, 
-                new BufferedReader(new FileReader(new File("src/main/resources/org/apache/rat/plain-rat.xsl"))), 
+                new BufferedReader(new FileReader(Resources.getMainResourceFile("/org/apache/rat/plain-rat.xsl"))),
                 in);
         transformer.transform();
     }
