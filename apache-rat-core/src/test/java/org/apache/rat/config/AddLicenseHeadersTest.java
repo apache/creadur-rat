@@ -1,5 +1,4 @@
 package org.apache.rat.config;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,30 +17,19 @@ package org.apache.rat.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
 
 /**
- * Value of addLicenseHeaders configuration option.
- *
  * @author pottlinger
- * @version 2015-05-11
+ * @version 2015-05-17, 21:14
  */
-public enum AddLicenseHeaders {
-    TRUE, //
-    FALSE, //
-    FORCED;
-
-    private static final char SEPARATOR = '|';
-
-    /**
-     * @return pretty-printed list of all available options.
-     */
-    public static String getValuesForHelp() {
-        StringBuilder sb = new StringBuilder();
-        for(AddLicenseHeaders headerOption : AddLicenseHeaders.values()) {
-            sb.append(headerOption.name().toLowerCase()).append(SEPARATOR);
-        }
-        // remove last separator
-        sb.setLength(sb.length() - 1);
-        return sb.toString();
+public class AddLicenseHeadersTest {
+    @Test
+    public void verifyHelpOptions() {
+        String allOptions = AddLicenseHeaders.getValuesForHelp();
+        assertFalse(allOptions, allOptions.isEmpty());
+        assertFalse(allOptions, allOptions.endsWith("|"));
     }
 }

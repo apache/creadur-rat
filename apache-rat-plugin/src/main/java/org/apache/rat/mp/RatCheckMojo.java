@@ -40,14 +40,12 @@ import java.io.InputStream;
 /**
  * Run Rat to perform a violation check.
  */
-@Mojo (name = "check", defaultPhase = LifecyclePhase.VALIDATE)
-public class RatCheckMojo extends AbstractRatMojo
-{
+@Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE)
+public class RatCheckMojo extends AbstractRatMojo {
     /**
      * Where to store the report.
-     *
      */
-    @Parameter (property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
+    @Parameter(property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
     private File reportFile;
 
     /**
@@ -55,7 +53,6 @@ public class RatCheckMojo extends AbstractRatMojo
      * report or "xml" for the raw XML report. Alternatively you can give the
      * path of an XSL transformation that will be applied on the raw XML to
      * produce the report written to the output file.
-     *
      */
     @Parameter(property = "rat.outputStyle", defaultValue = "plain")
     private String reportStyle;
@@ -69,7 +66,6 @@ public class RatCheckMojo extends AbstractRatMojo
     /**
      * Whether to add license headers; possible values are
      * {@code forced}, {@code true}, and {@code false} (default).
-     *
      */
     @Parameter(property = "rat.addLicenseHeaders", defaultValue = "false")
     private String addLicenseHeaders;
@@ -78,7 +74,6 @@ public class RatCheckMojo extends AbstractRatMojo
      * Copyright message to add to license headers. This option is
      * ignored, unless {@code addLicenseHeaders} is set to {@code true},
      * or {@code forced}.
-     *
      */
     @Parameter(property = "rat.copyrightMessage")
     private String copyrightMessage;
@@ -86,6 +81,7 @@ public class RatCheckMojo extends AbstractRatMojo
     /**
      * Will ignore rat errors and display a log message if any.
      * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     *
      * @since 0.9
      */
     @Parameter(property = "rat.ignoreErrors", defaultValue = "false")
@@ -101,53 +97,39 @@ public class RatCheckMojo extends AbstractRatMojo
     private boolean consoleOutput;
 
     private ClaimStatistic getRawReport()
-        throws MojoExecutionException, MojoFailureException
-    {
+            throws MojoExecutionException, MojoFailureException {
         FileWriter fw = null;
-        try
-        {
-            fw = new FileWriter( reportFile );
-            final ClaimStatistic statistic = createReport( fw, getStyleSheet() );
+        try {
+            fw = new FileWriter(reportFile);
+            final ClaimStatistic statistic = createReport(fw, getStyleSheet());
             fw.close();
             fw = null;
             return statistic;
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        finally
-        {
-            IOUtils.closeQuietly( fw );
+        } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(fw);
         }
     }
 
     /**
      * Returns the XSL stylesheet to be used for formatting the report.
      *
-     * @see #reportStyle
      * @return report stylesheet, or <code>null</code> for raw XML
      * @throws MojoExecutionException if the stylesheet can not be found
+     * @see #reportStyle
      */
     private InputStream getStyleSheet() throws MojoExecutionException {
-        if ( reportStyle == null || reportStyle.equals( "plain" ) )
-        {
+        if (reportStyle == null || reportStyle.equals("plain")) {
             return Defaults.getPlainStyleSheet();
-        }
-        else if ( reportStyle.equals( "xml" ) )
-        {
+        } else if (reportStyle.equals("xml")) {
             return null;
-        }
-        else
-        {
-            try
-            {
-                return new FileInputStream( reportStyle );
-            }
-            catch ( FileNotFoundException e )
-            {
+        } else {
+            try {
+                return new FileInputStream(reportStyle);
+            } catch (FileNotFoundException e) {
                 throw new MojoExecutionException(
-                        "Unable to find report stylesheet: " + reportStyle, e );
+                        "Unable to find report stylesheet: " + reportStyle, e);
             }
         }
     }
@@ -155,53 +137,41 @@ public class RatCheckMojo extends AbstractRatMojo
     /**
      * Invoked by Maven to execute the Mojo.
      *
-     * @throws MojoFailureException
-     *             An error in the plugin configuration was detected.
-     * @throws MojoExecutionException
-     *             Another error occurred while executing the plugin.
+     * @throws MojoFailureException   An error in the plugin configuration was detected.
+     * @throws MojoExecutionException Another error occurred while executing the plugin.
      */
-    public void execute() throws MojoExecutionException, MojoFailureException
-    {
-        if(skip) {
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
             getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
             return;
         }
 
         final File parent = reportFile.getParentFile();
-        if(!parent.mkdirs() && !parent.isDirectory()) {
+        if (!parent.mkdirs() && !parent.isDirectory()) {
             throw new MojoExecutionException("Could not create report parent directory " + parent);
         }
 
         final ClaimStatistic report = getRawReport();
-        check( report );
+        check(report);
     }
 
-    protected void check( ClaimStatistic statistics )
-        throws MojoFailureException
-    {
+    protected void check(ClaimStatistic statistics)
+            throws MojoFailureException {
         getLog().info("Rat check: Summary of files. Unapproved: " + statistics.getNumUnApproved() + " unknown: " + statistics.getNumUnknown() + " generated: " + statistics.getNumGenerated() + " approved: " + statistics.getNumApproved() + " licence.");
-        if ( numUnapprovedLicenses < statistics.getNumUnApproved() )
-        {
-            if ( consoleOutput )
-            {
-                try
-                {
-                    getLog().warn( createReport( Defaults.getUnapprovedLicensesStyleSheet() ).trim() );
-                }
-                catch( MojoExecutionException e )
-                {
-                    getLog().warn( "Unable to print the files with unapproved licenses to the console." );
+        if (numUnapprovedLicenses < statistics.getNumUnApproved()) {
+            if (consoleOutput) {
+                try {
+                    getLog().warn(createReport(Defaults.getUnapprovedLicensesStyleSheet()).trim());
+                } catch (MojoExecutionException e) {
+                    getLog().warn("Unable to print the files with unapproved licenses to the console.");
                 }
             }
 
             final String seeReport = " See RAT report in: " + reportFile;
-            if ( !ignoreErrors )
-            {
-                throw new RatCheckException( "Too many files with unapproved license: " + statistics.getNumUnApproved() + seeReport);
-            }
-            else
-            {
-                getLog().warn( "Rat check: " + statistics.getNumUnApproved() + " files with unapproved licenses." + seeReport);
+            if (!ignoreErrors) {
+                throw new RatCheckException("Too many files with unapproved license: " + statistics.getNumUnApproved() + seeReport);
+            } else {
+                getLog().warn("Rat check: " + statistics.getNumUnApproved() + " files with unapproved licenses." + seeReport);
             }
         }
     }
@@ -221,7 +191,7 @@ public class RatCheckMojo extends AbstractRatMojo
         } else if (AddLicenseHeaders.FALSE.name().equalsIgnoreCase(addLicenseHeaders)) {
             // Nothing to do
         } else {
-            throw new MojoFailureException("Invalid value for addLicenseHeaders: Expected forced|true|false, got "
+            throw new MojoFailureException("Invalid value for addLicenseHeaders: Expected " + AddLicenseHeaders.getValuesForHelp() + ", got "
                     + addLicenseHeaders);
         }
         return configuration;
