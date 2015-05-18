@@ -344,7 +344,7 @@ public abstract class AbstractLicenceAppender {
      *
      * @param document to retrieve type from.
      * @return not null
-     * @TODO use existing mechanism to detect the type of a file and record it in the report output, thus we will not need this duplication here.
+     * TODO use existing mechanism to detect the type of a file and record it in the report output, thus we will not need this duplication here.
      */
     protected int getType(File document) {
         String path = document.getPath();
