@@ -28,6 +28,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.config.ReportFormat;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 import java.io.File;
@@ -53,6 +54,7 @@ public class RatCheckMojo extends AbstractRatMojo {
      * report or "xml" for the raw XML report. Alternatively you can give the
      * path of an XSL transformation that will be applied on the raw XML to
      * produce the report written to the output file.
+     *
      */
     @Parameter(property = "rat.outputStyle", defaultValue = "plain")
     private String reportStyle;
@@ -120,9 +122,9 @@ public class RatCheckMojo extends AbstractRatMojo {
      * @see #reportStyle
      */
     private InputStream getStyleSheet() throws MojoExecutionException {
-        if (reportStyle == null || reportStyle.equals("plain")) {
+        if (reportStyle == null || ReportFormat.PLAIN.is(reportStyle)) {
             return Defaults.getPlainStyleSheet();
-        } else if (reportStyle.equals("xml")) {
+        } else if (ReportFormat.XML.is(reportStyle)) {
             return null;
         } else {
             try {

@@ -36,7 +36,7 @@ public interface IXmlWriter {
      * if called after the first element has been written
      * or once a prolog has already been written
      */
-    public IXmlWriter startDocument() throws IOException;
+    IXmlWriter startDocument() throws IOException;
     
     /**
      * Writes the start of an element.
@@ -47,7 +47,7 @@ public interface IXmlWriter {
      * @throws OperationNotAllowedException 
      * if called after the first element has been closed
      */
-    public IXmlWriter openElement(CharSequence elementName) throws IOException;
+    IXmlWriter openElement(CharSequence elementName) throws IOException;
     
     /**
      * Writes an attribute of an element.
@@ -62,7 +62,7 @@ public interface IXmlWriter {
      * @throws OperationNotAllowedException if called after {@link #content(CharSequence)} 
      * or {@link #closeElement()} or before any call to {@link #openElement(CharSequence)}
      */
-    public IXmlWriter attribute(CharSequence name, CharSequence value) throws IOException;
+    IXmlWriter attribute(CharSequence name, CharSequence value) throws IOException;
     
     /**
      * Writes content.
@@ -75,7 +75,7 @@ public interface IXmlWriter {
      * if called before any call to {@link #openElement} 
      * or after the first element has been closed
      */
-    public IXmlWriter content(CharSequence content) throws IOException;
+    IXmlWriter content(CharSequence content) throws IOException;
     
     /**
      * Closes the last element written.
@@ -85,7 +85,7 @@ public interface IXmlWriter {
      * if called before any call to {@link #openElement} 
      * or after the first element has been closed
      */
-    public IXmlWriter closeElement() throws IOException;
+    IXmlWriter closeElement() throws IOException;
     
     /**
      * Closes all pending elements.
@@ -97,5 +97,5 @@ public interface IXmlWriter {
      * @throws OperationNotAllowedException 
      * if called before any call to {@link #openElement} 
      */
-    public IXmlWriter closeDocument() throws IOException;
+    IXmlWriter closeDocument() throws IOException;
 }

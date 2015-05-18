@@ -18,30 +18,30 @@
  */
 package org.apache.rat.analysis.license;
 
-import java.util.regex.Pattern;
-
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
 
+import java.util.regex.Pattern;
+
 /**
  * Matches a typical Copyright header line only based on a regex pattern
  * which allows for one (starting) year or year range, and a
  * configurable copyright owner.
- *
+ * <p/>
  * <p>The matching is done case insensitive</p>
- *
+ * <p/>
  * Example supported Copyright header lines, using copyright owner &quot;FooBar&quot;
  * <ul>
- *   <li>* Copyright 2010 FooBar. *</li>
- *   <li>* Copyright 2010-2012 FooBar. *</li>
- *   <li>*copyright 2012 foobar*</li>
+ * <li>* Copyright 2010 FooBar. *</li>
+ * <li>* Copyright 2010-2012 FooBar. *</li>
+ * <li>*copyright 2012 foobar*</li>
  * </ul>
- *
+ * <p/>
  * <p>Note also that the copyright owner is appended to the regex pattern, so
  * can support additional regex but also requires escaping where needed,<br>
-  * e.g. use &quot;FooBar \(www\.foobar\.com\)&quot; for matching &quot;FooBar (www.foobar.com)&quot;</p>
+ * e.g. use &quot;FooBar \(www\.foobar\.com\)&quot; for matching &quot;FooBar (www.foobar.com)&quot;</p>
  *
  * @since Rat 0.9
  */
@@ -53,7 +53,7 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
     private String copyrightOwner;
     private boolean copyrightMatch = false;
 
-    public CopyrightHeader(){
+    public CopyrightHeader() {
     }
 
     protected CopyrightHeader(Datum licenseFamilyCategory, Datum licenseFamilyName, String notes) {
@@ -68,7 +68,7 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
     // Called by ctor, so must not be overridden
     public final void setCopyrightOwner(String copyrightOwner) {
         this.copyrightOwner = copyrightOwner;
-        this.copyrightPattern = Pattern.compile(COPYRIGHT_PREFIX_PATTERN_DEFN+copyrightOwner+".*", Pattern.CASE_INSENSITIVE);
+        this.copyrightPattern = Pattern.compile(COPYRIGHT_PREFIX_PATTERN_DEFN + copyrightOwner + ".*", Pattern.CASE_INSENSITIVE);
     }
 
     public String getCopyRightOwner() {
@@ -91,10 +91,8 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
     }
 
     public boolean match(Document subject, String s) throws RatHeaderAnalysisException {
-        if (!copyrightMatch) {
-            if (matchCopyright(s)) {
-                reportOnLicense(subject);
-            }
+        if (!copyrightMatch && matchCopyright(s)) {
+            reportOnLicense(subject);
         }
         return copyrightMatch;
     }

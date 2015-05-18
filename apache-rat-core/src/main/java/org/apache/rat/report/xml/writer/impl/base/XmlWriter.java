@@ -15,20 +15,19 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml.writer.impl.base;
+
+import org.apache.commons.collections.ArrayStack;
+import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.InvalidXmlException;
+import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.collections.ArrayStack;
-
-import org.apache.rat.report.xml.writer.IXmlWriter;
-import org.apache.rat.report.xml.writer.InvalidXmlException;
-import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 
 /**
  * <p>Lightweight {@link IXmlWriter} implementation.</p>
@@ -44,9 +43,9 @@ public final class XmlWriter implements IXmlWriter {
     private static final byte NAME_MASK = 1 << 2;
     private static final byte NAME_BODY_CHAR = NAME_MASK;
     private static final byte NAME_START_OR_BODY_CHAR = NAME_MASK | NAME_START_MASK;
-    
-    private final static boolean[] ALLOWED_CHARACTERS = new boolean[1 << 16]; 
-    
+
+    private final static boolean[] ALLOWED_CHARACTERS = new boolean[1 << 16];
+
     static {
         Arrays.fill(ALLOWED_CHARACTERS, false);
         ALLOWED_CHARACTERS[0x9] = true;
@@ -55,9 +54,9 @@ public final class XmlWriter implements IXmlWriter {
         Arrays.fill(ALLOWED_CHARACTERS, 0x20, 0xD7FF, true);
         Arrays.fill(ALLOWED_CHARACTERS, 0xE000, 0xFFFD, true);
     }
-    
-    private final static byte[] CHARACTER_CODES = new byte[1 << 16]; 
-                              
+
+    private final static byte[] CHARACTER_CODES = new byte[1 << 16];
+
     static {
         // Name ::= (Letter | '_' | ':') (NameChar)*
         CHARACTER_CODES['_'] = NAME_START_OR_BODY_CHAR;
@@ -399,28 +398,28 @@ public final class XmlWriter implements IXmlWriter {
         Arrays.fill(CHARACTER_CODES, 0x30FC, 0x30FE, NAME_BODY_CHAR);
 
     }
-    
+
     private final Writer writer;
     private final ArrayStack elementNames;
     private final Set<CharSequence> currentAttributes = new HashSet<CharSequence>();
-    
+
     boolean elementsWritten = false;
     boolean inElement = false;
     boolean prologWritten = false;
-    
+
     public XmlWriter(final Writer writer) {
         this.writer = writer;
         this.elementNames = new ArrayStack();
     }
-    
+
     /**
      * Starts a document by writing a prolog.
      * Calling this method is optional.
      * When writing a document fragment, it should <em>not</em> be called.
+     *
      * @return this object
-     * @throws OperationNotAllowedException 
-     * if called after the first element has been written
-     * or once a prolog has already been written
+     * @throws OperationNotAllowedException if called after the first element has been written
+     *                                      or once a prolog has already been written
      */
     public IXmlWriter startDocument() throws IOException {
         if (elementsWritten) {
@@ -433,15 +432,14 @@ public final class XmlWriter implements IXmlWriter {
         prologWritten = true;
         return this;
     }
-    
+
     /**
      * Writes the start of an element.
-     * 
+     *
      * @param elementName the name of the element, not null
-     * @return this object 
-     * @throws InvalidXmlException if the name is not valid for an xml element
-     * @throws OperationNotAllowedException 
-     * if called after the first element has been closed
+     * @return this object
+     * @throws InvalidXmlException          if the name is not valid for an xml element
+     * @throws OperationNotAllowedException if called after the first element has been closed
      */
     public IXmlWriter openElement(final CharSequence elementName) throws IOException {
         if (elementsWritten && elementNames.isEmpty()) {
@@ -461,26 +459,26 @@ public final class XmlWriter implements IXmlWriter {
         currentAttributes.clear();
         return this;
     }
-    
+
     /**
      * Writes an attribute of an element.
      * Note that this is only allowed directly after {@link #openElement(CharSequence)}
      * or {@link #attribute}.
-     * 
-     * @param name the attribute name, not null
+     *
+     * @param name  the attribute name, not null
      * @param value the attribute value, not null
      * @return this object
-     * @throws InvalidXmlException if the name is not valid for an xml attribute 
-     * or if a value for the attribute has already been written
-     * @throws OperationNotAllowedException if called after {@link #content(CharSequence)} 
-     * or {@link #closeElement()} or before any call to {@link #openElement(CharSequence)}
+     * @throws InvalidXmlException          if the name is not valid for an xml attribute
+     *                                      or if a value for the attribute has already been written
+     * @throws OperationNotAllowedException if called after {@link #content(CharSequence)}
+     *                                      or {@link #closeElement()} or before any call to {@link #openElement(CharSequence)}
      */
     public IXmlWriter attribute(CharSequence name, CharSequence value) throws IOException {
         if (elementNames.isEmpty()) {
             if (elementsWritten) {
                 throw new OperationNotAllowedException("Root element has already been closed.");
             } else {
-                throw new OperationNotAllowedException("Close called before an element has been opened.");            
+                throw new OperationNotAllowedException("Close called before an element has been opened.");
             }
         }
         if (!isValidName(name)) {
@@ -501,28 +499,27 @@ public final class XmlWriter implements IXmlWriter {
         currentAttributes.add(name);
         return this;
     }
-    
+
     private void writeAttributeContent(CharSequence content) throws IOException {
         writeEscaped(content, true);
     }
 
     /**
      * Writes content.
-     * Calling this method will automatically 
+     * Calling this method will automatically
      * Note that this method does not use CDATA.
-     * 
+     *
      * @param content the content to write
      * @return this object
-     * @throws OperationNotAllowedException 
-     * if called before any call to {@link #openElement} 
-     * or after the first element has been closed
+     * @throws OperationNotAllowedException if called before any call to {@link #openElement}
+     *                                      or after the first element has been closed
      */
     public IXmlWriter content(CharSequence content) throws IOException {
         if (elementNames.isEmpty()) {
             if (elementsWritten) {
                 throw new OperationNotAllowedException("Root element has already been closed.");
             } else {
-                throw new OperationNotAllowedException("An element must be opened before content can be written.");            
+                throw new OperationNotAllowedException("An element must be opened before content can be written.");
             }
         }
         if (inElement) {
@@ -532,14 +529,14 @@ public final class XmlWriter implements IXmlWriter {
         inElement = false;
         return this;
     }
-    
+
     private void writeBodyContent(final CharSequence content) throws IOException {
         writeEscaped(content, false);
     }
 
     private void writeEscaped(final CharSequence content, boolean isAttributeContent) throws IOException {
         final int length = content.length();
-        for (int i=0;i<length;i++) {
+        for (int i = 0; i < length; i++) {
             char character = content.charAt(i);
             if (character == '&') {
                 writer.write("&amp;");
@@ -558,7 +555,7 @@ public final class XmlWriter implements IXmlWriter {
             }
         }
     }
-    
+
     private boolean isOutOfRange(final char character) {
         final boolean result = !ALLOWED_CHARACTERS[character];
         return result;
@@ -566,18 +563,17 @@ public final class XmlWriter implements IXmlWriter {
 
     /**
      * Closes the last element written.
-     * 
+     *
      * @return this object
-     * @throws OperationNotAllowedException 
-     * if called before any call to {@link #openElement} 
-     * or after the first element has been closed
+     * @throws OperationNotAllowedException if called before any call to {@link #openElement}
+     *                                      or after the first element has been closed
      */
     public IXmlWriter closeElement() throws IOException {
         if (elementNames.isEmpty()) {
             if (elementsWritten) {
                 throw new OperationNotAllowedException("Root element has already been closed.");
             } else {
-                throw new OperationNotAllowedException("Close called before an element has been opened.");            
+                throw new OperationNotAllowedException("Close called before an element has been opened.");
             }
         }
         final CharSequence elementName = (CharSequence) elementNames.pop();
@@ -594,43 +590,41 @@ public final class XmlWriter implements IXmlWriter {
         inElement = false;
         return this;
     }
-                                                         
-    
+
+
     /**
      * Closes all pending elements.
      * When appropriate, resources are also flushed and closed.
      * No exception is raised when called upon a document whose
      * root element has already been closed.
+     *
      * @return this object
-     * @throws OperationNotAllowedException 
-     * if called before any call to {@link #openElement} 
+     * @throws OperationNotAllowedException if called before any call to {@link #openElement}
      */
     public IXmlWriter closeDocument() throws IOException {
-        if (elementNames.isEmpty()) {
-            if (!elementsWritten) {
-                throw new OperationNotAllowedException("Close called before an element has been opened.");            
-            }
+        if (elementNames.isEmpty() && !elementsWritten) {
+            throw new OperationNotAllowedException("Close called before an element has been opened.");
         }
-        while(!elementNames.isEmpty()) {
+        while (!elementNames.isEmpty()) {
             closeElement();
         }
         writer.flush();
         return this;
     }
-    
+
     private void rawWrite(final CharSequence sequence) throws IOException {
-        for (int i=0;i<sequence.length();i++) {
+        for (int i = 0; i < sequence.length(); i++) {
             final char charAt = sequence.charAt(i);
             writer.write(charAt);
         }
     }
-    
+
     private boolean isValidName(final CharSequence sequence) {
         boolean result = true;
         final int length = sequence.length();
-        for (int i=0;i<length;i++) {
+        for (int i = 0; i < length; i++) {
             char character = sequence.charAt(i);
-            if (i==0) {
+            if (i == 0) {
                 if (!isValidNameStart(character)) {
                     result = false;
                     break;
@@ -644,13 +638,13 @@ public final class XmlWriter implements IXmlWriter {
         }
         return result;
     }
-    
+
     private boolean isValidNameStart(final char character) {
         final byte code = CHARACTER_CODES[character];
         final boolean result = (code & NAME_START_MASK) > 0;
         return result;
     }
-    
+
     private boolean isValidNameBody(final char character) {
         final byte code = CHARACTER_CODES[character];
         final boolean result = (code & NAME_MASK) > 0;
