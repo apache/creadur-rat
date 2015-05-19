@@ -54,7 +54,6 @@ public class RatCheckMojo extends AbstractRatMojo {
      * report or "xml" for the raw XML report. Alternatively you can give the
      * path of an XSL transformation that will be applied on the raw XML to
      * produce the report written to the output file.
-     *
      */
     @Parameter(property = "rat.outputStyle", defaultValue = "plain")
     private String reportStyle;
@@ -159,7 +158,17 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     protected void check(ClaimStatistic statistics)
             throws MojoFailureException {
-        getLog().info("Rat check: Summary of files. Unapproved: " + statistics.getNumUnApproved() + " unknown: " + statistics.getNumUnknown() + " generated: " + statistics.getNumGenerated() + " approved: " + statistics.getNumApproved() + " licence.");
+        if (numUnapprovedLicenses > 0) {
+            getLog().info("You requested to accept " + numUnapprovedLicenses + " files with unapproved licenses.");
+        }
+
+        int numApproved = statistics.getNumApproved();
+        getLog().info("Rat check: Summary over all files. Unapproved: " + statistics.getNumUnApproved() + //
+                ", unknown: " + statistics.getNumUnknown() + //
+                ", generated: " + statistics.getNumGenerated() + //
+                ", approved: " + numApproved + //
+                (numApproved > 0 ? " licenses." : " license."));
+
         if (numUnapprovedLicenses < statistics.getNumUnApproved()) {
             if (consoleOutput) {
                 try {
