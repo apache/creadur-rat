@@ -70,7 +70,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
         if (subject != null) {
             final String name = subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
             if (name != null) {
-                final boolean isApproved = (Collections.binarySearch(approvedLicenseNames, name) >= 0);
+                final boolean isApproved = Collections.binarySearch(approvedLicenseNames, name) >= 0;
                 reportLicenseApprovalClaim(subject, isApproved);
             }
         }
