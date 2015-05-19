@@ -207,11 +207,6 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <!-- Later versions require Java 1.6+ -->
-        <version>3.1</version>
-        <configuration>
-          <targetJdk>${javaVersion}</targetJdk>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -278,7 +273,8 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.2</version>
+          <!-- Later versions require Java 1.6+ -->
+          <version>3.1</version>
           <configuration>
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>

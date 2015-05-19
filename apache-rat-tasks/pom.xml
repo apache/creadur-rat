@@ -160,4 +160,13 @@
       </plugins>
     </pluginManagement>
   </build>
+  <!-- Strangely no PMD report appears in this submodule -->
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
