@@ -23,7 +23,6 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,13 +40,11 @@ public class DefaultPolicyTest {
         }
     };
 
-    private MockClaimReporter reporter;
     private Document subject;
     private DefaultPolicy policy;
 
     @Before
     public void setUp() throws Exception {
-        reporter = new MockClaimReporter();
         policy = new DefaultPolicy();
         subject = new MockLocation("subject");
     }

@@ -42,7 +42,6 @@ public final class ScmIgnoreParser {
 
     private static List<String> COMMENT_PREFIXES = Arrays.asList("#", "##", "//", "/**", "/*");
 
-    // FIXME: RAT-171 should we try to parse it into Patterns to sort out error cases?
     /**
      * Parses excludes from the given SCM ignore file.
      *
@@ -52,12 +51,13 @@ public final class ScmIgnoreParser {
      */
     public static List<String> getExcludesFromFile(final Log log, final File scmIgnore) {
 
-        List<String> exclusionLines = new ArrayList<String>();
+        final List<String> exclusionLines = new ArrayList<String>();
 
         if (scmIgnore != null && scmIgnore.exists() && scmIgnore.isFile()) {
             log.info("Parsing exclusions from " + scmIgnore);
+            BufferedReader reader = null;
             try {
-                final BufferedReader reader = new BufferedReader(new FileReader(scmIgnore));
+                reader = new BufferedReader(new FileReader(scmIgnore));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (!isComment(line)) {
@@ -68,11 +68,19 @@ public final class ScmIgnoreParser {
             } catch (final IOException e) {
                 log.warn("Cannot parse " + scmIgnore + " for exclusions. Will skip this file.");
                 log.debug("Skip parsing " + scmIgnore + " due to " + e.getMessage());
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        log.error("Cannot close " + scmIgnore + " after exclusion parsing. Will give up.");
+                    }
+                }
+
             }
         }
         return exclusionLines;
     }
-
 
     /**
      * Parse ignore files from all known SCMs that have ignore files.
