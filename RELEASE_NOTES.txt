@@ -49,6 +49,7 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-172] - Exclude technical directories of source code management systems and their ignore files from RAT scans. 
                   Enabled for SVN,Git,Mercurial,Bazar and CVS.
     * [RAT-200] - Update to latest ASF parent pom v17.
+    * [RAT-201] - BinaryGuesser should treat *.swf as binary
 
 Rat 0.11
 ========

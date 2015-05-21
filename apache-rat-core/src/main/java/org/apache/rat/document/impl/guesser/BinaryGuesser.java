@@ -15,8 +15,10 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl.guesser;
+
+import org.apache.rat.api.Document;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +31,6 @@ import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.util.Locale;
 
-import org.apache.rat.api.Document;
-
 /**
  * TODO: factor into MIME guesser and MIME-&gt;binary guesser
  */
@@ -41,54 +41,44 @@ public class BinaryGuesser {
     private static boolean isBinaryDocument(Document document) {
         boolean result = false;
         InputStream stream = null;
-        try
-        {
+        try {
             stream = document.inputStream();
             result = isBinary(stream);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             result = false;
-        }
-        finally
-        {
-            try
-            {
-                if (stream != null)
-                {
+        } finally {
+            try {
+                if (stream != null) {
                     stream.close();
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 // SWALLOW
-            }   
+            }
         }
         return result;
     }
-    
+
     private static boolean isBinary(CharSequence taste) {
         int highBytes = 0;
         final int length = taste.length();
         for (int i = 0; i < length; i++) {
             char c = taste.charAt(i);
             if (c > BinaryGuesser.NON_ASCII_THREASHOLD
-                || c <= BinaryGuesser.ASCII_CHAR_THREASHOLD) {
+                    || c <= BinaryGuesser.ASCII_CHAR_THREASHOLD) {
                 highBytes++;
             }
         }
         return highBytes * BinaryGuesser.HIGH_BYTES_RATIO
-            > length * BinaryGuesser.TOTAL_READ_RATIO;
+                > length * BinaryGuesser.TOTAL_READ_RATIO;
     }
 
     /**
      * @param in the file to check.
-     * 
      * @return Do the first few bytes of the stream hint at a binary file?
-     *
+     * <p/>
      * <p>Any IOException is swallowed internally and the test returns
      * false.</p>
-     *
+     * <p/>
      * <p>This method may lead to false negatives if the reader throws
      * an exception because it can't read characters according to the
      * reader's encoding from the underlying stream.</p>
@@ -108,12 +98,11 @@ public class BinaryGuesser {
 
     /**
      * @param in the file to check.
-     * 
      * @return Do the first few bytes of the stream hint at a binary file?
-     *
+     * <p/>
      * <p>Any IOException is swallowed internally and the test returns
      * false.</p>
-     *
+     * <p/>
      * <p>This method will try to read bytes from the stream and
      * translate them to characters according to the platform's
      * default encoding.  If any bytes can not be translated to
@@ -129,8 +118,8 @@ public class BinaryGuesser {
                 CharBuffer chars = CharBuffer.allocate(2 * bytesRead);
                 Charset cs = Charset.forName(System.getProperty("file.encoding"));
                 CharsetDecoder cd = cs.newDecoder()
-                    .onMalformedInput(CodingErrorAction.REPORT)
-                    .onUnmappableCharacter(CodingErrorAction.REPORT);
+                        .onMalformedInput(CodingErrorAction.REPORT)
+                        .onUnmappableCharacter(CodingErrorAction.REPORT);
                 while (bytes.remaining() > 0) {
                     CoderResult res = cd.decode(bytes, chars, true);
                     if (res.isMalformed() || res.isUnmappable()) {
@@ -154,9 +143,8 @@ public class BinaryGuesser {
         return false;
     }
 
-    
+
     /**
-     * 
      * @param name current file name.
      * @return whether given name is binary.
      */
@@ -165,26 +153,28 @@ public class BinaryGuesser {
     }
 
     /**
-     * @return Is a file by that name a known non-binary file?
      * @param name current file name.
+     * @return Is a file by that name a known non-binary file?
      */
     public static final boolean isNonBinary(final String name) {
-        if (name == null) {return false;}
+        if (name == null) {
+            return false;
+        }
         return extensionMatches(name.toUpperCase(Locale.US),
-                                BinaryGuesser.NON_BINARY_EXTENSIONS);
+                BinaryGuesser.NON_BINARY_EXTENSIONS);
     }
 
     /**
-     * @return Is a file by that name an executable/binary file?
      * @param name current file name.
+     * @return Is a file by that name an executable/binary file?
      */
     public static final boolean isExecutable(final String name) {
         return name.equals(BinaryGuesser.JAVA) || extensionMatches(name, EXE_EXTENSIONS)
-            || containsExtension(name, EXE_EXTENSIONS);
+                || containsExtension(name, EXE_EXTENSIONS);
     }
 
     public static boolean containsExtension(final String name,
-                                             final String[] exts) {
+                                            final String[] exts) {
         for (int i = 0; i < exts.length; i++) {
             if (name.indexOf(DOT + exts[i] + DOT) >= 0) {
                 return true;
@@ -194,7 +184,7 @@ public class BinaryGuesser {
     }
 
     public static boolean extensionMatches(final String name,
-                                            final String[] exts) {
+                                           final String[] exts) {
         for (int i = 0; i < exts.length; i++) {
             if (name.endsWith(DOT + exts[i])) {
                 return true;
@@ -214,140 +204,142 @@ public class BinaryGuesser {
     public static final boolean isKeystore(final String name) {
         return BinaryGuesser.extensionMatches(name, KEYSTORE_EXTENSIONS);
     }
-    
+
     /**
-     * @return Is a file by that name a known binary file?
      * @param name file name.
+     * @return Is a file by that name a known binary file?
      */
     public static final boolean isBinary(final String name) {
-        if (name == null) {return false;}
+        if (name == null) {
+            return false;
+        }
         String normalisedName = GuessUtils.normalise(name);
-        return BinaryGuesser.JAR_MANIFEST.equals(name) || BinaryGuesser.isImage(normalisedName)
-            || BinaryGuesser.isKeystore(normalisedName) || BinaryGuesser.isBytecode(normalisedName)
-            || BinaryGuesser.isBinaryData(normalisedName) || BinaryGuesser.isExecutable(normalisedName);
+        return BinaryGuesser.JAR_MANIFEST.equalsIgnoreCase(name) || BinaryGuesser.isImage(normalisedName)
+                || BinaryGuesser.isKeystore(normalisedName) || BinaryGuesser.isBytecode(normalisedName)
+                || BinaryGuesser.isBinaryData(normalisedName) || BinaryGuesser.isExecutable(normalisedName);
     }
 
     private static final String[] DATA_EXTENSIONS = {
-        "DAT", "DOC",
-        "NCB", "IDB",
-        "SUO", "XCF",
-        "RAJ", "CERT",
-        "KS", "TS",
-        "ODP",
+            "DAT", "DOC",
+            "NCB", "IDB",
+            "SUO", "XCF",
+            "RAJ", "CERT",
+            "KS", "TS",
+            "ODP", "SWF"
     };
 
     private static final String[] EXE_EXTENSIONS = {
-        "EXE", "DLL",
-        "LIB", "SO",
-        "A", "EXP",
+            "EXE", "DLL",
+            "LIB", "SO",
+            "A", "EXP",
     };
 
     private static final String[] KEYSTORE_EXTENSIONS = {
-        "JKS", "KEYSTORE", "PEM", "CRL", "TRUSTSTORE"
+            "JKS", "KEYSTORE", "PEM", "CRL", "TRUSTSTORE"
     };
 
     private static final String[] IMAGE_EXTENSIONS = {
-        "PNG", "PDF",
-        "GIF", "GIFF",
-        "TIF", "TIFF",
-        "JPG", "JPEG",
-        "ICO", "ICNS",
-        "PSD",
+            "PNG", "PDF",
+            "GIF", "GIFF",
+            "TIF", "TIFF",
+            "JPG", "JPEG",
+            "ICO", "ICNS",
+            "PSD",
     };
 
     private static final String[] BYTECODE_EXTENSIONS = {
-        "CLASS", "PYD",
-        "OBJ", "PYC",
+            "CLASS", "PYD",
+            "OBJ", "PYC",
     };
-    
+
     /**
      * Based on http://www.apache.org/dev/svn-eol-style.txt
      */
     private static final String[] NON_BINARY_EXTENSIONS = {
-        "AART",
-        "AC",
-        "AM",
-        "BAT",
-        "C",
-        "CAT",
-        "CGI",
-        "CLASSPATH",
-        "CMD",
-        "CONFIG",
-        "CPP",
-        "CSS",
-        "CWIKI",
-        "DATA",
-        "DCL",
-        "DTD",
-        "EGRM",
-        "ENT",
-        "FT", 
-        "FN",
-        "FV", 
-        "GRM",
-        "G",
-        "H",
-        "HTACCESS",
-        "HTML",
-        "IHTML",
-        "IN",
-        "JAVA",
-        "JMX", 
-        "JSP",
-        "JS",
-        "JUNIT",
-        "JX", 
-        "MANIFEST",
-        "M4",
-        "MF",
-        "MF",
-        "META",
-        "MOD",
-        "N3",
-        "PEN",
-        "PL",
-        "PM",
-        "POD",
-        "POM",
-        "PROJECT",
-        "PROPERTIES",
-        "PY",
-        "RB",
-        "RDF",
-        "RNC",
-        "RNG",
-        "RNX",
-        "ROLES",
-        "RSS",
-        "SH",
-        "SQL",
-        "SVG",
-        "TLD",
-        "TXT",
-        "TYPES",
-        "VM",
-        "VSL",
-        "WSDD",
-        "WSDL",
-        "XARGS",
-        "XCAT",
-        "XCONF",
-        "XEGRM",
-        "XGRM",
-        "XLEX",
-        "XLOG",
-        "XMAP",
-        "XML",
-        "XROLES",
-        "XSAMPLES",
-        "XSD",
-        "XSL",
-        "XSLT",
-        "XSP",
-        "XUL",
-        "XWEB",
-        "XWELCOME",
+            "AART",
+            "AC",
+            "AM",
+            "BAT",
+            "C",
+            "CAT",
+            "CGI",
+            "CLASSPATH",
+            "CMD",
+            "CONFIG",
+            "CPP",
+            "CSS",
+            "CWIKI",
+            "DATA",
+            "DCL",
+            "DTD",
+            "EGRM",
+            "ENT",
+            "FT",
+            "FN",
+            "FV",
+            "GRM",
+            "G",
+            "H",
+            "HTACCESS",
+            "HTML",
+            "IHTML",
+            "IN",
+            "JAVA",
+            "JMX",
+            "JSP",
+            "JS",
+            "JUNIT",
+            "JX",
+            "MANIFEST",
+            "M4",
+            "MF",
+            "MF",
+            "META",
+            "MOD",
+            "N3",
+            "PEN",
+            "PL",
+            "PM",
+            "POD",
+            "POM",
+            "PROJECT",
+            "PROPERTIES",
+            "PY",
+            "RB",
+            "RDF",
+            "RNC",
+            "RNG",
+            "RNX",
+            "ROLES",
+            "RSS",
+            "SH",
+            "SQL",
+            "SVG",
+            "TLD",
+            "TXT",
+            "TYPES",
+            "VM",
+            "VSL",
+            "WSDD",
+            "WSDL",
+            "XARGS",
+            "XCAT",
+            "XCONF",
+            "XEGRM",
+            "XGRM",
+            "XLEX",
+            "XLOG",
+            "XMAP",
+            "XML",
+            "XROLES",
+            "XSAMPLES",
+            "XSD",
+            "XSL",
+            "XSLT",
+            "XSP",
+            "XUL",
+            "XWEB",
+            "XWELCOME",
     };
     public static final String JAR_MANIFEST = "MANIFEST.MF";
     public static final String JAVA = "JAVA";
@@ -361,11 +353,10 @@ public class BinaryGuesser {
         // TODO: more efficient to move into standard analysis
         // TODO: then use binary as default
         return isBinary(document.getName())
-            ||
-            // try a taste
-            isBinaryDocument(document);
+                ||
+                // try a taste
+                isBinaryDocument(document);
     }
-
 
 
 }

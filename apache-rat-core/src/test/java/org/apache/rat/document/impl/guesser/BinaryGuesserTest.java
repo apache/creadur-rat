@@ -25,53 +25,54 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class BinaryGuesserTest {
 
+    private static final List<String> BINARY_FILES = Arrays.asList(//
+            "image.png",//
+            "image.pdf",//
+            "image.psd",//
+            "image.gif",//
+            "image.giff",//
+            "image.jpg",//
+            "image.jpeg",//
+            "image.exe",//
+            "Whatever.class",//
+            "data.dat",//
+            "libicuda.so.34",//
+            "my.truststore",//
+            //"foo.Java", //
+            //"manifest.Mf",//
+            "deprecatedtechnology.swf"
+    );
+
+
     @Test
     public void testMatches() {
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.png")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.pdf")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.psd")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.gif")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.giff")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.tif")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.tiff")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.jpg")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.jpeg")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("image.exe")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("Whatever.class")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("data.dat")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("libicudata.so.34.")));
-        assertTrue(BinaryGuesser.isBinary(new MockDocument("my.truststore")));
+        for (String name : BINARY_FILES) {
+            assertTrue("'" + name + "' should be detected as a binary", BinaryGuesser.isBinary(new MockDocument(name)));
+        }
+
     }
 
+    @Test
     public void testIsBinary() {
-        assertTrue(BinaryGuesser.isBinary("image.png"));
-        assertTrue(BinaryGuesser.isBinary("image.pdf"));
-        assertTrue(BinaryGuesser.isBinary("image.psd"));
-        assertTrue(BinaryGuesser.isBinary("image.gif"));
-        assertTrue(BinaryGuesser.isBinary("image.giff"));
-        assertTrue(BinaryGuesser.isBinary("image.tif"));
-        assertTrue(BinaryGuesser.isBinary("image.tiff"));
-        assertTrue(BinaryGuesser.isBinary("image.jpg"));
-        assertTrue(BinaryGuesser.isBinary("image.jpeg"));
-        assertTrue(BinaryGuesser.isBinary("image.exe"));
-        assertTrue(BinaryGuesser.isBinary("Whatever.class"));
-        assertTrue(BinaryGuesser.isBinary("data.dat"));
-        assertTrue(BinaryGuesser.isBinary("libicudata.so.34."));
-        assertTrue(BinaryGuesser.isBinary("my.truststore"));
+        for (String name : BINARY_FILES) {
+            assertTrue("'" + name + "' should be detected as a binary", BinaryGuesser.isBinary(name));
+        }
     }
 
     /**
      * Used to swallow a MalformedInputException and return false
      * because the encoding of the stream was different from the
      * platform's default encoding.
-     * @throws Exception 
      *
+     * @throws Exception
      * @see "RAT-81"
      */
     @Test
@@ -91,13 +92,13 @@ public class BinaryGuesserTest {
             // still here?  can't test on this platform
             System.err.println("Skipping testBinaryWithMalformedInput");
         } catch (IOException e) {
-            if (r!= null) {
+            if (r != null) {
                 r.close();
             } else {
                 throw e; // could not open the second file
             }
             r = null;
-            assertTrue("Expected binary for "+ doc.getName(),BinaryGuesser.isBinary(doc));
+            assertTrue("Expected binary for " + doc.getName(), BinaryGuesser.isBinary(doc));
         } finally {
             if (r != null) {
                 r.close();
@@ -114,9 +115,9 @@ public class BinaryGuesserTest {
             assertTrue(isBinary);
         } else {
             if (isBinary) {
-                System.out.println("BinaryGuesserTest.realBinaryContent() succeeded when using encoding "+encoding);
+                System.out.println("BinaryGuesserTest.realBinaryContent() succeeded when using encoding " + encoding);
             } else {
-                System.err.println("BinaryGuesserTest.realBinaryContent() failed when using encoding "+encoding);
+                System.err.println("BinaryGuesserTest.realBinaryContent() failed when using encoding " + encoding);
             }
         }
     }
