@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Locale;
 
 /**
@@ -37,6 +38,9 @@ import java.util.Locale;
 public class BinaryGuesser {
 
     private static final String DOT = ".";
+
+    static final String FILE_ENCODING = "file.encoding";
+    private static Charset CHARSET_FROM_FILE_ENCODING_OR_UTF8 = getFileEncodingOrUTF8AsFallback();
 
     private static boolean isBinaryDocument(Document document) {
         boolean result = false;
@@ -75,10 +79,8 @@ public class BinaryGuesser {
     /**
      * @param in the file to check.
      * @return Do the first few bytes of the stream hint at a binary file?
-     * <p/>
      * <p>Any IOException is swallowed internally and the test returns
      * false.</p>
-     * <p/>
      * <p>This method may lead to false negatives if the reader throws
      * an exception because it can't read characters according to the
      * reader's encoding from the underlying stream.</p>
@@ -99,10 +101,8 @@ public class BinaryGuesser {
     /**
      * @param in the file to check.
      * @return Do the first few bytes of the stream hint at a binary file?
-     * <p/>
      * <p>Any IOException is swallowed internally and the test returns
      * false.</p>
-     * <p/>
      * <p>This method will try to read bytes from the stream and
      * translate them to characters according to the platform's
      * default encoding.  If any bytes can not be translated to
@@ -116,8 +116,7 @@ public class BinaryGuesser {
             if (bytesRead > 0) {
                 ByteBuffer bytes = ByteBuffer.wrap(taste, 0, bytesRead);
                 CharBuffer chars = CharBuffer.allocate(2 * bytesRead);
-                Charset cs = Charset.forName(System.getProperty("file.encoding"));
-                CharsetDecoder cd = cs.newDecoder()
+                CharsetDecoder cd = CHARSET_FROM_FILE_ENCODING_OR_UTF8.newDecoder()
                         .onMalformedInput(CodingErrorAction.REPORT)
                         .onUnmappableCharacter(CodingErrorAction.REPORT);
                 while (bytes.remaining() > 0) {
@@ -143,6 +142,13 @@ public class BinaryGuesser {
         return false;
     }
 
+    static Charset getFileEncodingOrUTF8AsFallback() {
+        try {
+            return Charset.forName(System.getProperty(FILE_ENCODING));
+        } catch (UnsupportedCharsetException e) {
+            return Charset.forName("UTF-8");
+        }
+    }
 
     /**
      * @param name current file name.

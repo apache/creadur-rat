@@ -28,6 +28,7 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -130,5 +131,15 @@ public class BinaryGuesserTest {
     @Test
     public void emptyFile() throws IOException {
         assertFalse(BinaryGuesser.isBinary(new FileDocument(Resources.getResourceFile("/elements/sub/Empty.txt"))));
+    }
+
+    @Test
+    public void testFileEncodingSettable() {
+        System.setProperty(BinaryGuesser.FILE_ENCODING, "shouldThrowAnExceptionBecauseNotFound");
+        assertEquals("UTF-8", BinaryGuesser.getFileEncodingOrUTF8AsFallback().displayName());
+
+        final String usAscii = "US-ASCII";
+        System.setProperty(BinaryGuesser.FILE_ENCODING, usAscii);
+        assertEquals(usAscii, BinaryGuesser.getFileEncodingOrUTF8AsFallback().displayName());
     }
 }
