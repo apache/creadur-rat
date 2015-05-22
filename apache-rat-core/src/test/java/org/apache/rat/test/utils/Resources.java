@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -43,11 +45,13 @@ public class Resources {
         // Does nothing
     }
 
-    // DevHint: needs to be prefix with apache-rat-core to work properly from within IntelliJ
+    // If started in IntelliJ the working directory is different, thus tests are not running through
+    public static final List<String> INTELLIJ_PROJECT_PREFIXES = Arrays.asList("", "apache-rat-core/" /*,"apache-rat-plugin/"*/);
+
     public static final String SRC_TEST_RESOURCES = "src/test/resources";
     public static final String SRC_MAIN_RESOURCES = "src/main/resources";
     private static File TEST_RESOURCE_BASE_PATH = new File(SRC_TEST_RESOURCES);
-    private static File RESOURCE_BASE_PATH =  new File(SRC_MAIN_RESOURCES);
+    private static File RESOURCE_BASE_PATH = new File(SRC_MAIN_RESOURCES);
 
     /**
      * Locates a test resource file in the class path.
@@ -63,22 +67,46 @@ public class Resources {
         return getResourceFromBase(RESOURCE_BASE_PATH, pResource);
     }
 
+    /**
+     * Try to to load the given file from baseDir, in case of errors try to add module names to fix behaviour from within IntelliJ.
+     */
     private static File getResourceFromBase(File baseDir, String pResource) throws IOException {
-        final File f = new File(baseDir, pResource);
+        File f = new File(baseDir, pResource);
         if (!f.isFile()) {
-            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
+            // try IntelliJ workaround before giving up
+            for (String prefix : INTELLIJ_PROJECT_PREFIXES) {
+                f = new File(new File(prefix + baseDir.getPath()), pResource);
+                System.out.println("Trying: " + f.getAbsolutePath());
+                if (!f.isFile()) continue;
+            }
+
+            if (!f.isFile()) {
+                throw new FileNotFoundException("Unable to locate resource file: " + pResource);
+            }
+
         }
         return f;
     }
 
     /**
      * Locates a set of resource files in the class path.
+     * In case of errors try to add module names to fix behaviour from within IntelliJ.
      */
     public static File[] getResourceFiles(String pResource) throws IOException {
-        final File f = new File(TEST_RESOURCE_BASE_PATH, pResource);
+        File f = new File(TEST_RESOURCE_BASE_PATH, pResource);
         if (!f.isDirectory()) {
-            throw new FileNotFoundException("Unable to locate resource directory: " + f);
+            // try IntelliJ workaround before giving up
+            for (String prefix : INTELLIJ_PROJECT_PREFIXES) {
+                f = new File(new File(prefix + TEST_RESOURCE_BASE_PATH.getPath()), pResource);
+                System.out.println("Trying: " + f.getAbsolutePath());
+                if (!f.isDirectory()) continue;
+            }
+
+            if (!f.isDirectory()) {
+                throw new FileNotFoundException("Unable to locate resource directory: " + pResource);
+            }
         }
+
         return f.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
                 return pathname.isFile();

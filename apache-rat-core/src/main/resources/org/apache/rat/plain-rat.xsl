@@ -38,8 +38,8 @@ JavaDocs are generated, thus a license header is optional.
 Generated files do not require license headers.
 
 <xsl:value-of select='count(descendant::header-type[attribute::name="?????"])'/> Unknown Licenses
-
-*******************************
+<xsl:if test="descendant::resource[license-approval/@name='false']">
+*****************************************************
 
 Files with unapproved licenses:
 
@@ -49,14 +49,16 @@ Files with unapproved licenses:
   <xsl:text>
 </xsl:text>
 </xsl:for-each>
-*******************************
-
+*****************************************************
+</xsl:if>
+<xsl:if test="descendant::resource[type/@name='archive']">
 Archives:
 <xsl:for-each select='descendant::resource[type/@name="archive"]'>
  + <xsl:value-of select='@name'/>
  <xsl:text>
  </xsl:text>
  </xsl:for-each>
+</xsl:if>
 *****************************************************
   Files with Apache License headers will be marked AL
   Binary files (which do not require any license headers) will be marked B
@@ -80,12 +82,14 @@ Archives:
  </xsl:text>
  </xsl:for-each>
 *****************************************************
+<xsl:if test="descendant::resource[header-type/@name='?????']">
  Printing headers for text files without a valid license header...
  <xsl:for-each select='descendant::resource[header-type/@name="?????"]'>
-=======================================================================
+=====================================================
 == File: <xsl:value-of select='@name'/>
-=======================================================================
+=====================================================
 <xsl:value-of select='header-sample'/>
 </xsl:for-each>
+</xsl:if>
 </xsl:template>
 </xsl:stylesheet>

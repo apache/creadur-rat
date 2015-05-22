@@ -106,4 +106,9 @@ public class AnalyserFactoryTest {
         reporter.report(document);
         assertEquals("Open archive element", "<resource name='src/test/resources/elements/dummy.jar'><type name='archive'/>", out.toString());
     }
+
+    // TODO make tests run from within IntelliJ
+    private static void equalsWithPathInfixOrNot(String messagePrefix, String expectedWithMarker, String actual) {
+        // TODO use Resources.INTELLIJ_PROJECT_PREFIXES and provide an either with/without equals to match test results
+    }
 }

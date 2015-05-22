@@ -31,10 +31,12 @@ import static org.junit.Assert.assertTrue;
 
 public class ReportTest {
     private static final String NL = System.getProperty("line.separator");
+    private static final String PARAGRAPH = "*****************************************************";
+    private static final String FILE_PARAGRAPH = "=====================================================";
 
     private static final String HEADER =
             NL +
-                    "*****************************************************" + NL +//
+                    PARAGRAPH + NL +//
                     "Summary" + NL +//
                     "-------" + NL +//
                     "Generated at: ";
@@ -54,20 +56,20 @@ public class ReportTest {
                         "" + NL +//
                         "2 Unknown Licenses" + NL +//
                         "" + NL +//
-                        "*******************************" + NL +//
+                        PARAGRAPH + NL +//
                         "" + NL +//
                         "Files with unapproved licenses:" + NL +//
                         "" + NL +//
                         "  " + pElementsPath + "/Source.java" + NL +//
                         "  " + pElementsPath + "/sub/Empty.txt" + NL +//
                         "" + NL +//
-                        "*******************************" + NL +//
+                        PARAGRAPH + NL +//
                         "" + NL +//
                         "Archives:" + NL +//
                         "" + NL +//
                         " + " + pElementsPath + "/dummy.jar" + NL +//
                         " " + NL +//
-                        "*****************************************************" + NL +//
+                        PARAGRAPH + NL +//
                         "  Files with Apache License headers will be marked AL" + NL +//
                         "  Binary files (which do not require any license headers) will be marked B" + NL +//
                         "  Compressed archives will be marked A" + NL +//
@@ -83,12 +85,13 @@ public class ReportTest {
                         "  A     " + pElementsPath + "/dummy.jar" + NL +//
                         " !????? " + pElementsPath + "/sub/Empty.txt" + NL +//
                         " " + NL +//
-                        "*****************************************************" + NL +//
+                        PARAGRAPH + NL +//
+                        NL +//
                         " Printing headers for text files without a valid license header..." + NL +//
                         " " + NL +//
-                        "=======================================================================" + NL +//
+                        FILE_PARAGRAPH + NL +//
                         "== File: " + pElementsPath + "/Source.java" + NL +//
-                        "=======================================================================" + NL + //
+                        FILE_PARAGRAPH + NL + //
                         "package elements;" + NL +//
                         "" + NL +//
                         "/*" + NL +//
@@ -99,14 +102,14 @@ public class ReportTest {
                         "" + NL +//
                         "}" + NL +//
                         "" + NL +//
-                        "=======================================================================" + NL +//
+                        FILE_PARAGRAPH + NL +//
                         "== File: " + pElementsPath + "/sub/Empty.txt" + NL +//
-                        "=======================================================================" + NL +//
+                        FILE_PARAGRAPH + NL +//
                         NL;
     }
 
     @Test
-    public void plainReport() throws Exception {
+    public void plainReportWithArchivesAndUnapprovedLicenses() throws Exception {
         StringWriter out = new StringWriter();
         HeaderMatcherMultiplexer matcherMultiplexer = new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
