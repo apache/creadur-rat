@@ -32,11 +32,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Add a licence header to a document. This appender does not check for the
- * existence of an existing licence header, it is assumed that either a second
- * licence header is intentional or that there is no licence header present
+ * Add a license header to a document. This appender does not check for the
+ * existence of an existing license header, it is assumed that either a second
+ * license header is intentional or that there is no license header present
  * already.
- *
  */
 public abstract class AbstractLicenceAppender {
     private static final String DOT = ".";
@@ -67,47 +66,49 @@ public abstract class AbstractLicenceAppender {
     private static final int TYPE_JSP = 24;
     private static final int TYPE_FML = 25;
 
-    /** the line separator for this OS */
+    /**
+     * the line separator for this OS
+     */
     private static final String LINE_SEP = System.getProperty("line.separator");
 
-    private static final int[] FAMILY_C = new int[] {
-        TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
-        TYPE_CSS, TYPE_CPP, TYPE_CSHARP, TYPE_PHP, TYPE_GROOVY,
-        TYPE_BEANSHELL,
+    private static final int[] FAMILY_C = new int[]{
+            TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
+            TYPE_CSS, TYPE_CPP, TYPE_CSHARP, TYPE_PHP, TYPE_GROOVY,
+            TYPE_BEANSHELL,
     };
-    private static final int[] FAMILY_SGML = new int[] {
-        TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML,
+    private static final int[] FAMILY_SGML = new int[]{
+            TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML,
     };
-    private static final int[] FAMILY_SH = new int[] {
-        TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
-        TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION,
+    private static final int[] FAMILY_SH = new int[]{
+            TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
+            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION,
     };
-    private static final int[] FAMILY_BAT = new int[] {
-        TYPE_BAT,
+    private static final int[] FAMILY_BAT = new int[]{
+            TYPE_BAT,
     };
-    private static final int[] FAMILY_APT = new int[] {
-        TYPE_APT,
+    private static final int[] FAMILY_APT = new int[]{
+            TYPE_APT,
     };
-    private static final int[] FAMILY_VELOCITY = new int[] {
-        TYPE_VM,
+    private static final int[] FAMILY_VELOCITY = new int[]{
+            TYPE_VM,
     };
-    private static final int[] EXPECTS_HASH_PLING = new int[] {
-        TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL
+    private static final int[] EXPECTS_HASH_PLING = new int[]{
+            TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL
     };
-    private static final int[] EXPECTS_AT_ECHO = new int[] {
-        TYPE_BAT,
+    private static final int[] EXPECTS_AT_ECHO = new int[]{
+            TYPE_BAT,
     };
-    private static final int[] EXPECTS_PACKAGE = new int[] {
-        TYPE_JAVA,
+    private static final int[] EXPECTS_PACKAGE = new int[]{
+            TYPE_JAVA,
     };
-    private static final int[] EXPECTS_XML_DECL = new int[] {
-        TYPE_XML,
+    private static final int[] EXPECTS_XML_DECL = new int[]{
+            TYPE_XML,
     };
-    private static final int[] EXPECTS_PHP_PI = new int[] {
-        TYPE_PHP,
+    private static final int[] EXPECTS_PHP_PI = new int[]{
+            TYPE_PHP,
     };
-    private static final int[] EXPECTS_MSVSSF_HEADER = new int[] {
-        TYPE_VISUAL_STUDIO_SOLUTION,
+    private static final int[] EXPECTS_MSVSSF_HEADER = new int[]{
+            TYPE_VISUAL_STUDIO_SOLUTION,
     };
 
     private static final Map<String, Integer> EXT2TYPE = new HashMap<String, Integer>();
@@ -187,11 +188,10 @@ public abstract class AbstractLicenceAppender {
     }
 
     /**
-     * Append the default licence header to the supplied document.
+     * Append the default license header to the supplied document.
      *
      * @param document document to append to.
-     * @throws IOException
-     *           if there is a problem while reading or writing the file
+     * @throws IOException if there is a problem while reading or writing the file
      */
     public void append(File document) throws IOException {
         int type = getType(document);
@@ -210,8 +210,8 @@ public abstract class AbstractLicenceAppender {
         FileWriter writer = new FileWriter(newDocument);
         try {
             if (!attachLicense(writer, document,
-                               expectsHashPling, expectsAtEcho, expectsPackage,
-                               expectsXMLDecl, expectsPhpPI, expectsMSVSSF)) {
+                    expectsHashPling, expectsAtEcho, expectsPackage,
+                    expectsXMLDecl, expectsPhpPI, expectsMSVSSF)) {
                 // Java File without package, XML file without decl or PHP
                 // file without PI
                 // for Java just place the license at the front, for XML add
@@ -223,7 +223,7 @@ public abstract class AbstractLicenceAppender {
                         writer.write(LINE_SEP);
                     }
                     attachLicense(writer, document,
-                                  false, false, false, false, false, false);
+                            false, false, false, false, false, false);
                 }
             }
         } finally {
@@ -242,6 +242,7 @@ public abstract class AbstractLicenceAppender {
     /**
      * Write document's content to writer attaching the license using
      * the given flags as hints for where to put it.
+     *
      * @return whether the license has actually been written
      */
     private boolean attachLicense(Writer writer, File document,
@@ -251,7 +252,7 @@ public abstract class AbstractLicenceAppender {
                                   boolean expectsXMLDecl,
                                   boolean expectsPhpPI,
                                   boolean expectsMSVSSF)
-        throws IOException {
+            throws IOException {
         boolean written = false;
         try {
             FileInputStream fis = new FileInputStream(document);
@@ -260,13 +261,13 @@ public abstract class AbstractLicenceAppender {
                 br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis)));
 
                 if (!expectsHashPling
-                    && !expectsAtEcho
-                    && !expectsPackage
-                    && !expectsXMLDecl
-                    && !expectsPhpPI
-                    && !expectsMSVSSF) {
+                        && !expectsAtEcho
+                        && !expectsPackage
+                        && !expectsXMLDecl
+                        && !expectsPhpPI
+                        && !expectsMSVSSF) {
                     written = true;
-                    writer.write(getLicenceHeader(document));
+                    writer.write(getLicenseHeader(document));
                     writer.write(LINE_SEP);
                 }
 
@@ -285,7 +286,7 @@ public abstract class AbstractLicenceAppender {
                             line = passThroughReadNext(writer, line, br);
                         }
                         if (line.startsWith("Microsoft Visual Studio Solution"
-                                            + " File")) {
+                                + " File")) {
                             line = passThroughReadNext(writer, line, br);
                         }
                         doFirstLine(document, writer, line, "# Visual ");
@@ -297,17 +298,17 @@ public abstract class AbstractLicenceAppender {
                     if (expectsPackage && line.startsWith("package ")) {
                         written = true;
                         writer.write(LINE_SEP);
-                        writer.write(getLicenceHeader(document));
+                        writer.write(getLicenseHeader(document));
                         writer.write(LINE_SEP);
                     } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
                         written = true;
                         writer.write(LINE_SEP);
-                        writer.write(getLicenceHeader(document));
+                        writer.write(getLicenseHeader(document));
                         writer.write(LINE_SEP);
                     } else if (expectsPhpPI && line.startsWith("<?php")) {
                         written = true;
                         writer.write(LINE_SEP);
-                        writer.write(getLicenceHeader(document));
+                        writer.write(getLicenseHeader(document));
                         writer.write(LINE_SEP);
                     }
                     first = false;
@@ -327,13 +328,13 @@ public abstract class AbstractLicenceAppender {
     /**
      * Check first line for specified text and process.
      */
-    private void doFirstLine(File document, Writer writer, String line, String lookfor) throws IOException  {
+    private void doFirstLine(File document, Writer writer, String line, String lookfor) throws IOException {
         if (line.startsWith(lookfor)) {
             writer.write(line);
             writer.write(LINE_SEP);
-            writer.write(getLicenceHeader(document));
+            writer.write(getLicenseHeader(document));
         } else {
-            writer.write(getLicenceHeader(document));
+            writer.write(getLicenseHeader(document));
             writer.write(line);
             writer.write(LINE_SEP);
         }
@@ -371,13 +372,13 @@ public abstract class AbstractLicenceAppender {
     }
 
     /**
-     * @return Get the licence header of a document.
      * @param document document to extract from.
+     * @return Get the license header of a document.
      */
-    public abstract String getLicenceHeader(File document);
+    public abstract String getLicenseHeader(File document);
 
     /**
-     * Get the first line of the licence header formatted
+     * Get the first line of the license header formatted
      * for the given type of file.
      *
      * @param type the type of file, see the TYPE_* constants
@@ -394,7 +395,7 @@ public abstract class AbstractLicenceAppender {
 
 
     /**
-     * Get the last line of the licence header formatted
+     * Get the last line of the license header formatted
      * for the given type of file.
      *
      * @param type the type of file, see the TYPE_* constants
@@ -411,10 +412,10 @@ public abstract class AbstractLicenceAppender {
 
 
     /**
-     * Get a line of the licence header formatted
+     * Get a line of the license header formatted
      * for the given type of file.
      *
-     * @param type the type of file, see the TYPE_* constants
+     * @param type    the type of file, see the TYPE_* constants
      * @param content the content for this line
      * @return not null
      */
@@ -438,39 +439,51 @@ public abstract class AbstractLicenceAppender {
     private static boolean isFamilyC(int type) {
         return isIn(FAMILY_C, type);
     }
+
     private static boolean isFamilySGML(int type) {
         return isIn(FAMILY_SGML, type);
     }
+
     private static boolean isFamilySH(int type) {
         return isIn(FAMILY_SH, type);
     }
+
     private static boolean isFamilyAPT(int type) {
         return isIn(FAMILY_APT, type);
     }
+
     private static boolean isFamilyBAT(int type) {
         return isIn(FAMILY_BAT, type);
     }
+
     private static boolean isFamilyVelocity(int type) {
         return isIn(FAMILY_VELOCITY, type);
     }
+
     private static boolean expectsHashPling(int type) {
         return isIn(EXPECTS_HASH_PLING, type);
     }
+
     private static boolean expectsAtEcho(int type) {
         return isIn(EXPECTS_AT_ECHO, type);
     }
+
     private static boolean expectsPackage(int type) {
         return isIn(EXPECTS_PACKAGE, type);
     }
+
     private static boolean expectsXMLDecl(int type) {
         return isIn(EXPECTS_XML_DECL, type);
     }
+
     private static boolean expectsPhpPI(int type) {
         return isIn(EXPECTS_PHP_PI, type);
     }
+
     private static boolean expectsMSVisualStudioSolutionFileHeader(int type) {
         return isIn(EXPECTS_MSVSSF_HEADER, type);
     }
+
     private static boolean isIn(int[] arr, int key) {
         return Arrays.binarySearch(arr, key) >= 0;
     }
@@ -492,9 +505,9 @@ class BOMInputStream extends FilterInputStream {
     private int fbLength, fbIndex, markFbIndex;
     private boolean markedAtStart;
     private static final int[][] BOMS = {
-        new int[] { 0xEF, 0xBB, 0xBF }, // UTF-8
-        new int[] { 0xFE, 0xFF }, // UTF-16BE
-        new int[] { 0xFF, 0xFE }, // UTF-16LE
+            new int[]{0xEF, 0xBB, 0xBF}, // UTF-8
+            new int[]{0xFE, 0xFF}, // UTF-16BE
+            new int[]{0xFF, 0xFE}, // UTF-16LE
     };
 
     BOMInputStream(InputStream s) {
@@ -521,7 +534,7 @@ class BOMInputStream extends FilterInputStream {
         }
         int secondCount = in.read(buf, off, len);
         return (secondCount < 0)
-            ? (firstCount > 0 ? firstCount : -1) : firstCount + secondCount;
+                ? (firstCount > 0 ? firstCount : -1) : firstCount + secondCount;
     }
 
     @Override
@@ -556,6 +569,7 @@ class BOMInputStream extends FilterInputStream {
             }
         }
     }
+
     @Override
     public synchronized void mark(int readlimit) {
         markFbIndex = fbIndex;

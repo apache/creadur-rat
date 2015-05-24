@@ -50,7 +50,7 @@
         <targetPath>META-INF</targetPath>
         <includes>
           <include>RELEASE_NOTES.txt</include>
-          <include>LICENCE</include>
+          <include>LICENSE</include>
           <include>NOTICE</include>
         </includes>
       </resource>

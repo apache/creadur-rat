@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat;
 
 import org.apache.commons.cli.CommandLine;
@@ -42,7 +42,17 @@ import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
 import javax.xml.transform.TransformerConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.util.List;
 
 
@@ -90,8 +100,7 @@ public class Report {
                     final FilenameFilter filter = new NotFileFilter(new WildcardFileFilter(excludes));
                     report.setInputFileFilter(filter);
                 }
-            }
-            else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
+            } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
                 String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
                 if (excludeFileName != null) {
                     List<String> excludes = FileUtils.readLines(new File(excludeFileName));
@@ -121,7 +130,7 @@ public class Report {
                                 configuration);
                     } catch (FileNotFoundException fnfe) {
                         System.err.println("stylesheet " + style[0]
-                                           + " doesn't exist");
+                                + " doesn't exist");
                         System.exit(1);
                     }
                 }
@@ -133,66 +142,69 @@ public class Report {
         Options opts = new Options();
 
         Option help = new Option("h", "help", false,
-        "Print help for the Rat command line interface and exit");
+                "Print help for the Rat command line interface and exit");
         opts.addOption(help);
 
-        OptionGroup addLicenceGroup = new OptionGroup();
-        String addLicenceDesc = "Add the default licence header to any file with an unknown licence that is not in the exclusion list. By default new files will be created with the licence header, to force the modification of existing files use the --force option.";
+        OptionGroup addLicenseGroup = new OptionGroup();
+        String addLicenseDesc = "Add the default license header to any file with an unknown license that is not in the exclusion list. " +
+                "By default new files will be created with the license header, " +
+                "to force the modification of existing files use the --force option.";
 
+        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards compatibility
         Option addLicence = new Option(
                 "a",
                 "addLicence",
                 false,
-                addLicenceDesc);
-        addLicenceGroup.addOption(addLicence);
+                addLicenseDesc);
+        addLicenseGroup.addOption(addLicence);
         Option addLicense = new Option(
                 "A",
                 "addLicense",
                 false,
-                addLicenceDesc);
-        addLicenceGroup.addOption(addLicense);
-        opts.addOptionGroup(addLicenceGroup);
+                addLicenseDesc);
+        addLicenseGroup.addOption(addLicense);
+        opts.addOptionGroup(addLicenseGroup);
 
         Option write = new Option(
                 "f",
                 "force",
                 false,
-        "Forces any changes in files to be written directly to the source files (i.e. new files are not created)");
+                "Forces any changes in files to be written directly to the source files (i.e. new files are not created)");
         opts.addOption(write);
 
         Option copyright = new Option(
                 "c",
                 "copyright",
                 true,
-        "The copyright message to use in the licence headers, usually in the form of \"Copyright 2008 Foo\"");
+                "The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\"");
         opts.addOption(copyright);
 
         @SuppressWarnings("static-access") // ignore OptionBuilder design fault
         final Option exclude = OptionBuilder
-                            .withArgName("expression")
-                            .withLongOpt("exclude")
-                            .hasArgs()
-                            .withDescription("Excludes files matching wildcard <expression>. " +
-                                    "Note that --dir is required when using this parameter. " +
-                                    "Allows multiple arguments.")
-                            .create(EXCLUDE_CLI);
+                .withArgName("expression")
+                .withLongOpt("exclude")
+                .hasArgs()
+                .withDescription("Excludes files matching wildcard <expression>. " +
+                        "Note that --dir is required when using this parameter. " +
+                        "Allows multiple arguments.")
+                .create(EXCLUDE_CLI);
         opts.addOption(exclude);
 
         @SuppressWarnings("static-access") // ignore OptionBuilder design fault
         final Option excludeFile = OptionBuilder
-                            .withArgName("fileName")
-                            .withLongOpt("exclude-file")
-                            .hasArgs()
-                            .withDescription("Excludes files matching regular expression in <file> " +
-                                    "Note that --dir is required when using this parameter. " )
-                            .create(EXCLUDE_FILE_CLI);
+                .withArgName("fileName")
+                .withLongOpt("exclude-file")
+                .hasArgs()
+                .withDescription("Excludes files matching regular expression in <file> " +
+                        "Note that --dir is required when using this parameter. ")
+                .create(EXCLUDE_FILE_CLI);
         opts.addOption(excludeFile);
 
         Option dir = new Option(
                 "d",
                 "dir",
                 false,
-        "Used to indicate source when using --exclude");
+                "Used to indicate source when using --exclude");
         opts.addOption(dir);
 
         OptionGroup outputType = new OptionGroup();
@@ -205,10 +217,10 @@ public class Report {
         outputType.addOption(xml);
 
         Option xslt = new Option(String.valueOf(STYLESHEET_CLI),
-                                 "stylesheet",
-                                 true,
-                                 "XSLT stylesheet to use when creating the"
-                                 + " report.  Not compatible with -x");
+                "stylesheet",
+                true,
+                "XSLT stylesheet to use when creating the"
+                        + " report.  Not compatible with -x");
         outputType.addOption(xslt);
         opts.addOptionGroup(outputType);
 
@@ -225,7 +237,7 @@ public class Report {
         footer.append("Rat is also rather memory hungry ATM\n");
         footer.append("Rat is very basic ATM\n");
         footer.append("Rat highlights possible issues\n");
-        footer.append("Rat reports require intepretation\n");
+        footer.append("Rat reports require interpretation\n");
         footer.append("Rat often requires some tuning before it runs well against a project\n");
         footer.append("Rat relies on heuristics: it may miss issues\n");
 
@@ -244,6 +256,7 @@ public class Report {
 
     /**
      * Gets the current filter used to select files.
+     *
      * @return current file filter, or null when no filter has been set
      */
     public FilenameFilter getInputFileFilter() {
@@ -252,6 +265,7 @@ public class Report {
 
     /**
      * Sets the current filter used to select files.
+     *
      * @param inputFileFilter filter, or null when no filter has been set
      */
     public void setInputFileFilter(FilenameFilter inputFileFilter) {
@@ -260,11 +274,9 @@ public class Report {
 
     /**
      * @param out - the output stream to receive the styled report
-     * @throws Exception in case of errors.
-     * 
-     * @deprecated use {@link #report(PrintStream, ReportConfiguration)} instead
-     * 
      * @return the currently collected numerical statistics.
+     * @throws Exception in case of errors.
+     * @deprecated use {@link #report(PrintStream, ReportConfiguration)} instead
      */
     @Deprecated
     public ClaimStatistic report(PrintStream out) throws Exception {
@@ -275,16 +287,15 @@ public class Report {
     }
 
     /**
-     * @param out - the output stream to receive the styled report
+     * @param out           - the output stream to receive the styled report
      * @param configuration - current configuration options.
-     * @throws Exception in case of errors.
-     * 
-     * @since Rat 0.8
      * @return the currently collected numerical statistics.
+     * @throws Exception in case of errors.
+     * @since Rat 0.8
      */
     public ClaimStatistic report(PrintStream out,
                                  ReportConfiguration configuration)
-        throws Exception {
+            throws Exception {
         final IReportable base = getDirectory(out);
         if (base != null) {
             return report(base, new OutputStreamWriter(out), configuration);
@@ -299,7 +310,7 @@ public class Report {
             out.print(baseDirectory);
             out.print(" does not exist.\n");
             return null;
-        } 
+        }
 
         if (base.isDirectory()) {
             return new DirectoryWalker(base, inputFileFilter);
@@ -316,9 +327,9 @@ public class Report {
     }
 
     /**
-     * Output a report in the default style and default licence
-     * header matcher. 
-     * 
+     * Output a report in the default style and default license
+     * header matcher.
+     *
      * @param out - the output stream to receive the styled report
      * @throws Exception in case of errors.
      * @deprecated use {@link #styleReport(PrintStream, ReportConfiguration)} instead
@@ -332,17 +343,17 @@ public class Report {
     }
 
     /**
-     * Output a report in the default style and default licence
-     * header matcher. 
-     * 
-     * @param out - the output stream to receive the styled report
+     * Output a report in the default style and default license
+     * header matcher.
+     *
+     * @param out           - the output stream to receive the styled report
      * @param configuration the configuration to use
      * @throws Exception in case of errors.
      * @since Rat 0.8
      */
     public void styleReport(PrintStream out,
                             ReportConfiguration configuration)
-        throws Exception {
+            throws Exception {
         final IReportable base = getDirectory(out);
         if (base != null) {
             InputStream style = Defaults.getDefaultStyleSheet();
@@ -352,42 +363,38 @@ public class Report {
 
     /**
      * Output a report that is styled using a defined stylesheet.
-     * 
-     * @param out the stream to write the report to
-     * @param base the files or directories to report on
-     * @param style an input stream representing the stylesheet to use for styling the report
+     *
+     * @param out            the stream to write the report to
+     * @param base           the files or directories to report on
+     * @param style          an input stream representing the stylesheet to use for styling the report
      * @param pConfiguration current report configuration.
-     * 
-     * @throws IOException in case of I/O errors.
+     * @throws IOException                       in case of I/O errors.
      * @throws TransformerConfigurationException in case of XML errors.
-     * @throws InterruptedException in case of threading errors.
-     * @throws RatException in case of internal errors.
+     * @throws InterruptedException              in case of threading errors.
+     * @throws RatException                      in case of internal errors.
      */
     public static void report(PrintStream out, IReportable base, final InputStream style,
-                              ReportConfiguration pConfiguration) 
-            throws IOException, TransformerConfigurationException,  InterruptedException, RatException {
+                              ReportConfiguration pConfiguration)
+            throws IOException, TransformerConfigurationException, InterruptedException, RatException {
         report(new OutputStreamWriter(out), base, style, pConfiguration);
     }
 
     /**
-     * 
      * Output a report that is styled using a defined stylesheet.
-     * 
-     * @param out the writer to write the report to
-     * @param base the files or directories to report on
-     * @param style an input stream representing the stylesheet to use for styling the report
+     *
+     * @param out            the writer to write the report to
+     * @param base           the files or directories to report on
+     * @param style          an input stream representing the stylesheet to use for styling the report
      * @param pConfiguration current report configuration.
-     * 
-     * @throws IOException in case of I/O errors.
-     * @throws TransformerConfigurationException in case of XML errors.
-     * @throws InterruptedException in case of threading errors.
-     * @throws RatException in case of internal errors.
-     * 
      * @return the currently collected numerical statistics.
+     * @throws IOException                       in case of I/O errors.
+     * @throws TransformerConfigurationException in case of XML errors.
+     * @throws InterruptedException              in case of threading errors.
+     * @throws RatException                      in case of internal errors.
      */
-    public static ClaimStatistic report(Writer out, IReportable base, final InputStream style, 
-            ReportConfiguration pConfiguration) 
-    throws IOException, TransformerConfigurationException, InterruptedException, RatException {
+    public static ClaimStatistic report(Writer out, IReportable base, final InputStream style,
+                                        ReportConfiguration pConfiguration)
+            throws IOException, TransformerConfigurationException, InterruptedException, RatException {
         PipedReader reader = new PipedReader();
         PipedWriter writer = new PipedWriter(reader);
         ReportTransformer transformer = new ReportTransformer(out, style, reader);
@@ -401,18 +408,15 @@ public class Report {
     }
 
     /**
-     * 
-     * @param container the files or directories to report on
-     * @param out the writer to write the report to
+     * @param container      the files or directories to report on
+     * @param out            the writer to write the report to
      * @param pConfiguration current report configuration.
-     * 
-     * @throws IOException in case of I/O errors.
-     * @throws RatException in case of internal errors.
-     * 
      * @return the currently collected numerical statistics.
+     * @throws IOException  in case of I/O errors.
+     * @throws RatException in case of internal errors.
      */
     public static ClaimStatistic report(final IReportable container, final Writer out,
-            ReportConfiguration pConfiguration) throws IOException, RatException {
+                                        ReportConfiguration pConfiguration) throws IOException, RatException {
         IXmlWriter writer = new XmlWriter(out);
         final ClaimStatistic statistic = new ClaimStatistic();
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, pConfiguration);

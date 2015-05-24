@@ -188,7 +188,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     private boolean excludeSubProjects;
 
     /**
-     * Will skip the plugin execution, e.g. for technical builds that do not take licence compliance into account.
+     * Will skip the plugin execution, e.g. for technical builds that do not take license compliance into account.
      *
      * @since 0.11
      */

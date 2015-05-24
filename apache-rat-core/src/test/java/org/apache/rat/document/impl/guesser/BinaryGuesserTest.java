@@ -134,7 +134,7 @@ public class BinaryGuesserTest {
     }
 
     @Test
-    public void testFileEncodingSettable() {
+    public void testFileEncodingCanBeSetAndHasFallbackInCaseOfErrors() {
         System.setProperty(BinaryGuesser.FILE_ENCODING, "shouldThrowAnExceptionBecauseNotFound");
         assertEquals("UTF-8", BinaryGuesser.getFileEncodingOrUTF8AsFallback().displayName());
 

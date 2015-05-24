@@ -52,6 +52,7 @@ Rat 0.12 (SNAPSHOT)
     * [RAT-201] - BinaryGuesser should treat *.swf as binary. 
                   Furthermore BinaryGuesser falls back to UTF-8 encoding in case the encoding given via system property (-Dfile.encoding) was not found.
     * [RAT-202] - Report layout differs between successful RAT checks and existence of unapproved files.
+    * [RAT-203] - Using 'license' in README, source code, javadoc, comments and site instead of 'licence'; improve terminology to not confuse RAT consumers.
 
 Rat 0.11
 ========
@@ -265,5 +266,3 @@ Rat 0.3 Notes
    The new XML reporting code is present but is not yet the default.
  * Rat 0.3 is the first release with release notes. All previous releases are
    now consigned to Ancient History. No record of them will be found here.
-
-

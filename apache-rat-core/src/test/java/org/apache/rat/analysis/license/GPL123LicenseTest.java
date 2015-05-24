@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -48,7 +48,7 @@ public class GPL123LicenseTest {
      * If you replace this with BeforeClass and make this method static the build fails at line 67.
      */
     @Before
-    public void initLicencesUnderTest() {
+    public void initLicensesUnderTest() {
         licenseStringMap = new HashMap<IHeaderMatcher, String>();
         licenseStringMap.put(new GPL1License(), GPL1License.FIRST_LICENSE_LINE);
         licenseStringMap.put(new GPL2License(), GPL2License.FIRST_LICENSE_LINE);
@@ -63,24 +63,24 @@ public class GPL123LicenseTest {
 
     @Test
     public void testNegativeMatches() throws Exception {
-        for(Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap.entrySet()) {
-            assertFalse(licenceUnderTest.getKey().match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
+        for (Map.Entry<IHeaderMatcher, String> licenseUnderTest : licenseStringMap.entrySet()) {
+            assertFalse(licenseUnderTest.getKey().match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
         }
     }
 
     @Test
     public void testPositiveMatchInDocument() throws Exception {
-        for(Map.Entry<IHeaderMatcher, String> licenceUnderTest : licenseStringMap.entrySet()) {
-            assertTrue(licenceUnderTest.getKey().match(subject, "\t" + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, "     " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, " * " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, " // " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, " /* " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, " /** " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, "    " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, " ## " + licenceUnderTest.getValue()));
-            assertTrue(licenceUnderTest.getKey().match(subject, " ## " + licenceUnderTest.getValue() + " ##"));
+        for (Map.Entry<IHeaderMatcher, String> licenseUnderTest : licenseStringMap.entrySet()) {
+            assertTrue(licenseUnderTest.getKey().match(subject, "\t" + licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, "     " + licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, " * " + licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, " // " + licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, " /* " + licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, " /** " + licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, "    " + licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, " ## " + licenseUnderTest.getValue()));
+            assertTrue(licenseUnderTest.getKey().match(subject, " ## " + licenseUnderTest.getValue() + " ##"));
         }
     }
 

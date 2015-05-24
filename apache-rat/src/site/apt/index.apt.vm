@@ -39,21 +39,21 @@ java -jar apache-rat-${project.version}.jar --help
  This will output a help message detailing the command line
  options available to you.
 
-* Adding licence headers
+* Adding license headers
 
- Rat can be used to automatically add licence headers to
+ Rat can be used to automatically add license headers to
  files that do not currently have them. Only files that
  are not excluded by the Rat configurations will be affected.
 
- To add licence headers use a command such as:
+ To add license headers use a command such as:
 
 +------------------------------------------+
-java -jar apache-rat-${project.version}.jar --addLicence
+java -jar apache-rat-${project.version}.jar --addlicense
   --copyright "Copyright 2008 Foo" --force
   /path/to/project
 +------------------------------------------+
 
- This command will add the licence header directly to the
+ This command will add the license header directly to the
  source files. If you prefer to see which files will be
  changed and how then remove the "--force" option.
 
@@ -77,20 +77,20 @@ java -jar apache-rat-${project.version}.jar
 +------------------------------------------+
 usage: java rat.report [options] [DIR|TARBALL]
 Options
- -A,--addLicense                Add the default licence header to any file
-                                with an unknown licence that is not in the
+ -A,--addLicense                Add the default license header to any file
+                                with an unknown license that is not in the
                                 exclusion list. By default new files will
-                                be created with the licence header, to
+                                be created with the license header, to
                                 force the modification of existing files
                                 use the --force option.
- -a,--addLicence                Add the default licence header to any file
-                                with an unknown licence that is not in the
+ -a,--addlicense                Add the default license header to any file
+                                with an unknown license that is not in the
                                 exclusion list. By default new files will
-                                be created with the licence header, to
+                                be created with the license header, to
                                 force the modification of existing files
                                 use the --force option.
  -c,--copyright <arg>           The copyright message to use in the
-                                licence headers, usually in the form of
+                                license headers, usually in the form of
                                 "Copyright 2008 Foo"
  -d,--dir                       Used to indicate source when using
                                 --exclude

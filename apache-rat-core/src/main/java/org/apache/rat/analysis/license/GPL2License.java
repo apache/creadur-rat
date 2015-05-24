@@ -15,13 +15,13 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
 import org.apache.rat.api.MetaData;
 
 /**
- * Licence matches GPL2 or later.
+ * License matches GPL2 or later.
  */
 public class GPL2License extends FullTextMatchingLicense {
     public static final String FIRST_LICENSE_LINE = "This program is free software; you can redistribute it and/or\n" +
