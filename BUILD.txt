@@ -11,10 +11,8 @@ Normal development without running tests:
 
     mvn -Dmaven.test.skip=true install
 
-Normal development, eating dog food:
-
-    mvn clean verify -Prat
-
 Build apache release
 
     mvn clean install -Papache-release
+
+RAT uses the previos release version during the build to verify it complies its own rules.
