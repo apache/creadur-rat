@@ -21,8 +21,8 @@ package org.apache.rat.report.claim.util;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.rat.annotation.AbstractLicenceAppender;
-import org.apache.rat.annotation.ApacheV2LicenceAppender;
+import org.apache.rat.annotation.AbstractLicenseAppender;
+import org.apache.rat.annotation.ApacheV2LicenseAppender;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.api.RatException;
@@ -30,10 +30,10 @@ import org.apache.rat.report.AbstractReport;
 
 
 public class LicenseAddingReport extends AbstractReport {
-    private final AbstractLicenceAppender appender;
+    private final AbstractLicenseAppender appender;
 
     public LicenseAddingReport(String pCopyrightMsg, boolean pForced) {
-        appender = pCopyrightMsg == null ? new ApacheV2LicenceAppender() : new ApacheV2LicenceAppender(pCopyrightMsg);
+        appender = pCopyrightMsg == null ? new ApacheV2LicenseAppender() : new ApacheV2LicenseAppender(pCopyrightMsg);
         appender.setForce(pForced);
     }
 

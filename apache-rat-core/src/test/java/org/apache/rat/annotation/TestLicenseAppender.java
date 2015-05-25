@@ -32,7 +32,7 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class TestLicenceAppender {
+public class TestLicenseAppender {
 
     // TODO pottlinger refactor test to use:
     //@Rule
@@ -86,8 +86,8 @@ public class TestLicenceAppender {
         try {
             createTestFile(name, creator);
 
-            ApacheV2LicenceAppender appender =
-                    new ApacheV2LicenceAppender();
+            ApacheV2LicenseAppender appender =
+                    new ApacheV2LicenseAppender();
             appender.append(new File(name));
 
             BufferedReader r = null;
@@ -158,8 +158,8 @@ public class TestLicenceAppender {
             });
 
             file = new File(filename);
-            ApacheV2LicenceAppender appender =
-                    new ApacheV2LicenceAppender();
+            ApacheV2LicenseAppender appender =
+                    new ApacheV2LicenseAppender();
             appender.append(file);
 
             newFile = new File(filename + ".new");
@@ -518,8 +518,8 @@ public class TestLicenceAppender {
     public void fileWithBOM() throws IOException {
         File f = Resources.getResourceFile("violations/FilterTest.cs");
         try {
-            ApacheV2LicenceAppender appender =
-                    new ApacheV2LicenceAppender();
+            ApacheV2LicenseAppender appender =
+                    new ApacheV2LicenseAppender();
             appender.append(f);
 
             BufferedReader r = null;

@@ -28,14 +28,14 @@ import java.io.File;
  * license header is intentional or that there is no license header present
  * already.
  */
-public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
+public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
 
     private String copyright;
 
     /**
      * Create a license appender with the standard ASF license header.
      */
-    public ApacheV2LicenceAppender() {
+    public ApacheV2LicenseAppender() {
         super();
     }
 
@@ -45,7 +45,7 @@ public class ApacheV2LicenceAppender extends AbstractLicenceAppender {
      *
      * @param copyright copyright line.
      */
-    public ApacheV2LicenceAppender(String copyright) {
+    public ApacheV2LicenseAppender(String copyright) {
         super();
         this.copyright = copyright;
     }

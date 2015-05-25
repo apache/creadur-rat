@@ -37,7 +37,7 @@ import java.util.Map;
  * license header is intentional or that there is no license header present
  * already.
  */
-public abstract class AbstractLicenceAppender {
+public abstract class AbstractLicenseAppender {
     private static final String DOT = ".";
     private static final int TYPE_UNKNOWN = 0;
     private static final int TYPE_JAVA = 1;
@@ -183,7 +183,7 @@ public abstract class AbstractLicenceAppender {
 
     private boolean isForced;
 
-    public AbstractLicenceAppender() {
+    public AbstractLicenseAppender() {
         super();
     }
 
