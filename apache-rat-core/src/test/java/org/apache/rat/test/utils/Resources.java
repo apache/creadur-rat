@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -44,9 +42,6 @@ public class Resources {
     private Resources() {
         // Does nothing
     }
-
-    // If started in IntelliJ the working directory is different, thus tests are not running through
-    public static final List<String> INTELLIJ_PROJECT_PREFIXES = Arrays.asList("", "apache-rat-core/" /*,"apache-rat-plugin/"*/);
 
     public static final String SRC_TEST_RESOURCES = "src/test/resources";
     public static final String SRC_MAIN_RESOURCES = "src/main/resources";
@@ -73,17 +68,7 @@ public class Resources {
     private static File getResourceFromBase(File baseDir, String pResource) throws IOException {
         File f = new File(baseDir, pResource);
         if (!f.isFile()) {
-            // try IntelliJ workaround before giving up
-            for (String prefix : INTELLIJ_PROJECT_PREFIXES) {
-                f = new File(new File(prefix + baseDir.getPath()), pResource);
-                System.out.println("Trying: " + f.getAbsolutePath());
-                if (!f.isFile()) continue;
-            }
-
-            if (!f.isFile()) {
-                throw new FileNotFoundException("Unable to locate resource file: " + pResource);
-            }
-
+            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
         }
         return f;
     }
@@ -95,16 +80,7 @@ public class Resources {
     public static File[] getResourceFiles(String pResource) throws IOException {
         File f = new File(TEST_RESOURCE_BASE_PATH, pResource);
         if (!f.isDirectory()) {
-            // try IntelliJ workaround before giving up
-            for (String prefix : INTELLIJ_PROJECT_PREFIXES) {
-                f = new File(new File(prefix + TEST_RESOURCE_BASE_PATH.getPath()), pResource);
-                System.out.println("Trying: " + f.getAbsolutePath());
-                if (!f.isDirectory()) continue;
-            }
-
-            if (!f.isDirectory()) {
-                throw new FileNotFoundException("Unable to locate resource directory: " + pResource);
-            }
+            throw new FileNotFoundException("Unable to locate resource directory: " + pResource);
         }
 
         return f.listFiles(new FileFilter() {

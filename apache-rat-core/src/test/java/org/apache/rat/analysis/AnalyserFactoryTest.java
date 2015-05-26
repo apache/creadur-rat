@@ -33,9 +33,6 @@ import static org.junit.Assert.assertEquals;
 
 public class AnalyserFactoryTest {
 
-    // Marks where to insert a path prefix to make tests run from within IntelliJ due to different path settings
-    private static String INFIX_MARKER = "UNDER_INTELLIJ_THERE_IS_A_SUBDIRECTORY_HERE";
-
     private static final IHeaderMatcher MATCHES_NOTHING_MATCHER = new IHeaderMatcher() {
         public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
             return false;
@@ -52,18 +49,18 @@ public class AnalyserFactoryTest {
     @Before
     public void setUp() throws Exception {
         out = new StringWriter();
-        XmlWriter writer = new XmlWriter(out);
+        final XmlWriter writer = new XmlWriter(out);
         reporter = new SimpleXmlClaimReporter(writer);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(MATCHES_NOTHING_MATCHER);
     }
 
     @Test
     public void standardTypeAnalyser() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/Text.txt"));
+        final MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/Text.txt"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEqualsWithPathInfix("Open standard element", //
-                "<resource name='" + INFIX_MARKER + "src/test/resources/elements/Text.txt'><header-sample>/*\n" +
+        assertEquals("Open standard element", //
+                "<resource name='src/test/resources/elements/Text.txt'><header-sample>/*\n" +
                         " * Licensed to the Apache Software Foundation (ASF) under one\n" +
                         " * or more contributor license agreements.  See the NOTICE file\n" +
                         " * distributed with this work for additional information\n" +
@@ -84,56 +81,37 @@ public class AnalyserFactoryTest {
                         "\n" +
                         "            \n" +
                         "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/>", out.toString());
-
     }
 
     @Test
     public void noteTypeAnalyser() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/LICENSE"));
+        final MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/LICENSE"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEqualsWithPathInfix("Open note element", "<resource name='" + INFIX_MARKER + "src/test/resources/elements/LICENSE'><type name='notice'/>", out.toString());
+        assertEquals("Open note element", "<resource name='src/test/resources/elements/LICENSE'><type name='notice'/>", out.toString());
     }
 
     @Test
     public void binaryTypeAnalyser() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/Image.png"));
+        final MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/Image.png"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEqualsWithPathInfix("Open binary element", "<resource name='" + INFIX_MARKER + "src/test/resources/elements/Image.png'><type name='binary'/>", out.toString());
+        assertEquals("Open binary element", "<resource name='src/test/resources/elements/Image.png'><type name='binary'/>", out.toString());
     }
 
     @Test
     public void archiveTypeAnalyser() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/dummy.jar"));
+        final MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEqualsWithPathInfix("Open archive element", "<resource name='" + INFIX_MARKER + "src/test/resources/elements/dummy.jar'><type name='archive'/>", out.toString());
+        assertEquals("Open archive element", "<resource name='src/test/resources/elements/dummy.jar'><type name='archive'/>", out.toString());
     }
 
     @Test
     public void archiveTypeAnalyserIntelliJ() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/dummy.jar"));
+        final MonolithicFileDocument document = new MonolithicFileDocument(Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEqualsWithPathInfix("Open archive element", "<resource name='" + INFIX_MARKER + "src/test/resources/elements/dummy.jar'><type name='archive'/>", out.toString());
-    }
-
-    private static void assertEqualsWithPathInfix(final String messagePrefix, final String expectedWithMarker, final String actual) {
-        // if the given string is parameter expectedWithMarker is <code>null</code>,
-        // the test code fails with NPE since it's used in a wrong way.
-
-        boolean anyMatch = true;
-        foundMatch:
-        for (String marker : Resources.INTELLIJ_PROJECT_PREFIXES) {
-            if (actual.equals(expectedWithMarker)) {
-                anyMatch = false;
-                break foundMatch;
-            }
-        }
-
-        if (!anyMatch) {
-            assertEquals(messagePrefix, expectedWithMarker.replaceAll(INFIX_MARKER, ""), actual);
-        }
+        assertEquals("Open archive element", "<resource name='src/test/resources/elements/dummy.jar'><type name='archive'/>", out.toString());
     }
 }
