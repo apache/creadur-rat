@@ -18,9 +18,6 @@
  */ 
 package org.apache.rat.report.claim.impl.xml;
 
-import java.io.IOException;
-import java.util.Calendar;
-
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -28,7 +25,12 @@ import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
+import java.io.IOException;
+import java.util.Calendar;
+
 public class SimpleXmlClaimReporter extends AbstractReport {
+    public static final String RAT_REPORT = "rat-report";
+    public static final String TIMESTAMP = "timestamp";
     public static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
     public static final String LICENSE_FAMILY_PREDICATE = "license-family";
     public static final String HEADER_SAMPLE_PREDICATE = "header-sample";
@@ -38,8 +40,8 @@ public class SimpleXmlClaimReporter extends AbstractReport {
     public static final String ARCHIVE_TYPE_UNREADABLE = "unreadable";
     public static final String ARCHIVE_TYPE_READABLE = "readable";
 
-    private static final String NAME = "name";
     private final IXmlWriter writer;
+    private static final String NAME = "name";
     private boolean firstTime = true;
 
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
@@ -128,8 +130,8 @@ public class SimpleXmlClaimReporter extends AbstractReport {
     @Override
     public void startReport() throws RatException {
         try {
-            writer.openElement("rat-report")
-                .attribute("timestamp",
+            writer.openElement(RAT_REPORT)
+                .attribute(TIMESTAMP,
                            DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT
                            .format(Calendar.getInstance()));
         } catch (IOException e) {

@@ -19,7 +19,9 @@
 package org.apache.rat.annotation;
 
 import org.apache.rat.test.utils.Resources;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,23 +29,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class TestLicenseAppender {
-
-    // TODO pottlinger refactor test to use:
-    //@Rule
-    //TemporaryFolder baseTempFolder = new TemporaryFolder();
+    @ClassRule
+    public static TemporaryFolder baseTempFolder = new TemporaryFolder();
 
     private static final String FIRST_LICENSE_LINE = " Licensed to the Apache Software Foundation (ASF) under one";
-
-    /**
-     * Used to ensure that temporary files have unq
-     */
-    private Random random = new Random();
 
     private interface FileCreator {
         void createFile(Writer w) throws IOException;
@@ -53,10 +47,12 @@ public class TestLicenseAppender {
         void readFile(BufferedReader r) throws IOException;
     }
 
-    private static String qualify(String fileName) {
-        return new File(new File(System.getProperty("java.io.tmpdir")),
-                fileName)
-                .getAbsolutePath();
+    private static String getTemporaryFileWithName(String fileName) throws IOException {
+        if (fileName != null) {
+            return baseTempFolder.newFile(fileName).getAbsolutePath();
+        } else {
+            return baseTempFolder.newFile().getAbsolutePath();
+        }
     }
 
     private static void createTestFile(String fileName,
@@ -82,7 +78,7 @@ public class TestLicenseAppender {
                                            FileCreator creator,
                                            NewFileReader reader)
             throws IOException {
-        String name = qualify(relativeName);
+        String name = getTemporaryFileWithName(relativeName);
         try {
             createTestFile(name, creator);
 
@@ -145,8 +141,7 @@ public class TestLicenseAppender {
 
     @Test
     public void addLicenseToUnknownFile() throws IOException {
-        String filename = qualify("tmp" + random.nextLong()
-                + ".unknownType");
+        String filename = getTemporaryFileWithName(null);
         File file = null;
         File newFile = null;
         try {
