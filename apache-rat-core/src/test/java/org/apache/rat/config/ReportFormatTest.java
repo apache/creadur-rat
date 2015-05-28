@@ -26,10 +26,6 @@ import java.util.Arrays;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author pottlinger
- * @version 2015-05-18, 19:52
- */
 public class ReportFormatTest {
     @Test
     public void isANullSafe() {

@@ -91,18 +91,15 @@ public class Defaults {
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
     public static InputStream getPlainStyleSheet() {
-        InputStream result = Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
-        return result;
+        return Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
     }
 
     public static InputStream getUnapprovedLicensesStyleSheet() {
-        InputStream result = Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
-        return result;
+        return Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
     }
 
     public static InputStream getDefaultStyleSheet() {
-        InputStream result = getPlainStyleSheet();
-        return result;
+        return getPlainStyleSheet();
     }
 
     public static IHeaderMatcher createDefaultMatcher() {

@@ -25,9 +25,9 @@ import junit.framework.TestCase;
 
 public class DocumentAnalyserMultiplexerTest extends TestCase {
 
-    DocumentAnalyserMultiplexer multiplexer;
-    IDocumentAnalyser[] analysers;
-    MockDocument document;
+    private DocumentAnalyserMultiplexer multiplexer;
+    private IDocumentAnalyser[] analysers;
+    private MockDocument document;
     
     @Override
     protected void setUp() throws Exception {

@@ -18,6 +18,7 @@
  */
 package org.apache.rat.annotation;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.test.utils.Resources;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -62,9 +63,7 @@ public class TestLicenseAppender {
         try {
             creator.createFile(w = new FileWriter(fileName));
         } finally {
-            if (w != null) {
-                w.close();
-            }
+            IOUtils.closeQuietly(w);
         }
     }
 
@@ -91,9 +90,7 @@ public class TestLicenseAppender {
                 r = new BufferedReader(new FileReader(name + ".new"));
                 reader.readFile(r);
             } finally {
-                if (r != null) {
-                    r.close();
-                }
+                IOUtils.closeQuietly(r);
             }
         } finally {
             tryToDelete(new File(name));
@@ -142,28 +139,23 @@ public class TestLicenseAppender {
     @Test
     public void addLicenseToUnknownFile() throws IOException {
         String filename = getTemporaryFileWithName(null);
-        File file = null;
-        File newFile = null;
-        try {
-            createTestFile(filename, new FileCreator() {
-                public void createFile(Writer writer)
-                        throws IOException {
-                    writer.write("Unknown file type\n");
-                }
-            });
+        createTestFile(filename, new FileCreator() {
+            public void createFile(Writer writer)
+                    throws IOException {
+                writer.write("Unknown file type\n");
+            }
+        });
 
-            file = new File(filename);
-            ApacheV2LicenseAppender appender =
-                    new ApacheV2LicenseAppender();
-            appender.append(file);
+        File file = new File(filename);
+        file.deleteOnExit();
+        ApacheV2LicenseAppender appender =
+                new ApacheV2LicenseAppender();
+        appender.append(file);
 
-            newFile = new File(filename + ".new");
-            assertFalse("No new file should have been written",
-                    newFile.exists());
-        } finally {
-            tryToDelete(file);
-            tryToDelete(newFile);
-        }
+        File newFile = new File(filename + ".new");
+        newFile.deleteOnExit();
+        assertFalse("No new file should have been written",
+                newFile.exists());
     }
 
     @Test
@@ -530,9 +522,7 @@ public class TestLicenseAppender {
                 }
                 assertEquals("#if NET_2_0", r.readLine());
             } finally {
-                if (r != null) {
-                    r.close();
-                }
+                IOUtils.closeQuietly(r);
             }
         } finally {
             tryToDelete(new File(f.getAbsolutePath() + ".new"));

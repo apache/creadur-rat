@@ -18,6 +18,8 @@
  */
 package org.apache.rat.annotation;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -227,11 +229,14 @@ public abstract class AbstractLicenseAppender {
                 }
             }
         } finally {
-            writer.close();
+            IOUtils.closeQuietly(writer);
         }
 
         if (isForced) {
-            document.delete();
+            boolean deleted = document.delete();
+            if (!deleted) {
+                System.err.println("Could not delete original file to prepare renaming.");
+            }
             boolean renamed = newDocument.renameTo(document.getAbsoluteFile());
             if (!renamed) {
                 System.err.println("Failed to rename new file, original file remains unchanged.");
@@ -254,73 +259,69 @@ public abstract class AbstractLicenseAppender {
                                   boolean expectsMSVSSF)
             throws IOException {
         boolean written = false;
+        FileInputStream fis = null;
+        BufferedReader br = null;
         try {
-            FileInputStream fis = new FileInputStream(document);
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis)));
+            fis = new FileInputStream(document);
+            br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis)));
 
-                if (!expectsHashPling
-                        && !expectsAtEcho
-                        && !expectsPackage
-                        && !expectsXMLDecl
-                        && !expectsPhpPI
-                        && !expectsMSVSSF) {
+            if (!expectsHashPling
+                    && !expectsAtEcho
+                    && !expectsPackage
+                    && !expectsXMLDecl
+                    && !expectsPhpPI
+                    && !expectsMSVSSF) {
+                written = true;
+                writer.write(getLicenseHeader(document));
+                writer.write(LINE_SEP);
+            }
+
+            String line;
+            boolean first = true;
+            while ((line = br.readLine()) != null) {
+                if (first && expectsHashPling) {
                     written = true;
-                    writer.write(getLicenseHeader(document));
+                    doFirstLine(document, writer, line, "#!");
+                } else if (first && expectsAtEcho) {
+                    written = true;
+                    doFirstLine(document, writer, line, "@echo");
+                } else if (first && expectsMSVSSF) {
+                    written = true;
+                    if ("".equals(line)) {
+                        line = passThroughReadNext(writer, line, br);
+                    }
+                    if (line.startsWith("Microsoft Visual Studio Solution"
+                            + " File")) {
+                        line = passThroughReadNext(writer, line, br);
+                    }
+                    doFirstLine(document, writer, line, "# Visual ");
+                } else {
+                    writer.write(line);
                     writer.write(LINE_SEP);
                 }
 
-                String line;
-                boolean first = true;
-                while ((line = br.readLine()) != null) {
-                    if (first && expectsHashPling) {
-                        written = true;
-                        doFirstLine(document, writer, line, "#!");
-                    } else if (first && expectsAtEcho) {
-                        written = true;
-                        doFirstLine(document, writer, line, "@echo");
-                    } else if (first && expectsMSVSSF) {
-                        written = true;
-                        if ("".equals(line)) {
-                            line = passThroughReadNext(writer, line, br);
-                        }
-                        if (line.startsWith("Microsoft Visual Studio Solution"
-                                + " File")) {
-                            line = passThroughReadNext(writer, line, br);
-                        }
-                        doFirstLine(document, writer, line, "# Visual ");
-                    } else {
-                        writer.write(line);
-                        writer.write(LINE_SEP);
-                    }
-
-                    if (expectsPackage && line.startsWith("package ")) {
-                        written = true;
-                        writer.write(LINE_SEP);
-                        writer.write(getLicenseHeader(document));
-                        writer.write(LINE_SEP);
-                    } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
-                        written = true;
-                        writer.write(LINE_SEP);
-                        writer.write(getLicenseHeader(document));
-                        writer.write(LINE_SEP);
-                    } else if (expectsPhpPI && line.startsWith("<?php")) {
-                        written = true;
-                        writer.write(LINE_SEP);
-                        writer.write(getLicenseHeader(document));
-                        writer.write(LINE_SEP);
-                    }
-                    first = false;
+                if (expectsPackage && line.startsWith("package ")) {
+                    written = true;
+                    writer.write(LINE_SEP);
+                    writer.write(getLicenseHeader(document));
+                    writer.write(LINE_SEP);
+                } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
+                    written = true;
+                    writer.write(LINE_SEP);
+                    writer.write(getLicenseHeader(document));
+                    writer.write(LINE_SEP);
+                } else if (expectsPhpPI && line.startsWith("<?php")) {
+                    written = true;
+                    writer.write(LINE_SEP);
+                    writer.write(getLicenseHeader(document));
+                    writer.write(LINE_SEP);
                 }
-            } finally {
-                if (br != null) {
-                    br.close();
-                }
-                fis.close();
+                first = false;
             }
         } finally {
-            writer.close();
+            IOUtils.closeQuietly(br);
+            IOUtils.closeQuietly(fis);
+            IOUtils.closeQuietly(writer);
         }
         return written;
     }

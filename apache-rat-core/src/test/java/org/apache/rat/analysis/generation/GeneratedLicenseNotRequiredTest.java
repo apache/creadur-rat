@@ -31,8 +31,8 @@ import static org.junit.Assert.assertTrue;
 
 public class GeneratedLicenseNotRequiredTest {
 
-    GeneratedLicenseNotRequired license;
-    MockClaimReporter reporter;
+    private GeneratedLicenseNotRequired license;
+    private MockClaimReporter reporter;
     
     @Before
     public void setUp() throws Exception {

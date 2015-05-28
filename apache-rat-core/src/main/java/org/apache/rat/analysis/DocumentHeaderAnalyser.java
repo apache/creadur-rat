@@ -18,12 +18,13 @@
  */ 
 package org.apache.rat.analysis;
 
-import java.io.IOException;
-import java.io.Reader;
-
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
+
+import java.io.IOException;
+import java.io.Reader;
 
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
@@ -46,13 +47,7 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
         } catch (RatHeaderAnalysisException e) {
             throw new RatDocumentAnalysisException("Cannot analyse header", e);
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // SWALLOW
-                }
-            }
+            IOUtils.closeQuietly(reader);
         }
      }
 

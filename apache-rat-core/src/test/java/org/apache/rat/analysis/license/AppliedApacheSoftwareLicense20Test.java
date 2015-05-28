@@ -15,18 +15,19 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.apache.rat.test.utils.Resources;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.BufferedReader;
+import java.io.StringReader;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -50,9 +51,9 @@ public class AppliedApacheSoftwareLicense20Test {
             + " *  limitations under the License.\n"
             + " */\n";
 
-    AppliedApacheSoftwareLicense20 license;
-    
-    MockClaimReporter reporter;
+    private AppliedApacheSoftwareLicense20 license;
+
+    private MockClaimReporter reporter;
 
     @Before
     public void setUp() throws Exception {
@@ -78,25 +79,31 @@ public class AppliedApacheSoftwareLicense20Test {
 
     @Test
     public void noMatch() throws Exception {
-        BufferedReader in = Resources.getBufferedResourceReader("elements/Source.java");
-        String line = in.readLine();
-        boolean result = false;
-        final Document subject = new MockLocation("subject");
-        while (line != null) {
-            result = license.match(subject, line);
-            line = in.readLine();
+        BufferedReader in = null;
+        try {
+            in = Resources.getBufferedResourceReader("elements/Source.java");
+            String line = in.readLine();
+            boolean result = false;
+            final Document subject = new MockLocation("subject");
+            while (line != null) {
+                result = license.match(subject, line);
+                line = in.readLine();
+            }
+            assertFalse("Applied AL2.0 license should not be matched", result);
+            license.reset();
+        } finally {
+            IOUtils.closeQuietly(in);
         }
-        assertFalse("Applied AL2.0 license should not be matched", result);
-        license.reset();
     }
-    @Test(timeout=2000) // may need to be adjusted if many more files are added
+
+    @Test(timeout = 2000) // may need to be adjusted if many more files are added
     public void goodFiles() throws Exception {
         DirectoryScanner.testFilesInDir("appliedAL20/good", license, true);
     }
-   
-    @Test(timeout=2000) // may need to be adjusted if many more files are added
+
+    @Test(timeout = 2000) // may need to be adjusted if many more files are added
     public void baddFiles() throws Exception {
         DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
     }
-   
+
 }

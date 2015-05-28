@@ -28,9 +28,9 @@ import static org.junit.Assert.assertNotNull;
 
 public class FilteringSequenceFactoryTest {
 
-    int capacity;
-    FilteringSequenceFactory factory;
-    SimpleCharFilter filter;
+    private int capacity;
+    private FilteringSequenceFactory factory;
+    private SimpleCharFilter filter;
 
     @Before
     public void setUp() throws Exception {
@@ -75,7 +75,7 @@ public class FilteringSequenceFactoryTest {
         StringReader reader = new StringReader(INPUT);
         CharSequence result = factory.filter(reader);
         assertNotNull(result);
-        String output = new StringBuffer().append(result).toString();
+        String output = result.toString();
         assertEquals("No filtering so input equals output.", INPUT.substring(0, capacity), output);
     }
 }

@@ -21,9 +21,6 @@ package org.apache.rat.config;
 
 /**
  * Value of addLicenseHeaders configuration option.
- *
- * @author pottlinger
- * @version 2015-05-11
  */
 public enum AddLicenseHeaders {
     TRUE, //

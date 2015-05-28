@@ -21,10 +21,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 
-/**
- * @author pottlinger
- * @version 2015-05-17, 21:14
- */
 public class AddLicenseHeadersTest {
     @Test
     public void verifyHelpOptions() {

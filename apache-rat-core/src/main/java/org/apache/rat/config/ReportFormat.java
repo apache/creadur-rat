@@ -19,10 +19,6 @@ package org.apache.rat.config;
  * under the License.
  */
 
-/**
- * @author pottlinger
- * @version 2015-05-18, 19:49
- */
 public enum ReportFormat {
     PLAIN,
 

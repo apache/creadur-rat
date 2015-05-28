@@ -18,19 +18,15 @@
  */ 
 package org.apache.rat.report.xml;
 
+import org.apache.rat.report.xml.writer.IXmlWriter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.rat.report.xml.writer.IXmlWriter;
-
 public class MockXmlWriter implements IXmlWriter {
 
-    public final List<Object> calls;
-    
-    public MockXmlWriter() {
-        calls = new ArrayList<Object>();
-    }
+    public final List<Object> calls = new ArrayList<Object>();
     
     public IXmlWriter attribute(CharSequence name, CharSequence value)
             throws IOException {

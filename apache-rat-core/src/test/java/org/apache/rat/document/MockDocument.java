@@ -18,17 +18,17 @@
  */ 
 package org.apache.rat.document;
 
+import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-
 public class MockDocument implements Document {
 
-    public Reader reader;
-    public String name;
+    private final Reader reader;
+    private final String name;
     private final MetaData metaData = new MetaData();
 
     public MockDocument() {

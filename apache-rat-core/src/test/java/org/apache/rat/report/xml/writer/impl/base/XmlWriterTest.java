@@ -34,8 +34,8 @@ public class XmlWriterTest {
 
     private static final char[] ZERO_CHAR = {(char)0};
     
-    XmlWriter writer;
-    StringWriter out;
+    private XmlWriter writer;
+    private StringWriter out;
     
     @Before
     public void setUp() throws Exception {

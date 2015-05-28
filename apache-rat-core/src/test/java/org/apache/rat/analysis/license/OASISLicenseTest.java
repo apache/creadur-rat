@@ -15,9 +15,10 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
@@ -32,7 +33,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class OASISLicenseTest {
-    
+
     private static final String LICENSE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<!--\n" +
             "\n" +
@@ -52,10 +53,10 @@ public class OASISLicenseTest {
             "\n" +
             "This document and the information contained herein is provided on an \"AS IS\" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.\n" +
             "-->\n";
-    
-    OASISLicense license;
-    
-    MockClaimReporter reporter;
+
+    private OASISLicense license;
+
+    private MockClaimReporter reporter;
 
     @Before
     public void setUp() throws Exception {
@@ -65,42 +66,52 @@ public class OASISLicenseTest {
 
     @Test
     public void match() throws Exception {
-        BufferedReader in = new BufferedReader(new StringReader(LICENSE));
-        String line = in.readLine();
-        boolean result = false;
-        final Document subject = new MockLocation("subject");
-        while (line != null) {
-            result = license.match(subject, line);
-            line = in.readLine();
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new StringReader(LICENSE));
+            String line = in.readLine();
+            boolean result = false;
+            final Document subject = new MockLocation("subject");
+            while (line != null) {
+                result = license.match(subject, line);
+                line = in.readLine();
+            }
+            assertTrue("OASIS license should be matched", result);
+            license.reset();
+            result = license.match(subject, "New line");
+            assertFalse("After reset, content should build up again", result);
+        } finally {
+            IOUtils.closeQuietly(in);
         }
-        assertTrue("OASIS license should be matched", result);
-        license.reset();
-        result = license.match(subject, "New line");
-        assertFalse("After reset, content should build up again", result);
     }
 
     @Test
     public void noMatch() throws Exception {
-        BufferedReader in = Resources.getBufferedResourceReader("elements/Source.java");
-        String line = in.readLine();
-        boolean result = false;
-        final Document subject = new MockLocation("subject");
-        while (line != null) {
-            result = license.match(subject, line);
-            line = in.readLine();
+        BufferedReader in = null;
+        try {
+            in = Resources.getBufferedResourceReader("elements/Source.java");
+            String line = in.readLine();
+            boolean result = false;
+            final Document subject = new MockLocation("subject");
+            while (line != null) {
+                result = license.match(subject, line);
+                line = in.readLine();
+            }
+            assertFalse("OASIS license should not be matched", result);
+            license.reset();
+        } finally {
+            IOUtils.closeQuietly(in);
         }
-        assertFalse("OASIS license should not be matched", result);
-        license.reset();
     }
-    
-    @Test(timeout=2000) // may need to be adjusted if many more files are added
+
+    @Test(timeout = 2000) // may need to be adjusted if many more files are added
     public void goodFiles() throws Exception {
         DirectoryScanner.testFilesInDir("oasis/good", license, true);
     }
-   
-    @Test(timeout=2000) // may need to be adjusted if many more files are added
+
+    @Test(timeout = 2000) // may need to be adjusted if many more files are added
     public void baddFiles() throws Exception {
         DirectoryScanner.testFilesInDir("oasis/bad", license, false);
     }
-   
+
 }

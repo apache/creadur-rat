@@ -557,8 +557,7 @@ public final class XmlWriter implements IXmlWriter {
     }
 
     private boolean isOutOfRange(final char character) {
-        final boolean result = !ALLOWED_CHARACTERS[character];
-        return result;
+        return !ALLOWED_CHARACTERS[character];
     }
 
     /**
@@ -641,13 +640,11 @@ public final class XmlWriter implements IXmlWriter {
 
     private boolean isValidNameStart(final char character) {
         final byte code = CHARACTER_CODES[character];
-        final boolean result = (code & NAME_START_MASK) > 0;
-        return result;
+        return (code & NAME_START_MASK) > 0;
     }
 
     private boolean isValidNameBody(final char character) {
         final byte code = CHARACTER_CODES[character];
-        final boolean result = (code & NAME_MASK) > 0;
-        return result;
+        return (code & NAME_MASK) > 0;
     }
 }

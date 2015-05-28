@@ -18,12 +18,13 @@ package org.apache.rat.analysis;
  * under the License.                                           *
  */
 
+import org.apache.commons.io.IOUtils;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 
 /**
  * <p>Reads from a stream to check license.</p>
@@ -94,11 +95,7 @@ class HeaderCheckWorker {
             } catch (IOException e) {
                 throw new RatHeaderAnalysisException("Cannot read header for " + subject, e);
             }
-            try {
-                reader.close();
-            } catch (IOException e) {
-                // swallow
-            }
+            IOUtils.closeQuietly(reader);
             matcher.reset();
         }
         finished = true;

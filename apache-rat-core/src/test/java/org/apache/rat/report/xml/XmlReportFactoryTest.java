@@ -41,8 +41,8 @@ public class XmlReportFactoryTest {
 
     private static final Pattern IGNORE_EMPTY = Pattern.compile(".svn|Empty.txt");
     
-    StringWriter out;
-    IXmlWriter writer;
+    private StringWriter out;
+    private IXmlWriter writer;
     
     @Before
     public void setUp() throws Exception {

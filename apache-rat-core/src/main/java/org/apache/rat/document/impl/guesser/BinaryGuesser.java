@@ -18,6 +18,7 @@
  */
 package org.apache.rat.document.impl.guesser;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 
 import java.io.IOException;
@@ -51,13 +52,7 @@ public class BinaryGuesser {
         } catch (IOException e) {
             result = false;
         } finally {
-            try {
-                if (stream != null) {
-                    stream.close();
-                }
-            } catch (IOException e) {
-                // SWALLOW
-            }
+            IOUtils.closeQuietly(stream);
         }
         return result;
     }
@@ -182,7 +177,7 @@ public class BinaryGuesser {
     public static boolean containsExtension(final String name,
                                             final String[] exts) {
         for (int i = 0; i < exts.length; i++) {
-            if (name.indexOf(DOT + exts[i] + DOT) >= 0) {
+            if (name.contains(DOT + exts[i] + DOT)) {
                 return true;
             }
         }

@@ -18,6 +18,7 @@
  */
 package org.apache.rat.document.impl.guesser;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.test.utils.Resources;
@@ -51,7 +52,6 @@ public class BinaryGuesserTest {
             //"manifest.Mf",//
             "deprecatedtechnology.swf"
     );
-
 
     @Test
     public void testMatches() {
@@ -94,16 +94,14 @@ public class BinaryGuesserTest {
             System.err.println("Skipping testBinaryWithMalformedInput");
         } catch (IOException e) {
             if (r != null) {
-                r.close();
+                IOUtils.closeQuietly(r);
             } else {
                 throw e; // could not open the second file
             }
             r = null;
             assertTrue("Expected binary for " + doc.getName(), BinaryGuesser.isBinary(doc));
         } finally {
-            if (r != null) {
-                r.close();
-            }
+            IOUtils.closeQuietly(r);
         }
     }
 

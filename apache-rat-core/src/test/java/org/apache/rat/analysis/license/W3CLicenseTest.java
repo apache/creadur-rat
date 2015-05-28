@@ -38,8 +38,8 @@ public class W3CLicenseTest {
     public static final String COPYRIGHT_URL_XML
     = "<!-- http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 -->";
     
-    W3CLicense license;
-    MockClaimReporter reporter;
+    private W3CLicense license;
+    private MockClaimReporter reporter;
 
     @Before
     public void setUp() throws Exception {

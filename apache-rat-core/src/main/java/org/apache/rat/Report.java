@@ -231,8 +231,7 @@ public class Report {
         HelpFormatter f = new HelpFormatter();
         String header = "Options";
 
-        StringBuilder footer = new StringBuilder("\n");
-        footer.append("NOTE:\n");
+        StringBuilder footer = new StringBuilder("\nNOTE:\n");
         footer.append("Rat is really little more than a grep ATM\n");
         footer.append("Rat is also rather memory hungry ATM\n");
         footer.append("Rat is very basic ATM\n");

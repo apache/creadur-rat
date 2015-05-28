@@ -30,10 +30,10 @@ import static org.junit.Assert.assertTrue;
 
 public class HeaderMatcherWithBeansTest {
 
-    int capacity;
-    HeaderMatcher matcher;
-    SimpleCharFilter filter;
-    HeaderBean[] beans;
+    private int capacity;
+    private HeaderMatcher matcher;
+    private SimpleCharFilter filter;
+    private HeaderBean[] beans;
 
     @Before
     public void setUp() throws Exception {

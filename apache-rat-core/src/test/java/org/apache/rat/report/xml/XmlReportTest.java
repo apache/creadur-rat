@@ -45,9 +45,9 @@ import static org.junit.Assert.assertTrue;
 public class XmlReportTest {
 
     private static final Pattern IGNORE = Pattern.compile(".svn");
-    StringWriter out;
-    IXmlWriter writer;
-    RatReport report;
+    private StringWriter out;
+    private IXmlWriter writer;
+    private RatReport report;
     
     @Before
     public void setUp() throws Exception {

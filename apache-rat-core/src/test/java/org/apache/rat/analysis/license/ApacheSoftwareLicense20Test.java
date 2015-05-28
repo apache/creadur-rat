@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ApacheSoftwareLicense20Test {
 
-    MockClaimReporter reporter;
+    private MockClaimReporter reporter;
 
     @Before
     public void setUp() throws Exception {

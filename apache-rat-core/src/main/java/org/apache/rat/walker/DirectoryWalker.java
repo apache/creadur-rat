@@ -92,8 +92,8 @@ public class DirectoryWalker extends Walker implements IReportable {
      */
     private void process(final RatReport report, final File file) throws RatException {
         final File[] files = file.listFiles();
-        Arrays.sort(files, COMPARATOR);
         if (files != null) {
+            Arrays.sort(files, COMPARATOR);
             // breadth first traversal
             processNonDirectories(report, files);
             processDirectories(report, files);

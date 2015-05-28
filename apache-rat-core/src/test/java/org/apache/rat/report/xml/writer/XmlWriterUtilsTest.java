@@ -28,8 +28,8 @@ import static org.junit.Assert.assertEquals;
 
 public class XmlWriterUtilsTest {
 
-    StringWriter out;
-    IXmlWriter writer;
+    private StringWriter out;
+    private IXmlWriter writer;
 
     @Before
     public void setUp() throws Exception {

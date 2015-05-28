@@ -15,9 +15,10 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.generation;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
@@ -34,9 +35,9 @@ import static org.junit.Assert.assertTrue;
 
 public class JavaDocLicenseNotRequiredTest {
 
-    MockClaimReporter reporter;
-    JavaDocLicenseNotRequired license;
-    
+    private MockClaimReporter reporter;
+    private JavaDocLicenseNotRequired license;
+
     @Before
     public void setUp() throws Exception {
         license = new JavaDocLicenseNotRequired();
@@ -60,18 +61,22 @@ public class JavaDocLicenseNotRequiredTest {
         boolean result = readAndMatch("notjavadoc.html");
         assertFalse("Not javadocs and so should return null", result);
     }
-    
+
     boolean readAndMatch(String name) throws Exception {
         File file = Resources.getResourceFile("javadocs/" + name);
         boolean result = false;
-        BufferedReader in = new BufferedReader(new FileReader(file));
-        String line = in.readLine();
-        final Document subject = new MockLocation("subject");
-        while (line != null && !result) {
-            result = license.match(subject, line);
-            line = in.readLine();
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new FileReader(file));
+            String line = in.readLine();
+            final Document subject = new MockLocation("subject");
+            while (line != null && !result) {
+                result = license.match(subject, line);
+                line = in.readLine();
+            }
+        } finally {
+                IOUtils.closeQuietly(in);
         }
-        in.close();
-        return result;
+            return result;
+        }
     }
-}

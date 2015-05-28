@@ -19,12 +19,12 @@
 
 package org.apache.rat.report.claim.impl;
 
+import org.apache.rat.api.MetaData;
+import org.apache.rat.api.RatException;
+import org.apache.rat.report.claim.ClaimStatistic;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.rat.api.RatException;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.report.claim.ClaimStatistic;
 
 
 /**
@@ -48,9 +48,9 @@ public class ClaimAggregator extends AbstractClaimReporter {
         if (num == null) {
             newNum = 1;
         } else {
-            newNum = num.intValue() + 1;
+            newNum = num + 1;
         }
-        pMap.put(pKey, new Integer(newNum));
+        pMap.put(pKey, newNum);
     }
     
     @Override

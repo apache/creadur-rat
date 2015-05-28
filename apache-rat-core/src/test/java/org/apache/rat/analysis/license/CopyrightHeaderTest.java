@@ -43,9 +43,9 @@ public class CopyrightHeaderTest {
             , "/*  Copyright 2013FooBar*/"
             , "/*  Copyright 2012 2013 FooBar.*/" };
 
-    CopyrightHeader header;
-    MockClaimReporter reporter;
-    Document subject = new MockLocation("subject");
+    private CopyrightHeader header;
+    private MockClaimReporter reporter;
+    private Document subject = new MockLocation("subject");
 
     @Before
     public void setUp() throws Exception {

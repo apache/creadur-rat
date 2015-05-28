@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 public class ArrayCharFilterTest {
 
     private static final char[] filtered = {'d', 'o', 'a'};
-    ArrayCharFilter filter;
+    private ArrayCharFilter filter;
     
     @Before
     public void setUp() throws Exception {

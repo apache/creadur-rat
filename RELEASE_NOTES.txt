@@ -53,6 +53,7 @@ Rat 0.12 (SNAPSHOT)
                   Furthermore BinaryGuesser falls back to UTF-8 encoding in case the encoding given via system property (-Dfile.encoding) was not found.
     * [RAT-202] - Report layout differs between successful RAT checks and existence of unapproved files.
     * [RAT-203] - Using 'license' in README, source code, javadoc, comments and site instead of 'licence'; improve terminology to not confuse RAT consumers.
+    * [RAT-204] - Unify resource handling in code and tests, make sure the resources are properly closed. Apply minor refactorings.
 
 Rat 0.11
 ========
