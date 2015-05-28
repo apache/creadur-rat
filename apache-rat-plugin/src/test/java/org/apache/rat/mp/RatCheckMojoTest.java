@@ -17,6 +17,7 @@ package org.apache.rat.mp;
  * limitations under the License.
  */
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -43,11 +44,9 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
     /**
      * Creates a new instance of {@link RatCheckMojo}.
      *
-     * @param pDir
-     *            The directory, where to look for a pom.xml file.
+     * @param pDir The directory, where to look for a pom.xml file.
      * @return The configured Mojo.
-     * @throws Exception
-     *             An error occurred while creating the Mojo.
+     * @throws Exception An error occurred while creating the Mojo.
      */
     private RatCheckMojo newRatCheckMojo(String pDir) throws Exception {
         return (RatCheckMojo) newRatMojo(pDir, "check", false);
@@ -56,16 +55,13 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
     /**
      * Creates a new instance of {@link AbstractRatMojo}.
      *
-     * @param pDir
-     *            The directory, where to look for a pom.xml file.
-     * @param pGoal
-     *            The goal, which the Mojo must implement.
+     * @param pDir  The directory, where to look for a pom.xml file.
+     * @param pGoal The goal, which the Mojo must implement.
      * @return The configured Mojo.
-     * @throws Exception
-     *             An error occurred while creating the Mojo.
+     * @throws Exception An error occurred while creating the Mojo.
      */
     private AbstractRatMojo newRatMojo(String pDir, String pGoal,
-            boolean pCreateCopy) throws Exception {
+                                       boolean pCreateCopy) throws Exception {
         final File baseDir = new File(getBasedir());
         final File testBaseDir = getSourceDirectory(getBasedir(), pDir,
                 pCreateCopy, baseDir);
@@ -118,11 +114,9 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
     /**
      * Reads the location of the rat text file from the Mojo.
      *
-     * @param pMojo
-     *            The configured Mojo.
+     * @param pMojo The configured Mojo.
      * @return Value of the "reportFile" property.
-     * @throws Exception
-     *             An error occurred while reading the property.
+     * @throws Exception An error occurred while reading the property.
      */
     private File getRatTxtFile(RatCheckMojo pMojo) throws Exception {
         return (File) getVariableValueFromObject(pMojo, "reportFile");
@@ -131,8 +125,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
     /**
      * Runs a check, which should expose no problems.
      *
-     * @throws Exception
-     *             The test failed.
+     * @throws Exception The test failed.
      */
     public void testIt1() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("it1");
@@ -144,8 +137,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
     /**
      * Runs a check, which should detect a problem.
      *
-     * @throws Exception
-     *             The test failed.
+     * @throws Exception The test failed.
      */
     public void testIt2() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("it2");
@@ -161,18 +153,27 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
             assertTrue("report filename was not contained in '" + msg + "'",
                     msg.contains(REPORTFILE));
             assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase()
-                    .indexOf("NULL") > -1));
+                    .contains("NULL")));
         }
         ensureRatReportIsCorrect(ratTxtFile, 1, 1);
     }
 
     private String getFirstLine(File pFile) throws IOException {
-        final FileInputStream fis = new FileInputStream(pFile);
-        final InputStreamReader reader = new InputStreamReader(fis, "UTF8");
-        final BufferedReader breader = new BufferedReader(reader);
-        final String result = breader.readLine();
-        breader.close();
-        return result;
+        FileInputStream fis = null;
+        InputStreamReader reader = null;
+        BufferedReader breader = null;
+        try {
+            fis = new FileInputStream(pFile);
+            reader = new InputStreamReader(fis, "UTF8");
+            breader = new BufferedReader(reader);
+            final String result = breader.readLine();
+            breader.close();
+            return result;
+        } finally {
+            IOUtils.closeQuietly(fis);
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(breader);
+        }
     }
 
     /**
@@ -183,7 +184,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
                 true);
         setVariableValueToObject(mojo, "addLicenseHeaders", AddLicenseHeaders.TRUE.name());
         setVariableValueToObject(mojo, "numUnapprovedLicenses",
-                Integer.valueOf(1));
+                1);
         mojo.execute();
         final File ratTxtFile = getRatTxtFile(mojo);
         ensureRatReportIsCorrect(ratTxtFile, 1, 1);
@@ -193,12 +194,12 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
                 "it3");
         final String firstLineOrig = getFirstLine(new File(sourcesDir,
                 "src.apt"));
-        assertTrue(firstLineOrig.indexOf("--") != -1);
-        assertTrue(firstLineOrig.indexOf("~~") == -1);
+        assertTrue(firstLineOrig.contains("--"));
+        assertFalse(firstLineOrig.contains("~~"));
         final String firstLineModified = getFirstLine(new File(sourcesDir,
                 "src.apt.new"));
-        assertTrue(firstLineModified.indexOf("--") == -1);
-        assertTrue(firstLineModified.indexOf("~~") != -1);
+        assertTrue(firstLineModified.contains("~~"));
+        assertFalse(firstLineModified.contains("--"));
     }
 
 }

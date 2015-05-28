@@ -434,8 +434,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             throws MojoExecutionException, MojoFailureException {
         final List<ILicenseFamily> list = new ArrayList<ILicenseFamily>();
         if (licenseFamilies != null) {
-            int numberOfAddedApprovals = licenseFamilies == null ? 0 : licenseFamilies.length;
-            getLog().info("Added " + numberOfAddedApprovals + " custom approved licenses.");
+            getLog().info("Added " + licenseFamilies.length + " custom approved licenses.");
             list.addAll(Arrays.asList(licenseFamilies));
         }
         if (licenseFamilyNames != null) {

@@ -16,17 +16,8 @@ package org.apache.rat.mp;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -40,16 +31,25 @@ import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.DirectoryScanner;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 /**
  * Test helpers used when verifying mojo interaction in RAT integration tests.
  */
 public final class RatTestHelpers {
 
     /**
-     * @param pDir
-     *            Removes the given directory recursively.
-     * @throws IOException
-     *             in case of errors.
+     * @param pDir Removes the given directory recursively.
+     * @throws IOException in case of errors.
      */
     public static void remove(File pDir) throws IOException {
         if (pDir.isFile()) {
@@ -58,8 +58,10 @@ public final class RatTestHelpers {
             }
         } else if (pDir.isDirectory()) {
             final File[] files = pDir.listFiles();
-            for (File file : files) {
-                remove(file);
+            if (files != null) {
+                for (File file : files) {
+                    remove(file);
+                }
             }
             if (!pDir.delete()) {
                 throw new IOException("Unable to delete directory: " + pDir);
@@ -71,14 +73,11 @@ public final class RatTestHelpers {
 
     /**
      * Copies the given files recursively in order to get all integration test
-     * files into a target director.
+     * files into a target directory.
      *
-     * @param pSource
-     *            source files.
-     * @param pTarget
-     *            target directory
-     * @throws IOException
-     *             in case of errors.
+     * @param pSource source files.
+     * @param pTarget target directory
+     * @throws IOException in case of errors.
      */
     public static void copy(File pSource, File pTarget) throws IOException {
         if (pSource.isDirectory()) {
@@ -88,7 +87,7 @@ public final class RatTestHelpers {
             final DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir(pSource);
             scanner.addDefaultExcludes();
-            scanner.setIncludes(new String[] { "*" });
+            scanner.setIncludes(new String[]{"*"});
             scanner.scan();
             final String[] dirs = scanner.getIncludedDirectories();
 
@@ -105,7 +104,7 @@ public final class RatTestHelpers {
             final FileInputStream fis = new FileInputStream(pSource);
             final FileOutputStream fos = new FileOutputStream(pTarget);
             final byte[] buffer = new byte[8192];
-            for (;;) {
+            for (; ; ) {
                 int res = fis.read(buffer);
                 if (res == -1) {
                     break;
@@ -124,11 +123,9 @@ public final class RatTestHelpers {
     /**
      * Creates a new instance of {@link Renderer}.
      *
-     * @param container
-     *            current plexus container.
-     * @return A configured instance of {@link DefaultRenderer}.
-     * @throws Exception
-     *             Creating the object failed.
+     * @param container current plexus container.
+     * @return A configured instance of a Default renderer.
+     * @throws Exception Creating the object failed.
      */
     public static Renderer newSiteRenderer(PlexusContainer container)
             throws Exception {
@@ -139,8 +136,7 @@ public final class RatTestHelpers {
      * Creates a new instance of {@link ArtifactFactory}.
      *
      * @return A configured instance of {@link DefaultArtifactFactory}.
-     * @throws Exception
-     *             Creating the object failed.
+     * @throws Exception Creating the object failed.
      */
     public static ArtifactFactory newArtifactFactory() throws Exception {
         final InvocationHandler handler = new InvocationHandler() {
@@ -151,16 +147,15 @@ public final class RatTestHelpers {
             }
         };
         return (ArtifactFactory) Proxy.newProxyInstance(Thread.currentThread()
-                .getContextClassLoader(),
-                new Class[] { ArtifactFactory.class }, handler);
+                        .getContextClassLoader(),
+                new Class[]{ArtifactFactory.class}, handler);
     }
 
     /**
      * Creates a new instance of {@link ArtifactResolver}.
      *
      * @return A configured instance of {@link DefaultArtifactResolver}.
-     * @throws Exception
-     *             Creating the object failed.
+     * @throws Exception Creating the object failed.
      */
     public static ArtifactResolver newArtifactResolver() throws Exception {
         final InvocationHandler handler = new InvocationHandler() {
@@ -171,18 +166,16 @@ public final class RatTestHelpers {
             }
         };
         return (ArtifactResolver) Proxy.newProxyInstance(Thread.currentThread()
-                .getContextClassLoader(),
-                new Class[] { ArtifactResolver.class }, handler);
+                        .getContextClassLoader(),
+                new Class[]{ArtifactResolver.class}, handler);
     }
 
     /**
      * Creates an instance of {@link ArtifactRepository}.
      *
-     * @param container
-     *            current plexus container.
+     * @param container current plexus container.
      * @return A configured instance of {@link DefaultArtifactRepository}.
-     * @throws Exception
-     *             Creating the object failed.
+     * @throws Exception Creating the object failed.
      */
     public static ArtifactRepository newArtifactRepository(
             PlexusContainer container) throws Exception {
@@ -204,7 +197,7 @@ public final class RatTestHelpers {
     }
 
     public static File makeSourceDirectory(String mvnBaseDir, File pFile,
-            String pDir, boolean pCreateCopy) throws IOException {
+                                           String pDir, boolean pCreateCopy) throws IOException {
         if (!pCreateCopy) {
             return pFile;
         }
@@ -217,7 +210,7 @@ public final class RatTestHelpers {
     }
 
     public static File getSourceDirectory(String mvnBaseDir, String pDir,
-            boolean pCreateCopy, final File baseDir) throws IOException {
+                                          boolean pCreateCopy, final File baseDir) throws IOException {
         return makeSourceDirectory(mvnBaseDir, new File(new File(baseDir,
                 "src/test/resources/unit"), pDir), pDir, pCreateCopy);
     }
@@ -226,55 +219,55 @@ public final class RatTestHelpers {
      * Reads the created report file and verifies, whether the detected numbers
      * are matching.
      *
-     * @param pRatTxtFile
-     *            The file to read.
-     * @param pNumALFiles
-     *            The number of files with AL.
-     * @param pNumNoLicenseFiles
-     *            The number of files without license.
-     * @throws IOException
-     *             An error occurred while reading the file or the file does not
-     *             exist at all.
-     * @throws IllegalArgumentException
-     *             In case of mismatches in file numbers passed in as parameter.
+     * @param pRatTxtFile        The file to read.
+     * @param pNumALFiles        The number of files with AL.
+     * @param pNumNoLicenseFiles The number of files without license.
+     * @throws IOException              An error occurred while reading the file or the file does not
+     *                                  exist at all.
+     * @throws IllegalArgumentException In case of mismatches in file numbers passed in as parameter.
      */
     public static void ensureRatReportIsCorrect(File pRatTxtFile,
-            int pNumALFiles, int pNumNoLicenseFiles) throws IOException {
+                                                int pNumALFiles, int pNumNoLicenseFiles) throws IOException {
         if (!pRatTxtFile.exists()) {
             throw new FileNotFoundException("Could not find " + pRatTxtFile);
         }
+        BufferedReader reader = null;
+        try {
 
-        BufferedReader reader = new BufferedReader(new FileReader(pRatTxtFile));
-        Integer numALFiles = null;
-        Integer numNoLicenseFiles = null;
-        for (;;) {
-            String line = reader.readLine();
-            if (line == null) {
-                break;
+            reader = new BufferedReader(new FileReader(pRatTxtFile));
+            Integer numALFiles = null;
+            Integer numNoLicenseFiles = null;
+            for (; ; ) {
+                String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                int offset = line.indexOf("Apache Licensed: ");
+                if (offset >= 0) {
+                    numALFiles = new Integer(line.substring(
+                            offset + "Apache Licensed: ".length()).trim());
+                }
+                offset = line.indexOf("Unknown Licenses");
+                if (offset >= 0) {
+                    numNoLicenseFiles = new Integer(line.substring(0, offset)
+                            .trim());
+                }
             }
-            int offset = line.indexOf("Apache Licensed: ");
-            if (offset >= 0) {
-                numALFiles = new Integer(line.substring(
-                        offset + "Apache Licensed: ".length()).trim());
-            }
-            offset = line.indexOf("Unknown Licenses");
-            if (offset >= 0) {
-                numNoLicenseFiles = new Integer(line.substring(0, offset)
-                        .trim());
-            }
-        }
-        reader.close();
+            reader.close();
 
-        if (!new Integer(pNumALFiles).equals(numALFiles)) {
-            throw new IllegalArgumentException(
-                    "Amount of licensed files does not match. Expected "
-                            + pNumALFiles + ", got " + numALFiles);
-        }
+            if (!new Integer(pNumALFiles).equals(numALFiles)) {
+                throw new IllegalArgumentException(
+                        "Amount of licensed files does not match. Expected "
+                                + pNumALFiles + ", got " + numALFiles);
+            }
 
-        if (!new Integer(pNumNoLicenseFiles).equals(numNoLicenseFiles)) {
-            throw new IllegalArgumentException(
-                    "Amount of licensed files does not match. Expected "
-                            + pNumALFiles + ", got " + numALFiles);
+            if (!new Integer(pNumNoLicenseFiles).equals(numNoLicenseFiles)) {
+                throw new IllegalArgumentException(
+                        "Amount of licensed files does not match. Expected "
+                                + pNumALFiles + ", got " + numALFiles);
+            }
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
 
     }

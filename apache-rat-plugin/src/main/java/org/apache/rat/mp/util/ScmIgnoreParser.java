@@ -20,6 +20,7 @@ package org.apache.rat.mp.util;
  */
 
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.config.SourceCodeManagementSystems;
 
@@ -69,14 +70,7 @@ public final class ScmIgnoreParser {
                 log.warn("Cannot parse " + scmIgnore + " for exclusions. Will skip this file.");
                 log.debug("Skip parsing " + scmIgnore + " due to " + e.getMessage());
             } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        log.error("Cannot close " + scmIgnore + " after exclusion parsing. Will give up.");
-                    }
-                }
-
+                IOUtils.closeQuietly(reader);
             }
         }
         return exclusionLines;

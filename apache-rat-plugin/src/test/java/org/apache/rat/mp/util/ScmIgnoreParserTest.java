@@ -16,6 +16,7 @@ package org.apache.rat.mp.util;
  * limitations under the License.
  */
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Rule;
 import org.junit.Test;
@@ -99,9 +100,7 @@ public class ScmIgnoreParserTest {
         } catch (IOException e) {
             throw e;
         } finally {
-            if (bw != null) {
-                bw.close();
-            }
+            IOUtils.closeQuietly(bw);
         }
     }
 
