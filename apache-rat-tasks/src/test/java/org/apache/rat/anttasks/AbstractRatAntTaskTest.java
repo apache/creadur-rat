@@ -16,9 +16,9 @@
 */
 package org.apache.rat.anttasks;
 
-import org.junit.Assert;
+import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildFileTest;
-import org.apache.tools.ant.util.FileUtils;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.FileReader;
@@ -39,7 +39,7 @@ public abstract class AbstractRatAntTaskTest extends BuildFileTest {
         configureProject(getAntFile().getPath());
     }
 
-    protected void assertLogDoesntMatch(String pPattern) {
+    protected void assertLogDoesNotMatch(String pPattern) {
         final String log = super.getLog();
         Assert.assertFalse("Log matches the pattern: " + pPattern + ", got " + log,
                 isMatching(pPattern, log));
@@ -72,7 +72,7 @@ public abstract class AbstractRatAntTaskTest extends BuildFileTest {
                 }
             }
         } finally {
-            FileUtils.close(fr);
+            IOUtils.closeQuietly(fr);
         }
     }
 

@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.anttasks;
 
+ import org.apache.commons.io.IOUtils;
  import org.apache.rat.Defaults;
  import org.apache.rat.ReportConfiguration;
  import org.apache.rat.analysis.IHeaderMatcher;
@@ -205,9 +206,7 @@ public class Report extends Task {
         } catch (RatException e) {
             throw new BuildException(e);
         } finally {
-            if (reportFile != null) {
-                FileUtils.close(out);
-            }
+            IOUtils.closeQuietly(out);
         }
     }
 
