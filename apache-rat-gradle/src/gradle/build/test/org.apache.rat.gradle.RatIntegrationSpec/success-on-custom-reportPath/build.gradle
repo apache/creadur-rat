@@ -1,0 +1,13 @@
+// Running test for success-on-custom-reportPath
+
+apply plugin: 'java'
+apply plugin: 'org.apache.rat'
+rat {
+    verbose = true
+    inputDir = 'C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/build/test/org.apache.rat.gradle.RatIntegrationSpec/success-on-custom-reportPath'
+    excludes = [
+        'build.gradle', 'settings.gradle', 'build/**', '.gradle/**', '.gradle-test-kit/**',
+        'no-license-file.txt'
+    ]
+    reportDir = file( 'build/reports/rat-custom' )
+}

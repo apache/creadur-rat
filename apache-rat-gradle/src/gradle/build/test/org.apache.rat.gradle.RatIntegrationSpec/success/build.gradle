@@ -1,0 +1,12 @@
+// Running test for success
+
+apply plugin: 'java'
+apply plugin: 'org.apache.rat'
+rat {
+    verbose = true
+    inputDir = 'C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/build/test/org.apache.rat.gradle.RatIntegrationSpec/success'
+    excludes = [
+        'build.gradle', 'settings.gradle', 'build/**', '.gradle/**', '.gradle-test-kit/**',
+        'no-license-file.txt'
+    ]
+}

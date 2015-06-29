@@ -1,0 +1,11 @@
+// Running test for do-not-fail-but-report-errors-when-rat-failOnError-is-false
+
+apply plugin: 'org.apache.rat'
+rat {
+    verbose = true
+    inputDir = 'C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/build/test/org.apache.rat.gradle.RatIntegrationSpec/do-not-fail-but-report-errors-when-rat-failOnError-is-false'
+    failOnError = false
+    excludes = [
+        'build.gradle', 'settings.gradle', 'build/**', '.gradle/**', '.gradle-test-kit/**'
+    ]
+}

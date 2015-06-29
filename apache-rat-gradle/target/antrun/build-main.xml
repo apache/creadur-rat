@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <copy file="C:\Users\jwi\afw\apache-rat\apache-rat-gradle\target/gradle-build/libs/apache-rat-gradle-0.12-SNAPSHOT.jar" overwrite="true" tofile="C:\Users\jwi\afw\apache-rat\apache-rat-gradle\target/apache-rat-gradle-0.12-SNAPSHOT.jar"/>
+  <copy file="C:\Users\jwi\afw\apache-rat\apache-rat-gradle\target/gradle-build/libs/apache-rat-gradle-0.12-SNAPSHOT-sources.jar" overwrite="true" tofile="C:\Users\jwi\afw\apache-rat\apache-rat-gradle\target/apache-rat-gradle-0.12-SNAPSHOT-sources.jar"/>
+  <copy file="C:\Users\jwi\afw\apache-rat\apache-rat-gradle\target/gradle-build/libs/apache-rat-gradle-0.12-SNAPSHOT-javadoc.jar" overwrite="true" tofile="C:\Users\jwi\afw\apache-rat\apache-rat-gradle\target/apache-rat-gradle-0.12-SNAPSHOT-javadoc.jar"/>
+  <copy file="C:\Users\jwi\afw\apache-rat\apache-rat-gradle\target/gradle-build/libs/apache-rat-gradle-0.12-SNAPSHOT-groovydoc.jar" overwrite="true" tofile="C:\Users\jwi\afw\apache-rat\apache-rat-gradle\target/apache-rat-gradle-0.12-SNAPSHOT-groovydoc.jar"/>
+</target>
+</project>

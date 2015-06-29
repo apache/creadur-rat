@@ -1,0 +1,196 @@
+<?xml version='1.0'?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-project</artifactId>
+        <version>0.12-SNAPSHOT</version>
+    </parent>
+    <artifactId>apache-rat-gradle</artifactId>
+    <packaging>jar</packaging>
+    <name>Apache Creadur Rat::Plugin4Gradle</name>
+    <description> A plugin for Apache Gradle that runs Apache Rat to audit the source to be distributed.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-tasks</artifactId>
+        </dependency>
+    </dependencies>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.fortasoft</groupId>
+                <artifactId>gradle-maven-plugin</artifactId>
+                <version>1.0.7</version>
+                <!-- Hook Gradle tasks into Maven phases -->
+                <configuration>
+                    <gradleVersion>2.4</gradleVersion>
+                    <gradleProjectDirectory>${project.basedir}/src/gradle</gradleProjectDirectory>
+                    <args>
+                        <arg>-Dversion=${project.version}</arg>
+                        <arg>-Dgradle.publish.key=${gradle.publish.key}</arg>
+                        <arg>-Dgradle.publish.secret=${gradle.publish.secret}</arg>
+                    </args>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>gradle-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>invoke</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <task>clean</task>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>gradle-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>invoke</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <task>check</task>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>gradle-assemble</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>invoke</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <task>assemble</task>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <!-- Uncomment to deploy the plugin to plugins.gradle.org on maven 'deploy' phase
+                    You'll then need to provide the `gradle.publish.key` and `gradle.publish.secret` properties
+                    See https://plugins.gradle.org/docs/submit -->
+                    <!--
+                    <execution>
+                        <id>gradle-deploy</id>
+                        <phase>deploy</phase>
+                        <goals><goal>invoke</goal></goals>
+                        <configuration>
+                            <tasks><task>publishPlugins</task></tasks>
+                        </configuration>
+                    </execution>
+                    -->
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <!-- Overwrite the main artifact and sources/javadocs with the ones built by Gradle -->
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/gradle-build/libs/${project.build.finalName}.jar"
+                                      tofile="${project.build.directory}/${project.build.finalName}.jar"
+                                      overwrite="true"/>
+                                <copy file="${project.build.directory}/gradle-build/libs/${project.build.finalName}-sources.jar"
+                                      tofile="${project.build.directory}/${project.build.finalName}-sources.jar"
+                                      overwrite="true"/>
+                                <copy file="${project.build.directory}/gradle-build/libs/${project.build.finalName}-javadoc.jar"
+                                      tofile="${project.build.directory}/${project.build.finalName}-javadoc.jar"
+                                      overwrite="true"/>
+                                <copy file="${project.build.directory}/gradle-build/libs/${project.build.finalName}-groovydoc.jar"
+                                      tofile="${project.build.directory}/${project.build.finalName}-groovydoc.jar"
+                                      overwrite="true"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>src/gradle/.nb-gradle/**</exclude>
+                            <exclude>src/gradle/.gradle/**</exclude>
+                            <exclude>src/gradle/build/**</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <profiles>
+        <profile>
+            <id>apache-release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.9.1</version>
+                        <!-- Attach javadoc and groovydoc artifacts built by Gradle -->
+                        <executions>
+                            <execution>
+                                <id>attach-artifacts</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach-artifact</goal>
+                                </goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>${project.build.directory}/gradle-build/libs/${project.build.finalName}-javadoc.jar</file>
+                                            <type>jar</type>
+                                            <classifier>javadoc</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${project.build.directory}/gradle-build/libs/${project.build.finalName}-groovydoc.jar</file>
+                                            <type>jar</type>
+                                            <classifier>groovydoc</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

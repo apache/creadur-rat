@@ -1,0 +1,50 @@
+
+*****************************************************
+Summary
+-------
+Generated at: 2015-06-29T21:03:37+02:00
+Notes: 0
+Binaries: 0
+Archives: 0
+Standards: 13
+
+Apache Licensed: 13
+Generated Documents: 0
+
+JavaDocs are generated and so license header is optional
+Generated files do not required license headers
+
+0 Unknown Licenses
+
+*******************************
+
+Unapproved licenses:
+
+
+*******************************
+
+Archives:
+
+*****************************************************
+  Files with Apache License headers will be marked AL
+  Binary files (which do not require AL headers) will be marked B
+  Compressed archives will be marked A
+  Notices, licenses etc will be marked N
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/pom.xml
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/build.gradle
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/gradle.properties
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/settings.gradle
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/src/main/groovy/org/apache/rat/gradle/RatPlugin.groovy
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/src/main/groovy/org/apache/rat/gradle/RatTask.groovy
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/src/main/resources/META-INF/gradle-plugins/org.apache.rat.properties
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/src/main/resources/org/apache/rat/gradle/apache-rat-output-to-html.xsl
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/src/test/groovy/org/apache/rat/gradle/RatIntegrationSpec.groovy
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/src/test/groovy/org/apache/rat/gradle/RatPluginProjectSpec.groovy
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/site/apt/index.apt
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/site/resources/css/site.css
+  AL    C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/site/site.xml
+ 
+*****************************************************
+ Printing headers for files without AL header...
+ 
+ 
