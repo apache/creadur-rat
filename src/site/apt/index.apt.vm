@@ -51,7 +51,9 @@ Apache Rat
 
    * {{{http://ant.apache.org/} Apache Ant}},
 
-   * {{{http://maven.apache.org}Apache Maven}} and
+   * {{{http://maven.apache.org}Apache Maven}},
+
+   * {{{https://gradle.org}Gradle}} and
 
    * the command line.
 
@@ -112,6 +114,17 @@ java -jar apache-rat-${project.version}.jar --help
 
  Read more {{{./apache-rat-plugin/index.html} here}}.
 
+** Gradle
+
+ Use the plugin for {{{https://gradle.org}Gradle}}.
+
++------------------------------------------+
+plugins {
+  id "org.apache.rat" version "${version}"
+}
++------------------------------------------+
+
+ Read more {{{./apache-rat-gradle/index.html} here}}.
 
 * Checking Out Rat
 

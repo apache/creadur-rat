@@ -582,6 +582,10 @@ agnostic home for software distribution comprehension and audit tools.
       <name>Garrett Rooney</name>
       <email>rooneg@apache.org</email>
     </contributor>
+    <contributor>
+      <name>Paul Merlin</name>
+      <email>paulmerlin@apache.org</email>
+    </contributor>
   </contributors>
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/trunk</connection>
@@ -599,6 +603,7 @@ agnostic home for software distribution comprehension and audit tools.
     <module>apache-rat-api</module>
     <module>apache-rat-core</module>
     <module>apache-rat-plugin</module>
+    <module>apache-rat-gradle</module>
     <module>apache-rat-tasks</module>
     <module>apache-rat</module>
   </modules>
