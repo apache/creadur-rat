@@ -1,2 +1,0 @@
-<rat-report timestamp='2015-06-29T21:03:46+02:00'><resource name='C:/Users/jwi/afw/apache-rat/apache-rat-gradle/src/gradle/build/test/org.apache.rat.gradle.RatIntegrationSpec/fail-the-build-when-finding-a-file-with-unapproved-unknown-license/no-license-file.txt'><header-sample>Nothing here.
-</header-sample><header-type name='?????'/><license-family name='?????'/><license-approval name='false'/><type name='standard'/></resource></rat-report>
