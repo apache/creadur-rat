@@ -31,6 +31,10 @@ class RatTask extends DefaultTask {
     boolean failOnError = true
     boolean verbose = false
 
+    boolean xmlOutput = true
+    boolean htmlOutput = true
+    boolean plainOutput = false
+
     @Input
     String inputDir = '.'
 
@@ -50,14 +54,57 @@ class RatTask extends DefaultTask {
         if( !reportDir.exists() ) {
             reportDir.mkdirs()
         }
-        def xmlReport = generateXmlReport()
-        def errorCount = countUnaprovedUnknownLicenses( xmlReport )
-        def htmlReport = generateHtmlReport( xmlReport )
+        def mainReport = null
+        def errorCount = -1
+        if( plainOutput ) {
+            mainReport = generatePlainReport()
+            errorCount = countUnaprovedUnknownLicensesFromPlain( mainReport )
+        }
+        def xmlReport = null
+        if( xmlOutput || htmlOutput ) {
+            xmlReport = generateXmlReport()
+            mainReport = mainReport ?: xmlReport
+            errorCount = countUnaprovedUnknownLicenses( xmlReport )
+        }
+        if( xmlReport != null && htmlOutput ) {
+            mainReport = generateHtmlReport( xmlReport )
+        }
+        if( xmlReport && !xmlOutput ) {
+            xmlReport.delete()
+        }
         if( failOnError && errorCount > 0 ) {
             throw new GradleException(
-                "Found $errorCount files with unapproved/unknown licenses. See ${htmlReport.toURI()}"
+                "Found $errorCount files with unapproved/unknown licenses. See ${mainReport.toURI()}"
             )
         }
+    }
+
+    def generatePlainReport() {
+        def plainReport = new File( reportDir, 'rat-report.txt' )
+        def antBuilder = services.get( IsolatedAntBuilder )
+        def ratClasspath = project.configurations.rat
+        antBuilder.withClasspath( ratClasspath ).execute {
+            ant.taskdef( resource: 'org/apache/rat/anttasks/antlib.xml' )
+            ant.report( format: 'plain', reportFile: plainReport.absolutePath ) {
+                fileset( dir: inputDir ) {
+                    patternset {
+                        excludes.each { exclude( name: it ) }
+                    }
+                }
+            }
+        }
+        project.logger.info "Rat TXT report: ${plainReport.toURI()}"
+        return plainReport
+    }
+
+    def countUnaprovedUnknownLicensesFromPlain( plainReport ) {
+        def errorCount = 0
+        plainReport.readLines().each { line ->
+            if( line.endsWith( 'Unknown Licenses' ) ) {
+                errorCount = line.substring( 0, line.indexOf( ' ' ) ).toInteger()
+            }
+        }
+        return errorCount
     }
 
     def generateXmlReport() {

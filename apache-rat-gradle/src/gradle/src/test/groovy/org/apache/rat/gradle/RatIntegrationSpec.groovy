@@ -132,4 +132,94 @@ class RatIntegrationSpec extends IntegrationSpec {
         fileExists( 'build/reports/rat-custom/index.html' )
     }
 
+    def 'success on only plain text report'() {
+        setup:
+        fork = true
+        def inputDir = buildFile.parentFile.absolutePath.replaceAll('\\\\', '/')
+        buildFile << """
+            apply plugin: 'java'
+            apply plugin: 'org.apache.rat'
+            rat {
+                verbose = true
+                inputDir = '$inputDir'
+                plainOutput = true
+                xmlOutput = false
+                htmlOutput = false
+                excludes = [
+                    'build.gradle', 'settings.gradle', 'build/**', '.gradle/**', '.gradle-test-kit/**',
+                    'no-license-file.txt'
+                ]
+            }
+        """.stripIndent()
+        createFile( 'no-license-file.txt' ).text = 'Nothing here.'
+
+        when:
+        ExecutionResult result = runTasksSuccessfully( 'check' )
+
+        then:
+        wasExecuted( 'rat' )
+        fileExists( 'build/reports/rat/rat-report.txt' )
+        !fileExists( 'build/reports/rat/rat-report.xml' )
+        !fileExists( 'build/reports/rat/index.html' )
+    }
+
+    def 'fail the build when finding a file with unapproved/unknown license on plain text report only'() {
+        setup:
+        fork = true
+        def inputDir = buildFile.parentFile.absolutePath.replaceAll('\\\\', '/')
+        buildFile << """
+            apply plugin: 'org.apache.rat'
+            rat {
+                verbose = true
+                inputDir = '$inputDir'
+                plainOutput = true
+                xmlOutput = false
+                htmlOutput = false
+                excludes = [
+                    'build.gradle', 'settings.gradle', 'build/**', '.gradle/**', '.gradle-test-kit/**'
+                ]
+            }
+        """.stripIndent()
+        createFile( 'no-license-file.txt' ).text = 'Nothing here.'
+
+        when:
+        ExecutionResult result = runTasksWithFailure( 'rat' )
+
+        then:
+        wasExecuted( 'rat' )
+        fileExists( 'build/reports/rat/rat-report.txt' )
+        !fileExists( 'build/reports/rat/rat-report.xml' )
+        !fileExists( 'build/reports/rat/index.html' )
+    }
+
+    def 'success on plain text and html report'() {
+        setup:
+        fork = true
+        def inputDir = buildFile.parentFile.absolutePath.replaceAll('\\\\', '/')
+        buildFile << """
+            apply plugin: 'java'
+            apply plugin: 'org.apache.rat'
+            rat {
+                verbose = true
+                inputDir = '$inputDir'
+                plainOutput = true
+                xmlOutput = false
+                htmlOutput = true
+                excludes = [
+                    'build.gradle', 'settings.gradle', 'build/**', '.gradle/**', '.gradle-test-kit/**',
+                    'no-license-file.txt'
+                ]
+            }
+        """.stripIndent()
+        createFile( 'no-license-file.txt' ).text = 'Nothing here.'
+
+        when:
+        ExecutionResult result = runTasksSuccessfully( 'check' )
+
+        then:
+        wasExecuted( 'rat' )
+        fileExists( 'build/reports/rat/rat-report.txt' )
+        !fileExists( 'build/reports/rat/rat-report.xml' )
+        fileExists( 'build/reports/rat/index.html' )
+    }
 }
