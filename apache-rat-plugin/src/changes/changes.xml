@@ -20,6 +20,12 @@
     <title>Changes in the Rat Maven Plugin</title>
   </properties>
   <body>
+    <release version="0.12" date="Not yet released">
+      <action dev="jochen" type="add" issue="RAT-208">
+        Added parameters includesFile, excludesFile, includesFileCharacterset, and
+        excludesFileCharacterset, and support thereof.
+      </action>
+    </release>
     <release version="1.0-alpha-4" date="Not yet released">
       <action dev="jochen" type="fix" issue="MOJO-866">
         Added @requiresDependencyResolution to the RatReportMojo, so that

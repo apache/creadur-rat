@@ -1,7 +1,4 @@
-package org.apache.rat.mp;
-
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
@@ -18,6 +15,35 @@ package org.apache.rat.mp;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.rat.mp;
+
+import static org.apache.rat.mp.util.ConfigurationHelper.newInstance;
+import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.transform.TransformerConfigurationException;
+
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -37,27 +63,6 @@ import org.apache.rat.mp.util.ScmIgnoreParser;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.codehaus.plexus.util.DirectoryScanner;
-
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.UndeclaredThrowableException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.apache.rat.mp.util.ConfigurationHelper.newInstance;
-import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
 
 /**
  * Abstract base class for Mojos, which are running Rat.
@@ -120,11 +125,40 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     private String[] includes;
 
     /**
+     * Specifies a file, from which to read includes. Basically, an alternative to
+     * specifying the includes as a list.
+     */
+    @Parameter(property="rat.includesFile")
+    private String includesFile;
+
+    /**
+     * Specifies the include files character set. Defaults to @code{${project.build.sourceEncoding}),
+     * or @code{UTF8}.
+     */
+    @Parameter(property="rat.includesFileCharset", defaultValue="${project.build.sourceEncoding}")
+    private String includesFileCharset;
+    
+    /**
      * Specifies files, which are excluded in the report. By default, no files
      * are excluded.
      */
     @Parameter
     private String[] excludes;
+
+    /**
+     * Specifies a file, from which to read excludes. Basically, an alternative to
+     * specifying the excludes as a list.  The excludesFile is assumed to be using the
+     * UFT8 character set.
+     */
+    @Parameter(property="rat.excludesFile")
+    private String excludesFile;
+
+    /**
+     * Specifies the include files character set. Defaults to @code{${project.build.sourceEncoding}),
+     * or @code{UTF8}.
+     */
+    @Parameter(property="rat.excludesFileCharset", defaultValue="${project.build.sourceEncoding}")
+    private String excludesFileCharset;
 
     /**
      * Whether to use the default excludes when scanning for files. The default
@@ -254,7 +288,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      *
      * @return A container of files, which are being checked.
      */
-    protected IReportable getResources() {
+    protected IReportable getResources() throws MojoExecutionException {
         final DirectoryScanner ds = new DirectoryScanner();
         ds.setBasedir(basedir);
         setExcludes(ds);
@@ -300,18 +334,75 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         }
     }
 
-    private void setIncludes(DirectoryScanner ds) {
-        if (includes != null) {
-            ds.setIncludes(includes);
+    private void setIncludes(DirectoryScanner ds) throws MojoExecutionException {
+        if ((includes != null  &&  includes.length > 0)  ||  includesFile != null) {
+        	final List<String> includeList = new ArrayList<String>();
+        	if (includes != null) {
+        		includeList.addAll(Arrays.asList(includes));
+        	}
+        	if (includesFile != null) {
+        		final String charset = includesFileCharset == null ? "UTF8" : includesFileCharset;
+        		final File f = new File(includesFile);
+        		if (!f.isFile()) {
+        			getLog().error("IncludesFile not found: " + f.getAbsolutePath());
+        		} else {
+        			getLog().info("Includes loaded from file " + includesFile + ", using character set " + charset);
+        		}
+        		includeList.addAll(getPatternsFromFile(f, charset));
+        	}
+            ds.setIncludes(includeList.toArray(new String[includeList.size()]));
         }
     }
 
-    private void setExcludes(DirectoryScanner ds) {
+    private List<String> getPatternsFromFile(File pFile, String pCharset) throws MojoExecutionException {
+    	InputStream is = null;
+    	BufferedInputStream bis = null;
+    	Reader r = null;
+    	BufferedReader br = null;
+    	Throwable th = null;
+    	final List<String> patterns = new ArrayList<String>();
+    	try {
+    		is = new FileInputStream(pFile);
+    		bis = new BufferedInputStream(is);
+    		r = new InputStreamReader(bis, pCharset);
+    		br = new BufferedReader(r);
+    		for (;;) {
+    			final String s = br.readLine();
+    			if (s == null) {
+    				break;
+    			}
+    			patterns.add(s);
+    		}
+    		br.close();
+    		br = null;
+    		r.close();
+    		r = null;
+    		bis.close();
+    		bis = null;
+    		is.close();
+    		is = null;
+    	} catch (Throwable t) {
+    		th = t;
+    	} finally {
+    		if (br != null) { try { br.close(); } catch (Throwable t) { if (th == null) { th = t; } } }
+    		if (r != null) { try { r.close(); } catch (Throwable t) { if (th == null) { th = t; } } }
+    		if (bis != null) { try { bis.close(); } catch (Throwable t) { if (th == null) { th = t; } } }
+    		if (is != null) { try { is.close(); } catch (Throwable t) { if (th == null) { th = t; } } }
+    	}
+    	if (th != null) {
+    		if (th instanceof RuntimeException) { throw (RuntimeException) th; }
+    		if (th instanceof Error) { throw (Error) th; }
+    		throw new MojoExecutionException(th.getMessage(), th);
+    	}
+    	return patterns;
+    }
+    
+    private void setExcludes(DirectoryScanner ds) throws MojoExecutionException {
         final List<String> excludeList = mergeDefaultExclusions();
         if (excludes == null || excludes.length == 0) {
             getLog().info("No excludes explicitly specified.");
         } else {
-            for (final String exclude : excludes) {
+        	for (final String exclude : excludes) {
                 getLog().info("Exclude: " + exclude);
             }
         }
@@ -325,7 +416,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         }
     }
 
-    private List<String> mergeDefaultExclusions() {
+    private List<String> mergeDefaultExclusions() throws MojoExecutionException {
         final Set<String> results = new HashSet<String>();
 
         addPlexusAndScmDefaults(getLog(), useDefaultExcludes, results);
@@ -357,6 +448,18 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             for (final String exclude : results) {
                 getLog().debug("Implicit exclude: " + exclude);
             }
+        }
+        if (excludesFile != null) {
+        	final File f = new File(excludesFile);
+        	if (!f.isFile()) {
+        		getLog().error("Excludes file not found: " + f.getAbsolutePath());
+        	}
+        	if (!f.canRead()) {
+        		getLog().error("Excludes file not readable: " + f.getAbsolutePath());
+        	}
+        	final String charset = excludesFileCharset == null ? "UTF8" : excludesFileCharset;
+        	getLog().info("Loading excludes from file " + f + ", using character set " + charset);
+        	results.addAll(getPatternsFromFile(f, charset));
         }
 
         return new ArrayList<String>(results);
