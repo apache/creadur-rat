@@ -287,6 +287,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      * Creates an iterator over the files to check.
      *
      * @return A container of files, which are being checked.
+     * @throws MojoExecutionException in case of errors. I/O errors result in UndeclaredThrowableExceptions.
      */
     protected IReportable getResources() throws MojoExecutionException {
         final DirectoryScanner ds = new DirectoryScanner();
