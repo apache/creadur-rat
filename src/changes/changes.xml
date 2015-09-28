@@ -68,8 +68,43 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     <release version="0.10" date="2013-09-05" description=
 "The 0.10 version includes several bug fixes, 
-most notably a fix for 0.9 performance issues."></release>
-    <release version="0.9"  date="2013-05-02" description="TBA"></release>
+most notably a fix for 0.9 performance issues.">
+      <action issue="RAT-137" type="fix">Website shows incorrect Maven goals in some pages</action>
+      <action issue="RAT-128" type="fix">Use the proper name for the Apache License</action>
+      <action issue="RAT-138" type="fix">RAT runs very slowly on some input</action>
+      <action issue="RAT-140" type="fix">OASISLicense allows invalid Copyright line</action>
+      <action issue="RAT-139" type="fix">FullTextMatchingLicense.prune uses inefficient deleteAtChar</action>
+      <action issue="RAT-145" type="fix">Maven plugin should not run in the "verify" phase, but in the "validate" phase</action>
+      <action issue="RAT-129" type="add">Add support for CDDL 1.0 </action>
+    </release>
+    <release version="0.9"  date="2013-05-02" description=
+" * Improved documentation
+  * Rat now requires Java5 at runtime
+  * The Antlib contains a new matcher type that allows matching on the
+   full text of the license rather than a single line.
+ * Support automatic addition of license headers to svg files.">
+      <action issue="RAT-3" type="fix">Incorrect alignment of file contents</action>
+      <action issue="RAT-102" type="fix">typo in pom.xml / field description</action>
+      <action issue="RAT-109" type="fix">Return value of mkdirs() is not checked and no error handling occurs</action>
+      <action issue="RAT-116" type="fix">Docs don't say what the default excludes are</action>
+      <action issue="RAT-120" type="fix">fix some maven warnings and upgrade some dependencies.</action>
+      <action issue="RAT-121" type="fix">use maven java5 annotations for maven plugins</action>
+      <action issue="RAT-122" type="fix">Maven Plugin: field to ignore errors and continue the build</action>
+      <action issue="RAT-124" type="fix">Rat plugin should exclude the configuration directory used by IDEA</action>
+      <action issue="RAT-126" type="fix">Default excludes do not ignore .git/ repository</action>
+      <action issue="RAT-13" type="update">[GOOGLE-14] GNU License support</action>
+      <action issue="RAT-49" type="update">Recognise MIT LIcense</action>
+      <action issue="RAT-104" type="update">
+          Using jUnit4 annotation based tests instead of junit3 - migration from junit 3.8.2 to current junit 4.10
+      </action>
+      <action issue="RAT-106" type="fix">Minor Javadoc errors fixed in 3 files</action>
+      <action issue="RAT-108" type="update">Add native support for thrift generated code to be ignored</action>
+      <action issue="RAT-111" type="update">RAT does not ignore javah generated files</action>
+      <action issue="RAT-125" type="update">Support applied AL20 license headers, including checking for required copyright header line</action>
+      <action issue="RAT-78" type="add">Support doxia 1.1.2</action>
+      <action issue="RAT-59" type="update">Upgrade To Java 1.5</action>
+      <action issue="RAT-119" type="update">Upgrade Maven prerequisite to 2.2.1</action>
+    </release>
     <release version="0.8-incubating"  date="2011-11-15" description=
 "Version 0.8 improves the command line interface, supports more file
 types when adding license headers and makes it easier to detect custom
