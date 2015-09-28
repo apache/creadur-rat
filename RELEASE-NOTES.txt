@@ -1,0 +1,27 @@
+              Apache Creadur Rat 0.11
+                  RELEASE NOTES
+
+The Apache Creadur Rat team is pleased to announce the release of Apache Creadur Rat 0.11
+
+Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
+releases. It is heuristic in nature: making guesses about possible problems. It
+will produce false positives and cannot find every possible issue with a release.
+It's reports require interpretation.
+
+In response to demands from project quality tool developers, Rat is available as a
+library suitable for inclusion in tools. This POM describes that library.
+Note that binary compatibility is not guaranteed between 0.x releases.
+
+Apache Rat is developed by the Apache Creadur project, a language and build
+agnostic home for software distribution comprehension and audit tools.
+
+TBA
+
+No changes defined in this version.
+
+Historical list of changes: http://creadur.apache.org/rat/changes-report.html
+
+For complete information on Apache Creadur Rat, including instructions on how to submit bug reports,
+patches, or suggestions for improvement, see the Apache Apache Creadur Rat website:
+
+http://creadur.apache.org/rat/

@@ -32,7 +32,7 @@
 Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
-It's reports require interpretation.
+Its reports require interpretation.
 
 In response to demands from project quality tool developers, Rat is available as a
 library suitable for inclusion in tools. This POM describes that library.
@@ -76,6 +76,7 @@ agnostic home for software distribution comprehension and audit tools.
     <rat.site.id>org.apache.rat.site</rat.site.id>
     <!-- maven plugin versions -->
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
+    <mavenChangesVersion>2.11</mavenChangesVersion>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -640,6 +641,46 @@ agnostic home for software distribution comprehension and audit tools.
                 <configuration>
                   <skipAssembly>true</skipAssembly>
                 </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!--
+          Generate release notes in top-level directory from src/changes/changes.xml
+          Usage:
+          mvn changes:announcement-generate -Prelease-notes [-Dchanges.version=nnn]
+
+          Defining changes.version allows one to create the RN without first removing the SNAPSHOT suffix.
+
+          Requires file src/changes/release-notes.vm.
+       -->
+      <id>release-notes</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changes-plugin</artifactId>
+            <version>${mavenChangesVersion}</version>
+            <configuration>
+              <template>release-notes.vm</template>
+              <templateDirectory>src/changes</templateDirectory>
+              <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
+              <announcementDirectory>.</announcementDirectory>
+              <announcementFile>RELEASE-NOTES.txt</announcementFile>
+              <announceParameters>
+                <releaseVersion>${mavenChangesVersion}</releaseVersion>
+              </announceParameters>
+            </configuration>
+            <executions>
+              <execution>
+                <id>create-release-notes</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>announcement-generate</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
