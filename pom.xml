@@ -221,7 +221,11 @@ agnostic home for software distribution comprehension and audit tools.
               <report>mailing-list</report>
               <report>issue-tracking</report>
               <report>cim</report>
+              <!-- Do not enable the license report;
+                   license links must only point to
+                   http://www.apache.org/licenses/
               <report>license</report>
+              -->
               <report>scm</report>
             </reports>
           </reportSet>
