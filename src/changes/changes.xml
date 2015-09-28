@@ -44,7 +44,28 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
-    <release version="0.11" date="2014-08-31" description="TBA"></release>
+    <release version="0.11" date="2014-08-31" description=
+"* Rat stays at compiler level 1.5 to be more compliant with other Maven plugins,
+  fixed build/CI environment to reflect and ensure that.
+
+  * Fixed Javadoc warnings during build, upgraded Maven Plugin Plugin to avoid
+  warnings in generated code (https://jira.codehaus.org/browse/MPLUGIN-237)
+">
+    <action issue="RAT-135" type="fix">addLicenseHeaders is missing a space on license header.</action>
+    <action issue="RAT-144" type="fix">AbstractRatMojo String constant arrays should be private</action>
+    <action issue="RAT-148" type="fix" due-to="Chris A Mattmann">LicenseAddingReport#report has useless call to metaData.getData</action>
+    <action issue="RAT-151" type="fix">Detect more archive file formats</action>
+    <action issue="RAT-152" type="fix">Recognize the format for .bsh, .fml and .jsp file types</action>
+    <action issue="RAT-153" type="fix">Do not add extra empty lines when appending headers for the Apache License</action>
+    <action issue="RAT-154" type="fix">Indentation of the license header should be decided per family</action>
+    <action issue="RAT-155" type="fix">Do not add empty first and last lines in the license header for certain families</action>
+    <action issue="RAT-156" type="fix">Add some symmetry when applying license headers to files with file type specific headers</action>
+    <action issue="RAT-159" type="fix">Detect OpenOffice documents as being archives</action>
+    <action issue="RAT-129" type="add">Add support for CDDL 1.0</action>
+    <action issue="RAT-162" type="add" due-to="Andrew Gaul">CDDL1License.matches slow with large inputs</action>
+    <action issue="RAT-164" type="add">Allow skipping execution entirely</action>
+    <action issue="RAT-165" type="add">Use a maven defaultGoal for RAT's base pom.xml</action>
+    </release>
     <release version="0.10" date="2013-09-05" description=
 "The 0.10 version includes several bug fixes, 
 most notably a fix for 0.9 performance issues."></release>
