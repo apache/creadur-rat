@@ -167,7 +167,38 @@ agnostic home for software distribution comprehension and audit tools.
     </dependencies>
   </dependencyManagement>
   <reporting>
+    <!-- N.B. plugins defined here in the <reporting> section ignore what's defined in <pluginManagement>
+         in the <build> section above, so we have to define the versions here. -->
     <plugins>
+      <!-- org.apache.maven.plugins, alpha order by artifact id -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${mavenChangesVersion}</version>
+        <configuration>
+          <xmlPath>${basedir}/src/changes/changes.xml</xmlPath>
+          <columnNames>Fix Version,Key,Component,Summary,Type,Resolution,Status</columnNames>
+          <!-- Sort cols in natural order when using JQL for JIRA 5.1 -->
+          <sortColumnNames>Fix Version DESC,Type,Key DESC</sortColumnNames>
+          <resolutionIds>Fixed</resolutionIds>
+          <statusIds>Resolved,Closed</statusIds>
+          <!-- Don't include sub-task -->
+          <typeIds>Bug,New Feature,Task,Improvement,Wish,Test</typeIds>
+          <!-- For JIRA >= 5.1 -->
+          <useJql>true</useJql>
+          <onlyCurrentVersion>${commons.changes.onlyCurrentVersion}</onlyCurrentVersion>
+          <maxEntries>${commons.changes.maxEntries}</maxEntries>
+          <runOnlyAtExecutionRoot>${commons.changes.runOnlyAtExecutionRoot}</runOnlyAtExecutionRoot>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+              <report>jira-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
