@@ -44,6 +44,12 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
+    <release version="0.12" date="Not yet released">
+      <action dev="jochen" issue="RAT-163">
+        Removing the Gradle Plugin from the Rat Core project, so that building
+        with Java 5 works again.
+      </action>
+    </release>
     <release version="0.11" date="2014-08-31" description=
 "* Rat stays at compiler level 1.5 to be more compliant with other Maven plugins,
   fixed build/CI environment to reflect and ensure that.
