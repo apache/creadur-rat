@@ -37,17 +37,109 @@ and commit
 The <action> type attribute can be add,update,fix,remove.
 -->
 
-<document>
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <properties>
     <title>Changes in Apache Creadur RAT</title>
     <author email="dev@creadur.apache.org">Apache Creadur RAT developers</author>
   </properties>
 
   <body>
-    <release version="0.12" date="Not yet released">
-      <action dev="jochen" issue="RAT-163">
+    <release version="0.12" date="2015-09-30" description=
+" We now require Maven 3.0.5+ to build Rat, but as before we only require
+ Maven 2.2.1+ if you want to use Rat in your own Maven projects.
+
+We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
+">
+      <action dev="jochen" issue="RAT-163" type="fix">
         Removing the Gradle Plugin from the Rat Core project, so that building
         with Java 5 works again.
+      </action>
+      <action dev="pottlinger" issue="RAT-158" due-to="Hervé Boutemy" type="fix">
+        Fix SAX-Parser warning by explicitly excluding xerces in Doxia 1.2.
+      </action>
+      <action dev="pottlinger" issue="RAT-173" due-to="Chris Burroughs" type="fix">
+        Allow complete skip of RAT plugin with rat.skip property.
+      </action>
+      <action dev="pottlinger" issue="RAT-174" due-to="Chris Burroughs" type="fix">
+        CDDL1License still very slow, replace Pattern matching with simple String comparison.
+      </action>
+      <action dev="sebb" issue="RAT-175" type="fix">
+        SourceCodeManagementSystems.hasIgnoreFile() should return boolean.
+      </action>
+      <action dev="pottlinger" issue="RAT-177" type="fix">
+        Final arrays should be private.
+      </action>
+      <action dev="pottlinger" issue="RAT-188" due-to="Mark Thomas" type="fix">
+        Fix problems with AnimalSniffer-plugin when running in GUMP with Java 8.
+        Workaround for https://jira.codehaus.org/browse/MANIMALSNIFFER-45
+      </action>
+      <action dev="pottlinger" issue="RAT-160" due-to="Christopher Tubbs" type="fix">
+        Ignore build.log created by maven-invoker-plugin.
+      </action>
+      <action dev="pottlinger" issue="RAT-179" type="fix">
+        Maven plugin and Ant task do not support adding extra approved licenses.
+      </action>
+      <action dev="pottlinger" issue="RAT-180" type="fix">
+        Generify and beautify texts in RAT report. 
+      </action>
+      <action dev="pottlinger" issue="RAT-196" due-to="Karl Heinz Marbais" type="add">
+        Minor refactoring in pom.xml.
+      </action>
+      <action dev="pottlinger" issue="RAT-194" due-to="Hervé Boutemy" type="fix">
+        Upgrade to Doxia 1.6 if called directly, does not affect problems reported in RAT-158. Minor improvements.
+      </action>
+      <action dev="dennisl" issue="RAT-61" due-to="Jukka Zitting" type="add">
+        List files with unapproved licenses in Maven output.
+      </action>
+      <action dev="dennisl" issue="RAT-170" due-to="Philipp Ottlinger" type="add">
+        RAT should use itself during build and site generation.
+      </action>
+      <action dev="sebb" issue="RAT-181" type="add">
+        BinaryGuesser should treat *.truststore as binary.
+      </action>
+      <action dev="pottlinger" issue="RAT-184" due-to="Karl Heinz Marbaise" type="add">
+        Add DEPENDENCIES to the list of ignored files in NoteGuesser.
+      </action>
+      <action dev="dennisl" issue="RAT-185" due-to="Karl Heinz Marbaise" type="add">
+        .repository folder should be ignored.
+      </action>
+        <action dev="dennisl" issue="RAT-186" type="add">
+        BinaryGuesser should recognize PSD files as images.
+      </action>
+      <action dev="dennisl" issue="RAT-187" due-to="Karl Heinz Marbaise" type="add">
+        Add 'SAR', 'HAR', 'WSR' as archives which should be ignored.
+      </action>
+      <action dev="pottlinger" issue="RAT-197" due-to="Karl Heinz Marbaise" type="add">
+        Improve exclusion defaults when working with Maven 3.3.1 (exclude .mvn).
+      </action>
+      <action dev="pottlinger" issue="RAT-198" due-to="Karl Heinz Marbaise" type="fix">
+        Upgrade plexus-utils to 3.0.20.
+      </action>
+      <action dev="pottlinger" issue="RAT-172" type="fix">
+        Exclude technical directories of source code management systems and their ignore files from RAT scans.
+      </action>
+      <action dev="pottlinger" issue="RAT-200" type="fix">
+        Upgrade ASF parent POM to 17.
+      </action>
+      <action dev="pottlinger" issue="RAT-201" type="add">
+        BinaryGuesser should treat *.swf as binary.
+        Furthermore BinaryGuesser falls back to UTF-8 encoding in case the encoding given via system property
+        (-Dfile.encoding) was not found.
+      </action>
+      <action dev="pottlinger" issue="RAT-202" type="add">
+         Report layout differs between successful RAT checks and existence of unapproved files.
+      </action>
+      <action dev="pottlinger" issue="RAT-202" type="add">
+         Report layout differs between successful RAT checks and existence of unapproved files.
+      </action>
+      <action dev="pottlinger" issue="RAT-203" type="add">
+         Using 'license' in README, source code, javadoc, comments and site instead of 'licence';
+         improve terminology to not confuse RAT consumers.
+      </action>
+      <action dev="pottlinger" issue="RAT-204" type="add">
+        Unify resource handling in code and tests, make sure the resources are properly closed. Apply minor refactorings.
       </action>
     </release>
     <release version="0.11" date="2014-08-31" description=
