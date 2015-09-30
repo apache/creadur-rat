@@ -242,10 +242,8 @@ The Antlib and Maven plugins now provide simpler ways to detect licenses not dir
 - Add support for Python scripts, C source files, Unix shell scripts (.sh) and Windows batch files (.bat) (RAT-68)
 - Allow Ant task to output report as XML. (RAT-73)
 - Allow users to specify a custom XSLT stylesheet for reports (RAT-74, and RAT-75)
+- Some website fixes
 - Optionally auto-add headers to source files. (RAT-76) ">
- * Some website fixes
- * Issues Resolved (see http://issues.apache.org/jira):
-  * Bug:
       <action issue="RAT-62" type="fix">Some of Rat's own files missing License Headers</action>
       <action issue="RAT-63" type="fix">ant-task-examples.xml has an wrong uri in the -typedef ant target</action>
       <action issue="RAT-70" type="fix">Missing closing html tag in generated report by</action>
