@@ -50,9 +50,9 @@ The <action> type attribute can be add,update,fix,remove.
 " We now require Maven 3.0.5+ to build Rat, but as before we only require
  Maven 2.2.1+ if you want to use Rat in your own Maven projects.
 
- We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
+We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
 ">
-      <action dev="jochen" issue="RAT-163">
+      <action dev="jochen" issue="RAT-163" type="fix">
         Removing the Gradle Plugin from the Rat Core project, so that building
         with Java 5 works again.
       </action>
@@ -68,7 +68,7 @@ The <action> type attribute can be add,update,fix,remove.
       <action dev="sebb" issue="RAT-175" type="fix">
         SourceCodeManagementSystems.hasIgnoreFile() should return boolean.
       </action>
-      <action dev="pottlinger" issue="RAT-177" due-to="Sebastian Bazley" type="fix">
+      <action dev="pottlinger" issue="RAT-177" type="fix">
         Final arrays should be private.
       </action>
       <action dev="pottlinger" issue="RAT-188" due-to="Mark Thomas" type="fix">
@@ -78,10 +78,10 @@ The <action> type attribute can be add,update,fix,remove.
       <action dev="pottlinger" issue="RAT-160" due-to="Christopher Tubbs" type="fix">
         Ignore build.log created by maven-invoker-plugin.
       </action>
-      <action dev="pottlinger" issue="RAT-179" due-to="Sebastian Bazley" type="fix">
+      <action dev="pottlinger" issue="RAT-179" type="fix">
         Maven plugin and Ant task do not support adding extra approved licenses.
       </action>
-      <action dev="pottlinger" issue="RAT-180" due-to="Sebastian Bazley" type="fix">
+      <action dev="pottlinger" issue="RAT-180" type="fix">
         Generify and beautify texts in RAT report. 
       </action>
       <action dev="pottlinger" issue="RAT-196" due-to="Karl Heinz Marbais" type="add">
