@@ -242,24 +242,87 @@ The Antlib and Maven plugins now provide simpler ways to detect licenses not dir
 - Add support for Python scripts, C source files, Unix shell scripts (.sh) and Windows batch files (.bat) (RAT-68)
 - Allow Ant task to output report as XML. (RAT-73)
 - Allow users to specify a custom XSLT stylesheet for reports (RAT-74, and RAT-75)
+- Some website fixes
 - Optionally auto-add headers to source files. (RAT-76) ">
+      <action issue="RAT-62" type="fix">Some of Rat's own files missing License Headers</action>
+      <action issue="RAT-63" type="fix">ant-task-examples.xml has an wrong uri in the -typedef ant target</action>
+      <action issue="RAT-70" type="fix">Missing closing html tag in generated report by</action>
+      <action issue="RAT-17" type="update">Support the use of archives as input</action>
+      <action issue="RAT-30" type="update">Support automatic addition of license headers</action>
+      <action issue="RAT-76" type="update">Support automatic addition of license headers</action>
+      <action issue="RAT-52" type="update">Merge In Rat Output Semantics</action>
+      <action issue="RAT-56" type="update">Commons IO Wildcard Excludes</action>
+      <action issue="RAT-65" type="update">Rat Pom cleanup</action>
+      <action issue="RAT-68" type="update">Add support for Python, C, &amp; script files (.bat &amp; .sh)</action>
+      <action issue="RAT-72" type="update">Keep version in plugins sample doc up to date</action>
+      <action issue="RAT-73" type="update">Support for XML output in Ant task and Maven Plugin</action>
+      <action issue="RAT-73" type="update">Support for XML output in Ant task and Maven Plugin</action>
+      <action issue="RAT-74" type="update">Support for custom XSLT stylesheets</action>
+      <action issue="RAT-75" type="update">Support for custom XSLT stylesheets</action>
     </release>
     <release version="0.6-incubating" date="2009-04-10" description=
 "This is the first version using the org.apache package
 structure and related names. RAT users are strongly encouraged to
-migrate, as the old Google version will no longer be maintained.">
-      <action dev="jochen" type="fix" issue="RAT-37"
+migrate, as the old Google version will no longer be maintained.
+ * Support for TMF header
+ * Comprehend PEM, CRL file endings
+ * Added reporting capability to recursive rat script
+ * Moved to the Incubator@Apache
+">
+      <action issue="RAT-37" type="fix" dev="jochen"
           due-to="Jukka Zitting" due-to-email="jukka@apache.org">
         List all resources with unapproved licenses at the beginning of the report.
       </action>
-      <action dev="jochen" type="fix" issue="RAT-36"
+      <action issue="RAT-36" type="fix" dev="jochen"
           due-to="Jukka Zitting" due-to-email="jukka@apache.org">
         Report header incorrectly refers to an "L" license marker
       </action>
-      <action dev="jochen" type="fix" issue="RAT-33"
+      <action issue="RAT-33" type="fix" dev="jochen"
           due-to="Gavin" due-to-email="gavin@16degrees.com.au">
         Mailing list subscribe points to unsubscribe
       </action>
+      <action issue="RAT-3" type="fix">Incorrect alignment of file contents</action>
+      <action issue="RAT-11" type="fix">Incorrect number of unnapproved licences reported</action>
+      <action issue="RAT-12" type="fix">Incorrect SCM info in maven plugin pom</action>
+      <action issue="RAT-29" type="fix">NPE on &quot;mvn install&quot; in rat-anttasks</action>
+      <action issue="RAT-34" type="fix">No license header added for java files that do not contain project line</action>
+      <action issue="RAT-35" type="fix">Incorrect number of unapproved licenses reported by rat:check</action>
+      <action issue="RAT-8" type="update">add JavaCC to GeneratedLicenseNotRequired</action>
+      <action issue="RAT-9" type="update">A more informative website</action>
+      <action issue="RAT-10" type="update">A few Javadoc comments</action>
+      <action issue="RAT-23" type="update">More details in text summary</action>
+      <action issue="RAT-24" type="update">Include checksums on web page</action>
+      <action issue="RAT-26" type="update">Improve web summary</action>
+      <action issue="RAT-27" type="update">Index page</action>
+      <action issue="RAT-6" type="add">RAT Source Import</action>
+      <action issue="RAT-28" type="add">Repackage maven plugin</action>
+      <action issue="RAT-1" type="add">maven-rat-plugin and ant-rat tasks</action>
     </release>
+    <release version="0.5.1" description=
+"* Fixed file closing bug
+ * Fixed XML bad character bug"/>
+    <release version="0.5" description=
+" * Added header matcher for DoJo.
+ * Refactoring existing codebase to separate concerns and use
+   resource pipeline.
+ * New header matching library."/>
+    <release version="0.4.1" description=
+"Rat 0.4.1 is the first release with distributions. The release was cut
+for this purpose.
+ * Created POM for use with Rat library.
+ * Ant task switched to use Xml based report."/>
+    <release version="0.4" description=
+" * Ant tasks added. These allow Rat reports to be run against a wide variety
+   of resources from within Ant.
+ * Legacy report is now deprecated. It will be removed before the next release.
+ * Created stylesheet for xml reports which produce output similar to the legacy
+   plain text report. Application now uses the xml report with that stylesheet.
+ * Revised xml output format
+ * Improve support for binary recognition by adding code that tastes files"/>
+    <release version="0.3" description=
+" * This is the last release with the original hacked together plain test report.
+   The new XML reporting code is present but is not yet the default.
+ * Rat 0.3 is the first release with release notes. All previous releases are
+   now consigned to Ancient History. No record of them will be found here."/>
   </body>
 </document>
