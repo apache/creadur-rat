@@ -346,7 +346,6 @@ agnostic home for software distribution comprehension and audit tools.
               <!-- This file only describes how to build the project and it has no license header -->
               <exclude>BUILD.txt</exclude>
               <!-- rat:check does not seem to use exclusions from modules -->
-              <exclude>apache-rat-gradle/**</exclude>
               <exclude>apache-rat/README*.txt</exclude>
               <exclude>apache-rat-core/src/test/resources/**</exclude>
               <exclude>apache-rat*/target/**</exclude>
@@ -640,9 +639,6 @@ agnostic home for software distribution comprehension and audit tools.
     <module>apache-rat-api</module>
     <module>apache-rat-core</module>
     <module>apache-rat-plugin</module>
-    <!-- RAT-163: current patch uses a JDK7-compiled test dependencies; thus fails our JDK5 compliance
-    <module>apache-rat-gradle</module>
-    -->
     <module>apache-rat-tasks</module>
     <module>apache-rat</module>
   </modules>

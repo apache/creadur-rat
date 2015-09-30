@@ -44,6 +44,71 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
+    <release version="0.12" date="Not yet released" description="
+ We now require Maven 3.0.5+ to build Rat, but as before we only require
+ Maven 2.2.1+ if you want to use Rat in your own Maven projects.
+
+ We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
+"
+      <action dev="jochen" issue="RAT-163">
+        Removing the Gradle Plugin from the Rat Core project, so that building
+        with Java 5 works again.
+      </action>
+      <action dev="pottlinger" issue="RAT-158" due-to="Hervé Boutemy" type="fix">
+        Fix SAX-Parser warning by explicitly excluding xerces in Doxia 1.2.
+      </action>
+      <action dev="pottlinger" issue="RAT-173" due-to="Chris Burroughs" type="fix">
+        Allow complete skip of RAT plugin with rat.skip property.
+      </action>
+      <action dev="pottlinger" issue="RAT-174" due-to="Chris Burroughs" type="fix">
+        CDDL1License still very slow, replace Pattern matching with simple String comparison.
+      </action>
+      <action dev="sebb" issue="RAT-175" type="fix">
+        SourceCodeManagementSystems.hasIgnoreFile() should return boolean.
+      </action>
+      <action dev="pottlinger" issue="RAT-177" due-to="Sebastian Bazley" type="fix">
+        Final arrays should be private.
+      </action>
+      <action dev="pottlinger" issue="RAT-188" due-to="Mark Thomas" type="fix">
+        Fix problems with AnimalSniffer-plugin when running in GUMP with Java 8.
+        Workaround for https://jira.codehaus.org/browse/MANIMALSNIFFER-45
+      </action>
+      <action dev="pottlinger" issue="RAT-160" due-to="Christopher Tubbs" type="fix">
+        Ignore build.log created by maven-invoker-plugin.
+      </action>
+      <action dev="pottlinger" issue="RAT-179" due-to="Sebastian Bazley" type="fix">
+        Maven plugin and Ant task do not support adding extra approved licenses.
+      </action>
+      <action dev="pottlinger" issue="RAT-180" due-to="Sebastian Bazley" type="fix">
+        Generify and beautify texts in RAT report. 
+      </action>
+
+      <action dev="pottlinger" issue="RAT-196" due-to="Karl Heinz Marbais" type="add">
+        Minor refactoring in pom.xml.
+      </action>
+      <action dev="pottlinger" issue="RAT-194" due-to="Hervé Boutemy" type="fix">
+        Upgrade to Doxia 1.6 if called directly, does not affect problems reported in RAT-158. Minor improvements.
+      </action>
+      <action dev="dennisl" issue="RAT-61" due-to="Jukka Zitting" type="add">
+        List files with unapproved licenses in Maven output.
+      </action>
+      <action dev="dennisl" issue="RAT-61" due-to="Jukka Zitting" type="add">
+        List files with unapproved licenses in Maven output.
+      </action>
+      <action dev="dennisl" issue="RAT-170" due-to="Philipp Ottlinger" type="add">
+        RAT should use itself during build and site generation.
+      </action>
+      <action dev="sebb" issue="RAT-181" type="add">
+        BinaryGuesser should treat *.truststore as binary.
+      </action>
+      <action dev="pottlinger" issue="RAT-184" due-to="Karl Heinz Marbaise" type="add">
+        Add DEPENDENCIES to the list of ignored files in NoteGuesser.
+      </action>
+      <action dev="pottlinger" issue="RAT-184" due-to="Karl Heinz Marbaise" type="add">
+        Add DEPENDENCIES to the list of ignored files in NoteGuesser.
+      </action>
+
+    </release>
     <release version="0.11" date="2014-08-31" description=
 "* Rat stays at compiler level 1.5 to be more compliant with other Maven plugins,
   fixed build/CI environment to reflect and ensure that.
