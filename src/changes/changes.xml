@@ -105,7 +105,7 @@ We've integrated Rat into the ASF Jenkins to ensure continuous builds with vario
       <action dev="dennisl" issue="RAT-185" due-to="Karl Heinz Marbaise" type="add">
         .repository folder should be ignored.
       </action>
-        <action dev="dennisl" issue="RAT-186" type="add">
+      <action dev="dennisl" issue="RAT-186" type="add">
         BinaryGuesser should recognize PSD files as images.
       </action>
       <action dev="dennisl" issue="RAT-187" due-to="Karl Heinz Marbaise" type="add">
