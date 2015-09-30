@@ -107,6 +107,48 @@ The <action> type attribute can be add,update,fix,remove.
       <action dev="pottlinger" issue="RAT-184" due-to="Karl Heinz Marbaise" type="add">
         Add DEPENDENCIES to the list of ignored files in NoteGuesser.
       </action>
+      <action dev="dennisl" issue="RAT-185" due-to="Karl Heinz Marbaise" type="add">
+        .repository folder should be ignored.
+      </action>
+      <action dev="dennisl" issue="RAT-185" type="add">
+        BinaryGuesser should recognize PSD files as images.
+      </action>
+      <action dev="dennisl" issue="RAT-187" due-to="Karl Heinz Marbaise" type="add">
+        Add 'SAR', 'HAR', 'WSR' as archives which should be ignored.
+      </action>
+      <action dev="dennisl" issue="RAT-187" due-to="Karl Heinz Marbaise" type="add">
+        Add 'SAR', 'HAR', 'WSR' as archives which should be ignored.
+      </action>
+      <action dev="pottlinger" issue="RAT-197" due-to="Karl Heinz Marbaise" type="add">
+        Improve exclusion defaults when working with Maven 3.3.1 (exclude .mvn).
+      </action>
+      <action dev="pottlinger" issue="RAT-198" due-to="Karl Heinz Marbaise" type="fix">
+        Upgrade plexus-utils to 3.0.20.
+      </action>
+      <action dev="pottlinger" issue="RAT-172" type="fix">
+        Exclude technical directories of source code management systems and their ignore files from RAT scans.
+      </action>
+      <action dev="pottlinger" issue="RAT-200" type="fix">
+        Upgrade ASF parent POM to 17.
+      </action>
+      <action dev="pottlinger" issue="RAT-201" type="add">
+        BinaryGuesser should treat *.swf as binary.
+        Furthermore BinaryGuesser falls back to UTF-8 encoding in case the encoding given via system property
+        (-Dfile.encoding) was not found.
+      </action>
+      <action dev="pottlinger" issue="RAT-202" type="add">
+         Report layout differs between successful RAT checks and existence of unapproved files.
+      </action>
+      <action dev="pottlinger" issue="RAT-202" type="add">
+         Report layout differs between successful RAT checks and existence of unapproved files.
+      </action>
+      <action dev="pottlinger" issue="RAT-203" type="add">
+         Using 'license' in README, source code, javadoc, comments and site instead of 'licence';
+         improve terminology to not confuse RAT consumers.
+      </action>
+      <action dev="pottlinger" issue="RAT-204" type="add">
+        Unify resource handling in code and tests, make sure the resources are properly closed. Apply minor refactorings.
+      </action>
 
     </release>
     <release version="0.11" date="2014-08-31" description=
