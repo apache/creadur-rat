@@ -74,7 +74,10 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     <release version="0.10" date="2013-09-05" description=
 "The 0.10 version includes several bug fixes, 
-most notably a fix for 0.9 performance issues.">
+most notably a fix for 0.9 performance issues.
+ * Simpler binary archive
+ * Updated dependencies and plugins
+ * Fixed up generics and annotations">
       <action issue="RAT-137" type="fix">Website shows incorrect Maven goals in some pages</action>
       <action issue="RAT-128" type="fix">Use the proper name for the Apache License</action>
       <action issue="RAT-138" type="fix">RAT runs very slowly on some input</action>
@@ -114,7 +117,24 @@ most notably a fix for 0.9 performance issues.">
     <release version="0.8-incubating"  date="2011-11-15" description=
 "Version 0.8 improves the command line interface, supports more file
 types when adding license headers and makes it easier to detect custom
-licenses.">
+licenses.
+Some website fixes
+The Antlib and Maven plugins now provide simpler ways to detect licenses not directly supported by Rat.">
+      <action issue="RAT-86" type="bug">CLI doesn't allow adding of licenses unless a custom stylesheet has been specified</action>
+      <action issue="RAT-87" type="bug">Tests could leave temporary files around.></action>
+      <action issue="RAT-92" type="bug">When adding licenses Rat used \n instead of the platform dependent line--end character(s)</action>
+      <action issue="RAT-94" type="bug">Streams were not always closed immediately when adding licenses.</action>
+      <action issue="RAT-79" type="update">Support automatic addition of license headers to Velocity templates</action>
+      <action issue="RAT-83" type="update">Support automatic addition of license headers to Scala source files</action>
+      <action issue="RAT-84" type="update">Support automatic addition of license headers to Ruby source files</action>
+      <action issue="RAT-89" type="update">Support automatic addition of license headers to Perl, TCL, C++, C# and PHP source files</action>
+      <action issue="RAT-91" type="update">Support automatic addition of license headers to Groovy source files</action>
+      <action issue="RAT-85" type="update">Allow --addLicense as an alias for --addLicence for people used to the US spelling.</action>
+      <action issue="RAT-34" type="update">--addLicense will add the license to the top of Java files without a package line or XML files without an XML declaration now - it used to not add anything.</action>
+      <action issue="RAT-67" type="update">The XML and standard plain text reports now contain a timestamp with the time the report has been generated.</action>
+      <action issue="RAT-95" type="update"> When adding licenses Rat will now remove any BOM from the file.</action>
+      <action issue="RAT-93" type="update">--addLicense now supports more .NET specific files like MS Visual Studio project and solution files</action>
+      <action issue="RAT-99" type="update">The command line interface has a new option that specifies a file containing regular expressions for files to exclude</action>
     </release>
     <release version="0.7-incubating"  date="2013-05-02" description=
 "The following changes have been made in Apache RAT 0.7:
