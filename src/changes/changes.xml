@@ -37,19 +37,21 @@ and commit
 The <action> type attribute can be add,update,fix,remove.
 -->
 
-<document>
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <properties>
     <title>Changes in Apache Creadur RAT</title>
     <author email="dev@creadur.apache.org">Apache Creadur RAT developers</author>
   </properties>
 
   <body>
-    <release version="0.12" date="Not yet released" description="
- We now require Maven 3.0.5+ to build Rat, but as before we only require
+    <release version="0.12" date="2015-09-30" description=
+" We now require Maven 3.0.5+ to build Rat, but as before we only require
  Maven 2.2.1+ if you want to use Rat in your own Maven projects.
 
  We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
-"
+">
       <action dev="jochen" issue="RAT-163">
         Removing the Gradle Plugin from the Rat Core project, so that building
         with Java 5 works again.
