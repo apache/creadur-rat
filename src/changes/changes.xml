@@ -84,15 +84,11 @@ The <action> type attribute can be add,update,fix,remove.
       <action dev="pottlinger" issue="RAT-180" due-to="Sebastian Bazley" type="fix">
         Generify and beautify texts in RAT report. 
       </action>
-
       <action dev="pottlinger" issue="RAT-196" due-to="Karl Heinz Marbais" type="add">
         Minor refactoring in pom.xml.
       </action>
       <action dev="pottlinger" issue="RAT-194" due-to="Hervé Boutemy" type="fix">
         Upgrade to Doxia 1.6 if called directly, does not affect problems reported in RAT-158. Minor improvements.
-      </action>
-      <action dev="dennisl" issue="RAT-61" due-to="Jukka Zitting" type="add">
-        List files with unapproved licenses in Maven output.
       </action>
       <action dev="dennisl" issue="RAT-61" due-to="Jukka Zitting" type="add">
         List files with unapproved licenses in Maven output.
@@ -106,17 +102,11 @@ The <action> type attribute can be add,update,fix,remove.
       <action dev="pottlinger" issue="RAT-184" due-to="Karl Heinz Marbaise" type="add">
         Add DEPENDENCIES to the list of ignored files in NoteGuesser.
       </action>
-      <action dev="pottlinger" issue="RAT-184" due-to="Karl Heinz Marbaise" type="add">
-        Add DEPENDENCIES to the list of ignored files in NoteGuesser.
-      </action>
       <action dev="dennisl" issue="RAT-185" due-to="Karl Heinz Marbaise" type="add">
         .repository folder should be ignored.
       </action>
-      <action dev="dennisl" issue="RAT-185" type="add">
+      <action dev="dennisl" issue="RAT-186" type="add">
         BinaryGuesser should recognize PSD files as images.
-      </action>
-      <action dev="dennisl" issue="RAT-187" due-to="Karl Heinz Marbaise" type="add">
-        Add 'SAR', 'HAR', 'WSR' as archives which should be ignored.
       </action>
       <action dev="dennisl" issue="RAT-187" due-to="Karl Heinz Marbaise" type="add">
         Add 'SAR', 'HAR', 'WSR' as archives which should be ignored.
@@ -151,7 +141,6 @@ The <action> type attribute can be add,update,fix,remove.
       <action dev="pottlinger" issue="RAT-204" type="add">
         Unify resource handling in code and tests, make sure the resources are properly closed. Apply minor refactorings.
       </action>
-
     </release>
     <release version="0.11" date="2014-08-31" description=
 "* Rat stays at compiler level 1.5 to be more compliant with other Maven plugins,
