@@ -267,7 +267,7 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
         <!-- Must use previous version, to avoid a cyclic reference -->
-        <version>${previousRatVersion}</version>
+        <version>0.12-SNAPSHOT</version>
       </plugin>
     </plugins>
   </reporting>
