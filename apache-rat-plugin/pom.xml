@@ -20,7 +20,7 @@
   <parent>
     <artifactId>apache-rat-project</artifactId>
     <groupId>org.apache.rat</groupId>
-    <version>0.12-SNAPSHOT</version>
+    <version>0.12</version>
   </parent>
   <artifactId>apache-rat-plugin</artifactId>
   <packaging>maven-plugin</packaging>
@@ -116,7 +116,7 @@
         						</goals>
         					</pluginExecutionFilter>
         					<action>
-        						<ignore></ignore>
+        						<ignore />
         					</action>
         				</pluginExecution>
         			</pluginExecutions>
@@ -301,4 +301,10 @@
     </profile>
   </profiles>
 -->
+
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/tags/0.13-SNAPSHOT</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/tags/0.13-SNAPSHOT</developerConnection>
+    <url>http://svn.apache.org/repos/asf/creadur/rat/tags/0.13-SNAPSHOT</url>
+  </scm>
 </project>
