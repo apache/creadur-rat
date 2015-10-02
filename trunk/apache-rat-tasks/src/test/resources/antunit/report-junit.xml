@@ -1,0 +1,96 @@
+<?xml version='1.0'?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one   *
+ or more contributor license agreements.  See the NOTICE file *
+ distributed with this work for additional information        *
+ regarding copyright ownership.  The ASF licenses this file   *
+ to you under the Apache License, Version 2.0 (the            *
+ "License"); you may not use this file except in compliance   *
+ with the License.  You may obtain a copy of the License at   *
+                                                              *
+   http://www.apache.org/licenses/LICENSE-2.0                 *
+                                                              *
+ Unless required by applicable law or agreed to in writing,   *
+ software distributed under the License is distributed on an  *
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ KIND, either express or implied.  See the License for the    *
+ specific language governing permissions and limitations      *
+ under the License.                                           *
+
+-->
+
+<project default="all"
+    xmlns:au="antlib:org.apache.ant.antunit"
+    xmlns:rat="antlib:org.apache.rat.anttasks">
+  <taskdef uri="antlib:org.apache.ant.antunit"
+      resource="org/apache/ant/antunit/antlib.xml"
+      classpath="${test.classpath}"/>
+
+  <taskdef uri="antlib:org.apache.rat.anttasks"
+      resource="org/apache/rat/anttasks/antlib.xml"
+      classpath="${test.classpath}"/>
+
+  <property name="output.dir" location="target/anttasks"/>
+  <pathconvert dirsep="/" property="file.name">
+    <path>
+      <pathelement location="${ant.file}"/>
+    </path>
+  </pathconvert>
+  <property name="expectedOutput" value="AL    ${file.name}"/>
+
+  <target name="testWithReportSentToAnt">
+    <rat:report>
+      <file file="${ant.file}"/>
+    </rat:report>
+  </target>
+
+  <target name="all"/>
+
+  <target name="testWithReportSentToFile">
+    <property name="report.file" location="${output.dir}/selftest.report"/>
+    <rat:report reportFile="${report.file}">
+      <file file="${ant.file}"/>
+    </rat:report>
+  </target>
+
+  <target name="testWithALUnknown">
+    <rat:report addDefaultLicenseMatchers="false">
+      <file file="${ant.file}"/>
+      <rat:w3c/>
+    </rat:report>
+  </target>
+
+  <target name="testCustomMatcher">
+    <mkdir dir="${output.dir}/dest"/>
+    <mkdir dir="${output.dir}/src/org/example"/>
+    <typedef name="exmpl" classname="org.example.Matcher"
+        classpath="${test.classpath}"/>
+    <typedef name="exmpl-license" classname="org.example.LicenseFamily"
+        classpath="${test.classpath}"/>
+    <rat:report>
+      <file file="${ant.file}"/>
+      <exmpl/>
+      <exmpl-license/>
+    </rat:report>
+  </target>
+
+  <target name="testNoResources">
+    <rat:report/>
+  </target>
+
+  <target name="testNoLicenseMatchers">
+    <rat:report addDefaultLicenseMatchers="false">
+      <file file="${ant.file}"/>
+    </rat:report>
+  </target>
+
+  <target name="testAddLicenseHeaders">
+    <delete dir="${output.dir}/it-sources"/>
+    <mkdir dir="${output.dir}/it-sources"/>
+    <copy file="src/test/resources/antunit/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
+    <rat:report addLicenseHeaders="true">
+       <file file="${output.dir}/it-sources/index.apt"/>
+    </rat:report>
+  </target>
+</project>

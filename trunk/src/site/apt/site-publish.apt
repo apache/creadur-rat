@@ -1,0 +1,128 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   --------------------
+   Publishing this site
+   --------------------
+
+How to publish the Rat website
+
+ The {{{http://creadur.apache.org}Apache Creadur}} project, the community
+ that develops {{{http://creadur.apache.org/rat}Apache Rat}},
+ hosts its website on the
+ {{{http://www.apache.org/dev/cms.html}ASF Content Management System}}.
+ {{{http://maven.apache.org}Apache Maven}} builds Rat, and generates this
+ subsite. Here's (one way) to work with these systems.
+
+* Developing Content
+
+ Build and generate the site using Maven the usual way
+
++------------------------------------------+
+mvn clean site
++------------------------------------------+
+
+ Make your changes to the <<<site.xml>>> and/or <<<.apt>>> files then launch
+ a server on <<<localhost:8080>>> using
+
++------------------------------------------+
+ mvn site:run
++------------------------------------------+
+
+ Review {{{http://localhost:8080}<<<localhost:8080>>>}} using a browser, and do more edits.
+ You'll see your changes as soon as you refresh the page.
+
+* Committing and Reviewing Content
+
+ As soon as your changes look okay locally on <<<localhost:8080>>>, commit them.
+ {{{http://ci.apache.org/buildbot.html}Buildbot}} will automatically
+ notice the commit and create a staging site to look at
+ {{{http://ci.apache.org/projects/rat} http://ci.apache.org/projects/rat/}}
+ which is always up to date (within a couple of minutes of any commit).
+
+ Need to make changes? No problem - go back and repeat the cycle as often as you like.
+
+ Happy with changes and ready to go live? Then read on...
+
+* Publishing the Site
+
+ The publishing process updates the main site with any changes committed since the last
+ time the site was published.
+
+ Publishing is a multi-stage process with a mixture of automated
+ and manual processing. End to end, the process is slow - perhaps
+ taking 30 minutes but close supervision is not required.
+
+** Deploy the Site Locally
+
+ Rat declares a local directory (<<<stage>>>) for Maven
+ site deployments. To avoid excessive numbers of commits, the
+ local directory needs to remain ignored by <<<subversion>>>.
+ As well as being the target for <<<mvn site-deploy>>>, this is also
+ the origin for publication.
+
+ Triggering the automated publication pipeline is a two phase process:
+ Maven needs to deploy the latest site locally and then
+ <<<scm-publish>>> pushes this content into version control.
+
+ If you prefer to be prompted to type your subversion passphrase, edit
+ <<<~/.scm/svn-settings.xml>>> to include
+
++------------------------------------------+
+<svn-settings>
+  ...
+  <useNonInteractive>false</useNonInteractive>
+  <useAuthCache>false</useAuthCache>
+  ...
+</svn-settings>
++------------------------------------------+
+
+ Run both steps together using
+
++------------------------------------------+
+
+mvn site-deploy scm-publish:publish-scm
+
++------------------------------------------+
+
+ Publication is slow, and the plugin may wait silently for up to
+ 30 minutes - so please allow the build enough time to complete.
+
+** Automated Staging of the Site
+
+ The content committed by the Maven <<<scm-publish>>> plugin
+ triggers a staging build on
+ {{{http://ci.apache.org/}<<<http://ci.apache.org/>>>}}. To
+ follow its progress, open the
+ {{{http://ci.apache.org/builders/creadur-site-staging}creadur
+ site builder}}.
+
+ When this builds has completed successfully, review the content
+ staged on
+ {{{http://creadur.staging.apache.org/rat/index.html}
+ <<<http://creadur.staging.apache.org/rat/index.html>>>}}. If
+ this looks fine then publish the staged content using the
+ {{{http://www.apache.org/dev/cms.html}ASF Content Management System}}.
+
+ Propagating the content to {{{http://creadur.apache.org/rat}production}} may take a brief while (maybe
+ 30 seconds) so please be patient a little longer.
+
+* Troubleshooting
+
+  * If you have issues with 'mvn site' failing try running 'mvn clean' then 'mvn install' before going back and running 'mvn site' again.
+
+  * If you experience an Out of Memory error <<java.lang.OutOfMemoryError: Java heap space>> when running 'mvn site' try setting 'export MAVEN_OPTS=-Xmx512m'
+     or for Windows 'set MAVEN_OPTS=-Xmx512m' first on the command line (or in your profile) and then try 'mvn site' again.
