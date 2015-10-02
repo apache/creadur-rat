@@ -319,38 +319,6 @@ agnostic home for software distribution comprehension and audit tools.
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <!-- Must use previous version, to avoid a cyclic reference -->
-          <version>${previousRatVersion}</version>
-          <dependencies><!-- TODO remove exclusion when upgrading to new ASF parent or doxia release (RAT-158) -->
-            <dependency>
-              <groupId>org.apache.maven.doxia</groupId>
-              <artifactId>doxia-core</artifactId>
-              <version>1.2</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>xerces</groupId>
-                  <artifactId>xercesImpl</artifactId>
-                </exclusion>
-              </exclusions>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <excludes>
-              <!-- This file only describes how to build the project and it has no license header -->
-              <exclude>BUILD.txt</exclude>
-              <!-- rat:check does not seem to use exclusions from modules -->
-              <exclude>apache-rat/README*.txt</exclude>
-              <exclude>apache-rat-core/src/test/resources/**</exclude>
-              <exclude>apache-rat*/target/**</exclude>
-              <exclude>apache-rat-plugin/src/test/resources/**</exclude>
-              <exclude>apache-rat-plugin/src/it/**</exclude>
-              <exclude>apache-rat-tasks/src/test/resources/**</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
           <version>1.0</version>
@@ -445,17 +413,6 @@ agnostic home for software distribution comprehension and audit tools.
             <version>1.0-beta-2</version>
           </dependency>
         </dependencies>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
