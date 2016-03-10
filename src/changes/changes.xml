@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
 
 We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
 ">
+      <action issue="RAT-213" type="fix" dev="pottlinger">
+        Upgrade to commons-collections 3.2.2.
+      </action>
       <action issue="RAT-210" type="fix" dev="pottlinger">
         Adapt layout of Creadur project pages to use the new ASF logo. Change links to SSL.
       </action>
