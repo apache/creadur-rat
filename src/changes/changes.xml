@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
 
 We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
 ">
+      <action issue="RAT-215" type="fix" dev="pottlinger">
+        Add WOFF2, WOFF, TTF and EOT font file extensions to binary file collection to allow faster detection as binary without reading in the files.
+      </action>
       <action issue="RAT-214" type="fix" dev="pottlinger">
         Upgrade commons-compress and apache-ant due to possible security problems.
       </action>
