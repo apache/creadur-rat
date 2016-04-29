@@ -66,14 +66,8 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
         final File testBaseDir = getSourceDirectory(getBasedir(), pDir,
                 pCreateCopy, baseDir);
         File testPom = new File(testBaseDir, "pom.xml");
-        AbstractRatMojo mojo;
-        if ("check".equals(pGoal)) {
-            mojo = new RatCheckMojo();
-        } else {
-            throw new IllegalStateException("Invalid goal: " + pGoal);
-        }
-        configureMojo(mojo, "apache-rat-plugin", testPom);
-        
+        AbstractRatMojo mojo = (AbstractRatMojo) lookupMojo(pGoal, testPom);
+        assertNotNull(mojo);
         final File buildDirectory = new File(new File(baseDir, "target/test"),
                 pDir);
         setVariableValueToObject(mojo, "basedir", testBaseDir);

@@ -226,7 +226,9 @@ public class BinaryGuesser {
             "SUO", "XCF",
             "RAJ", "CERT",
             "KS", "TS",
-            "ODP", "SWF"
+            "ODP", "SWF",
+            // fonts
+            "WOFF2", "WOFF", "TTF", "EOT"
     };
 
     private static final String[] EXE_EXTENSIONS = {

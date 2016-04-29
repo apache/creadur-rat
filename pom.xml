@@ -24,7 +24,7 @@
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
-  <version>0.13-SNAPSHOT</version>
+  <version>0.12-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Apache Creadur Rat</name>
   <url>http://creadur.apache.org/rat/</url>
@@ -52,7 +52,7 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
     <mavenVersion>2.2.1</mavenVersion>
-    <previousRatVersion>0.12</previousRatVersion>
+    <previousRatVersion>0.11</previousRatVersion>
     <!--
     Publication to the website is a two phase operation:
 
@@ -104,7 +104,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
-        <version>3.2.1</version>
+        <version>3.2.2</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
@@ -121,7 +121,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.5</version>
+        <version>1.10</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -150,19 +150,19 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant</artifactId>
-        <version>1.7.1</version>
+        <version>1.9.6</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant-antunit</artifactId>
-        <version>1.1</version>
+        <version>1.3</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant-testutil</artifactId>
-        <version>1.7.1</version>
+        <version>1.9.6</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -203,6 +203,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
         <configuration>
           <tags>
             <tag>
@@ -240,6 +241,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -263,6 +265,12 @@ agnostic home for software distribution comprehension and audit tools.
           </reportSet>
         </reportSets>
       </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <!-- Must use previous version, to avoid a cyclic reference -->
+        <version>${previousRatVersion}</version>
+      </plugin>
     </plugins>
   </reporting>
   <build>
@@ -283,7 +291,7 @@ agnostic home for software distribution comprehension and audit tools.
             <dependency>
               <groupId>org.apache.ant</groupId>
               <artifactId>ant</artifactId>
-              <version>1.7.1</version>
+              <version>1.9.6</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -295,6 +303,11 @@ agnostic home for software distribution comprehension and audit tools.
             <source>${javaVersion}</source>
             <target>${javaVersion}</target>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.10.3</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -316,6 +329,38 @@ agnostic home for software distribution comprehension and audit tools.
           <version>3.4</version>
           <configuration>
             <relativizeDecorationLinks>false</relativizeDecorationLinks>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <!-- Must use previous version, to avoid a cyclic reference -->
+          <version>${previousRatVersion}</version>
+          <dependencies><!-- TODO remove exclusion when upgrading to new ASF parent or doxia release (RAT-158) -->
+            <dependency>
+              <groupId>org.apache.maven.doxia</groupId>
+              <artifactId>doxia-core</artifactId>
+              <version>1.2</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>xerces</groupId>
+                  <artifactId>xercesImpl</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <excludes>
+              <!-- This file only describes how to build the project and it has no license header -->
+              <exclude>BUILD.txt</exclude>
+              <!-- rat:check does not seem to use exclusions from modules -->
+              <exclude>apache-rat/README*.txt</exclude>
+              <exclude>apache-rat-core/src/test/resources/**</exclude>
+              <exclude>apache-rat*/target/**</exclude>
+              <exclude>apache-rat-plugin/src/test/resources/**</exclude>
+              <exclude>apache-rat-plugin/src/it/**</exclude>
+              <exclude>apache-rat-tasks/src/test/resources/**</exclude>
+            </excludes>
           </configuration>
         </plugin>
         <plugin>
@@ -358,7 +403,7 @@ agnostic home for software distribution comprehension and audit tools.
         						</goals>
         					</pluginExecutionFilter>
         					<action>
-        						<ignore />
+        						<ignore></ignore>
         					</action>
         				</pluginExecution>
         			</pluginExecutions>
@@ -380,7 +425,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <configuration>
               <target>
-                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
+                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false"/>
               </target>
             </configuration>
           </execution>
@@ -413,6 +458,17 @@ agnostic home for software distribution comprehension and audit tools.
             <version>1.0-beta-2</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

@@ -24,7 +24,7 @@ limitations under the License.
       <subsection name="Using a Mirror">
         <p>
           We recommend you use a mirror to download our release
-          builds, but you <strong>must</strong> <a href="http://www.apache.org/info/verification.html">verify the integrity</a> of
+          builds, but you <strong>must</strong> <a href="https://www.apache.org/info/verification.html">verify the integrity</a> of
           the downloaded files using signatures downloaded from our main
           distribution directories. Recent releases (48 hours) may not yet
           be available from the mirrors.
@@ -60,7 +60,7 @@ limitations under the License.
 
         <p>
           The <a
-          href="http://www.apache.org/dist/creadur/KEYS">KEYS</a>
+          href="https://www.apache.org/dist/creadur/KEYS">KEYS</a>
           link links to the code signing keys used to sign the
           product.  The <code>PGP</code> link downloads the OpenPGP
           compatible signature from our main site.  The
@@ -74,20 +74,20 @@ limitations under the License.
         <table>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.bz2">apache-rat-${project.version}-bin.tar.bz2</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.bz2.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.bz2.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.bz2.asc">pgp</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.bz2.md5">md5</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.bz2.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.bz2.asc">pgp</a></td>
           </tr>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.gz">apache-rat-${project.version}-bin.tar.gz</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.gz.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.gz.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.gz.asc">pgp</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.gz.md5">md5</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.gz.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.zip">apache-rat-${project.version}-bin.zip</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.zip.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.zip.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.zip.md5">md5</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.zip.sha1">sha1</a></td>
               <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-bin.zip.asc">pgp</a></td>
           </tr>
         </table>
@@ -96,21 +96,21 @@ limitations under the License.
         <table>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.bz2">apache-rat-${project.version}-src.tar.bz2</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.bz2.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.bz2.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.bz2.asc">pgp</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.bz2.md5">md5</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.bz2.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.bz2.asc">pgp</a></td>
           </tr>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.gz">apache-rat-${project.version}-src.tar.gz</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.gz.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.gz.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.gz.asc">pgp</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.gz.md5">md5</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.gz.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.zip">apache-rat-${project.version}-src.zip</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.zip.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.zip.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.zip.asc">pgp</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.zip.md5">md5</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.zip.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${project.version}/apache-rat-${project.version}-src.zip.asc">pgp</a></td>
           </tr>
         </table>
       </subsection>
@@ -121,8 +121,8 @@ limitations under the License.
         </p>
         <ul>
           <li class="download"><a href="[preferred]/creadur/">browse download area</a></li>
-          <li><a href="http://archive.apache.org/dist/creadur/">archives...</a></li>
-          <li><a href="http://archive.apache.org/dist/incubator/rat/">Incubator archives...</a></li>
+          <li><a href="https://archive.apache.org/dist/creadur/">archives...</a></li>
+          <li><a href="https://archive.apache.org/dist/incubator/rat/">Incubator archives...</a></li>
         </ul>
     </section>
   </body>

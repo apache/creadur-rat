@@ -49,9 +49,9 @@ Apache Rat
 
  Apache Rat ${project.version} ships with tooling for
 
-   * {{{http://ant.apache.org/} Apache Ant}},
+   * {{{https://ant.apache.org/} Apache Ant}},
 
-   * {{{http://maven.apache.org}Apache Maven}},
+   * {{{https://maven.apache.org}Apache Maven}},
 
    * {{{https://gradle.org}Gradle}} and
 
@@ -68,11 +68,11 @@ Apache Rat
 
 ** Who Develops Rat?
 
-  Apache Rat is part of the {{{http://creadur.apache.org}Apache Creadur}}
+  Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
   language- and build-agnostic suite of tools for auditing and comprehending
   software distributions. Our community develops
   {{{http://www.opensource.org/} open source software}} the
-  {{{http://www.apache.org/foundation/how-it-works.html} Apache way}}.
+  {{{https://www.apache.org/foundation/how-it-works.html} Apache way}}.
 
   Please feel free to contribute a
   {{{./issue-tracking.html}patch}},
@@ -96,13 +96,13 @@ java -jar apache-rat-${project.version}.jar --help
 
 ** Apache Ant
 
- Use the task library for {{{http://ant.apache.org/} Apache Ant 1.7}} or later
+ Use the task library for {{{https://ant.apache.org/} Apache Ant 1.7}} or later
 
  Read more {{{./apache-rat-tasks/index.html} here}}.
 
 ** Apache Maven
 
- Use the plugin for {{{http://maven.apache.org}Apache Maven ${mavenVersion}}} or later.
+ Use the plugin for {{{https://maven.apache.org}Apache Maven ${mavenVersion}}} or later.
 
 +------------------------------------------+
   <plugin>
@@ -114,7 +114,7 @@ java -jar apache-rat-${project.version}.jar --help
 
  Read more {{{./apache-rat-plugin/index.html} here}}.
 
-** Gradle
+** Gradle (not yet officially supported)
 
  Use the plugin for {{{https://gradle.org}Gradle}}.
 
@@ -138,7 +138,7 @@ svn co http://svn.apache.org/repos/asf/creadur/rat/trunk/
 
 * Building Rat
 
- Build Rat with {{{http://maven.apache.org/} Apache Maven}}
+ Build Rat with {{{https://maven.apache.org/} Apache Maven}}
 
  Quick start
 
