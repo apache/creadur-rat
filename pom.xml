@@ -52,7 +52,6 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
     <mavenVersion>2.2.1</mavenVersion>
-    <previousRatVersion>0.11</previousRatVersion>
     <!--
     Publication to the website is a two phase operation:
 
@@ -269,7 +268,7 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
         <!-- Must use previous version, to avoid a cyclic reference -->
-        <version>${previousRatVersion}</version>
+        <version>0.11</version>
       </plugin>
     </plugins>
   </reporting>
@@ -335,7 +334,7 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <!-- Must use previous version, to avoid a cyclic reference -->
-          <version>${previousRatVersion}</version>
+          <version>0.11</version>
           <dependencies><!-- TODO remove exclusion when upgrading to new ASF parent or doxia release (RAT-158) -->
             <dependency>
               <groupId>org.apache.maven.doxia</groupId>
