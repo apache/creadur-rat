@@ -1,0 +1,136 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                -----
+                The Report Task
+                -----
+
+Report Task
+
+  The Report task is the heart of the Apache Rat Ant Task Library, it
+  runs Rat on a given set of resources and generates the report.
+
+  The task can work on any Ant
+  {{{http://ant.apache.org/manual/Types/resources.html}resource or
+  resource collection}} and the usual Ant selectors can be applied to
+  restrict things even further.
+
+  Reports can use Rat's internal XML or plain text format or be styled
+  by a custom XSLT stylesheet.
+
+  It is possible to define custom matchers for licenses not directly supported
+  by Rat via nested elements to the Report task.
+
+Attributes of the Task
+
+*-------------------------*-------------------------------+
+|Name                     |Description                    |
+*-------------------------*-------------------------------+
+| reportFile | Name of the file to write the report to.  If ommitted the report will be sent to Ant's logging system instead.
+*-------------------------*-------------------------------+
+| format | The format to use for the report.
+| | Choices are <<<xml>>> for Rat's XML format,
+| | <<<plain>>> for plain text using Rat's built-in stylesheet,
+| | <<<styled>>> transforms the XML output using the given stylesheet. The stylesheet nested element must be set as well if this attribute is used.
+| | Defaults to <<<plain>>>|
+*-------------------------*-------------------------------+
+| addDefaultLicenseMatchers | Whether to use Rat's built-in set of license matchers in addition to those specified as nested elements.
+| | Boolean, defaults to <<<true>>>.|
+*-------------------------*-------------------------------+
+| addLicenseHeaders | Whether to add license headers to files that don't have one.
+| | Choices are <<<true>>>, <<<false>>> and <<<forced>>> where <<<forced>>> would add a license even if Rat already found one.
+| | Boolean, defaults to <<<false>>>.|
+*-------------------------*-------------------------------+
+| copyrightMessage | If Rat is adding license headers: Sets the optional copyright message. This value is ignored, if no license headers are added.
+*-------------------------*-------------------------------+
+
+Nested Elements
+
+* Resources
+
+  The files to be checked by Rat are specified as nested
+  {{{http://ant.apache.org/manual/Types/resources.html} resource
+  (collection)(s)}}, the most basic one would probably be a
+  {{{http://ant.apache.org/manual/Types/fileset.html} fileset}}.
+
+  For example the following would check all Java files in the
+  <<<src>>> directory.
+
+---
+<rat:report>
+    <fileset dir="src" includes="**/*.java"/>
+</rat:report>
+---
+
+* Stylesheet
+
+  If the <<<format>>> attribute has been set to <<<styled>>> the XSLT
+  stylesheet to apply is specified as a nested resource element.  For
+  example
+
+---
+<rat:report format="styled" reportFile="rat-report.html">
+    ...
+    <stylesheet>
+        <file file="my/rat-xml-2-html.xslt"/>
+    </stylesheet>
+</rat:report>
+---
+
+* License Matchers
+
+  Any defined Ant type that implements the <<<IHeaderMatcher>>>
+  interface can be used as nested element to provide a matcher to Rat.
+  License matchers are the pieces that make Rat identify the license
+  of a document.
+
+  The Ant library already contains
+  {{{./types.html#License_Matchers}types for the built-in license
+  matchers}} but you can define your own classes for
+  {{{./examples/custom.html}custom matchers}}.
+
+  There are two scenarios where you'd use a nested element to define
+  license matchers to Rat.  The more common one would be if you wanted
+  Rat to detect and identify a license that isn't supported out of the
+  box - in this case you will want to write a custom matcher.
+
+  The second case would be if you want to only detect a subset of
+  licenses known to Rat for some reason.  For example if the only
+  license you want to detect was the Apache License 2.0 you'd first
+  disable the built-in matchers by setting
+  <<<addDefaultLicenseMatchers>>> to false and then explicitly add the
+  built-in <<<asl20>>> matcher
+
+---
+<rat:report addDefaultLicenseMatchers="false">
+    <rat:asl20/>
+</rat:report>
+---
+
+* Approved License Families
+
+  Any defined Ant type that implements the <<<ILicenseFamily>>>
+  interface can be used as nested element to provide a license family
+  as an approved license to Rat.
+
+  The Ant library already contains
+  {{{./types.html#License_Matchers}types for the built-in license families}}
+  but you can define your own classes for {{{./examples/custom.html}custom
+  families}}.  In most cases
+  {{{./types.html#approvedLicense}<<<approvedLicense>>>}} should be
+  sufficient, though.
+

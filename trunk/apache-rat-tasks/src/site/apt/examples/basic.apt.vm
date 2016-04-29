@@ -1,0 +1,134 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                        ----
+                        Basic Usage Examples
+                        ----
+
+Examples
+
+  These examples assume you have installed the Rat Antlib in a way
+  that provides the Report task in the XML namespace associated with
+  the prefix <<<rat>>>.
+
+* Run Rat in default configuration on all files in directory
+  <<<src>>>.
+
+---
+<rat:report>
+    <fileset dir="src"/>
+</rat:report>
+---
+
+  The report will be written to Ant's logging system.
+
+  This corresponds to the command line
+
++------------------------------------------+
+java -jar apache-rat-${project.version}.jar src
++------------------------------------------+
+
+  except that Ant's default excludes will be applied when looking for
+  documents to check.
+
+* Run Rat on multiple directories
+
+---
+<rat:report>
+    <fileset dir="module1/src/main"/>
+    <fileset dir="module2/src/test"/>
+</rat:report>
+---
+
+* Adding license headers
+
+  The equivalent of
+
++------------------------------------------+
+java -jar apache-rat-${project.version}.jar --addlicense
+  --copyright "Copyright 2008 Foo"
+  /path/to/project
++------------------------------------------+
+
+  is
+
+---
+<rat:report addLicenseHeaders="true"
+            coprightMessage="Copyright 2008 Foo">
+    <fileset dir="/path/to/project"/>
+</rat:report>
+---
+
+* Create a styled HTML report
+
+---
+<rat:report format="styled" reportFile="rat.html">
+    <fileset dir="src"/>
+    <stylesheet>
+        <file file="my/rat-xml-2-html.xslt"/>
+    </stylesheet>
+</rat:report>
+---
+
+* Run Rat on a tarball located on a webserver
+
+---
+<rat:report>
+    <tarfileset>
+        <gzipresource>
+            <url url="http://example.org/some.tar.gz"/>
+        </gzipresource>
+    </tarfileset>
+</rat:report>
+---
+
+* Run Rat but make the Apache License Version 2.0 the only one
+  accepted
+
+---
+<rat:report addDefaultLicenseMatchers="false">
+    <fileset dir="src"/>
+    <rat:asl20/>
+</rat:report>
+---
+
+* Run Rat on all files in <<<src>>> that have been modified today
+
+---
+<tstamp/>
+<rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+    <restrict>
+        <fileset dir="src"/>
+        <date when="after" datetime="${DSTAMP}" pattern="yyyyMMdd"/>
+    </restrict>
+</rat:report>
+---
+
+* Make Rat only detect your custom license and mark this license
+  approved.
+
+---
+<rat:report addDefaultLicenseMatchers="false">
+    <fileset dir="src"/>
+    <rat:substringMatcher licenseFamilyCategory="YASL1"
+             licenseFamilyName="Yet Another Software License, Version 1.0">
+        <pattern substring="Yet Another Software License, 1.0"/>
+    </rat:substringMatcher>
+    <rat:approvedLicense
+             familyName="Yet Another Software License, Version 1.0"/>
+</rat:report>
+---
