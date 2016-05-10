@@ -20,11 +20,11 @@
 
 How to publish the Rat website
 
- The {{{http://creadur.apache.org}Apache Creadur}} project, the community
- that develops {{{http://creadur.apache.org/rat}Apache Rat}},
+ The {{{https://creadur.apache.org}Apache Creadur}} project, the community
+ that develops {{{https://creadur.apache.org/rat}Apache Rat}},
  hosts its website on the
- {{{http://www.apache.org/dev/cms.html}ASF Content Management System}}.
- {{{http://maven.apache.org}Apache Maven}} builds Rat, and generates this
+ {{{https://www.apache.org/dev/cms.html}ASF Content Management System}}.
+ {{{https://maven.apache.org}Apache Maven}} builds Rat, and generates this
  subsite. Here's (one way) to work with these systems.
 
 * Developing Content
@@ -48,9 +48,9 @@ mvn clean site
 * Committing and Reviewing Content
 
  As soon as your changes look okay locally on <<<localhost:8080>>>, commit them.
- {{{http://ci.apache.org/buildbot.html}Buildbot}} will automatically
+ {{{https://ci.apache.org/buildbot.html}Buildbot}} will automatically
  notice the commit and create a staging site to look at
- {{{http://ci.apache.org/projects/rat} http://ci.apache.org/projects/rat/}}
+ {{{https://builds.apache.org/view/A-D/view/Creadur/} https://builds.apache.org/view/A-D/view/Creadur/}}
  which is always up to date (within a couple of minutes of any commit).
 
  Need to make changes? No problem - go back and repeat the cycle as often as you like.
@@ -105,19 +105,19 @@ mvn site-deploy scm-publish:publish-scm
 
  The content committed by the Maven <<<scm-publish>>> plugin
  triggers a staging build on
- {{{http://ci.apache.org/}<<<http://ci.apache.org/>>>}}. To
+ {{{https://ci.apache.org/}<<<https://ci.apache.org/>>>}}. To
  follow its progress, open the
- {{{http://ci.apache.org/builders/creadur-site-staging}creadur
+ {{{https://ci.apache.org/builders/creadur-site-staging}creadur
  site builder}}.
 
  When this builds has completed successfully, review the content
  staged on
- {{{http://creadur.staging.apache.org/rat/index.html}
- <<<http://creadur.staging.apache.org/rat/index.html>>>}}. If
+ {{{https://creadur.staging.apache.org/rat/index.html}
+ <<<https://creadur.staging.apache.org/rat/index.html>>>}}. If
  this looks fine then publish the staged content using the
- {{{http://www.apache.org/dev/cms.html}ASF Content Management System}}.
+ {{{https://www.apache.org/dev/cms.html}ASF Content Management System}}.
 
- Propagating the content to {{{http://creadur.apache.org/rat}production}} may take a brief while (maybe
+ Propagating the content to {{{https://creadur.apache.org/rat}production}} may take a brief while (maybe
  30 seconds) so please be patient a little longer.
 
 * Troubleshooting
