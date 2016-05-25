@@ -24,7 +24,7 @@
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
-  <version>0.12-SNAPSHOT</version>
+  <version>0.12</version>
   <packaging>pom</packaging>
   <name>Apache Creadur Rat</name>
   <url>http://creadur.apache.org/rat/</url>
@@ -588,9 +588,9 @@ agnostic home for software distribution comprehension and audit tools.
     </contributor>
   </contributors>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/branches/0.12-release</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/branches/0.12-release</developerConnection>
-    <url>http://svn.apache.org/repos/asf/creadur/rat/branches/0.12-release</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/tags/apache-rat-project-0.12</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/tags/apache-rat-project-0.12</developerConnection>
+    <url>http://svn.apache.org/repos/asf/creadur/rat/tags/apache-rat-project-0.12</url>
   </scm>
   <distributionManagement>
     <site>
