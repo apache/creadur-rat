@@ -1,0 +1,162 @@
+<?xml version='1.0'?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one   *
+ or more contributor license agreements.  See the NOTICE file *
+ distributed with this work for additional information        *
+ regarding copyright ownership.  The ASF licenses this file   *
+ to you under the Apache License, Version 2.0 (the            *
+ "License"); you may not use this file except in compliance   *
+ with the License.  You may obtain a copy of the License at   *
+                                                              *
+   http://www.apache.org/licenses/LICENSE-2.0                 *
+                                                              *
+ Unless required by applicable law or agreed to in writing,   *
+ software distributed under the License is distributed on an  *
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ KIND, either express or implied.  See the License for the    *
+ specific language governing permissions and limitations      *
+ under the License.                                           *
+
+-->
+
+<project default="allTests"
+    name='report-bad-configurations'
+    xmlns:au="antlib:org.apache.ant.antunit"
+    xmlns:rat="antlib:org.apache.rat.anttasks">
+    
+  <taskdef uri="antlib:org.apache.ant.antunit"
+      resource="org/apache/ant/antunit/antlib.xml"
+      classpath="${test.classpath}" />
+
+  <taskdef uri="antlib:org.apache.rat.anttasks" resource="org/apache/rat/anttasks/antlib.xml">
+    <classpath>
+      <pathelement location="${jar.name}" />
+      <pathelement path='${test.classpath}' />
+    </classpath>
+  </taskdef>
+
+  <target name="allTests">
+    <au:antunit xmlns:au="antlib:org.apache.ant.antunit"
+                failonerror="false" errorproperty="antunit.failed">
+      <file file="${ant.file}"/>
+      <au:plainlistener />
+    </au:antunit>
+  </target>
+
+  <target name="testNoResources">
+    <au:expectfailure expectedMessage="at least one file">
+      <rat:report/>
+    </au:expectfailure>
+  </target>
+
+  <target name="testNoLicenseMatchers">
+    <au:expectfailure expectedMessage="at least one license">
+      <rat:report addDefaultLicenseMatchers="false">
+        <file file="${ant.file}"/>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testNoStylesheet">
+    <au:expectfailure expectedMessage="must specify a stylesheet">
+      <rat:report format="styled">
+        <file file="${ant.file}"/>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testUnusedStylesheet">
+    <rat:report>
+      <stylesheet>
+        <file file="${ant.file}"/>
+      </stylesheet>
+      <file file="${ant.file}"/>
+    </rat:report>
+    <au:assertLogContains text="Ignoring stylesheet"/>
+  </target>
+
+  <target name="testSubstringMatcherRequiresFamilyName">
+    <au:expectfailure
+        expectedMessage="The licenseFamilyName attribute is required.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:substringMatcher
+            licenseFamilyCategory="YASL1"
+            notes="Interesting License">
+          <pattern substring="exmpl"/>
+        </rat:substringMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testSubstringMatcherRequiresFamilyCategory">
+    <au:expectfailure
+        expectedMessage="The licenseFamilyCategory attribute is required.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:substringMatcher
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License">
+          <pattern substring="exmpl"/>
+        </rat:substringMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testSubstringMatcherRequiresPattern">
+    <au:expectfailure
+        expectedMessage="You must specify at least one nested pattern.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:substringMatcher
+            licenseFamilyCategory="YASL1"
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License">
+        </rat:substringMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testFullTextMatcherRequiresFamilyName">
+    <au:expectfailure
+        expectedMessage="The licenseFamilyName attribute is required.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:fullTextMatcher
+            licenseFamilyCategory="YASL1"
+            notes="Interesting License"
+            fullText="exmpl">
+        </rat:fullTextMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testFullTextMatcherRequiresFamilyCategory">
+    <au:expectfailure
+        expectedMessage="The licenseFamilyCategory attribute is required.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:fullTextMatcher
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License"
+            fullText="exmpl">
+        </rat:fullTextMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+
+  <target name="testFullTextMatcherRequiresText">
+    <au:expectfailure
+        expectedMessage="You must specify the text to match.">
+      <rat:report>
+        <file file="${ant.file}"/>
+        <rat:fullTextMatcher
+            licenseFamilyCategory="YASL1"
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License">
+        </rat:fullTextMatcher>
+      </rat:report>
+    </au:expectfailure>
+  </target>
+</project>

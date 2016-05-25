@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!-- 
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="what">
+      <question>What is Rat?</question>
+      <answer>
+        <p>
+          Basically, you can think of it as a tool that checks,
+          whether you're source files are carrying proper
+          license headers. Almost any non-trivial organization
+          has a policy for license headers. In the case
+          of the <a href="http://www.apache.org/">Apache Software
+          Foundation (ASF)</a>, this is the
+          <a href="http://www.apache.org/legal/src-headers.html">ASF
+          Source Header and Copyright Notice Policy</a>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="where">
+      <question>Where do I find Apache Rat?</question>
+      <answer>
+        <p>
+          Apache Rat is now part of the 
+          <a href='http://creadur.apache.org'>Apache Creadur</a> project,
+          a home for all sorts of software that helps audit and review
+          software distributions.
+        </p>
+      </answer>
+    </faq>
+    <faq id="why">
+      <question>Why should I use the Maven plugin to run Apache Rat?</question>
+      <answer>
+        <p>Because it makes running Rat trivial. Basically, you just
+          add the plugin to the <code>build/plugins</code> section
+          of your POM and run <code>mvn apache-rat:check</code>. Using Rat
+          cannot be simpler.
+        </p>
+      </answer>
+    </faq>
+  </part>
+
+  <part id="Configuration">
+    <faq id="includeSubprojects">
+      <question>
+        The apache-rat-plugin creates a report for every subproject.
+        I want a single report for the whole project, which includes
+        the subprojects.
+      </question>
+      <answer>
+        <p>Set the configuration parameter "excludeSubProjects"
+          to false.</p>
+      </answer>
+    </faq>
+    <faq id="customLicense">
+      <question>Can I use Rat to validate against a custom license header?</question>
+      <answer>
+        <p>See <a href="examples/custom-license.html">this example</a> to see how.</p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

@@ -1,0 +1,72 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                   --------------------------
+                   Core Module
+                   --------------------------
+
+About Apache Rat
+
+ Rat audits software distributions, with a special interest in headers.
+ If this isn't quite what you're looking for then take a look at the
+ other products developed by {{{http://creadur.apache.org}Apache Creadur}},
+ including {{{http://creadur.apache.org/whisker}Apache Whisker}} which audits
+ and generates legal (for example <<<LICENSE>>>) documents for
+ complex software distributions.
+
+Developing Rat
+
+* Introducing the Modules
+
+ This module, <<<apache-rat-core>>>, is a library containing the basic
+ engine. Other modules allow this engine to be run in various ways.
+
+*----------+--------------+----------------+
+ <<Runs Rat via>> | <<Requires>>     | <<Module>>       |
+*----------+--------------+----------------+
+ An Ant task | {{{http://ant.apache.org}Apache Ant}}     | {{{../apache-rat-tasks}apache-rat-tasks}}      |
+*----------+--------------+----------------+
+ The command line | Java\u00ae     | {{{../apache-rat}apache-rat}}       |
+*----------+--------------+----------------+
+ A Maven plugin | {{{http://maven.apache.org}Apache Maven}}     | {{{../apache-rat-plugin}apache-rat-plugin}}       |
+*----------+--------------+----------------+
+<<Modules that run Rat>>
+
+ Support for new build tools and alternative ways to run rat should be coded
+ in new modules building on <<<apache-rat-core>>>. Developers interested in
+ improving existing support for a specific build tool should start by taking
+ a look at that module.
+
+* Diving into Core
+
+ Browse the source {{{./xref/index.html}here}}.
+
+ Read the JavaDocs {{{./apidocs/index.html}here}}.
+
+ Check out with {{{http://subversion.apache.org}Subversion}}
+
++------------------------------------------+
+svn co http://svn.apache.org/repos/asf/creadur/rat/trunk/
++------------------------------------------+
+
+ Build with {{{http://maven.apache.org/} Apache Maven}}
+
++------------------------------------------+
+mvn install
++------------------------------------------+
+
+ Subscribe to our {{{./mail-lists.html}mailing lists}} for a warm welcome one and all.

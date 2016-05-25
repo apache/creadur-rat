@@ -1,0 +1,18 @@
+How to build RAT
+================
+
+There is a maven default goal configured that builds and installs a fresh artifact. Just launch maven without any goals in the project root directory.
+or
+Normal development:
+
+    mvn install
+
+Normal development without running tests:
+
+    mvn -Dmaven.test.skip=true install
+
+Build apache release
+
+    mvn clean install -Papache-release
+
+RAT uses the previos release version during the build to verify it complies its own rules.
