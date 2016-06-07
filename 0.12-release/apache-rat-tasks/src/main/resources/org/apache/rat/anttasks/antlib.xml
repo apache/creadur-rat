@@ -1,0 +1,79 @@
+<?xml version='1.0'?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one   *
+ or more contributor license agreements.  See the NOTICE file *
+ distributed with this work for additional information        *
+ regarding copyright ownership.  The ASF licenses this file   *
+ to you under the Apache License, Version 2.0 (the            *
+ "License"); you may not use this file except in compliance   *
+ with the License.  You may obtain a copy of the License at   *
+                                                              *
+   http://www.apache.org/licenses/LICENSE-2.0                 *
+                                                              *
+ Unless required by applicable law or agreed to in writing,   *
+ software distributed under the License is distributed on an  *
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ KIND, either express or implied.  See the License for the    *
+ specific language governing permissions and limitations      *
+ under the License.                                           *
+
+-->
+
+<antlib>
+  <taskdef name="report" classname="org.apache.rat.anttasks.Report"/>
+
+  <typedef name="substringMatcher"
+           classname="org.apache.rat.anttasks.SubstringLicenseMatcher"/>
+  <typedef name="fullTextMatcher"
+           classname="org.apache.rat.anttasks.FullTextLicenseMatcher"/>
+
+  <!-- typedef the built-in license matchers -->
+  <typedef name="asl20"
+    classname="org.apache.rat.analysis.license.ApacheSoftwareLicense20"/>
+  <typedef name="generated"
+    classname="org.apache.rat.analysis.generation.GeneratedLicenseNotRequired"/>
+  <typedef name="javadoc"
+    classname="org.apache.rat.analysis.generation.JavaDocLicenseNotRequired"/>
+  <typedef name="oasis"
+    classname="org.apache.rat.analysis.license.OASISLicense"/>
+  <typedef name="w3c"
+    classname="org.apache.rat.analysis.license.W3CLicense"/>
+  <typedef name="w3c-doc"
+    classname="org.apache.rat.analysis.license.W3CDocLicense"/>
+  <typedef name="dojo"
+    classname="org.apache.rat.analysis.license.DojoLicenseHeader"/>
+  <typedef name="gpl1"
+    classname="org.apache.rat.analysis.license.GPL1License"/>
+  <typedef name="gpl2"
+    classname="org.apache.rat.analysis.license.GPL2License"/>
+  <typedef name="gpl3"
+    classname="org.apache.rat.analysis.license.GPL3License"/>
+  <typedef name="mit"
+    classname="org.apache.rat.analysis.license.MITLicense"/>
+
+  <!-- typedef the built-in license families -->
+  <typedef name="w3c-doc-license"
+    classname="org.apache.rat.license.W3CDocumentLicenseFamily"/>
+  <typedef name="w3c-soft-license"
+    classname="org.apache.rat.license.W3CSoftwareLicenseFamily"/>
+  <typedef name="oasis-license"
+    classname="org.apache.rat.license.OASISLicenseFamily"/>
+  <typedef name="apache20-license"
+    classname="org.apache.rat.license.Apache20LicenseFamily"/> 
+  <typedef name="academic-free-21"
+    classname="org.apache.rat.license.AcademicFree21LicenseFamily"/> 
+  <typedef name="modified-bsd"
+    classname="org.apache.rat.license.ModifiedBSDLicenseFamily"/> 
+  <typedef name="approvedLicense"
+           classname="org.apache.rat.license.SimpleLicenseFamily"/> 
+  <typedef name="gpl1-family"
+    classname="org.apache.rat.license.GPL1LicenseFamily"/> 
+  <typedef name="gpl2-family"
+    classname="org.apache.rat.license.GPL2LicenseFamily"/> 
+  <typedef name="gpl3-family"
+    classname="org.apache.rat.license.GPL3LicenseFamily"/> 
+  <typedef name="mit-family"
+    classname="org.apache.rat.license.MITLicenseFamily"/> 
+    
+</antlib>

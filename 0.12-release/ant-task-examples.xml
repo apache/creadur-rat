@@ -1,0 +1,128 @@
+<?xml version='1.0'?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<project default="javasources" name="Ant task examples">
+  <description>
+    A few examples of using the Ant task, for more examples see the
+    AntUnit tests
+  </description>
+
+  <property name="src-dir" location="apache-rat-core/src/main/java"/>
+  <property name="version" value="0.11"/>
+  <property name="src-jar"
+            location="apache-rat-core/target/apache-rat-core-${version}-sources.jar"/>
+
+  <target name="javasources" depends="-taskdef"
+    description="runs the tasks over Rat's source tree excluding the license directory">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+      <fileset dir="${src-dir}">
+        <exclude name="rat/license/"/>
+      </fileset>
+    </rat:report>
+  </target>
+
+  <target name="jar" depends="-taskdef"
+    description="runs the task over Rat's source tree">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+      <zipfileset src="${src-jar}"/>
+    </rat:report>
+  </target>
+
+  <target name="tarball" depends="-taskdef"
+    description="creates a tarball of Rat's source tree and runs the task over the tarball">
+    <tar destfile="ratsrc.tar.gz" compression="gzip">
+      <fileset dir="${src-dir}"/>
+    </tar>
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+      <tarfileset>
+        <gzipresource>
+          <file file="ratsrc.tar.gz"/>
+        </gzipresource>
+      </tarfileset>
+    </rat:report>
+    <delete file="ratsrc.tar.gz"/>
+  </target>
+
+  <target name="javasources-w3c" depends="-taskdef"
+    description="runs the tasks over Rat's source tree accepting only the W3C license">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
+      addDefaultLicenseMatchers="false">
+      <fileset dir="${src-dir}"/>
+
+      <rat:w3c/>
+
+    </rat:report>
+  </target>
+
+  <target name="url" depends="-taskdef"
+    description="runs the task on the ASF's homepage">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+      <url url="http://www.apache.org/"/>
+    </rat:report>
+  </target>
+
+  <target name="run-on-rat" depends="-taskdef">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+      <fileset dir="."/>
+    </rat:report>
+  </target>
+
+  <target name="run-on-rat-output-xml" depends="-taskdef"
+          description="Runs Rat on its own source tree and creates an XML report">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
+                format="xml" reportFile="rat-report.xml">
+      <fileset dir="."/>
+    </rat:report>
+  </target>
+
+  <target name="run-on-rat-output-styled" depends="-taskdef"
+          description="Runs Rat on its own source tree and creates a report using XSLT">
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
+                format="styled" reportFile="rat-report.txt">
+      <stylesheet>
+        <file file="apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl"/>
+      </stylesheet>
+      <fileset dir="."/>
+    </rat:report>
+  </target>
+
+  <target name="restrict" depends="-taskdef"
+          description="Run Rat on all files in this source tree that have been modified today">
+    <tstamp/>
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+      <restrict>
+        <fileset dir="."/>
+        <date when="after" datetime="${DSTAMP}" pattern="yyyyMMdd"/>
+      </restrict>
+    </rat:report>
+  </target>
+
+  <target name="-taskdef">
+    <typedef resource="org/apache/rat/anttasks/antlib.xml"
+             uri="antlib:org.apache.rat.anttasks">
+      <classpath>
+        <fileset dir=".">
+           <include name="**/apache-rat*.jar"/>
+           <include name="**/commons-*.jar"/>
+        </fileset>
+      </classpath>
+    </typedef>
+  </target>
+</project>

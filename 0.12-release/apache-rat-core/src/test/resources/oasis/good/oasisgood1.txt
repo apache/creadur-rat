@@ -1,0 +1,10 @@
+Copyright (c) OASIS Open 2002-2011. All Rights Reserved.
+
+All capitalized terms in the following text have the meanings assigned
+to them in the OASIS Intellectual Property Rights Policy (the "OASIS
+IPR Policy"). The full Policy may be found at the OASIS website.
+ 
+This document and translations of it may be copied and furnished to
+others, and derivative works that comment on or otherwise explain it
+or assist in its implementation may be prepared, copied, published,
+and distributed
