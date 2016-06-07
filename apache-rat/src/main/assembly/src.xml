@@ -32,6 +32,9 @@
     <fileSet>
       <directory>${project.basedir}/..</directory>
       <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/.bzrignore</include>
+      </includes>
       <excludes>
         <exclude>**/target/**</exclude>
         <exclude>.*/**</exclude>
