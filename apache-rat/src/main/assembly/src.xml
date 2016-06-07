@@ -32,15 +32,14 @@
     <fileSet>
       <directory>${project.basedir}/..</directory>
       <outputDirectory></outputDirectory>
-      <includes>
-        <include>**/.bzrignore</include>
-      </includes>
       <excludes>
         <exclude>**/target/**</exclude>
+        <exclude>**/.settings/**/*</exclude>
+        <exclude>**/.project</exclude>
+        <exclude>**/.classpath</exclude>
         <exclude>.*/**</exclude>
         <exclude>**.bak</exclude>
         <exclude>*.jar</exclude>
-        <exclude>**/.*</exclude>
       </excludes>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
