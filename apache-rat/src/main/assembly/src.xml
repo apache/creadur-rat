@@ -34,12 +34,13 @@
       <outputDirectory></outputDirectory>
       <excludes>
         <exclude>**/target/**</exclude>
-        <exclude>**/.settings/**/*</exclude>
+        <exclude>**/.settings/**</exclude>
         <exclude>**/.project</exclude>
         <exclude>**/.classpath</exclude>
         <exclude>.*/**</exclude>
         <exclude>**.bak</exclude>
         <exclude>*.jar</exclude>
+        <exclude>**/pom.xml.*</exclude>
       </excludes>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
