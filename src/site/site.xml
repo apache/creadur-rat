@@ -56,7 +56,6 @@
       <item name="From The Command Line" href="apache-rat/index.html"/>
       <item name="With Ant" href="apache-rat-tasks/index.html"/>
       <item name="With Maven" href="apache-rat-plugin/index.html"/>
-      <item name="With Gradle" href="apache-rat-gradle/index.html"/>
     </menu>
 
     <menu name="Apache Creadur&#8482;" inherit="bottom">

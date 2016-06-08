@@ -51,9 +51,7 @@ Apache Rat
 
    * {{{https://ant.apache.org/} Apache Ant}},
 
-   * {{{https://maven.apache.org}Apache Maven}},
-
-   * {{{https://gradle.org}Gradle}} and
+   * {{{https://maven.apache.org}Apache Maven}} and
 
    * the command line.
 
