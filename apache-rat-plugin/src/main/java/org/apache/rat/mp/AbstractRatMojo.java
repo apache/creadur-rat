@@ -1,4 +1,7 @@
+package org.apache.rat.mp;
+
 /*
+ * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
@@ -15,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.mp;
 
 import static org.apache.rat.mp.util.ConfigurationHelper.newInstance;
 import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
