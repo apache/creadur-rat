@@ -29,11 +29,13 @@ How to publish the Rat website
 
 * Developing Content
 
- Build and generate the site using Maven the usual way. A plain site does not generate a fully complete page, thus:
+ Build and generate the site using Maven the usual way. A plain 'site' does not generate a fully complete page, thus:
 
 +------------------------------------------+
 mvn clean site site:stage
 +------------------------------------------+
+
+ This will generate a complete page under 'target/staging'.
 
  Make your changes to the <<<site.xml>>> and/or <<<.apt>>> files then launch
  a server on <<<localhost:8080>>> using
