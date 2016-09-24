@@ -630,9 +630,9 @@ agnostic home for software distribution comprehension and audit tools.
     </contributor>
   </contributors>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/rat/trunk</connection>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/trunk</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/trunk</developerConnection>
-    <url>http://svn.apache.org/repos/asf/creadur/rat/trunk</url>
+    <url>https://svn.apache.org/repos/asf/creadur/rat/trunk</url>
   </scm>
   <distributionManagement>
     <site>
