@@ -405,8 +405,9 @@ public class TestLicenseAppender {
     @Test
     public void addLicenseToPerlModule() throws IOException {
         String filename = "tmp.pm";
-        final String firstLine = "package API::TestAPI;"
-        String secondLine = "#" + FIRST_LICENSE_LINE;
+        final String firstLine = "package API::TestAPI;";
+        final String secondLine = ""; 
+        final String thirdLine = "#" + FIRST_LICENSE_LINE;
 
         commonTestTemplate(filename, new FileCreator() {
                     public void createFile(Writer writer)
@@ -415,7 +416,7 @@ public class TestLicenseAppender {
                         writer.write("print \"Hello world\"\n");
                     }
                 },
-                checkLines(firstLine, secondLine));
+                checkLines(firstLine, secondLine, thirdLine));
     }    
 
     @Test
@@ -520,18 +521,22 @@ public class TestLicenseAppender {
     @Test
     public void addLicenseToGo() throws IOException {
         String filename = "tmp.go";
-        String firstLine = "/*";
+        final String firstLine = "package main";
+        String secondLine = "";
+        String thirdLine = "/*";
+        
+        		
 
         commonTestTemplate(filename, new FileCreator() {
                     public void createFile(Writer writer)
                             throws IOException {
-                        writer.write("package main;\n");
+                        writer.write(firstLine + "\n");
                         writer.write("import (\n");
                         writer.write("    log\n");
                         writer.write(")\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine, secondLine, thirdLine));
     }    
 
     @Test

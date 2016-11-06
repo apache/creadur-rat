@@ -103,7 +103,7 @@ public abstract class AbstractLicenseAppender {
             TYPE_BAT,
     };
     private static final int[] EXPECTS_PACKAGE = new int[]{
-            TYPE_JAVA, TYPE_PM,
+            TYPE_JAVA, TYPE_GO, TYPE_PM,
     };
     private static final int[] EXPECTS_XML_DECL = new int[]{
             TYPE_XML,
