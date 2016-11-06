@@ -67,6 +67,8 @@ public abstract class AbstractLicenseAppender {
     private static final int TYPE_BEANSHELL = 23;
     private static final int TYPE_JSP = 24;
     private static final int TYPE_FML = 25;
+    private static final int TYPE_GO = 26;
+    private static final int TYPE_PM = 27;    
 
     /**
      * the line separator for this OS
@@ -76,14 +78,14 @@ public abstract class AbstractLicenseAppender {
     private static final int[] FAMILY_C = new int[]{
             TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
             TYPE_CSS, TYPE_CPP, TYPE_CSHARP, TYPE_PHP, TYPE_GROOVY,
-            TYPE_BEANSHELL,
+            TYPE_BEANSHELL, TYPE_GO,
     };
     private static final int[] FAMILY_SGML = new int[]{
             TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML,
     };
     private static final int[] FAMILY_SH = new int[]{
             TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
-            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION,
+            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION, TYPE_PM,
     };
     private static final int[] FAMILY_BAT = new int[]{
             TYPE_BAT,
@@ -95,13 +97,13 @@ public abstract class AbstractLicenseAppender {
             TYPE_VM,
     };
     private static final int[] EXPECTS_HASH_PLING = new int[]{
-            TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL
+            TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL,
     };
     private static final int[] EXPECTS_AT_ECHO = new int[]{
             TYPE_BAT,
     };
     private static final int[] EXPECTS_PACKAGE = new int[]{
-            TYPE_JAVA,
+            TYPE_JAVA, TYPE_GO, TYPE_PM,
     };
     private static final int[] EXPECTS_XML_DECL = new int[]{
             TYPE_XML,
@@ -149,6 +151,7 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("fxcop", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("fml", Integer.valueOf(TYPE_FML));
         EXT2TYPE.put("groovy", Integer.valueOf(TYPE_GROOVY));
+        EXT2TYPE.put("go", Integer.valueOf(TYPE_GO));
         EXT2TYPE.put("h", Integer.valueOf(TYPE_H));
         EXT2TYPE.put("hh", Integer.valueOf(TYPE_H));
         EXT2TYPE.put("hpp", Integer.valueOf(TYPE_H));
@@ -161,6 +164,7 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("nunit", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("php", Integer.valueOf(TYPE_PHP));
         EXT2TYPE.put("pl", Integer.valueOf(TYPE_PERL));
+        EXT2TYPE.put("pm", Integer.valueOf(TYPE_PM));
         EXT2TYPE.put("properties", Integer.valueOf(TYPE_PROPERTIES));
         EXT2TYPE.put("py", Integer.valueOf(TYPE_PYTHON));
         EXT2TYPE.put("rb", Integer.valueOf(TYPE_RUBY));
