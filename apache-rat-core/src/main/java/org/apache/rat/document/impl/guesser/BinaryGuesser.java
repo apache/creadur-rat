@@ -282,6 +282,7 @@ public class BinaryGuesser {
             "FV",
             "GRM",
             "G",
+            "GO",
             "H",
             "HTACCESS",
             "HTML",
@@ -291,11 +292,12 @@ public class BinaryGuesser {
             "JMX",
             "JSP",
             "JS",
+            "JSON",
             "JUNIT",
             "JX",
+            "M4",            
             "MANIFEST",
-            "M4",
-            "MF",
+            "MD",
             "MF",
             "META",
             "MOD",
@@ -360,6 +362,5 @@ public class BinaryGuesser {
                 // try a taste
                 isBinaryDocument(document);
     }
-
 
 }

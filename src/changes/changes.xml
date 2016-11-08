@@ -20,7 +20,7 @@
 This file is also used by the maven-changes-plugin to generate the release notes.
 Useful ways of finding items to add to this file are:
 
-1.  Add items when you fix a bug or add a feature (this makes the 
+1.  Add items when you fix a bug or add a feature (this makes the
 release process easy :-).
 
 2.  Do a JIRA search for tickets closed since the previous release.
@@ -31,7 +31,7 @@ SVN commits. TBA how to use this with SVN.
 To generate the release notes from this file:
 
 mvn changes:announcement-generate -Prelease-notes [-Dchanges.version=nn]
-then tweak the formatting if necessary 
+then tweak the formatting if necessary
 and commit
 
 The <action> type attribute can be add,update,fix,remove.
@@ -40,7 +40,7 @@ The <action> type attribute can be add,update,fix,remove.
     issue - required
     type - required
     the rest are optional; order not important
-    
+
     having the issue number first makes it easier to read the XML outline
 
 -->
@@ -54,11 +54,17 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
+    <release version="0.13" date="2016-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-223" type="fix" due-to="Eric Friedrich" dev="pottlinger">
+        Add support for Golang and Perl module files.
+      </action>
+    </release>
+
     <release version="0.12" date="2015-09-30" description=
 " We now require Maven 3.0.5+ to build Rat, but as before we only require
  Maven 2.2.1+ if you want to use Rat in your own Maven projects.
 
-We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
+We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions.
 ">
       <action issue="RAT-215" type="fix" dev="pottlinger">
         Add WOFF2, WOFF, TTF and EOT font file extensions to binary file collection to allow faster detection as binary without reading in the files.
@@ -102,7 +108,7 @@ We've integrated Rat into the ASF Jenkins to ensure continuous builds with vario
         Maven plugin and Ant task do not support adding extra approved licenses.
       </action>
       <action issue="RAT-180" type="fix" dev="pottlinger">
-        Generify and beautify texts in RAT report. 
+        Generify and beautify texts in RAT report.
       </action>
       <action issue="RAT-196" type="add" due-to="Karl Heinz Marbais" dev="pottlinger">
         Minor refactoring in pom.xml.
@@ -185,7 +191,7 @@ We've integrated Rat into the ASF Jenkins to ensure continuous builds with vario
     <action issue="RAT-165" type="add">Use a maven defaultGoal for RAT's base pom.xml</action>
     </release>
     <release version="0.10" date="2013-09-05" description=
-"The 0.10 version includes several bug fixes, 
+"The 0.10 version includes several bug fixes,
 most notably a fix for 0.9 performance issues.
  * Simpler binary archive
  * Updated dependencies and plugins

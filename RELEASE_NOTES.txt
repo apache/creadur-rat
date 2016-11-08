@@ -1,4 +1,4 @@
-Rat 0.12 (SNAPSHOT)
+Rat 0.12
 ===================
 
  * We now require Maven 3.0.5+ to build Rat, but as before we only require

@@ -403,6 +403,23 @@ public class TestLicenseAppender {
     }
 
     @Test
+    public void addLicenseToPerlModule() throws IOException {
+        String filename = "tmp.pm";
+        final String firstLine = "package API::TestAPI;";
+        final String secondLine = ""; 
+        final String thirdLine = "#" + FIRST_LICENSE_LINE;
+
+        commonTestTemplate(filename, new FileCreator() {
+                    public void createFile(Writer writer)
+                            throws IOException {
+                        writer.write(firstLine + "\n");
+                        writer.write("print \"Hello world\"\n");
+                    }
+                },
+                checkLines(firstLine, secondLine, thirdLine));
+    }    
+
+    @Test
     public void addLicenseToTclWithoutHashBang()
             throws IOException {
         String filename = "tmp.tcl";
@@ -500,6 +517,27 @@ public class TestLicenseAppender {
                 },
                 checkLines(firstLine, null));
     }
+
+    @Test
+    public void addLicenseToGo() throws IOException {
+        String filename = "tmp.go";
+        final String firstLine = "package main";
+        String secondLine = "";
+        String thirdLine = "/*";
+        
+        		
+
+        commonTestTemplate(filename, new FileCreator() {
+                    public void createFile(Writer writer)
+                            throws IOException {
+                        writer.write(firstLine + "\n");
+                        writer.write("import (\n");
+                        writer.write("    log\n");
+                        writer.write(")\n");
+                    }
+                },
+                checkLines(firstLine, secondLine, thirdLine));
+    }    
 
     @Test
     public void fileWithBOM() throws IOException {
