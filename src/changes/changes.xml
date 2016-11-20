@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.13" date="2016-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-224" type="fix" due-to="John Patrick" dev="pottlinger">
+        Fixed example on webpage abozt usage of custom licenses.
+      </action>
       <action issue="RAT-223" type="fix" due-to="Eric Friedrich" dev="pottlinger">
         Add support for Golang and Perl module files.
       </action>
