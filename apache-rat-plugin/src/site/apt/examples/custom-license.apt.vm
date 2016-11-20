@@ -114,7 +114,7 @@ Approved License Families
           </licenses>
           <licenseFamilies>
             <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
-              <familyName>Yet Another Software License</familyName>
+              <familyName>Yet Another Software License (YASL) 1.0</familyName>
             </licenseFamily>
           </licenseFamilies>
         </configuration>
