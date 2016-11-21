@@ -395,7 +395,7 @@ agnostic home for software distribution comprehension and audit tools.
         						<artifactId>
         							apache-rat-plugin
         						</artifactId>
-        						<versionRange>[0.11,)</versionRange>
+        						<versionRange>[0.12,)</versionRange>
         						<goals>
         							<goal>check</goal>
         						</goals>

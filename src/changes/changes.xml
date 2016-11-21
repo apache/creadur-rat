@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.13" date="2016-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-222" type="fix" dev="pottlinger">
+        Download section does not work if SNAPSHOT is deployed, add download of previous RAT release.
+      </action>
       <action issue="RAT-224" type="fix" due-to="John Patrick" dev="pottlinger">
         Fixed example on webpage abozt usage of custom licenses.
       </action>
