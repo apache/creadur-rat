@@ -50,7 +50,14 @@ public class BinaryGuesserTest {
             "my.truststore",//
             //"foo.Java", //
             //"manifest.Mf",//
-            "deprecatedtechnology.swf"
+            "deprecatedtechnology.swf",
+            "xyz.aif",
+            "abc.iff",
+            // Audio Files
+            "test.m3u", "test.m4a",
+            "test-audio.mid", "test-audio.mp3",
+            "test-audio.mpa", "test-audio.wav",
+            "test-audio.wma"
     );
 
     @Test

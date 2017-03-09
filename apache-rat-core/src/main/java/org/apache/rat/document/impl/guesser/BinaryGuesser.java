@@ -206,6 +206,10 @@ public class BinaryGuesser {
         return BinaryGuesser.extensionMatches(name, KEYSTORE_EXTENSIONS);
     }
 
+    public static final boolean isAudio(final String name) {
+        return BinaryGuesser.extensionMatches( name, AUDIO_EXTENSIONS );
+    }
+
     /**
      * @param name file name.
      * @return Is a file by that name a known binary file?
@@ -217,7 +221,8 @@ public class BinaryGuesser {
         String normalisedName = GuessUtils.normalise(name);
         return BinaryGuesser.JAR_MANIFEST.equalsIgnoreCase(name) || BinaryGuesser.isImage(normalisedName)
                 || BinaryGuesser.isKeystore(normalisedName) || BinaryGuesser.isBytecode(normalisedName)
-                || BinaryGuesser.isBinaryData(normalisedName) || BinaryGuesser.isExecutable(normalisedName);
+                || BinaryGuesser.isBinaryData(normalisedName) || BinaryGuesser.isExecutable(normalisedName)
+                || BinaryGuesser.isAudio( normalisedName );
     }
 
     private static final String[] DATA_EXTENSIONS = {
@@ -255,6 +260,14 @@ public class BinaryGuesser {
             "OBJ", "PYC",
     };
 
+    private static final String[] AUDIO_EXTENSIONS = {
+            "AIF", "IFF",
+            "M3U", "M4A",
+            "MID", "MP3",
+            "MPA", "WAV",
+            "WMA"
+    };
+    
     /**
      * Based on http://www.apache.org/dev/svn-eol-style.txt
      */
