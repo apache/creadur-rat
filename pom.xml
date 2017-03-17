@@ -27,7 +27,7 @@
   <version>0.13-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Apache Creadur Rat</name>
-  <url>http://creadur.apache.org/rat/</url>
+  <url>https://creadur.apache.org/rat/</url>
   <description>
 Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
@@ -519,7 +519,7 @@ agnostic home for software distribution comprehension and audit tools.
   </issueManagement>
   <ciManagement>
     <system>Buildbot</system>
-    <url>http://ci.apache.org/builders/rat_trunk</url>
+    <url>https://ci.apache.org/builders/rat_trunk</url>
     <!--  Jenkins builds are at:
     https://builds.apache.org/job/Creadur-Rat-ParentPom/ - build the parent pom for all RAT submodules
     https://builds.apache.org/job/Creadur-Rat/ - check Java5 compliance and run all tests
@@ -651,14 +651,14 @@ agnostic home for software distribution comprehension and audit tools.
   <licenses>
     <license>
       <name>Apache License, Version 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
       <comments>An OSI approved open source license.</comments>
     </license>
   </licenses>
   <organization>
     <name>Apache Software Foundation</name>
-    <url>http://www.apache.org</url>
+    <url>https://www.apache.org</url>
   </organization>
   <profiles>
     <profile>
