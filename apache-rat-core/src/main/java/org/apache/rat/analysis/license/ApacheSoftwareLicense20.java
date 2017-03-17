@@ -26,10 +26,11 @@ import org.apache.rat.api.MetaData;
  */
 public final class ApacheSoftwareLicense20 extends SimplePatternBasedLicense {
     public static final String FIRST_LICENSE_LINE = "Licensed under the Apache License, Version 2.0 (the \"License\")";
+    public static final String FIRST_LICENSE_LINE_SHORT = "Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.";
     public static final String LICENSE_REFERENCE_LINE = "http://www.apache.org/licenses/LICENSE-2.0";
 
     public ApacheSoftwareLicense20() {
         super(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL, MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,
-                "", new String[]{FIRST_LICENSE_LINE, LICENSE_REFERENCE_LINE});
+                "", new String[]{FIRST_LICENSE_LINE, FIRST_LICENSE_LINE_SHORT, LICENSE_REFERENCE_LINE, });
     }
 }
