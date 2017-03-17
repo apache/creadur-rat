@@ -23,8 +23,8 @@ About Apache Rat
 
  Rat audits software distributions, with a special interest in headers.
  If this isn't quite what you're looking for then take a look at the
- other products developed by {{{http://creadur.apache.org}Apache Creadur}},
- including {{{http://creadur.apache.org/whisker}Apache Whisker}} which audits
+ other products developed by {{{https://creadur.apache.org}Apache Creadur}},
+ including {{{https://creadur.apache.org/whisker}Apache Whisker}} which audits
  and generates legal (for example <<<LICENSE>>>) documents for
  complex software distributions.
 
@@ -38,11 +38,11 @@ Developing Rat
 *----------+--------------+----------------+
  <<Runs Rat via>> | <<Requires>>     | <<Module>>       |
 *----------+--------------+----------------+
- An Ant task | {{{http://ant.apache.org}Apache Ant}}     | {{{../apache-rat-tasks}apache-rat-tasks}}      |
+ An Ant task | {{{https://ant.apache.org}Apache Ant}}     | {{{../apache-rat-tasks}apache-rat-tasks}}      |
 *----------+--------------+----------------+
  The command line | Java\u00ae     | {{{../apache-rat}apache-rat}}       |
 *----------+--------------+----------------+
- A Maven plugin | {{{http://maven.apache.org}Apache Maven}}     | {{{../apache-rat-plugin}apache-rat-plugin}}       |
+ A Maven plugin | {{{https://maven.apache.org}Apache Maven}}     | {{{../apache-rat-plugin}apache-rat-plugin}}       |
 *----------+--------------+----------------+
 <<Modules that run Rat>>
 
@@ -57,13 +57,13 @@ Developing Rat
 
  Read the JavaDocs {{{./apidocs/index.html}here}}.
 
- Check out with {{{http://subversion.apache.org}Subversion}}
+ Check out with {{{https://subversion.apache.org}Subversion}}
 
 +------------------------------------------+
-svn co http://svn.apache.org/repos/asf/creadur/rat/trunk/
+svn co https://svn.apache.org/repos/asf/creadur/rat/trunk/
 +------------------------------------------+
 
- Build with {{{http://maven.apache.org/} Apache Maven}}
+ Build with {{{https://maven.apache.org/} Apache Maven}}
 
 +------------------------------------------+
 mvn install

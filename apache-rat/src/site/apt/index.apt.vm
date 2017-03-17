@@ -23,8 +23,8 @@ About Apache Rat&#8482;
 
  Rat audits software distributions, with a special interest in headers.
  If this isn't quite what you're looking for then take a look at the
- other products developed by {{{http://creadur.apache.org}Apache Creadur}}&#8482;,
- including {{{http://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
+ other products developed by {{{https://creadur.apache.org}Apache Creadur}}&#8482;,
+ including {{{https://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
  and generates legal (for example <<<LICENSE>>>) documents for
  complex software distributions.
 

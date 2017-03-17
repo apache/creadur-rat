@@ -22,7 +22,7 @@ package org.apache.rat.api.domain;
  * Licenses are grouped into families. Each family has similar legal semantics,
  * though some small details may differ.
  * <p>
- * For example, the <a href='http://opensource.org/licenses/BSD-3-Clause'>3
+ * For example, the <a href='https://opensource.org/licenses/BSD-3-Clause'>3
  * clause BSD license</a> is in a family where members differ by &lt;OWNER&gt;,
  * &lt;ORGANIZATION&gt; and &lt;YEAR&gt; parameters.
  * 

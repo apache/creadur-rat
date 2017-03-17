@@ -25,9 +25,9 @@
           whether you're source files are carrying proper
           license headers. Almost any non-trivial organization
           has a policy for license headers. In the case
-          of the <a href="http://www.apache.org/">Apache Software
+          of the <a href="https://www.apache.org/">Apache Software
           Foundation (ASF)</a>, this is the
-          <a href="http://www.apache.org/legal/src-headers.html">ASF
+          <a href="https://www.apache.org/legal/src-headers.html">ASF
           Source Header and Copyright Notice Policy</a>.
         </p>
       </answer>
@@ -37,7 +37,7 @@
       <answer>
         <p>
           Apache Rat is now part of the 
-          <a href='http://creadur.apache.org'>Apache Creadur</a> project,
+          <a href='https://creadur.apache.org'>Apache Creadur</a> project,
           a home for all sorts of software that helps audit and review
           software distributions.
         </p>

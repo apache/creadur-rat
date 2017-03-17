@@ -26,9 +26,9 @@ Built-In Types
  license families.
 
  In order to stay compatible with Ant 1.7.1 these types are defined
- via {{{http://ant.apache.org/manual/Tasks/typedef.html}
+ via {{{https://ant.apache.org/manual/Tasks/typedef.html}
  <<<typedef>>>}} rather than
- {{{http://ant.apache.org/manual/Tasks/componentdef.html}
+ {{{https://ant.apache.org/manual/Tasks/componentdef.html}
  <<<componentdef>>>}} which means they can be defined outside of the
  Report task as well - but they will be completely useless there.
 

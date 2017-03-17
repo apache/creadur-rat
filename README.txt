@@ -18,8 +18,8 @@
                             ==========
 
 Apache Rat is developed by the Apache Creadur project of the Apache Software
-Foundation. Join us at http://creadur.apache.org and read more about Apache Rat
-at http://creadur.apache.org/rat.
+Foundation. Join us at https://creadur.apache.org and read more about Apache Rat
+at https://creadur.apache.org/rat.
 
 Release Audit Tool (Rat) is a tool to improve accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
@@ -41,7 +41,7 @@ runnable and self-documenting. This jar is available as a standard alone binary.
 
 Rat includes a task library for Ant 1.7. This allows Rat reports to be run against
 a wide variety of resources. See ant-task-examples.xml. To use the Ant tasks,
-Apache Ant 1.7 is required. See http://ant.apache.org/.
+Apache Ant 1.7 is required. See https://ant.apache.org/.
 
 For Maven builds, the plugin is recommended.
 

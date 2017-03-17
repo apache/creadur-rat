@@ -23,7 +23,7 @@ Apache Rat Ant Task Library
 
  The Ant Task Library provides a single Ant task and a few supporting
  Ant types to run Rat, the {{{../index.html}Release Audit Tool}}, from
- inside {{{http://ant.apache.org/}Apache Ant}}.
+ inside {{{https://ant.apache.org/}Apache Ant}}.
 
  Using Ant's resource abstraction the task can be used to check files
  on disk as well as tarballs or even URLs directly.

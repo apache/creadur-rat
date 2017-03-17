@@ -25,7 +25,7 @@ Report Task
   runs Rat on a given set of resources and generates the report.
 
   The task can work on any Ant
-  {{{http://ant.apache.org/manual/Types/resources.html}resource or
+  {{{https://ant.apache.org/manual/Types/resources.html}resource or
   resource collection}} and the usual Ant selectors can be applied to
   restrict things even further.
 
@@ -63,9 +63,9 @@ Nested Elements
 * Resources
 
   The files to be checked by Rat are specified as nested
-  {{{http://ant.apache.org/manual/Types/resources.html} resource
+  {{{https://ant.apache.org/manual/Types/resources.html} resource
   (collection)(s)}}, the most basic one would probably be a
-  {{{http://ant.apache.org/manual/Types/fileset.html} fileset}}.
+  {{{https://ant.apache.org/manual/Types/fileset.html} fileset}}.
 
   For example the following would check all Java files in the
   <<<src>>> directory.

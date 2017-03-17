@@ -4,7 +4,7 @@ Rat 0.12
  * We now require Maven 3.0.5+ to build Rat, but as before we only require
    Maven 2.2.1+ if you want to use Rat in your own Maven projects.
  * We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
- * Issues resolved (see http://issues.apache.org/jira):
+ * Issues resolved (see https://issues.apache.org/jira):
    Bug
     * [RAT-158] - Fix SAX-Parser warning by explicitly excluding xerces in Doxia 1.2.
                   (thanks to Hervé Boutemy)
@@ -65,7 +65,7 @@ Rat 0.11
    fixed build/CI environment to reflect and ensure that.
  * Fixed Javadoc warnings during build, upgraded Maven Plugin Plugin to avoid
    warnings in generated code (https://jira.codehaus.org/browse/MPLUGIN-237)
- * Issues resolved (see http://issues.apache.org/jira):
+ * Issues resolved (see https://issues.apache.org/jira):
    Bug
     * [RAT-135] - addLicenseHeaders is missing a space on license header.
     * [RAT-144] - AbstractRatMojo String constant arrays should be private
@@ -90,7 +90,7 @@ Rat 0.10
 The main change is RAT-138 - Rat 0.9 could run much slower than 0.8 on some input.
 
  * Simpler binary archive
- * Issues resolved (see http://issues.apache.org/jira):
+ * Issues resolved (see https://issues.apache.org/jira):
    * Bugs fixed:
      * [RAT-137] Website shows incorrect Maven goals in some pages
      * [RAT-128] Use the proper name for the Apache License
@@ -110,7 +110,7 @@ Rat 0.9
  * The Antlib contains a new matcher type that allows matching on the
    full text of the license rather than a single line.
  * Support automatic addition of license headers to svg files.
- * Issues Resolved (see http://issues.apache.org/jira):
+ * Issues Resolved (see https://issues.apache.org/jira):
    * Bugs Fixed:
      * [RAT-3]   - Incorrect alignment of file contents
      * [RAT-102] - typo in pom.xml / field description
@@ -148,7 +148,7 @@ Rat 0.8
  * Some website fixes
  * The Antlib and Maven plugins now provide simpler ways to detect
    licenses not directly supported by Rat.
- * Issues Resolved (see http://issues.apache.org/jira):
+ * Issues Resolved (see https://issues.apache.org/jira):
   * Bug:
     * RAT-86 CLI doesn't allow adding of licenses unless a custom
       stylesheet has been specified
@@ -184,7 +184,7 @@ Rat 0.8
 Rat 0.7
 =======
  * Some website fixes
- * Issues Resolved (see http://issues.apache.org/jira):
+ * Issues Resolved (see https://issues.apache.org/jira):
   * Bug:
     * RAT-62 Some of Rat's own files missing License Headers
     * RAT-63 ant-task-examples.xml has an wrong uri in the -typedef ant target
@@ -206,7 +206,7 @@ Rat 0.6
  * Comprehend PEM, CRL file endings
  * Added reporting capability to recursive rat script
  * Moved to the Incubator@Apache
- * Issues Resolved (see http://issues.apache.org/jira):
+ * Issues Resolved (see https://issues.apache.org/jira):
   * Bug:
     * RAT-3 Incorrect alignment of file contents
     * RAT-11 Incorrect number of unnapproved licences reported

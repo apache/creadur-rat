@@ -74,7 +74,7 @@
   <target name="url" depends="-taskdef"
     description="runs the task on the ASF's homepage">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
-      <url url="http://www.apache.org/"/>
+      <url url="https://www.apache.org/"/>
     </rat:report>
   </target>
 

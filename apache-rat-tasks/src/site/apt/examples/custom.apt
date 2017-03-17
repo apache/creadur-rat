@@ -30,7 +30,7 @@ Custom Types
  configuration of your instance via XML attributes or nested elements
  your type must provide methods that follow Ant's method naming
  conventions.  For details see the
- {{{http://ant.apache.org/manual/develop.html#writingowntask} Writing
+ {{{https://ant.apache.org/manual/develop.html#writingowntask} Writing
  Your Own Task}} section in Ant's manual.
 
  For this example let us assume you want to match a license that looks
@@ -96,8 +96,8 @@ public class YASLMatcher implements IHeaderMatcher {
 
  In order to use your matcher it has to be defined as an Ant type.
  You do so by either using
- {{{http://ant.apache.org/manual/Tasks/typedef.html} <<<typedef>>>}} or
- {{{http://ant.apache.org/manual/Tasks/componentdef.html}
+ {{{https://ant.apache.org/manual/Tasks/typedef.html} <<<typedef>>>}} or
+ {{{https://ant.apache.org/manual/Tasks/componentdef.html}
  <<<componentdef>>>}}.  If you are using Ant 1.8.x you should use
  <<<componentdef>>>.
 

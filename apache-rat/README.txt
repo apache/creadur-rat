@@ -12,7 +12,7 @@ java -jar apache-rat-${project.version}.jar --help
 
 For more details, please see the file README-CLI.txt or the website:
 
-http://creadur.apache.org/rat/apache-rat/index.html
+https://creadur.apache.org/rat/apache-rat/index.html
 
 Apache Rat Ant Task Library
 ===========================
@@ -23,4 +23,4 @@ ant -lib apache-rat-${project.version}.jar ...
 
 For more details, please see the file README-ANT.txt or the website:
 
-http://creadur.apache.org/rat/apache-rat-tasks/index.html
+https://creadur.apache.org/rat/apache-rat-tasks/index.html

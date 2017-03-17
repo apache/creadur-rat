@@ -38,7 +38,7 @@ Apache Rat
 
 ** Why Develop Rat?
 
- Reviewing releases in the {{{http://incubator.apache.org/}Apache Incubator}}
+ Reviewing releases in the {{{https://incubator.apache.org/}Apache Incubator}}
  by hand was error-prone and time-consuming.
 
  Rat arises from the Apache style, but is used more widely.
@@ -69,7 +69,7 @@ Apache Rat
   Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
   language- and build-agnostic suite of tools for auditing and comprehending
   software distributions. Our community develops
-  {{{http://www.opensource.org/} open source software}} the
+  {{{https://opensource.org/} open source software}} the
   {{{https://www.apache.org/foundation/how-it-works.html} Apache way}}.
 
   Please feel free to contribute a
@@ -117,7 +117,7 @@ java -jar apache-rat-${project.version}.jar --help
   Quick start
 
 +------------------------------------------+
-svn co http://svn.apache.org/repos/asf/creadur/rat/trunk/
+svn co https://svn.apache.org/repos/asf/creadur/rat/trunk/
 +------------------------------------------+
 
  Read more {{{./source-repository.html}here}}.

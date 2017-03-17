@@ -269,7 +269,7 @@ public class BinaryGuesser {
     };
     
     /**
-     * Based on http://www.apache.org/dev/svn-eol-style.txt
+     * Based on https://www.apache.org/dev/svn-eol-style.txt
      */
     private static final String[] NON_BINARY_EXTENSIONS = {
             "AART",

@@ -534,13 +534,13 @@ agnostic home for software distribution comprehension and audit tools.
       <subscribe>dev-subscribe@creadur.apache.org</subscribe>
       <unsubscribe>dev-unsubscribe@creadur.apache.org</unsubscribe>
       <post>dev@creadur.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/creadur-dev/</archive>
+      <archive>https://mail-archives.apache.org/mod_mbox/creadur-dev/</archive>
     </mailingList>
     <mailingList>
       <name>Rat Commits (Apache Creadur project)</name>
       <subscribe>commits-subscribe@creadur.apache.org</subscribe>
       <unsubscribe>commits-unsubscribe@creadur.apache.org</unsubscribe>
-      <archive>http://mail-archives.apache.org/mod_mbox/creadur-commits/</archive>
+      <archive>https://mail-archives.apache.org/mod_mbox/creadur-commits/</archive>
     </mailingList>
   </mailingLists>
   <developers>

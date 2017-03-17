@@ -88,7 +88,7 @@ limitations under the License.
               <td><a href="[preferred]/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip">apache-rat-${previousRatVersion}-bin.zip</a></td>
               <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip.md5">md5</a></td>
               <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip.sha1">sha1</a></td>
-              <td><a href="http://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip.asc">pgp</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip.asc">pgp</a></td>
           </tr>
         </table>
       </subsection>

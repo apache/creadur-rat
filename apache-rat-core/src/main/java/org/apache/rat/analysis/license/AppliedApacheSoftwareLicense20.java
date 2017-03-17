@@ -24,7 +24,7 @@ import org.apache.rat.api.MetaData;
 
 /**
  * Matches an applied AL 2.0 License header, including a <em>required</em>
- * initial copyright header line, conforming the <a href="http://apache.org/licenses/LICENSE-2.0.html#apply">template</a>
+ * initial copyright header line, conforming the <a href="https://apache.org/licenses/LICENSE-2.0.html#apply">template</a>
  * from the AL 2.0 license itself.
  *
  * @since Rat 0.9

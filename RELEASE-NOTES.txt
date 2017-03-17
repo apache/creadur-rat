@@ -59,9 +59,9 @@ o RAT-172:  Exclude technical directories of source code management systems and 
 o RAT-200:  Upgrade ASF parent POM to 17.
 
 
-Historical list of changes: http://creadur.apache.org/rat/changes-report.html
+Historical list of changes: https://creadur.apache.org/rat/changes-report.html
 
 For complete information on Apache Creadur Rat, including instructions on how to submit bug reports,
 patches, or suggestions for improvement, see the Apache Apache Creadur Rat website:
 
-http://creadur.apache.org/rat/
+https://creadur.apache.org/rat/
