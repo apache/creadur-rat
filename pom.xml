@@ -42,10 +42,6 @@ Apache Rat is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
-  <prerequisites>
-    <!-- This is the version of Maven required to build Rat -->
-    <maven>3.0.5</maven>
-  </prerequisites>
   <properties>
     <javaVersion>1.5</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
@@ -444,6 +440,9 @@ agnostic home for software distribution comprehension and audit tools.
                 <enforceBytecodeVersion>
                   <maxJdkVersion>${javaVersion}</maxJdkVersion>
                 </enforceBytecodeVersion>
+                <requireMavenVersion>
+                  <version>3.0.5</version>
+                </requireMavenVersion>
               </rules>
               <fail>true</fail>
             </configuration>
