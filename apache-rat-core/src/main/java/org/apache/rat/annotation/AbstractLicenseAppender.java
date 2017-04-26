@@ -184,6 +184,7 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("vsdisco", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("webinfo", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("xml", Integer.valueOf(TYPE_XML));
+        EXT2TYPE.put("xproj", Integer.valueOf(TYPE_XML));
         EXT2TYPE.put("xsl", Integer.valueOf(TYPE_XML));
     }
 
