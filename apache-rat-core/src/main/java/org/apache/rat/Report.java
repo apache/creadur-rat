@@ -18,14 +18,7 @@
  */
 package org.apache.rat;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.OptionGroup;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
@@ -42,33 +35,23 @@ import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
 import javax.xml.transform.TransformerConfigurationException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.PrintStream;
-import java.io.Writer;
+import java.io.*;
 import java.util.List;
 
 
 public class Report {
-    private static final char EXCLUDE_CLI = 'e';
+    private static final String EXCLUDE_CLI = "e";
     private static final char EXCLUDE_FILE_CLI = 'E';
     private static final char STYLESHEET_CLI = 's';
+    private static final String HELP = "h";
 
-    //@SuppressWarnings("unchecked")
     public static final void main(String args[]) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
         configuration.setApproveDefaultLicenses(true);
         Options opts = buildOptions();
 
-        PosixParser parser = new PosixParser();
+        DefaultParser parser = new DefaultParser();
         CommandLine cl = null;
         try {
             cl = parser.parse(opts, args);
@@ -78,7 +61,7 @@ public class Report {
             return; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE for "cl"
         }
 
-        if (cl.hasOption('h')) {
+        if (cl.hasOption(HELP)) {
             printUsage(opts);
         }
 
@@ -141,7 +124,7 @@ public class Report {
     private static Options buildOptions() {
         Options opts = new Options();
 
-        Option help = new Option("h", "help", false,
+        Option help = new Option(HELP, "help", false,
                 "Print help for the Rat command line interface and exit");
         opts.addOption(help);
 
@@ -179,15 +162,14 @@ public class Report {
                 "The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\"");
         opts.addOption(copyright);
 
-        @SuppressWarnings("static-access") // ignore OptionBuilder design fault
-        final Option exclude = OptionBuilder
-                .withArgName("expression")
-                .withLongOpt("exclude")
+        final Option exclude = Option.builder(EXCLUDE_CLI)
+                .argName("expression")
+                .longOpt("exclude")
                 .hasArgs()
-                .withDescription("Excludes files matching wildcard <expression>. " +
+                .desc("Excludes files matching wildcard <expression>. " +
                         "Note that --dir is required when using this parameter. " +
                         "Allows multiple arguments.")
-                .create(EXCLUDE_CLI);
+                .build();
         opts.addOption(exclude);
 
         @SuppressWarnings("static-access") // ignore OptionBuilder design fault
@@ -231,7 +213,8 @@ public class Report {
         HelpFormatter f = new HelpFormatter();
         String header = "Options";
 
-        StringBuilder footer = new StringBuilder("\nNOTE:\n");
+        StringBuilder footer = new StringBuilder();
+        footer.append("\nNOTE:\n");
         footer.append("Rat is really little more than a grep ATM\n");
         footer.append("Rat is also rather memory hungry ATM\n");
         footer.append("Rat is very basic ATM\n");
