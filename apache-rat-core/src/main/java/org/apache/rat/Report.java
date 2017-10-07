@@ -41,8 +41,8 @@ import java.util.List;
 
 public class Report {
     private static final String EXCLUDE_CLI = "e";
-    private static final char EXCLUDE_FILE_CLI = 'E';
-    private static final char STYLESHEET_CLI = 's';
+    private static final String EXCLUDE_FILE_CLI = "E";
+    private static final String STYLESHEET_CLI = "s";
     private static final String HELP = "h";
 
     public static final void main(String args[]) throws Exception {
@@ -172,14 +172,13 @@ public class Report {
                 .build();
         opts.addOption(exclude);
 
-        @SuppressWarnings("static-access") // ignore OptionBuilder design fault
-        final Option excludeFile = OptionBuilder
-                .withArgName("fileName")
-                .withLongOpt("exclude-file")
+        final Option excludeFile = Option.builder(EXCLUDE_FILE_CLI)
+                .argName("fileName")
+                .longOpt("exclude-file")
                 .hasArgs()
-                .withDescription("Excludes files matching regular expression in <file> " +
+                .desc("Excludes files matching regular expression in <file> " +
                         "Note that --dir is required when using this parameter. ")
-                .create(EXCLUDE_FILE_CLI);
+                .build();
         opts.addOption(excludeFile);
 
         Option dir = new Option(
