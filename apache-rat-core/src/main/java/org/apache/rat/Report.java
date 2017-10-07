@@ -20,10 +20,7 @@ package org.apache.rat;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.NotFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.io.filefilter.*;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -37,6 +34,7 @@ import org.apache.rat.walker.DirectoryWalker;
 import javax.xml.transform.TransformerConfigurationException;
 import java.io.*;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 
 public class Report {
@@ -86,12 +84,7 @@ public class Report {
             } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
                 String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
                 if (excludeFileName != null) {
-                    List<String> excludes = FileUtils.readLines(new File(excludeFileName));
-                    final OrFileFilter orFilter = new OrFileFilter();
-                    for (String exclude : excludes) {
-                        orFilter.addFileFilter(new RegexFileFilter(exclude));
-                    }
-                    final FilenameFilter filter = new NotFileFilter(orFilter);
+                    final FilenameFilter filter = parseExclusions(FileUtils.readLines(new File(excludeFileName)));
                     report.setInputFileFilter(filter);
                 }
             }
@@ -119,6 +112,18 @@ public class Report {
                 }
             }
         }
+    }
+
+    private static FilenameFilter parseExclusions(List<String> excludes) throws IOException {
+        final OrFileFilter orFilter = new OrFileFilter();
+        for (String exclude : excludes) {
+            try {
+                orFilter.addFileFilter(new RegexFileFilter(exclude));
+            } catch(PatternSyntaxException e) {
+                System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
+            }
+        }
+        return new NotFileFilter(orFilter);
     }
 
     private static Options buildOptions() {
