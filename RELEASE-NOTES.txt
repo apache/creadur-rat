@@ -22,7 +22,7 @@ We've integrated Rat into the ASF Jenkins to ensure continuous builds with vario
 Changes in this version include:
 
 New features:
-o RAT-196:  Minor refactoring in pom.xml. Thanks to Karl Heinz Marbais.
+o RAT-196:  Minor refactoring in pom.xml. Thanks to Karl Heinz Marbaise.
 o RAT-61:   List files with unapproved licenses in Maven output. Thanks to Jukka Zitting.
 o RAT-170:  RAT should use itself during build and site generation. Thanks to Philipp Ottlinger.
 o RAT-181:  BinaryGuesser should treat *.truststore as binary.
