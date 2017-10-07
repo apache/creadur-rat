@@ -122,7 +122,7 @@ We've integrated Rat into the ASF Jenkins to ensure continuous builds with vario
       <action issue="RAT-180" type="fix" dev="pottlinger">
         Generify and beautify texts in RAT report.
       </action>
-      <action issue="RAT-196" type="add" due-to="Karl Heinz Marbais" dev="pottlinger">
+      <action issue="RAT-196" type="add" due-to="Karl Heinz Marbaise" dev="pottlinger">
         Minor refactoring in pom.xml.
       </action>
       <action issue="RAT-194" type="fix" due-to="Hervé Boutemy" dev="pottlinger">
