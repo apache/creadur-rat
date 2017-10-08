@@ -24,9 +24,13 @@ import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ReportTest {
@@ -129,5 +133,11 @@ public class ReportTest {
         assertEquals("Report created was: " + result,
                 elementsReports,
                 result.substring(generatedAtLineEnd + NL.length()));
+    }
+
+    @Test
+    public void parseExclusionsForCLIUsage() throws IOException {
+        final FilenameFilter filter = Report.parseExclusions(Arrays.asList("foo", "foo/bar"));
+        assertNotNull(filter);
     }
 }

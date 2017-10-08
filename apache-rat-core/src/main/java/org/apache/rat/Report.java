@@ -33,6 +33,7 @@ import org.apache.rat.walker.DirectoryWalker;
 
 import javax.xml.transform.TransformerConfigurationException;
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
@@ -78,7 +79,7 @@ public class Report {
             if (cl.hasOption(EXCLUDE_CLI)) {
                 String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
                 if (excludes != null) {
-                    final FilenameFilter filter = new NotFileFilter(new WildcardFileFilter(excludes));
+                    final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
                     report.setInputFileFilter(filter);
                 }
             } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
@@ -114,7 +115,7 @@ public class Report {
         }
     }
 
-    private static FilenameFilter parseExclusions(List<String> excludes) throws IOException {
+    static FilenameFilter parseExclusions(List<String> excludes) throws IOException {
         final OrFileFilter orFilter = new OrFileFilter();
         for (String exclude : excludes) {
             try {
@@ -216,7 +217,7 @@ public class Report {
         return opts;
     }
 
-    private static final void printUsage(Options opts) {
+    private static void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
         String header = "Options";
 
@@ -241,15 +242,6 @@ public class Report {
 
     private Report(String baseDirectory) {
         this.baseDirectory = baseDirectory;
-    }
-
-    /**
-     * Gets the current filter used to select files.
-     *
-     * @return current file filter, or null when no filter has been set
-     */
-    public FilenameFilter getInputFileFilter() {
-        return inputFileFilter;
     }
 
     /**
