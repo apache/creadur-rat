@@ -119,6 +119,9 @@ public class Report {
         for (String exclude : excludes) {
             try {
                 orFilter.addFileFilter(new RegexFileFilter(exclude));
+                // RAT-240: verify it works properly
+                //orFilter.addFileFilter(new NameFileFilter(exclude));
+                //orFilter.addFileFilter(new WildcardFileFilter(exclude));
             } catch(PatternSyntaxException e) {
                 System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
             }
