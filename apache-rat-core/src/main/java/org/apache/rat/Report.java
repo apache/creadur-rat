@@ -21,6 +21,7 @@ package org.apache.rat;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -117,16 +118,24 @@ public class Report {
 
     static FilenameFilter parseExclusions(List<String> excludes) throws IOException {
         final OrFileFilter orFilter = new OrFileFilter();
+        int ignoredLines = 0;
         for (String exclude : excludes) {
             try {
+                // skip comments
+                if(exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
+                    ignoredLines++;
+                    continue;
+                }
+
                 orFilter.addFileFilter(new RegexFileFilter(exclude));
                 // RAT-240: verify it works properly
-                //orFilter.addFileFilter(new NameFileFilter(exclude));
-                //orFilter.addFileFilter(new WildcardFileFilter(exclude));
+                orFilter.addFileFilter(new NameFileFilter(exclude));
+                orFilter.addFileFilter(new WildcardFileFilter(exclude));
             } catch(PatternSyntaxException e) {
                 System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
             }
         }
+        System.out.println("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
         return new NotFileFilter(orFilter);
     }
 
