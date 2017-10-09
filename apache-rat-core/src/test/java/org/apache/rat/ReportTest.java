@@ -137,7 +137,7 @@ public class ReportTest {
 
     @Test
     public void parseExclusionsForCLIUsage() throws IOException {
-        final FilenameFilter filter = Report.parseExclusions(Arrays.asList("foo", "foo/bar"));
+        final FilenameFilter filter = Report.parseExclusions(Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertNotNull(filter);
     }
 }

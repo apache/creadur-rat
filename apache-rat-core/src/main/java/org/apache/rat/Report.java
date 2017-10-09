@@ -127,10 +127,11 @@ public class Report {
                     continue;
                 }
 
-                orFilter.addFileFilter(new RegexFileFilter(exclude));
-                // RAT-240: verify it works properly
-                orFilter.addFileFilter(new NameFileFilter(exclude));
-                orFilter.addFileFilter(new WildcardFileFilter(exclude));
+                String exclusion = exclude.trim();
+                // interpret given patterns regular expression, direct file names or wildcards to give users more choices to configure exclusions
+                orFilter.addFileFilter(new RegexFileFilter(exclusion));
+                orFilter.addFileFilter(new NameFileFilter(exclusion));
+                orFilter.addFileFilter(new WildcardFileFilter(exclusion));
             } catch(PatternSyntaxException e) {
                 System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
             }
