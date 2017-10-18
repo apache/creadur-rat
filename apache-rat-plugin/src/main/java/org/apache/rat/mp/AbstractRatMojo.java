@@ -405,8 +405,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         if (excludes == null || excludes.length == 0) {
             getLog().info("No excludes explicitly specified.");
         } else {
+            getLog().info(excludes.length + " explicit excludes (use -debug for more details).");
         	for (final String exclude : excludes) {
-                getLog().info("Exclude: " + exclude);
+                getLog().debug("Exclude: " + exclude);
             }
         }
         if (excludes != null) {
