@@ -56,14 +56,13 @@ public class AppliedApacheSoftwareLicense20 extends CopyrightHeader {
 
     @Override
     public boolean match(Document subject, String s) throws RatHeaderAnalysisException {
-        boolean result = false;
         if (isCopyrightMatch()) {
             return textMatcher.match(subject, s); // will report the match if it has occurred
         }
         else {
             matchCopyright(s);
         }
-        return result;
+        return false;
     }
 
     @Override

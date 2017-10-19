@@ -35,7 +35,8 @@ public abstract class AbstractRatAntTaskTest extends BuildFileTest {
     }
 
     @Override
-    public void setUp() {
+    public void setUp() throws Exception {
+        super.setUp();
         configureProject(getAntFile().getPath());
     }
 

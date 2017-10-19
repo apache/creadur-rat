@@ -48,8 +48,7 @@ class ResourceCollectionContainer implements IReportable {
 
     public void run(RatReport report) throws RatException {
         ResourceDocument document = new ResourceDocument();
-        for (Iterator<?> iter = rc.iterator(); iter.hasNext(); ) {
-            Resource r = (Resource) iter.next();
+        for (Resource r : rc) {
             if (!r.isDirectory()) {
                 document.setResource(r);
                 document.getMetaData().clear();
@@ -68,8 +67,7 @@ class ResourceCollectionContainer implements IReportable {
         
         public Reader reader() throws IOException {
             final InputStream in = resource.getInputStream();
-            final Reader result = new InputStreamReader(in);
-            return result;
+            return new InputStreamReader(in);
         }
 
         public String getName() {

@@ -90,8 +90,8 @@ public enum RatLicenseFamily {
      * @param notes
      *            not null
      */
-    private RatLicenseFamily(final String name, final String category,
-            final String notes) {
+	RatLicenseFamily(final String name, final String category,
+					 final String notes) {
         this.name = name;
         this.category = category;
         this.notes = notes;

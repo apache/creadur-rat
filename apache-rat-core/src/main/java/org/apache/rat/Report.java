@@ -51,10 +51,9 @@ public class Report {
         configuration.setApproveDefaultLicenses(true);
         Options opts = buildOptions();
 
-        DefaultParser parser = new DefaultParser();
         CommandLine cl = null;
         try {
-            cl = parser.parse(opts, args);
+            cl = new DefaultParser().parse(opts, args);
         } catch (ParseException e) {
             System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
             System.exit(1);
@@ -231,18 +230,17 @@ public class Report {
         HelpFormatter f = new HelpFormatter();
         String header = "Options";
 
-        StringBuilder footer = new StringBuilder();
-        footer.append("\nNOTE:\n");
-        footer.append("Rat is really little more than a grep ATM\n");
-        footer.append("Rat is also rather memory hungry ATM\n");
-        footer.append("Rat is very basic ATM\n");
-        footer.append("Rat highlights possible issues\n");
-        footer.append("Rat reports require interpretation\n");
-        footer.append("Rat often requires some tuning before it runs well against a project\n");
-        footer.append("Rat relies on heuristics: it may miss issues\n");
+        String footer = "\nNOTE:\n" +
+                "Rat is really little more than a grep ATM\n" +
+                "Rat is also rather memory hungry ATM\n" +
+                "Rat is very basic ATM\n" +
+                "Rat highlights possible issues\n" +
+                "Rat reports require interpretation\n" +
+                "Rat often requires some tuning before it runs well against a project\n" +
+                "Rat relies on heuristics: it may miss issues\n";
 
         f.printHelp("java rat.report [options] [DIR|TARBALL]",
-                header, opts, footer.toString(), false);
+                header, opts, footer, false);
         System.exit(0);
     }
 

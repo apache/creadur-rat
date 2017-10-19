@@ -25,9 +25,6 @@ public enum ReportFormat {
     XML;
 
     public boolean is(String optionGiven) {
-        if (optionGiven == null || optionGiven.length() == 0) {
-            return false;
-        }
-        return name().equalsIgnoreCase(optionGiven);
+        return optionGiven != null && optionGiven.length() != 0 && name().equalsIgnoreCase(optionGiven);
     }
 }

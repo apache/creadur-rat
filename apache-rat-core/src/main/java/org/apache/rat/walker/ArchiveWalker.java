@@ -90,7 +90,7 @@ public class ArchiveWalker extends Walker implements IReportable {
                     offset += actualRead;
                 }
 
-                if (!entry.isDirectory() && !ignored(f)) {
+                if (!entry.isDirectory() && isNotIgnored(f)) {
                     report(report, contents, f);
                 }
 

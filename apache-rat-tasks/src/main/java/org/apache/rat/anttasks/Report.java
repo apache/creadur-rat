@@ -171,10 +171,9 @@ public class Report extends Task {
      */
     public void addConfiguredStylesheet(Union u) {
         if (stylesheet != null || u.size() != 1) {
-            throw new BuildException("You must not specify more than one"
-                                     + " stylesheet.");
+            throw new BuildException("You must not specify more than one stylesheet.");
         }
-        stylesheet = (Resource) u.iterator().next();
+        stylesheet = u.iterator().next();
     }
 
     /**

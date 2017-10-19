@@ -445,7 +445,7 @@ public final class XmlWriter implements IXmlWriter {
         if (elementsWritten && elementNames.isEmpty()) {
             throw new OperationNotAllowedException("Root element already closed. Cannot open new element.");
         }
-        if (!isValidName(elementName)) {
+        if (isInvalidName(elementName)) {
             throw new InvalidXmlException("'" + elementName + "' is not a valid element name");
         }
         elementsWritten = true;
@@ -481,7 +481,7 @@ public final class XmlWriter implements IXmlWriter {
                 throw new OperationNotAllowedException("Close called before an element has been opened.");
             }
         }
-        if (!isValidName(name)) {
+        if (isInvalidName(name)) {
             throw new InvalidXmlException("'" + name + "' is not a valid attribute name.");
         }
         if (!inElement) {
@@ -618,7 +618,7 @@ public final class XmlWriter implements IXmlWriter {
         }
     }
 
-    private boolean isValidName(final CharSequence sequence) {
+    private boolean isInvalidName(final CharSequence sequence) {
         boolean result = true;
         final int length = sequence.length();
         for (int i = 0; i < length; i++) {
@@ -635,7 +635,7 @@ public final class XmlWriter implements IXmlWriter {
                 }
             }
         }
-        return result;
+        return !result;
     }
 
     private boolean isValidNameStart(final char character) {

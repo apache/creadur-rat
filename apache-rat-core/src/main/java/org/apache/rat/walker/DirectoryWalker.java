@@ -109,7 +109,7 @@ public class DirectoryWalker extends Walker implements IReportable {
      */
     private void processDirectories(final RatReport report, final File[] files) throws RatException {
         for (final File file : files) {
-            if (!ignored(file) && file.isDirectory()) {
+            if (isNotIgnored(file) && file.isDirectory()) {
                 processDirectory(report, file);
             }
         }
@@ -124,7 +124,7 @@ public class DirectoryWalker extends Walker implements IReportable {
      */
     private void processNonDirectories(final RatReport report, final File[] files) throws RatException {
         for (final File file : files) {
-            if (!ignored(file) && !file.isDirectory()) {
+            if (isNotIgnored(file) && !file.isDirectory()) {
                 report(report, file);
             }
         }

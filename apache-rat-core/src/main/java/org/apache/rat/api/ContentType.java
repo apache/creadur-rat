@@ -43,7 +43,7 @@ public class ContentType {
         this.subType = subType.toLowerCase(Locale.US);
         this.parameters = new HashMap<String, String>(parameters.size());
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            this.parameters.put(entry.getKey().toString().toLowerCase(Locale.US), entry.getValue());
+            this.parameters.put(entry.getKey().toLowerCase(Locale.US), entry.getValue());
         }
     }
 

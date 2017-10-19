@@ -158,11 +158,7 @@ public class BinaryGuesser {
      * @return Is a file by that name a known non-binary file?
      */
     public static final boolean isNonBinary(final String name) {
-        if (name == null) {
-            return false;
-        }
-        return extensionMatches(name.toUpperCase(Locale.US),
-                BinaryGuesser.NON_BINARY_EXTENSIONS);
+        return name != null && extensionMatches(name.toUpperCase(Locale.US), BinaryGuesser.NON_BINARY_EXTENSIONS);
     }
 
     /**
@@ -176,8 +172,8 @@ public class BinaryGuesser {
 
     public static boolean containsExtension(final String name,
                                             final String[] exts) {
-        for (int i = 0; i < exts.length; i++) {
-            if (name.contains(DOT + exts[i] + DOT)) {
+        for (String ext : exts) {
+            if (name.contains(DOT + ext + DOT)) {
                 return true;
             }
         }
@@ -186,8 +182,8 @@ public class BinaryGuesser {
 
     public static boolean extensionMatches(final String name,
                                            final String[] exts) {
-        for (int i = 0; i < exts.length; i++) {
-            if (name.endsWith(DOT + exts[i])) {
+        for (String ext : exts) {
+            if (name.endsWith(DOT + ext)) {
                 return true;
             }
         }

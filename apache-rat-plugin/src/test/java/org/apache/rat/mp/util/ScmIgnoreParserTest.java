@@ -97,8 +97,6 @@ public class ScmIgnoreParserTest {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             bw = new BufferedWriter(fw);
             bw.write(contents);
-        } catch (IOException e) {
-            throw e;
         } finally {
             IOUtils.closeQuietly(bw);
         }

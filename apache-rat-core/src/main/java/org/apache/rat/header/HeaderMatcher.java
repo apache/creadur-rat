@@ -61,8 +61,7 @@ public class HeaderMatcher {
         }
         if (headers != null) {
             final int length = headers.length;
-            for (int i=0;i<length;i++) {
-                final HeaderBean headerBean = headers[i];
+            for (final HeaderBean headerBean : headers) {
                 if (headerBean != null) {
                     final Pattern headerPattern = headerBean.getHeaderPattern();
                     if (headerPattern != null) {

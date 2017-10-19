@@ -44,12 +44,6 @@ class HeaderCheckWorker {
     private int headerLinesToRead;
     private boolean finished = false;
 
-    public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine,
-            final IHeaderMatcher matcher, final Document name) {
-        this(new BufferedReader(reader), numberOfRetainedHeaderLine, matcher, name);
-    }
-
-
     /**
      * Convenience constructor wraps given <code>Reader</code>
      * in a <code>BufferedReader</code>.

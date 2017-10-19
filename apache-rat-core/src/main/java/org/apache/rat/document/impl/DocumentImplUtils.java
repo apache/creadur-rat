@@ -31,8 +31,7 @@ public class DocumentImplUtils {
 
     public final static String toName(File file) {
         String path = file.getPath();
-        String normalisedPath = path.replace('\\', '/');
-        return normalisedPath;
+        return path.replace('\\', '/');
     }
     
     public static final boolean isZipStream(InputStream stream) {

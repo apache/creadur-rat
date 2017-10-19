@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-content = new File( basedir, 'build.log' ).text;
+content = new File( basedir, 'build.log' ).text
 
-assert content.contains( 'BUILD SUCCESS' );
+assert content.contains( 'BUILD SUCCESS' )
 
 /*
  * [WARNING] No resources included
  */
-assert ! content.contains( '[WARNING]' );
+assert ! content.contains( '[WARNING]' )
 
-report = new File( basedir, 'target/site/rat-report.html' ).text;
+report = new File( basedir, 'target/site/rat-report.html' ).text
 
-assert report.contains( 'AL    pom.xml' );
+assert report.contains( 'AL    pom.xml' )

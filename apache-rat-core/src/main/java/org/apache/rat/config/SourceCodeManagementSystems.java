@@ -40,7 +40,7 @@ public enum SourceCodeManagementSystems {
      */
     private String ignoreFile;
 
-    private SourceCodeManagementSystems(String directory, String ignoreFile) {
+    SourceCodeManagementSystems(String directory, String ignoreFile) {
         this.directory = directory;
         this.ignoreFile = ignoreFile;
     }
