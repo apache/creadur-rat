@@ -50,7 +50,8 @@ public final class ExclusionHelper {
      * The Eclipse specific default excludes.
      */
     static final List<String> ECLIPSE_DEFAULT_EXCLUDES = Collections
-            .unmodifiableList(Arrays.asList(".classpath",//
+            .unmodifiableList(Arrays.asList(".checkstyle",
+                    ".classpath",//
                     ".project", //
                     ".settings/**/*"));
 

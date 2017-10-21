@@ -45,7 +45,7 @@ public class ExclusionHelperTest {
 
     @Test
     public void testNumberOfExclusions() {
-        assertEquals("Did you change the number of eclipse excludes?", 3,
+        assertEquals("Did you change the number of eclipse excludes?", 4,
                 ECLIPSE_DEFAULT_EXCLUDES.size());
         assertEquals("Did you change the number of idea excludes?", 4,
                 IDEA_DEFAULT_EXCLUDES.size());
@@ -59,9 +59,9 @@ public class ExclusionHelperTest {
         addEclipseDefaults(log, false, exclusion);
         assertTrue(exclusion.isEmpty());
         addEclipseDefaults(log, true, exclusion);
-        assertEquals(3, exclusion.size());
+        assertEquals(4, exclusion.size());
         addEclipseDefaults(log, true, exclusion);
-        assertEquals(3, exclusion.size());
+        assertEquals(4, exclusion.size());
     }
 
     @Test

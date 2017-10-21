@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.13" date="2017-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-243" type="add" due-to="Matthew Ouyang" dev="pottlinger">
+	Add .checkstyle to Eclipse default exclusions.
+      </action>
       <action issue="RAT-241" type="add" due-to="Andrew Gaul" dev="pottlinger">
 	Reduce default log level of used exclusions to debug, only print totals into the maven log like includes.
       </action>
