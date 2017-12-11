@@ -226,8 +226,7 @@ public class BinaryGuesser {
             "NCB", "IDB",
             "SUO", "XCF",
             "RAJ", "CERT",
-            "KS", "TS",
-            "ODP", "SWF",
+            "KS", "ODP", "SWF",
             // fonts
             "WOFF2", "WOFF", "TTF", "EOT"
     };
