@@ -62,8 +62,8 @@ public class BinaryGuesser {
         final int length = taste.length();
         for (int i = 0; i < length; i++) {
             char c = taste.charAt(i);
-            if (c > BinaryGuesser.NON_ASCII_THREASHOLD
-                    || c <= BinaryGuesser.ASCII_CHAR_THREASHOLD) {
+            if (c > BinaryGuesser.NON_ASCII_THRESHOLD
+                    || c <= BinaryGuesser.ASCII_CHAR_THRESHOLD) {
                 highBytes++;
             }
         }
@@ -358,8 +358,8 @@ public class BinaryGuesser {
     public static final String JAVA = "JAVA";
     public static final int HIGH_BYTES_RATIO = 100;
     public static final int TOTAL_READ_RATIO = 30;
-    public static final int NON_ASCII_THREASHOLD = 256;
-    public static final int ASCII_CHAR_THREASHOLD = 8;
+    public static final int NON_ASCII_THRESHOLD = 256;
+    public static final int ASCII_CHAR_THRESHOLD = 8;
 
     public static final boolean isBinary(final Document document) {
         // TODO: reimplement the binary test algorithm?
