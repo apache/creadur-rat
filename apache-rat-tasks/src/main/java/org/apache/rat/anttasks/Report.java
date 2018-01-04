@@ -42,6 +42,7 @@ package org.apache.rat.anttasks;
  import java.io.InputStream;
  import java.io.OutputStreamWriter;
  import java.io.PrintWriter;
+import java.nio.charset.Charset;
  import java.util.ArrayList;
  import java.util.List;
 
@@ -188,8 +189,8 @@ public class Report extends Task {
             if (reportFile == null) {
                 out = new PrintWriter(
                           new OutputStreamWriter(
-                              new LogOutputStream(this, Project.MSG_INFO)
-                              )
+                              new LogOutputStream(this, Project.MSG_INFO),
+                              Charset.forName("UTF-8"))
                           );
             } else {
                 out = new PrintWriter(new FileWriter(reportFile));

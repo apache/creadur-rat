@@ -34,9 +34,12 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 
 /**
  * Run Rat to perform a violation check.
@@ -99,9 +102,11 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     private ClaimStatistic getRawReport()
             throws MojoExecutionException, MojoFailureException {
-        FileWriter fw = null;
+        Writer fw = null;
         try {
-            fw = new FileWriter(reportFile);
+            fw = new OutputStreamWriter(
+                    new FileOutputStream(reportFile), 
+                    Charset.forName("UTF-8"));
             final ClaimStatistic statistic = createReport(fw, getStyleSheet());
             fw.close();
             fw = null;
