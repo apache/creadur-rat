@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.13" date="2017-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-242" type="fix" due-to="Matthias Bläsing" dev="pottlinger">
+	Use UTF-8 as default encoding for RAT Ant reports.
+      </action>
       <action issue="RAT-234" type="fix" due-to="ajbanck" dev="pottlinger">
 	Do not treat TypeScript files as binary.
       </action>

@@ -31,19 +31,20 @@ package org.apache.rat.anttasks;
  import org.apache.tools.ant.taskdefs.LogOutputStream;
  import org.apache.tools.ant.types.EnumeratedAttribute;
  import org.apache.tools.ant.types.Resource;
- import org.apache.tools.ant.types.ResourceCollection;
- import org.apache.tools.ant.types.resources.Union;
- import org.apache.tools.ant.util.FileUtils;
+import org.apache.tools.ant.types.ResourceCollection;
+import org.apache.tools.ant.types.resources.Union;
+import org.apache.tools.ant.util.FileUtils;
 
- import javax.xml.transform.TransformerException;
- import java.io.File;
- import java.io.FileWriter;
- import java.io.IOException;
- import java.io.InputStream;
- import java.io.OutputStreamWriter;
- import java.io.PrintWriter;
- import java.util.ArrayList;
- import java.util.List;
+import javax.xml.transform.TransformerException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A basic Ant task that generates a report on all files specified by
@@ -188,8 +189,8 @@ public class Report extends Task {
             if (reportFile == null) {
                 out = new PrintWriter(
                           new OutputStreamWriter(
-                              new LogOutputStream(this, Project.MSG_INFO)
-                              )
+                              new LogOutputStream(this, Project.MSG_INFO),
+                              Charset.forName("UTF-8"))
                           );
             } else {
                 out = new PrintWriter(new FileWriter(reportFile));
