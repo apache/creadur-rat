@@ -37,7 +37,7 @@ import org.apache.tools.ant.util.FileUtils;
 
 import javax.xml.transform.TransformerException;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -189,11 +189,13 @@ public class Report extends Task {
             if (reportFile == null) {
                 out = new PrintWriter(
                           new OutputStreamWriter(
-                              new LogOutputStream(this, Project.MSG_INFO),
-                              Charset.forName("UTF-8"))
-                          );
+                              new LogOutputStream(this, Project.MSG_INFO)
+                          ));
             } else {
-                out = new PrintWriter(new FileWriter(reportFile));
+                out = new PrintWriter(new OutputStreamWriter(
+                        new FileOutputStream(reportFile),
+                        Charset.forName("UTF-8")
+                ));
             }
             createReport(out);
             out.flush();

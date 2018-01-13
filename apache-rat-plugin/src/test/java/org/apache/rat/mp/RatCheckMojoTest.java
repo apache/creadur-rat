@@ -28,6 +28,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import static junit.framework.TestCase.assertTrue;
+import org.apache.rat.document.impl.guesser.BinaryGuesser;
 
 import static org.apache.rat.mp.RatTestHelpers.ensureRatReportIsCorrect;
 import static org.apache.rat.mp.RatTestHelpers.getSourceDirectory;
@@ -35,6 +41,7 @@ import static org.apache.rat.mp.RatTestHelpers.newArtifactFactory;
 import static org.apache.rat.mp.RatTestHelpers.newArtifactRepository;
 import static org.apache.rat.mp.RatTestHelpers.newArtifactResolver;
 import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
+import org.w3c.dom.Document;
 
 /**
  * Test case for the {@link RatCheckMojo} and {@link RatReportMojo}.
@@ -202,4 +209,81 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
         assertFalse(firstLineModified.contains("--"));
     }
 
+    /**
+     * Test correct generation of XML file if non-UTF8 file.encoding is set.
+     *
+     * @throws Exception The test failed.
+     */
+    public void testIt4() throws Exception {
+        final RatCheckMojo mojo = newRatCheckMojo("it4");
+        final File ratTxtFile = getRatTxtFile(mojo);
+        try {
+            setVariableValueToObject(mojo, "reportStyle", "xml");
+            String origEncoding = overrideFileEncoding("ISO-8859-1");
+            mojo.execute();
+            overrideFileEncoding(origEncoding);
+            fail("Expected RatCheckException");
+        } catch (RatCheckException e) {
+            final String msg = e.getMessage();
+            // default value is "${project.build.directory}/rat.txt"
+            final String REPORTFILE = "rat.txt";
+
+            assertTrue("report filename was not contained in '" + msg + "'",
+                    msg.contains(REPORTFILE));
+            assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase()
+                    .contains("NULL")));
+        }
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        FileInputStream fis = new FileInputStream(ratTxtFile);
+        boolean documentParsed = false;
+        try {
+            Document doc = db.parse(fis);
+            boolean byteSequencePresent = doc.getElementsByTagName("header-sample")
+                    .item(0)
+                    .getTextContent()
+                    .contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
+            assertTrue("Report should contain test umlauts", byteSequencePresent);
+            documentParsed = true;
+        } catch (Exception ex) {
+            documentParsed = false;
+        } finally {
+            fis.close();
+        }
+        assertTrue("Report file could not be parsed as XML", documentParsed);
+    }
+
+
+    private String overrideFileEncoding(String newEncoding) {
+        String current = System.getProperty("file.encoding");
+        System.setProperty("file.encoding", newEncoding);
+        setBinaryGuesserCharset(newEncoding);
+        clearDefaultCharset();
+        return current;
+    }
+
+    private void clearDefaultCharset() {
+        try {
+            Field f = Charset.class.getDeclaredField("defaultCharset");
+            f.setAccessible(true);
+            f.set(null, null);
+        } catch (Exception ex) {
+            // This is for unittesting - there is no good reason not to rethrow
+            // it. This could be happening in JDK 9, where the unittests need
+            // run with the java.base module opened
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void setBinaryGuesserCharset(String charset) {
+        try {
+            Field f = BinaryGuesser.class.getDeclaredField("CHARSET_FROM_FILE_ENCODING_OR_UTF8");
+            f.setAccessible(true);
+            f.set(null, Charset.forName(charset));
+        } catch (Exception ex) {
+            // This is for unittesting - there is no good reason not to rethrow
+            // it. This could be happening in JDK 9, where the unittests need
+            // run with the java.base module opened
+            throw new RuntimeException(ex);
+        }
+    }
 }

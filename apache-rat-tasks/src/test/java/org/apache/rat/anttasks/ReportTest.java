@@ -25,6 +25,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.rat.document.impl.guesser.BinaryGuesser;
+import org.w3c.dom.Document;
 
 public class ReportTest extends AbstractRatAntTaskTest {
     private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
@@ -121,5 +127,78 @@ public class ReportTest extends AbstractRatAntTaskTest {
         final String modifiedFirstLine = getFirstLine(modifiedFile);
         assertFalse(modifiedFirstLine.contains("--"));
         assertTrue(modifiedFirstLine.contains("~~"));
+    }
+
+    /**
+     * Test correct generation of string result if non-UTF8 file.encoding is set.
+     */
+    public void testISO88591() throws Exception {
+        String origEncoding = overrideFileEncoding("ISO-8859-1");
+        executeTarget("testISO88591");
+        overrideFileEncoding(origEncoding);
+        assertTrue("Log should contain the test umlauts", getLog().contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF"));
+    }
+
+    /**
+     * Test correct generation of XML file if non-UTF8 file.encoding is set.
+     */
+    public void testISO88591WithFile() throws Exception {
+        Charset.defaultCharset();
+        String outputDir = System.getProperty("output.dir", "target/anttasks");
+        String selftestOutput = System.getProperty("report.file", outputDir + "/selftest.report");
+        String origEncoding = overrideFileEncoding("ISO-8859-1");
+        executeTarget("testISO88591WithReportFile");
+        overrideFileEncoding(origEncoding);
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        FileInputStream fis = new FileInputStream(selftestOutput);
+        boolean documentParsed = false;
+        try {
+            Document doc = db.parse(fis);
+            boolean byteSequencePresent = doc.getElementsByTagName("header-sample")
+                    .item(0)
+                    .getTextContent()
+                    .contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
+            assertTrue("Report should contain test umlauts", byteSequencePresent);
+            documentParsed = true;
+        } catch (Exception ex) {
+            documentParsed = false;
+        } finally {
+            fis.close();
+        }
+        assertTrue("Report file could not be parsed as XML", documentParsed);
+    }
+
+    private String overrideFileEncoding(String newEncoding) {
+        String current = System.getProperty("file.encoding");
+        System.setProperty("file.encoding", newEncoding);
+        setBinaryGuesserCharset(newEncoding);
+        clearDefaultCharset();
+        return current;
+    }
+
+    private void clearDefaultCharset() {
+        try {
+            Field f = Charset.class.getDeclaredField("defaultCharset");
+            f.setAccessible(true);
+            f.set(null, null);
+        } catch (Exception ex) {
+            // This is for unittesting - there is no good reason not to rethrow
+            // it. This could be happening in JDK 9, where the unittests need
+            // run with the java.base module opened
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void setBinaryGuesserCharset(String charset) {
+        try {
+            Field f = BinaryGuesser.class.getDeclaredField("CHARSET_FROM_FILE_ENCODING_OR_UTF8");
+            f.setAccessible(true);
+            f.set(null, Charset.forName(charset));
+        } catch (Exception ex) {
+            // This is for unittesting - there is no good reason not to rethrow
+            // it. This could be happening in JDK 9, where the unittests need
+            // run with the java.base module opened
+            throw new RuntimeException(ex);
+        }
     }
 }

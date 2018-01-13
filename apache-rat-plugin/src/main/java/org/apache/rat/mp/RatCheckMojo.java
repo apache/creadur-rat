@@ -105,7 +105,7 @@ public class RatCheckMojo extends AbstractRatMojo {
         Writer fw = null;
         try {
             fw = new OutputStreamWriter(
-                   new FileOutputStream(reportFile), 
+                   new FileOutputStream(reportFile),
                    Charset.forName("UTF-8"));
             final ClaimStatistic statistic = createReport(fw, getStyleSheet());
             fw.close();
