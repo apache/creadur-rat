@@ -21,6 +21,7 @@
     <artifactId>apache-rat-project</artifactId>
     <groupId>org.apache.rat</groupId>
     <version>0.13-SNAPSHOT</version>
+    <relativePath>..</relativePath>
   </parent>
   <artifactId>apache-rat-plugin</artifactId>
   <packaging>maven-plugin</packaging>
@@ -83,10 +84,11 @@
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
             <excludes>
-              <!-- These files does not have license headers because they are used to test license headers -->
+              <!-- These files do not have license headers because they are used to test license headers -->
               <exclude>src/it/it1/src.apt</exclude>
               <exclude>src/test/resources/unit/it2/src.txt</exclude>
               <exclude>src/test/resources/unit/it3/src.apt</exclude>
+              <exclude>src/test/resources/unit/it4/*.html</exclude>
               <exclude>**/*.iml</exclude>
               <!-- RAT-171: needs to be added since SCM ignores are only parsed in project root -->
               <exclude>**/.bzrignore</exclude>
