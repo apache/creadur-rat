@@ -130,6 +130,7 @@
             <excludes>
               <!-- This file does not have license header because it is used to test license headers -->
               <exclude>src/test/resources/antunit/index.apt</exclude>
+              <exclude>src/test/resources/org/example</exclude>
             </excludes>
           </configuration>
         </plugin>
