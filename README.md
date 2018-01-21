@@ -1,4 +1,4 @@
-# Apache Rat
+# Apache Creadur Rat
 
 [![Build Status](https://api.travis-ci.org/apache/creadur-rat.svg?branch=trunk)](https://travis-ci.org/apache/creadur-rat)
 
