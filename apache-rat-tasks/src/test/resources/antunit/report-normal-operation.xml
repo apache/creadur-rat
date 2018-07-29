@@ -56,7 +56,7 @@
 
   <target name="allTests">
     <au:antunit xmlns:au="antlib:org.apache.ant.antunit"
-                failonerror="false" errorproperty="antunit.failed">
+                failonerror="true" >
       <file file="${ant.file}"/>
       <au:plainlistener/>
       <propertyset>
