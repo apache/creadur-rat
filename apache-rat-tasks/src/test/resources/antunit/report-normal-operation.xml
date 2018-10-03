@@ -330,7 +330,7 @@ public class LicenseFamily implements ILicenseFamily {
 }
 ]]></echo>
     <javac srcdir="${output.dir}/src" destdir="${output.dir}/dest"
-           classpath="${test.classpath}"/>
+           classpath="${test.classpath}" fork="true"/>
     <typedef name="exmpl" classname="org.example.Matcher"
              classpathref="all-classes-needed-for-tests"
              loaderref="testloader"/>

@@ -42,6 +42,7 @@ import static org.apache.rat.mp.RatTestHelpers.newArtifactRepository;
 import static org.apache.rat.mp.RatTestHelpers.newArtifactResolver;
 import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 /**
  * Test case for the {@link RatCheckMojo} and {@link RatReportMojo}.
@@ -233,23 +234,23 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
             assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase()
                     .contains("NULL")));
         }
+        assertTrue(ratTxtFile.exists());
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         FileInputStream fis = new FileInputStream(ratTxtFile);
-        boolean documentParsed = false;
         try {
             Document doc = db.parse(fis);
-            boolean byteSequencePresent = doc.getElementsByTagName("header-sample")
-                    .item(0)
-                    .getTextContent()
-                    .contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
-            assertTrue("Report should contain test umlauts", byteSequencePresent);
-            documentParsed = true;
+            NodeList headerSample = doc.getElementsByTagName("header-sample");
+            String textContent = headerSample.item(0).getTextContent();
+            if (textContent.length() == 0) { // can be the pom since this test will parse 2 files but the pom is "ok"
+                textContent = headerSample.item(1).getTextContent();
+            }
+            boolean byteSequencePresent = textContent.contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
+            assertTrue("Report should contain test umlauts, got '" + textContent + "'", byteSequencePresent);
         } catch (Exception ex) {
-            documentParsed = false;
+            fail("Report file could not be parsed as XML: " + ex.getMessage());
         } finally {
             fis.close();
         }
-        assertTrue("Report file could not be parsed as XML", documentParsed);
     }
 
 
