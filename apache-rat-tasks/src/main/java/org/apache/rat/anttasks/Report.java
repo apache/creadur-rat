@@ -292,14 +292,13 @@ public class Report extends Task {
      * required) into a single array.
      */
     private List<IHeaderMatcher> getLicenseMatchers() {
-        List<IHeaderMatcher> matchers = new ArrayList<IHeaderMatcher>(Defaults.DEFAULT_MATCHERS);
+        List<IHeaderMatcher> matchers = new ArrayList<IHeaderMatcher>(
+        (addDefaultLicenseMatchers ? Defaults.DEFAULT_MATCHERS.size() : 0) + licenseMatchers.size());
         if (addDefaultLicenseMatchers) {
-            int nestedSize = licenseMatchers.size();
-            if (nestedSize != 0) {
-                matchers.addAll(licenseMatchers);
-            }
+            matchers.addAll(Defaults.DEFAULT_MATCHERS);
+            matchers.addAll(licenseMatchers);
         } else {
-            matchers = new ArrayList<IHeaderMatcher>();
+            matchers = new ArrayList<IHeaderMatcher>(licenseMatchers);
         }
         return matchers;
     }
