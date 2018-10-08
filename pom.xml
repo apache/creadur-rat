@@ -264,12 +264,14 @@ agnostic home for software distribution comprehension and audit tools.
           </reportSet>
         </reportSets>
       </plugin>
+<!-- DISABLED before Release
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <!-- Must use previous version, to avoid a cyclic reference -->
+        <!-- Must use previous version, to avoid a cyclic reference 
         <version>${previousRatVersion}</version>
       </plugin>
+-->
     </plugins>
   </reporting>
   <build>
