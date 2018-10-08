@@ -400,7 +400,7 @@ agnostic home for software distribution comprehension and audit tools.
         						</goals>
         					</pluginExecutionFilter>
         					<action>
-        						<ignore></ignore>
+        						<ignore />
         					</action>
         				</pluginExecution>
         			</pluginExecutions>
@@ -422,7 +422,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <configuration>
               <target>
-                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false"/>
+                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
               </target>
             </configuration>
           </execution>
