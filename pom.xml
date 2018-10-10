@@ -264,14 +264,11 @@ agnostic home for software distribution comprehension and audit tools.
           </reportSet>
         </reportSets>
       </plugin>
-<!-- Disabled during release to prevent:
-Failed to execute goal org.apache.maven.plugins:maven-release-plugin:2.5.3:prepare (default-cli) on project apache-rat-project: The artifact (org.apache.rat:apache-rat-plugin) requires a different version (0.13) than what is found (0.12) for the expression (previousRatVersion) in the project (org.apache.rat:apache-rat-project). -> [Help 1]
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <version>${previousRatVersion}</version>
+        <version>0.12</version>
       </plugin>
--->
     </plugins>
   </reporting>
   <build>
