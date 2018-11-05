@@ -74,6 +74,7 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- maven plugin versions -->
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
     <mavenChangesVersion>2.11</mavenChangesVersion>
+    <previousRatVersion>0.12</previousRatVersion>
   </properties>
   <dependencyManagement>
     <dependencies>
