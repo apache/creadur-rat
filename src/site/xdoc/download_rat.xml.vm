@@ -64,8 +64,7 @@ limitations under the License.
           file links to the code signing keys used to sign the
           product.  The <code>PGP</code> link downloads the OpenPGP
           compatible signature from our main site.  The
-          <code>SHA1</code> and <code>MD5</code> links download the
-          checksum from the main site.
+          <code>SHA512</code> links download the checksum from the main site.
         </p>
       </subsection>
     </section>
@@ -74,20 +73,17 @@ limitations under the License.
         <table>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.bz2">apache-rat-${previousRatVersion}-bin.tar.bz2</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.bz2.md5">md5</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.bz2.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.bz2.sha512">sha512</a></td>
               <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.bz2.asc">pgp</a></td>
           </tr>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.gz">apache-rat-${previousRatVersion}-bin.tar.gz</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.gz.md5">md5</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.gz.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.gz.sha512">sha512</a></td>
               <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip">apache-rat-${previousRatVersion}-bin.zip</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip.md5">md5</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip.sha512">sha512</a></td>
               <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-bin.zip.asc">pgp</a></td>
           </tr>
         </table>
@@ -96,20 +92,17 @@ limitations under the License.
         <table>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.bz2">apache-rat-${previousRatVersion}-src.tar.bz2</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.bz2.md5">md5</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.bz2.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.bz2.sha512">sha512</a></td>
               <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.bz2.asc">pgp</a></td>
           </tr>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.gz">apache-rat-${previousRatVersion}-src.tar.gz</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.gz.md5">md5</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.gz.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.gz.sha512">sha512</a></td>
               <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
               <td><a href="[preferred]/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.zip">apache-rat-${previousRatVersion}-src.zip</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.zip.md5">md5</a></td>
-              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.zip.sha1">sha1</a></td>
+              <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.zip.sha512">sha512</a></td>
               <td><a href="https://www.apache.org/dist/creadur/apache-rat-${previousRatVersion}/apache-rat-${previousRatVersion}-src.zip.asc">pgp</a></td>
           </tr>
         </table>
