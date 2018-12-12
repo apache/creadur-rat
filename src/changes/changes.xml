@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.13" date="2018-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="INFRA-17348" type="add" dev="jochen">
+        SCM repository has been moved from svn.apache.org (Subversion) to gitbox.apache.org (Git)
+      </action>
       <action issue="RAT-228" type="add" due-to="Romain Manni-Bucau" dev="pottlinger">
         Fixing broken Ant unit test setup and making tests run more deterministic.
       </action>
