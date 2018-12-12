@@ -632,9 +632,9 @@ agnostic home for software distribution comprehension and audit tools.
     </contributor>
   </contributors>
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/rat/trunk</developerConnection>
-    <url>https://svn.apache.org/repos/asf/creadur/rat/trunk</url>
+    <connection>scm:git:https://gitbox.apache.org/repos/asf/creadur-rat.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/creadur-rat.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=creadur-rat.git</url>
   </scm>
   <distributionManagement>
     <site>
