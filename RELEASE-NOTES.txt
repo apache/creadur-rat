@@ -15,8 +15,6 @@ Note that binary compatibility is not guaranteed between 0.x releases.
 Apache Rat is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
 
-Current SNAPSHOT - to be done
-
 Changes in this version include:
 
 New features:
