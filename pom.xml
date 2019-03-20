@@ -43,7 +43,7 @@ agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
   <properties>
-    <ant.version>1.9.12</ant.version>
+    <ant.version>1.9.14</ant.version>
     <javaVersion>1.5</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
@@ -290,7 +290,7 @@ agnostic home for software distribution comprehension and audit tools.
             <dependency>
               <groupId>org.apache.ant</groupId>
               <artifactId>ant</artifactId>
-              <version>1.9.9</version>
+              <version>${ant.version}</version>
             </dependency>
           </dependencies>
         </plugin>

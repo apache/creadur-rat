@@ -54,7 +54,10 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
-    <release version="0.14-SNAPSHOT" date="2018-xx-xx" description="Current SNAPSHOT - to be done">
+    <release version="0.14-SNAPSHOT" date="2019-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-250" type="add" dev="pottlinger">
+        Update to latest available and compatible Apache ANT 1.9.14 to get bugfixes.
+      </action>
       <action issue="INFRA-17348" type="add" dev="jochen">
         SCM repository has been moved from svn.apache.org (Subversion) to gitbox.apache.org (Git)
       </action>
