@@ -20,7 +20,6 @@
 from sys import argv
 from os import popen
 from os import popen4
-from os import spawnl
 from os.path import isdir
 from os.path import walk
 from os.path import split
@@ -29,7 +28,6 @@ from os.path import exists
 from tempfile import mkdtemp
 from os.path import join
 from os import listdir
-from os import rmdir
 from os import makedirs
 from shutil import rmtree
 import md5
