@@ -50,9 +50,9 @@ public class ReportTest {
                 NL + "Notes: 2" + NL +//
                         "Binaries: 1" + NL +//
                         "Archives: 1" + NL +//
-                        "Standards: 6" + NL +//
+                        "Standards: 7" + NL +//
                         "" + NL +//
-                        "Apache Licensed: 3" + NL +//
+                        "Apache Licensed: 4" + NL +//
                         "Generated Documents: 0" + NL +//
                         "" + NL +//
                         "JavaDocs are generated, thus a license header is optional." + NL +//
@@ -84,6 +84,7 @@ public class ReportTest {
                         "  N     " + pElementsPath + "/NOTICE" + NL +//
                         " !????? " + pElementsPath + "/Source.java" + NL +//
                         "  AL    " + pElementsPath + "/Text.txt" + NL +//
+                        "  AL    " + pElementsPath + "/TextHttps.txt" + NL +//
                         "  AL    " + pElementsPath + "/Xml.xml" + NL +//
                         "  AL    " + pElementsPath + "/buildr.rb" + NL +//
                         "  A     " + pElementsPath + "/dummy.jar" + NL +//
