@@ -55,7 +55,7 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2019-xx-xx" description="Current SNAPSHOT - to be done">
-      <action issue="RAT-253" type="add" due-to="Niels Basjes" dev="pottlinger">
+      <action issue="RAT-212" type="add" due-to="Niels Basjes" dev="pottlinger">
         Add alternative https URLs in Apache License, Version 2.0 to allow automatic recognition as valid ASF2.0.
       </action>
       <action issue="RAT-250" type="add" dev="pottlinger">
