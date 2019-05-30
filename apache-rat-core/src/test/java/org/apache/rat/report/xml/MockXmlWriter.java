@@ -71,7 +71,7 @@ public class MockXmlWriter implements IXmlWriter {
         final Object call = calls.get(index);
         if (call instanceof Content) {
             Content contentCall = (Content) call;
-            result = content.equals(contentCall.content);
+            result = content.contentEquals(contentCall.content);
         }
         return result;
     }
@@ -81,7 +81,7 @@ public class MockXmlWriter implements IXmlWriter {
         final Object call = calls.get(index);
         if (call instanceof OpenElement) {
             OpenElement openElement = (OpenElement) call;
-            result = name.equals(openElement.elementName);
+            result = name.contentEquals(openElement.elementName);
         }
         return result;
     }
@@ -91,7 +91,7 @@ public class MockXmlWriter implements IXmlWriter {
         final Object call = calls.get(index);
         if (call instanceof Attribute) {
             Attribute attribute = (Attribute) call;
-            result = name.equals(attribute.name) && value.equals(attribute.value);
+            result = name.contentEquals(attribute.name) && value.contentEquals(attribute.value);
         }
         return result;
     }
