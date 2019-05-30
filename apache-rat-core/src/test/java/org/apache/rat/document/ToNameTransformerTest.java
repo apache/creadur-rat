@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNull;
 
 public class ToNameTransformerTest {
 
-    private ToNameTransformer transformer = new ToNameTransformer();
+    private final ToNameTransformer transformer = new ToNameTransformer();
     
     @Test
     public void transformLocation() {

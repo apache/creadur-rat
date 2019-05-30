@@ -45,8 +45,8 @@ public class Resources {
 
     public static final String SRC_TEST_RESOURCES = "src/test/resources";
     public static final String SRC_MAIN_RESOURCES = "src/main/resources";
-    private static File TEST_RESOURCE_BASE_PATH = new File(SRC_TEST_RESOURCES);
-    private static File RESOURCE_BASE_PATH = new File(SRC_MAIN_RESOURCES);
+    private static final File TEST_RESOURCE_BASE_PATH = new File(SRC_TEST_RESOURCES);
+    private static final File RESOURCE_BASE_PATH = new File(SRC_MAIN_RESOURCES);
 
     /**
      * Locates a test resource file in the class path.

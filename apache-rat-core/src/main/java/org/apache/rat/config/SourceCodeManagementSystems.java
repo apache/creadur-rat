@@ -33,12 +33,12 @@ public enum SourceCodeManagementSystems {
     /**
      * Technical directory of that SCM which contains SCM internals.
      */
-    private String directory;
+    private final String directory;
     /**
      * If there is a external way to configure files to be ignored: name of this
      * file, <code>null</code> otherwise.
      */
-    private String ignoreFile;
+    private final String ignoreFile;
 
     SourceCodeManagementSystems(String directory, String ignoreFile) {
         this.directory = directory;

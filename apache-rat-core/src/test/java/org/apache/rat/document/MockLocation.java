@@ -27,8 +27,8 @@ import org.apache.rat.api.MetaData;
 
 public class MockLocation implements Document {
 
-    public String name;
-    public String url;
+    public final String name;
+    public final String url;
     private final MetaData metaData = new MetaData();
     
     public MockLocation() {

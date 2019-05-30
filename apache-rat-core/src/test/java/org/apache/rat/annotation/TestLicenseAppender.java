@@ -36,7 +36,7 @@ import static org.junit.Assert.assertFalse;
 
 public class TestLicenseAppender {
     @ClassRule
-    public static TemporaryFolder baseTempFolder = new TemporaryFolder();
+    public static final TemporaryFolder baseTempFolder = new TemporaryFolder();
 
     private static final String FIRST_LICENSE_LINE = " Licensed to the Apache Software Foundation (ASF) under one";
 

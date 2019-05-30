@@ -32,7 +32,7 @@ import org.apache.rat.api.RatException;
 
 public class ArchiveEntryDocument implements Document {
 
-    private byte[] contents;
+    private final byte[] contents;
     private final String name;
 
     private final MetaData metaData = new MetaData();

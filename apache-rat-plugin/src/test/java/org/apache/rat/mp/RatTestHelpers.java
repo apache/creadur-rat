@@ -244,24 +244,24 @@ public final class RatTestHelpers {
                 }
                 int offset = line.indexOf("Apache Licensed: ");
                 if (offset >= 0) {
-                    numALFiles = new Integer(line.substring(
+                    numALFiles = Integer.valueOf(line.substring(
                             offset + "Apache Licensed: ".length()).trim());
                 }
                 offset = line.indexOf("Unknown Licenses");
                 if (offset >= 0) {
-                    numNoLicenseFiles = new Integer(line.substring(0, offset)
+                    numNoLicenseFiles = Integer.valueOf(line.substring(0, offset)
                             .trim());
                 }
             }
             reader.close();
 
-            if (!new Integer(pNumALFiles).equals(numALFiles)) {
+            if (!Integer.valueOf(pNumALFiles).equals(numALFiles)) {
                 throw new IllegalArgumentException(
                         "Amount of licensed files does not match. Expected "
                                 + pNumALFiles + ", got " + numALFiles);
             }
 
-            if (!new Integer(pNumNoLicenseFiles).equals(numNoLicenseFiles)) {
+            if (!Integer.valueOf(pNumNoLicenseFiles).equals(numNoLicenseFiles)) {
                 throw new IllegalArgumentException(
                         "Amount of licensed files does not match. Expected "
                                 + pNumALFiles + ", got " + numALFiles);

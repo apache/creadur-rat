@@ -57,7 +57,6 @@ public final class XmlUtils {
             newXMLReader().parse(isource);
             return true;
         } catch (SAXException e) {
-            System.out.println(e);
             e.printStackTrace();
             return false;
         } catch (IOException e) {

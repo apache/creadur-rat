@@ -72,9 +72,9 @@ public class Report extends Task {
     /**
      * The licenses we want to match on.
      */
-    private ArrayList<IHeaderMatcher> licenseMatchers = new ArrayList<IHeaderMatcher>();
+    private final ArrayList<IHeaderMatcher> licenseMatchers = new ArrayList<IHeaderMatcher>();
 
-    private ArrayList<ILicenseFamily> licenseNames = new ArrayList<ILicenseFamily>();
+    private final ArrayList<ILicenseFamily> licenseNames = new ArrayList<ILicenseFamily>();
 
     /**
      * Whether to add the default list of license matchers.

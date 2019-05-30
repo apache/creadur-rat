@@ -52,7 +52,7 @@ public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMat
             final String[] pttrns = getPatterns();
             if (pttrns != null) {
                 for (String pttrn : pttrns) {
-                    if (pLine.indexOf(pttrn, 0) >= 0) {
+                    if (pLine.indexOf(pttrn) >= 0) {
                         return true;
                     }
                 }

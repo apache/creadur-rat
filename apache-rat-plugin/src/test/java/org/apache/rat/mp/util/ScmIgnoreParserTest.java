@@ -41,12 +41,12 @@ import static org.junit.Assert.assertTrue;
 @RunWith(MockitoJUnitRunner.class)
 public class ScmIgnoreParserTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public final TemporaryFolder testFolder = new TemporaryFolder();
 
     @Mock
     private Log log;
 
-    private static String IGNORE_EXAMPLE = "**/*.java\r\n## Justus commentos\r\nignoredDirectory";
+    private static final String IGNORE_EXAMPLE = "**/*.java\r\n## Justus commentos\r\nignoredDirectory";
 
     @Test
     public void parseAsNoComments() {

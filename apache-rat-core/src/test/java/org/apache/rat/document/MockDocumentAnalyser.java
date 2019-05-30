@@ -25,7 +25,7 @@ import java.util.List;
 
 public class MockDocumentAnalyser implements IDocumentAnalyser {
 
-    public List<Document> matches = new ArrayList<Document>();
+    public final List<Document> matches = new ArrayList<Document>();
     
     public void analyse(Document document) throws RatDocumentAnalysisException {
         matches.add(document);

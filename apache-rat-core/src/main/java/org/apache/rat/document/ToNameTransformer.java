@@ -31,7 +31,7 @@ public class ToNameTransformer implements Transformer {
     
     public Object transform(Object subject) {
         Object result = null;
-        if (subject != null && subject instanceof Document) {
+        if (subject instanceof Document) {
             Document location = (Document) subject;
             result = location.getName();
         }

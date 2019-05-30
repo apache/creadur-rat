@@ -41,7 +41,7 @@ public final class ScmIgnoreParser {
         // prevent instantiation of utility class
     }
 
-    private static List<String> COMMENT_PREFIXES = Arrays.asList("#", "##", "//", "/**", "/*");
+    private static final List<String> COMMENT_PREFIXES = Arrays.asList("#", "##", "//", "/**", "/*");
 
     /**
      * Parses excludes from the given SCM ignore file.

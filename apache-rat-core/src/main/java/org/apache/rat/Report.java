@@ -46,7 +46,7 @@ public class Report {
     private static final String STYLESHEET_CLI = "s";
     private static final String HELP = "h";
 
-    public static final void main(String args[]) throws Exception {
+    public static final void main(String[] args) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
         configuration.setApproveDefaultLicenses(true);
@@ -216,7 +216,7 @@ public class Report {
                 "Output the report in raw XML format.  Not compatible with -s");
         outputType.addOption(xml);
 
-        Option xslt = new Option(String.valueOf(STYLESHEET_CLI),
+        Option xslt = new Option(STYLESHEET_CLI,
                 "stylesheet",
                 true,
                 "XSLT stylesheet to use when creating the"
