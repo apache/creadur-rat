@@ -51,7 +51,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -176,6 +175,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
      * @return Version number, if found, or null.
      */
     private String getRatVersion() {
+        //noinspection unchecked
         for (Artifact a : (Iterable<Artifact>) getProject().getDependencyArtifacts()) {
             if ("rat-lib".equals(a.getArtifactId())) {
                 return a.getVersion();

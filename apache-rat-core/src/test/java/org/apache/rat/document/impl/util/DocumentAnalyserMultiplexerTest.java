@@ -21,17 +21,19 @@ package org.apache.rat.document.impl.util;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.MockDocumentAnalyser;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class DocumentAnalyserMultiplexerTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class DocumentAnalyserMultiplexerTest {
 
     private DocumentAnalyserMultiplexer multiplexer;
     private IDocumentAnalyser[] analysers;
     private MockDocument document;
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() {
         IDocumentAnalyser[] analysers = {
                 new MockDocumentAnalyser(), 
                 new MockDocumentAnalyser(),
@@ -42,11 +44,7 @@ public class DocumentAnalyserMultiplexerTest extends TestCase {
         multiplexer = new DocumentAnalyserMultiplexer(analysers);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void testAnalyse() throws Exception {
         multiplexer.analyse(document);
         MockDocumentAnalyser analyser =  (MockDocumentAnalyser) (analysers[0]);

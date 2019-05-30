@@ -18,7 +18,6 @@ package org.apache.rat.anttasks;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildException;
-import org.junit.Assert;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -18,41 +18,38 @@
  */ 
 package org.apache.rat.analysis.util;
 
-import junit.framework.TestCase;
-
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.MockLicenseMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Arrays;
 
-public class MatcherMultiplexerTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class MatcherMultiplexerTest {
 
     private static final String LINE_ONE = "Line One";
     private static final String LINE_TWO = "Line Two";
 
-    MockClaimReporter reporter;
-    MockLicenseMatcher matcherOne;
-    MockLicenseMatcher matcherTwo;
+    private MockClaimReporter reporter;
+    private MockLicenseMatcher matcherOne;
+    private MockLicenseMatcher matcherTwo;
 
-    HeaderMatcherMultiplexer multiplexer;
+    private HeaderMatcherMultiplexer multiplexer;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() {
         matcherOne = new MockLicenseMatcher();
         matcherTwo = new MockLicenseMatcher();
         multiplexer = new HeaderMatcherMultiplexer(Arrays.<IHeaderMatcher>asList(matcherOne, matcherTwo));
         reporter = new MockClaimReporter();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void testMatcherLine() throws Exception {
         matcherOne.result = false;
         matcherTwo.result = false;
@@ -69,6 +66,7 @@ public class MatcherMultiplexerTest extends TestCase {
         assertEquals("Same as line passed", LINE_TWO, matcherTwo.lines.get(1));
     }
 
+    @Test
     public void testReset() {
         multiplexer.reset();
         assertEquals("Reset once", 1, matcherOne.resets);
