@@ -282,7 +282,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
             f.set(null, Charset.forName(charset));
         } catch (Exception ex) {
             // This is for unittesting - there is no good reason not to rethrow
-            // it. This could be happening in JDK 9, where the unittests need
+            // it. This could be happening in JDK 9, where the unittests need to
             // run with the java.base module opened
             throw new RuntimeException(ex);
         }

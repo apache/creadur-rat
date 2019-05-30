@@ -29,16 +29,13 @@ import java.io.IOException;
 import java.util.Calendar;
 
 public class SimpleXmlClaimReporter extends AbstractReport {
-    public static final String RAT_REPORT = "rat-report";
-    public static final String TIMESTAMP = "timestamp";
-    public static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
-    public static final String LICENSE_FAMILY_PREDICATE = "license-family";
-    public static final String HEADER_SAMPLE_PREDICATE = "header-sample";
-    public static final String HEADER_TYPE_PREDICATE = "header-type";
-    public static final String FILE_TYPE_PREDICATE = "type";
-    public static final String ARCHIVE_TYPE_PREDICATE = "archive-type";
-    public static final String ARCHIVE_TYPE_UNREADABLE = "unreadable";
-    public static final String ARCHIVE_TYPE_READABLE = "readable";
+    private static final String RAT_REPORT = "rat-report";
+    private static final String TIMESTAMP = "timestamp";
+    private static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
+    private static final String LICENSE_FAMILY_PREDICATE = "license-family";
+    private static final String HEADER_SAMPLE_PREDICATE = "header-sample";
+    private static final String HEADER_TYPE_PREDICATE = "header-type";
+    private static final String FILE_TYPE_PREDICATE = "type";
 
     private final IXmlWriter writer;
     private static final String NAME = "name";

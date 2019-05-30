@@ -17,16 +17,20 @@
 package org.apache.rat.anttasks;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.tools.ant.BuildFileTest;
+import org.apache.tools.ant.BuildFileRule;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public abstract class AbstractRatAntTaskTest extends BuildFileTest {
+public abstract class AbstractRatAntTaskTest {
     private static final File tempDir = new File("target/anttasks");
+    @Rule
+    public final BuildFileRule buildRule = new BuildFileRule();
 
     protected abstract File getAntFile();
 
@@ -34,20 +38,19 @@ public abstract class AbstractRatAntTaskTest extends BuildFileTest {
         return tempDir;
     }
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        configureProject(getAntFile().getPath());
+    @Before
+    public void setUp() {
+        buildRule.configureProject(getAntFile().getPath());
     }
 
     protected void assertLogDoesNotMatch(String pPattern) {
-        final String log = super.getLog();
+        final String log = buildRule.getLog();
         Assert.assertFalse("Log matches the pattern: " + pPattern + ", got " + log,
                 isMatching(pPattern, log));
     }
 
     protected void assertLogMatches(String pPattern) {
-        final String log = super.getLog();
+        final String log = buildRule.getLog();
         Assert.assertTrue("Log doesn't match string: " + pPattern + ", got " + log,
                 isMatching(pPattern, log));
     }

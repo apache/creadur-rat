@@ -32,6 +32,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.w3c.dom.Document;
 
+import static org.junit.Assert.*;
+
 public class ReportTest extends AbstractRatAntTaskTest {
     private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
 
@@ -41,7 +43,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     public void testWithReportSentToAnt() throws Exception {
-        executeTarget("testWithReportSentToAnt");
+        buildRule.executeTarget("testWithReportSentToAnt");
         assertLogMatches("AL +\\Q" + getAntFileName() + "\\E");
     }
 
@@ -54,27 +56,27 @@ public class ReportTest extends AbstractRatAntTaskTest {
         if (reportFile.isFile() && !reportFile.delete()) {
             throw new IOException("Unable to remove report file " + reportFile);
         }
-        executeTarget("testWithReportSentToFile");
+        buildRule.executeTarget("testWithReportSentToFile");
         assertLogDoesNotMatch(alLine);
-        Assert.assertTrue("Expected report file " + reportFile, reportFile.isFile());
+        assertTrue("Expected report file " + reportFile, reportFile.isFile());
         assertFileMatches(reportFile, alLine);
     }
 
     public void testWithALUnknown() throws Exception {
-        executeTarget("testWithALUnknown");
+        buildRule.executeTarget("testWithALUnknown");
         assertLogDoesNotMatch("AL +\\Q" + getAntFileName() + "\\E");
         assertLogMatches("\\!\\?\\?\\?\\?\\? +\\Q" + getAntFileName() + "\\E");
     }
 
     public void testCustomMatcher() throws Exception {
-        executeTarget("testCustomMatcher");
+        buildRule.executeTarget("testCustomMatcher");
         assertLogDoesNotMatch("AL +\\Q" + getAntFileName() + "\\E");
         assertLogMatches("EXMPL +\\Q" + getAntFileName() + "\\E");
     }
 
     public void testNoResources() throws Exception {
         try {
-            executeTarget("testNoResources");
+            buildRule.executeTarget("testNoResources");
             fail("Expected Exception");
         } catch (BuildException e) {
             final String expect = "You must specify at least one file";
@@ -85,7 +87,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
 
     public void testNoLicenseMatchers() throws Exception {
         try {
-            executeTarget("testNoLicenseMatchers");
+            buildRule.executeTarget("testNoLicenseMatchers");
             fail("Expected Exception");
         } catch (BuildException e) {
             final String expect = "at least one license";
@@ -117,7 +119,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     public void testAddLicenseHeaders() throws Exception {
-        executeTarget("testAddLicenseHeaders");
+        buildRule.executeTarget("testAddLicenseHeaders");
 
         final File origFile = new File("target/anttasks/it-sources/index.apt");
         final String origFirstLine = getFirstLine(origFile);
@@ -134,9 +136,9 @@ public class ReportTest extends AbstractRatAntTaskTest {
      */
     public void testISO88591() throws Exception {
         String origEncoding = overrideFileEncoding("ISO-8859-1");
-        executeTarget("testISO88591");
+        buildRule.executeTarget("testISO88591");
         overrideFileEncoding(origEncoding);
-        assertTrue("Log should contain the test umlauts", getLog().contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF"));
+        assertTrue("Log should contain the test umlauts", buildRule.getLog().contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF"));
     }
 
     /**
@@ -147,7 +149,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         String outputDir = System.getProperty("output.dir", "target/anttasks");
         String selftestOutput = System.getProperty("report.file", outputDir + "/selftest.report");
         String origEncoding = overrideFileEncoding("ISO-8859-1");
-        executeTarget("testISO88591WithReportFile");
+        buildRule.executeTarget("testISO88591WithReportFile");
         overrideFileEncoding(origEncoding);
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         FileInputStream fis = new FileInputStream(selftestOutput);
@@ -183,7 +185,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             f.set(null, null);
         } catch (Exception ex) {
             // This is for unittesting - there is no good reason not to rethrow
-            // it. This could be happening in JDK 9, where the unittests need
+            // it. This could be happening in JDK 9, where the unittests need to
             // run with the java.base module opened
             throw new RuntimeException(ex);
         }
@@ -196,7 +198,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             f.set(null, Charset.forName(charset));
         } catch (Exception ex) {
             // This is for unittesting - there is no good reason not to rethrow
-            // it. This could be happening in JDK 9, where the unittests need
+            // it. This could be happening in JDK 9, where the unittests need to
             // run with the java.base module opened
             throw new RuntimeException(ex);
         }
