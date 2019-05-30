@@ -401,7 +401,7 @@ public final class XmlWriter implements IXmlWriter {
 
     private final Writer writer;
     private final ArrayStack elementNames;
-    private final Set<CharSequence> currentAttributes = new HashSet<CharSequence>();
+    private final Set<CharSequence> currentAttributes = new HashSet<>();
 
     boolean elementsWritten = false;
     boolean inElement = false;

@@ -55,7 +55,7 @@ public class ExclusionHelperTest {
 
     @Test
     public void testAddingEclipseExclusions() {
-        final Set<String> exclusion = new HashSet<String>();
+        final Set<String> exclusion = new HashSet<>();
         addEclipseDefaults(log, false, exclusion);
         assertTrue(exclusion.isEmpty());
         addEclipseDefaults(log, true, exclusion);
@@ -66,7 +66,7 @@ public class ExclusionHelperTest {
 
     @Test
     public void testAddingIdeaExclusions() {
-        final Set<String> exclusion = new HashSet<String>();
+        final Set<String> exclusion = new HashSet<>();
         addIdeaDefaults(log, false, exclusion);
         assertTrue(exclusion.isEmpty());
         addIdeaDefaults(log, true, exclusion);
@@ -77,7 +77,7 @@ public class ExclusionHelperTest {
 
     @Test
     public void testAddingMavenExclusions() {
-        final Set<String> exclusion = new HashSet<String>();
+        final Set<String> exclusion = new HashSet<>();
         addMavenDefaults(log, false, exclusion);
         assertTrue(exclusion.isEmpty());
         addMavenDefaults(log, true, exclusion);
@@ -90,7 +90,7 @@ public class ExclusionHelperTest {
     public void testAddingPlexusAndScmExclusion() {
         final int expectedSizeMergedFromPlexusDefaultsAndScm = (38 + SourceCodeManagementSystems.getPluginExclusions().size());
 
-        final Set<String> exclusion = new HashSet<String>();
+        final Set<String> exclusion = new HashSet<>();
         addPlexusAndScmDefaults(log, false, exclusion);
         assertTrue(exclusion.isEmpty());
         addPlexusAndScmDefaults(log, true, exclusion);

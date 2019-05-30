@@ -63,7 +63,7 @@ public enum SourceCodeManagementSystems {
      * @return list of excludes if the current SCM is used.
      */
     public List<String> getExclusions() {
-        List<String> excludes = new ArrayList<String>(2);
+        List<String> excludes = new ArrayList<>(2);
 
         if (hasIgnoreFile()) {
             excludes.add("**/" + ignoreFile);
@@ -84,7 +84,7 @@ public enum SourceCodeManagementSystems {
      * @return the global list of exclusions usable for all known SCM.
      */
     public static List<String> getPluginExclusions() {
-        List<String> pluginExclusions = new ArrayList<String>();
+        List<String> pluginExclusions = new ArrayList<>();
 
         for (SourceCodeManagementSystems scm : values()) {
             pluginExclusions.addAll(scm.getExclusions());

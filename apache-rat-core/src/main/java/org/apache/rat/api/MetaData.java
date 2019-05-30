@@ -147,7 +147,7 @@ public class MetaData {
     
     public MetaData(final ContentType contentType) {
         this.contentType = contentType;
-        this.data = new ArrayList<Datum>(16);
+        this.data = new ArrayList<>(16);
     }
     
     /**

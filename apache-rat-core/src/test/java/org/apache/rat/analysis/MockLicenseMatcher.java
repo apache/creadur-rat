@@ -25,7 +25,7 @@ import java.util.List;
 
 public class MockLicenseMatcher implements IHeaderMatcher {
 
-    public final List<String> lines = new ArrayList<String>();
+    public final List<String> lines = new ArrayList<>();
     public int resets = 0;
     public boolean result = true;
 

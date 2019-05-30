@@ -52,7 +52,7 @@ public final class ScmIgnoreParser {
      */
     public static List<String> getExcludesFromFile(final Log log, final File scmIgnore) {
 
-        final List<String> exclusionLines = new ArrayList<String>();
+        final List<String> exclusionLines = new ArrayList<>();
 
         if (scmIgnore != null && scmIgnore.exists() && scmIgnore.isFile()) {
             log.info("Parsing exclusions from " + scmIgnore);
@@ -84,7 +84,7 @@ public final class ScmIgnoreParser {
      * @return Exclusions from the SCM ignore files.
      */
     public static List<String> getExclusionsFromSCM(final Log log, final File baseDir) {
-        List<String> exclusions = new ArrayList<String>();
+        List<String> exclusions = new ArrayList<>();
         for (SourceCodeManagementSystems scm : SourceCodeManagementSystems.values()) {
             if (scm.hasIgnoreFile()) {
                 exclusions.addAll(getExcludesFromFile(log, new File(baseDir, scm.getIgnoreFile())));

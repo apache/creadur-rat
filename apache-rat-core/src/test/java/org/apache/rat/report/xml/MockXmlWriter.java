@@ -26,7 +26,7 @@ import java.util.List;
 
 public class MockXmlWriter implements IXmlWriter {
 
-    public final List<Object> calls = new ArrayList<Object>();
+    public final List<Object> calls = new ArrayList<>();
     
     public IXmlWriter attribute(CharSequence name, CharSequence value)
             throws IOException {

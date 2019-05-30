@@ -41,7 +41,7 @@ import java.util.List;
 public class XmlReportFactory {
     public static final RatReport createStandardReport(IXmlWriter writer,
             final ClaimStatistic pStatistic, ReportConfiguration pConfiguration) {
-        final List<RatReport> reporters = new ArrayList<RatReport>();
+        final List<RatReport> reporters = new ArrayList<>();
         if (pStatistic != null) {
             reporters.add(new ClaimAggregator(pStatistic));
         }

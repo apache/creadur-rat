@@ -49,7 +49,7 @@ public class GPL123LicenseTest {
      */
     @Before
     public void initLicensesUnderTest() {
-        licenseStringMap = new HashMap<IHeaderMatcher, String>();
+        licenseStringMap = new HashMap<>();
         licenseStringMap.put(new GPL1License(), GPL1License.FIRST_LICENSE_LINE);
         licenseStringMap.put(new GPL2License(), GPL2License.FIRST_LICENSE_LINE);
         licenseStringMap.put(new GPL3License(), GPL3License.FIRST_LICENSE_LINE);

@@ -65,7 +65,7 @@ public class XmlReportTest {
             }            
         };
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcher);
-        final List<AbstractReport> reporters = new ArrayList<AbstractReport>();
+        final List<AbstractReport> reporters = new ArrayList<>();
         reporters.add(reporter);
         report = new ClaimReporterMultiplexer(analyser, reporters); 
     }

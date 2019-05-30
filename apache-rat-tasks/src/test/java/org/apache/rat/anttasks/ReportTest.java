@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
@@ -105,7 +106,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         BufferedReader breader = null;
         try {
             fis = new FileInputStream(pFile);
-            reader = new InputStreamReader(fis, "UTF8");
+            reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
             breader = new BufferedReader(reader);
             final String result = breader.readLine();
             breader.close();
@@ -151,9 +152,8 @@ public class ReportTest extends AbstractRatAntTaskTest {
         buildRule.executeTarget("testISO88591WithReportFile");
         overrideFileEncoding(origEncoding);
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        FileInputStream fis = new FileInputStream(selftestOutput);
-        boolean documentParsed = false;
-        try {
+        try (FileInputStream fis = new FileInputStream(selftestOutput)) {
+            boolean documentParsed = false;
             Document doc = db.parse(fis);
             boolean byteSequencePresent = doc.getElementsByTagName("header-sample")
                     .item(0)
@@ -163,8 +163,6 @@ public class ReportTest extends AbstractRatAntTaskTest {
             documentParsed = true;
         } catch (Exception ex) {
             documentParsed = false;
-        } finally {
-            fis.close();
         }
         assertTrue("Report file could not be parsed as XML", documentParsed);
     }

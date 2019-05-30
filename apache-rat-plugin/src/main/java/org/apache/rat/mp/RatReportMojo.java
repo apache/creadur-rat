@@ -128,7 +128,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
 
         final DecorationModel model = new DecorationModel();
         model.setBody(new Body());
-        final Map<String, String> attributes = new HashMap<String, String>();
+        final Map<String, String> attributes = new HashMap<>();
         attributes.put("outputEncoding", "UTF-8");
         final Locale locale = Locale.getDefault();
         try {
@@ -151,11 +151,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
 
             siteRenderer.copyResources(siteContext, new File(getProject().getBasedir(), "src/site/resources"),
                     outputDirectory);
-        } catch (IOException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        } catch (MavenReportException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        } catch (RendererException e) {
+        } catch (IOException | RendererException | MavenReportException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
@@ -223,9 +219,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
         sink.verbatim(true);
         try {
             sink.text(createReport(Defaults.getDefaultStyleSheet()));
-        } catch (MojoExecutionException e) {
-            throw new MavenReportException(e.getMessage(), e);
-        } catch (MojoFailureException e) {
+        } catch (MojoExecutionException | MojoFailureException e) {
             throw new MavenReportException(e.getMessage(), e);
         }
         sink.verbatim_();

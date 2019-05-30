@@ -33,9 +33,9 @@ import java.util.Map;
  */
 public class ClaimAggregator extends AbstractClaimReporter {
     private final ClaimStatistic statistic;
-    private final Map<String, Integer> numsByLicenseFamilyName = new HashMap<String, Integer>();
-    private final Map<String, Integer> numsByLicenseFamilyCode = new HashMap<String, Integer>();
-    private final Map<String, Integer> numsByFileType = new HashMap<String, Integer>();
+    private final Map<String, Integer> numsByLicenseFamilyName = new HashMap<>();
+    private final Map<String, Integer> numsByLicenseFamilyCode = new HashMap<>();
+    private final Map<String, Integer> numsByFileType = new HashMap<>();
     private int numApproved, numUnApproved, numGenerated, numUnknown;
 
     public ClaimAggregator(ClaimStatistic pStatistic) {

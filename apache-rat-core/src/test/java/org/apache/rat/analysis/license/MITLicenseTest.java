@@ -44,7 +44,7 @@ public class MITLicenseTest {
      */
     @Before
     public void initLicensesUnderTest() {
-        licenseStringMap = new HashMap<IHeaderMatcher, String>();
+        licenseStringMap = new HashMap<>();
         licenseStringMap.put(new MITLicense(),
                 MITLicense.FIRST_LICENSE_LINE
                         + "\n" + MITLicense.MIDDLE_LICENSE_LINE

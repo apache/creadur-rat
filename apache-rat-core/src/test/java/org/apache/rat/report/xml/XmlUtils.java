@@ -59,9 +59,7 @@ public final class XmlUtils {
         } catch (SAXException e) {
             e.printStackTrace();
             return false;
-        } catch (IOException e) {
-            throw new UndeclaredThrowableException(e);
-        } catch (ParserConfigurationException e) {
+        } catch (IOException | ParserConfigurationException e) {
             throw new UndeclaredThrowableException(e);
         }
     }

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -101,7 +102,7 @@ public class Resources {
      * Locates a resource file in the class path and returns a {@link Reader}.
      */
     public static Reader getResourceReader(String pResource) throws IOException {
-        return new InputStreamReader(getResourceStream(pResource), "UTF-8");
+        return new InputStreamReader(getResourceStream(pResource), StandardCharsets.UTF_8);
     }
 
     /**
@@ -115,7 +116,7 @@ public class Resources {
      * Locates a resource file in the class path and returns a {@link BufferedReader}.
      */
     public static BufferedReader getBufferedReader(File file) throws IOException {
-        return new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+        return new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
     }
 
     /**

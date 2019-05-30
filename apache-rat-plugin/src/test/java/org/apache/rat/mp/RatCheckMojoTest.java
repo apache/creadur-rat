@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import static junit.framework.TestCase.assertTrue;
@@ -172,7 +173,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
         BufferedReader breader = null;
         try {
             fis = new FileInputStream(pFile);
-            reader = new InputStreamReader(fis, "UTF8");
+            reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
             breader = new BufferedReader(reader);
             final String result = breader.readLine();
             breader.close();
@@ -236,8 +237,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
         }
         assertTrue(ratTxtFile.exists());
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        FileInputStream fis = new FileInputStream(ratTxtFile);
-        try {
+        try (FileInputStream fis = new FileInputStream(ratTxtFile)) {
             Document doc = db.parse(fis);
             NodeList headerSample = doc.getElementsByTagName("header-sample");
             String textContent = headerSample.item(0).getTextContent();
@@ -248,8 +248,6 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
             assertTrue("Report should contain test umlauts, got '" + textContent + "'", byteSequencePresent);
         } catch (Exception ex) {
             fail("Report file could not be parsed as XML: " + ex.getMessage());
-        } finally {
-            fis.close();
         }
     }
 

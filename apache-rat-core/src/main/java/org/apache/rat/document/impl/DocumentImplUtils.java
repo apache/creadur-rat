@@ -39,8 +39,6 @@ public class DocumentImplUtils {
         try {
             zip.getNextEntry();
             return true;
-        } catch (ZipException e) {
-            return false;
         } catch (IOException e) {
             return false;
         } finally {

@@ -115,7 +115,7 @@ public abstract class AbstractLicenseAppender {
             TYPE_VISUAL_STUDIO_SOLUTION,
     };
 
-    private static final Map<String, Integer> EXT2TYPE = new HashMap<String, Integer>();
+    private static final Map<String, Integer> EXT2TYPE = new HashMap<>();
 
     static {
         // these arrays are used in Arrays.binarySearch so they must

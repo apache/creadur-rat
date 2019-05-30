@@ -53,7 +53,7 @@ public class CDDL1LicenseTest {
 
     @BeforeClass
     public static void initLicensesUnderTest() {
-        licenseStringMap = new HashMap<IHeaderMatcher, String>();
+        licenseStringMap = new HashMap<>();
         licenseStringMap.put(new CDDL1License(), LICENSE_LINE);
         assertEquals(1, licenseStringMap.entrySet().size());
     }

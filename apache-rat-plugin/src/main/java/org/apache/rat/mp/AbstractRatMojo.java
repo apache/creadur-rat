@@ -253,7 +253,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      */
     private List<IHeaderMatcher> mergeLicenseMatchers()
             throws MojoFailureException, MojoExecutionException {
-        List<IHeaderMatcher> matchers = new ArrayList<IHeaderMatcher>();
+        List<IHeaderMatcher> matchers = new ArrayList<>();
 
         if (licenses != null) {
             matchers.addAll(Arrays.asList(licenses));
@@ -339,7 +339,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
     private void setIncludes(DirectoryScanner ds) throws MojoExecutionException {
         if ((includes != null  &&  includes.length > 0)  ||  includesFile != null) {
-        	final List<String> includeList = new ArrayList<String>();
+        	final List<String> includeList = new ArrayList<>();
         	if (includes != null) {
         		includeList.addAll(Arrays.asList(includes));
         	}
@@ -363,7 +363,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     	Reader r = null;
     	BufferedReader br = null;
     	Throwable th = null;
-    	final List<String> patterns = new ArrayList<String>();
+    	final List<String> patterns = new ArrayList<>();
     	try {
     		is = new FileInputStream(pFile);
     		bis = new BufferedInputStream(is);
@@ -421,7 +421,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     }
 
     private List<String> mergeDefaultExclusions() throws MojoExecutionException {
-        final Set<String> results = new HashSet<String>();
+        final Set<String> results = new HashSet<>();
 
         addPlexusAndScmDefaults(getLog(), useDefaultExcludes, results);
         addMavenDefaults(getLog(), useMavenDefaultExcludes, results);
@@ -466,7 +466,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         	results.addAll(getPatternsFromFile(f, charset));
         }
 
-        return new ArrayList<String>(results);
+        return new ArrayList<>(results);
     }
 
     /**
@@ -516,13 +516,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             } else {
                 return Report.report(getResources(), out, configuration);
             }
-        } catch (final TransformerConfigurationException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        } catch (final IOException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        } catch (final InterruptedException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        } catch (final RatException e) {
+        } catch (final TransformerConfigurationException | RatException | InterruptedException | IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
@@ -539,7 +533,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
     private List<ILicenseFamily> mergeApprovedLicenseNames()
             throws MojoExecutionException, MojoFailureException {
-        final List<ILicenseFamily> list = new ArrayList<ILicenseFamily>();
+        final List<ILicenseFamily> list = new ArrayList<>();
         if (licenseFamilies != null) {
             getLog().info("Added " + licenseFamilies.length + " custom approved licenses.");
             list.addAll(Arrays.asList(licenseFamilies));

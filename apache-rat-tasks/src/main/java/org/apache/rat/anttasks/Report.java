@@ -72,9 +72,9 @@ public class Report extends Task {
     /**
      * The licenses we want to match on.
      */
-    private final ArrayList<IHeaderMatcher> licenseMatchers = new ArrayList<IHeaderMatcher>();
+    private final ArrayList<IHeaderMatcher> licenseMatchers = new ArrayList<>();
 
-    private final ArrayList<ILicenseFamily> licenseNames = new ArrayList<ILicenseFamily>();
+    private final ArrayList<ILicenseFamily> licenseNames = new ArrayList<>();
 
     /**
      * Whether to add the default list of license matchers.
@@ -199,14 +199,8 @@ public class Report extends Task {
             }
             createReport(out);
             out.flush();
-        } catch (IOException ioex) {
+        } catch (IOException | RatException | InterruptedException | TransformerException ioex) {
             throw new BuildException(ioex);
-        } catch (TransformerException e) {
-            throw new BuildException(e);
-        } catch (InterruptedException e) {
-            throw new BuildException(e);
-        } catch (RatException e) {
-            throw new BuildException(e);
         } finally {
             IOUtils.closeQuietly(out);
         }
@@ -292,13 +286,13 @@ public class Report extends Task {
      * required) into a single array.
      */
     private List<IHeaderMatcher> getLicenseMatchers() {
-        List<IHeaderMatcher> matchers = new ArrayList<IHeaderMatcher>(
-        (addDefaultLicenseMatchers ? Defaults.DEFAULT_MATCHERS.size() : 0) + licenseMatchers.size());
+        List<IHeaderMatcher> matchers = new ArrayList<>(
+                (addDefaultLicenseMatchers ? Defaults.DEFAULT_MATCHERS.size() : 0) + licenseMatchers.size());
         if (addDefaultLicenseMatchers) {
             matchers.addAll(Defaults.DEFAULT_MATCHERS);
             matchers.addAll(licenseMatchers);
         } else {
-            matchers = new ArrayList<IHeaderMatcher>(licenseMatchers);
+            matchers = new ArrayList<>(licenseMatchers);
         }
         return matchers;
     }
