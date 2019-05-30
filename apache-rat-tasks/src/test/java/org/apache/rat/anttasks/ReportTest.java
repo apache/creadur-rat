@@ -152,8 +152,8 @@ public class ReportTest extends AbstractRatAntTaskTest {
         buildRule.executeTarget("testISO88591WithReportFile");
         overrideFileEncoding(origEncoding);
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        boolean documentParsed = false;
         try (FileInputStream fis = new FileInputStream(selftestOutput)) {
-            boolean documentParsed = false;
             Document doc = db.parse(fis);
             boolean byteSequencePresent = doc.getElementsByTagName("header-sample")
                     .item(0)
