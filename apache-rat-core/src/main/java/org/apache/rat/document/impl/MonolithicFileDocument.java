@@ -32,8 +32,6 @@ import org.apache.rat.api.Document;
 
 
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
-    private static final String UTF_8 = "UTF-8";
-
     private static final String FILE_URL_PREFIX = "file";
 
     private final File file;
