@@ -44,7 +44,7 @@ agnostic home for software distribution comprehension and audit tools.
   <inceptionYear>2006</inceptionYear>
   <properties>
     <ant.version>1.9.14</ant.version>
-    <javaVersion>6</javaVersion>
+    <javaVersion>7</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
@@ -119,7 +119,7 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
         <!--  later versions require Java 1.6+ -->
-        <version>1.12</version>
+        <version>1.18</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
