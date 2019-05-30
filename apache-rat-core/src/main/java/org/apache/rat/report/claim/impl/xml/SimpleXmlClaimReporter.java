@@ -132,7 +132,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         try {
             writer.openElement(RAT_REPORT)
                 .attribute(TIMESTAMP,
-                           DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT
+                           DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT
                            .format(Calendar.getInstance()));
         } catch (IOException e) {
             throw new RatException("Cannot open start element", e);
