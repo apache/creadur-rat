@@ -44,7 +44,7 @@ agnostic home for software distribution comprehension and audit tools.
   <inceptionYear>2006</inceptionYear>
   <properties>
     <ant.version>1.9.14</ant.version>
-    <javaVersion>1.5</javaVersion>
+    <javaVersion>6</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
@@ -473,15 +473,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.11</version>
-        <dependencies>
-          <!-- Upgrade ASM and support Java 8 bytecode -->
-          <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-all</artifactId>
-            <version>5.0.3</version>
-          </dependency>
-        </dependencies>
+        <version>1.16</version>
         <executions>
           <execution>
             <!-- This checks the source code of our project -->
@@ -490,7 +482,7 @@ agnostic home for software distribution comprehension and audit tools.
               be changed manually when we decide to move to a higher version of
               Java
             -->
-            <id>check-java-1.5-compat</id>
+            <id>check-java-1.6-compat</id>
             <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
@@ -498,7 +490,7 @@ agnostic home for software distribution comprehension and audit tools.
             <configuration>
               <signature>
                 <groupId>org.codehaus.mojo.signature</groupId>
-                <artifactId>java15</artifactId>
+                <artifactId>java16</artifactId>
                 <version>1.0</version>
               </signature>
             </configuration>

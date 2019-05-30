@@ -1,6 +1,11 @@
 language: java
 jdk:
   - openjdk8
+  - openjdk9
+  - openjdk10
+  - openjdk11
+# Not possible with language level 1.6
+#  - openjdk12
 #before_script:
 #  - pip install --user codecov
 
