@@ -23,17 +23,16 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Test to see if short form license informations will be correctly recognized.
+ * Test to see if short form license information will be recognized correctly.
  * 
- * @see https://www.apache.org/legal/src-headers.html#is-a-short-form-of-the-
- *      source-header-available
+ * @see  <a href="https://www.apache.org/legal/src-headers.html#is-a-short-form-of-the-source-header-available">https://www.apache.org/legal/src-headers.html#is-a-short-form-of-the-source-header-available</a>
  * 
  * @author Karl Heinz Marbaise
  *
  */
 public class ApacheSoftwareLicense20ShortTest {
 
-	public static final String SHORT_LICENSE = "Licensed to the Apache Software Foundation (ASF) "
+	private static final String SHORT_LICENSE = "Licensed to the Apache Software Foundation (ASF) "
 			+ "under one or more contributor license agreements; and to You under the Apache License, Version 2.0.";
 
 	@Test
@@ -43,7 +42,7 @@ public class ApacheSoftwareLicense20ShortTest {
 	}
 
 	@Test
-	public void apacheShortLicenseShouldBeIdentifiedWithDifferentPreAndPostFixes() throws Exception {
+	public void apacheShortLicenseShouldBeIdentifiedWithDifferentPreAndPostFixes() {
 		ApacheSoftwareLicense20 worker = new ApacheSoftwareLicense20();
 		assertTrue(worker.matches(SHORT_LICENSE));
 		assertTrue(worker.matches("# " + SHORT_LICENSE));

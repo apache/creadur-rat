@@ -35,7 +35,6 @@ import org.apache.rat.walker.DirectoryWalker;
 import javax.xml.transform.TransformerConfigurationException;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
