@@ -110,10 +110,10 @@ agnostic home for software distribution comprehension and audit tools.
         <version>2.5</version>
       </dependency>
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <!--  commons-lang3 versions require Java 1.6+ -->
-        <version>2.6</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <!--  later versions require Java 1.6+ -->
+        <version>3.5</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>

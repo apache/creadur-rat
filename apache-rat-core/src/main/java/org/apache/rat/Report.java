@@ -21,7 +21,7 @@ package org.apache.rat;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -34,6 +34,8 @@ import org.apache.rat.walker.DirectoryWalker;
 
 import javax.xml.transform.TransformerConfigurationException;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -85,7 +87,7 @@ public class Report {
             } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
                 String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
                 if (excludeFileName != null) {
-                    final FilenameFilter filter = parseExclusions(FileUtils.readLines(new File(excludeFileName)));
+                    final FilenameFilter filter = parseExclusions(FileUtils.readLines(new File(excludeFileName), Charset.forName("UTF-8")));
                     report.setInputFileFilter(filter);
                 }
             }
