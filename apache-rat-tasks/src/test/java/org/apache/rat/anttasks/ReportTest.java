@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
+import org.junit.Test;
 import org.w3c.dom.Document;
 
 import static org.junit.Assert.*;
@@ -42,11 +43,13 @@ public class ReportTest extends AbstractRatAntTaskTest {
         return antFile;
     }
 
+    @Test
     public void testWithReportSentToAnt() throws Exception {
         buildRule.executeTarget("testWithReportSentToAnt");
         assertLogMatches("AL +\\Q" + getAntFileName() + "\\E");
     }
 
+    @Test
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
         if (!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
@@ -62,18 +65,21 @@ public class ReportTest extends AbstractRatAntTaskTest {
         assertFileMatches(reportFile, alLine);
     }
 
+    @Test
     public void testWithALUnknown() throws Exception {
         buildRule.executeTarget("testWithALUnknown");
         assertLogDoesNotMatch("AL +\\Q" + getAntFileName() + "\\E");
         assertLogMatches("\\!\\?\\?\\?\\?\\? +\\Q" + getAntFileName() + "\\E");
     }
 
+    @Test
     public void testCustomMatcher() throws Exception {
         buildRule.executeTarget("testCustomMatcher");
         assertLogDoesNotMatch("AL +\\Q" + getAntFileName() + "\\E");
         assertLogMatches("EXMPL +\\Q" + getAntFileName() + "\\E");
     }
 
+    @Test
     public void testNoResources() throws Exception {
         try {
             buildRule.executeTarget("testNoResources");
@@ -85,6 +91,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         }
     }
 
+    @Test
     public void testNoLicenseMatchers() throws Exception {
         try {
             buildRule.executeTarget("testNoLicenseMatchers");
@@ -118,6 +125,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         }
     }
 
+    @Test
     public void testAddLicenseHeaders() throws Exception {
         buildRule.executeTarget("testAddLicenseHeaders");
 
@@ -134,6 +142,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     /**
      * Test correct generation of string result if non-UTF8 file.encoding is set.
      */
+    @Test
     public void testISO88591() throws Exception {
         String origEncoding = overrideFileEncoding("ISO-8859-1");
         buildRule.executeTarget("testISO88591");
@@ -144,6 +153,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     /**
      * Test correct generation of XML file if non-UTF8 file.encoding is set.
      */
+    @Test
     public void testISO88591WithFile() throws Exception {
         Charset.defaultCharset();
         String outputDir = System.getProperty("output.dir", "target/anttasks");
