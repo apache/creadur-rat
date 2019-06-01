@@ -44,11 +44,7 @@ agnostic home for software distribution comprehension and audit tools.
   <inceptionYear>2006</inceptionYear>
   <properties>
     <ant.version>1.9.14</ant.version>
-<<<<<<< HEAD
     <javaVersion>1.7</javaVersion>
-=======
-    <javaVersion>1.6</javaVersion>
->>>>>>> 5277f23e... RAT-244: Fix site build
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
