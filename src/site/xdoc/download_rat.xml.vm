@@ -107,15 +107,6 @@ limitations under the License.
           </tr>
         </table>
       </subsection>
-      <section name="${project.name} ${project.version}">
-        <subsection name="Snapshots">
-          <table>
-            <tr>
-                <td colspan="4"><a href="https://repository.apache.org/content/repositories/snapshots/org/apache/rat">apache-rat SNAPSHOT ${project.version}</a></td>
-            </tr>
-          </table>
-        </subsection>
-        </section>
     </section>
     <section name="Archives">
         <p>
