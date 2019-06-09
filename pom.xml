@@ -49,27 +49,6 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
     <mavenVersion>2.2.1</mavenVersion>
-    <!--
-    Publication to the website is a two phase operation:
-
-     1. Deploy to local stage: mvn site-deploy
-     2. Publish to Apache CMS: mvn scm-publish:publish-scm
-
-    This will only work when the origin for scm-publish:publish-scm
-    is the target for site:deploy.
-
-    SO MAKE SURE THAT THE FOLLOWING PROPERTIES RESOLVE TO THE SAME
-    DIRECTORY:
-
-     * scmpublish.content
-     * rat.site.url
-
-    -->
-    <rat.LocalSiteStaging>stage</rat.LocalSiteStaging>
-    <scmpublish.content>${rat.LocalSiteStaging}</scmpublish.content>
-    <rat.site.url>file:${rat.LocalSiteStaging}</rat.site.url>
-    <rat.site.name>Apache Rat Website</rat.site.name>
-    <rat.site.id>org.apache.rat.site</rat.site.id>
     <creadur.jira.id>RAT</creadur.jira.id>
     <!-- maven plugin versions -->
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
@@ -362,16 +341,6 @@ agnostic home for software distribution comprehension and audit tools.
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-scm-publish-plugin</artifactId>
-          <version>1.0</version>
-          <extensions>true</extensions>
-          <configuration>
-            <!-- svn location for publication -->
-            <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/creadur/site/trunk/content/rat/</pubScmUrl>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5.3</version>
           <configuration>
@@ -629,13 +598,6 @@ agnostic home for software distribution comprehension and audit tools.
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/creadur-rat.git</developerConnection>
     <url>https://gitbox.apache.org/repos/asf?p=creadur-rat.git</url>
   </scm>
-  <distributionManagement>
-    <site>
-      <id>${rat.site.id}</id>
-      <name>${rat.site.name}</name>
-      <url>${rat.site.url}</url>
-    </site>
-  </distributionManagement>
   <modules>
     <module>apache-rat-api</module>
     <module>apache-rat-core</module>
