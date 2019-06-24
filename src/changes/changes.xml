@@ -59,7 +59,7 @@ The <action> type attribute can be add,update,fix,remove.
         Properly finish move to gitbox/github, get rid of SVN references and adapt main branch to master and fix all Jenkins build jobs for RAT.
       </action>
       <action issue="RAT-244" type="add" dev="pottlinger">
-        Update compiler level to 1.6 to allow building with more recent JDKs. Update plugins and dependencies to more modern versions to fix security issues.
+        Update compiler level to 1.7 to allow building with more recent JDKs. Update plugins and dependencies to more modern versions to fix security issues (CVE-warnings).
       </action>
       <action issue="RAT-212" type="add" due-to="Niels Basjes" dev="pottlinger">
         Add alternative https URLs in Apache License, Version 2.0 to allow automatic recognition as valid ASF2.0.
