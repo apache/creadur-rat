@@ -128,7 +128,7 @@ public class Report {
                 }
 
                 String exclusion = exclude.trim();
-                // interpret given patterns regular expression, direct file names or wildcards to give users more choices to configure exclusions
+                // interpret given patterns as regular expression, direct file names or wildcards to give users more choices to configure exclusions
                 orFilter.addFileFilter(new RegexFileFilter(exclusion));
                 orFilter.addFileFilter(new NameFileFilter(exclusion));
                 orFilter.addFileFilter(new WildcardFileFilter(exclusion));
@@ -144,7 +144,7 @@ public class Report {
         Options opts = new Options();
 
         Option help = new Option(HELP, "help", false,
-                "Print help for the Rat command line interface and exit");
+                "Print help for the RAT command line interface and exit");
         opts.addOption(help);
 
         OptionGroup addLicenseGroup = new OptionGroup();
@@ -229,7 +229,7 @@ public class Report {
 
     private static void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
-        String header = "Options";
+        String header = "\nAvailable options";
 
         String footer = "\nNOTE:\n" +
                 "Rat is really little more than a grep ATM\n" +
@@ -240,7 +240,7 @@ public class Report {
                 "Rat often requires some tuning before it runs well against a project\n" +
                 "Rat relies on heuristics: it may miss issues\n";
 
-        f.printHelp("java rat.report [options] [DIR|TARBALL]",
+        f.printHelp("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]",
                 header, opts, footer, false);
         System.exit(0);
     }
