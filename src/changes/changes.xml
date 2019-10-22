@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2019-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-257" type="fix" dev="pottlinger">
+        Adapt help text for CLI usage of RAT.
+      </action>
       <action issue="RAT-254" type="add" dev="pottlinger">
         Properly finish move to gitbox/github, get rid of SVN references and adapt main branch to master and fix all Jenkins build jobs for RAT.
       </action>
