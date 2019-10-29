@@ -92,13 +92,13 @@
           </excludes>
           <archive>
             <manifestEntries>
-              <Main-Class>org.apache.rat.Report</Main-Class>
+              <Main-Class>org.apache.rat.cli.RatCommandLine</Main-Class>
               <Extension-Name>rat</Extension-Name>
               <Specification-Title>Apache Rat</Specification-Title>
               <Specification-Vendor>apache.org</Specification-Vendor>
               <Specification-Version>${project.version}</Specification-Version>
               <Implementation-Vendor-Id>apache.org</Implementation-Vendor-Id>
-              <Implementation-Title>Apache Rat</Implementation-Title>
+              <Implementation-Title>Apache Creadur RAT</Implementation-Title>
               <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
               <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
