@@ -28,9 +28,8 @@ import static org.junit.Assert.assertNotNull;
 
 public class RatCommandLineTest {
     @Test
-    public void parseExclusionsForCLIUsage() throws IOException {
+    public void parseExclusions() throws IOException {
         final FilenameFilter filter = RatCommandLine.parseExclusions(Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertNotNull(filter);
     }
-
 }
