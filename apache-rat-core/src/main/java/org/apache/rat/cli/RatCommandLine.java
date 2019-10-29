@@ -55,11 +55,13 @@ public class RatCommandLine {
 
         if (cl.hasOption(HELP)) {
             printUsage(opts);
+            System.exit(0);
         }
 
         args = cl.getArgs();
         if (args == null || args.length != 1) {
             printUsage(opts);
+            System.exit(0);
         } else {
             Report report = new Report(new File(args[0]));
 
@@ -235,7 +237,6 @@ public class RatCommandLine {
 
         f.printHelp("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]",
                 header, opts, footer, false);
-        System.exit(0);
     }
 
 }
