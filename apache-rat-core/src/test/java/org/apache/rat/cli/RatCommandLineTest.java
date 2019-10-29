@@ -18,6 +18,7 @@
  */
 package org.apache.rat.cli;
 
+import org.apache.commons.cli.Options;
 import org.junit.Test;
 
 import java.io.FilenameFilter;
@@ -31,5 +32,15 @@ public class RatCommandLineTest {
     public void parseExclusions() throws IOException {
         final FilenameFilter filter = RatCommandLine.parseExclusions(Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertNotNull(filter);
+    }
+    
+    @Test
+    public void helpFormatterWorks() {
+		RatCommandLine.printUsage(new Options());
+    }
+
+    @Test
+    public void optionsCanBeGenerated() {
+		RatCommandLine.printUsage(RatCommandLine.buildOptions());
     }
 }

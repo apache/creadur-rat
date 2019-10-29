@@ -135,7 +135,7 @@ public class RatCommandLine {
     }
 
 
-    private static Options buildOptions() {
+    static Options buildOptions() {
         Options opts = new Options();
 
         Option help = new Option(HELP, "help", false,
@@ -222,7 +222,7 @@ public class RatCommandLine {
         return opts;
     }
 
-    private static void printUsage(Options opts) {
+    static void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
         String header = "\nAvailable options";
 
