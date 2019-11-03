@@ -512,9 +512,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         final ReportConfiguration configuration = getConfiguration();
         try {
             if (style != null) {
-                return Report.report(out, getResources(), style, configuration);
+                return new Report(basedir).report(out, getResources(), style, configuration);
             } else {
-                return Report.report(getResources(), out, configuration);
+                return new Report(basedir).report(getResources(), out, configuration);
             }
         } catch (final TransformerConfigurationException | RatException | InterruptedException | IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);

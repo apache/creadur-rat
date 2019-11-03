@@ -121,7 +121,7 @@ public class ReportTest {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setApproveDefaultLicenses(true);
         configuration.setHeaderMatcher(matcherMultiplexer);
-        Report.report(out, new DirectoryWalker(new File(elementsPath)),
+        new Report(null).report(out, new DirectoryWalker(new File(elementsPath)),
                 Defaults.getPlainStyleSheet(), configuration);
 
         String result = out.getBuffer().toString();

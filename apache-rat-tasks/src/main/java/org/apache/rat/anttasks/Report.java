@@ -260,8 +260,10 @@ public class Report extends Task {
             throw new BuildException("Invalid value for addLicenseHeaders: " + addLicenseHeaders.getValue());
         }
         ResourceCollectionContainer rcElement = new ResourceCollectionContainer(nestedResources);
+        // reportFile is not used from Ant to actually get the report
+        org.apache.rat.Report report = new org.apache.rat.Report(reportFile);
         if (format.getValue().equals(Format.XML_KEY)) {
-            org.apache.rat.Report.report(rcElement, out, configuration);
+            report.report(rcElement, out, configuration);
         } else {
             InputStream style = null;
             try {
@@ -273,7 +275,7 @@ public class Report extends Task {
                     throw new BuildException("unsupported format '"
                                              + format.getValue() + "'");
                 }
-                org.apache.rat.Report.report(out, rcElement, style,
+                report.report(out, rcElement, style,
                                              configuration);
             } finally {
                 FileUtils.close(style);

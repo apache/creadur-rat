@@ -150,7 +150,7 @@ public class Report {
      * @throws InterruptedException              in case of threading errors.
      * @throws RatException                      in case of internal errors.
      */
-    public static void report(PrintStream out, IReportable base, final InputStream style,
+    public void report(PrintStream out, IReportable base, final InputStream style,
                               ReportConfiguration pConfiguration)
             throws IOException, TransformerConfigurationException, InterruptedException, RatException {
         report(new OutputStreamWriter(out), base, style, pConfiguration);
@@ -169,7 +169,7 @@ public class Report {
      * @throws InterruptedException              in case of threading errors.
      * @throws RatException                      in case of internal errors.
      */
-    public static ClaimStatistic report(Writer out, IReportable base, final InputStream style,
+    public ClaimStatistic report(Writer out, IReportable base, final InputStream style,
                                         ReportConfiguration pConfiguration)
             throws IOException, TransformerConfigurationException, InterruptedException, RatException {
         PipedReader reader = new PipedReader();
@@ -192,7 +192,7 @@ public class Report {
      * @throws IOException  in case of I/O errors.
      * @throws RatException in case of internal errors.
      */
-    public static ClaimStatistic report(final IReportable container, final Writer out,
+    public ClaimStatistic report(final IReportable container, final Writer out,
                                         ReportConfiguration pConfiguration) throws IOException, RatException {
         IXmlWriter writer = new XmlWriter(out);
         final ClaimStatistic statistic = new ClaimStatistic();
