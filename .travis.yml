@@ -3,15 +3,39 @@ language: minimal
 services:
   - docker
 
+stages:
+  - lint
+  - test
+
 jobs:
   include:
-    - env: DOCKER_IMAGE=maven:3.6.2-jdk-8
-    - env: DOCKER_IMAGE=maven:3.5.4-jdk-9 # There are no newer images with Maven for this JDK
-    - env: DOCKER_IMAGE=maven:3.6.0-jdk-10 # There are no newer images with Maven for this JDK
-    - env: DOCKER_IMAGE=maven:3.6.2-jdk-11
-    - env: DOCKER_IMAGE=maven:3.6.2-jdk-12
-    - env: DOCKER_IMAGE=maven:3.6.2-jdk-13
-    - env: DOCKER_IMAGE=maven:3.6.2-jdk-14
+    - stage: lint
+      env: RAT_VERSION="0.13" DOCKER_IMAGE="gcr.io/distroless/java:11"
+      script:
+      - JAR_FILE="/opt/rat/apache-rat.jar"
+      - JAR_URL="https://repo1.maven.org/maven2/org/apache/rat/apache-rat/${RAT_VERSION}/apache-rat-${RAT_VERSION}.jar"
+      - mkdir -p "$(dirname "${JAR_FILE}")"
+      - curl -sL "${JAR_URL}" > "${JAR_FILE}"
+      - curl -sL "${JAR_URL}.md5" > "${JAR_FILE}.md5"
+      - md5sum -c <<< "$(cat "${JAR_FILE}.md5") ${JAR_FILE}"
+      - docker run
+        --volume "$PWD":/src/
+        --volume /opt/rat/:/opt/rat/
+        "${DOCKER_IMAGE}" /opt/rat/apache-rat.jar -d /src
+    - stage: test
+      env: DOCKER_IMAGE=maven:3.6.2-jdk-8
+    - stage: test
+      env: DOCKER_IMAGE=maven:3.5.4-jdk-9 # There are no newer images with Maven for this JDK
+    - stage: test
+      env: DOCKER_IMAGE=maven:3.6.0-jdk-10 # There are no newer images with Maven for this JDK
+    - stage: test
+      env: DOCKER_IMAGE=maven:3.6.2-jdk-11
+    - stage: test
+      env: DOCKER_IMAGE=maven:3.6.2-jdk-12
+    - stage: test
+      env: DOCKER_IMAGE=maven:3.6.2-jdk-13
+    - stage: test
+      env: DOCKER_IMAGE=maven:3.6.2-jdk-14
 
 install:
   - docker pull "${DOCKER_IMAGE}"
