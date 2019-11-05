@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2019-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-260" type="fix" due-to="Kamil Breguła" dev="pottlinger">
+        Change to docker image when building on Travis to avoid JDK version mixup in traditional build setup.
+      </action>
       <action issue="RAT-258" type="fix" dev="pottlinger">
         Update to latest commons-compress to fix CVE-2019-12402.
       </action>
