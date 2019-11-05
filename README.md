@@ -1,6 +1,6 @@
 # Apache Creadur Rat - Build status
 
-Travis: [![Build Status](https://api.travis-ci.org/apache/creadur-rat.svg?branch=trunk)](https://travis-ci.org/apache/creadur-rat)
+Travis: [![Build Status](https://travis-ci.org/apache/creadur-rat.svg?branch=master)](https://travis-ci.org/apache/creadur-rat.svg?branch=master)
 
 As of 2019-06 the build is failing on Travis since - due to a bug in the underlying Ubuntu operating system - changing the JDK version does not happen properly, which results in animal-sniffer-plugin errors due to a mix of JDKs.
 
