@@ -1,15 +1,25 @@
-language: java
-jdk:
-  - openjdk8
-  - openjdk9
-  - openjdk10
-  - openjdk11
-  - openjdk12
-#before_script:
-#  - pip install --user codecov
+language: minimal
 
-#after_success:
-#  - codecov
+services:
+  - docker
 
-#addons:
-#  srcclr: true 
+jobs:
+  include:
+    - env: DOCKER_IMAGE=maven:3.6.2-jdk-8
+    - env: DOCKER_IMAGE=maven:3.5.4-jdk-9 # There are no newer images with Maven for this JDK
+    - env: DOCKER_IMAGE=maven:3.6.0-jdk-10 # There are no newer images with Maven for this JDK
+    - env: DOCKER_IMAGE=maven:3.6.2-jdk-11
+    - env: DOCKER_IMAGE=maven:3.6.2-jdk-12
+    - env: DOCKER_IMAGE=maven:3.6.2-jdk-13
+    - env: DOCKER_IMAGE=maven:3.6.2-jdk-14
+
+install:
+  - docker pull "${DOCKER_IMAGE}"
+
+script:
+  - docker run
+    --env "_JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true"
+    --volume "$PWD":/usr/src/
+    --workdir /usr/src/
+    --rm
+    "${DOCKER_IMAGE}" mvn clean test -B
