@@ -17,3 +17,8 @@
 .idea/*
 */.idea
 /target/
+# Eclipse generates new ignore files after project import
+apache-rat-core/.gitignore
+apache-rat-plugin/.gitignore
+apache-rat-tasks/.gitignore
+apache-rat/.gitignore
