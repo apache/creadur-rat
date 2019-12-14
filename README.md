@@ -1,6 +1,6 @@
 # Apache Creadur Rat - Build status
 
-Travis: [![Build Status](https://travis-ci.org/apache/creadur-rat.svg?branch=master)](https://travis-ci.org/apache/creadur-rat.svg?branch=master)
+Travis: [![Build Status](https://travis-ci.org/apache/creadur-rat.svg?branch=master)](https://travis-ci.org/apache/creadur-rat)
 ASF Jenkins: [![ASF Jenkins Build Status](https://builds.apache.org/buildStatus/icon?job=Creadur-Rat&style=plastic)](https://builds.apache.org/view/A-D/view/Creadur/job/Creadur-Rat/)
 
 ## What is RAT?
