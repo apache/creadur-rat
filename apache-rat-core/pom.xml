@@ -67,6 +67,8 @@
               <exclude>src/test/resources/binaries/Image-png.not</exclude>
               <!-- These files have a valid license header that was not recognised by older rat versions -->
               <exclude>src/test/resources/elements/TextHttps.txt</exclude>
+              <!-- Remove after using RAT 0.14 for dog-fooding ..... older versions do not ignore JSON -->
+              <exclude>src/test/resources/elements/plain.json</exclude>
             </excludes>
           </configuration>
         </plugin>
