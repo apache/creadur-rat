@@ -86,7 +86,7 @@ public class XmlReportTest {
         assertTrue("Preamble and document element are OK",
                    output.startsWith("<?xml version='1.0'?>" +
                 "<rat-report timestamp="));
-        assertTrue("Part after timestamp attribute is OK",
+        assertTrue(output+"Part after timestamp attribute is OK",
                    output.endsWith(">" +
                     "<resource name='" + elementsPath + "/Image.png'><type name='binary'/></resource>" +
                     "<resource name='" + elementsPath + "/LICENSE'><type name='notice'/></resource>" +
@@ -208,7 +208,8 @@ public class XmlReportTest {
 "end\n" +
 "\n" +
                 "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
-                    "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
+                           "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
+                           "<resource name='" + elementsPath + "/plain.json'><type name='binary'/></resource>" +
                     "<resource name='" + elementsPath + "/sub/Empty.txt'><header-sample>\n</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>" +
                     "</rat-report>"));
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
