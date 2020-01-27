@@ -228,7 +228,9 @@ public class BinaryGuesser {
             "RAJ", "CERT",
             "KS", "ODP", "SWF",
             // fonts
-            "WOFF2", "WOFF", "TTF", "EOT"
+            "WOFF2", "WOFF", "TTF", "EOT",
+            // JSON structure does not allow comments/license injections in the way RAT expects it
+            "JSON"
     };
 
     private static final String[] EXE_EXTENSIONS = {

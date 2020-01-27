@@ -48,7 +48,7 @@ public class ReportTest {
     private static String getElementsReports(String pElementsPath) {
         return
                 NL + "Notes: 2" + NL +//
-                        "Binaries: 1" + NL +//
+                        "Binaries: 2" + NL +//
                         "Archives: 1" + NL +//
                         "Standards: 7" + NL +//
                         "" + NL +//
@@ -88,6 +88,7 @@ public class ReportTest {
                         "  AL    " + pElementsPath + "/Xml.xml" + NL +//
                         "  AL    " + pElementsPath + "/buildr.rb" + NL +//
                         "  A     " + pElementsPath + "/dummy.jar" + NL +//
+                        "  B     " + pElementsPath + "/plain.json" + NL +//
                         " !????? " + pElementsPath + "/sub/Empty.txt" + NL +//
                         " " + NL +//
                         PARAGRAPH + NL +//
