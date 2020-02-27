@@ -54,7 +54,10 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
-    <release version="0.14-SNAPSHOT" date="2019-xx-xx" description="Current SNAPSHOT - to be done">
+    <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-267" type="fix" due-to="Fabio Utzig" dev="pottlinger">
+        Report ignored lines from exclusion file to stderr instead of std to not generate erroneous JSON.
+      </action>
       <action issue="RAT-266" type="add" due-to="Michael Osipov" dev="pottlinger">
         Add .factorypath to Eclipse-default exclusions.
       </action>
