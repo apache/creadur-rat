@@ -130,7 +130,7 @@ public class RatCommandLine {
                 System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
             }
         }
-        System.out.println("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
+        System.err.println("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
         return new NotFileFilter(orFilter);
     }
 
