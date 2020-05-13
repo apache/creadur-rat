@@ -48,6 +48,7 @@ import javax.xml.transform.TransformerConfigurationException;
 
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -438,7 +439,12 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 && project.getModules() != null) {
             for (final Object o : project.getModules()) {
                 final String moduleSubPath = (String) o;
-                results.add(moduleSubPath + "/**/*");
+                if (new File( basedir, moduleSubPath ).isDirectory()) {
+                    results.add(moduleSubPath + "/**/*");
+                }
+                else {
+                    results.add(StringUtils.substringBeforeLast( moduleSubPath, "/" ) + "/**/*");
+                }
             }
         }
 
