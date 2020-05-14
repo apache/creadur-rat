@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-268" type="fix" due-to="Robert Scholte" dev="pottlinger">
+        Allow handling of pom-file-only projects by not assuming that all modules are in directories.
+      </action>
       <action issue="RAT-267" type="fix" due-to="Fabio Utzig" dev="pottlinger">
         Report ignored lines from exclusion file to stderr instead of std to not generate erroneous JSON.
       </action>
