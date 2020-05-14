@@ -85,7 +85,7 @@
           <configuration>
             <excludes>
               <!-- These files do not have license headers because they are used to test license headers -->
-              <exclude>src/it/it1/src.apt</exclude>
+              <exclude>src/it/**/src.apt</exclude>
               <exclude>src/test/resources/unit/it2/src.txt</exclude>
               <exclude>src/test/resources/unit/it3/src.apt</exclude>
               <exclude>src/test/resources/unit/it4/*.html</exclude>
@@ -131,13 +131,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.10</version>
         <configuration>
-          <projectsDirectory>src/it</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/invoker</cloneProjectsTo>
-          <pomIncludes>
-            <pomInclude>*/pom.xml</pomInclude>
-          </pomIncludes>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <settingsFile>src/it/settings.xml</settingsFile>
           <postBuildHookScript>verify</postBuildHookScript>
@@ -246,6 +241,11 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>3.0.21</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.5</version>
     </dependency>
   </dependencies>
   <reporting>
