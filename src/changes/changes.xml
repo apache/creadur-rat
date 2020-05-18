@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-269" type="fix" dev="pottlinger">
+        Update to latest Apache Ant to fix CVE-2020-1945.
+      </action>
       <action issue="RAT-268" type="fix" due-to="Robert Scholte" dev="pottlinger">
         Allow handling of pom-file-only projects by not assuming that all modules are in directories.
       </action>
