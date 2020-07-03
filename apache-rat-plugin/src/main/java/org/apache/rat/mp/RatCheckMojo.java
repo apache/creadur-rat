@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Run Rat to perform a violation check.
@@ -93,11 +94,11 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     /**
      * Whether to output the names of files that have unapproved licenses to the
-     * console.
+     * console. Defaults to {@code true} to ease builds in containers where you are unable to access rat.txt easily.
      *
      * @since 0.12
      */
-    @Parameter(property = "rat.consoleOutput", defaultValue = "false")
+    @Parameter(property = "rat.consoleOutput", defaultValue = "true")
     private boolean consoleOutput;
 
     private ClaimStatistic getRawReport()
@@ -106,7 +107,7 @@ public class RatCheckMojo extends AbstractRatMojo {
         try {
             fw = new OutputStreamWriter(
                    new FileOutputStream(reportFile),
-                   Charset.forName("UTF-8"));
+                    StandardCharsets.UTF_8);
             final ClaimStatistic statistic = createReport(fw, getStyleSheet());
             fw.close();
             fw = null;
