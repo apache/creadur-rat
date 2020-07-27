@@ -19,13 +19,11 @@
  */
 pipeline {
 
-    /* Hopefully we won't need this on the newer infra ...
     agent {
         node {
             label 'ubuntu'
         }
     }
-    */
 
     environment {
         // It seems the login the jenkins slave uses, doesn't pick up the environment changes,
@@ -46,7 +44,7 @@ pipeline {
 
     tools {
         maven 'Maven 3 (latest)'
-        jdk 'JDK 14 (latest)'
+        jdk 'JDK 8 (latest)'
     }
 
     options {
