@@ -19,7 +19,7 @@
  */
 pipeline {
 
-    /** Hopefully we won't need this on the newer infra ...
+    /* Hopefully we won't need this on the newer infra ...
     agent {
         node {
             label 'ubuntu'
@@ -95,20 +95,7 @@ pipeline {
             }
         }
 
-/*
-        stage('Code Quality') {
-            when {
-                branch 'master'
-            }
-            steps {
-                echo 'Checking Code Quality on SonarCloud'
-                withCredentials([string(credentialsId: 'chris-sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                    sh 'mvn sonar:sonar ${SONARCLOUD_PARAMS} -Dsonar.login=${SONAR_TOKEN}'
-                }
-            }
-        }
-*/
-        stage('Stage site') {
+        stage('Ensure site build works') {
             when {
                 branch 'master'
             }
@@ -117,6 +104,7 @@ pipeline {
                 sh 'mvn site:site'
             }
         }
+    }
 
     // Send out notifications on unsuccessful builds.
     post {
