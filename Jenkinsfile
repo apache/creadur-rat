@@ -19,11 +19,7 @@
  */
 pipeline {
 
-    agent {
-        node {
-            label 'ubuntu'
-        }
-    }
+    agent any
 
     environment {
         // It seems the login the jenkins slave uses, doesn't pick up the environment changes,
