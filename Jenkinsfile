@@ -80,6 +80,7 @@ pipeline {
         stage('Build master') {
             steps {
                 echo 'Building'
+                // clean package -B -U -e -fae -V for making sure it just builds
                 sh 'mvn -U clean deploy'
             }
             post {
