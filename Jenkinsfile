@@ -78,9 +78,6 @@ pipeline {
         }
 
         stage('Build master') {
-            when {
-                branch 'master'
-            }
             steps {
                 echo 'Building'
                 sh 'mvn -U clean deploy'
@@ -94,9 +91,6 @@ pipeline {
         }
 
         stage('Ensure site build works') {
-            when {
-                branch 'master'
-            }
             steps {
                 echo 'Verify site build is okay ....'
                 sh 'mvn site:site'
