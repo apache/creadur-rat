@@ -77,11 +77,19 @@ pipeline {
             }
         }
 
-        stage('Build master') {
+
+        stage('Build Parent-pom') {
             steps {
-                echo 'Building'
+                echo 'Building parent pom only'
+                sh 'mvn clean install -N -e -B'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building the whole project'
                 // clean package -B -U -e -fae -V for making sure it just builds
-                sh 'mvn -U clean deploy'
+                sh 'mvn -B -U -V clean deploy'
             }
             post {
                 always {
