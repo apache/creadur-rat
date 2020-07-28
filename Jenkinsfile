@@ -44,8 +44,8 @@ pipeline {
     }
 
     options {
-        // Kill this job after one hour.
-        timeout(time: 24, unit: 'HOURS')
+        timeout(time: 1, unit: 'HOURS')
+        timestamps()
         // When we have test-fails e.g. we don't need to run the remaining steps
         skipStagesAfterUnstable()
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
