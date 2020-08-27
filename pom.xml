@@ -485,6 +485,7 @@ agnostic home for software distribution comprehension and audit tools.
     <system>Buildbot</system>
     <url>https://ci.apache.org/builders/rat_trunk</url>
     <!--  Jenkins builds are at:
+    TODO RAT-271 migrate over to new environment
     https://builds.apache.org/job/Creadur-Rat-ParentPom/ - build the parent pom for all RAT submodules
     https://builds.apache.org/job/Creadur-Rat/ - check Java5 compliance and run all tests
     https://builds.apache.org/job/Creadur-Rat-Site/ - generate mvn site

@@ -1,9 +1,30 @@
+Rat 0.13
+=========
+
+New features:
+* RAT-228:  Fixing broken Ant unit test setup and making tests run more deterministic. Thanks to Romain Manni-Bucau.
+* RAT-245:  Update to latest available and compatible Apache ANT 1.9.12 to get bugfixes and newer JDK support.
+* RAT-245:  Update to latest available and compatible Apache ANT 1.9.11 to get bugfixes and newer JDK support.
+* RAT-245:  Update to latest available and compatible Apache ANT 1.9.10 due to CVE-2017-5645.
+* RAT-243:  Add .checkstyle to Eclipse default exclusions. Thanks to Matthew Ouyang.
+* RAT-241:  Reduce default log level of used exclusions to debug, only print totals into the maven log like includes. Thanks to Andrew Gaul.
+* RAT-233:  Recognize XML-based .Net Core xproj files. Thanks to Stefan Bodewig.
+* RAT-226:  Update to latest available and compatible Apache ANT 1.9.9.
+
+Fixed Bugs:
+* RAT-242:  Use UTF-8 as default encoding for RAT Ant reports. Thanks to Matthias Bläsing.
+* RAT-234:  Do not treat TypeScript files as binary. Thanks to ajbanck.
+* RAT-240:  Overhauled CLI module to allow file based exclusions with wildcards and explicit file names.
+* RAT-222:  Download section does not work if SNAPSHOT is deployed, add download of previous RAT release.
+* RAT-224:  Fixed example on webpage abozt usage of custom licenses. Thanks to John Patrick.
+* RAT-223:  Add support for Golang and Perl module files. Thanks to Eric Friedrich.
+
 Rat 0.12
-===================
+========
 
  * We now require Maven 3.0.5+ to build Rat, but as before we only require
    Maven 2.2.1+ if you want to use Rat in your own Maven projects.
- * We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions. 
+ * We've integrated Rat into the ASF Jenkins to ensure continuous builds with various JDK versions.
  * Issues resolved (see https://issues.apache.org/jira):
    Bug
     * [RAT-158] - Fix SAX-Parser warning by explicitly excluding xerces in Doxia 1.2.
@@ -18,19 +39,19 @@ Rat 0.12
                   Workaround for https://jira.codehaus.org/browse/MANIMALSNIFFER-45
                   (thanks to Mark Thomas)
     * [RAT-160] - Ignore build.log that is created by maven-invoker-plugin runs. Temporary fix until invoker plugin improves
-                  configurability of that file. 
+                  configurability of that file.
                   (thanks to Christopher Tubbs)
     * [RAT-179] - Maven plugin and Ant task do not support adding extra approved licenses.
-    * [RAT-180] - Generify and beautify texts in RAT report. 
+    * [RAT-180] - Generify and beautify texts in RAT report.
 
    New features
     * [RAT-171] - Maven plugin allows scanning of source code management ignore files. Their contents is added as exclusion to be ignored during RAT runs.
-                  Supported source code management systems are: SVN, Git, Bazaar, Mercurial and CVS. 
+                  Supported source code management systems are: SVN, Git, Bazaar, Mercurial and CVS.
                   An ignore-file's contents is taken as it is without parsing or validating.
 
    Improvement
     * [RAT-196] - Minor refactoring in pom.xml.
-                  (thanks to Karl Heinz Marbaise) 
+                  (thanks to Karl Heinz Marbaise)
     * [RAT-194] - Upgrade to Doxia 1.6 if called directly, does not affect problems reported in RAT-158. Minor improvements.
                   (thanks to Hervé Boutemy)
     * [RAT-61]  - List files with unapproved licenses in Maven output
@@ -46,17 +67,16 @@ Rat 0.12
                   (thanks to Karl Heinz Marbaise)
     * [RAT-198] - Upgrade to plexus-utils 3.0.20.
                   (thanks to Karl Heinz Marbaise)
-    * [RAT-172] - Exclude technical directories of source code management systems and their ignore files from RAT scans. 
+    * [RAT-172] - Exclude technical directories of source code management systems and their ignore files from RAT scans.
                   Enabled for SVN,Git,Mercurial,Bazar and CVS.
     * [RAT-200] - Update to latest ASF parent pom v17.
-    * [RAT-201] - BinaryGuesser should treat *.swf as binary. 
+    * [RAT-201] - BinaryGuesser should treat *.swf as binary.
                   Furthermore BinaryGuesser falls back to UTF-8 encoding in case the encoding given via system property (-Dfile.encoding) was not found.
     * [RAT-202] - Report layout differs between successful RAT checks and existence of unapproved files.
     * [RAT-203] - Using 'license' in README, source code, javadoc, comments and site instead of 'licence'; improve terminology to not confuse RAT consumers.
     * [RAT-204] - Unify resource handling in code and tests, make sure the resources are properly closed. Apply minor refactorings.
     * [RAT-213] - Upgrade to commons-collections 3.2.2.
                   (thanks to Glenn Lewis)
-                  
 
 Rat 0.11
 ========
@@ -99,7 +119,7 @@ The main change is RAT-138 - Rat 0.9 could run much slower than 0.8 on some inpu
      * [RAT-139] FullTextMatchingLicense.prune uses inefficient deleteAtChar
      * [RAT-145] Maven plugin should not run in the "verify" phase, but in the "validate" phase
    * Improvements:
-     * [RAT-129] Add support for CDDL 1.0 
+     * [RAT-129] Add support for CDDL 1.0
  * Updated dependencies and plugins
  * Fixed up generics and annotations
 
