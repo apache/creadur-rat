@@ -482,16 +482,8 @@ agnostic home for software distribution comprehension and audit tools.
     <url>https://issues.apache.org/jira/browse/RAT</url>
   </issueManagement>
   <ciManagement>
-    <system>Buildbot</system>
-    <url>https://ci.apache.org/builders/rat_trunk</url>
-    <!--  Jenkins builds are at:
-    TODO RAT-271 migrate over to new environment
-    https://builds.apache.org/job/Creadur-Rat-ParentPom/ - build the parent pom for all RAT submodules
-    https://builds.apache.org/job/Creadur-Rat/ - check Java5 compliance and run all tests
-    https://builds.apache.org/job/Creadur-Rat-Site/ - generate mvn site
-    https://builds.apache.org/job/Creadur-Rat-Latest-Jdk/ - run with Java8 and mvn3 latest
-    https://builds.apache.org/job/Creadur-Rat-Site-Latest-Jdk/ - ensure that a site can be generated with mvn3 and Java8
-     -->
+    <system>Jenkins</system>
+    <url>https://ci-builds.apache.org/job/Creadur/job/Creadur-Rat/</url>
   </ciManagement>
   <mailingLists>
     <mailingList>
