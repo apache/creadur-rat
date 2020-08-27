@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-271" type="add" dev="pottlinger">
+        Move all Creadur projects to new Jenkins infrastructure at ASF and migrate from Subversion to Gitbox/Github. Please update your repository URLs and use the new default branch master in all projects.
+      </action>
       <action issue="RAT-270" type="add" dev="pottlinger">
         Change default behaviour to output erroneous files to console. Can be disabled by setting rat.consoleOutput to false.
       </action>
