@@ -43,8 +43,8 @@ agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
   <properties>
-    <ant.version>1.9.15</ant.version>
-    <javaVersion>1.7</javaVersion>
+    <ant.version>1.10.9</ant.version>
+    <javaVersion>1.8</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
@@ -452,7 +452,7 @@ agnostic home for software distribution comprehension and audit tools.
               be changed manually when we decide to move to a higher version of
               Java
             -->
-            <id>check-java-1.7-compat</id>
+            <id>check-java-1.8-compat</id>
             <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
@@ -460,7 +460,7 @@ agnostic home for software distribution comprehension and audit tools.
             <configuration>
               <signature>
                 <groupId>org.codehaus.mojo.signature</groupId>
-                <artifactId>java17</artifactId>
+                <artifactId>java18</artifactId>
                 <version>1.0</version>
               </signature>
             </configuration>
