@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>18</version>
+    <version>23</version>
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
@@ -310,19 +310,6 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>apache-rat-plugin</artifactId>
           <!-- Do not use property values here as this makes problem during release -->
           <version>0.13</version>
-          <dependencies><!--TODO remove exclusion when upgrading to new ASF parent or doxia release (RAT-158) -->
-            <dependency>
-              <groupId>org.apache.maven.doxia</groupId>
-              <artifactId>doxia-core</artifactId>
-              <version>1.2</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>xerces</groupId>
-                  <artifactId>xercesImpl</artifactId>
-                </exclusion>
-              </exclusions>
-            </dependency>
-          </dependencies>
           <configuration>
             <excludes>
               <!-- This file only describes how to build the project and it has no license header -->
