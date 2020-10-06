@@ -224,7 +224,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.1</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -300,7 +300,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.9.1</version>
           <configuration>
             <relativizeDecorationLinks>false</relativizeDecorationLinks>
           </configuration>
