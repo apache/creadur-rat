@@ -84,11 +84,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
     /**
      * Returns the skins artifact file.
      *
-     * @return Artifact file
+     * @return Artifact 
      * @throws MojoFailureException   An error in the plugin configuration was detected.
      * @throws MojoExecutionException An error occurred while searching for the artifact file.
      */
-    private File getSkinArtifactFile() throws MojoFailureException, MojoExecutionException {
+    private Artifact getSkinArtifactFile() throws MojoFailureException, MojoExecutionException {
         final Skin skin = Skin.getDefaultSkin();
 
         String version = skin.getVersion();
@@ -111,7 +111,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
             throw new MojoFailureException("The skin does not exist: " + e.getMessage());
         }
 
-        return artifact.getFile();
+        return artifact;
     }
 
     /**
