@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-277" type="fix" dev="pottlinger">
+        Update to junit 4.13.1 to fix CVE-2020-15250.
+      </action>
       <action issue="RAT-158" type="fix" dev="pottlinger">
         Update to new ASF parent 23 in order to get rid of doxia version management that generated warnings.
       </action>
