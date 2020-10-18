@@ -40,7 +40,7 @@ pipeline {
     }
 
     tools {
-        maven 'Maven 3 (latest)'
+        maven 'maven_3_latest'
         jdk 'JDK 14 (latest)'
     }
 
