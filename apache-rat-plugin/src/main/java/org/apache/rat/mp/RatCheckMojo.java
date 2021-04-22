@@ -45,7 +45,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Run Rat to perform a violation check.
  */
-@Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE)
+@Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
     /**
      * Where to store the report.
