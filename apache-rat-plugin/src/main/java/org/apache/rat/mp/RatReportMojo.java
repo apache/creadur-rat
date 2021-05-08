@@ -60,7 +60,7 @@ import java.util.ResourceBundle;
  * Generates a report with Rat's output.
  */
 @SuppressWarnings("deprecation") // MavenReport invokes the deprecated Sink implementation
-@Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class RatReportMojo extends AbstractRatMojo implements MavenReport {
     public static final String DOT_HTML = ".html";
     @Component
