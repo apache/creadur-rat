@@ -1,6 +1,8 @@
 Rat 0.13
 =========
 
+ * Compiler level is set to JDK8 (1.8) to be able to update dependencies properly.
+
 New features:
 * RAT-228:  Fixing broken Ant unit test setup and making tests run more deterministic. Thanks to Romain Manni-Bucau.
 * RAT-245:  Update to latest available and compatible Apache ANT 1.9.12 to get bugfixes and newer JDK support.
