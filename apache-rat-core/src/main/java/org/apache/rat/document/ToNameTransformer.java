@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.document;
 
-import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections4.Transformer;
 import org.apache.rat.api.Document;
 
 public class ToNameTransformer implements Transformer {
