@@ -44,6 +44,7 @@ agnostic home for software distribution comprehension and audit tools.
   <inceptionYear>2006</inceptionYear>
   <properties>
     <ant.version>1.10.11</ant.version>
+    <mockito.version>3.11.2</mockito.version>
     <javaVersion>1.8</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
@@ -107,13 +108,13 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>3.11.2</version>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>
-        <version>3.11.2</version>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
