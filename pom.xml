@@ -315,6 +315,7 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>apache-rat-plugin/src/it/**</exclude>
               <exclude>apache-rat-tasks/src/test/resources/**</exclude>
               <exclude>**/iso-8859-1.html</exclude>
+              <exclude>**/velocity.log</exclude>
             </excludes>
           </configuration>
         </plugin>
