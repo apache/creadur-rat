@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-283" type="fix" dev="pottlinger">
+        Update plugin versions and dependencies in order to run properly with Java8 as minimal compiler level.
+      </action>
       <action issue="RAT-286" type="fix" dev="pottlinger">
         Update to maven-plugin-plugin v3.6.1 in order to circumvent error during maven site builds.
       </action>
