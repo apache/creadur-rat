@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-289" type="add" dev="pottlinger">
+        Enable dependabot integration - write access is forbidden, but email alerts and pull requests should be ok.
+      </action>
       <action issue="RAT-283" type="fix" dev="pottlinger">
         Update plugin versions and dependencies in order to run properly with Java8 as minimal compiler level.
       </action>
