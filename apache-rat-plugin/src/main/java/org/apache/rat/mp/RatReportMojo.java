@@ -149,7 +149,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
 
             siteRenderer.generateDocument(writer, sink, siteContext);
 
-            siteRenderer.copyResources(siteContext, new File(getProject().getBasedir(), "src/site/resources"),
+
+            siteRenderer.copyResources(siteContext, new File(getProject().getBasedir() + "/src/site/resources"),
                     outputDirectory);
         } catch (IOException | RendererException | MavenReportException e) {
             throw new MojoExecutionException(e.getMessage(), e);
