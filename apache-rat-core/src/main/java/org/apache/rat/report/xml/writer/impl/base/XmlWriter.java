@@ -18,7 +18,7 @@
  */
 package org.apache.rat.report.xml.writer.impl.base;
 
-import org.apache.commons.collections.ArrayStack;
+import org.apache.commons.collections4.ArrayStack;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.InvalidXmlException;
 import org.apache.rat.report.xml.writer.OperationNotAllowedException;

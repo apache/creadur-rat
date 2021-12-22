@@ -43,7 +43,8 @@ agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
   <properties>
-    <ant.version>1.10.10</ant.version>
+    <ant.version>1.10.11</ant.version>
+    <mockito.version>3.11.2</mockito.version>
     <javaVersion>1.8</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
@@ -51,8 +52,9 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenVersion>2.2.1</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
     <!-- maven plugin versions -->
-    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.6.1</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
+    <mavenJavadocPluginVersion>3.1.1</mavenJavadocPluginVersion>
     <previousRatVersion>0.13</previousRatVersion>
   </properties>
   <dependencyManagement>
@@ -78,50 +80,41 @@ agnostic home for software distribution comprehension and audit tools.
         <version>1.4</version>
       </dependency>
       <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <!-- Later versions require Java 1.6+ -->
-        <version>3.2.2</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>4.4</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.8.0</version>
+        <version>2.11.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <!--  later versions require Java 1.6+ -->
-        <version>3.5</version>
+        <version>3.12.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <!--  later versions require Java 1.6+ -->
-        <version>1.19</version>
+        <version>1.21</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.13.1</version>
+        <version>4.13.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>1.10.19</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>1.10.19</version>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-library</artifactId>
-        <version>1.3</version>
+        <version>2.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -133,7 +126,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant-antunit</artifactId>
-        <version>1.4</version>
+        <version>1.4.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -181,7 +174,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>${mavenJavadocPluginVersion}</version>
         <configuration>
           <tags>
             <tag>
@@ -219,7 +212,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.12.0</version>
+        <version>3.14.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -281,7 +274,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>${mavenJavadocPluginVersion}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -291,8 +284,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
-          <!-- Later versions require Java 1.6+ -->
-          <version>3.12</version>
+          <version>3.14.0</version>
           <configuration>
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>
@@ -323,6 +315,7 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>apache-rat-plugin/src/it/**</exclude>
               <exclude>apache-rat-tasks/src/test/resources/**</exclude>
               <exclude>**/iso-8859-1.html</exclude>
+              <exclude>**/velocity.log</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -412,7 +405,7 @@ agnostic home for software distribution comprehension and audit tools.
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.0-beta-5</version>
+            <version>1.3</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -430,7 +423,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.18</version>
+        <version>1.20</version>
         <executions>
           <execution>
             <!-- This checks the source code of our project -->

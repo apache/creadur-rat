@@ -39,9 +39,9 @@ A good way to use Rat is to through the source. This allows the code base to be
 easily patched for example to add new generated file matchers. The main jar is
 runnable and self-documenting. This jar is available as a standard alone binary.
 
-Rat includes a task library for Ant 1.7. This allows Rat reports to be run against
+Rat includes a task library for Ant 1.10. This allows Rat reports to be run against
 a wide variety of resources. See ant-task-examples.xml. To use the Ant tasks,
-Apache Ant 1.7 is required. See https://ant.apache.org/.
+Apache Ant 1.10 is required. See https://ant.apache.org/.
 
 For Maven builds, the plugin is recommended.
 

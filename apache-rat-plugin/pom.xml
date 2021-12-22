@@ -111,7 +111,7 @@
         						<artifactId>
         							maven-plugin-plugin
         						</artifactId>
-        						<versionRange>[3.4,)</versionRange>
+        						<versionRange>[3.3,)</versionRange>
         						<goals>
         							<goal>descriptor</goal>
         							<goal>helpmojo</goal>
@@ -161,7 +161,7 @@
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
+      <artifactId>mockito-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
