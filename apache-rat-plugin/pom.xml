@@ -34,7 +34,7 @@
   </prerequisites>
   <properties>
     <currentVersion>${project.version}</currentVersion>
-    <doxiaVersion>1.10</doxiaVersion>
+    <doxiaVersion>1.11.1</doxiaVersion>
     <doxiaSitetoolsVersion>1.11.1</doxiaSitetoolsVersion>
   </properties>
   <build>
