@@ -56,6 +56,9 @@ The <action> type attribute can be add,update,fix,remove.
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
       <action issue="RAT-290" type="fix" dev="pottlinger" due-to="dependabot">
+        Update maven-dependency-plugin from 3.1.1 to 3.2.0. Thanks to dependabot.
+      </action>
+      <action issue="RAT-290" type="fix" dev="pottlinger" due-to="dependabot">
         Update plexus-utils from 3.0.21 to 3.4.1. Thanks to dependabot.
       </action>
       <action issue="RAT-290" type="fix" dev="pottlinger" due-to="dependabot">
