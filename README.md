@@ -1,8 +1,8 @@
 # Apache Creadur Rat - Build status
 
-ASF Jenkins: [![ASF Jenkins Build Status](https://builds.apache.org/buildStatus/icon?job=Creadur-Rat&style=plastic)](https://builds.apache.org/view/A-D/view/Creadur/job/Creadur-Rat/)
+ASF Jenkins: [![ASF Jenkins Build Status](https://ci-builds.apache.org/buildStatus/icon?job=Creadur%2FCreadur-Rat)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Rat/)
 
-Travis: [![Build Status](https://travis-ci.org/apache/creadur-rat.svg?branch=master)](https://travis-ci.org/apache/creadur-rat)
+Travis: [![Build Status](https://travis-ci.com/apache/creadur-rat.svg?branch=master)](https://travis-ci.com/apache/creadur-rat)
 
 Due to a bug in the Travis build infrastructure the builds fail regularly because Travis selects a JDK that fails animal-sniffer-plugin runs as it is not the one specified in the build.
 

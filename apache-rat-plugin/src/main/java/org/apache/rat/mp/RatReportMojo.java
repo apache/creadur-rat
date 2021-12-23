@@ -60,7 +60,7 @@ import java.util.ResourceBundle;
  * Generates a report with Rat's output.
  */
 @SuppressWarnings("deprecation") // MavenReport invokes the deprecated Sink implementation
-@Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class RatReportMojo extends AbstractRatMojo implements MavenReport {
     public static final String DOT_HTML = ".html";
     @Component
@@ -84,11 +84,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
     /**
      * Returns the skins artifact file.
      *
-     * @return Artifact file
+     * @return Artifact 
      * @throws MojoFailureException   An error in the plugin configuration was detected.
      * @throws MojoExecutionException An error occurred while searching for the artifact file.
      */
-    private File getSkinArtifactFile() throws MojoFailureException, MojoExecutionException {
+    private Artifact getSkinArtifactFile() throws MojoFailureException, MojoExecutionException {
         final Skin skin = Skin.getDefaultSkin();
 
         String version = skin.getVersion();
@@ -111,7 +111,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
             throw new MojoFailureException("The skin does not exist: " + e.getMessage());
         }
 
-        return artifact.getFile();
+        return artifact;
     }
 
     /**
@@ -149,8 +149,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
 
             siteRenderer.generateDocument(writer, sink, siteContext);
 
-            siteRenderer.copyResources(siteContext, new File(getProject().getBasedir(), "src/site/resources"),
-                    outputDirectory);
+
+            siteRenderer.copyResources(siteContext, outputDirectory);
         } catch (IOException | RendererException | MavenReportException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

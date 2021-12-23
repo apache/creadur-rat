@@ -22,3 +22,5 @@ apache-rat-core/.gitignore
 apache-rat-plugin/.gitignore
 apache-rat-tasks/.gitignore
 apache-rat/.gitignore
+=======
+**/.gitignore

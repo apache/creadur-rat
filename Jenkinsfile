@@ -19,6 +19,7 @@
  */
 pipeline {
 
+//    agent { label 'ubuntu' } 
     agent any
 
     environment {
@@ -39,8 +40,8 @@ pipeline {
     }
 
     tools {
-        maven 'Maven 3 (latest)'
-        jdk 'JDK 14 (latest)'
+        maven 'maven_3_latest'
+        jdk 'jdk_14_latest'
     }
 
     options {
@@ -78,6 +79,13 @@ pipeline {
             steps {
                 echo 'Building parent pom only'
                 sh 'mvn clean install -N -e -B'
+            }
+        }
+
+        stage('Print available updates') {
+            steps {
+                echo 'Show available plugin and dependency updates'
+                sh 'mvn clean versions:display-dependency-updates versions:display-plugin-updates enforcer:display-info -U -B'
             }
         }
 
