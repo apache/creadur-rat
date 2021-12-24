@@ -453,7 +453,7 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh</artifactId>
         <!-- Last version that is compatible with Maven 2 -->
-        <version>1.0-beta-7</version>
+        <version>3.5.0</version>
       </extension>
     </extensions>
   </build>
