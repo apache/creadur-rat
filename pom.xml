@@ -405,7 +405,7 @@ agnostic home for software distribution comprehension and audit tools.
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.3</version>
+            <version>1.5.1</version>
           </dependency>
         </dependencies>
       </plugin>
