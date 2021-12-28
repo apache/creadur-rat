@@ -25,4 +25,4 @@ script:
     --volume "$PWD":/usr/src/
     --workdir /usr/src/
     --rm
-    "${DOCKER_IMAGE}" mvn clean test -B
+    "${DOCKER_IMAGE}" mvn clean package site:site -B
