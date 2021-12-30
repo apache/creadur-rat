@@ -43,6 +43,8 @@ agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
   <properties>
+    <sonar.organization>apache</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <ant.version>1.10.11</ant.version>
     <mockito.version>3.11.2</mockito.version>
     <javaVersion>1.8</javaVersion>
