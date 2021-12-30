@@ -5,16 +5,17 @@ services:
 
 jobs:
   include:
-    - env: DOCKER_IMAGE=maven:3.6.3-jdk-8
+    - env: DOCKER_IMAGE=maven:3.8.4-jdk-8
     - env: DOCKER_IMAGE=maven:3.5.4-jdk-9 # There are no newer images with Maven for this JDK
     - env: DOCKER_IMAGE=maven:3.6.0-jdk-10 # There are no newer images with Maven for this JDK
-    - env: DOCKER_IMAGE=maven:3.6.3-jdk-11
+    - env: DOCKER_IMAGE=maven:3.8.4-jdk-11
     - env: DOCKER_IMAGE=maven:3.6.2-jdk-12
     - env: DOCKER_IMAGE=maven:3.6.2-jdk-13
     - env: DOCKER_IMAGE=maven:3.6.3-jdk-14
     - env: DOCKER_IMAGE=maven:3.6.3-openjdk-15
 # 20200914: enable after RAT-273 is fixed
 #    - env: DOCKER_IMAGE=maven:3.6.3-openjdk-16
+#    - env: DOCKER_IMAGE=maven:3.8.4-openjdk-17
 
 install:
   - docker pull "${DOCKER_IMAGE}"
