@@ -58,7 +58,7 @@ Developing Rat
  Read the JavaDocs {{{./apidocs/index.html}here}}.
 
 +------------------------------------------+
-git co https://gitbox.apache.org/repos/asf/creadur-rat.git
+git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 +------------------------------------------+
 
  Build with {{{https://maven.apache.org/} Apache Maven}}

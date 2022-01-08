@@ -117,7 +117,7 @@ java -jar apache-rat-${project.version}.jar --help
   Quick start
 
 +------------------------------------------+
-git co https://gitbox.apache.org/repos/asf/creadur-rat.git
+git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 +------------------------------------------+
 
  Read more {{{./source-repository.html}here}}.
