@@ -57,10 +57,8 @@ Developing Rat
 
  Read the JavaDocs {{{./apidocs/index.html}here}}.
 
- Check out with {{{https://subversion.apache.org}Subversion}}
-
 +------------------------------------------+
-svn co https://svn.apache.org/repos/asf/creadur/rat/trunk/
+git co https://gitbox.apache.org/repos/asf/creadur-rat.git
 +------------------------------------------+
 
  Build with {{{https://maven.apache.org/} Apache Maven}}
