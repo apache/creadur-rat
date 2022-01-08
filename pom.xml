@@ -59,6 +59,12 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenJavadocPluginVersion>3.3.1</mavenJavadocPluginVersion>
     <previousRatVersion>0.13</previousRatVersion>
   </properties>
+  <distributionManagement>
+    <site>
+      <id>staging</id>
+      <url>file:bogus</url>
+    </site>
+  </distributionManagement>
   <dependencyManagement>
     <dependencies>
       <dependency>
