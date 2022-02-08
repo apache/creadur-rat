@@ -447,7 +447,7 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
         <!-- 20220206: updating to 1.21 fails the build as there are undefined references within java.nio-references in RAT -->
-        <version>1.20</version>
+        <version>1.21</version>
         <executions>
           <execution>
             <!-- This checks the source code of our project -->
