@@ -29,7 +29,9 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        java: [8, 10, 11, 12, 13, 14, 15]
+# RAT-296: disable JDK10 due to
+# Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+        java: [8, 11, 12, 13, 14, 15]
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
