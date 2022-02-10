@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-296" type="fix" dev="pottlinger">
+        Use Github Actions for matrix builds on Windows and ubuntu with JDK 8,11,12,13,14,15. Simplify Travis integration to avoid dockerhub-related build failures.
+      </action>
       <action issue="RAT-274" type="fix" dev="pottlinger">
         Update to latest Apache Ant 1.10.12.
       </action>
