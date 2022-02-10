@@ -117,7 +117,7 @@ java -jar apache-rat-${project.version}.jar --help
   Quick start
 
 +------------------------------------------+
-svn co https://svn.apache.org/repos/asf/creadur/rat/trunk/
+git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 +------------------------------------------+
 
  Read more {{{./source-repository.html}here}}.
