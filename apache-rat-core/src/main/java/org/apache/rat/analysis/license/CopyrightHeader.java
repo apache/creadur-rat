@@ -39,8 +39,8 @@ import java.util.regex.Pattern;
  * <li>*copyright 2012 foobar*</li>
  * </ul>
  * <p>Note also that the copyright owner is appended to the regex pattern, so
- * can support additional regex but also requires escaping where needed,<p>
- * e.g. use &quot;FooBar \(www\.foobar\.com\)&quot; for matching &quot;FooBar (www.foobar.com)&quot;<p>
+ * can support additional regex but also requires escaping where needed,<br>
+ * e.g. use &quot;FooBar \(www\.foobar\.com\)&quot; for matching &quot;FooBar (www.foobar.com)&quot;</p>
  *
  * @since Rat 0.9
  */
