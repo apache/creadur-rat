@@ -446,8 +446,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <!-- 20220206: updating to 1.21 fails the build as there are undefined references within java.nio-references in RAT -->
-        <version>1.20</version>
+        <version>1.21</version>
         <executions>
           <execution>
             <!-- This checks the source code of our project -->
@@ -615,6 +614,20 @@ agnostic home for software distribution comprehension and audit tools.
     <url>https://www.apache.org</url>
   </organization>
   <profiles>
+    <profile>
+      <id>maven.compiler.release</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <properties>
+        <!--
+          Note that this cannot use our ${javaVersion} property, so it must
+          be changed manually when we decide to move to a higher version of
+          Java
+        -->
+        <maven.compiler.release>8</maven.compiler.release>
+      </properties>
+    </profile>
     <profile>
       <id>apache-release</id>
       <build>
