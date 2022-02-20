@@ -57,6 +57,7 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenPluginPluginVersion>3.6.4</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.3.2</mavenJavadocPluginVersion>
+    <mavenPmdPluginVersion>3.16.0</mavenPmdPluginVersion>
     <previousRatVersion>0.13</previousRatVersion>
   </properties>
   <distributionManagement>
@@ -228,7 +229,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>${mavenPmdPluginVersion}</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -307,7 +308,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.15.0</version>
+          <version>${mavenPmdPluginVersion}</version>
           <configuration>
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>
