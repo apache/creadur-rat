@@ -67,22 +67,38 @@ public class HeaderMatcherTest {
 
     @Test
     public void noLines() throws Exception {
-        StringReader reader = new StringReader("None");
+        StringReader reader = new StringReader("");
         matcher.read(reader);
         assertEquals("No lines read", 0, matcher.lines());
     }
-    
+
+    @Test
+    public void noLines_lineEndingHandledDifferentlyInNewerJDK() throws Exception {
+        StringReader reader = new StringReader("None");
+        matcher.read(reader);
+        int numberOfLinesRead = matcher.lines();
+        assertTrue("No lines read in older JDK or one line in newer JDK as implicit stream end is counted as line ending", numberOfLinesRead == 0 || numberOfLinesRead == 1);
+    }
+
+    @Test
+    public void lines_lineEndingHandledDifferentlyInNewerJDK() throws Exception {
+        StringReader reader = new StringReader("One\nTwo");
+        matcher.read(reader);
+        int numberOfLinesRead = matcher.lines();
+        assertTrue("One line read read in older JDK or two lines in newer JDK as implicit stream end is counted as line ending", numberOfLinesRead == 1 || numberOfLinesRead == 2);
+
+        reader = new StringReader("One\nTwo\nThree");
+        matcher.read(reader);
+        numberOfLinesRead = matcher.lines();
+        assertTrue("Two lines read read in older JDK or three lines in newer JDK as implicit stream end is counted as line ending", numberOfLinesRead == 2 || numberOfLinesRead == 3);
+    }
+
     @Test
     public void lines() throws Exception {
         StringReader reader = new StringReader("One\n");
         matcher.read(reader);
         assertEquals("One line read", 1, matcher.lines());
-        reader = new StringReader("One\nTwo");
-        matcher.read(reader);
-        assertEquals("One line read", 1, matcher.lines());
-        reader = new StringReader("One\nTwo\nThree");
-        matcher.read(reader);
-        assertEquals("Two lines read", 2, matcher.lines());
+
         reader = new StringReader("One\nTwo\nThree\n");
         matcher.read(reader);
         assertEquals("Three lines read", 3, matcher.lines());
