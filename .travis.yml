@@ -15,7 +15,3 @@ jobs:
         - name: "Java 17"
           jdk: openjdk17
           script: mvn -e -B -V clean package site
-
-        - name: "Java 18 - newest"
-          jdk: openjdk18
-          script: mvn -e -B -V clean package site
