@@ -1,31 +1,13 @@
-language: minimal
-
-services:
-  - docker
+language: java
+dist: trusty
+sudo: required
 
 jobs:
-  include:
-    - env: DOCKER_IMAGE=maven:3.8.4-jdk-8
-# RAT-290: yields strange compiler error
-# java.time.DateTimeException: Invalid value for MonthOfYear (valid values 1 - 12): 0
-#    - env: DOCKER_IMAGE=maven:3.5.4-jdk-9 # There are no newer images with Maven for this JDK
-    - env: DOCKER_IMAGE=maven:3.6.0-jdk-10 # There are no newer images with Maven for this JDK
-    - env: DOCKER_IMAGE=maven:3.8.4-jdk-11
-    - env: DOCKER_IMAGE=maven:3.6.2-jdk-12
-    - env: DOCKER_IMAGE=maven:3.6.2-jdk-13
-    - env: DOCKER_IMAGE=maven:3.6.3-jdk-14
-    - env: DOCKER_IMAGE=maven:3.6.3-openjdk-15
-# 20200914: enable after RAT-273 is fixed
-#    - env: DOCKER_IMAGE=maven:3.6.3-openjdk-16
-#    - env: DOCKER_IMAGE=maven:3.8.4-openjdk-17
+    include:
+        - name: "Java 8"
+          jdk: openjdk8
+          script: mvn -e -B -V clean package site
 
-install:
-  - docker pull "${DOCKER_IMAGE}"
-
-script:
-  - docker run
-    --env "_JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true"
-    --volume "$PWD":/usr/src/
-    --workdir /usr/src/
-    --rm
-    "${DOCKER_IMAGE}" mvn clean package site -B
+        - name: "Java 14"
+          jdk: openjdk14
+          script: mvn -e -B -V clean package site

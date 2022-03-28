@@ -60,7 +60,6 @@ public class HeaderMatcher {
             lines = -1;
         }
         if (headers != null) {
-            final int length = headers.length;
             for (final HeaderBean headerBean : headers) {
                 if (headerBean != null) {
                     final Pattern headerPattern = headerBean.getHeaderPattern();
