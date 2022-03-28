@@ -27,6 +27,8 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.doxia.site.decoration.Body;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Skin;
@@ -44,22 +46,17 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.rat.Defaults;
-import org.codehaus.doxia.sink.Sink;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 /**
  * Generates a report with Rat's output.
  */
-@SuppressWarnings("deprecation") // MavenReport invokes the deprecated Sink implementation
 @Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class RatReportMojo extends AbstractRatMojo implements MavenReport {
     public static final String DOT_HTML = ".html";
@@ -216,7 +213,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenReport {
         sink.paragraph_();
 
         sink.paragraph();
-        sink.verbatim(true);
+        sink.verbatim(SinkEventAttributeSet.BOXED);
         try {
             sink.text(createReport(Defaults.getDefaultStyleSheet()));
         } catch (MojoExecutionException | MojoFailureException e) {
