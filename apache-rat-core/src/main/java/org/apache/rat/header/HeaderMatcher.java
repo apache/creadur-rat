@@ -19,7 +19,6 @@
 package org.apache.rat.header;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
