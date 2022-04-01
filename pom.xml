@@ -193,6 +193,7 @@ agnostic home for software distribution comprehension and audit tools.
             </tag>
           </tags>
           <notimestamp>true</notimestamp>
+          <doclint>none</doclint>
         </configuration>
         <reportSets>
           <reportSet>
