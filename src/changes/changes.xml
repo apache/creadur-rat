@@ -55,7 +55,7 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
-      <action type="fix" dev="jochen">
+      <action type="fix" issue="RAT-273" dev="jochen">
         Some tests were based on the assumption, that the value of file.encoding
         can be changed on runtime. (Won't work nowadays, beginning with Java 16.)
         Removed this assumption in favour of a proper surefire configuration.
