@@ -55,6 +55,9 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+      <action issue="RAT-288" type="add" dev="pottlinger" due-to="Michael Osipov">
+        Adapt logging output to be more compliant with future Maven versions as debug is deprecated and verbose is the recommended way to go.
+      </action>
       <action type="fix" issue="RAT-273" dev="jochen">
         Some tests were based on the assumption, that the value of file.encoding
         can be changed on runtime. (Won't work nowadays, beginning with Java 16.)

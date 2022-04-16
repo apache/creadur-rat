@@ -314,7 +314,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         } else {
             getLog().info(
                     files.length
-                            + " resources included (use -debug for more details)");
+                            + " resources included");
             if (getLog().isDebugEnabled()) {
                 for (final String resource : files) {
                     getLog().debug(" - included " + resource);
@@ -406,7 +406,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         if (excludes == null || excludes.length == 0) {
             getLog().info("No excludes explicitly specified.");
         } else {
-            getLog().info(excludes.length + " explicit excludes (use -debug for more details).");
+            getLog().info(excludes.length + " explicit excludes.");
         	for (final String exclude : excludes) {
                 getLog().debug("Exclude: " + exclude);
             }
@@ -454,7 +454,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         } else {
             getLog().info(
                     results.size()
-                            + " implicit excludes (use -debug for more details).");
+                            + " implicit excludes.");
             for (final String exclude : results) {
                 getLog().debug("Implicit exclude: " + exclude);
             }
