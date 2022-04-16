@@ -52,3 +52,6 @@ jobs:
       - name: Build with Maven
         run: mvn -e -B -V clean package site
 
+notifications:
+   jobs: commits@creadur.apache.org
+
