@@ -317,7 +317,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.11.0</version>
+          <version>3.12.0</version>
           <configuration>
             <relativizeDecorationLinks>false</relativizeDecorationLinks>
           </configuration>
