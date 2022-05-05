@@ -52,6 +52,8 @@ jobs:
       - name: Build with Maven
         run: mvn -e -B -V clean package site
 
-notifications:
-   jobs: commits@creadur.apache.org
+# as of 20220505:  Invalid workflow file
+# The workflow is not valid. .github/workflows/maven.yml (Line: 55, Col: 1): Unexpected value 'notifications'
+#notifications:
+#   jobs: commits@creadur.apache.org
 
