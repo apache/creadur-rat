@@ -65,4 +65,4 @@ stylesheets or keep in close touch with the code.
 
 If you want to contribute, feel free to branch from master and provide a pull request via Github.
 You should file a contributor license agreement in order to properly handle your input.
-Apart from that you could file an issue in ASF's Jira under the project "RAT".
+Apart from that you can file an issue in ASF's Jira: [project RAT](https://issues.apache.org/jira/browse/RAT)
