@@ -1,7 +1,7 @@
-              Apache Creadur Rat 0.13
+              Apache Creadur Rat 0.14
                   RELEASE NOTES
 
-The Apache Creadur Rat team is pleased to announce the release of Apache Creadur Rat 0.13
+The Apache Creadur Rat team is pleased to announce the release of Apache Creadur Rat 0.14
 
 Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
@@ -15,25 +15,55 @@ Note that binary compatibility is not guaranteed between 0.x releases.
 Apache Rat is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
 
+This release contains dependency updates, bugfixes and many improvements apart from infrastructure updates at ASF.
+
 Changes in this version include:
 
 New features:
-o RAT-228:  Fixing broken Ant unit test setup and making tests run more deterministic. Thanks to Romain Manni-Bucau.
-o RAT-245:  Update to latest available and compatible Apache ANT 1.9.12 to get bugfixes and newer JDK support.
-o RAT-245:  Update to latest available and compatible Apache ANT 1.9.11 to get bugfixes and newer JDK support.
-o RAT-245:  Update to latest available and compatible Apache ANT 1.9.10 due to CVE-2017-5645.
-o RAT-243:  Add .checkstyle to Eclipse default exclusions. Thanks to Matthew Ouyang.
-o RAT-241:  Reduce default log level of used exclusions to debug, only print totals into the maven log like includes. Thanks to Andrew Gaul.
-o RAT-233:  Recognize XML-based .Net Core xproj files. Thanks to Stefan Bodewig.
-o RAT-226:  Update to latest available and compatible Apache ANT 1.9.9.
+o RAT-288:  Adapt logging output to be more compliant with future Maven versions as debug is deprecated and verbose is the recommended way to go. Thanks to Michael Osipov.
+o RAT-297:  Update maven-reporting-api from 3.0 to 3.1.0 and remove usage of deprecated Sink API. Thanks to Michael Osipov.
+o RAT-289:  Enable dependabot integration - write access is forbidden, but email alerts and pull requests should be ok.
+o RAT-279:  Migrate vom Travis CI.org to Travis-ci.com.
+o RAT-271:  Move all Creadur projects to new Jenkins infrastructure at ASF and migrate from Subversion to Gitbox/Github. Please update your repository URLs and use the new default branch master in all projects.
+o RAT-270:  Change default behaviour to output erroneous files to console. Can be disabled by setting rat.consoleOutput to false.
+o RAT-266:  Add .factorypath to Eclipse-default exclusions. Thanks to Michael Osipov.
+o RAT-254:  Properly finish move to gitbox/github, get rid of SVN references and adapt main branch to master and fix all Jenkins build jobs for RAT.
+o RAT-244:  Update compiler level to 1.7 to allow building with more recent JDKs. Update plugins and dependencies to more modern versions to fix security issues (CVE-warnings).
+o RAT-212:  Add alternative https URLs in Apache License, Version 2.0 to allow automatic recognition as valid ASF2.0. Thanks to Niels Basjes.
+o RAT-250:  Update to latest available and compatible Apache ANT 1.9.14 to get bugfixes.
+o INFRA-17348: SCM repository has been moved from svn.apache.org (Subversion) to gitbox.apache.org (Git)
 
 Fixed Bugs:
-o RAT-242:  Use UTF-8 as default encoding for RAT Ant reports. Thanks to Matthias Bläsing.
-o RAT-234:  Do not treat TypeScript files as binary. Thanks to ajbanck.
-o RAT-240:  Overhauled CLI module to allow file based exclusions with wildcards and explicit file names.
-o RAT-222:  Download section does not work if SNAPSHOT is deployed, add download of previous RAT release.
-o RAT-224:  Fixed example on webpage abozt usage of custom licenses. Thanks to John Patrick.
-o RAT-223:  Add support for Golang and Perl module files. Thanks to Eric Friedrich.
+o RAT-273:  Some tests were based on the assumption, that the value of file.encoding
+            can be changed on runtime. (Won't work nowadays, beginning with Java 16.)
+            Removed this assumption in favour of a proper surefire configuration.
+o RAT-273:  Workaround for an incompatibility in the java.io.LineNumberReader, which is
+            being replaced by the org.apache.rat.header.LineNumberReader.
+o RAT-290:  Update animal-sniffer-maven-plugin from 1.20 to 1.21. Thanks to Jin Xu/Xeno Amess. Thanks to Jin Xu.
+o RAT-296:  Use Github Actions for matrix builds on Windows and ubuntu with JDK 8,11,12,13,14,15. Simplify Travis integration to avoid dockerhub-related build failures.
+o RAT-274:  Update to latest Apache Ant 1.10.12.
+o RAT-291:  Fix links to Travis builds for all creadur projects.
+o RAT-290:  Update maven-dependency-plugin from 3.1.1 to 3.2.0. Thanks to dependabot. Thanks to dependabot.
+o RAT-290:  Update plexus-utils from 3.0.21 to 3.4.1. Thanks to dependabot. Thanks to dependabot.
+o RAT-290:  Update commons-cli from 1.4 to 1.5.0. Thanks to dependabot. Thanks to dependabot.
+o RAT-290:  Update maven-plugin-annotations from 3.6.1 to 3.6.2. Thanks to dependabot. Thanks to dependabot.
+o RAT-275:  Update to doxia 1.11.1 in order to get CVE-2020-13956-httpclient problem fixes in doxia.
+o RAT-283:  Update plugin versions and dependencies in order to run properly with Java8 as minimal compiler level.
+o RAT-286:  Update to maven-plugin-plugin v3.6.1 in order to circumvent error during maven site builds.
+o RAT-285:  Update to latest Apache Ant 1.10.11 in order to fix issues related to dependency commons-compress in Ant itself.
+o RAT-207:  Properly report thread-safeness to Maven. Thanks to Xavier Dury.
+o RAT-281:  Update to latest Commons IO to fix CVE-2021-29425 (Moderate severity).
+o RAT-274:  Update to latest Apache Ant 1.10.10.
+o RAT-277:  Update to junit 4.13.1 to fix CVE-2020-15250.
+o RAT-158:  Update to new ASF parent 23 in order to get rid of doxia version management that generated warnings.
+o RAT-274:  Update to latest Apache Ant 1.10.9 to fix CVE-2020-11979. Update to JDK8 as minimal version/compiler version.
+o RAT-269:  Update to latest Apache Ant to fix CVE-2020-1945.
+o RAT-268:  Allow handling of pom-file-only projects by not assuming that all modules are in directories. Thanks to Robert Scholte.
+o RAT-267:  Report ignored lines from exclusion file to stderr instead of std to not generate erroneous JSON. Thanks to Fabio Utzig.
+o RAT-262:  Treat JSON data as binary to avoid reports of missing licenses.
+o RAT-260:  Change to docker image when building on Travis to avoid JDK version mixup in traditional build setup. Thanks to Kamil Breguła.
+o RAT-258:  Update to latest commons-compress to fix CVE-2019-12402.
+o RAT-257:  Adapt help text for CLI usage of RAT.
 
 
 Historical list of changes: https://creadur.apache.org/rat/changes-report.html
