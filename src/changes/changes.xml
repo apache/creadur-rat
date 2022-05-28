@@ -54,7 +54,8 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
-    <release version="0.14-SNAPSHOT" date="2020-xx-xx" description="Current SNAPSHOT - to be done">
+    <!--release version="0.14-SNAPSHOT" date="2022-05-28" description="Current SNAPSHOT - to be done"-->
+    <release version="0.14" date="2022-05-28" description="Release 0.14 - dependency updates, bugfixes and many improvements.">
       <action issue="RAT-288" type="add" dev="pottlinger" due-to="Michael Osipov">
         Adapt logging output to be more compliant with future Maven versions as debug is deprecated and verbose is the recommended way to go.
       </action>
