@@ -264,7 +264,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <!-- Do not use property values here as this makes problem during release -->
+        <!-- Do not use property values here as this causes problems during release -->
         <version>0.13</version>
       </plugin>
     </plugins>
@@ -325,7 +325,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <!-- Do not use property values here as this makes problem during release -->
+          <!-- Do not use property values here as this causes problems during release -->
           <version>0.13</version>
           <configuration>
             <excludes>
