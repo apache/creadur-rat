@@ -34,19 +34,31 @@ o RAT-250:  Update to latest available and compatible Apache ANT 1.9.14 to get b
 o INFRA-17348: SCM repository has been moved from svn.apache.org (Subversion) to gitbox.apache.org (Git)
 
 Fixed Bugs:
+o RAT-290:  Update maven-jxr-plugin from 2.5 to 3.2.0. Thanks to dependabot.
+o RAT-290:  Update maven-antrun-plugin from 3.0.0 to 3.1.1. Thanks to dependabot.
+o RAT-290:  Update github actions/checkout from 2 to 3. Thanks to dependabot.
+o RAT-290:  Update github actions/setup-java from 2.5.0 to 3.3.0. Thanks to dependabot.
+o RAT-290:  Update maven-pmd-plugin from 3.14.0 to 3.16.0. Thanks to dependabot.
+o RAT-290:  Update maven-javadoc-plugin from 3.3.1 to 3.4.0. Thanks to dependabot.
+o RAT-290:  Update maven-compiler-plugin from 3.8.1 to 3.10.1. Thanks to dependabot.
+o RAT-290:  Update wagon-ssh from 3.5.0 to 3.5.1. Thanks to dependabot.
+o RAT-290:  Update maven-site-plugin from 3.9.1 to 3.12.0. Thanks to dependabot.
+o RAT-290:  Update maven-project-info-reports-plugin from 3.1.1 to 3.3.0. Thanks to dependabot.
+o RAT-290:  Update mockito-core from 3.11.2 to 4.6.0. Thanks to dependabot.
+o RAT-290:  Update ASF parent from 23 to 26. Thanks to dependabot.
 o RAT-273:  Some tests were based on the assumption, that the value of file.encoding
             can be changed on runtime. (Won't work nowadays, beginning with Java 16.)
             Removed this assumption in favour of a proper surefire configuration.
 o RAT-273:  Workaround for an incompatibility in the java.io.LineNumberReader, which is
             being replaced by the org.apache.rat.header.LineNumberReader.
-o RAT-290:  Update animal-sniffer-maven-plugin from 1.20 to 1.21. Thanks to Jin Xu/Xeno Amess. Thanks to Jin Xu.
+o RAT-290:  Update animal-sniffer-maven-plugin from 1.20 to 1.21. Thanks to Jin Xu/Xeno Amess.
 o RAT-296:  Use Github Actions for matrix builds on Windows and ubuntu with JDK 8,11,12,13,14,15. Simplify Travis integration to avoid dockerhub-related build failures.
 o RAT-274:  Update to latest Apache Ant 1.10.12.
 o RAT-291:  Fix links to Travis builds for all creadur projects.
-o RAT-290:  Update maven-dependency-plugin from 3.1.1 to 3.2.0. Thanks to dependabot. Thanks to dependabot.
-o RAT-290:  Update plexus-utils from 3.0.21 to 3.4.1. Thanks to dependabot. Thanks to dependabot.
-o RAT-290:  Update commons-cli from 1.4 to 1.5.0. Thanks to dependabot. Thanks to dependabot.
-o RAT-290:  Update maven-plugin-annotations from 3.6.1 to 3.6.2. Thanks to dependabot. Thanks to dependabot.
+o RAT-290:  Update maven-dependency-plugin from 3.1.1 to 3.2.0. Thanks to dependabot.
+o RAT-290:  Update plexus-utils from 3.0.21 to 3.4.1. Thanks to dependabot.
+o RAT-290:  Update commons-cli from 1.4 to 1.5.0. Thanks to dependabot.
+o RAT-290:  Update maven-plugin-annotation and maven-plugin-plugin from 3.6.1 to 3.6.2. Thanks to dependabot.
 o RAT-275:  Update to doxia 1.11.1 in order to get CVE-2020-13956-httpclient problem fixes in doxia.
 o RAT-283:  Update plugin versions and dependencies in order to run properly with Java8 as minimal compiler level.
 o RAT-286:  Update to maven-plugin-plugin v3.6.1 in order to circumvent error during maven site builds.
