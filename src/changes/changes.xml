@@ -52,7 +52,10 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
-    <release version="0.15-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done"-->
+    <release version="0.15-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-305" type="fix" dev="pottlinger" due-to="dependabot">
+        TODO: collect all dependabot updates for release 0.15.
+      </action>
     </release>
 
     <release version="0.14" date="2022-05-28" description="This release contains dependency updates, bugfixes and many improvements apart from infrastructure updates at ASF.">
