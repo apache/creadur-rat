@@ -4,10 +4,6 @@ sudo: required
 
 jobs:
     include:
-        - name: "Java 8"
-          jdk: openjdk8
-          script: mvn -e -B -V clean package site
-
         - name: "Java 16"
           jdk: openjdk16
           script: mvn -e -B -V clean package site
