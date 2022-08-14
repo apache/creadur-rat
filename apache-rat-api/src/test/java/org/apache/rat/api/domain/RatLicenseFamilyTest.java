@@ -30,7 +30,7 @@ import static org.apache.rat.api.domain.RatLicenseFamily.TMF854;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C;
 import static org.apache.rat.api.domain.RatLicenseFamily.W3C_DOCUMENTATION;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
