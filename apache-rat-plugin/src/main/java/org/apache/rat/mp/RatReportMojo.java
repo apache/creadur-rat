@@ -44,14 +44,10 @@ import org.apache.maven.shared.utils.WriterFactory;
 import org.apache.rat.Defaults;
 import org.codehaus.plexus.util.ReaderFactory;
 
-import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.*;
+
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 
 /**
@@ -65,31 +61,31 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * the command line. If the goal is run indirectly as part of a site generation, the output directory configured in
      * the Maven Site Plugin is used instead.
      */
-    @Parameter( defaultValue = "${project.reporting.outputDirectory}", readonly = true, required = true )
+    @Parameter(defaultValue = "${project.reporting.outputDirectory}", readonly = true, required = true)
     protected File outputDirectory;
 
     /**
      * Specifies the input encoding.
      */
-    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}", readonly = true )
+    @Parameter(property = "encoding", defaultValue = "${project.build.sourceEncoding}", readonly = true)
     private String inputEncoding;
 
     /**
      * Specifies the output encoding.
      */
-    @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}", readonly = true )
+    @Parameter(property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}", readonly = true)
     private String outputEncoding;
 
     /**
      * The local repository.
      */
-    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
+    @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
     protected ArtifactRepository localRepository;
 
     /**
      * Remote repositories used for the project.
      */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
     protected List<ArtifactRepository> remoteRepositories;
 
     /**
@@ -104,13 +100,19 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     @Component
     protected Renderer siteRenderer;
 
-    /** The current sink to use */
+    /**
+     * The current sink to use
+     */
     private Sink sink;
 
-    /** The sink factory to use */
+    /**
+     * The sink factory to use
+     */
     private SinkFactory sinkFactory;
 
-    /** The current report output directory to use */
+    /**
+     * The current report output directory to use
+     */
     private File reportOutputDirectory;
 
 
@@ -122,96 +124,83 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      */
     @Override
     public void execute()
-        throws MojoExecutionException
-    {
-        if ( !canGenerateReport() )
-        {
+            throws MojoExecutionException {
+        if (!canGenerateReport()) {
             return;
         }
 
-        File outputDirectory = new File( getOutputDirectory() );
+        File outputDirectory = new File(getOutputDirectory());
 
         String filename = getOutputName() + ".html";
 
         Locale locale = Locale.getDefault();
 
-        try
-        {
-            SiteRenderingContext siteContext = createSiteRenderingContext( locale );
+        try {
+            SiteRenderingContext siteContext = createSiteRenderingContext(locale);
 
             // copy resources
-            getSiteRenderer().copyResources( siteContext, outputDirectory );
+            getSiteRenderer().copyResources(siteContext, outputDirectory);
 
             // TODO Replace null with real value
-            RenderingContext docRenderingContext = new RenderingContext( outputDirectory, filename, null );
+            RenderingContext docRenderingContext = new RenderingContext(outputDirectory, filename, null);
 
-            SiteRendererSink sink = new SiteRendererSink( docRenderingContext );
+            SiteRendererSink sink = new SiteRendererSink(docRenderingContext);
 
-            generate( sink, null, locale );
+            generate(sink, null, locale);
 
-            if ( !isExternalReport() ) // MSHARED-204: only render Doxia sink if not an external report
-            {
+            // MSHARED-204: only render Doxia sink if not an external report
+            if (!isExternalReport()) {
                 outputDirectory.mkdirs();
 
-                try ( Writer writer =
-                      new OutputStreamWriter( new FileOutputStream( new File( outputDirectory, filename ) ),
-                                              getOutputEncoding() ) )
-                {
+                try (Writer writer =
+                             new OutputStreamWriter(new FileOutputStream(new File(outputDirectory, filename)),
+                                     getOutputEncoding())) {
                     // render report
-                    getSiteRenderer().mergeDocumentIntoSite( writer, sink, siteContext );
+                    getSiteRenderer().mergeDocumentIntoSite(writer, sink, siteContext);
                 }
             }
 
             // copy generated resources also
-            getSiteRenderer().copyResources( siteContext, outputDirectory );
-        }
-        catch ( RendererException | IOException | MavenReportException e )
-        {
+            getSiteRenderer().copyResources(siteContext, outputDirectory);
+        } catch (RendererException | IOException | MavenReportException e) {
             throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+                    "An error has occurred in " + getName(Locale.ENGLISH) + " report generation.", e);
         }
     }
 
-    private SiteRenderingContext createSiteRenderingContext( Locale locale )
-            throws MavenReportException, IOException
-    {
+    private SiteRenderingContext createSiteRenderingContext(Locale locale)
+            throws MavenReportException, IOException {
         DecorationModel decorationModel = new DecorationModel();
 
         Map<String, Object> templateProperties = new HashMap<>();
         // We tell the skin that we are rendering in standalone mode
-        templateProperties.put( "standalone", Boolean.TRUE );
-        templateProperties.put( "project", getProject() );
-        templateProperties.put( "inputEncoding", getInputEncoding() );
-        templateProperties.put( "outputEncoding", getOutputEncoding() );
+        templateProperties.put("standalone", Boolean.TRUE);
+        templateProperties.put("project", getProject());
+        templateProperties.put("inputEncoding", getInputEncoding());
+        templateProperties.put("outputEncoding", getOutputEncoding());
         // Put any of the properties in directly into the Velocity context
-        for ( Map.Entry<Object, Object> entry : getProject().getProperties().entrySet() )
-        {
-            templateProperties.put( (String) entry.getKey(), entry.getValue() );
+        for (Map.Entry<Object, Object> entry : getProject().getProperties().entrySet()) {
+            templateProperties.put((String) entry.getKey(), entry.getValue());
         }
 
         SiteRenderingContext context;
-        try
-        {
-           Artifact skinArtifact =
-               siteTool.getSkinArtifactFromRepository( localRepository, remoteRepositories, decorationModel );
+        try {
+            Artifact skinArtifact =
+                    siteTool.getSkinArtifactFromRepository(localRepository, remoteRepositories, decorationModel);
 
-           getLog().info( buffer().a( "Rendering content with " ).strong( skinArtifact.getId()
-               + " skin" ).a( '.' ).toString() );
+            getLog().info(buffer().a("Rendering content with ").strong(skinArtifact.getId()
+                    + " skin").a('.').toString());
 
-            context = siteRenderer.createContextForSkin( skinArtifact, templateProperties, decorationModel,
-                                                         project.getName(), locale );
-        }
-        catch ( SiteToolException e )
-        {
-            throw new MavenReportException( "Failed to retrieve skin artifact", e );
-        }
-        catch ( RendererException e )
-        {
-            throw new MavenReportException( "Failed to create context for skin", e );
+            context = siteRenderer.createContextForSkin(skinArtifact, templateProperties, decorationModel,
+                    project.getName(), locale);
+        } catch (SiteToolException e) {
+            throw new MavenReportException("Failed to retrieve skin artifact", e);
+        } catch (RendererException e) {
+            throw new MavenReportException("Failed to create context for skin", e);
         }
 
         // Generate static site
-        context.setRootDirectory( project.getBasedir() );
+        context.setRootDirectory(project.getBasedir());
 
         return context;
     }
@@ -219,17 +208,16 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Generate a report.
      *
-     * @param sink the sink to use for the generation.
+     * @param sink   the sink to use for the generation.
      * @param locale the wanted locale to generate the report, could be null.
      * @throws MavenReportException if any
      * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
      */
     @Deprecated
     @Override
-    public void generate( org.codehaus.doxia.sink.Sink sink, Locale locale )
-        throws MavenReportException
-    {
-        generate( sink, null, locale );
+    public void generate(org.codehaus.doxia.sink.Sink sink, Locale locale)
+            throws MavenReportException {
+        generate(sink, null, locale);
     }
 
     /**
@@ -241,10 +229,9 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
      */
     @Deprecated
-    public void generate( Sink sink, Locale locale )
-        throws MavenReportException
-    {
-        generate( sink, null, locale );
+    public void generate(Sink sink, Locale locale)
+            throws MavenReportException {
+        generate(sink, null, locale);
     }
 
     /**
@@ -256,13 +243,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @throws MavenReportException
      */
     @Override
-    public void generate( Sink sink, SinkFactory sinkFactory, Locale locale )
-        throws MavenReportException
-    {
-        if ( !canGenerateReport() )
-        {
-            getLog().info( "This report cannot be generated as part of the current build. "
-                           + "The report name should be referenced in this line of output." );
+    public void generate(Sink sink, SinkFactory sinkFactory, Locale locale)
+            throws MavenReportException {
+        if (!canGenerateReport()) {
+            getLog().info("This report cannot be generated as part of the current build. "
+                    + "The report name should be referenced in this line of output.");
             return;
         }
 
@@ -270,7 +255,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
 
         this.sinkFactory = sinkFactory;
 
-        executeReport( locale );
+        executeReport(locale);
 
         closeReport();
     }
@@ -279,36 +264,30 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @return CATEGORY_PROJECT_REPORTS
      */
     @Override
-    public String getCategoryName()
-    {
+    public String getCategoryName() {
         return CATEGORY_PROJECT_REPORTS;
     }
 
     @Override
-    public File getReportOutputDirectory()
-    {
-        if ( reportOutputDirectory == null )
-        {
-            reportOutputDirectory = new File( getOutputDirectory() );
+    public File getReportOutputDirectory() {
+        if (reportOutputDirectory == null) {
+            reportOutputDirectory = new File(getOutputDirectory());
         }
 
         return reportOutputDirectory;
     }
 
     @Override
-    public void setReportOutputDirectory( File reportOutputDirectory )
-    {
+    public void setReportOutputDirectory(File reportOutputDirectory) {
         this.reportOutputDirectory = reportOutputDirectory;
         this.outputDirectory = reportOutputDirectory;
     }
 
-    protected String getOutputDirectory()
-    {
+    protected String getOutputDirectory() {
         return outputDirectory.getAbsolutePath();
     }
 
-    protected Renderer getSiteRenderer()
-    {
+    protected Renderer getSiteRenderer() {
         return siteRenderer;
     }
 
@@ -317,9 +296,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      *
      * @return The input files encoding, never <code>null</code>.
      */
-    protected String getInputEncoding()
-    {
-        return ( inputEncoding == null ) ? ReaderFactory.FILE_ENCODING : inputEncoding;
+    protected String getInputEncoding() {
+        return (inputEncoding == null) ? ReaderFactory.FILE_ENCODING : inputEncoding;
     }
 
     /**
@@ -327,48 +305,42 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      *
      * @return The effective reporting output file encoding, never <code>null</code>.
      */
-    protected String getOutputEncoding()
-    {
-        return ( outputEncoding == null ) ? WriterFactory.UTF_8 : outputEncoding;
+    protected String getOutputEncoding() {
+        return (outputEncoding == null) ? WriterFactory.UTF_8 : outputEncoding;
     }
 
     /**
      * Actions when closing the report.
      */
-    protected void closeReport()
-    {
+    protected void closeReport() {
         getSink().close();
     }
 
     /**
      * @return the sink used
      */
-    public Sink getSink()
-    {
+    public Sink getSink() {
         return sink;
     }
 
     /**
      * @return the sink factory used
      */
-    public SinkFactory getSinkFactory()
-    {
+    public SinkFactory getSinkFactory() {
         return sinkFactory;
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#isExternalReport()
      * @return {@code false} by default.
+     * @see org.apache.maven.reporting.MavenReport#isExternalReport()
      */
     @Override
-    public boolean isExternalReport()
-    {
+    public boolean isExternalReport() {
         return false;
     }
 
     @Override
-    public boolean canGenerateReport()
-    {
+    public boolean canGenerateReport() {
         return !skip;
     }
 
@@ -391,7 +363,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Writes the report to the Doxia sink.
      *
-     * @param sink   The doxia sink, kind of a SAX handler.
      * @param locale The locale to use for writing the report.
      * @throws MavenReportException Writing the report failed.
      */
