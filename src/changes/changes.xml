@@ -56,6 +56,12 @@ The <action> type attribute can be add,update,fix,remove.
       <action issue="RAT-305" type="fix" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.15.
       </action>
+      <action issue="RAT-309" type="fix" dev="pottlinger" due-to="Michael Osipov">
+        Site builds could not be generated properly due to API changes: solution was to upgrade Maven Reporting API to 3.1.1 and use details of Maven Reporting Implementation 3.2.0 in RAT's Mojo hierarchy.
+      </action>
+      <action issue="RAT-309" type="fix" dev="pottlinger">
+        Updated internal data structures from deprecated ArrayStack to JDK's ArrayDeque.
+      </action>
       <action issue="RAT-307" type="fix" dev="pottlinger" due-to="dependabot">
         Update to focal (Ubuntu 20.04) on Travis to circumvent build errors and be able to use more modern JDK versions. Deprecate openJDK8 build with focal as it is not supported on Travis.
       </action>
