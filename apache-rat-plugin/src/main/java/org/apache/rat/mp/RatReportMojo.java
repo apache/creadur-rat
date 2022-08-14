@@ -45,6 +45,7 @@ import org.apache.rat.Defaults;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
@@ -153,7 +154,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
                 outputDirectory.mkdirs();
 
                 try (Writer writer =
-                             new OutputStreamWriter(new FileOutputStream(new File(outputDirectory, filename)),
+                             new OutputStreamWriter(Files.newOutputStream(new File(outputDirectory, filename).toPath()),
                                      getOutputEncoding())) {
                     // render report
                     getSiteRenderer().mergeDocumentIntoSite(writer, sink, siteContext);
