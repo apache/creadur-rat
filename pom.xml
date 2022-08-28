@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>26</version>
+    <version>27</version>
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
@@ -219,7 +219,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -480,7 +480,7 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh</artifactId>
         <!-- Last version that is compatible with Maven 2 -->
-        <version>3.5.1</version>
+        <version>3.5.2</version>
       </extension>
     </extensions>
   </build>
