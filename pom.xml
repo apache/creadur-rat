@@ -46,7 +46,7 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
     <project.build.outputTimestamp>10</project.build.outputTimestamp>
     <ant.version>1.10.12</ant.version>
-    <mockito.version>4.6.0</mockito.version>
+    <mockito.version>4.7.0</mockito.version>
     <javaVersion>1.8</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
@@ -56,8 +56,8 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- maven plugin versions -->
     <mavenPluginPluginVersion>3.6.4</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
-    <mavenJavadocPluginVersion>3.4.0</mavenJavadocPluginVersion>
-    <mavenPmdPluginVersion>3.16.0</mavenPmdPluginVersion>
+    <mavenJavadocPluginVersion>3.4.1</mavenJavadocPluginVersion>
+    <mavenPmdPluginVersion>3.18.0</mavenPmdPluginVersion>
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
     <previousRatVersion>0.14</previousRatVersion>
     <currentSnapshotRatVersion>0.15-SNAPSHOT</currentSnapshotRatVersion>
@@ -219,7 +219,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -319,7 +319,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.0</version>
+          <version>3.12.1</version>
           <configuration>
             <relativizeDecorationLinks>false</relativizeDecorationLinks>
           </configuration>
@@ -432,7 +432,7 @@ agnostic home for software distribution comprehension and audit tools.
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.5.1</version>
+            <version>1.6.1</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -450,7 +450,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.21</version>
+        <version>1.22</version>
         <executions>
           <execution>
             <!-- This checks the source code of our project -->
