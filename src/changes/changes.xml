@@ -32,7 +32,8 @@ To generate the release notes from this file:
 
 mvn changes:announcement-generate -Prelease-notes [-Dchanges.version=nn]
 then tweak the formatting if necessary
-and commit
+and commit.
+Run with changes.version-parameter in order to not generate a SNAPSHOT changelog
 
 The <action> type attribute can be add,update,fix,remove.
 
