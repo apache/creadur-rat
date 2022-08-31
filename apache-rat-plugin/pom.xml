@@ -20,7 +20,7 @@
   <parent>
     <artifactId>apache-rat-project</artifactId>
     <groupId>org.apache.rat</groupId>
-    <version>0.15-SNAPSHOT</version>
+    <version>0.15</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>apache-rat-plugin</artifactId>
