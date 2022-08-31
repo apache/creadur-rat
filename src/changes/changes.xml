@@ -60,40 +60,40 @@ The <action> type attribute can be add,update,fix,remove.
     -->
     <release version="0.15" date="2022-08-31" description="This release fixes a warning during site builds and updates various dependencies.">
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-project-info-reports-plugin from 3.3.0 to 3.4.1
+        Update maven-project-info-reports-plugin from 3.3.0 to 3.4.1.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-javadoc-plugin from 3.4.0 to 3.4.1
+        Update maven-javadoc-plugin from 3.4.0 to 3.4.1.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-jxr-plugin from 3.2.0 to 3.3.0
+        Update maven-jxr-plugin from 3.2.0 to 3.3.0.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update animal-sniffer-maven-plugin from 1.21 to 1.22
+        Update animal-sniffer-maven-plugin from 1.21 to 1.22.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-site-plugin from 3.12.0 to 3.12.1
+        Update maven-site-plugin from 3.12.0 to 3.12.1.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-pmd-plugin from 3.16.0 to 3.18.0
+        Update maven-pmd-plugin from 3.16.0 to 3.18.0.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update mockito-core from 4.6.0 to 4.7.0
+        Update mockito-core from 4.6.0 to 4.7.0.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update extra-enforcer-rules from 1.5.1 to 1.6.1
+        Update extra-enforcer-rules from 1.5.1 to 1.6.1.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update Apache parent pom from 26 to 27
+        Update Apache parent pom from 26 to 27.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update wagon-ssh from 3.5.1 to 3.5.2
+        Update wagon-ssh from 3.5.1 to 3.5.2.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-enforcer-plugin from 3.0.0 to 3.1.0
+        Update maven-enforcer-plugin from 3.0.0 to 3.1.0.
       </action>
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
-        Update actions/setup-java from 3.3.0 to 3.4.1
+        Update actions/setup-java from 3.3.0 to 3.4.1.
       </action>
       <action issue="RAT-309" type="fix" dev="pottlinger" due-to="Michael Osipov, Gary Gregory">
         Site builds could not be generated properly due to API changes: solution was to upgrade Maven Reporting API to 3.1.1 and use details of Maven Reporting Implementation 3.2.0 in RAT's Mojo hierarchy.
