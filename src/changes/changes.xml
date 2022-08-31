@@ -73,7 +73,7 @@ The <action> type attribute can be add,update,fix,remove.
       <action issue="RAT-310" type="update" dev="pottlinger">
         Fix deprecation warnings in tests. Use hamcrest's annotations instead of ones from JUnit.
       </action>
-      <action issue="RAT-307" type="fix" dev="pottlinger" due-to="dependabot">
+      <action issue="RAT-307" type="fix" dev="pottlinger">
         Update to focal (Ubuntu 20.04) on Travis to circumvent build errors and be able to use more modern JDK versions. Deprecate openJDK8 build with focal as it is not supported on Travis.
       </action>
     </release>
