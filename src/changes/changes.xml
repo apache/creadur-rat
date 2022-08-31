@@ -62,6 +62,9 @@ The <action> type attribute can be add,update,fix,remove.
       <action issue="RAT-309" type="fix" dev="pottlinger">
         Updated internal data structures from deprecated ArrayStack to JDK's ArrayDeque.
       </action>
+      <action issue="RAT-306" type="fix" dev="pottlinger">
+        Add note about hierarchy of changelogs in RAT project structure when publishing the project webpage.
+      </action>
       <action issue="RAT-310" type="update" dev="pottlinger">
         Fix deprecation warnings in tests. Use hamcrest's annotations instead of ones from JUnit.
       </action>
