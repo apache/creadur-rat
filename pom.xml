@@ -57,7 +57,7 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenPluginPluginVersion>3.6.4</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.4.1</mavenJavadocPluginVersion>
-    <mavenPmdPluginVersion>3.18.0</mavenPmdPluginVersion>
+    <mavenPmdPluginVersion>3.19.0</mavenPmdPluginVersion>
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
     <previousRatVersion>0.15</previousRatVersion>
     <currentSnapshotRatVersion>0.16-SNAPSHOT</currentSnapshotRatVersion>
