@@ -53,11 +53,17 @@ The <action> type attribute can be add,update,fix,remove.
   </properties>
 
   <body>
-    <!--release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-3xx" type="update" dev="pottlinger" due-to="dependabot">
+    <!--release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-xxx" type="update" dev="pottlinger" due-to="dependabot">
+        TODO: collect all dependabot updates for release 0.17.
+      </action>
+    </release>
+    -->
+    <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.16.
       </action>
-    -->
+    </release>
     <release version="0.15" date="2022-08-31" description="This release fixes a warning during site builds and updates various dependencies.">
       <action issue="RAT-305" type="update" dev="pottlinger" due-to="dependabot">
         Update maven-project-info-reports-plugin from 3.3.0 to 3.4.1.
