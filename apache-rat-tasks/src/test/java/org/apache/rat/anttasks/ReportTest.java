@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
+import org.junit.Assume;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -144,9 +145,14 @@ public class ReportTest extends AbstractRatAntTaskTest {
      */
     @Test
     public void testISO88591() throws Exception {
-        String origEncoding = overrideFileEncoding("ISO-8859-1");
+    	// In previous versions of the JDK, it used to be possible to
+    	// change the value of file.encoding at runtime. As of Java 16,
+    	// this is no longer possible. Instead, at this point, we check,
+    	// that file.encoding is actually ISO-8859-1. (Within Maven, this
+    	// is enforced by the configuration of the surefire plugin.) If not,
+    	// we skip this test.
+    	Assume.assumeTrue("Expected file.encoding=ISO-8859-1", "ISO-8859-1".equals(System.getProperty("file.encoding")));
         buildRule.executeTarget("testISO88591");
-        overrideFileEncoding(origEncoding);
         assertTrue("Log should contain the test umlauts", buildRule.getLog().contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF"));
     }
 
@@ -155,12 +161,17 @@ public class ReportTest extends AbstractRatAntTaskTest {
      */
     @Test
     public void testISO88591WithFile() throws Exception {
+    	// In previous versions of the JDK, it used to be possible to
+    	// change the value of file.encoding at runtime. As of Java 16,
+    	// this is no longer possible. Instead, at this point, we check,
+    	// that file.encoding is actually ISO-8859-1. (Within Maven, this
+    	// is enforced by the configuration of the surefire plugin.) If not,
+    	// we skip this test.
+    	Assume.assumeTrue("Expected file.encoding=ISO-8859-1", "ISO-8859-1".equals(System.getProperty("file.encoding")));
         Charset.defaultCharset();
         String outputDir = System.getProperty("output.dir", "target/anttasks");
         String selftestOutput = System.getProperty("report.file", outputDir + "/selftest.report");
-        String origEncoding = overrideFileEncoding("ISO-8859-1");
         buildRule.executeTarget("testISO88591WithReportFile");
-        overrideFileEncoding(origEncoding);
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         boolean documentParsed = false;
         try (FileInputStream fis = new FileInputStream(selftestOutput)) {
@@ -175,39 +186,5 @@ public class ReportTest extends AbstractRatAntTaskTest {
             documentParsed = false;
         }
         assertTrue("Report file could not be parsed as XML", documentParsed);
-    }
-
-    private String overrideFileEncoding(String newEncoding) {
-        String current = System.getProperty("file.encoding");
-        System.setProperty("file.encoding", newEncoding);
-        setBinaryGuesserCharset(newEncoding);
-        clearDefaultCharset();
-        return current;
-    }
-
-    private void clearDefaultCharset() {
-        try {
-            Field f = Charset.class.getDeclaredField("defaultCharset");
-            f.setAccessible(true);
-            f.set(null, null);
-        } catch (Exception ex) {
-            // This is for unittesting - there is no good reason not to rethrow
-            // it. This could be happening in JDK 9, where the unittests need to
-            // run with the java.base module opened
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private void setBinaryGuesserCharset(String charset) {
-        try {
-            Field f = BinaryGuesser.class.getDeclaredField("CHARSET_FROM_FILE_ENCODING_OR_UTF8");
-            f.setAccessible(true);
-            f.set(null, Charset.forName(charset));
-        } catch (Exception ex) {
-            // This is for unittesting - there is no good reason not to rethrow
-            // it. This could be happening in JDK 9, where the unittests need to
-            // run with the java.base module opened
-            throw new RuntimeException(ex);
-        }
     }
 }

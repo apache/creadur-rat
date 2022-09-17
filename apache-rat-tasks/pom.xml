@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.rat</groupId>
     <artifactId>apache-rat-project</artifactId>
-    <version>0.14-SNAPSHOT</version>
+    <version>0.16-SNAPSHOT</version>
   </parent>
   <artifactId>apache-rat-tasks</artifactId>
   <packaging>jar</packaging>
@@ -156,6 +156,14 @@
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <forkCount>1</forkCount>
+            <argLine>-Dfile.encoding=ISO-8859-1</argLine>
           </configuration>
         </plugin>
       </plugins>

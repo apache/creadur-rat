@@ -88,7 +88,7 @@ public class ExclusionHelperTest {
 
     @Test
     public void testAddingPlexusAndScmExclusion() {
-        final int expectedSizeMergedFromPlexusDefaultsAndScm = (38 + SourceCodeManagementSystems.getPluginExclusions().size());
+        final int expectedSizeMergedFromPlexusDefaultsAndScm = (37 + SourceCodeManagementSystems.getPluginExclusions().size());
 
         final Set<String> exclusion = new HashSet<>();
         addPlexusAndScmDefaults(log, false, exclusion);

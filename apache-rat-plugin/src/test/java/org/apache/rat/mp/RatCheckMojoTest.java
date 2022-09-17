@@ -28,13 +28,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import static junit.framework.TestCase.assertTrue;
-import org.apache.rat.document.impl.guesser.BinaryGuesser;
+import org.junit.Assume;
 
 import static org.apache.rat.mp.RatTestHelpers.ensureRatReportIsCorrect;
 import static org.apache.rat.mp.RatTestHelpers.getSourceDirectory;
@@ -217,13 +214,18 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
      * @throws Exception The test failed.
      */
     public void testIt4() throws Exception {
+    	// In previous versions of the JDK, it used to be possible to
+    	// change the value of file.encoding at runtime. As of Java 16,
+    	// this is no longer possible. Instead, at this point, we check,
+    	// that file.encoding is actually ISO-8859-1. (Within Maven, this
+    	// is enforced by the configuration of the surefire plugin.) If not,
+    	// we skip this test.
+    	Assume.assumeTrue("Expected file.encoding=ISO-8859-1", "ISO-8859-1".equals(System.getProperty("file.encoding")));
         final RatCheckMojo mojo = newRatCheckMojo("it4");
         final File ratTxtFile = getRatTxtFile(mojo);
         try {
             setVariableValueToObject(mojo, "reportStyle", "xml");
-            String origEncoding = overrideFileEncoding("ISO-8859-1");
             mojo.execute();
-            overrideFileEncoding(origEncoding);
             fail("Expected RatCheckException");
         } catch (RatCheckException e) {
             final String msg = e.getMessage();
@@ -248,41 +250,6 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
             assertTrue("Report should contain test umlauts, got '" + textContent + "'", byteSequencePresent);
         } catch (Exception ex) {
             fail("Report file could not be parsed as XML: " + ex.getMessage());
-        }
-    }
-
-
-    private String overrideFileEncoding(String newEncoding) {
-        String current = System.getProperty("file.encoding");
-        System.setProperty("file.encoding", newEncoding);
-        setBinaryGuesserCharset(newEncoding);
-        clearDefaultCharset();
-        return current;
-    }
-
-    private void clearDefaultCharset() {
-        try {
-            Field f = Charset.class.getDeclaredField("defaultCharset");
-            f.setAccessible(true);
-            f.set(null, null);
-        } catch (Exception ex) {
-            // This is for unittesting - there is no good reason not to rethrow
-            // it. This could be happening in JDK 9, where the unittests need to
-            // run with the java.base module opened
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private void setBinaryGuesserCharset(String charset) {
-        try {
-            Field f = BinaryGuesser.class.getDeclaredField("CHARSET_FROM_FILE_ENCODING_OR_UTF8");
-            f.setAccessible(true);
-            f.set(null, Charset.forName(charset));
-        } catch (Exception ex) {
-            // This is for unittesting - there is no good reason not to rethrow
-            // it. This could be happening in JDK 9, where the unittests need to
-            // run with the java.base module opened
-            throw new RuntimeException(ex);
         }
     }
 }

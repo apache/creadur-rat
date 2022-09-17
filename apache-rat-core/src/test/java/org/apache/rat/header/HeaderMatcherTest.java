@@ -30,13 +30,11 @@ import static org.junit.Assert.assertTrue;
 
 public class HeaderMatcherTest {
 
-    private int capacity;
     private HeaderMatcher matcher;
     private SimpleCharFilter filter;
 
     @Before
     public void setUp() throws Exception {
-        capacity = 20;
         filter = new SimpleCharFilter();
         matcher = new HeaderMatcher(filter, 20);
     }

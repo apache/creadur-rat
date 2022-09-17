@@ -30,7 +30,6 @@ import static org.junit.Assert.assertTrue;
 
 public class HeaderMatcherWithBeansTest {
 
-    private int capacity;
     private HeaderMatcher matcher;
     private SimpleCharFilter filter;
     private HeaderBean[] beans;
@@ -43,7 +42,6 @@ public class HeaderMatcherWithBeansTest {
                 new HeaderBean()
             };
         this.beans = beans;
-        capacity = 20;
         filter = new SimpleCharFilter();
         matcher = new HeaderMatcher(filter, 20, beans);
     }

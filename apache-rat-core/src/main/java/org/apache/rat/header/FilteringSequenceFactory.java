@@ -39,6 +39,10 @@ class FilteringSequenceFactory {
     }
 
     public CharSequence filter(Reader reader) throws IOException {
+    	return filter(new LineNumberReader(reader));
+    }
+
+    public CharSequence filter(LineNumberReader reader) throws IOException {
         buffer.clear();
         boolean eof = false;
         while(!eof) {
