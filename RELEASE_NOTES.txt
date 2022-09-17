@@ -1,3 +1,28 @@
+Rat 0.15
+========
+This release fixes a warning during site builds and updates various dependencies.
+
+Fixed Bugs:
+o RAT-309:  Site builds could not be generated properly due to API changes: solution was to upgrade Maven Reporting API to 3.1.1 and use details of Maven Reporting Implementation 3.2.0 in RAT's Mojo hierarchy. Thanks to Michael Osipov, Gary Gregory.
+o RAT-309:  Updated internal data structures from deprecated ArrayStack to JDK's ArrayDeque.
+o RAT-306:  Add note about hierarchy of changelogs in RAT project structure when publishing the project webpage.
+o RAT-307:  Update to focal (Ubuntu 20.04) on Travis to circumvent build errors and be able to use more modern JDK versions. Deprecate openJDK8 build with focal as it is not supported on Travis.
+
+Changes:
+o RAT-305:  Update maven-project-info-reports-plugin from 3.3.0 to 3.4.1. Thanks to dependabot.
+o RAT-305:  Update maven-javadoc-plugin from 3.4.0 to 3.4.1. Thanks to dependabot.
+o RAT-305:  Update maven-jxr-plugin from 3.2.0 to 3.3.0. Thanks to dependabot.
+o RAT-305:  Update animal-sniffer-maven-plugin from 1.21 to 1.22. Thanks to dependabot.
+o RAT-305:  Update maven-site-plugin from 3.12.0 to 3.12.1. Thanks to dependabot.
+o RAT-305:  Update maven-pmd-plugin from 3.16.0 to 3.18.0. Thanks to dependabot.
+o RAT-305:  Update mockito-core from 4.6.0 to 4.7.0. Thanks to dependabot.
+o RAT-305:  Update extra-enforcer-rules from 1.5.1 to 1.6.1. Thanks to dependabot.
+o RAT-305:  Update Apache parent pom from 26 to 27. Thanks to dependabot.
+o RAT-305:  Update wagon-ssh from 3.5.1 to 3.5.2. Thanks to dependabot.
+o RAT-305:  Update maven-enforcer-plugin from 3.0.0 to 3.1.0. Thanks to dependabot.
+o RAT-305:  Update actions/setup-java from 3.3.0 to 3.4.1. Thanks to dependabot.
+o RAT-310:  Fix deprecation warnings in tests. Use hamcrest's annotations instead of ones from JUnit.
+
 Rat 0.14
 ========
 This release contains dependency updates, bugfixes and many improvements apart from infrastructure updates at ASF.
