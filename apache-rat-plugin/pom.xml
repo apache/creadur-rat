@@ -20,7 +20,7 @@
   <parent>
     <artifactId>apache-rat-project</artifactId>
     <groupId>org.apache.rat</groupId>
-    <version>0.14-SNAPSHOT</version>
+    <version>0.16-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>apache-rat-plugin</artifactId>
@@ -124,6 +124,14 @@
         			</pluginExecutions>
         		</lifecycleMappingMetadata>
         	</configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <forkCount>1</forkCount>
+            <argLine>-Dfile.encoding=ISO-8859-1</argLine>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -229,13 +237,23 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-integration-tools</artifactId>
+      <version>${doxiaSitetoolsVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
       <version>${doxiaSitetoolsVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>3.0</version>
+      <version>3.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-shared-utils</artifactId>
+      <version>3.3.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -246,7 +264,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.4.1</version>
+      <version>3.4.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

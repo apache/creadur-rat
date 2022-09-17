@@ -18,13 +18,13 @@
  */
 package org.apache.rat.report.xml.writer.impl.base;
 
-import org.apache.commons.collections4.ArrayStack;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.InvalidXmlException;
 import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -400,7 +400,7 @@ public final class XmlWriter implements IXmlWriter {
     }
 
     private final Writer writer;
-    private final ArrayStack elementNames;
+    private final ArrayDeque elementNames;
     private final Set<CharSequence> currentAttributes = new HashSet<>();
 
     boolean elementsWritten = false;
@@ -409,7 +409,7 @@ public final class XmlWriter implements IXmlWriter {
 
     public XmlWriter(final Writer writer) {
         this.writer = writer;
-        this.elementNames = new ArrayStack();
+        this.elementNames = new ArrayDeque<CharSequence>();
     }
 
     /**

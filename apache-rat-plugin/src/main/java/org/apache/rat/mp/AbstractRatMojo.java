@@ -140,7 +140,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      */
     @Parameter(property="rat.includesFileCharset", defaultValue="${project.build.sourceEncoding}")
     private String includesFileCharset;
-    
+
     /**
      * Specifies files, which are excluded in the report. By default, no files
      * are excluded.
@@ -236,7 +236,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
      * Holds the maven-internal project to allow resolution of artifact properties during mojo runs.
      */
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
-    private MavenProject project;
+    protected MavenProject project;
 
     /**
      * @return Returns the Maven project.
@@ -314,7 +314,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         } else {
             getLog().info(
                     files.length
-                            + " resources included (use -debug for more details)");
+                            + " resources included");
             if (getLog().isDebugEnabled()) {
                 for (final String resource : files) {
                     getLog().debug(" - included " + resource);
@@ -400,13 +400,13 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     	}
     	return patterns;
     }
-    
+
     private void setExcludes(DirectoryScanner ds) throws MojoExecutionException {
         final List<String> excludeList = mergeDefaultExclusions();
         if (excludes == null || excludes.length == 0) {
             getLog().info("No excludes explicitly specified.");
         } else {
-            getLog().info(excludes.length + " explicit excludes (use -debug for more details).");
+            getLog().info(excludes.length + " explicit excludes.");
         	for (final String exclude : excludes) {
                 getLog().debug("Exclude: " + exclude);
             }
@@ -454,7 +454,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         } else {
             getLog().info(
                     results.size()
-                            + " implicit excludes (use -debug for more details).");
+                            + " implicit excludes.");
             for (final String exclude : results) {
                 getLog().debug("Implicit exclude: " + exclude);
             }

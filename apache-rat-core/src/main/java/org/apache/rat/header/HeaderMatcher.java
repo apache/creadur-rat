@@ -19,7 +19,6 @@
 package org.apache.rat.header;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,7 +59,6 @@ public class HeaderMatcher {
             lines = -1;
         }
         if (headers != null) {
-            final int length = headers.length;
             for (final HeaderBean headerBean : headers) {
                 if (headerBean != null) {
                     final Pattern headerPattern = headerBean.getHeaderPattern();
