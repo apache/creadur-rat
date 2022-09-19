@@ -376,7 +376,7 @@ agnostic home for software distribution comprehension and audit tools.
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -398,7 +398,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <configuration>
               <target>
-                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
+                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false"/>
               </target>
             </configuration>
           </execution>
@@ -697,11 +697,11 @@ agnostic home for software distribution comprehension and audit tools.
       </build>
     </profile>
   </profiles>
-    <!-- in order to test new releases this reference can be activated locally-->
-    <pluginRepositories>
-      <pluginRepository>
-        <id>staged-releases-rat-015</id>
-        <url>https://repository.apache.org/content/repositories/orgapachecreadur-1008/</url>
-      </pluginRepository>
-    </pluginRepositories>
+  <!-- in order to test new releases this reference can be activated locally-->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>staged-releases-rat-015</id>
+      <url>https://repository.apache.org/content/repositories/orgapachecreadur-1008/</url>
+    </pluginRepository>
+  </pluginRepositories>
 </project>
