@@ -1,9 +1,0 @@
-language: java
-dist: focal 
-sudo: required
-
-jobs:
-    include:
-        - name: "Java 16"
-          jdk: openjdk16
-          script: mvn -e -B -V clean package site
