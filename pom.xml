@@ -331,8 +331,6 @@ agnostic home for software distribution comprehension and audit tools.
           <version>0.15</version>
           <configuration>
             <excludes>
-              <!-- This file only describes how to build the project and it has no license header -->
-              <exclude>.travis.yml</exclude>
               <exclude>BUILD.txt</exclude>
               <!-- rat:check does not seem to use exclusions from modules -->
               <exclude>apache-rat/README*.txt</exclude>
