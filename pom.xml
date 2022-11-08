@@ -54,7 +54,7 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenVersion>2.2.1</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
     <!-- maven plugin versions -->
-    <mavenPluginPluginVersion>3.6.4</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.7.0</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.4.1</mavenJavadocPluginVersion>
     <mavenPmdPluginVersion>3.19.0</mavenPmdPluginVersion>
