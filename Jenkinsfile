@@ -19,8 +19,8 @@
  */
 pipeline {
 
-//    agent { label 'ubuntu' } 
-    agent any
+    agent { label 'ubuntu' } 
+// arm does not have JDK8 anymore: agent any
 
     environment {
         // It seems the login the jenkins slave uses, doesn't pick up the environment changes,
