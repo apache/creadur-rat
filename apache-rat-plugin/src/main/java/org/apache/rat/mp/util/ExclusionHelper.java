@@ -43,7 +43,7 @@ public final class ExclusionHelper {
                     "release.properties", //
                     ".repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
                     "build.log", // RAT-160: until now maven-invoker-plugin runs create a build.log that is not part of a release
-                    ".mvn/**", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
+                    ".mvn/**/*", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
                     "pom.xml.releaseBackup"));
 
     /**
