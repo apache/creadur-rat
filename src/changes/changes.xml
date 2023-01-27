@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-314" type="fix" dev="pottlinger" due-to="François Guillot">
+        Add default recursive exclusion for maven-induced build artifacts in folder .mvn.
+      </action>
       <action issue="RAT-312" type="fix" dev="pottlinger">
         Remove Travis build as they are unreliable. Builds with ASF Jenkins and Github Actions remain as before.
       </action>
