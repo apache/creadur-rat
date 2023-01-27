@@ -266,6 +266,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
+        <version>0.16-SNAPSHOT</version><!-- RAT-314: replace with proper value after 0.16 is out -->
       </plugin>
     </plugins>
   </reporting>
