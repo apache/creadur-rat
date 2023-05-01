@@ -189,7 +189,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
             Artifact skinArtifact =
                     siteTool.getSkinArtifactFromRepository(localRepository, remoteRepositories, decorationModel);
 
-            getLog().info(buffer().a("Rendering content with ").strong(skinArtifact.getId()
+            getLog().debug(buffer().a("Rendering content with ").strong(skinArtifact.getId()
                     + " skin").a('.').toString());
 
             context = siteRenderer.createContextForSkin(skinArtifact, templateProperties, decorationModel,

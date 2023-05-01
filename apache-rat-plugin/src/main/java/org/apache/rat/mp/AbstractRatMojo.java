@@ -258,7 +258,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
         if (licenses != null) {
             matchers.addAll(Arrays.asList(licenses));
-            getLog().info("Added " + licenses.length + " additional default licenses.");
+            getLog().debug("Added " + licenses.length + " additional default licenses.");
         }
 
         if (licenseMatchers != null) {
@@ -268,7 +268,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         }
 
         if (addDefaultLicenseMatchers) {
-            getLog().info("Enabled default license matchers.");
+            getLog().debug("Enabled default license matchers.");
             matchers.addAll(Defaults.DEFAULT_MATCHERS);
         }
         logLicenseMatchers(matchers);
@@ -312,7 +312,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         if (files.length == 0) {
             getLog().warn("No resources included.");
         } else {
-            getLog().info(
+            getLog().debug(
                     files.length
                             + " resources included");
             if (getLog().isDebugEnabled()) {
@@ -350,7 +350,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         		if (!f.isFile()) {
         			getLog().error("IncludesFile not found: " + f.getAbsolutePath());
         		} else {
-        			getLog().info("Includes loaded from file " + includesFile + ", using character set " + charset);
+        			getLog().debug("Includes loaded from file " + includesFile + ", using character set " + charset);
         		}
         		includeList.addAll(getPatternsFromFile(f, charset));
         	}
@@ -404,9 +404,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     private void setExcludes(DirectoryScanner ds) throws MojoExecutionException {
         final List<String> excludeList = mergeDefaultExclusions();
         if (excludes == null || excludes.length == 0) {
-            getLog().info("No excludes explicitly specified.");
+            getLog().debug("No excludes explicitly specified.");
         } else {
-            getLog().info(excludes.length + " explicit excludes.");
+            getLog().debug(excludes.length + " explicit excludes.");
         	for (final String exclude : excludes) {
                 getLog().debug("Exclude: " + exclude);
             }
@@ -430,9 +430,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         addIdeaDefaults(getLog(), useIdeaDefaultExcludes, results);
 
         if (parseSCMIgnoresAsExcludes) {
-            getLog().info("Will parse SCM ignores for exclusions...");
+            getLog().debug("Will parse SCM ignores for exclusions...");
             results.addAll(ScmIgnoreParser.getExclusionsFromSCM(getLog(), project.getBasedir()));
-            getLog().info("Finished adding exclusions from SCM ignore files.");
+            getLog().debug("Finished adding exclusions from SCM ignore files.");
         }
 
         if (excludeSubProjects && project != null
@@ -450,9 +450,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
         getLog().debug("Finished creating list of implicit excludes.");
         if (results.isEmpty()) {
-            getLog().info("No excludes implicitly specified.");
+            getLog().debug("No excludes implicitly specified.");
         } else {
-            getLog().info(
+            getLog().debug(
                     results.size()
                             + " implicit excludes.");
             for (final String exclude : results) {
@@ -468,7 +468,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         		getLog().error("Excludes file not readable: " + f.getAbsolutePath());
         	}
         	final String charset = excludesFileCharset == null ? "UTF8" : excludesFileCharset;
-        	getLog().info("Loading excludes from file " + f + ", using character set " + charset);
+        	getLog().debug("Loading excludes from file " + f + ", using character set " + charset);
         	results.addAll(getPatternsFromFile(f, charset));
         }
 
@@ -541,7 +541,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             throws MojoExecutionException, MojoFailureException {
         final List<ILicenseFamily> list = new ArrayList<>();
         if (licenseFamilies != null) {
-            getLog().info("Added " + licenseFamilies.length + " custom approved licenses.");
+            getLog().debug("Added " + licenseFamilies.length + " custom approved licenses.");
             list.addAll(Arrays.asList(licenseFamilies));
         }
         if (licenseFamilyNames != null) {
