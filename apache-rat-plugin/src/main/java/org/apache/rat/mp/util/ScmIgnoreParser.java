@@ -55,7 +55,7 @@ public final class ScmIgnoreParser {
         final List<String> exclusionLines = new ArrayList<>();
 
         if (scmIgnore != null && scmIgnore.exists() && scmIgnore.isFile()) {
-            log.info("Parsing exclusions from " + scmIgnore);
+            log.debug("Parsing exclusions from " + scmIgnore);
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new FileReader(scmIgnore));
