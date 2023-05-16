@@ -23,7 +23,6 @@ import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.settings.Settings;
@@ -149,25 +148,6 @@ public final class RatTestHelpers {
         return (ArtifactFactory) Proxy.newProxyInstance(Thread.currentThread()
                         .getContextClassLoader(),
                 new Class[]{ArtifactFactory.class}, handler);
-    }
-
-    /**
-     * Creates a new instance of {@link ArtifactResolver}.
-     *
-     * @return A configured instance of {@link DefaultArtifactResolver}.
-     * @throws Exception Creating the object failed.
-     */
-    public static ArtifactResolver newArtifactResolver() throws Exception {
-        final InvocationHandler handler = new InvocationHandler() {
-            public Object invoke(Object pProxy, Method pMethod, Object[] pArgs)
-                    throws Throwable {
-                System.out.println("Invoking method " + pMethod);
-                throw new IllegalStateException("Not implemented");
-            }
-        };
-        return (ArtifactResolver) Proxy.newProxyInstance(Thread.currentThread()
-                        .getContextClassLoader(),
-                new Class[]{ArtifactResolver.class}, handler);
     }
 
     /**

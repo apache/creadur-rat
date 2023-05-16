@@ -37,7 +37,6 @@ import static org.apache.rat.mp.RatTestHelpers.ensureRatReportIsCorrect;
 import static org.apache.rat.mp.RatTestHelpers.getSourceDirectory;
 import static org.apache.rat.mp.RatTestHelpers.newArtifactFactory;
 import static org.apache.rat.mp.RatTestHelpers.newArtifactRepository;
-import static org.apache.rat.mp.RatTestHelpers.newArtifactResolver;
 import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -105,11 +104,10 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
 
         if (mojo instanceof RatReportMojo) {
             setVariableValueToObject(mojo, "localRepository",
-                    newArtifactRepository(container));
-            setVariableValueToObject(mojo, "resolver", newArtifactResolver());
+                    newArtifactRepository(getContainer()));
             setVariableValueToObject(mojo, "factory", newArtifactFactory());
             setVariableValueToObject(mojo, "siteRenderer",
-                    newSiteRenderer(container));
+                    newSiteRenderer(getContainer()));
         } else if (mojo instanceof RatCheckMojo) {
             final File ratTxtFile = new File(buildDirectory, "rat.txt");
             setVariableValueToObject(mojo, "reportFile", ratTxtFile);

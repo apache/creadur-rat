@@ -32,6 +32,7 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -80,8 +81,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * The local repository.
      */
-    @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
-    protected ArtifactRepository localRepository;
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
 
     /**
      * Remote repositories used for the project.
@@ -187,7 +188,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         SiteRenderingContext context;
         try {
             Artifact skinArtifact =
-                    siteTool.getSkinArtifactFromRepository(localRepository, remoteRepositories, decorationModel);
+                    siteTool.getSkinArtifactFromRepository(session.getLocalRepository(), remoteRepositories, decorationModel);
 
             getLog().debug(buffer().a("Rendering content with ").strong(skinArtifact.getId()
                     + " skin").a('.').toString());
