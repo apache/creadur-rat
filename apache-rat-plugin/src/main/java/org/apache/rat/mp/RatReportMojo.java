@@ -354,7 +354,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     // TODO The canonical way is to read the pom.properties for the artifact desired in META-INF/maven
     private String getRatVersion() {
         //noinspection unchecked
-        for (Artifact a : (Iterable<Artifact>) getProject().getDependencyArtifacts()) {
+        for (Artifact a : getProject().getDependencyArtifacts()) {
             if ("rat-lib".equals(a.getArtifactId())) {
                 return a.getVersion();
             }
