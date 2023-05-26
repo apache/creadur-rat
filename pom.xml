@@ -271,8 +271,6 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <!-- Do not use property values here as this causes problems during release -->
-        <version>0.15</version>
       </plugin>
     </plugins>
   </reporting>
@@ -311,7 +309,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.6.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
