@@ -22,6 +22,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,12 +31,13 @@ import java.util.List;
  */
 public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 
-    private final List<IHeaderMatcher> matchers;
+    private final Collection<IHeaderMatcher> matchers;
 
-    public HeaderMatcherMultiplexer(final List<IHeaderMatcher> matchers) {
+    public HeaderMatcherMultiplexer(final Collection<IHeaderMatcher> matchers) {
         this.matchers = matchers;
     }
 
+    @Override
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         boolean result = false;
         for (IHeaderMatcher matcher : matchers) {
@@ -47,6 +49,7 @@ public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
         return result;
     }
 
+    @Override
     public void reset() {
         for (IHeaderMatcher matcher : matchers) {
             matcher.reset();

@@ -29,6 +29,7 @@ import org.apache.rat.analysis.license.GPL2License;
 import org.apache.rat.analysis.license.GPL3License;
 import org.apache.rat.analysis.license.MITLicense;
 import org.apache.rat.analysis.license.OASISLicense;
+import org.apache.rat.analysis.license.SPDXMatcher;
 import org.apache.rat.analysis.license.TMF854LicenseHeader;
 import org.apache.rat.analysis.license.W3CDocLicense;
 import org.apache.rat.analysis.license.W3CLicense;
@@ -68,7 +69,8 @@ public class Defaults {
                     new GeneratedLicenseNotRequired(), // does not have a MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_... entry
                     new DojoLicenseHeader(),
                     new TMF854LicenseHeader(),
-                    new CDDL1License()));
+                    new CDDL1License(),
+                    SPDXMatcher.Factory.getDefault()));
 
     // all classes in license package implementing ILicenseFamily
     public static final List<String> DEFAULT_LICENSE_FAMILIES = Collections.unmodifiableList(
