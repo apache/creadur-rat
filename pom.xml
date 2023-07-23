@@ -51,10 +51,10 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
-    <mavenVersion>2.2.1</mavenVersion>
+    <mavenVersion>3.2.5</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
     <!-- maven plugin versions -->
-    <mavenPluginPluginVersion>3.8.2</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.9.0</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.5.0</mavenJavadocPluginVersion>
     <mavenPmdPluginVersion>3.20.0</mavenPmdPluginVersion>
@@ -145,6 +145,11 @@ agnostic home for software distribution comprehension and audit tools.
         <artifactId>ant-testutil</artifactId>
         <version>${ant.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugin-tools</groupId>
+        <artifactId>maven-plugin-annotations</artifactId>
+        <version>${mavenPluginPluginVersion}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -266,8 +271,6 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <!-- Do not use property values here as this causes problems during release -->
-        <version>0.15</version>
       </plugin>
     </plugins>
   </reporting>
@@ -306,7 +309,12 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.6.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-invoker-plugin</artifactId>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -315,6 +323,11 @@ agnostic home for software distribution comprehension and audit tools.
           <configuration>
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${mavenPluginPluginVersion}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -347,12 +360,31 @@ agnostic home for software distribution comprehension and audit tools.
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <version>3.0.0</version>
           <configuration>
             <!-- Only prompt once for the release version -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <mavenExecutorId>forked-path</mavenExecutorId>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <forkCount>1</forkCount>
+            <argLine>-Dfile.encoding=ISO-8859-1</argLine>
           </configuration>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->

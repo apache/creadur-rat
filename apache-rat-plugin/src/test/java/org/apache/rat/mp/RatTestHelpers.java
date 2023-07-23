@@ -21,10 +21,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
@@ -152,29 +151,10 @@ public final class RatTestHelpers {
     }
 
     /**
-     * Creates a new instance of {@link ArtifactResolver}.
-     *
-     * @return A configured instance of {@link DefaultArtifactResolver}.
-     * @throws Exception Creating the object failed.
-     */
-    public static ArtifactResolver newArtifactResolver() throws Exception {
-        final InvocationHandler handler = new InvocationHandler() {
-            public Object invoke(Object pProxy, Method pMethod, Object[] pArgs)
-                    throws Throwable {
-                System.out.println("Invoking method " + pMethod);
-                throw new IllegalStateException("Not implemented");
-            }
-        };
-        return (ArtifactResolver) Proxy.newProxyInstance(Thread.currentThread()
-                        .getContextClassLoader(),
-                new Class[]{ArtifactResolver.class}, handler);
-    }
-
-    /**
      * Creates an instance of {@link ArtifactRepository}.
      *
      * @param container current plexus container.
-     * @return A configured instance of {@link DefaultArtifactRepository}.
+     * @return A configured instance of {@link MavenArtifactRepository}.
      * @throws Exception Creating the object failed.
      */
     public static ArtifactRepository newArtifactRepository(
@@ -192,8 +172,8 @@ public final class RatTestHelpers {
         }
         ArtifactRepositoryLayout repositoryLayout = (ArtifactRepositoryLayout) container
                 .lookup(ArtifactRepositoryLayout.ROLE, "default");
-        return new DefaultArtifactRepository("local", "file://" + localRepo,
-                repositoryLayout);
+        return new MavenArtifactRepository("local", "file://" + localRepo,
+                repositoryLayout, new ArtifactRepositoryPolicy(), new ArtifactRepositoryPolicy());
     }
 
     public static File makeSourceDirectory(String mvnBaseDir, File pFile,
