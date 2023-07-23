@@ -66,6 +66,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
         Collections.sort(this.approvedLicenseNames);
     }
 
+    @Override
     public void analyse(final Document subject) throws RatDocumentAnalysisException {
         if (subject != null) {
             final String name = subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
