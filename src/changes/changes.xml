@@ -63,6 +63,9 @@ The <action> type attribute can be add,update,fix,remove.
       <action issue="RAT-251" type="fix" dev="claudenw">
          Added SPDX processing for default licenses.
       </action>
+      <action issue="RAT-315" type="fix" dev="jochenw" due-to="Guillaume Nodet">
+        Fix warnings when using RAT with newer Maven versions as methods from Maven v2 are deprecated. No change in compatibility of RAT itself.
+      </action>
       <action issue="RAT-317" type="fix" dev="pottlinger" due-to="Gary Gregory">
         Change log output level of SCM ignore parser from info to debug in order to produce less log output in RAT runs.
       </action>
