@@ -623,6 +623,10 @@ agnostic home for software distribution comprehension and audit tools.
       <name>Paul Merlin</name>
       <email>paulmerlin@apache.org</email>
     </contributor>
+    <contributor>
+      <name>Claude Warren</name>
+      <email>claude@apache.org</email>
+    </contributor>
   </contributors>
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/creadur-rat.git</connection>
