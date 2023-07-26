@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-251" type="fix" dev="jochenw" due-to="Claude Warren">
+         Added SPDX processing for default licenses.
+      </action>
       <action issue="RAT-315" type="fix" dev="jochenw" due-to="Guillaume Nodet">
         Fix warnings when using RAT with newer Maven versions as methods from Maven v2 are deprecated. Minimum version of required Maven changed to 3.2.5.
       </action>
