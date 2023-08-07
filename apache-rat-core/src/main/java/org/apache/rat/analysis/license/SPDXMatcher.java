@@ -39,53 +39,46 @@ import org.apache.rat.api.MetaData;
  * 
  * @see https://spdx.dev/ids/
  */
-public class SPDXMatcher extends BaseLicense implements IHeaderMatcher {
+public class SPDXMatcher implements IHeaderMatcher {
 
     /**
      * Creates IHeaderMatcher instances that are a collection of SPDXMatcher instances.  Used in the
      * default matcher construction.
      */
-    public static class Factory {
-        static Map<String, IHeaderMatcher> getDefaultMatchers() {
-            Map<String, IHeaderMatcher> matchers = new HashMap<>();
-            matchers.put("CDDL-1.0", new SPDXMatcher("CDDL-1.0", MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_CDLL1,
-                    MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1));
+    private static final Map<String, BaseLicense> matchers = new HashMap<>();
+    
+    static {
+            matchers.put("CDDL-1.0", new BaseLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_CDLL1,
+                    MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1,""));
             matchers.put("GPL-1.0-only",
-                    new SPDXMatcher("GPL-1.0-only", MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL1,
-                            MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_1));
+                    new BaseLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL1,
+                            MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_1,""));
             matchers.put("GPL-2.0-only",
-                    new SPDXMatcher("GPL-2.0-only", MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL2,
-                            MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2));
+                    new BaseLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL2,
+                            MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2,""));
             matchers.put("GPL-3.0-only",
-                    new SPDXMatcher("GPL-3.0-only", MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL3,
-                            MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_3));
-            matchers.put("MIT", new SPDXMatcher("MIT", MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_MIT,
-                    MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MIT));
-            matchers.put("Apache-2.0", new SPDXMatcher("Apache-2.0", MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,
-                    MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0));
-            matchers.put("W3C", new SPDXMatcher("W3C", MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3CD,
-                    MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT));
-            return matchers;
+                    new BaseLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL3,
+                            MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_3,""));
+            matchers.put("MIT", new BaseLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_MIT,
+                    MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MIT,""));
+            matchers.put("Apache-2.0", new BaseLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,
+                    MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,""));
+            matchers.put("W3C", new BaseLicense(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3CD,
+                    MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT,""));
         }
 
-        public static final IHeaderMatcher getDefault() {
-            return new HeaderMatcherMultiplexer(getDefaultMatchers().values());
-        }
-    }
+  
 
     private static Pattern groupSelector = Pattern.compile(".*SPDX-License-Identifier:\\s([A-Za-z0-9\\.\\-]+)");
-    private Predicate<String> regex;
-
+  
     /**
      * Constructor.
      * @param spdxId A regular expression that matches the @{short-name} of the SPDX Identifier.
      * @param licenseFamilyCategory the RAT license family category for the license.
      * @param licenseFamilyName the RAT license family name for the license.
      */
-    public SPDXMatcher(final String spdxId, final MetaData.Datum licenseFamilyCategory,
-            final MetaData.Datum licenseFamilyName) {
-        super(licenseFamilyCategory, licenseFamilyName, "");
-        this.regex = Pattern.compile(spdxId).asPredicate();
+    public SPDXMatcher() {
+        super();
     }
 
     @Override
@@ -96,9 +89,9 @@ public class SPDXMatcher extends BaseLicense implements IHeaderMatcher {
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         Matcher matcher = groupSelector.matcher(line);
         if (matcher.find()) {
-            String name = matcher.group(1);
-            if (regex.test(name)) {
-                reportOnLicense(subject);
+            BaseLicense data = matchers.get(matcher.group(1));
+        	if (data != null) {
+        		data.reportOnLicense(subject);
                 return true;
             }
         }

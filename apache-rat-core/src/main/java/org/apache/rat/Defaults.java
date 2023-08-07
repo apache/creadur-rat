@@ -70,7 +70,7 @@ public class Defaults {
                     new DojoLicenseHeader(),
                     new TMF854LicenseHeader(),
                     new CDDL1License(),
-                    SPDXMatcher.Factory.getDefault()));
+                    new SPDXMatcher()));
 
     // all classes in license package implementing ILicenseFamily
     public static final List<String> DEFAULT_LICENSE_FAMILIES = Collections.unmodifiableList(
