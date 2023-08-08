@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class SPDXMatcherTest {
 
-    private IHeaderMatcher defaults = SPDXMatcher.Factory.getDefault();
+    private IHeaderMatcher defaults = new SPDXMatcher();
     private Document testDocument;
 
     @Before
