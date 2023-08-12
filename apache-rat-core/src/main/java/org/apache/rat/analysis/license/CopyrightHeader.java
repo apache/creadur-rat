@@ -59,7 +59,7 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
         super(licenseFamilyCategory, licenseFamilyName, notes);
     }
 
-    protected CopyrightHeader(Datum licenseFamilyCategory, Datum licenseFamilyName, String notes, String copyrightOwner) {
+    public CopyrightHeader(Datum licenseFamilyCategory, Datum licenseFamilyName, String notes, String copyrightOwner) {
         this(licenseFamilyCategory, licenseFamilyName, notes);
         setCopyrightOwner(copyrightOwner);
     }

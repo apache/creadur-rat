@@ -52,7 +52,7 @@ public class FullTextMatchingLicense extends BaseLicense
     public FullTextMatchingLicense() {
     }
 
-    protected FullTextMatchingLicense(Datum licenseFamilyCategory,
+    public FullTextMatchingLicense(Datum licenseFamilyCategory,
                                       Datum licenseFamilyName,
                                       String notes,
                                       String fullText) {
