@@ -30,10 +30,7 @@ import org.apache.rat.api.MetaData.Datum;
 public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMatcher {
     private String[] patterns;
 
-    public SimplePatternBasedLicense() {
-    }
-
-    protected SimplePatternBasedLicense(Datum pLicenseFamilyCategory, Datum pLicenseFamilyName,
+    public SimplePatternBasedLicense(Datum pLicenseFamilyCategory, Datum pLicenseFamilyName,
             String pNotes, String[] pPatterns) {
         super(pLicenseFamilyCategory, pLicenseFamilyName, pNotes);
         setPatterns(pPatterns);

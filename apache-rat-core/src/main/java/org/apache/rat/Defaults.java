@@ -50,10 +50,13 @@ import org.apache.rat.analysis.license.W3CLicense;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
+import org.apache.rat.configuration.Readers;
+import org.apache.rat.configuration.Reader;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -75,141 +78,11 @@ public class Defaults {
     private static List<BaseLicense> licenses;
     private static Map<String,MetaData> licenseFamilies = new HashMap<>();
     
-    private static Configuration readConfigFiles(String... fileNames) throws ConfigurationException {
-
-        CompositeConfiguration composite = new CompositeConfiguration();
-        FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<>(
-                PropertiesConfiguration.class);
-//        PropertiesBuilderParameters propertyParameters = new Parameters().properties()
-//                .setThrowExceptionOnMissing(true);
-
-        
-        XMLBuilderParameters parameters = new Parameters().xml().setThrowExceptionOnMissing(true);
-                
-      for (String fname : fileNames) {
-      parameters.setFile(new File(fname));
-      composite.addConfiguration(builder.configure(parameters).getConfiguration());
-  }
-        return composite;
-    }
-    
-    private static void readFamilies(Configuration families) {
-        Iterator<String> iter = families.getKeys();
-        while (iter.hasNext()) {
-            MetaData meta = new MetaData();
-            String id=iter.next();
-            Configuration fam = families.subset(id);
-            
-            String category = fam.getString("category").concat("     ").substring(0,5);
-            meta.add(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, category));
-            meta.add(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, fam.getString("name")));
-            licenseFamilies.put(id, meta);
+    public static void readConfigFiles(String... fileNames){
+        for (String fileName : fileNames) {
+            Reader reader = Readers.get(fileName);
+            licenseFamilies.putAll(reader.readFamilies());
         }
-    }
-    
-    private static void readLicenses(Configuration licenseConfig) {
-        Iterator<String> iter = licenseConfig.getKeys();
-        while (iter.hasNext()) {
-            String id=iter.next();
-            Configuration lic = licenseConfig.subset(id);
-            String familyId = lic.getString("family");
-            MetaData family = licenseFamilies.get(familyId);
-            if (family == null) {
-                throw new IllegalArgumentException( String.format( "license %s uses family %s which is missing", id, familyId));
-            }
-            if (lic.containsKey("fullText"))
-            {
-                licenses.add( new FullTextMatchingLicense(
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
-                        lic.getString("notes", ""),
-                        lic.getString("fullText")));
-            }
-            if (lic.containsKey("copyright")) {
-                licenses.add( new CopyrightHeader(
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
-                        lic.getString("notes", ""),
-                        lic.getString("copyright")));
-            }
-            if (lic.containsKey("text")) {
-                
-                //lic.get
-            }
-            if (lic.containsKey("spdx")) {
-                licenses.add( new SPDXMatcher( lic.getString("spdx"),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME)
-                        ));
-            }
-        }
-    }
-    
-    public static void readConfig(String... fileNames) throws ConfigurationException {
-        Configuration config = readConfigFiles(fileNames);
-        readFamilies( config.subset("family"));
-        readLicenses( config.subset("license"));
-        
-        /*
-         * --- JSON ---
-         *  {
-         *      families : {
-         *          xxx: 'name',
-         *          },
-         *      licenses : [
-         *      {
-         *          family : 'xxx',
-         *          notes: 'notes',
-         *          spdx: 'spdx',
-         *          fulltext: 'text',
-         *          copyright: 'copyright',
-         *          text = ['text','text2','text3'],
-         *          }],
-         *  }
-         * 
-         * --- RDF ---
-         *
-         * family:category [
-         *   name='   '
-         *   ] 
-         *
-         * license:id [
-         *   family family:category
-         *   notes=''
-         *   spdx=''
-         *   fulltext=''
-         *   copyright=''
-         *   text=''
-         *   text=''
-         *   text=''
-         * ]
-         *
-         * --- XML ---
-         * <config>
-         * <family id='fxx' category='xxxxx'>
-         *      name text
-         * </family>
-         * 
-         * <license id="lxx' family='fxx' spdx='spdxtx'>
-         *  <notes>notes text</notes>
-         *  <fulltext>full text</fulltext>
-         *  <copyright>copyright</copyright>
-         *  <text>text</text>
-         *  </license>
-         *  </config>
-         *  
-         *  --- CONFIG ---
-         * family.famid.category=xxxxx
-         * family.famid.name=text
-         * 
-         * 
-         * license.id.family=famid
-         * license.id.notes=
-         * license.id.fullText=
-         * license.id.copyright=
-         * license.id.text=
-         * license.id.spdx=
-         */
     }
 
     /**
