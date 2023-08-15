@@ -31,11 +31,10 @@ public enum Format {
     }
     
     public static Format fromName(String name) {
-        Format.valueOf("foo");
         String[] parts = name.split("\\.");
         String suffix = parts[parts.length-1];
         for (Format f: Format.values()) {
-            if (Arrays.stream(f.suffix).allMatch( suffix::equals )) {
+            if (Arrays.stream(f.suffix).anyMatch( suffix::equals )) {
                 return f;
             }
         }
