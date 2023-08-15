@@ -109,62 +109,83 @@
 				<artifactId>commons-configuration2</artifactId>
 				<version>2.9.0</version>
 			</dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.4</version>
+            </dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
+				<artifactId>
+                    commons-io</artifactId>
 				<version>2.11.0</version>
-			</dependency>
+            </dependency>
 			<dependency>
-				<groupId>org.apache.commons</groupId>
+				<groupId>
+                    org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.12.0</version>
-			</dependency>
+            </dependency>
 			<dependency>
-				<groupId>org.apache.commons</groupId>
+				<groupId>
+                    org.apache.commons</groupId>
 				<artifactId>commons-compress</artifactId>
-				<version>1.23.0</version>
-			</dependency>
+				<version>
+                    1.23.0</version>
+            </dependency>
 			<dependency>
 				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
+				<artifactId>
+                    junit</artifactId>
 				<version>4.13.2</version>
 				<scope>test</scope>
-			</dependency>
+            </dependency>
 			<dependency>
-				<groupId>org.mockito</groupId>
+				<groupId>
+                    org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>${mockito.version}</version>
+				<version>
+                    ${mockito.version}</version>
 				<scope>test</scope>
-			</dependency>
+            </dependency>
 			<dependency>
-				<groupId>org.hamcrest</groupId>
+				<groupId>
+                    org.hamcrest</groupId>
 				<artifactId>hamcrest-library</artifactId>
 				<version>2.2</version>
-				<scope>test</scope>
-			</dependency>
+				<scope>
+                    test</scope>
+            </dependency>
 			<dependency>
 				<groupId>org.apache.ant</groupId>
-				<artifactId>ant</artifactId>
+				<artifactId>
+                    ant</artifactId>
 				<version>${ant.version}</version>
 				<scope>provided</scope>
-			</dependency>
+            </dependency>
 			<dependency>
-				<groupId>org.apache.ant</groupId>
+				<groupId>
+                    org.apache.ant</groupId>
 				<artifactId>ant-antunit</artifactId>
 				<version>1.4.1</version>
-				<scope>test</scope>
-			</dependency>
+				<scope>
+                    test</scope>
+            </dependency>
 			<dependency>
 				<groupId>org.apache.ant</groupId>
-				<artifactId>ant-testutil</artifactId>
+				<artifactId>
+                    ant-testutil</artifactId>
 				<version>${ant.version}</version>
 				<scope>test</scope>
-			</dependency>
+            </dependency>
 			<dependency>
-				<groupId>org.apache.maven.plugin-tools</groupId>
-				<artifactId>maven-plugin-annotations</artifactId>
-				<version>${mavenPluginPluginVersion}</version>
-			</dependency>
+				<groupId>
+                    org.apache.maven.plugin-tools</groupId>
+				<artifactId>
+                    maven-plugin-annotations</artifactId>
+				<version>
+                    ${mavenPluginPluginVersion}</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 	<reporting>

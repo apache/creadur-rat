@@ -84,10 +84,22 @@ public class SPDXMatcher extends BaseLicense implements IHeaderMatcher {
      */
     public SPDXMatcher(final String spdxId, final MetaData.Datum licenseFamilyCategory,
             final MetaData.Datum licenseFamilyName) {
-        super(licenseFamilyCategory, licenseFamilyName, "");
-        this.regex = Pattern.compile(spdxId).asPredicate();
+        this(spdxId,licenseFamilyCategory, licenseFamilyName, "");
     }
 
+    /**
+     * Constructor.
+     * @param spdxId A regular expression that matches the @{short-name} of the SPDX Identifier.
+     * @param licenseFamilyCategory the RAT license family category for the license.
+     * @param licenseFamilyName the RAT license family name for the license.
+     * @param notes The notes for this matcher.
+     */
+    public SPDXMatcher(final String spdxId, final MetaData.Datum licenseFamilyCategory,
+            final MetaData.Datum licenseFamilyName, String notes) {
+        super(licenseFamilyCategory, licenseFamilyName, notes);
+        this.regex = Pattern.compile(spdxId).asPredicate();
+    }
+    
     @Override
     public void reset() {
     }
