@@ -19,6 +19,9 @@
 package org.apache.rat.configuration;
 
 import java.util.Map;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
 public class Readers {
@@ -89,11 +92,19 @@ public class Readers {
         readers.put( Format.CONFIG, new ConfigurationReader());
     }
 
-    public static Reader get(String fileName) {
-        return readers.get(Format.fromName(fileName));
+    public static Reader get(URL fileName) {
+        return readers.get(Format.fromName(fileName.getFile()));
     }
     
     private Readers() {
         // do not instantiate
+    }
+
+    public static Reader get(File file) throws MalformedURLException {
+        return get(file.toURI().toURL());
+    }
+    
+    public static Reader get(String fileName) throws MalformedURLException {
+        return get(new File(fileName));
     }
 }

@@ -38,16 +38,16 @@ public class ConfigurationReaderTest {
     public void readDefault() throws ConfigurationException {
         ConfigurationReader reader = new ConfigurationReader();
         URL url = ConfigurationReader.class.getResource("/org/apache/rat/default.config");
-        reader.read(url.getFile());
+        reader.read(url);
         Map<String,MetaData> families = reader.readFamilies();
         assertTrue(families.keySet().containsAll(Arrays.asList(FAMILIES)));
         families.keySet().removeAll(Arrays.asList(FAMILIES));
         assertTrue(families.isEmpty());
         
-        Collection<BaseLicense> licenses = reader.readLicenses();
-        assertEquals(24, licenses.size());
+        Map<String,BaseLicense> licenses = reader.readLicenses();
+        assertEquals(15, licenses.size());
         Map<String,Integer> result = new TreeMap<>();
-        licenses.stream().map(BaseLicense::getLicenseFamilyCategory).forEach( x -> {
+        licenses.values().stream().map(BaseLicense::getLicenseFamilyCategory).forEach( x -> {
             Integer i = result.get(x);
             if (i == null) {
                 result.put(x, 1);
@@ -55,16 +55,16 @@ public class ConfigurationReaderTest {
                 result.put(x, 1+i.intValue());
             }
         });
-        assertEquals(4,result.get("AL   ").intValue());
+        assertEquals(2,result.get("AL   ").intValue());
         assertEquals(2,result.get("BSD_m").intValue());
-        assertEquals(3,result.get("CDDL1").intValue());
+        assertEquals(2,result.get("CDDL1").intValue());
         assertEquals(2,result.get("GEN  ").intValue());
-        assertEquals(2,result.get("GPL1 ").intValue());
-        assertEquals(2,result.get("GPL2 ").intValue());
-        assertEquals(2,result.get("GPL3 ").intValue());
-        assertEquals(2,result.get("MIT  ").intValue());
-        assertEquals(2,result.get("OASIS").intValue());
-        assertEquals(2,result.get("W3C  ").intValue());
+        assertEquals(1,result.get("GPL1 ").intValue());
+        assertEquals(1,result.get("GPL2 ").intValue());
+        assertEquals(1,result.get("GPL3 ").intValue());
+        assertEquals(1,result.get("MIT  ").intValue());
+        assertEquals(1,result.get("OASIS").intValue());
+        assertEquals(1,result.get("W3C  ").intValue());
         assertEquals(1,result.get("W3CD ").intValue());
     }
 

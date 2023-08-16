@@ -53,13 +53,13 @@ public class DefaultPolicy implements IDocumentAnalyser {
         if (approvedLicenseNames == null || approvedLicenseNames.isEmpty()) {
             // used in tests only, no additional licenses given but defaults requested
             if(mergeWithDefault) {
-                this.approvedLicenseNames = new ArrayList<>(Defaults.DEFAULT_LICENSE_FAMILIES);
+                this.approvedLicenseNames.addAll(Defaults.getLicenseNames());
             }
         } else {
             // avoid duplicate entries and merge with defaults if requested
             Set<String> mergedLicenses = new HashSet<>(approvedLicenseNames);
             if(mergeWithDefault) {
-                mergedLicenses.addAll(Defaults.DEFAULT_LICENSE_FAMILIES);
+                mergedLicenses.addAll(Defaults.getLicenseNames());
             }
             this.approvedLicenseNames = new ArrayList<>(mergedLicenses);
         }

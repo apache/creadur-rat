@@ -23,10 +23,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.commons.configuration2.CompositeConfiguration;
@@ -39,6 +41,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.analysis.license.CopyrightHeader;
 import org.apache.rat.analysis.license.FullTextMatchingLicense;
+import org.apache.rat.analysis.license.MultiplexLicense;
 import org.apache.rat.analysis.license.SPDXMatcher;
 import org.apache.rat.analysis.license.SimplePatternBasedLicense;
 import org.apache.rat.api.MetaData;
@@ -62,23 +65,23 @@ public class ConfigurationReader implements Reader {
         configuration = new CompositeConfiguration();
     }
     
-    public void add(String fileName) {
+    public void add(URL url) {
         try {
-            read( fileName );
+            read(url);
         } catch (ConfigurationException e) {
             throw new RuntimeException(e);
         }
         
     }
 
-    public void read(String... fileNames) throws ConfigurationException {
+    public void read(URL... urls) throws ConfigurationException {
         FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<>(
                 PropertiesConfiguration.class);
         PropertiesBuilderParameters parameters = new Parameters().properties()
                 .setThrowExceptionOnMissing(true);
 
-      for (String fname : fileNames) {
-          parameters.setFile(new File(fname));
+      for (URL url : urls) {
+          parameters.setURL(url);
           add(builder.configure(parameters).getConfiguration());
       }
     }
@@ -96,9 +99,8 @@ public class ConfigurationReader implements Reader {
             MetaData meta = new MetaData();
             String cat = iter.next();
             String category = cat.concat("     ").substring(0, 5);
-            Configuration fam = families.subset(cat);
             meta.add(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, category));
-            meta.add(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, fam.getString("name")));
+            meta.add(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, families.getString(cat)));
             licenseFamilies.put(cat.trim(), meta);
         }
         return licenseFamilies;
@@ -114,8 +116,9 @@ public class ConfigurationReader implements Reader {
     }
 
     @Override
-    public Collection<BaseLicense> readLicenses() {
+    public Map<String,BaseLicense> readLicenses() {
         Map<String,MetaData> families = readFamilies();
+        Map<String,BaseLicense> result = new LinkedHashMap<>();
         List<BaseLicense> licenses = new ArrayList<BaseLicense>();
         Configuration licenseConfig = configuration.subset("license");
         for (String id : extractKeys(licenseConfig)) {
@@ -161,7 +164,16 @@ public class ConfigurationReader implements Reader {
                         notes
                         ));
             }
+            if (licenses.size() == 1) {
+                result.put(id, licenses.get(0));
+                licenses.clear();
+            } else if (licenses.size() > 1) {
+                result.put(id,  new MultiplexLicense(family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
+                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
+                        notes,licenses));
+                licenses = new ArrayList<BaseLicense>();
+            }
         }
-        return licenses;
+        return result;
     }
 }

@@ -31,9 +31,9 @@ import java.util.List;
  */
 public final class HeaderMatcherMultiplexer implements IHeaderMatcher {
 
-    private final Collection<IHeaderMatcher> matchers;
+    private final Collection<? extends IHeaderMatcher> matchers;
 
-    public HeaderMatcherMultiplexer(final Collection<IHeaderMatcher> matchers) {
+    public HeaderMatcherMultiplexer(final Collection<? extends IHeaderMatcher> matchers) {
         this.matchers = matchers;
     }
 

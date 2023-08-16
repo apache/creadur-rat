@@ -52,8 +52,8 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
     private String copyrightOwner;
     private boolean copyrightMatch = false;
 
-    public CopyrightHeader() {
-    }
+//    public CopyrightHeader() {
+//    }
 
     protected CopyrightHeader(Datum licenseFamilyCategory, Datum licenseFamilyName, String notes) {
         super(licenseFamilyCategory, licenseFamilyName, notes);

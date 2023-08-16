@@ -18,6 +18,7 @@
  */
 package org.apache.rat.configuration;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.MetaData;
 
 public interface Reader {
-    void add(String name);
+    void add(URL url);
 
     /**
      * Reads the configuration and extracts the Family metadata indexed by category id.
@@ -37,5 +38,5 @@ public interface Reader {
      * Reads the configuration and extracts the BaseLicenses.
      * @return A collection of Base licenses.
      */
-    Collection<BaseLicense> readLicenses();
+    Map<String,BaseLicense> readLicenses();
 }

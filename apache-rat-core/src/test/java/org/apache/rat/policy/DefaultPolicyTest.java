@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 
 public class DefaultPolicyTest {
-    private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = Defaults.DEFAULT_LICENSE_FAMILIES.size();
+    private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 12;
 
     private static final ILicenseFamily JUST_A_TEST_LIC_FAMILY = new ILicenseFamily() {
         public String getFamilyName() {
@@ -45,6 +45,7 @@ public class DefaultPolicyTest {
 
     @Before
     public void setUp() throws Exception {
+        Defaults.builder().build();
         policy = new DefaultPolicy();
         subject = new MockLocation("subject");
     }

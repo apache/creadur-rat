@@ -18,6 +18,9 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 
@@ -28,5 +31,15 @@ public class MockStandardLicense extends BaseLicense {
     public MockStandardLicense() {
         super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, ""), 
                 new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, ""), "");
+    }
+
+    @Override
+    public void reset() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+        throw new NotImplementedException();
     }
 }

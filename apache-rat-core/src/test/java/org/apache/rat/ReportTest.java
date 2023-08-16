@@ -116,8 +116,9 @@ public class ReportTest {
 
     @Test
     public void plainReportWithArchivesAndUnapprovedLicenses() throws Exception {
+        Defaults.builder().build();
         StringWriter out = new StringWriter();
-        HeaderMatcherMultiplexer matcherMultiplexer = new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
+        HeaderMatcherMultiplexer matcherMultiplexer = new HeaderMatcherMultiplexer(Defaults.getLicenses());
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setApproveDefaultLicenses(true);

@@ -18,16 +18,17 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
-public class BaseLicense {
+public abstract class BaseLicense implements IHeaderMatcher{
     private String licenseFamilyCategory;
     private String licenseFamilyName;
     private String notes;
 
-    public BaseLicense() {
-    }
+//    public BaseLicense() {
+//    }
 
     public BaseLicense(final MetaData.Datum licenseFamilyCategory, final MetaData.Datum licenseFamilyName, final String notes)
     {
@@ -88,5 +89,4 @@ public class BaseLicense {
         }
         return buffer.toString();
     }
-
 }

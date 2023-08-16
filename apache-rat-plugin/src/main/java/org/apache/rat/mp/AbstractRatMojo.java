@@ -269,7 +269,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
         if (addDefaultLicenseMatchers) {
             getLog().debug("Enabled default license matchers.");
-            matchers.addAll(Defaults.DEFAULT_MATCHERS);
+            matchers.addAll(Defaults.getLicenses());
         }
         logLicenseMatchers(matchers);
 
