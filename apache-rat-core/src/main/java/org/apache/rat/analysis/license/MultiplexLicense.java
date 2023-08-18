@@ -17,7 +17,7 @@ public class MultiplexLicense extends BaseLicense {
 
     @Override
     public void reset() {
-        enclosed.stream().forEach( x -> x.reset());
+        enclosed.stream().forEach(x -> x.reset());
     }
 
     @Override

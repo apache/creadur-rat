@@ -155,10 +155,9 @@ public class ConfigurationReader implements Reader {
                         family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
                         notes,
                         texts.toArray( new String[texts.size()])));
-                //lic.get
             }
             if (keys.contains("spdx")) {
-                licenses.add( new SPDXMatcher( lic.getString("spdx"),
+                licenses.add(SPDXMatcher.INSTANCE.register(lic.getString("spdx"),
                         family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
                         family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
                         notes

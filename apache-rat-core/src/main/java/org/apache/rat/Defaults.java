@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,6 +35,7 @@ import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.BaseLicense;
+import org.apache.rat.analysis.license.SPDXMatcher;
 import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.configuration.Reader;
@@ -123,16 +123,30 @@ public class Defaults {
     }
 
     public static IHeaderMatcher createDefaultMatcher() {
-        return new HeaderMatcherMultiplexer(getLicenses());
+        List<IHeaderMatcher> matchers = getLicenses().stream()
+                .filter( x -> ! (x instanceof SPDXMatcher.Match))
+                .collect(Collectors.toList());
+        if (SPDXMatcher.INSTANCE.isActive()) {
+            matchers.add(SPDXMatcher.INSTANCE);
+        }
+        return new HeaderMatcherMultiplexer(matchers);
     }
 
     public static Collection<BaseLicense> getLicenses() {
         return Collections.unmodifiableCollection(licenses.values());
     }
 
+    public static Map<String,BaseLicense> getLicenseMap() {
+        return Collections.unmodifiableMap(licenses);
+    }
+
     public static List<String> getLicenseNames() {
         return licenseFamilies.values().stream().map(x -> x.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME).getValue())
                 .collect(Collectors.toList());
+    }
+    
+    public static Collection<MetaData> getLicenseFamilies() {
+        return licenseFamilies.values();
     }
     
     public static class Builder {

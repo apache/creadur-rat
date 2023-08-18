@@ -22,6 +22,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -36,6 +37,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
@@ -45,6 +47,12 @@ public class Report {
     private static final String EXCLUDE_FILE_CLI = "E";
     private static final String STYLESHEET_CLI = "s";
     private static final String HELP = "h";
+    private static final String LICENSES="licenses";
+    private static final String NO_DEFAULTS="no-defaults";
+    private static final String LIST_LICENSES = "list-licenses";
+    private static final String LIST_LICENSE_FAMILIES = "list-license-families";
+    private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s\n";
+    private static final String LICENSE_FORMAT = "\t%s: %s\n\t\t%s\n";
 
     public static final void main(String[] args) throws Exception {
         final ReportConfiguration configuration = new ReportConfiguration();
@@ -56,6 +64,7 @@ public class Report {
         try {
             cl = new DefaultParser().parse(opts, args);
         } catch (ParseException e) {
+            System.err.println(e.getMessage());
             System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
             System.exit(1);
             return; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE for "cl"
@@ -70,7 +79,7 @@ public class Report {
             printUsage(opts);
         } else {
             Report report = new Report(args[0]);
-
+            
             if (cl.hasOption('a') || cl.hasOption('A')) {
                 configuration.setAddingLicenses(true);
                 configuration.setAddingLicensesForced(cl.hasOption('f'));
@@ -90,6 +99,24 @@ public class Report {
                     report.setInputFileFilter(filter);
                 }
             }
+            
+            Defaults.Builder defaults = Defaults.builder();
+            if (cl.hasOption( NO_DEFAULTS )) {
+                defaults.noDefault();
+            }
+            if (cl.hasOption(LICENSES)) {
+                for (String fn : cl.getOptionValues(LICENSES)) {
+                    defaults.add(fn);
+                }
+            }
+            defaults.build();
+            if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
+                listLicenseFamilies(System.out);
+            }
+            if (cl.hasOption(LIST_LICENSES)) {
+                listLicenses(System.out);
+            }
+            
             if (cl.hasOption('x')) {
                 report.report(System.out, configuration);
             } else {
@@ -116,6 +143,24 @@ public class Report {
         }
     }
 
+    private static void listLicenseFamilies(PrintStream out) {
+        out.println( "Families:");
+        Defaults.getLicenseFamilies().stream().forEach( x -> out.format(LICENSE_FAMILY_FORMAT, 
+                x.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY).getValue(),
+                x.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME).getValue()));
+        out.println();
+    }
+    
+    private static void listLicenses(PrintStream out) {
+        out.println( "Licenses:");
+        Defaults.getLicenseMap().entrySet().stream().forEach(  x -> out.format(LICENSE_FORMAT,
+                x.getKey(),
+                x.getValue().getLicenseFamilyName(),
+                x.getValue().getNotes()
+                ));
+        out.println();
+    }
+    
     static FilenameFilter parseExclusions(List<String> excludes) throws IOException {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
@@ -147,6 +192,11 @@ public class Report {
                 "Print help for the RAT command line interface and exit");
         opts.addOption(help);
 
+        opts.addOption(null,NO_DEFAULTS, false, "Ignore default configuration");
+        opts.addOption(null,LICENSES, true, "File names or URLs for license definitions" );
+        opts.addOption(null,LIST_LICENSES, false, "List all active licenses");
+        opts.addOption(null,LIST_LICENSE_FAMILIES, false, "List all defined license families");
+        
         OptionGroup addLicenseGroup = new OptionGroup();
         String addLicenseDesc = "Add the default license header to any file with an unknown license that is not in the exclusion list. " +
                 "By default new files will be created with the license header, " +
@@ -229,6 +279,7 @@ public class Report {
 
     private static void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
+        f.setOptionComparator(new OptionComparator());
         String header = "\nAvailable options";
 
         String footer = "\nNOTE:\n" +
@@ -415,5 +466,32 @@ public class Report {
         report.endReport();
         writer.closeDocument();
         return statistic;
+    }
+    
+    /**
+     * This class implements the {@code Comparator} interface for comparing Options.
+     */
+    private static class OptionComparator implements Comparator<Option>, Serializable {
+        /** The serial version UID. */
+        private static final long serialVersionUID = 5305467873966684014L;
+
+        private String getKey(Option opt) {
+            String key = opt.getOpt();
+            key = key==null?opt.getLongOpt():key;
+            return key;
+        }
+        /**
+         * Compares its two arguments for order. Returns a negative integer, zero, or a positive integer as the first argument
+         * is less than, equal to, or greater than the second.
+         *
+         * @param opt1 The first Option to be compared.
+         * @param opt2 The second Option to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than
+         *         the second.
+         */
+        @Override
+        public int compare(final Option opt1, final Option opt2) {
+            return getKey(opt1).compareToIgnoreCase(getKey(opt2));
+        }
     }
 }

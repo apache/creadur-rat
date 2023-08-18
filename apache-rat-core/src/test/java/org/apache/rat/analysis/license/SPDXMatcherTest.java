@@ -21,6 +21,7 @@ package org.apache.rat.analysis.license;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.rat.Defaults;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
@@ -31,13 +32,15 @@ import org.junit.Test;
 
 public class SPDXMatcherTest {
 
-    private IHeaderMatcher defaults = SPDXMatcher.Factory.getDefault();
+    private IHeaderMatcher defaults;
     private Document testDocument;
 
     @Before
     public void setup() {
         testDocument = new MockDocument("SPDXMatcher test");
-    }
+        Defaults.builder().build();
+        defaults = SPDXMatcher.INSTANCE;
+        }
     
     private String getTag(String shortName) {
         return String.format("Some text\n  SPDX-License-Identifier:\t%s \nSome more text", shortName);
@@ -87,6 +90,6 @@ public class SPDXMatcherTest {
     @Test
     public void testW3C() throws RatHeaderAnalysisException {
         assertTrue( defaults.match( testDocument, getTag("W3C")));
-        validate(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3CD, MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT);
+        validate(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C, MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT);
     }
 }

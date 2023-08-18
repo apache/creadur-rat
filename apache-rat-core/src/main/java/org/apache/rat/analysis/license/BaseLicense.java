@@ -78,6 +78,11 @@ public abstract class BaseLicense implements IHeaderMatcher{
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, getLicenseFamilyName()));
     }
 
+    /**
+     * Removes everything except letter or digit from text.
+     * @param text The text to remove extra chars from.
+     * @return the pruned text.
+     */
     protected static final String prune(String text) {
         final int length = text.length();
         final StringBuilder buffer = new StringBuilder(length);
