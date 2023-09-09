@@ -18,7 +18,42 @@
  */ 
 package org.apache.rat.license;
 
+import java.util.SortedSet;
 
-public interface ILicenseFamily {
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+public interface ILicenseFamily extends Comparable<ILicenseFamily> {
     String getFamilyName();
+    
+    String getFamilyCategory();
+
+    static String makeCategory(String cat) {
+        return cat == null ? "     " : cat.concat("     ").substring(0, 5);
+    }
+    
+    @Override
+    default int compareTo(ILicenseFamily other) {
+        return getFamilyCategory().compareTo(other.getFamilyCategory());
+    }
+    
+    public static ILicenseFamily searchSet(SortedSet<ILicenseFamily> set, String category) {
+        ILicenseFamily target = new ILicenseFamily() {
+
+            @Override
+            public String getFamilyName() {
+                return "";
+            }
+
+            @Override
+            public String getFamilyCategory() {
+               return makeCategory(category);
+            }};
+            
+        SortedSet<ILicenseFamily> partialSet = set.tailSet(target );
+        if (partialSet.isEmpty()) {
+            return null;
+        }
+        ILicenseFamily candidate = partialSet.first();
+        return candidate.compareTo(target) == 0 ? candidate : null;
+    }
 }

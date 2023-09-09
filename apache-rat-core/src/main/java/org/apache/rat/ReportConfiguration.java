@@ -18,24 +18,94 @@
  */
 package org.apache.rat;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.license.ILicenseFamily;
-
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.license.MultiplexLicense;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.report.IReportable;
 
 /**
- * A configuration object is used by the frontend to invoke the
- * {@link Report}. Basically, the sole purpose of the frontends is
- * to create the configuration and invoke the {@link Report}.
+ * A configuration object is used by the frontend to invoke the {@link Report}.
+ * Basically, the sole purpose of the frontends is to create the configuration
+ * and invoke the {@link Report}.
  */
-public class ReportConfiguration {
-    private IHeaderMatcher headerMatcher;
-    private ILicenseFamily[] approvedLicenseNames;
+public class ReportConfiguration implements AutoCloseable {
+    private List<IHeaderMatcher> headerMatcher = new ArrayList<>();
+    private List<ILicenseFamily> approvedLicenseNames = new ArrayList<>();
     private boolean addingLicenses;
     private boolean addingLicensesForced;
     private String copyrightMessage;
     private boolean approveDefaultLicenses = true;
+    private OutputStream out = null;
+    private boolean styleReport = true;
+    private InputStream styleSheet = null;
+    private IReportable reportable = null;
+    private FilenameFilter inputFileFilter = null;
+
+    public FilenameFilter getInputFileFilter() {
+        return inputFileFilter;
+    }
+
+    public void setInputFileFilter(FilenameFilter inputFileFilter) {
+        this.inputFileFilter = inputFileFilter;
+    }
+
+    public IReportable getReportable() {
+        return reportable;
+    }
+
+    public void setReportable(IReportable reportable) {
+        this.reportable = reportable;
+    }
+
+    public InputStream getStyleSheet() {
+        return styleSheet;
+    }
+
+    public void setStyleSheet(InputStream styleSheet) {
+        this.styleSheet = styleSheet;
+    }
+
+    public boolean isStyleReport() {
+        return styleReport;
+    }
+
+    public void setStyleReport(boolean styleReport) {
+        this.styleReport = styleReport;
+    }
+
+    public void setOut(OutputStream out) {
+        this.out = out;
+    }
+
+    /**
+     * Returns the output stream. If no stream has been set returns System.out.
+     * 
+     * @return The output stream to write to.
+     */
+    public OutputStream getOutput() {
+        return out == null ? System.out : out;
+    }
+
+    /**
+     * Returns a PrintWriter that wraps the output stream.
+     * 
+     * @return A PrintWriter that wraps the output stream.
+     */
+    public PrintWriter getWriter() {
+        return new PrintWriter(new OutputStreamWriter(getOutput(), Charset.forName("UTF-8")));
+    }
 
     /**
      * @return whether default licenses shall be approved by default.
@@ -54,7 +124,13 @@ public class ReportConfiguration {
      * @return the header matcher.
      */
     public IHeaderMatcher getHeaderMatcher() {
-        return headerMatcher;
+        if (headerMatcher.isEmpty()) {
+            return null;
+        }
+        if (headerMatcher.size() == 1) {
+            return headerMatcher.get(0);
+        }
+        return new MultiplexLicense("Report matchers", headerMatcher);
     }
 
     /**
@@ -62,8 +138,8 @@ public class ReportConfiguration {
      *
      * @param headerMatcher header matcher.
      */
-    public void setHeaderMatcher(IHeaderMatcher headerMatcher) {
-        this.headerMatcher = headerMatcher;
+    public void addHeaderMatcher(IHeaderMatcher headerMatcher) {
+        this.headerMatcher.add(headerMatcher);
     }
 
     /**
@@ -72,33 +148,39 @@ public class ReportConfiguration {
      * @return the set of approved license names.
      */
     public ILicenseFamily[] getApprovedLicenseNames() {
-        return approvedLicenseNames;
+        return approvedLicenseNames.toArray(new ILicenseFamily[approvedLicenseNames.size()]);
     }
 
     /**
-     * Sets the set of approved license names.
+     * Adds to the set of approved license names.
      *
      * @param approvedLicenseNames set of approved license names.
      */
-    public void setApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
-        this.approvedLicenseNames = approvedLicenseNames;
+    public void addApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
+        addApprovedLicenseNames(Arrays.asList(approvedLicenseNames));
     }
 
     /**
-     * Sets the set of approved license names (convenience).
+     * Adds a license to the list of approved license names.
      *
      * @param approvedLicenseNames set of approved license names.
      */
-    public void setApprovedLicenseNames(List<ILicenseFamily> approvedLicenseNames) {
-        if (approvedLicenseNames != null && approvedLicenseNames.size() > 0) {
-            setApprovedLicenseNames(approvedLicenseNames.toArray(new ILicenseFamily[approvedLicenseNames.size()]));
-        }
+    public void addApprovedLicenseName(ILicenseFamily approvedLicenseName) {
+        approvedLicenseNames.add(approvedLicenseName);
     }
 
     /**
-     * @return If Rat is adding license headers: Returns the optional
-     * copyright message. This value is ignored, if no
-     * license headers are added.
+     * Adds to the set of approved license names (convenience).
+     *
+     * @param approvedLicenseNames set of approved license names.
+     */
+    public void addApprovedLicenseNames(List<ILicenseFamily> approvedLicenseNames) {
+        this.approvedLicenseNames.addAll(approvedLicenseNames);
+    }
+
+    /**
+     * @return If Rat is adding license headers: Returns the optional copyright
+     * message. This value is ignored, if no license headers are added.
      * @see #isAddingLicenses()
      */
     public String getCopyrightMessage() {
@@ -106,9 +188,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * If Rat is adding license headers: Sets the optional
-     * copyright message. This value is ignored, if no
-     * license headers are added.
+     * If Rat is adding license headers: Sets the optional copyright message. This
+     * value is ignored, if no license headers are added.
      *
      * @param copyrightMessage message to set.
      * @see #setAddingLicenses(boolean)
@@ -118,9 +199,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * @return If Rat is adding license headers: Returns, whether adding
-     * license headers is enforced. This value is ignored, if no
-     * license headers are added.
+     * @return If Rat is adding license headers: Returns, whether adding license
+     * headers is enforced. This value is ignored, if no license headers are added.
      * @see #isAddingLicenses()
      */
     public boolean isAddingLicensesForced() {
@@ -128,9 +208,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * If Rat is adding license headers: Sets, whether adding
-     * license headers is enforced. This value is ignored, if no
-     * license headers are added.
+     * If Rat is adding license headers: Sets, whether adding license headers is
+     * enforced. This value is ignored, if no license headers are added.
      *
      * @param addingLicensesForced enable/disable forcibly adding licenses.
      * @see #isAddingLicenses()
@@ -159,4 +238,38 @@ public class ReportConfiguration {
         this.addingLicenses = addingLicenses;
     }
 
+    public void validate(Consumer<String> logger) throws ConfigurationException {
+        if (reportable == null) {
+            throw new ConfigurationException("Reportable may not be null");
+        }
+        if (headerMatcher.size() == 0) {
+            throw new ConfigurationException("You must specify at least one license" + " matcher");
+        }
+        if (styleSheet != null && !isStyleReport()) {
+            logger.accept("Ignoring stylesheet '%s' because styling is not selected");
+        }
+    }
+
+    @Override
+    public void close() {
+        if (styleSheet != null) {
+            try {
+                styleSheet.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                styleSheet = null;
+            }
+        }
+        if (out != null) {
+            if (out != System.out && out != System.err) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            out = null;
+        }
+    }
 }

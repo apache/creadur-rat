@@ -22,6 +22,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData.Datum;
+import org.apache.rat.license.ILicenseFamily;
 
 import java.util.regex.Pattern;
 
@@ -44,7 +45,7 @@ import java.util.regex.Pattern;
  *
  * @since Rat 0.9
  */
-public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
+public class CopyrightHeader extends BaseLicense {
 
     public static final String COPYRIGHT_PREFIX_PATTERN_DEFN = ".*Copyright [0-9]{4}(\\-[0-9]{4})? ";
 
@@ -52,16 +53,17 @@ public class CopyrightHeader extends BaseLicense implements IHeaderMatcher {
     private String copyrightOwner;
     private boolean copyrightMatch = false;
 
-//    public CopyrightHeader() {
-//    }
-
-    protected CopyrightHeader(Datum licenseFamilyCategory, Datum licenseFamilyName, String notes) {
-        super(licenseFamilyCategory, licenseFamilyName, notes);
+    protected CopyrightHeader(ILicenseFamily licenseFamily, String notes) {
+        super(licenseFamily, notes);
     }
 
-    public CopyrightHeader(Datum licenseFamilyCategory, Datum licenseFamilyName, String notes, String copyrightOwner) {
-        this(licenseFamilyCategory, licenseFamilyName, notes);
+    public CopyrightHeader(String idPrefix, ILicenseFamily licenseFamily, String notes, String copyrightOwner) {
+        super(licenseFamily, notes, idPrefix);
         setCopyrightOwner(copyrightOwner);
+    }
+    
+    public CopyrightHeader(ILicenseFamily licenseFamily, String notes, String copyrightOwner) {
+        this(null, licenseFamily, notes, copyrightOwner);
     }
 
     // Called by ctor, so must not be overridden

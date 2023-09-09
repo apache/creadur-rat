@@ -49,7 +49,7 @@ public class CopyrightHeaderTest {
 
     @Before
     public void setUp() throws Exception {
-        header = new CopyrightHeader(MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL,MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0,"","FooBar");
+        header = new CopyrightHeader(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL,MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0,"","FooBar");
         reporter = new MockClaimReporter();
         subject = new MockLocation("subject");
     }

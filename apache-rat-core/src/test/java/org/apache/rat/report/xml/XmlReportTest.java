@@ -23,6 +23,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
@@ -37,10 +38,15 @@ import org.junit.Test;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class XmlReportTest {
 
@@ -55,15 +61,9 @@ public class XmlReportTest {
         writer = new XmlWriter(out);
         writer.startDocument();
         final SimpleXmlClaimReporter reporter = new SimpleXmlClaimReporter(writer);
-        final IHeaderMatcher matcher = new IHeaderMatcher() {
+        final IHeaderMatcher matcher = mock(IHeaderMatcher.class);
+        when(matcher.match(any(),any())).thenReturn( false );
 
-            public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-                return false;
-            }
-
-            public void reset() {
-            }            
-        };
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcher);
         final List<AbstractReport> reporters = new ArrayList<>();
         reporters.add(reporter);

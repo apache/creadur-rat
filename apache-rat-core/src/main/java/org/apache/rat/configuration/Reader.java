@@ -21,22 +21,25 @@ package org.apache.rat.configuration;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
+import java.util.SortedSet;
 
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicenseFamily;
 
 public interface Reader {
     void add(URL url);
 
     /**
      * Reads the configuration and extracts the Family metadata indexed by category id.
-     * @return Map of Category id to associated Metadata.
+     * @return SortedSet of ILicenseFamily objects
      */
-    Map<String,MetaData> readFamilies();
+    SortedSet<ILicenseFamily> readFamilies();
     
     /**
      * Reads the configuration and extracts the BaseLicenses.
      * @return A collection of Base licenses.
      */
-    Map<String,BaseLicense> readLicenses();
+    Collection<IHeaderMatcher> readLicenses();
 }

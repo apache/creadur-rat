@@ -18,13 +18,23 @@
  */ 
 package org.apache.rat.analysis;
 
+import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 import org.apache.rat.api.Document;
 
+import org.apache.rat.license.ILicenseFamily;
 /**
  * Matches text headers to known licenses.
  */
 public interface IHeaderMatcher {
 
+    /**
+     * Get the identifier for this matcher.
+     * @return the Identifier for this matcher.
+     */
+    String getId();
     /**
      * Resets this matches.
      * Subsequent calls to {@link #match} will accumulate new text.
@@ -42,4 +52,22 @@ public interface IHeaderMatcher {
      * @throws RatHeaderAnalysisException in case of internal RAT errors.
      */
     boolean match(Document subject, String line) throws RatHeaderAnalysisException;
+    
+    /**
+     * Report the license family for this and any contained implementations.
+     * @param consumer the consumer to report to.
+     */
+    void reportFamily(Consumer<ILicenseFamily> consumer);
+    
+    /**
+     * If this HeaderMatcher has an associated LicenseFamily and it matches the comparator then call
+     * the consumer. If this HeaderMatcher is a collection of HeaderMatchers then make the call on each of the 
+     * enclosed HeaderMatchers.
+     * 
+     * @param consumer The consumer for the HeaderMatcher.
+     * @param comparator the test for calling the consumer.
+     */
+    void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator);
+    
+    
 }

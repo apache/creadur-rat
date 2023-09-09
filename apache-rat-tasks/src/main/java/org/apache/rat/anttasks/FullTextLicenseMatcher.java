@@ -21,6 +21,7 @@ package org.apache.rat.anttasks;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.license.FullTextMatchingLicense;
 import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -34,6 +35,10 @@ public class FullTextLicenseMatcher extends FullTextMatchingLicense {
     private boolean validated = false;
     private String fullText = "";
     private Project project;
+    
+    public FullTextLicenseMatcher() {
+        super(null, null, null);
+    }
 
     public void setProject(Project project) {
         this.project = project;

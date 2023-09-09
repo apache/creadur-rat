@@ -1,20 +1,34 @@
 package org.apache.rat.analysis.license;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicenseFamily;
 
-public class MultiplexLicense extends BaseLicense {
+public class MultiplexLicense implements IHeaderMatcher {
     
-    private Collection<BaseLicense> enclosed;
+    private Collection<IHeaderMatcher> enclosed;
+    private String id;
     
-    public MultiplexLicense(final MetaData.Datum licenseFamilyCategory, final MetaData.Datum licenseFamilyName, final String notes, Collection<BaseLicense> enclosed) {
-        super(licenseFamilyCategory, licenseFamilyName, notes);
-        this.enclosed = enclosed;
+    public MultiplexLicense(String id, Collection<IHeaderMatcher> enclosed) {
+        this.id = id;
+        this.enclosed = new ArrayList<>(enclosed);
     }
 
+    @Override
+    public String toString() {
+        return getId();
+    }
+    
+    public String getId() {
+        return id;
+    }
+    
     @Override
     public void reset() {
         enclosed.stream().forEach(x -> x.reset());
@@ -22,12 +36,22 @@ public class MultiplexLicense extends BaseLicense {
 
     @Override
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        for (BaseLicense lic : enclosed) {
-            if (lic.match(subject, line)) {
+        for (IHeaderMatcher matcher : enclosed) {
+            if (matcher.match(subject, line)) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public void reportFamily(Consumer<ILicenseFamily> consumer) {
+        enclosed.forEach(x -> x.reportFamily(consumer));
+    }
+    
+    @Override
+    public void extractMatcher(Consumer<IHeaderMatcher> matchers, Predicate<ILicenseFamily> comparator) {
+        enclosed.forEach(x -> x.extractMatcher(matchers, comparator));
     }
 
 }

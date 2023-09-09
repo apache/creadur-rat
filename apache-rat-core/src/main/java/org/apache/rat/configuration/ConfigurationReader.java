@@ -18,18 +18,15 @@
  */
 package org.apache.rat.configuration;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.Configuration;
@@ -38,13 +35,14 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.rat.analysis.license.BaseLicense;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.CopyrightHeader;
 import org.apache.rat.analysis.license.FullTextMatchingLicense;
 import org.apache.rat.analysis.license.MultiplexLicense;
 import org.apache.rat.analysis.license.SPDXMatcher;
 import org.apache.rat.analysis.license.SimplePatternBasedLicense;
-import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.SimpleLicenseFamily;
 
 /*
  *          *  
@@ -64,26 +62,26 @@ public class ConfigurationReader implements Reader {
     public ConfigurationReader() {
         configuration = new CompositeConfiguration();
     }
-    
+
+    @Override
     public void add(URL url) {
         try {
             read(url);
         } catch (ConfigurationException e) {
             throw new RuntimeException(e);
         }
-        
+
     }
 
     public void read(URL... urls) throws ConfigurationException {
         FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<>(
                 PropertiesConfiguration.class);
-        PropertiesBuilderParameters parameters = new Parameters().properties()
-                .setThrowExceptionOnMissing(true);
+        PropertiesBuilderParameters parameters = new Parameters().properties().setThrowExceptionOnMissing(true);
 
-      for (URL url : urls) {
-          parameters.setURL(url);
-          add(builder.configure(parameters).getConfiguration());
-      }
+        for (URL url : urls) {
+            parameters.setURL(url);
+            add(builder.configure(parameters).getConfiguration());
+        }
     }
 
     public void add(Configuration cfg) {
@@ -91,86 +89,64 @@ public class ConfigurationReader implements Reader {
     }
 
     @Override
-    public Map<String, MetaData> readFamilies() {
-        Map<String, MetaData> licenseFamilies = new HashMap<>();
+    public SortedSet<ILicenseFamily> readFamilies() {
+        SortedSet<ILicenseFamily> licenseFamilies = new TreeSet<>();
         Configuration families = configuration.subset("family");
         Iterator<String> iter = families.getKeys();
         while (iter.hasNext()) {
-            MetaData meta = new MetaData();
             String cat = iter.next();
-            String category = cat.concat("     ").substring(0, 5);
-            meta.add(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, category));
-            meta.add(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, families.getString(cat)));
-            licenseFamilies.put(cat.trim(), meta);
+            ILicenseFamily fam = new SimpleLicenseFamily(cat, families.getString(cat));
+            licenseFamilies.add(new SimpleLicenseFamily(cat, families.getString(cat)));
         }
         return licenseFamilies;
     }
-    
+
     Set<String> extractKeys(Configuration cfg) {
         Iterator<String> iter = cfg.getKeys();
         Set<String> ids = new TreeSet<>();
         while (iter.hasNext()) {
-            ids.add( iter.next().split("\\.")[0]);
+            ids.add(iter.next().split("\\.")[0]);
         }
         return ids;
     }
 
     @Override
-    public Map<String,BaseLicense> readLicenses() {
-        Map<String,MetaData> families = readFamilies();
-        Map<String,BaseLicense> result = new LinkedHashMap<>();
-        List<BaseLicense> licenses = new ArrayList<BaseLicense>();
+    public Collection<IHeaderMatcher> readLicenses() {
+        SortedSet<ILicenseFamily> families = readFamilies();
+        Collection<IHeaderMatcher> result = new ArrayList<>();
+        List<IHeaderMatcher> licenses = new ArrayList<>();
         Configuration licenseConfig = configuration.subset("license");
         for (String id : extractKeys(licenseConfig)) {
             Configuration lic = licenseConfig.subset(id);
-            String familyId = lic.getString("family").trim();
-            MetaData family = families.get(familyId);
-            if (family == null) {
-                throw new IllegalArgumentException( String.format( "license %s uses family %s which is missing", id, familyId));
+            ILicenseFamily licenseFamily = ILicenseFamily.searchSet(families, lic.getString("family"));
+            if (licenseFamily == null) {
+                throw new IllegalArgumentException(
+                        String.format("license %s uses family %s which is missing", id, lic.getString("family")));
             }
-            Set<String> keys=extractKeys(lic);
+            Set<String> keys = extractKeys(lic);
             String notes = lic.getString("notes", "");
-            if (keys.contains("fullText"))
-            {
-                licenses.add( new FullTextMatchingLicense(
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
-                        notes,
-                        lic.getString("fullText")));
+            if (keys.contains("fullText")) {
+                licenses.add(new FullTextMatchingLicense(id, licenseFamily, notes, lic.getString("fullText")));
             }
             if (keys.contains("copyright")) {
-                licenses.add( new CopyrightHeader(
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
-                        notes,
-                        lic.getString("copyright")));
+                licenses.add(new CopyrightHeader(id, licenseFamily, notes, lic.getString("copyright")));
             }
             if (keys.contains("text")) {
                 Configuration text = lic.subset("text");
                 Set<String> txtKeys = extractKeys(text);
-                List<String> texts = txtKeys.stream()
-                        .map(text::getString).collect(Collectors.toList()); 
-                licenses.add( new SimplePatternBasedLicense(
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
-                        notes,
-                        texts.toArray( new String[texts.size()])));
+                List<String> texts = txtKeys.stream().map(text::getString).collect(Collectors.toList());
+                licenses.add(
+                        new SimplePatternBasedLicense(id, licenseFamily, notes, texts.toArray(new String[texts.size()])));
             }
             if (keys.contains("spdx")) {
-                licenses.add(SPDXMatcher.INSTANCE.register(lic.getString("spdx"),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
-                        notes
-                        ));
+                licenses.add(SPDXMatcher.INSTANCE.register(id, licenseFamily, notes, lic.getString("spdx")));
             }
             if (licenses.size() == 1) {
-                result.put(id, licenses.get(0));
+                result.add(licenses.get(0));
                 licenses.clear();
             } else if (licenses.size() > 1) {
-                result.put(id,  new MultiplexLicense(family.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                        family.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME),
-                        notes,licenses));
-                licenses = new ArrayList<BaseLicense>();
+                result.add(new MultiplexLicense(id, licenses));
+                licenses = new ArrayList<>();
             }
         }
         return result;

@@ -18,47 +18,66 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.SimpleLicenseFamily;
 
-public abstract class BaseLicense implements IHeaderMatcher{
-    private String licenseFamilyCategory;
-    private String licenseFamilyName;
+/*
+ * Todo move to bulder pattern
+ */
+
+public abstract class BaseLicense implements IHeaderMatcher {
+    private ILicenseFamily family;
     private String notes;
+    private String idPrefix;
 
-//    public BaseLicense() {
-//    }
-
-    public BaseLicense(final MetaData.Datum licenseFamilyCategory, final MetaData.Datum licenseFamilyName, final String notes)
-    {
-        if (!MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY.equals(licenseFamilyCategory.getName())) {
-            throw new IllegalStateException("Expected " + MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY
-                    + ", got " + licenseFamilyCategory.getName());
-        }
-        setLicenseFamilyCategory(licenseFamilyCategory.getValue());
-        if (!MetaData.RAT_URL_LICENSE_FAMILY_NAME.equals(licenseFamilyName.getName())) {
-            throw new IllegalStateException("Expected " + MetaData.RAT_URL_LICENSE_FAMILY_NAME
-                    + ", got " + licenseFamilyName.getName());
-        }
-        setLicenseFamilyName(licenseFamilyName.getValue());
-        setNotes(notes);
+    public BaseLicense(ILicenseFamily family, String notes) {
+        this(family, notes, null);
+    }
+    
+    public BaseLicense(ILicenseFamily family, String notes, String idPrefix) {
+        this.family = family;
+        this.notes = notes;
+        this.idPrefix = idPrefix;
+    }
+    
+    @Override
+    public String toString() {
+        return getId();
+    }
+    
+    public String getId() {
+        return String.format( "%s:%s:%s", idPrefix==null?"":idPrefix, family.getFamilyCategory(), this.getClass().getSimpleName());
     }
 
-    public String getLicenseFamilyCategory() {
-        return licenseFamilyCategory;
+    public String getIdPrefix() {
+        return idPrefix;
     }
 
-    public void setLicenseFamilyCategory(String pDocumentCategory) {
-        licenseFamilyCategory = pDocumentCategory;
+    public void setIdPrefix(String idPrefix) {
+        this.idPrefix = idPrefix;
     }
 
-    public String getLicenseFamilyName() {
-        return licenseFamilyName;
+    public ILicenseFamily getLicenseFamily() {
+        return family;
     }
 
-    public void setLicenseFamilyName(String pLicenseFamilyCategory) {
-        licenseFamilyName = pLicenseFamilyCategory;
+    public void setLicenseFamilyCategory(String category) {
+        this.family = new SimpleLicenseFamily(category, family == null? null : family.getFamilyName());
+    }
+    
+    public void setLicenseFamilyName(String name) {
+        this.family = new SimpleLicenseFamily(family == null? null : family.getFamilyCategory(), name);
     }
 
     public String getNotes() {
@@ -72,10 +91,9 @@ public abstract class BaseLicense implements IHeaderMatcher{
     public final void reportOnLicense(Document subject) {
         final MetaData metaData = subject.getMetaData();
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-        final String licFamilyCategory = getLicenseFamilyCategory();
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, licFamilyCategory));
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, licFamilyCategory));
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, getLicenseFamilyName()));
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, family.getFamilyCategory()));
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, family.getFamilyCategory()));
+        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, family.getFamilyName()));
     }
 
     /**
@@ -93,5 +111,17 @@ public abstract class BaseLicense implements IHeaderMatcher{
             }
         }
         return buffer.toString();
+    }
+
+    @Override
+    public void reportFamily(Consumer<ILicenseFamily> consumer) {
+        consumer.accept(family);
+    }
+
+    @Override
+    public void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator) {
+        if (comparator.test(family)) {
+            consumer.accept(this);
+        }
     }
 }

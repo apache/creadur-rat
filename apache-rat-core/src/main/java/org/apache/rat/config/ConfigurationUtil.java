@@ -31,14 +31,14 @@ public class ConfigurationUtil {
      * @param approvedLicenses list of license family implementations.
      * @return extracted names of given license families.
      */
-    public static final List<String> toNames(final ILicenseFamily[] approvedLicenses) {
-        List<String> names = new ArrayList<>();
-        if (approvedLicenses != null && approvedLicenses.length > 0) {
-            for (ILicenseFamily approvedFamily : approvedLicenses) {
-                names.add(approvedFamily.getFamilyName());
-            }
-        }
-        return names;
-    }
+//    public static final List<String> toNames(final ILicenseFamily[] approvedLicenses) {
+//        List<String> names = new ArrayList<>();
+//        if (approvedLicenses != null && approvedLicenses.length > 0) {
+//            for (ILicenseFamily approvedFamily : approvedLicenses) {
+//                names.add(approvedFamily.getFamilyName());
+//            }
+//        }
+//        return names;
+//    }
 
 }

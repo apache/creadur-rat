@@ -32,57 +32,31 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CDDL1LicenseTest {
-
-    private static final String LICENSE_LINE =
-            " DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.\n\n"
-                    + "Copyright 2011-2013 Tirasa. All rights reserved.\n\n"
-                    + "The contents of this file are subject to the terms of the Common Development\n"
+public class CDDL1LicenseTest extends AbstractMatcherTest {
+    private static String category = "CDDL1";
+    private static String name = "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0";
+    private static String[][] targets = {
+            { "fullTxt", "", "The contents of this file are subject to the terms of the Common Development\n"
                     + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file\n"
-                    + "except in compliance with the License.\n\n"
-                    + "You can obtain a copy of the License at https://oss.oracle.com/licenses/CDDL\n"
-                    + "See the License for the specific language governing permissions and limitations\n"
-                    + "under the License.";
-
-    /**
-     * To ease testing provide a map with a given license version and the string to test for.
-     */
-    private static Map<IHeaderMatcher, String> licenseStringMap;
-
-    private Document subject;
-
-    @BeforeClass
-    public static void initLicensesUnderTest() {
-        licenseStringMap = new HashMap<>();
-        licenseStringMap.put(new CDDL1License(), LICENSE_LINE);
-        assertEquals(1, licenseStringMap.entrySet().size());
+                    + "except in compliance with the License.\n\n"},
+            { "longerTxt", "",
+                " DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.\n\n"
+                        + "Copyright 2011-2013 Tirasa. All rights reserved.\n\n"
+                        + "The contents of this file are subject to the terms of the Common Development\n"
+                        + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file\n"
+                        + "except in compliance with the License.\n\n"
+                        + "You can obtain a copy of the License at https://oss.oracle.com/licenses/CDDL\n"
+                        + "See the License for the specific language governing permissions and limitations\n"
+                        + "under the License." },
+            { "spdx-tab", "", "SPDX-License-Identifier:\tCDDL-1.0" },
+            { "spdx-space", "", "SPDX-License-Identifier: CDDL-1.0" },
+            { "illumos", "", "The contents of this file are subject to the terms of the\n"
+                    + "Common Development and Distribution License (the \"License\")\n"
+                    + "You may not use this file except in compliance with the License.\n"}
+    };
+    
+    public CDDL1LicenseTest() {
+        super(category, name, targets);
     }
 
-    @Before
-    public final void initSubject() {
-        this.subject = new MockLocation("subject");
-    }
-
-    @Test
-    public void testNegativeMatches() throws Exception {
-        for (Map.Entry<IHeaderMatcher, String> licenseUnderTest : licenseStringMap.entrySet()) {
-            assertFalse(licenseUnderTest.getKey().match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
-        }
-    }
-
-    @Test
-    public void testPositiveMatchInDocument() throws Exception {
-        for (Map.Entry<IHeaderMatcher, String> licenseUnderTest : licenseStringMap.entrySet()) {
-            assertTrue(licenseUnderTest.getKey().match(subject, "\t" + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, "     " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " * " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " // " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " /* " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " /** " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, "    " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " ## " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " ## " + licenseUnderTest.getValue() + " ##"));
-        }
-    }
 }

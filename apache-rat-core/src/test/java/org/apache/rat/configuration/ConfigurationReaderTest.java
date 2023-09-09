@@ -22,49 +22,59 @@ import static org.junit.Assert.assertTrue;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicenseFamily;
 import org.junit.Test;
 
 public class ConfigurationReaderTest {
     
-    private static String[] FAMILIES = {"GEN", "?????", "AL", "OASIS", "W3CD", "W3C", "GPL1", "GPL2", "GPL3", "MIT", "CDDL1", "BSD_m"};
+    private static String[] FAMILIES = {"GEN  ", "?????", "AL   ", "OASIS", "W3CD ", "W3C  ", "GPL1 ", "GPL2 ", "GPL3 ", "MIT  ", "CDDL1", "BSD_m"};
     
     @Test
     public void readDefault() throws ConfigurationException {
         ConfigurationReader reader = new ConfigurationReader();
         URL url = ConfigurationReader.class.getResource("/org/apache/rat/default.config");
         reader.read(url);
-        Map<String,MetaData> families = reader.readFamilies();
-        assertTrue(families.keySet().containsAll(Arrays.asList(FAMILIES)));
-        families.keySet().removeAll(Arrays.asList(FAMILIES));
-        assertTrue(families.isEmpty());
+        List<String> familyCategories = Arrays.asList(FAMILIES);
+        Set<String> readCategories = reader.readFamilies().stream().map(ILicenseFamily::getFamilyCategory).collect(Collectors.toSet());
+        assertTrue(readCategories.containsAll(familyCategories));
+        readCategories.removeAll(familyCategories);
+        assertTrue(readCategories.isEmpty());
         
-        Map<String,BaseLicense> licenses = reader.readLicenses();
+        Collection<IHeaderMatcher> licenses = reader.readLicenses();
         assertEquals(15, licenses.size());
         Map<String,Integer> result = new TreeMap<>();
-        licenses.values().stream().map(BaseLicense::getLicenseFamilyCategory).forEach( x -> {
-            Integer i = result.get(x);
-            if (i == null) {
-                result.put(x, 1);
-            } else {
-                result.put(x, 1+i.intValue());
-            }
-        });
-        assertEquals(2,result.get("AL   ").intValue());
+        for (IHeaderMatcher license : licenses) {
+            license.reportFamily( c -> { 
+                Integer i = result.get(c.getFamilyCategory());
+                if (i == null) {
+                    result.put(c.getFamilyCategory(), 1);
+                } else {
+                    result.put(c.getFamilyCategory(), 1+i.intValue());
+                }
+            });
+        }
+ 
+        assertEquals(3,result.get("AL   ").intValue());
         assertEquals(2,result.get("BSD_m").intValue());
-        assertEquals(2,result.get("CDDL1").intValue());
+        assertEquals(3,result.get("CDDL1").intValue());
         assertEquals(2,result.get("GEN  ").intValue());
-        assertEquals(1,result.get("GPL1 ").intValue());
-        assertEquals(1,result.get("GPL2 ").intValue());
-        assertEquals(1,result.get("GPL3 ").intValue());
-        assertEquals(1,result.get("MIT  ").intValue());
-        assertEquals(1,result.get("OASIS").intValue());
-        assertEquals(1,result.get("W3C  ").intValue());
+        assertEquals(2,result.get("GPL1 ").intValue());
+        assertEquals(2,result.get("GPL2 ").intValue());
+        assertEquals(2,result.get("GPL3 ").intValue());
+        assertEquals(2,result.get("MIT  ").intValue());
+        assertEquals(2,result.get("OASIS").intValue());
+        assertEquals(2,result.get("W3C  ").intValue());
         assertEquals(1,result.get("W3CD ").intValue());
     }
 

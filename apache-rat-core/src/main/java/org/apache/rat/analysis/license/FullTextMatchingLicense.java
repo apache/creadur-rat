@@ -23,7 +23,7 @@ import java.util.Locale;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData.Datum;
+import org.apache.rat.license.ILicenseFamily;
 
 /**
  * Accumulates all letters and numbers contained inside the header and
@@ -35,8 +35,7 @@ import org.apache.rat.api.MetaData.Datum;
  *
  * @since Rat 0.9
  */
-public class FullTextMatchingLicense extends BaseLicense
-    implements IHeaderMatcher {
+public class FullTextMatchingLicense extends BaseLicense {
 
     // Number of match characters assumed to be present on first line
     private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
@@ -48,15 +47,29 @@ public class FullTextMatchingLicense extends BaseLicense
     private boolean seenFirstLine = false;
 
     private final StringBuilder buffer = new StringBuilder();
+    
+    public FullTextMatchingLicense(ILicenseFamily licenseFamily) {
+        this(licenseFamily, null);
+    }
+    
+    public FullTextMatchingLicense(ILicenseFamily licenseFamily, String notes) {
+        this(null, licenseFamily, notes);
+    }
+    
+    public FullTextMatchingLicense(String idPrefix, ILicenseFamily licenseFamily, String notes) {
+        super(licenseFamily, notes, idPrefix);
+    }
+    
+    public FullTextMatchingLicense(ILicenseFamily family,
+            String notes,
+            String fullText) {
+        this(null, family, notes, fullText);
+    }
 
-//    public FullTextMatchingLicense() {
-//    }
-
-    public FullTextMatchingLicense(Datum licenseFamilyCategory,
-                                      Datum licenseFamilyName,
+    public FullTextMatchingLicense(String idPrefix, ILicenseFamily family,
                                       String notes,
                                       String fullText) {
-        super(licenseFamilyCategory, licenseFamilyName, notes);
+        super(family, notes, idPrefix);
         setFullText(fullText);
     }
 
@@ -74,6 +87,7 @@ public class FullTextMatchingLicense extends BaseLicense
         return fullText != null;
     }
 
+    @Override
     public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
         final String inputToMatch = prune(line).toLowerCase(Locale.ENGLISH);
         if (seenFirstLine) { // Accumulate more input
@@ -95,19 +109,20 @@ public class FullTextMatchingLicense extends BaseLicense
             if (buffer.toString().contains(fullText)) {
                 reportOnLicense(subject);
                 return true; // we found a match
-            } else { // buffer contains first line but does not contain full text
-                // It's possible that the buffer contains the first line again
-                int offset = buffer.substring(1).indexOf(firstLine);
-                if (offset >= 0) { // first line found again
-                    buffer.delete(0,offset); // reset buffer to the new start
-                } else { // buffer does not even contain first line, so cannot be used to match full text
-                    init();
-                }
+            } 
+            // buffer contains first line but does not contain full text
+            // It's possible that the buffer contains the first line again
+            int offset = buffer.substring(1).indexOf(firstLine);
+            if (offset >= 0) { // first line found again
+                buffer.delete(0,offset); // reset buffer to the new start
+            } else { // buffer does not even contain first line, so cannot be used to match full text
+                init();
             }
         }
         return false;
     }
 
+    @Override
     public void reset() {
         init();
     }

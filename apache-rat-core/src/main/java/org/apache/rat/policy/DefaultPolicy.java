@@ -25,55 +25,52 @@ import org.apache.rat.config.ConfigurationUtil;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.SimpleLicenseFamily;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class DefaultPolicy implements IDocumentAnalyser {
-    private List<String> approvedLicenseNames;
+    private SortedSet<ILicenseFamily> approvedLicenseNames;
 
     /**
      * Creates a policy that matches the default licenses.
      * Mainly used for testing purposes.
      */
     DefaultPolicy() {
-        this(new ArrayList<String>(0), true);
+        this(new ArrayList<ILicenseFamily>(0), true);
     }
 
     public DefaultPolicy(final ILicenseFamily[] approvedLicenses, boolean mergeWithDefault) {
-        this(ConfigurationUtil.toNames(approvedLicenses), mergeWithDefault);
+        this(Arrays.asList(approvedLicenses), mergeWithDefault);
     }
 
-    public DefaultPolicy(final List<String> approvedLicenseNames, boolean mergeWithDefault) {
-        this.approvedLicenseNames = new ArrayList<>();
+    public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseNames, boolean mergeWithDefault) {
+        this.approvedLicenseNames = new TreeSet<>();
 
-        if (approvedLicenseNames == null || approvedLicenseNames.isEmpty()) {
-            // used in tests only, no additional licenses given but defaults requested
-            if(mergeWithDefault) {
-                this.approvedLicenseNames.addAll(Defaults.getLicenseNames());
-            }
-        } else {
-            // avoid duplicate entries and merge with defaults if requested
-            Set<String> mergedLicenses = new HashSet<>(approvedLicenseNames);
-            if(mergeWithDefault) {
-                mergedLicenses.addAll(Defaults.getLicenseNames());
-            }
-            this.approvedLicenseNames = new ArrayList<>(mergedLicenses);
+        if (mergeWithDefault) {
+            this.approvedLicenseNames.addAll(Defaults.getLicenseFamilies());
         }
-        Collections.sort(this.approvedLicenseNames);
+        if (approvedLicenseNames != null) {
+            this.approvedLicenseNames.addAll(approvedLicenseNames);
+        }
     }
 
     @Override
     public void analyse(final Document subject) throws RatDocumentAnalysisException {
         if (subject != null) {
-            final String name = subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME);
-            if (name != null) {
-                final boolean isApproved = Collections.binarySearch(approvedLicenseNames, name) >= 0;
-                reportLicenseApprovalClaim(subject, isApproved);
-            }
+            final ILicenseFamily licenseFamily = new SimpleLicenseFamily( 
+                    subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
+                    subject.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME));
+           
+            reportLicenseApprovalClaim(subject, approvedLicenseNames.contains(licenseFamily));
         }
     }
 
@@ -82,7 +79,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
          isAcceptable ? MetaData.RAT_APPROVED_LICENSE_DATIM_TRUE: MetaData.RAT_APPROVED_LICENSE_DATIM_FALSE);
     }
 
-    public List<String> getApprovedLicenseNames() {
-        return Collections.unmodifiableList(approvedLicenseNames);
+    public SortedSet<ILicenseFamily> getApprovedLicenseNames() {
+        return Collections.unmodifiableSortedSet(approvedLicenseNames);
     }
 }

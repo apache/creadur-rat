@@ -15,27 +15,47 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData.Datum;
-
+import org.apache.rat.license.ILicenseFamily;
 
 /**
  * @since Rat 0.8
  */
-public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMatcher {
+public class SimplePatternBasedLicense extends BaseLicense {
     private String[] patterns;
 
-    public SimplePatternBasedLicense(Datum pLicenseFamilyCategory, Datum pLicenseFamilyName,
-            String pNotes, String[] pPatterns) {
-        super(pLicenseFamilyCategory, pLicenseFamilyName, pNotes);
-        setPatterns(pPatterns);
+    /**
+     * Creates a pattern based license with full documentation.
+     * 
+     * @param pLicenseFamilyCategory
+     * @param pLicenseFamilyName
+     * @param pNotes
+     * @param pPatterns
+     */
+    public SimplePatternBasedLicense(ILicenseFamily licenseFamily, String notes, String[] patterns) {
+        this(null,licenseFamily, notes, patterns);
     }
     
+    public SimplePatternBasedLicense(String idPrefix, ILicenseFamily licenseFamily, String notes, String[] patterns) {
+        super(licenseFamily, notes, idPrefix);
+        setPatterns(patterns);
+    }
+
+    /**
+     * Creates a pattern based license without patterns.
+     * 
+     * @param pLicenseFamilyCategory
+     * @param pLicenseFamilyName
+     * @param pNotes
+     */
+    protected SimplePatternBasedLicense(ILicenseFamily licenseFamily, String notes) {
+        super(licenseFamily, notes);
+    }
+
     public String[] getPatterns() {
         return patterns;
     }
@@ -57,11 +77,13 @@ public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMat
         }
         return false;
     }
-    
+
+    @Override
     public void reset() {
         // Nothing to do
     }
 
+    @Override
     public boolean match(Document pSubject, String pLine) throws RatHeaderAnalysisException {
         final boolean result = matches(pLine);
         if (result) {
@@ -69,4 +91,5 @@ public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMat
         }
         return result;
     }
+
 }

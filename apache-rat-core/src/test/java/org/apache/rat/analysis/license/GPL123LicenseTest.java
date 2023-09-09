@@ -18,70 +18,53 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.Arrays;
+import java.util.Collection;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests GPL license occurrences within comments and other characters.
- * Works for GPL1 to GPL3.
+ * Tests GPL license occurrences within comments and other characters. Works for
+ * GPL1 to GPL3.
  */
-public class GPL123LicenseTest {
-    MockClaimReporter reporter;
-    Document subject;
+@RunWith(Parameterized.class)
+public class GPL123LicenseTest extends AbstractMatcherTest {
 
-    /**
-     * To ease testing provide a map with a given license version and the string to test for.
-     */
-    private static Map<IHeaderMatcher, String> licenseStringMap;
+    private static Object[] GPL1 = { "GPL1", "GNU General Public License, version 1", new String[][] {
+            { "fulltext", "", "This program is free software; you can redistribute it and/or modify\n "
+                    + "it under the terms of the GNU General Public License as published by\n "
+                    + "the Free Software Foundation; either version 1, or (at your option)\n " + "any later version." },
+            { "spdx-tab", "", "SPDX-License-Identifier:\tGPL-1.0-only" },
+            { "spdx-space", "", "SPDX-License-Identifier: GPL-1.0-only" }, } };
 
-    /**
-     * If you replace this with BeforeClass and make this method static the build fails at line 67.
-     */
-    @Before
-    public void initLicensesUnderTest() {
-        licenseStringMap = new HashMap<>();
-        licenseStringMap.put(new GPL1License(), GPL1License.FIRST_LICENSE_LINE);
-        licenseStringMap.put(new GPL2License(), GPL2License.FIRST_LICENSE_LINE);
-        licenseStringMap.put(new GPL3License(), GPL3License.FIRST_LICENSE_LINE);
+    private static Object[] GPL2 = { "GPL2", "GNU General Public License, version 2",
+            new String[][] {
+                    { "fulltext", "",
+                            "This program is free software; you can redistribute it and/or\n"
+                                    + "modify it under the terms of the GNU General Public License\n"
+                                    + "as published by the Free Software Foundation; either version 2\n"
+                                    + "of the License, or (at your option) any later version." },
+                    { "spdx-tab", "", "SPDX-License-Identifier:\tGPL-2.0-only" },
+                    { "spdx-space", "", "SPDX-License-Identifier: GPL-2.0-only" }, } };
+
+    private static Object[] GPL3 = { "GPL3", "GNU General Public License, version 3",
+            new String[][] {
+                    { "fulltext", "",
+                            "This program is free software: you can redistribute it and/or modify\n"
+                                    + "    it under the terms of the GNU General Public License as published by\n"
+                                    + "    the Free Software Foundation, either version 3 of the License, or\n"
+                                    + "    (at your option) any later version." },
+                    { "spdx-tab", "", "SPDX-License-Identifier:\tGPL-3.0-only" },
+                    { "spdx-space", "", "SPDX-License-Identifier: GPL-3.0-only" }, } };
+
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(GPL1, GPL2, GPL3);
     }
 
-    @Before
-    public final void initReporter() {
-        this.reporter = new MockClaimReporter();
-        this.subject = new MockLocation("subject");
+    public GPL123LicenseTest(String cat, String name, String[][] targets) {
+        super(cat, name, targets);
     }
-
-    @Test
-    public void testNegativeMatches() throws Exception {
-        for (Map.Entry<IHeaderMatcher, String> licenseUnderTest : licenseStringMap.entrySet()) {
-            assertFalse(licenseUnderTest.getKey().match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
-        }
-    }
-
-    @Test
-    public void testPositiveMatchInDocument() throws Exception {
-        for (Map.Entry<IHeaderMatcher, String> licenseUnderTest : licenseStringMap.entrySet()) {
-            assertTrue(licenseUnderTest.getKey().match(subject, "\t" + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, "     " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " * " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " // " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " /* " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " /** " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, "    " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " ## " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " ## " + licenseUnderTest.getValue() + " ##"));
-        }
-    }
-
 }

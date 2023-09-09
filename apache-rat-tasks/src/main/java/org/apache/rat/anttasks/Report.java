@@ -21,7 +21,9 @@ package org.apache.rat.anttasks;
  import org.apache.commons.io.IOUtils;
  import org.apache.rat.Defaults;
  import org.apache.rat.ReportConfiguration;
- import org.apache.rat.analysis.IHeaderMatcher;
+ import org.apache.rat.ConfigurationException;
+import org.apache.rat.Reporter;
+import org.apache.rat.analysis.IHeaderMatcher;
  import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
  import org.apache.rat.api.RatException;
  import org.apache.rat.license.ILicenseFamily;
@@ -37,13 +39,16 @@ import org.apache.tools.ant.util.FileUtils;
 
 import javax.xml.transform.TransformerException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -64,6 +69,10 @@ import java.util.List;
  * </ul>
  */
 public class Report extends Task {
+    
+    private org.apache.rat.Reporter reporter;
+    private Defaults.Builder defaultsBuilder;
+    private final ReportConfiguration configuration;
 
     /**
      * will hold any nested resource collection
@@ -72,35 +81,36 @@ public class Report extends Task {
     /**
      * The licenses we want to match on.
      */
-    private final ArrayList<IHeaderMatcher> licenseMatchers = new ArrayList<>();
+    //private final ArrayList<IHeaderMatcher> licenseMatchers = new ArrayList<>();
 
-    private final ArrayList<ILicenseFamily> licenseNames = new ArrayList<>();
+    //private final ArrayList<ILicenseFamily> licenseNames = new ArrayList<>();
 
     /**
      * Whether to add the default list of license matchers.
      */
-    private boolean addDefaultLicenseMatchers = true;
+    //private boolean addDefaultLicenseMatchers = true;
     /**
      * Where to send the report.
      */
-    private File reportFile;
-    /**
-     * Which format to use.
-     */
-    private Format format = Format.PLAIN;
+    //private File reportFile;
     /**
      * Which stylesheet to use.
      */
-    private Resource stylesheet;
+    //private Resource stylesheet;
     /**
      * Whether to add license headers.
      */
-    private AddLicenseHeaders addLicenseHeaders = new AddLicenseHeaders(AddLicenseHeaders.FALSE);
+    //private AddLicenseHeaders addLicenseHeaders = new AddLicenseHeaders(AddLicenseHeaders.FALSE);
     /**
      * The copyright message.
      */
-    private String copyrightMessage;
+    //private String copyrightMessage;
 
+    public Report() {
+        configuration = new ReportConfiguration();
+        configuration.setOut(new LogOutputStream(this, Project.MSG_INFO));
+        defaultsBuilder = Defaults.builder();
+    }
     /**
      * Adds resources that will be checked.
      * @param rc resource to check.
@@ -116,18 +126,20 @@ public class Report extends Task {
      * @param matcher Adds a license matcher.
      */
     public void add(IHeaderMatcher matcher) {
-        licenseMatchers.add(matcher);
+        configuration.addHeaderMatcher(matcher);
     }
 
     public void add(ILicenseFamily license) {
-        licenseNames.add(license);
+        configuration.addApprovedLicenseName(license);
     }
 
     /**
      * @param addDefaultLicenseMatchers Whether to add the default list of license matchers.
      */
     public void setAddDefaultLicenseMatchers(boolean addDefaultLicenseMatchers) {
-        this.addDefaultLicenseMatchers = addDefaultLicenseMatchers;
+        if (!addDefaultLicenseMatchers) {
+            defaultsBuilder.noDefault();
+        }
     }
 
     /**
@@ -135,7 +147,11 @@ public class Report extends Task {
      * @param f report output file.
      */
     public void setReportFile(File f) {
-        reportFile = f;
+        try {
+            configuration.setOut(new FileOutputStream(f));
+        } catch (FileNotFoundException e) {
+            throw new BuildException("Can not open output file.", e);
+        }
     }
 
     /**
@@ -146,7 +162,7 @@ public class Report extends Task {
         if (f == null) {
             throw new IllegalArgumentException("format must not be null");
         }
-        format = f;
+        configuration.setStyleReport(! f.getValue().equals(Format.XML_KEY));
     }
 
     /**
@@ -156,14 +172,20 @@ public class Report extends Task {
         if (pAdd == null) {
             throw new IllegalArgumentException("addLicenseHeaders must not be null");
         }
-        addLicenseHeaders = pAdd;
+        if (!Arrays.asList(pAdd.getValues()).contains(pAdd.getValue().toUpperCase())) {
+            throw new IllegalArgumentException("Invalid value for addLicenseHeaders: " + pAdd.getValue());
+        }
+        if (!pAdd.getValue().equalsIgnoreCase(AddLicenseHeaders.FALSE)) {
+            configuration.setAddingLicenses(true);
+            configuration.setAddingLicensesForced(pAdd.getValue().equalsIgnoreCase(AddLicenseHeaders.FORCED));
+        }
     }
 
     /**
-     * @param pMessage copyright message to set.
+     * @param copyrightMessage copyright message to set.
      */
-    public void setCopyrightMessage(String pMessage) {
-        copyrightMessage = pMessage;
+    public void setCopyrightMessage(String copyrightMessage) {
+        configuration.setCopyrightMessage(copyrightMessage);
     }
     
     /**
@@ -171,10 +193,16 @@ public class Report extends Task {
      * @param u stylesheet.
      */
     public void addConfiguredStylesheet(Union u) {
-        if (stylesheet != null || u.size() != 1) {
+        if (configuration.getStyleSheet() != null || u.size() != 1) {
             throw new BuildException("You must not specify more than one stylesheet.");
         }
-        stylesheet = u.iterator().next();
+        Resource stylesheet = u.iterator().next(); 
+        try {
+            configuration.setStyleSheet(stylesheet.getInputStream());
+        } catch (IOException e) {
+            throw new BuildException("Stylesheet not readable", e);
+        }
+        
     }
 
     /**
@@ -182,27 +210,16 @@ public class Report extends Task {
      */
     @Override
     public void execute() {
-        validate();
-
-        PrintWriter out = null;
+        configuration.setReportable(new ResourceCollectionContainer(nestedResources));
         try {
-            if (reportFile == null) {
-                out = new PrintWriter(
-                          new OutputStreamWriter(
-                              new LogOutputStream(this, Project.MSG_INFO)
-                          ));
-            } else {
-                out = new PrintWriter(new OutputStreamWriter(
-                        new FileOutputStream(reportFile),
-                        Charset.forName("UTF-8")
-                ));
-            }
-            createReport(out);
-            out.flush();
-        } catch (IOException | RatException | InterruptedException | TransformerException ioex) {
+            validate();
+            Reporter.report(configuration);
+        } catch (BuildException e) {
+            throw e;
+        }catch (Exception ioex) {
             throw new BuildException(ioex);
         } finally {
-            IOUtils.closeQuietly(out);
+            configuration.close();
         }
     }
 
@@ -210,101 +227,41 @@ public class Report extends Task {
      * validates the task's configuration.
      */
     private void validate() {
+        try {
+            configuration.validate( s -> log(s,Project.MSG_WARN));
+        } catch (ConfigurationException e) {
+            throw new BuildException(e.getMessage(), e.getCause());
+        }
         if (nestedResources == null) {
             throw new BuildException("You must specify at least one file to"
                                      + " create the report for.");
         }
-        if (!addDefaultLicenseMatchers && licenseMatchers.size() == 0) {
-            throw new BuildException("You must specify at least one license"
-                                     + " matcher");
-        }
-        if (format.getValue().equals(Format.STYLED_KEY)) {
-            if (stylesheet == null) {
-                throw new BuildException("You must specify a stylesheet when"
-                                         + " using the 'styled' format");
-            }
-            if (!stylesheet.isExists()) {
-                throw new BuildException("Cannot find specified stylesheet '"
-                                         + stylesheet + "'");
-            }
-        } else if (stylesheet != null) {
-            log("Ignoring stylesheet '" + stylesheet + "' when using format '"
-                + format.getValue() + "'", Project.MSG_WARN);
-        }
     }
 
-    /**
-     * Writes the report to the given stream.
-     * 
-     * @param out stream to write report to.
-     * 
-     * @throws IOException in case of I/O errors.
-     * @throws InterruptedException in case of threading errors.
-     * @throws TransformerException in case of XML errors.
-     * @throws RatException in case of general errors.
-     */
-    private void createReport(PrintWriter out) throws IOException, TransformerException, InterruptedException, RatException {
-        final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(new HeaderMatcherMultiplexer(getLicenseMatchers()));
-        configuration.setApprovedLicenseNames(getApprovedLicenseNames());
-        configuration.setApproveDefaultLicenses(addDefaultLicenseMatchers);
-        
-        if (AddLicenseHeaders.FORCED.equalsIgnoreCase(addLicenseHeaders.getValue())) {
-            configuration.setAddingLicenses(true);
-            configuration.setAddingLicensesForced(true);
-            configuration.setCopyrightMessage(copyrightMessage);
-        } else if (AddLicenseHeaders.TRUE.equalsIgnoreCase(addLicenseHeaders.getValue())) {
-            configuration.setAddingLicenses(true);
-            configuration.setCopyrightMessage(copyrightMessage);
-        } else if (!AddLicenseHeaders.FALSE.equalsIgnoreCase(addLicenseHeaders.getValue())) {
-            throw new BuildException("Invalid value for addLicenseHeaders: " + addLicenseHeaders.getValue());
-        }
-        ResourceCollectionContainer rcElement = new ResourceCollectionContainer(nestedResources);
-        if (format.getValue().equals(Format.XML_KEY)) {
-            org.apache.rat.Report.report(rcElement, out, configuration);
-        } else {
-            InputStream style = null;
-            try {
-                if (format.getValue().equals(Format.PLAIN_KEY)) {
-                    style = Defaults.getPlainStyleSheet();
-                } else if (format.getValue().equals(Format.STYLED_KEY)) {
-                    style = stylesheet.getInputStream();
-                } else {
-                    throw new BuildException("unsupported format '"
-                                             + format.getValue() + "'");
-                }
-                org.apache.rat.Report.report(out, rcElement, style,
-                                             configuration);
-            } finally {
-                FileUtils.close(style);
-            }
-        }
-    }
-
-    /**
-     * Flattens all nested matchers plus the default matchers (if
-     * required) into a single array.
-     */
-    private List<IHeaderMatcher> getLicenseMatchers() {
-        List<IHeaderMatcher> matchers = new ArrayList<>(
-                (addDefaultLicenseMatchers ? Defaults.DEFAULT_MATCHERS.size() : 0) + licenseMatchers.size());
-        if (addDefaultLicenseMatchers) {
-            matchers.addAll(Defaults.DEFAULT_MATCHERS);
-            matchers.addAll(licenseMatchers);
-        } else {
-            matchers = new ArrayList<>(licenseMatchers);
-        }
-        return matchers;
-    }
-
-    private ILicenseFamily[] getApprovedLicenseNames() {
-        // TODO: add support for adding default licenses
-        ILicenseFamily[] results = null;
-        if (licenseNames.size() > 0) {
-            results = licenseNames.toArray(new ILicenseFamily[0]);
-        }
-        return results;
-    }
+//    /**
+//     * Flattens all nested matchers plus the default matchers (if
+//     * required) into a single array.
+//     */
+//    private List<IHeaderMatcher> getLicenseMatchers() {
+//        List<IHeaderMatcher> matchers = new ArrayList<>(
+//                (addDefaultLicenseMatchers ? Defaults.DEFAULT_MATCHERS.size() : 0) + licenseMatchers.size());
+//        if (addDefaultLicenseMatchers) {
+//            matchers.addAll(Defaults.DEFAULT_MATCHERS);
+//            matchers.addAll(licenseMatchers);
+//        } else {
+//            matchers = new ArrayList<>(licenseMatchers);
+//        }
+//        return matchers;
+//    }
+//
+//    private ILicenseFamily[] getApprovedLicenseNames() {
+//        // TODO: add support for adding default licenses
+//        ILicenseFamily[] results = null;
+//        if (licenseNames.size() > 0) {
+//            results = licenseNames.toArray(new ILicenseFamily[0]);
+//        }
+//        return results;
+//    }
 
     /**
      * Type for the format attribute.

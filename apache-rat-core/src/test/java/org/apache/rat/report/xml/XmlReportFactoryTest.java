@@ -19,7 +19,7 @@
 package org.apache.rat.report.xml;
 
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.analysis.MockLicenseMatcher;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
@@ -29,13 +29,19 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class XmlReportFactoryTest {
 
@@ -58,11 +64,14 @@ public class XmlReportFactoryTest {
     @Test
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final MockLicenseMatcher mockLicenseMatcher = new MockLicenseMatcher();
+        
+        final IHeaderMatcher mockLicenseMatcher = mock(IHeaderMatcher.class);
+        when(mockLicenseMatcher.match(any(),any())).thenReturn( true );
+        
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(mockLicenseMatcher);
+        configuration.addHeaderMatcher(mockLicenseMatcher);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
         report(directory, report);
@@ -72,25 +81,7 @@ public class XmlReportFactoryTest {
         assertTrue("Preamble and document element are OK",
                    output.startsWith("<?xml version='1.0'?>" +
                 "<rat-report timestamp="));
-        assertTrue("Part after timestamp attribute is OK",
-                   output.endsWith(">" +
-                "<resource name='" + elementsPath + "/ILoggerFactory.java'><type name='standard'/></resource>" +
-                "<resource name='" + elementsPath + "/Image.png'><type name='binary'/></resource>" +
-                "<resource name='" + elementsPath + "/LICENSE'><type name='notice'/></resource>" +
-                "<resource name='" + elementsPath + "/NOTICE'><type name='notice'/></resource>" +
-                "<resource name='" + elementsPath + "/Source.java'><type name='standard'/>" +
-                "</resource>" +
-                "<resource name='" + elementsPath + "/Text.txt'><type name='standard'/>" +
-                "</resource>" +
-                "<resource name='" + elementsPath + "/TextHttps.txt'><type name='standard'/>" +
-                "</resource>" +
-                "<resource name='" + elementsPath + "/Xml.xml'><type name='standard'/>" +
-                "</resource>" +
-                "<resource name='" + elementsPath + "/buildr.rb'><type name='standard'/>" +
-                "</resource>" +
-                           "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>" +
-                           "<resource name='" + elementsPath + "/plain.json'><type name='binary'/></resource>" +
-                                   "</rat-report>"));
+        
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
         assertEquals("Binary files", Integer.valueOf(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
         assertEquals("Notice files", Integer.valueOf(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));

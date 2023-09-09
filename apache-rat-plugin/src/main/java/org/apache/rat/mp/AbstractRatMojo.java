@@ -530,9 +530,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     protected ReportConfiguration getConfiguration()
             throws MojoFailureException, MojoExecutionException {
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(new HeaderMatcherMultiplexer(
+        configuration.addHeaderMatcher(new HeaderMatcherMultiplexer(
                 mergeLicenseMatchers()));
-        configuration.setApprovedLicenseNames(mergeApprovedLicenseNames());
+        configuration.addApprovedLicenseNames(mergeApprovedLicenseNames());
         configuration.setApproveDefaultLicenses(addDefaultLicenseMatchers);
         return configuration;
     }

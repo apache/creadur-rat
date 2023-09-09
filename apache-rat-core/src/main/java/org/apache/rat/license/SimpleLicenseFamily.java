@@ -24,13 +24,14 @@ package org.apache.rat.license;
  */
 public class SimpleLicenseFamily implements ILicenseFamily {
     private String familyName;
+    private String familyCategory;
 
-    public SimpleLicenseFamily(String familyName) {
+    public SimpleLicenseFamily(String familyId, String familyName) {
+        setFamilyCategory(familyId);
         setFamilyName(familyName);
     }
 
     public SimpleLicenseFamily() {
-        this(null);
     }
 
     public final void setFamilyName(String familyName) {
@@ -40,4 +41,13 @@ public class SimpleLicenseFamily implements ILicenseFamily {
     public final String getFamilyName() {
         return familyName;
     }
+
+    public String getFamilyCategory() {
+        return familyCategory;
+    }
+
+    public void setFamilyCategory(String familyId) {
+        this.familyCategory = ILicenseFamily.makeCategory(familyId);
+    }
 }
+

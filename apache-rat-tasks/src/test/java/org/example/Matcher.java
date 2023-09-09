@@ -23,10 +23,9 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 
-public class Matcher extends BaseLicense implements IHeaderMatcher {
+public class Matcher extends BaseLicense  {
     public Matcher() {
-        super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"),
-                new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, "Example License"), "");
+        super( "EXMPL", "Example License", "");
     }
     public void reset() {}
     

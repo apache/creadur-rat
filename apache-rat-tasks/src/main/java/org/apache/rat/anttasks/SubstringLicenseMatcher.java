@@ -21,6 +21,8 @@ package org.apache.rat.anttasks;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.rat.analysis.license.SimplePatternBasedLicense;
+import org.apache.rat.api.MetaData;
+import org.apache.rat.api.MetaData.Datum;
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -32,6 +34,10 @@ import org.apache.tools.ant.BuildException;
 public class SubstringLicenseMatcher extends SimplePatternBasedLicense {
     private final List<String> patterns = new ArrayList<>();
     private boolean validated = false;
+    
+    public SubstringLicenseMatcher() {
+        super(null, null, null);
+    }
 
     public void addConfiguredPattern(Pattern p) {
         patterns.add(p.getSubstring());
