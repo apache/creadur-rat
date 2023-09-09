@@ -29,16 +29,18 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class DefaultPolicyTest {
     private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 12;
 
-    private static final ILicenseFamily JUST_A_TEST_LIC_FAMILY = new ILicenseFamily() {
-        public String getFamilyName() {
-            return "justATest";
-        }
-    };
+    private static final ILicenseFamily JUST_A_TEST_LIC_FAMILY = mock(ILicenseFamily.class);
+    static {
+        when(JUST_A_TEST_LIC_FAMILY.getFamilyName()).thenReturn("justATest" );
+        
+    }
 
     private Document subject;
     private DefaultPolicy policy;
@@ -124,7 +126,7 @@ public class DefaultPolicyTest {
         // with defaults
         for (DefaultPolicy policy : new DefaultPolicy[]{//
                 new DefaultPolicy(), //
-                new DefaultPolicy(new ArrayList<String>(0), true),//
+                new DefaultPolicy(new ArrayList<ILicenseFamily>(0), true),//
                 new DefaultPolicy(new ILicenseFamily[]{}, true),
         }) {
             assertEquals("Did you add new license defaults?", NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
@@ -132,7 +134,7 @@ public class DefaultPolicyTest {
 
         // without defaults and no additions == 0
         for (DefaultPolicy policy : new DefaultPolicy[]{//
-                new DefaultPolicy(new ArrayList<String>(0), false),//
+                new DefaultPolicy(new ArrayList<ILicenseFamily>(0), false),//
                 new DefaultPolicy(new ILicenseFamily[]{}, false),
         }) {
             assertEquals(0, policy.getApprovedLicenseNames().size());
@@ -141,13 +143,13 @@ public class DefaultPolicyTest {
 
     @Test
     public void testAddNewApprovedLicenseAndDefaults() {
-        assertEquals("justATest", new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, false).getApprovedLicenseNames().get(0));
+        assertEquals("justATest", new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, false).getApprovedLicenseNames().first().getFamilyName());
         assertEquals("Did not properly merge approved licenses with default", 1, new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, false).getApprovedLicenseNames().size());
     }
 
     @Test
     public void testAddNewApprovedLicenseNoDefaults() {
-        assertEquals("justATest", new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, false).getApprovedLicenseNames().get(0));
+        assertEquals("justATest", new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, false).getApprovedLicenseNames().first().getFamilyName());
         assertEquals("Did not properly merge approved licenses with default", NUMBER_OF_DEFAULT_ACCEPTED_LICENSES + 1, new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, true).getApprovedLicenseNames().size());
     }
 }
