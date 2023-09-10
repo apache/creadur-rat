@@ -27,6 +27,7 @@ import java.io.StringWriter;
 
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -35,11 +36,11 @@ import org.junit.Test;
 
 public class AnalyserFactoryTest {
 
-    private static IHeaderMatcher MATCHES_NOTHING_MATCHER = mock(IHeaderMatcher.class);
+    private static ILicense MATCHES_NOTHING_MATCHER = mock(ILicense.class);
 
     static {
         try {
-            when(MATCHES_NOTHING_MATCHER.match(any(), any())).thenReturn(false);
+            when(MATCHES_NOTHING_MATCHER.matches(any())).thenReturn(false);
         } catch (RatHeaderAnalysisException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

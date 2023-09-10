@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.license.ILicense;
 import org.junit.Test;
 
 public class DefaultsTest {
@@ -39,15 +40,15 @@ public class DefaultsTest {
     public void defaultConfigTest() {
         Defaults.builder().build();
 
-        Collection<IHeaderMatcher> families = Defaults.getLicenses();
+        Collection<ILicense> licenses = Defaults.getLicenses();
 
         Set<String> names = new HashSet<>();
-        families.forEach(x -> x.reportFamily(y -> names.add(y.getFamilyCategory())));
+        licenses.forEach(x -> x.reportFamily(y -> names.add(y.getFamilyCategory())));
         assertEquals(FAMILIES.length - 1, names.size());
         names.removeAll(Arrays.asList(FAMILIES));
         assertTrue(names.isEmpty());
 
-        Collection<IHeaderMatcher> licenses = Defaults.getLicenses();
+
         assertEquals(15, licenses.size());
         Map<String, Integer> result = new TreeMap<>();
         licenses.forEach(x -> {

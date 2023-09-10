@@ -27,10 +27,11 @@ import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.SimpleLicenseFamily;
 
-public abstract class BaseLicense extends AbstractMatcherContainer {
+public abstract class BaseLicense extends AbstractMatcherContainer implements ILicense {
     private ILicenseFamily family;
     private String notes;
 
@@ -53,16 +54,14 @@ public abstract class BaseLicense extends AbstractMatcherContainer {
         return notes;
     }
 
-    public final void reportOnLicense(MetaData metaData) {
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, family.getFamilyCategory()));
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, family.getFamilyCategory()));
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, family.getFamilyName()));
-    }
-
     @Override
     public boolean matches(String line) throws RatHeaderAnalysisException {
         return enclosed.iterator().next().matches(line);
+    }
+    
+    @Override
+    public ILicense derivedFrom() {
+        return null;
     }
 
     /**

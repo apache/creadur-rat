@@ -28,6 +28,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.rat.Defaults.LicenseCollectionMatcher;
 import org.apache.rat.analysis.matchers.OrMatcher;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
@@ -115,11 +116,11 @@ public class ReportTest {
     public void plainReportWithArchivesAndUnapprovedLicenses() throws Exception {
         Defaults.builder().build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        OrMatcher matcherMultiplexer = new OrMatcher("testing License",Defaults.getLicenses());
+        LicenseCollectionMatcher licenseMatcher = new LicenseCollectionMatcher(Defaults.getLicenses());
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setApproveDefaultLicenses(true);
-        configuration.addHeaderMatcher(matcherMultiplexer);
+        configuration.addHeaderMatcher(licenseMatcher);
         configuration.setReportable(new DirectoryWalker(new File(elementsPath)));
         configuration.setOut(out);
         Reporter.report(configuration);

@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis;
 
 import org.apache.rat.api.Document;
@@ -25,27 +25,28 @@ import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
+import org.apache.rat.license.ILicense;
 
 /**
  * Creates default analysers.
  *
  */
 public class DefaultAnalyserFactory {
-  
-    public static final IDocumentAnalyser createDefaultAnalyser(final IHeaderMatcher matcher) {
-        
-        return new DefaultAnalyser(matcher);
+
+    public static final IDocumentAnalyser createDefaultAnalyser(final ILicense license) {
+        return new DefaultAnalyser(license);
     }
-    
+
     private final static class DefaultAnalyser implements IDocumentAnalyser {
 
-        private final IHeaderMatcher matcher;
-        
-        public DefaultAnalyser(final IHeaderMatcher matcher) {
+        private final ILicense license;
+
+        public DefaultAnalyser(final ILicense license) {
             super();
-            this.matcher = matcher;
+            this.license = license;
         }
 
+        @Override
         public void analyse(Document subject) throws RatDocumentAnalysisException {
             final MetaData.Datum documentCategory;
             if (NoteGuesser.isNote(subject)) {
@@ -56,10 +57,10 @@ public class DefaultAnalyserFactory {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
             } else {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher);
+                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(license);
                 headerAnalyser.analyse(subject);
             }
             subject.getMetaData().set(documentCategory);
-        }        
+        }
     }
 }

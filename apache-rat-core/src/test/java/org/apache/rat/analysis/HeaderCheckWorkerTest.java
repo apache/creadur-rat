@@ -27,6 +27,7 @@ import java.io.StringReader;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
+import org.apache.rat.license.ILicense;
 import org.junit.Test;
 
 public class HeaderCheckWorkerTest {
@@ -34,7 +35,7 @@ public class HeaderCheckWorkerTest {
     @Test
     public void isFinished() throws Exception {
         final Document subject = new MockLocation("subject");
-        IHeaderMatcher matcher = mock(IHeaderMatcher.class);
+        ILicense matcher = mock(ILicense.class);
         HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), matcher, subject);
         assertFalse(worker.isFinished());
         worker.read();

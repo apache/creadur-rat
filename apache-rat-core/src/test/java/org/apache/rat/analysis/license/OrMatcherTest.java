@@ -55,17 +55,16 @@ public class OrMatcherTest {
 
     @Test
     public void testMatcherLine() throws Exception {
-        final MetaData metadata = new MetaData();
+        
+        multiplexer.matches(LINE_ONE);
+        verify(matcherOne, times(1)).matches(eq(LINE_ONE));
+        verify(matcherTwo, times(1)).matches(eq(LINE_ONE));
 
-        multiplexer.match(metadata, LINE_ONE);
-        verify(matcherOne, times(1)).match(eq(metadata), eq(LINE_ONE));
-        verify(matcherTwo, times(1)).match(eq(metadata), eq(LINE_ONE));
-
-        multiplexer.match(metadata, LINE_TWO);
-        verify(matcherOne, times(1)).match(eq(metadata), eq(LINE_TWO));
-        verify(matcherTwo, times(1)).match(eq(metadata), eq(LINE_TWO));
-        verify(matcherOne, times(2)).match(eq(metadata), any());
-        verify(matcherTwo, times(2)).match(eq(metadata), any());
+        multiplexer.matches(LINE_TWO);
+        verify(matcherOne, times(1)).matches(eq(LINE_TWO));
+        verify(matcherTwo, times(1)).matches(eq(LINE_TWO));
+        verify(matcherOne, times(2)).matches(any());
+        verify(matcherTwo, times(2)).matches(any());
     }
 
     @Test

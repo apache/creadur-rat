@@ -5,17 +5,15 @@ import java.util.function.Predicate;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.api.MetaData;
 
 public class SimpleLicense implements ILicense {
 
-    ILicenseFamily family;
-    IHeaderMatcher matcher;
-    ILicense derivedFrom;
-    String notes;
-    
-    public SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, ILicense derivedFrom, String notes)
-    {
+    private ILicenseFamily family;
+    private IHeaderMatcher matcher;
+    private ILicense derivedFrom;
+    private String notes;
+
+    public SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, ILicense derivedFrom, String notes) {
         this.family = family;
         this.matcher = matcher;
         this.derivedFrom = derivedFrom;
@@ -42,22 +40,27 @@ public class SimpleLicense implements ILicense {
         this.derivedFrom = derivedFrom;
     }
 
+    @Override
     public String getId() {
         return matcher.getId();
     }
 
+    @Override
     public void reset() {
         matcher.reset();
     }
 
-    public boolean match(MetaData metadata, String line) throws RatHeaderAnalysisException {
-        return matcher.match(metadata, line);
+    @Override
+    public boolean matches(String line) throws RatHeaderAnalysisException {
+        return matcher.matches(line);
     }
 
+    @Override
     public void reportFamily(Consumer<ILicenseFamily> consumer) {
         matcher.reportFamily(consumer);
     }
 
+    @Override
     public void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator) {
         matcher.extractMatcher(consumer, comparator);
     }
@@ -69,8 +72,7 @@ public class SimpleLicense implements ILicense {
 
     @Override
     public String getNotes() {
-        // TODO Auto-generated method stub
-        return null;
+        return notes;
     }
 
     @Override

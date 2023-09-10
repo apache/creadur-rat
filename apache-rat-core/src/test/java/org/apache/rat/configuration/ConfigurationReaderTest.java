@@ -19,6 +19,7 @@ package org.apache.rat.configuration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,21 +30,25 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 public class ConfigurationReaderTest {
     
     private static String[] FAMILIES = {"GEN  ", "?????", "AL   ", "OASIS", "W3CD ", "W3C  ", "GPL1 ", "GPL2 ", "GPL3 ", "MIT  ", "CDDL1", "BSD_m"};
     
     @Test
-    public void readDefault() throws ConfigurationException {
-        PropertyConfigurationReader reader = new PropertyConfigurationReader();
-        URL url = PropertyConfigurationReader.class.getResource("/org/apache/rat/default.config");
+    public void readDefault() throws ConfigurationException, SAXException, IOException, ParserConfigurationException {
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        URL url = XMLConfigurationReader.class.getResource("/org/apache/rat/default.config");
         reader.read(url);
         List<String> familyCategories = Arrays.asList(FAMILIES);
         Set<String> readCategories = reader.readFamilies().stream().map(ILicenseFamily::getFamilyCategory).collect(Collectors.toSet());
@@ -51,7 +56,7 @@ public class ConfigurationReaderTest {
         readCategories.removeAll(familyCategories);
         assertTrue(readCategories.isEmpty());
         
-        Collection<IHeaderMatcher> licenses = reader.readLicenses();
+        Collection<ILicense> licenses = reader.readLicenses();
         assertEquals(15, licenses.size());
         Map<String,Integer> result = new TreeMap<>();
         for (IHeaderMatcher license : licenses) {

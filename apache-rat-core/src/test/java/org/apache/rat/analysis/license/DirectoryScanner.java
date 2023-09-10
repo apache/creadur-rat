@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.test.utils.Resources;
 import org.junit.Assert;
 
@@ -40,7 +41,7 @@ class DirectoryScanner {
      * @param expected the expected result of the each scan
      * @throws Exception
      */
-    public static void testFilesInDir(String directory, IHeaderMatcher matcher, boolean expected) throws Exception {
+    public static void testFilesInDir(String directory, ILicense license, boolean expected) throws Exception {
         final File[] resourceFiles = Resources.getResourceFiles(directory);
         if (resourceFiles.length == 0) {
             Assert.fail("No files found under "+directory);
@@ -53,11 +54,11 @@ class DirectoryScanner {
                 br = Resources.getBufferedReader(f);
                 String line;
                 while(!result && (line = br.readLine()) != null) {
-                    result = matcher.match(subject.getMetaData(), line);
+                    result = license.matches(line);
                 }
                 assertEquals(f.toString(), expected, result);
             } finally {
-                matcher.reset();
+                license.reset();
                 IOUtils.closeQuietly(br);
             }
         }

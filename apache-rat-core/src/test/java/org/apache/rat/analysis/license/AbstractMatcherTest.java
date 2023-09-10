@@ -148,7 +148,7 @@ abstract public class AbstractMatcherTest {
         String line = in.readLine();
         boolean found = false;
         while (line != null) {
-            found |= matcher.match(data, line);
+            found |= matcher.matches(line);
             line = in.readLine();
         }
         return found;
@@ -270,9 +270,9 @@ abstract public class AbstractMatcherTest {
 	    }
 
 	    @Override
-	    public boolean match(MetaData metadata, String line) throws RatHeaderAnalysisException {
+	    public boolean matches(String line) throws RatHeaderAnalysisException {
 	        matchCalled++;
-	        if (wrapped.match(metadata, line)) {
+	        if (wrapped.matches(line)) {
 	            matchCount++;
 	            return true;
 	        }

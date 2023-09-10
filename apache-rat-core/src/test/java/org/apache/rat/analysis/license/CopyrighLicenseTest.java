@@ -30,7 +30,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CopyrightHeaderTest {
+public class CopyrighLicenseTest {
 
     private static final String[] MATCHING_HEADERS =
             { "/*  Copyright 2012 FooBar.*/"
@@ -45,22 +45,22 @@ public class CopyrightHeaderTest {
             , "/*  Copyright 2013FooBar*/"
             , "/*  Copyright 2012 2013 FooBar.*/" };
 
-    private CopyrightHeader header;
+    private CopyrightLicense header;
     private MetaData metadata;
 
     @Before
     public void setUp() throws Exception {
         ILicenseFamily family = new SimpleLicenseFamily("test", "Test family");
-        header = new CopyrightHeader(family,"","FooBar");
+        header = new CopyrightLicense(family,"",null, null, "FooBar");
         metadata = new MetaData();
     }
 
     @Test
     public void match() throws Exception {
         for (String line : MATCHING_HEADERS) {
-            assertTrue("Copyright Header should be matched", header.match(metadata, line));
+            assertTrue("Copyright Header should be matched", header.matches(line));
             header.reset();
-            assertFalse("After reset, content should build up again", header.match(metadata, "New line"));
+            assertFalse("After reset, content should build up again", header.matches("New line"));
             header.reset();
         }
     }
@@ -68,9 +68,9 @@ public class CopyrightHeaderTest {
     @Test
     public void noMatch() throws Exception {
         for (String line : NON_MATCHING_HEADERS) {
-            assertFalse("Copyright Header shouldn't be matched", header.match(metadata, line));
+            assertFalse("Copyright Header shouldn't be matched", header.matches( line));
             header.reset();
-            assertTrue("After reset, content should build up again", header.match(metadata, MATCHING_HEADERS[0]));
+            assertTrue("After reset, content should build up again", header.matches(MATCHING_HEADERS[0]));
             header.reset();
         }
     }

@@ -26,6 +26,7 @@ import java.util.SortedSet;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
 public interface Reader {
@@ -41,5 +42,5 @@ public interface Reader {
      * Reads the configuration and extracts the BaseLicenses.
      * @return A collection of Base licenses.
      */
-    Collection<IHeaderMatcher> readLicenses();
+    Collection<ILicense> readLicenses();
 }

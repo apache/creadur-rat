@@ -26,18 +26,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.OrMatcher;
-import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
+import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.configuration.Reader;
 import org.apache.rat.configuration.Readers;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.SimpleLicenseFamily;
 
 /**
  * Utility class that holds constants shared by the CLI tool and the Ant tasks.
@@ -51,13 +53,13 @@ public class Defaults {
     private Defaults() {
     }
 
-    private static Collection<IHeaderMatcher> licenses = new ArrayList<>();
+    private static Collection<ILicense> licenses = new ArrayList<>();
     private static SortedSet<ILicenseFamily> licenseFamilies = new TreeSet<>();
 
     public static Builder builder() {
         return new Builder();
     }
-    
+
     public static void clear() {
         licenses.clear();
         licenseFamilies.clear();
@@ -87,16 +89,11 @@ public class Defaults {
         return getPlainStyleSheet();
     }
 
-    public static IHeaderMatcher createDefaultMatcher() {
-        List<IHeaderMatcher> matchers = getLicenses().stream().filter(x -> !(x instanceof SPDXMatcherFactory.Match))
-                .collect(Collectors.toList());
-        if (SPDXMatcherFactory.INSTANCE.isActive()) {
-            matchers.add(SPDXMatcherFactory.INSTANCE);
-        }
-        return new OrMatcher("Default matcher", matchers);
+    public static ILicense createDefaultMatcher() {
+        return new LicenseCollectionMatcher(licenses);
     }
 
-    public static Collection<IHeaderMatcher> getLicenses() {
+    public static Collection<ILicense> getLicenses() {
         return Collections.unmodifiableCollection(licenses);
     }
 
@@ -153,6 +150,63 @@ public class Defaults {
 
         public void build() {
             Defaults.readConfigFiles(fileNames);
+        }
+    }
+
+    public static class LicenseCollectionMatcher implements ILicense {
+
+        private Collection<ILicense> enclosed;
+        private ILicenseFamily family;
+
+        public LicenseCollectionMatcher(Collection<ILicense> enclosed) {
+            family = new SimpleLicenseFamily("", "System License Collection");
+            this.enclosed = enclosed;
+        }
+
+        @Override
+        public String getId() {
+            return "Default License Collection";
+        }
+
+        @Override
+        public void reset() {
+            enclosed.stream().forEach(ILicense::reset);
+        }
+
+        @Override
+        public boolean matches(String line) throws RatHeaderAnalysisException {
+            for (ILicense license : enclosed) {
+                if (license.matches(line)) {
+                    this.family = license.getLicenseFamily();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void reportFamily(Consumer<ILicenseFamily> consumer) {
+            enclosed.stream().forEach(x -> x.reportFamily(consumer));
+        }
+
+        @Override
+        public void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator) {
+            enclosed.stream().forEach(x -> x.extractMatcher(consumer, comparator));
+        }
+
+        @Override
+        public ILicenseFamily getLicenseFamily() {
+            return family;
+        }
+
+        @Override
+        public String getNotes() {
+            return null;
+        }
+
+        @Override
+        public ILicense derivedFrom() {
+            return null;
         }
     }
 }

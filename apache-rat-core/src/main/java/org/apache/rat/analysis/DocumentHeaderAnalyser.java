@@ -22,17 +22,18 @@ import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
+import org.apache.rat.license.ILicense;
 
 import java.io.IOException;
 import java.io.Reader;
 
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
-    private final IHeaderMatcher matcher;
+    private final ILicense license;
     
-    public DocumentHeaderAnalyser(final IHeaderMatcher matcher) {
+    public DocumentHeaderAnalyser(final ILicense license) {
         super();
-        this.matcher = matcher;
+        this.license = license;
     }
 
     public void analyse(Document document) throws RatDocumentAnalysisException {
@@ -40,7 +41,7 @@ public class DocumentHeaderAnalyser implements IDocumentAnalyser {
         try {
             reader = document.reader();
             // TODO: worker function should be moved into this class
-            HeaderCheckWorker worker = new HeaderCheckWorker(reader, matcher, document);
+            HeaderCheckWorker worker = new HeaderCheckWorker(reader, license, document);
             worker.read();
         } catch (IOException e) {
             throw new RatDocumentAnalysisException("Cannot read header", e);

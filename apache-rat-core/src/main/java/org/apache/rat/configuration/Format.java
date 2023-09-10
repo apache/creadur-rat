@@ -21,7 +21,7 @@ package org.apache.rat.configuration;
 import java.util.Arrays;
 
 public enum Format {
-    CONFIG( "cfg", "config");
+    XML( "xml");
     
     
     String[] suffix;

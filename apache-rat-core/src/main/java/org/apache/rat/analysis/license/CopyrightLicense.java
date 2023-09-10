@@ -24,6 +24,7 @@ import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
 import java.util.regex.Pattern;
@@ -47,15 +48,16 @@ import java.util.regex.Pattern;
  *
  * @since Rat 0.9
  */
-public class CopyrightHeader extends BaseLicense {
+public class CopyrightLicense extends BaseLicense {
 
     
 
-    protected CopyrightHeader(ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
+    protected CopyrightLicense(ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
         super(licenseFamily, notes, new CopyrightMatcher(start, stop, owner));
     }
 
-    public CopyrightHeader(String id, ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
+    public CopyrightLicense(String id, ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
         super(id, licenseFamily, notes, new CopyrightMatcher(start, stop, owner));
     }
+
 }

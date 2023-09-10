@@ -24,8 +24,8 @@ import org.junit.Test;
 public class FormatTest {
     @Test
     public void fromNameTest() {
-        assertEquals(Format.CONFIG, Format.fromName("foo/x.config"));
-        assertEquals(Format.CONFIG, Format.fromName("x.cfg"));
+        assertEquals(Format.XML, Format.fromName("foo/x.xml"));
+        assertEquals(Format.XML, Format.fromName("x.xml"));
         assertThrows(IllegalArgumentException.class, () ->Format.fromName("junk"));
     }
 

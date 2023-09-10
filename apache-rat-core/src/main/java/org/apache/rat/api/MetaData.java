@@ -24,6 +24,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.license.ILicense;
+
 /**
  * Data about the subject.
  */
@@ -148,6 +151,15 @@ public class MetaData {
     public MetaData(final ContentType contentType) {
         this.contentType = contentType;
         this.data = new ArrayList<>(16);
+    }
+    
+    public void reportOnLicense(ILicense license) {
+        if (license.getNotes() != null && StringUtils.isNotBlank(license.getNotes())) {
+            set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, license.getNotes()));
+        }
+        set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, license.getLicenseFamily().getFamilyCategory()));
+        set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, license.getLicenseFamily().getFamilyCategory()));
+        set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, license.getLicenseFamily().getFamilyName()));
     }
     
     /**

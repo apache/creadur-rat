@@ -21,6 +21,7 @@ package org.apache.rat.analysis;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicense;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +37,7 @@ class HeaderCheckWorker {
 
     private final int numberOfRetainedHeaderLines;
     private final BufferedReader reader;
-    private final IHeaderMatcher matcher;
+    private final ILicense license;
     private final Document document;
     
     private boolean match = false;
@@ -50,20 +51,20 @@ class HeaderCheckWorker {
      * @param reader a <code>Reader</code> for the content, not null
      * @param name the name of the checked content, possibly null
      */
-    public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher, final Document name) {
-        this(new BufferedReader(reader), matcher, name);
+    public HeaderCheckWorker(Reader reader, final ILicense license, final Document name) {
+        this(new BufferedReader(reader), license, name);
     }
 
-    public HeaderCheckWorker(BufferedReader reader, final IHeaderMatcher matcher,
+    public HeaderCheckWorker(BufferedReader reader, final ILicense license,
             final Document name) {
-        this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, matcher, name);
+        this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, license, name);
     }
 
-    public HeaderCheckWorker(BufferedReader reader, int numberOfRetainedHeaderLine, final IHeaderMatcher matcher,
+    public HeaderCheckWorker(BufferedReader reader, int numberOfRetainedHeaderLine, final ILicense license,
             final Document name) {
         this.reader = reader;
         this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
-        this.matcher = matcher;
+        this.license = license;
         this.document = name;
     }
 
@@ -90,7 +91,7 @@ class HeaderCheckWorker {
                 throw new RatHeaderAnalysisException("Cannot read header for " + document, e);
             }
             IOUtils.closeQuietly(reader);
-            matcher.reset();
+            license.reset();
         }
         finished = true;
     }
@@ -103,7 +104,10 @@ class HeaderCheckWorker {
                 headers.append(line);
                 headers.append('\n');
             }
-            match = matcher.match(document.getMetaData(), line);
+            match = license.matches(line);
+            if (match) {
+                document.getMetaData().reportOnLicense(license);
+            }
             result = !match;
         }
         return result;
