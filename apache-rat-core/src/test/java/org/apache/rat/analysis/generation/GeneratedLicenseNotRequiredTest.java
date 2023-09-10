@@ -15,36 +15,35 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.generation;
-
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.regex.Pattern;
+
+import org.apache.rat.api.MetaData;
+import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
+import org.junit.Before;
+import org.junit.Test;
 
 public class GeneratedLicenseNotRequiredTest {
 
     private GeneratedLicenseNotRequired license;
     private MockClaimReporter reporter;
-    
+
     @Before
     public void setUp() throws Exception {
-        Pattern[] patterns = {Pattern.compile(".*Generated")};
+        Pattern[] patterns = { Pattern.compile(".*Generated") };
         license = new GeneratedLicenseNotRequired(patterns);
         reporter = new MockClaimReporter();
     }
 
     @Test
     public void match() throws Exception {
-        final Document subject = new MockLocation("subject");
-        assertFalse("Does not match regex", license.match(subject, "Not at all"));
-        assertTrue("Matches regex", license.match(subject, "This is Generated"));
+        MetaData metadata = new MetaData();
+        assertFalse("Does not match regex", license.match(metadata, "Not at all"));
+        assertTrue("Matches regex", license.match(metadata, "This is Generated"));
     }
 }

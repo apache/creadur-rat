@@ -33,8 +33,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.license.MultiplexLicense;
-import org.apache.rat.analysis.license.SPDXMatcher;
+import org.apache.rat.analysis.matchers.OrMatcher;
+import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
 import org.apache.rat.configuration.Reader;
 import org.apache.rat.configuration.Readers;
 import org.apache.rat.license.ILicenseFamily;
@@ -88,12 +88,12 @@ public class Defaults {
     }
 
     public static IHeaderMatcher createDefaultMatcher() {
-        List<IHeaderMatcher> matchers = getLicenses().stream().filter(x -> !(x instanceof SPDXMatcher.Match))
+        List<IHeaderMatcher> matchers = getLicenses().stream().filter(x -> !(x instanceof SPDXMatcherFactory.Match))
                 .collect(Collectors.toList());
-        if (SPDXMatcher.INSTANCE.isActive()) {
-            matchers.add(SPDXMatcher.INSTANCE);
+        if (SPDXMatcherFactory.INSTANCE.isActive()) {
+            matchers.add(SPDXMatcherFactory.INSTANCE);
         }
-        return new MultiplexLicense("Default matcher", matchers);
+        return new OrMatcher("Default matcher", matchers);
     }
 
     public static Collection<IHeaderMatcher> getLicenses() {

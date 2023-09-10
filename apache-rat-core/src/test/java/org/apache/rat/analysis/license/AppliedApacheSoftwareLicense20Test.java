@@ -31,6 +31,7 @@ import java.io.StringReader;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class AppliedApacheSoftwareLicense20Test {
 
@@ -50,7 +51,7 @@ public class AppliedApacheSoftwareLicense20Test {
             + " *  See the License for the specific language governing permissions and\n"
             + " *  limitations under the License.\n"
             + " */\n";
-
+/*
     private AppliedApacheSoftwareLicense20 license;
 
     private MockClaimReporter reporter;
@@ -105,5 +106,9 @@ public class AppliedApacheSoftwareLicense20Test {
     public void baddFiles() throws Exception {
         DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
     }
-
+*/
+    @Test
+    public void dummy() {
+        fail( "Unimplemented test class");
+    }
 }

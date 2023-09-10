@@ -38,9 +38,9 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.CopyrightHeader;
 import org.apache.rat.analysis.license.FullTextMatchingLicense;
-import org.apache.rat.analysis.license.MultiplexLicense;
-import org.apache.rat.analysis.license.SPDXMatcher;
 import org.apache.rat.analysis.license.SimplePatternBasedLicense;
+import org.apache.rat.analysis.matchers.OrMatcher;
+import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.SimpleLicenseFamily;
 
@@ -56,10 +56,10 @@ import org.apache.rat.license.SimpleLicenseFamily;
          * license.id.text=
          * license.id.spdx=
  */
-public class ConfigurationReader implements Reader {
+public class PropertyConfigurationReader implements Reader {
     private final CompositeConfiguration configuration;
 
-    public ConfigurationReader() {
+    public PropertyConfigurationReader() {
         configuration = new CompositeConfiguration();
     }
 
@@ -139,13 +139,13 @@ public class ConfigurationReader implements Reader {
                         new SimplePatternBasedLicense(id, licenseFamily, notes, texts.toArray(new String[texts.size()])));
             }
             if (keys.contains("spdx")) {
-                licenses.add(SPDXMatcher.INSTANCE.register(id, licenseFamily, notes, lic.getString("spdx")));
+                licenses.add(SPDXMatcherFactory.INSTANCE.register(id, licenseFamily, notes, lic.getString("spdx")));
             }
             if (licenses.size() == 1) {
                 result.add(licenses.get(0));
                 licenses.clear();
             } else if (licenses.size() > 1) {
-                result.add(new MultiplexLicense(id, licenses));
+                result.add(new OrMatcher(id, licenses));
                 licenses = new ArrayList<>();
             }
         }

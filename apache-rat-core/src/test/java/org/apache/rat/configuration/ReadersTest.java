@@ -26,8 +26,8 @@ import org.junit.Test;
 public class ReadersTest {
     @Test
     public void getTest() throws MalformedURLException {
-        assertEquals(ConfigurationReader.class, Readers.get( "foo/x.config").getClass());
-        assertEquals(ConfigurationReader.class, Readers.get("x.cfg").getClass());
+        assertEquals(PropertyConfigurationReader.class, Readers.get( "foo/x.config").getClass());
+        assertEquals(PropertyConfigurationReader.class, Readers.get("x.cfg").getClass());
         assertThrows( IllegalArgumentException.class, () -> Readers.get("x.junk"));
     }
 }

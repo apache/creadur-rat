@@ -37,7 +37,7 @@ class HeaderCheckWorker {
     private final int numberOfRetainedHeaderLines;
     private final BufferedReader reader;
     private final IHeaderMatcher matcher;
-    private final Document subject;
+    private final Document document;
     
     private boolean match = false;
 
@@ -64,7 +64,7 @@ class HeaderCheckWorker {
         this.reader = reader;
         this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
         this.matcher = matcher;
-        this.subject = name;
+        this.document = name;
     }
 
     public boolean isFinished() {
@@ -81,13 +81,13 @@ class HeaderCheckWorker {
                 }
                 if (!match) {
                     final String notes = headers.toString();
-                    final MetaData metaData = subject.getMetaData();
+                    final MetaData metaData = document.getMetaData();
                     metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
                     metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
                     metaData.set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
                 }
             } catch (IOException e) {
-                throw new RatHeaderAnalysisException("Cannot read header for " + subject, e);
+                throw new RatHeaderAnalysisException("Cannot read header for " + document, e);
             }
             IOUtils.closeQuietly(reader);
             matcher.reset();
@@ -103,7 +103,7 @@ class HeaderCheckWorker {
                 headers.append(line);
                 headers.append('\n');
             }
-            match = matcher.match(subject, line);
+            match = matcher.match(document.getMetaData(), line);
             result = !match;
         }
         return result;

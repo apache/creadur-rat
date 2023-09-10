@@ -15,30 +15,27 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-public class MultiplexLicenseTest {
+import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.OrMatcher;
+import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicenseFamily;
+import org.junit.Before;
+import org.junit.Test;
+
+public class OrMatcherTest {
 
     private static final String LINE_ONE = "Line One";
     private static final String LINE_TWO = "Line Two";
@@ -46,42 +43,42 @@ public class MultiplexLicenseTest {
     private IHeaderMatcher matcherOne;
     private IHeaderMatcher matcherTwo;
 
-    private MultiplexLicense multiplexer;
+    private OrMatcher multiplexer;
 
     @Before
     public void setUp() {
         matcherOne = mock(IHeaderMatcher.class);
         matcherTwo = mock(IHeaderMatcher.class);
-        multiplexer = new MultiplexLicense("multiplexMatcher Test", Arrays.<IHeaderMatcher>asList(matcherOne, matcherTwo));
+        multiplexer = new OrMatcher("multiplexMatcher Test",
+                Arrays.<IHeaderMatcher>asList(matcherOne, matcherTwo));
     }
 
     @Test
     public void testMatcherLine() throws Exception {
-        final Document document = mock(Document.class);
-        
-        multiplexer.match(document, LINE_ONE);
-        verify(matcherOne, times(1)).match(eq(document), eq(LINE_ONE));
-        verify(matcherTwo, times(1)).match(eq(document), eq(LINE_ONE));
+        final MetaData metadata = new MetaData();
 
-        multiplexer.match(document, LINE_TWO);
-        verify(matcherOne, times(1)).match(eq(document), eq(LINE_TWO));
-        verify(matcherTwo, times(1)).match(eq(document), eq(LINE_TWO));
-        verify(matcherOne, times(2)).match(eq(document), any());
-        verify(matcherTwo, times(2)).match(eq(document), any());
+        multiplexer.match(metadata, LINE_ONE);
+        verify(matcherOne, times(1)).match(eq(metadata), eq(LINE_ONE));
+        verify(matcherTwo, times(1)).match(eq(metadata), eq(LINE_ONE));
+
+        multiplexer.match(metadata, LINE_TWO);
+        verify(matcherOne, times(1)).match(eq(metadata), eq(LINE_TWO));
+        verify(matcherTwo, times(1)).match(eq(metadata), eq(LINE_TWO));
+        verify(matcherOne, times(2)).match(eq(metadata), any());
+        verify(matcherTwo, times(2)).match(eq(metadata), any());
     }
-
 
     @Test
     public void testReset() {
         multiplexer.reset();
         verify(matcherOne, times(1)).reset();
         verify(matcherTwo, times(1)).reset();
-        
+
         multiplexer.reset();
         verify(matcherOne, times(2)).reset();
         verify(matcherTwo, times(2)).reset();
     }
-    
+
     @Test
     public void testReportFamily() {
         Consumer<ILicenseFamily> consumer = mock(Consumer.class);
@@ -89,14 +86,14 @@ public class MultiplexLicenseTest {
         verify(matcherOne, times(1)).reportFamily(eq(consumer));
         verify(matcherTwo, times(1)).reportFamily(eq(consumer));
     }
-    
+
     @Test
     public void testExtractMatcher() {
         Predicate<ILicenseFamily> comparator = mock(Predicate.class);
         Consumer<IHeaderMatcher> consumer = mock(Consumer.class);
 
         multiplexer.extractMatcher(consumer, comparator);
-        verify(matcherOne, times(1)).extractMatcher(eq(consumer),eq(comparator));
-        verify(matcherTwo, times(1)).extractMatcher(eq(consumer),eq(comparator));
+        verify(matcherOne, times(1)).extractMatcher(eq(consumer), eq(comparator));
+        verify(matcherTwo, times(1)).extractMatcher(eq(consumer), eq(comparator));
     }
 }

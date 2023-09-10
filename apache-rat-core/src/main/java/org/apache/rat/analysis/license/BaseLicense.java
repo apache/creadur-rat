@@ -15,89 +15,59 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.SimpleLicenseFamily;
 
-/*
- * Todo move to bulder pattern
- */
-
-public abstract class BaseLicense implements IHeaderMatcher {
+public abstract class BaseLicense extends AbstractMatcherContainer {
     private ILicenseFamily family;
     private String notes;
-    private String idPrefix;
 
-    public BaseLicense(ILicenseFamily family, String notes) {
-        this(family, notes, null);
+    public BaseLicense(ILicenseFamily family, String notes, IHeaderMatcher matcher) {
+        this(null, family, notes, matcher);
     }
-    
-    public BaseLicense(ILicenseFamily family, String notes, String idPrefix) {
+
+    public BaseLicense(String idPrefix, ILicenseFamily family, String notes, IHeaderMatcher matcher) {
+        super(String.format("%s:%s:%s/%s", idPrefix == null ? "" : idPrefix, family.getFamilyCategory(),
+                matcher.getClass().getSimpleName(), matcher.getId()), Arrays.asList(matcher));
         this.family = family;
         this.notes = notes;
-        this.idPrefix = idPrefix;
-    }
-    
-    @Override
-    public String toString() {
-        return getId();
-    }
-    
-    public String getId() {
-        return String.format( "%s:%s:%s", idPrefix==null?"":idPrefix, family.getFamilyCategory(), this.getClass().getSimpleName());
-    }
-
-    public String getIdPrefix() {
-        return idPrefix;
-    }
-
-    public void setIdPrefix(String idPrefix) {
-        this.idPrefix = idPrefix;
     }
 
     public ILicenseFamily getLicenseFamily() {
         return family;
     }
 
-    public void setLicenseFamilyCategory(String category) {
-        this.family = new SimpleLicenseFamily(category, family == null? null : family.getFamilyName());
-    }
-    
-    public void setLicenseFamilyName(String name) {
-        this.family = new SimpleLicenseFamily(family == null? null : family.getFamilyCategory(), name);
-    }
-
     public String getNotes() {
         return notes;
     }
 
-    public void setNotes(String pNotes) {
-        notes = pNotes;
-    }
-
-    public final void reportOnLicense(Document subject) {
-        final MetaData metaData = subject.getMetaData();
+    public final void reportOnLicense(MetaData metaData) {
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, family.getFamilyCategory()));
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, family.getFamilyCategory()));
         metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, family.getFamilyName()));
     }
 
+    @Override
+    public boolean matches(String line) throws RatHeaderAnalysisException {
+        return enclosed.iterator().next().matches(line);
+    }
+
     /**
      * Removes everything except letter or digit from text.
+     * 
      * @param text The text to remove extra chars from.
      * @return the pruned text.
      */
@@ -111,17 +81,5 @@ public abstract class BaseLicense implements IHeaderMatcher {
             }
         }
         return buffer.toString();
-    }
-
-    @Override
-    public void reportFamily(Consumer<ILicenseFamily> consumer) {
-        consumer.accept(family);
-    }
-
-    @Override
-    public void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator) {
-        if (comparator.test(family)) {
-            consumer.accept(this);
-        }
     }
 }

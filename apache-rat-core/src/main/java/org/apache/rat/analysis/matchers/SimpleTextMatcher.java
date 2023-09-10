@@ -16,33 +16,18 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.license;
+package org.apache.rat.analysis.matchers;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.analysis.matchers.OrMatcher;
-import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicenseFamily;
 
 /**
  * @since Rat 0.8
  */
-public class SimplePatternBasedLicense extends BaseLicense {
+public class SimpleTextMatcher extends AbstractHeaderMatcher {
+    private String pattern;
 
-    private static IHeaderMatcher getMatcher(String[] patterns) {
-        if (patterns.length == 1)
-        {
-            return new SimpleTextMatcher(patterns[0]);
-        } 
-        Collection<IHeaderMatcher> collection = Arrays.stream(patterns).map(SimpleTextMatcher::new)
-                .collect(Collectors.toList());
-        return new OrMatcher(collection);
-    }
     /**
      * Creates a pattern based license with full documentation.
      * 
@@ -51,11 +36,23 @@ public class SimplePatternBasedLicense extends BaseLicense {
      * @param pNotes
      * @param pPatterns
      */
-    public SimplePatternBasedLicense(ILicenseFamily licenseFamily, String notes, String[] patterns) {
-        this(null, licenseFamily, notes, patterns);
+    public SimpleTextMatcher(String pattern) {
+        super();
+        this.pattern = pattern;
     }
 
-    public SimplePatternBasedLicense(String id, ILicenseFamily licenseFamily, String notes, String[] patterns) {
-        super(licenseFamily, notes, getMatcher(patterns));
+    public SimpleTextMatcher(String id, String pattern) {
+        super(id);
+        this.pattern = pattern;
+    }
+
+    
+    public boolean matches(String line) {
+        return line != null && line.contains(pattern);
+    }
+
+    @Override
+    public void reset() {
+        // Nothing to do
     }
 }

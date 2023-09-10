@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.apache.rat.api.Document;
-
+import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicenseFamily;
 /**
  * Matches text headers to known licenses.
@@ -51,7 +51,7 @@ public interface IHeaderMatcher {
      * 
      * @throws RatHeaderAnalysisException in case of internal RAT errors.
      */
-    boolean match(Document subject, String line) throws RatHeaderAnalysisException;
+    boolean matches(String line) throws RatHeaderAnalysisException;
     
     /**
      * Report the license family for this and any contained implementations.

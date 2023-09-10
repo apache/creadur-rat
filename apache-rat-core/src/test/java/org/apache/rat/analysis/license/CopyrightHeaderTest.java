@@ -21,6 +21,8 @@ package org.apache.rat.analysis.license;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.MockLocation;
+import org.apache.rat.license.SimpleLicenseFamily;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,22 +46,21 @@ public class CopyrightHeaderTest {
             , "/*  Copyright 2012 2013 FooBar.*/" };
 
     private CopyrightHeader header;
-    private MockClaimReporter reporter;
-    private Document subject = new MockLocation("subject");
+    private MetaData metadata;
 
     @Before
     public void setUp() throws Exception {
-        header = new CopyrightHeader(MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL,MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0,"","FooBar");
-        reporter = new MockClaimReporter();
-        subject = new MockLocation("subject");
+        ILicenseFamily family = new SimpleLicenseFamily("test", "Test family");
+        header = new CopyrightHeader(family,"","FooBar");
+        metadata = new MetaData();
     }
 
     @Test
     public void match() throws Exception {
         for (String line : MATCHING_HEADERS) {
-            assertTrue("Copyright Header should be matched", header.match(subject, line));
+            assertTrue("Copyright Header should be matched", header.match(metadata, line));
             header.reset();
-            assertFalse("After reset, content should build up again", header.match(subject, "New line"));
+            assertFalse("After reset, content should build up again", header.match(metadata, "New line"));
             header.reset();
         }
     }
@@ -67,9 +68,9 @@ public class CopyrightHeaderTest {
     @Test
     public void noMatch() throws Exception {
         for (String line : NON_MATCHING_HEADERS) {
-            assertFalse("Copyright Header shouldn't be matched", header.match(subject, line));
+            assertFalse("Copyright Header shouldn't be matched", header.match(metadata, line));
             header.reset();
-            assertTrue("After reset, content should build up again", header.match(subject, MATCHING_HEADERS[0]));
+            assertTrue("After reset, content should build up again", header.match(metadata, MATCHING_HEADERS[0]));
             header.reset();
         }
     }

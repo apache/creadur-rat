@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.license.MultiplexLicense;
+import org.apache.rat.analysis.matchers.OrMatcher;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 
@@ -130,7 +130,7 @@ public class ReportConfiguration implements AutoCloseable {
         if (headerMatcher.size() == 1) {
             return headerMatcher.get(0);
         }
-        return new MultiplexLicense("Report matchers", headerMatcher);
+        return new OrMatcher("Report matchers", headerMatcher);
     }
 
     /**

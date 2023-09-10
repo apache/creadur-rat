@@ -22,7 +22,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-import java.io.PrintStream;
 import java.io.Writer;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -42,7 +41,7 @@ import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 public class Reporter {
 
-    static FilenameFilter parseExclusions(List<String> excludes) throws IOException {
+    static FilenameFilter parseExclusions(List<String> excludes) {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
         for (String exclude : excludes) {

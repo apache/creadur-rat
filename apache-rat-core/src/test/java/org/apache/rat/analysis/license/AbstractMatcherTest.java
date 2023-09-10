@@ -56,7 +56,6 @@ abstract public class AbstractMatcherTest {
     private static int NOTES=1;
     private static int TEXT=2;
 	protected MetaData data;
-	protected Document document;
 	protected static Collection<IHeaderMatcher> instrumented;
 	private final String category;
 	private final String name;
@@ -83,8 +82,6 @@ abstract public class AbstractMatcherTest {
 	@Before
 	public void setup() {
 	    data = new MetaData();
-        document = mock(Document.class);
-        when(document.getMetaData()).thenReturn(data);
 	}
 	
 	protected static Collection<IHeaderMatcher> extractCategory(String category) {
@@ -151,7 +148,7 @@ abstract public class AbstractMatcherTest {
         String line = in.readLine();
         boolean found = false;
         while (line != null) {
-            found |= matcher.match(document, line);
+            found |= matcher.match(data, line);
             line = in.readLine();
         }
         return found;
@@ -273,9 +270,9 @@ abstract public class AbstractMatcherTest {
 	    }
 
 	    @Override
-	    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+	    public boolean match(MetaData metadata, String line) throws RatHeaderAnalysisException {
 	        matchCalled++;
-	        if (wrapped.match(subject, line)) {
+	        if (wrapped.match(metadata, line)) {
 	            matchCount++;
 	            return true;
 	        }

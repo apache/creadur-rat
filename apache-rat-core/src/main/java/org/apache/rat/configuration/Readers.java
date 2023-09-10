@@ -89,7 +89,7 @@ public class Readers {
 
     static {
         readers = new HashMap<>();
-        readers.put( Format.CONFIG, new ConfigurationReader());
+        readers.put( Format.CONFIG, new PropertyConfigurationReader());
     }
 
     public static Reader get(URL fileName) {

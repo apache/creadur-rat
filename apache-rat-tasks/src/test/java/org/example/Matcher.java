@@ -21,16 +21,20 @@ import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.SimpleLicenseFamily;
 
 
 public class Matcher extends BaseLicense  {
     public Matcher() {
-        super( "EXMPL", "Example License", "");
+        super( new SimpleLicenseFamily("EXMPL", "Example License"), "");
     }
+    
+    @Override
     public void reset() {}
     
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        reportOnLicense(subject);
+    @Override
+    public boolean match(MetaData metadata, String line) throws RatHeaderAnalysisException {
+        reportOnLicense(metadata);
         return true;
     }
 }

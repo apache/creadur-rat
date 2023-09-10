@@ -53,7 +53,7 @@ class DirectoryScanner {
                 br = Resources.getBufferedReader(f);
                 String line;
                 while(!result && (line = br.readLine()) != null) {
-                    result = matcher.match(subject, line);
+                    result = matcher.match(subject.getMetaData(), line);
                 }
                 assertEquals(f.toString(), expected, result);
             } finally {

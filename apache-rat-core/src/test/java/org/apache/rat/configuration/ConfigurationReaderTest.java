@@ -42,8 +42,8 @@ public class ConfigurationReaderTest {
     
     @Test
     public void readDefault() throws ConfigurationException {
-        ConfigurationReader reader = new ConfigurationReader();
-        URL url = ConfigurationReader.class.getResource("/org/apache/rat/default.config");
+        PropertyConfigurationReader reader = new PropertyConfigurationReader();
+        URL url = PropertyConfigurationReader.class.getResource("/org/apache/rat/default.config");
         reader.read(url);
         List<String> familyCategories = Arrays.asList(FAMILIES);
         Set<String> readCategories = reader.readFamilies().stream().map(ILicenseFamily::getFamilyCategory).collect(Collectors.toSet());

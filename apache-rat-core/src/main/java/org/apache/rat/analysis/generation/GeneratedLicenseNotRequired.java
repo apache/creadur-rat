@@ -81,19 +81,19 @@ public class GeneratedLicenseNotRequired extends BaseLicense {
     }
 
     @Override
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
+    public boolean match(MetaData metadata, String line) throws RatHeaderAnalysisException {
         boolean result = false;
         for (Pattern pat : linePatterns) {
             if (pat.matcher(line).matches()) {
                 result = true;
-                reportOnLicense(subject);
+                reportOnLicense(metadata);
                 break;
             }
         }
         for(String phrase : phrases) {
             if (line.contains(phrase)) {
                 result = true;
-                reportOnLicense(subject);
+                reportOnLicense(metadata);
                 break;
             }                
         }

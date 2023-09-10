@@ -20,7 +20,9 @@ package org.apache.rat.analysis.license;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
+import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -47,58 +49,13 @@ import java.util.regex.Pattern;
  */
 public class CopyrightHeader extends BaseLicense {
 
-    public static final String COPYRIGHT_PREFIX_PATTERN_DEFN = ".*Copyright [0-9]{4}(\\-[0-9]{4})? ";
-
-    private Pattern copyrightPattern;
-    private String copyrightOwner;
-    private boolean copyrightMatch = false;
-
-    protected CopyrightHeader(ILicenseFamily licenseFamily, String notes) {
-        super(licenseFamily, notes);
-    }
-
-    public CopyrightHeader(String idPrefix, ILicenseFamily licenseFamily, String notes, String copyrightOwner) {
-        super(licenseFamily, notes, idPrefix);
-        setCopyrightOwner(copyrightOwner);
-    }
     
-    public CopyrightHeader(ILicenseFamily licenseFamily, String notes, String copyrightOwner) {
-        this(null, licenseFamily, notes, copyrightOwner);
+
+    protected CopyrightHeader(ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
+        super(licenseFamily, notes, new CopyrightMatcher(start, stop, owner));
     }
 
-    // Called by ctor, so must not be overridden
-    public final void setCopyrightOwner(String copyrightOwner) {
-        this.copyrightOwner = copyrightOwner;
-        this.copyrightPattern = Pattern.compile(COPYRIGHT_PREFIX_PATTERN_DEFN + copyrightOwner + ".*", Pattern.CASE_INSENSITIVE);
-    }
-
-    public String getCopyRightOwner() {
-        return copyrightOwner;
-    }
-
-    public boolean hasCopyrightPattern() {
-        return copyrightPattern != null;
-    }
-
-    protected boolean isCopyrightMatch() {
-        return copyrightMatch;
-    }
-
-    protected boolean matchCopyright(String s) {
-        if (!copyrightMatch) {
-            copyrightMatch = copyrightPattern.matcher(s).matches();
-        }
-        return copyrightMatch;
-    }
-
-    public boolean match(Document subject, String s) throws RatHeaderAnalysisException {
-        if (!copyrightMatch && matchCopyright(s)) {
-            reportOnLicense(subject);
-        }
-        return copyrightMatch;
-    }
-
-    public void reset() {
-        copyrightMatch = false;
+    public CopyrightHeader(String id, ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
+        super(id, licenseFamily, notes, new CopyrightMatcher(start, stop, owner));
     }
 }
