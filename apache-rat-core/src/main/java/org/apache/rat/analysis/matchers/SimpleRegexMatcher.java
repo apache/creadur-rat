@@ -18,11 +18,13 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.regex.Pattern;
+
 /**
  * @since Rat 0.8
  */
-public class SimpleTextMatcher extends AbstractHeaderMatcher {
-    private String pattern;
+public class SimpleRegexMatcher extends AbstractHeaderMatcher {
+    private Pattern pattern;
 
     /**
      * Creates a pattern based license with full documentation.
@@ -32,19 +34,19 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
      * @param pNotes
      * @param pPatterns
      */
-    public SimpleTextMatcher(String pattern) {
+    public SimpleRegexMatcher(Pattern pattern) {
         super();
         this.pattern = pattern;
     }
 
-    public SimpleTextMatcher(String id, String pattern) {
+    public SimpleRegexMatcher(String id, Pattern pattern) {
         super(id);
         this.pattern = pattern;
     }
 
     @Override
     public boolean matches(String line) {
-        return line != null && line.contains(pattern);
+        return line != null && pattern.matcher(line).matches();
     }
 
     @Override
