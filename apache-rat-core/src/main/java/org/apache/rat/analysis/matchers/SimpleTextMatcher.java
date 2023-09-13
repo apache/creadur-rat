@@ -18,6 +18,8 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @since Rat 0.8
  */
@@ -34,6 +36,9 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
      */
     public SimpleTextMatcher(String pattern) {
         super();
+        if (StringUtils.isBlank(pattern)) {
+            throw new IllegalArgumentException( "Pattern may not be null, empty or blank");
+        }
         this.pattern = pattern;
     }
 

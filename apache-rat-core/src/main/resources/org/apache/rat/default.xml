@@ -1,38 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rat-config>
 	<licenses>
-<!--
+		<!--
 	<license id=id name=name>
-		<notes></notes>
+		<note></note>
 	    <text>  </text>
 		<copyright start='' end='' owner=''/>
 		<spdx name=''/> 
 		<and> <license>...</and>
 		<or> <license>...</or> 
+		<license_ref refid='licenceid' />
 	</license>
 -->
 
 		<license id="AL" name="Apache License Version 2.0">
-			<any>
-				<text>Licensed under the Apache License, Version 2.0 (the
-					"License")</text>
-				<text>Licensed to the Apache Software Foundation (ASF) under one
-					or more contributor license agreements; and to You under the
-					Apache License, Version 2.0.</text>
-				<text>http://www.apache.org/licenses/LICENSE-2.0</text>
-				<text>https://www.apache.org/licenses/LICENSE-2.0</text>
-				<text>http://www.apache.org/licenses/LICENSE-2.0.html</text>
-				<text>https://www.apache.org/licenses/LICENSE-2.0.html</text>
-				<text>http://www.apache.org/licenses/LICENSE-2.0.txt</text>
-				<text>https://www.apache.org/licenses/LICENSE-2.0.txt</text>
-				<spdx name='Apache-2.0' />
-			</any>
+			<all>
+				<any>
+					<text>Licensed under the Apache License, Version 2.0 (the
+						"License")</text>
+					<text>Licensed to the Apache Software Foundation (ASF) under
+						one
+						or more contributor license agreements; and to You under
+						the
+						Apache License, Version 2.0.</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0.html</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0.html</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0.txt</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0.txt</text>
+					<spdx name='Apache-2.0' />
+				</any>
+				<not>
+					<copyright />
+				</not>
+			</all>
 		</license>
 
 		<license id="ASL" name="Applied Apahce License Version 2.0">
 			<all>
-				<license-ref refid="AL" />
-				<copyright start="" end="" owner="" />
+				<any>
+					<text>Licensed under the Apache License, Version 2.0 (the
+						"License")</text>
+					<text>Licensed to the Apache Software Foundation (ASF) under
+						one
+						or more contributor license agreements; and to You under
+						the
+						Apache License, Version 2.0.</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0.html</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0.html</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0.txt</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0.txt</text>
+					<spdx name='Apache-2.0' />
+				</any>
+				<copyright />
 			</all>
 		</license>
 
@@ -40,32 +63,21 @@
 			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0">
 			<any>
 				<text>The contents of this file are subject to the terms of the
-					Common Development\nand Distribution License("CDDL") (the
-					"License"). You may not use this file\nexcept in compliance
+					Common Development and Distribution License("CDDL") (the
+					"License"). You may not use this file except in compliance
 					with the License.</text>
 				<spdx name='CDDL-1.0' />
 			</any>
 		</license>
 
-		<license id="CDDL1"
-			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0">
-			<any>
-				<text>The contents of this file are subject to the terms of the
-					Common Development\nand Distribution License("CDDL") (the
-					"License"). You may not use this file\nexcept in compliance
-					with the License.</text>
-				<spdx name='CDDL-1.0' />
-			</any>
-		</license>
-
-		<license id="ILUMOS" name="ILLUMOS CDDL1 Derived license"
+		<license id="ILLUMOS" name="ILLUMOS CDDL1 Derived license"
 			derived-from='CDDL1'>
-			<note>modified CDDL1 license</note>
+			<note>Modified CDDL1 license</note>
 			<any>
 				<text>The contents of this file are subject to the terms of
-					the\nCommon Development and Distribution License (the
-					"License")\nYou may not use this file except in compliance
-					with the License.\n</text>
+					the Common Development and Distribution License (the
+					"License") You may not use this file except in compliance
+					with the License. </text>
 			</any>
 		</license>
 
@@ -73,17 +85,19 @@
 			<text>http://dojotoolkit.org/community/licensing.shtml</text>
 		</license>
 
-		<license id="GEN" name="Generated files">
-			<text file="generation-keywords" />
+		<license id="GEN" name="Generated Files">
+			<note>
+				Files that are autmoatically generated.</note>
+			<any resource="/org/apache/rat/generation-keywords.txt" />
 		</license>
 
 		<license id="GPL1" name="GNU General Public License, version 1">
 			<any>
-				<text>This program is free software; you can
-					redistribute it and/or modify\n it under the terms of the
-					GNU
-					General Public License as published by\n the Free Software
-					Foundation; either version 1, or (at your option)\n any
+				<text>This program is free software; you can redistribute it
+					and/or modify
+					it under the terms of the GNU
+					General Public License as published by the Free Software
+					Foundation; either version 1, or (at your option) any
 					later
 					version.</text>
 
@@ -94,10 +108,10 @@
 		<license id="GPL2" name="GNU General Public License, version 2">
 			<any>
 				<text>This program is free software; you can
-					redistribute it and/or\n modify it under the terms of the
+					redistribute it and/or modify it under the terms of the
 					GNU
-					General Public License\n as published by the Free Software
-					Foundation; either version 2\n of the License, or (at your
+					General Public License as published by the Free Software
+					Foundation; either version 2 of the License, or (at your
 					option) any later version.</text>
 				<spdx
 					name='GPL-2.0-only' />
@@ -107,10 +121,10 @@
 		<license id="GPL3" name="GNU General Public License, version 3">
 			<any>
 				<text>This program is free software: you can
-					redistribute it and/or modify\n it under the terms of the
+					redistribute it and/or modify it under the terms of the
 					GNU
-					General Public License as published by\n the Free Software
-					Foundation, either version 3 of the License, or\n (at your
+					General Public License as published by the Free Software
+					Foundation, either version 3 of the License, or (at your
 					option) any later version.</text>
 				<spdx
 					name='GPL-3.0-only' />
@@ -149,7 +163,7 @@
 		</license>
 
 		<license id="OASIS" name="OASIS Open License">
-			<notes>No modifications allowed</notes>
+			<note>No modifications allowed</note>
 			<all>
 				<text>This document and translations of it may be
 					copied and furnished to others and derivative works that
@@ -158,7 +172,7 @@
 					may
 					be prepared copied published and distributed</text>
 				<copyright
-					owner="OASIS Open" />
+					owner="OASIS Open" start="[0-9]{4}" />
 			</all>
 		</license>
 
@@ -166,17 +180,16 @@
 			derived-from="BSD">
 			<any>
 				<text>TMF854 Version 1.0</text>
-				<copyrigth
+				<copyright
 					owner="TeleManagement Forum" />
 			</any>
 		</license>
 
-
 		<license id="W3C" name="W3C Software Copyright">
-			<notes>
-				Note that W3C requires a NOTICE. All modifications require
-				notes. See
-				http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.</notes>
+			<note>Note that W3C requires a NOTICE.</note>
+			<note>All modifications require notes.</note>
+			<note>
+				See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.</note>
 			<any>
 				<text>
 					http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</text>
@@ -186,42 +199,12 @@
 		</license>
 
 		<license id="W3CD" name="W3C Document Copyright">
-			<notes>
-				Note that W3CD does not allow modifications. See
-				http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.</notes>
+			<note>
+				Note that W3CD does not allow modifications.</note>
+			<note>
+				See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.</note>
 			<text>
 				http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</text>
-		</license>
-
-		<license id="GEN" name="Generated Code">
-			<notes>
-				Code files that are autmoatically generated.</notes>
-			<text>
-				generated by Cayenne</text>
-			<text>Generated By:JJTree</text>
-			<text>Generated By:JavaCC</text>
-			<text>THIS FILE IS AUTOMATICALLY GENERATED</text>
-			<text>NOTE: this file is autogenerated by XBeans</text>
-			<text>This file was automatically generated by</text>
-			<text># WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!</text>
-			<text># Microsoft Developer Studio Generated NMAKE File</text>
-			<text># Microsoft Developer Studio Generated Build File</text>
-			<text>Generated from configure.ac by autoheader</text>
-			<text>generated automatically by aclocal</text>
-			<text>build.xml generated by maven from project.xml</text>
-			<text>This file was generated by</text>
-			<text>This file has been automatically generated.</text>
-			<text>Automatically generated - do not modify!</text>
-			<text>Javadoc style sheet</text>
-			<text>SOURCE FILE GENERATATED</text>
-			<text>Generated by the Batik</text>
-			<text>this file is autogenerated</text>
-			<text>This class was autogenerated</text>
-			<text>Generated by Maven</text>
-			<text>Autogenerated by Thrift</text>
-			<text>DO NOT EDIT THIS FILE - it is machine generated</text>
-			<text>This class was generated by</text>
-			<text>Generated by javadoc</text>
 		</license>
 	</licenses>
 </rat-config>

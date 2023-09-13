@@ -16,34 +16,34 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.generation;
+package org.apache.rat.analysis.license;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.api.Document;
+import org.apache.rat.document.MockLocation;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.regex.Pattern;
-
-import org.apache.rat.api.MetaData;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import org.junit.Before;
-import org.junit.Test;
-
-public class GeneratedLicenseNotRequiredTest {
-
-    private GeneratedLicenseNotRequired license;
-    private MockClaimReporter reporter;
-
-    @Before
-    public void setUp() throws Exception {
-        Pattern[] patterns = { Pattern.compile(".*Generated") };
-        license = new GeneratedLicenseNotRequired(patterns);
-        reporter = new MockClaimReporter();
+public class IllumosLicenseTest extends AbstractLicenseTest {
+    private static String category = "ILLUMOS";
+    private static String name = "ILLUMOS CDDL1 Derived license";
+    private static String note = "Modified CDDL1 license";
+    private static String[][] targets = {
+            { "illumos", "The contents of this file are subject to the terms of the "
+                    + "Common Development and Distribution License (the \"License\") "
+                    + "You may not use this file except in compliance with the License. "}
+    };
+    
+    public IllumosLicenseTest() {
+        super(category, name, note, targets);
     }
 
-    @Test
-    public void match() throws Exception {
-        MetaData metadata = new MetaData();
-        assertFalse("Does not match regex", license.match(metadata, "Not at all"));
-        assertTrue("Matches regex", license.match(metadata, "This is Generated"));
-    }
 }

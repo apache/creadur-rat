@@ -34,6 +34,9 @@ public class SimpleLicenseFamily implements ILicenseFamily {
     public SimpleLicenseFamily() {
     }
 
+    public String toString() {
+        return String.format("%s %s",  getFamilyCategory(), getFamilyName());
+    }
     public final void setFamilyName(String familyName) {
         this.familyName = familyName;
     }

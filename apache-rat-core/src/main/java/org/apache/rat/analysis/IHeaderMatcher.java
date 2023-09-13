@@ -15,16 +15,9 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis;
 
-import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.license.ILicenseFamily;
 /**
  * Matches text headers to known licenses.
  */
@@ -32,18 +25,21 @@ public interface IHeaderMatcher {
 
     /**
      * Get the identifier for this matcher.
+     * 
      * @return the Identifier for this matcher.
      */
     String getId();
+
     /**
-     * Resets this matches.
-     * Subsequent calls to {@link #match} will accumulate new text.
+     * Resets this matches. Subsequent calls to {@link #match} will accumulate new
+     * text.
      */
     void reset();
 
     /**
-     * Matches the text accumulated to licenses.
-     * TODO probably a poor design choice - hope to fix later
+     * Matches the text accumulated to licenses. TODO probably a poor design choice
+     * - hope to fix later
+     * 
      * @param subject current document.
      * @param line next line of text, not null
      * 
@@ -51,23 +47,5 @@ public interface IHeaderMatcher {
      * 
      * @throws RatHeaderAnalysisException in case of internal RAT errors.
      */
-    boolean matches(String line) throws RatHeaderAnalysisException;
-    
-    /**
-     * Report the license family for this and any contained implementations.
-     * @param consumer the consumer to report to.
-     */
-    void reportFamily(Consumer<ILicenseFamily> consumer);
-    
-    /**
-     * If this HeaderMatcher has an associated LicenseFamily and it matches the comparator then call
-     * the consumer. If this HeaderMatcher is a collection of HeaderMatchers then make the call on each of the 
-     * enclosed HeaderMatchers.
-     * 
-     * @param consumer The consumer for the HeaderMatcher.
-     * @param comparator the test for calling the consumer.
-     */
-    void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator);
-    
-    
+    boolean matches(String line);
 }

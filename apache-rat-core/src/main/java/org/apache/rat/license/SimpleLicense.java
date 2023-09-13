@@ -1,10 +1,6 @@
 package org.apache.rat.license;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 
 public class SimpleLicense implements ILicense {
 
@@ -18,6 +14,11 @@ public class SimpleLicense implements ILicense {
         this.matcher = matcher;
         this.derivedFrom = derivedFrom;
         this.notes = notes;
+    }
+
+    @Override
+    public String toString() {
+        return family.toString();
     }
 
     public ILicenseFamily getFamily() {
@@ -51,23 +52,18 @@ public class SimpleLicense implements ILicense {
     }
 
     @Override
-    public boolean matches(String line) throws RatHeaderAnalysisException {
+    public boolean matches(String line) {
         return matcher.matches(line);
-    }
-
-    @Override
-    public void reportFamily(Consumer<ILicenseFamily> consumer) {
-        matcher.reportFamily(consumer);
-    }
-
-    @Override
-    public void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator) {
-        matcher.extractMatcher(consumer, comparator);
     }
 
     @Override
     public ILicenseFamily getLicenseFamily() {
         return family;
+    }
+
+    @Override
+    public int compareTo(ILicense other) {
+        return ILicense.getComparator().compare(this, other);
     }
 
     @Override

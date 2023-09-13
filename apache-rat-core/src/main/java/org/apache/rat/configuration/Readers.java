@@ -85,14 +85,14 @@ public class Readers {
      * license.id.spdx=
      */
 
-    private static Map<Format,Reader> readers;
+    private static Map<Format,LicenseReader> readers;
 
     static {
         readers = new HashMap<>();
         readers.put( Format.XML, new XMLConfigurationReader());
     }
 
-    public static Reader get(URL fileName) {
+    public static LicenseReader get(URL fileName) {
         return readers.get(Format.fromName(fileName.getFile()));
     }
     
@@ -100,11 +100,11 @@ public class Readers {
         // do not instantiate
     }
 
-    public static Reader get(File file) throws MalformedURLException {
+    public static LicenseReader get(File file) throws MalformedURLException {
         return get(file.toURI().toURL());
     }
     
-    public static Reader get(String fileName) throws MalformedURLException {
+    public static LicenseReader get(String fileName) throws MalformedURLException {
         return get(new File(fileName));
     }
 }

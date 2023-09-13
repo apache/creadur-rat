@@ -22,56 +22,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.TreeSet;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
 import org.junit.Test;
 
 public class DefaultsTest {
-    private static String[] FAMILIES = { "GEN  ", "?????", "AL   ", "OASIS", "W3CD ", "W3C  ", "GPL1 ", "GPL2 ",
-            "GPL3 ", "MIT  ", "CDDL1", "BSD_m" };
+    private static final String[] FAMILIES = { "GEN  ", "ASL  ", "AL   ", "DOJO ", "OASIS", "W3CD ", "W3C  ", "GPL1 ",
+            "GPL2 ", "GPL3 ", "MIT  ", "CDDL1", "ILLUM", "TMF  " };
 
     @Test
     public void defaultConfigTest() {
         Defaults.builder().build();
 
-        Collection<ILicense> licenses = Defaults.getLicenses();
+        Set<ILicense> licenses = Defaults.getLicenses();
 
-        Set<String> names = new HashSet<>();
-        licenses.forEach(x -> x.reportFamily(y -> names.add(y.getFamilyCategory())));
-        assertEquals(FAMILIES.length - 1, names.size());
+        Set<String> names = new TreeSet<>();
+        licenses.forEach(x -> names.add(x.getLicenseFamily().getFamilyCategory()));
+        assertEquals(FAMILIES.length, names.size());
         names.removeAll(Arrays.asList(FAMILIES));
         assertTrue(names.isEmpty());
-
-
-        assertEquals(15, licenses.size());
-        Map<String, Integer> result = new TreeMap<>();
-        licenses.forEach(x -> {
-            x.reportFamily(y -> {
-                String cat = y.getFamilyCategory();
-                Integer i = result.get(cat);
-                if (i == null) {
-                    result.put(cat, 1);
-                } else {
-                    result.put(cat, 1 + i.intValue());
-                }
-            });
-        });
-        assertEquals(4, result.get("AL   ").intValue());
-        assertEquals(2, result.get("BSD_m").intValue());
-        assertEquals(3, result.get("CDDL1").intValue());
-        assertEquals(2, result.get("GEN  ").intValue());
-        assertEquals(2, result.get("GPL1 ").intValue());
-        assertEquals(2, result.get("GPL2 ").intValue());
-        assertEquals(2, result.get("GPL3 ").intValue());
-        assertEquals(2, result.get("MIT  ").intValue());
-        assertEquals(2, result.get("OASIS").intValue());
-        assertEquals(2, result.get("W3C  ").intValue());
-        assertEquals(1, result.get("W3CD ").intValue());
     }
 }

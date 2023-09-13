@@ -21,6 +21,8 @@ package org.apache.rat.analysis.matchers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
  * allows for one (starting) year or year range, and a configurable copyright
@@ -46,72 +48,65 @@ import java.util.regex.Pattern;
  */
 public class CopyrightMatcher extends AbstractHeaderMatcher {
 
-    private static final String COPYRIGHT_PATTERN_DEFN = "(\\b)?\\([Cc]\\)|©|Copyright\\b";
+    private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©";
+    private static final String COPYRIGHT_PATTERN_DEFN = "(\\b)?" + COPYRIGHT_SYMBOL_DEFN + "|Copyright\\b";
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile(COPYRIGHT_PATTERN_DEFN);
+    private static final String ONE_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s";
+    private static final String TWO_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s,?\\s+%s";
 
-    private Pattern datePattern;
-    private String owner;
-    private boolean answered;
+    private final Pattern dateOwnerPattern;
+    private final Pattern ownerDatePattern;
 
     public CopyrightMatcher(String start, String stop, String owner) {
         super();
-        if (start != null) {
-            if (stop != null) {
-                datePattern = Pattern.compile(String.format("\\b%s\\s?-\\s?%s\\b", start, stop));
+        String dateDefn = "";
+        if (StringUtils.isNotEmpty(start)) {
+            if (StringUtils.isNotEmpty(stop)) {
+                dateDefn = String.format("%s\\s*-\\s*%s", start.trim(), stop.trim());
             } else {
-                datePattern = Pattern.compile(String.format("\\b%s\\b", start));
+                dateDefn = start.trim();
             }
-        } else {
-            datePattern = null;
         }
-        this.owner = owner;
-        this.answered = false;
+        if (StringUtils.isEmpty(owner)) {
+            // no owner
+            if (StringUtils.isEmpty(dateDefn)) {
+                dateDefn = "[0-9]{4}";
+            }
+            dateOwnerPattern = Pattern.compile(String.format(ONE_PART, dateDefn));
+            ownerDatePattern = null;
+        } else {
+            if (StringUtils.isEmpty(dateDefn)) {
+                // no date
+                dateOwnerPattern = Pattern.compile(String.format(ONE_PART, owner));
+                ownerDatePattern = null;
+            } else {
+                dateOwnerPattern = Pattern.compile(String.format(TWO_PART, dateDefn, owner));
+                ownerDatePattern = Pattern.compile(String.format(TWO_PART, owner, dateDefn));
+            }
+        }
     }
 
     @Override
     public boolean matches(String line) {
-        return answered ? false : processLine(line);
-    }
-
-    private boolean processLine(String line) {
-        String buffer = null;
         Matcher matcher = COPYRIGHT_PATTERN.matcher(line);
-        if (matcher.matches()) {
-            buffer = line.substring(matcher.end());
-        }
-
-        if (buffer != null) {
-            // check for 2 options "date owner"
-            // "owner date"
-            if (owner == null) {
-                matcher = datePattern.matcher(buffer);
-                if (matcher.matches() && matcher.start() == 0) {
-                    answered = true;
-                    return true;
-                }
-            } else {
-                if (datePattern != null) {
-                    matcher = datePattern.matcher(buffer);
-                    if (!matcher.matches()) {
-                        return false;
-                    }
-                    if (matcher.start() == 0) {
-                        buffer = buffer.substring(matcher.end());
-                    }
-                }
-                buffer.trim();
-                if (buffer.startsWith(owner)) {
-                    answered = true;
+        if (matcher.find()) {
+            String buffer = line.substring(matcher.end());
+            matcher = dateOwnerPattern.matcher(buffer);
+            if (matcher.find() && matcher.start() == 0) {
+                return true;
+            }
+            if (ownerDatePattern != null) {
+                matcher = ownerDatePattern.matcher(buffer);
+                if (matcher.find() && matcher.start() == 0) {
                     return true;
                 }
             }
-
+            return false;
         }
         return false;
     }
 
     @Override
     public void reset() {
-        answered = false;
     }
 }

@@ -34,22 +34,35 @@ import org.apache.rat.license.SimpleLicenseFamily;
 public abstract class BaseLicense extends AbstractMatcherContainer implements ILicense {
     private ILicenseFamily family;
     private String notes;
+    private ILicense derivedFrom;
 
     public BaseLicense(ILicenseFamily family, String notes, IHeaderMatcher matcher) {
         this(null, family, notes, matcher);
     }
 
     public BaseLicense(String idPrefix, ILicenseFamily family, String notes, IHeaderMatcher matcher) {
+        this(null, family, notes, matcher, null);
+    }
+    
+    public BaseLicense(String idPrefix, ILicenseFamily family, String notes, IHeaderMatcher matcher, ILicense derivedFrom) {
         super(String.format("%s:%s:%s/%s", idPrefix == null ? "" : idPrefix, family.getFamilyCategory(),
                 matcher.getClass().getSimpleName(), matcher.getId()), Arrays.asList(matcher));
         this.family = family;
         this.notes = notes;
+        this.derivedFrom = derivedFrom;
     }
 
     public ILicenseFamily getLicenseFamily() {
         return family;
     }
 
+
+    @Override
+    public int compareTo(ILicense arg0) {
+        return ILicense.getComparator().compare(this, arg0);
+    }
+
+    
     public String getNotes() {
         return notes;
     }
@@ -61,7 +74,7 @@ public abstract class BaseLicense extends AbstractMatcherContainer implements IL
     
     @Override
     public ILicense derivedFrom() {
-        return null;
+        return derivedFrom;
     }
 
     /**

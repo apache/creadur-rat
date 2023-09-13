@@ -18,43 +18,35 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.Document;
+import java.util.Arrays;
+import java.util.Collection;
 
-import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Collection;
-
 @RunWith(Parameterized.class)
-public class W3CLicenseTest extends AbstractMatcherTest {
+public class W3CLicenseTest extends AbstractLicenseTest {
 
-    private static String W3C_note = "Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.";
-    private static Object[] W3C = { "W3C", "W3C Software Copyright",
-            new String[][] {
-                    { "fulltext", W3C_note, "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231" },
-                    { "spdx-tab", W3C_note, "SPDX-License-Identifier:\tW3C" },
-                    { "spdx-space", W3C_note, "SPDX-License-Identifier: W3C" }, } };
+    private static String W3C_note = "Note that W3C requires a NOTICE.\n" + "All modifications require notes.\n"
+            + "See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.";
+    private static Object[] W3C = { "W3C", "W3C Software Copyright", W3C_note,
+            new String[][] { { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231" },
+                    { "spdx-tab", "SPDX-License-Identifier:\tW3C" },
+                    { "spdx-space", "SPDX-License-Identifier: W3C" }, } };
 
-    private static String W3CD_note = "Note that W3CD does not allow modifications. See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.";
-    private static Object[] W3CD = { "W3CD", "W3C Document Copyright", new String[][] {
-            { "fulltext", W3CD_note, "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231" }, } };
+    private static String W3CD_note = "Note that W3CD does not allow modifications.\n"
+            + "See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.";
+    private static Object[] W3CD = { "W3CD", "W3C Document Copyright", W3CD_note, new String[][] {
+            { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231" }, } };
 
-    @Parameters
+    @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(W3C, W3CD);
     }
 
-    public W3CLicenseTest(String cat, String name, String[][] targets) {
-        super(cat, name, targets);
+    public W3CLicenseTest(String cat, String name, String note, String[][] targets) {
+        super(cat, name, note, targets);
     }
 
 }

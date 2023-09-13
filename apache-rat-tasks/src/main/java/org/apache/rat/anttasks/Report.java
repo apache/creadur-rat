@@ -126,7 +126,7 @@ public class Report extends Task {
      * @param matcher Adds a license matcher.
      */
     public void add(IHeaderMatcher matcher) {
-        configuration.addHeaderMatcher(matcher);
+        configuration.addLicense(matcher);
     }
 
     public void add(ILicenseFamily license) {

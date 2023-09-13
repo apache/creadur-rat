@@ -18,45 +18,28 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-public class CDDL1LicenseTest extends AbstractMatcherTest {
+public class CDDL1LicenseTest extends AbstractLicenseTest {
     private static String category = "CDDL1";
     private static String name = "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0";
     private static String[][] targets = {
-            { "fullTxt", "", "The contents of this file are subject to the terms of the Common Development\n"
-                    + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file\n"
-                    + "except in compliance with the License.\n\n"},
-            { "longerTxt", "",
-                " DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.\n\n"
-                        + "Copyright 2011-2013 Tirasa. All rights reserved.\n\n"
-                        + "The contents of this file are subject to the terms of the Common Development\n"
-                        + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file\n"
-                        + "except in compliance with the License.\n\n"
-                        + "You can obtain a copy of the License at https://oss.oracle.com/licenses/CDDL\n"
-                        + "See the License for the specific language governing permissions and limitations\n"
-                        + "under the License." },
-            { "spdx-tab", "", "SPDX-License-Identifier:\tCDDL-1.0" },
-            { "spdx-space", "", "SPDX-License-Identifier: CDDL-1.0" },
-            { "illumos", "", "The contents of this file are subject to the terms of the\n"
-                    + "Common Development and Distribution License (the \"License\")\n"
-                    + "You may not use this file except in compliance with the License.\n"}
-    };
-    
+            { "fullTxt",
+                    "The contents of this file are subject to the terms of the Common Development "
+                            + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file "
+                            + "except in compliance with the License.  " },
+            { "longerTxt",
+                    " DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.  "
+                            + "Copyright 2011-2013 Tirasa. All rights reserved.  "
+                            + "The contents of this file are subject to the terms of the Common Development "
+                            + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file "
+                            + "except in compliance with the License.  "
+                            + "You can obtain a copy of the License at https://oss.oracle.com/licenses/CDDL "
+                            + "See the License for the specific language governing permissions and limitations "
+                            + "under the License." },
+            { "spdx-tab", "SPDX-License-Identifier:\tCDDL-1.0" },
+            { "spdx-space", "SPDX-License-Identifier: CDDL-1.0" } };
+
     public CDDL1LicenseTest() {
-        super(category, name, targets);
+        super(category, name, null, targets);
     }
 
 }

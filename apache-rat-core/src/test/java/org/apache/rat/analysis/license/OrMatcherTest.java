@@ -77,22 +77,4 @@ public class OrMatcherTest {
         verify(matcherOne, times(2)).reset();
         verify(matcherTwo, times(2)).reset();
     }
-
-    @Test
-    public void testReportFamily() {
-        Consumer<ILicenseFamily> consumer = mock(Consumer.class);
-        multiplexer.reportFamily(consumer);
-        verify(matcherOne, times(1)).reportFamily(eq(consumer));
-        verify(matcherTwo, times(1)).reportFamily(eq(consumer));
-    }
-
-    @Test
-    public void testExtractMatcher() {
-        Predicate<ILicenseFamily> comparator = mock(Predicate.class);
-        Consumer<IHeaderMatcher> consumer = mock(Consumer.class);
-
-        multiplexer.extractMatcher(consumer, comparator);
-        verify(matcherOne, times(1)).extractMatcher(eq(consumer), eq(comparator));
-        verify(matcherTwo, times(1)).extractMatcher(eq(consumer), eq(comparator));
-    }
 }

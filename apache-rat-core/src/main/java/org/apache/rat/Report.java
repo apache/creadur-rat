@@ -64,7 +64,7 @@ public class Report {
 
     public static final void main(String[] args) throws Exception {
         try (final ReportConfiguration configuration = new ReportConfiguration()) {
-            configuration.addHeaderMatcher(Defaults.createDefaultMatcher());
+            configuration.addLicense(Defaults.createDefaultMatcher());
             configuration.setApproveDefaultLicenses(true);
             Options opts = buildOptions();
 

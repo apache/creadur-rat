@@ -40,17 +40,6 @@ import org.apache.rat.license.ILicenseFamily;
  */
 public class FullTextMatchingLicense extends BaseLicense {
 
-    // Number of match characters assumed to be present on first line
-    private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
-
-    private String fullText;
-
-    private String firstLine;
-
-    private boolean seenFirstLine = false;
-
-    private final StringBuilder buffer = new StringBuilder();
-
     public FullTextMatchingLicense(ILicenseFamily family, String notes, String fullText) {
         super(family, notes, new FullTextMatcher(fullText));
     }

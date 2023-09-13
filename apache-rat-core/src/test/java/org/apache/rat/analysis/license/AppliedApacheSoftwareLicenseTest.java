@@ -18,29 +18,35 @@
  */
 package org.apache.rat.analysis.license;
 
-public class OASISLicenseTest extends AbstractLicenseTest {
+public class AppliedApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
-    private static String category = "OASIS";
-    private static String name = "OASIS Open License";
-    private static String notes = "No modifications allowed";
-    private static String[][] targets = { { "fulltext",
-            "This document and translations of it may be copied and furnished to "
-                    + "others and derivative works that comment on or otherwise explain it or assist "
-                    + "in its implementation may be prepared copied published and distributed"
-                    + "\\nCopyright OAISIS Open, 1999" }, };
+    private static String CATEGORY = "ASL";
+    private static String NAME = "Applied Apahce License Version 2.0";
+    private static String[][] targets = { { "simple", "/*\n" + " *  Copyright 2012-2013 FooBar.\n" + " *\n"
+            + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+            + " *  you may not use this file except in compliance with the License.\n" + " *\n"
+            + " *  You may obtain a copy of the License at\n" + " *       http://www.apache.org/licenses/LICENSE-2.0\n"
+            + " *\n" + " *  Unless required by applicable law or agreed to in writing, software\n"
+            + " *  distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+            + " *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+            + " *  See the License for the specific language governing permissions and\n"
+            + " *  limitations under the License.\n" + " */\n" } };
 
-    public OASISLicenseTest() {
-        super(category, name, notes, targets);
+    public AppliedApacheSoftwareLicenseTest() {
+        super(CATEGORY, NAME, null, targets);
     }
     /*
+      
+    
     @Test(timeout = 2000) // may need to be adjusted if many more files are added
     public void goodFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("oasis/good", license, true);
+        DirectoryScanner.testFilesInDir("appliedAL20/good", license, true);
     }
     
     @Test(timeout = 2000) // may need to be adjusted if many more files are added
     public void baddFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("oasis/bad", license, false);
+        DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
     }
     */
+
 }

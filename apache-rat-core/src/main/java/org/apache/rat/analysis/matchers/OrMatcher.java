@@ -1,15 +1,8 @@
 package org.apache.rat.analysis.matchers;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.license.ILicenseFamily;
 
 public class OrMatcher extends AbstractMatcherContainer {
 
@@ -22,7 +15,7 @@ public class OrMatcher extends AbstractMatcherContainer {
     }
 
     @Override
-    public boolean matches(String line) throws RatHeaderAnalysisException {
+    public boolean matches(String line) {
         for (IHeaderMatcher matcher : enclosed) {
             if (matcher.matches(line)) {
                 return true;

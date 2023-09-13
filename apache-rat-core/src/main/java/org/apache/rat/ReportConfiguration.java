@@ -30,8 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.OrMatcher;
+import org.apache.rat.Defaults.LicenseCollectionMatcher;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 
@@ -41,7 +41,7 @@ import org.apache.rat.report.IReportable;
  * and invoke the {@link Report}.
  */
 public class ReportConfiguration implements AutoCloseable {
-    private List<IHeaderMatcher> headerMatcher = new ArrayList<>();
+    private List<ILicense> licenses = new ArrayList<>();
     private List<ILicenseFamily> approvedLicenseNames = new ArrayList<>();
     private boolean addingLicenses;
     private boolean addingLicensesForced;
@@ -123,14 +123,14 @@ public class ReportConfiguration implements AutoCloseable {
      *
      * @return the header matcher.
      */
-    public IHeaderMatcher getHeaderMatcher() {
-        if (headerMatcher.isEmpty()) {
+    public ILicense getLicense() {
+        if (licenses.isEmpty()) {
             return null;
         }
-        if (headerMatcher.size() == 1) {
-            return headerMatcher.get(0);
+        if (licenses.size() == 1) {
+            return licenses.get(0);
         }
-        return new OrMatcher("Report matchers", headerMatcher);
+        return new LicenseCollectionMatcher(licenses);
     }
 
     /**
@@ -138,8 +138,8 @@ public class ReportConfiguration implements AutoCloseable {
      *
      * @param headerMatcher header matcher.
      */
-    public void addHeaderMatcher(IHeaderMatcher headerMatcher) {
-        this.headerMatcher.add(headerMatcher);
+    public void addLicense(ILicense headerMatcher) {
+        this.licenses.add(headerMatcher);
     }
 
     /**
@@ -238,11 +238,11 @@ public class ReportConfiguration implements AutoCloseable {
         this.addingLicenses = addingLicenses;
     }
 
-    public void validate(Consumer<String> logger) throws ConfigurationException {
+    public void validate(Consumer<String> logger) {
         if (reportable == null) {
             throw new ConfigurationException("Reportable may not be null");
         }
-        if (headerMatcher.size() == 0) {
+        if (licenses.size() == 0) {
             throw new ConfigurationException("You must specify at least one license" + " matcher");
         }
         if (styleSheet != null && !isStyleReport()) {

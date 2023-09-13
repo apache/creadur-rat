@@ -23,6 +23,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.RatReport;
@@ -61,8 +62,8 @@ public class XmlReportTest {
         writer = new XmlWriter(out);
         writer.startDocument();
         final SimpleXmlClaimReporter reporter = new SimpleXmlClaimReporter(writer);
-        final IHeaderMatcher matcher = mock(IHeaderMatcher.class);
-        when(matcher.match(any(),any())).thenReturn( false );
+        final ILicense matcher = mock(ILicense.class);
+        when(matcher.matches(any())).thenReturn( false );
 
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcher);
         final List<AbstractReport> reporters = new ArrayList<>();

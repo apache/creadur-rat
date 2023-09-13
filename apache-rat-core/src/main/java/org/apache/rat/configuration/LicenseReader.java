@@ -29,7 +29,7 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
-public interface Reader {
+public interface LicenseReader {
     void add(URL url);
 
     /**

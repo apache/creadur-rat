@@ -18,32 +18,42 @@
  */
 package org.apache.rat.configuration;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.matchers.AndMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
+import org.apache.rat.analysis.matchers.NotMatcher;
 import org.apache.rat.analysis.matchers.OrMatcher;
 import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
@@ -69,42 +79,72 @@ import org.xml.sax.SAXException;
     </license>
  */
 
-public class XMLConfigurationReader implements Reader {
+public class XMLConfigurationReader implements LicenseReader {
 
     enum MatcherType {
-        text, copyright, spdx, and, or
+        text, copyright, spdx, any, all, license_ref, not
     };
 
-    private Document complete;
+    private Document document;
     private final Element baseElement;
+    private final Element licensesElement;
     private final SortedSet<ILicense> licenses;
 
     public XMLConfigurationReader() {
         try {
-            complete = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("No XML parser defined", e);
         }
-        baseElement = complete.createElement("rat-config");
-        licenses = new TreeSet<>();
+        baseElement = document.createElement("rat-config");
+        document.appendChild(baseElement);
+        licensesElement = document.createElement("licenses");
+        baseElement.appendChild(licensesElement);
+        licenses = new TreeSet<>((x, y) -> x.getLicenseFamily().compareTo(y.getLicenseFamily()));
+    }
+
+    public void printDocument(OutputStream out) {
+        printDocument(out, document);
+    }
+
+    public void printDocument(OutputStream out, Document document) {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+            transformer.transform(new DOMSource(document), new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+        } catch (TransformerException | UnsupportedEncodingException e) {
+            e.printStackTrace(new PrintStream(out));
+        }
     }
 
     @Override
     public void add(URL url) {
-        try {
-            read(url);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new RuntimeException("can not parse "+url, e);
-        }
-
+        read(url);
     }
 
-    public void read(URL... urls) throws SAXException, IOException, ParserConfigurationException {
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        for (URL url : urls) {
-            Document document = builder.parse(url.openStream());
-            add(document);
+    public void read(URL... urls) {
+        DocumentBuilder builder;
+        try {
+            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new ConfigurationException("Unable to create DOM builder", e);
         }
+        for (URL url : urls) {
+            try {
+                add(builder.parse(url.openStream()));
+            } catch (SAXException | IOException e) {
+                throw new ConfigurationException("Unable to read url: " + url, e);
+            }
+        }
+
     }
 
     private void nodeListConsumer(NodeList list, Consumer<Node> consumer) {
@@ -113,9 +153,12 @@ public class XMLConfigurationReader implements Reader {
         }
     }
 
-    public void add(Document document) {
-        nodeListConsumer(document.getElementsByTagName("rat-config"),
-                (x) -> nodeListConsumer(x.getChildNodes(), baseElement::appendChild));
+    public void add(Document newDoc) {
+        printDocument(System.out, newDoc);
+        List<Node> lst = new ArrayList<>();
+        nodeListConsumer(newDoc.getElementsByTagName("license"), lst::add);
+        nodeListConsumer(newDoc.getElementsByTagName("license"),
+                (n) -> licensesElement.appendChild(baseElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
     }
 
     @Override
@@ -123,15 +166,6 @@ public class XMLConfigurationReader implements Reader {
         SortedSet<ILicenseFamily> result = new TreeSet<>();
         readLicenses().stream().map(ILicense::getLicenseFamily).forEach(result::add);
         return result;
-    }
-
-    Set<String> extractKeys(Configuration cfg) {
-        Iterator<String> iter = cfg.getKeys();
-        Set<String> ids = new TreeSet<>();
-        while (iter.hasNext()) {
-            ids.add(iter.next().split("\\.")[0]);
-        }
-        return ids;
     }
 
     Map<String, String> attributes(Node node) {
@@ -144,28 +178,81 @@ public class XMLConfigurationReader implements Reader {
         return result;
     }
 
+    private IHeaderMatcher createTextMatcher(String txt) {
+        boolean complex = txt.contains(" ") | txt.contains("\\t") | txt.contains("\\n") | txt.contains("\\r")
+                | txt.contains("\\f") | txt.contains("\\v");
+        return complex ? new FullTextMatcher(txt) : new SimpleTextMatcher(txt);
+    }
+
+    /**
+     * Reads a text file. Each line becomes a text matcher in the resulting List.
+     * 
+     * @param resourceName the name of the resource to read.
+     * @return a List of Matchers, one for each non empty line in the input file.
+     */
+    private List<IHeaderMatcher> readTextResource(String resourceName) {
+        URL url = XMLConfigurationReader.class.getResource(resourceName);
+        List<IHeaderMatcher> matchers = new ArrayList<>();
+        try (final InputStream in = url.openStream()) {
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String txt;
+            while (null != (txt = buffer.readLine())) {
+                txt = txt.trim();
+                if (StringUtils.isNotBlank(txt)) {
+                    matchers.add(createTextMatcher(txt));
+                }
+            }
+            return matchers;
+        } catch (IOException e) {
+            throw new ConfigurationException("Unable to read matching text file: " + resourceName, e);
+        }
+    }
+
     private IHeaderMatcher parseMatcher(Node matcherNode) {
-        String hasSpaces = ".*\\s.*";
-        MatcherType type = MatcherType.valueOf(matcherNode.getLocalName());
+        Map<String, String> attr = attributes(matcherNode);
+        MatcherType type = MatcherType.valueOf(matcherNode.getNodeName());
+        List<IHeaderMatcher> children;
+
         switch (type) {
         case text:
-            String txt = matcherNode.getTextContent();
-            return Pattern.matches(hasSpaces, txt) ? new FullTextMatcher(txt) : new SimpleTextMatcher(txt);
+            return createTextMatcher(matcherNode.getTextContent().trim());
 
-        case or:
-        case and:
-            List<IHeaderMatcher> children = new ArrayList<>();
-            nodeListConsumer(matcherNode.getChildNodes(), x -> children.add(parseMatcher(x)));
-            return type == MatcherType.or ? new OrMatcher(children) : new AndMatcher(children);
+        case any:
+        case all:
+
+            if (attr.get("resource") != null) {
+                children = readTextResource(attr.get("resource"));
+            } else {
+                children = new ArrayList<>();
+                nodeListConsumer(matcherNode.getChildNodes(), x -> {
+                    if (x.getNodeType() == Node.ELEMENT_NODE) {
+                        children.add(parseMatcher(x));
+                    }
+                });
+            }
+            return type == MatcherType.any ? new OrMatcher(children) : new AndMatcher(children);
 
         case copyright:
-            Map<String, String> attr = attributes(matcherNode);
             return new CopyrightMatcher(attr.get("start"), attr.get("end"), attr.get("owner"));
 
         case spdx:
-            return SPDXMatcherFactory.INSTANCE.create(attributes(matcherNode).get("name"));
+            return SPDXMatcherFactory.INSTANCE.create(attr.get("name"));
+        case license_ref:
+            return new ILicenseProxy(attr.get("refid"));
+
+        case not:
+            children = new ArrayList<>();
+            nodeListConsumer(matcherNode.getChildNodes(), x -> {
+                if (x.getNodeType() == Node.ELEMENT_NODE) {
+                    children.add(parseMatcher(x));
+                }
+            });
+            if (children.size() != 1) {
+                throw new ConfigurationException("'Not' type matcher requires one and only one enclosed matcher");
+            }
+            return new NotMatcher(children.get(0));
         }
-        throw new IllegalStateException(String.format("%s is not a matcher type", matcherNode.getLocalName()));
+        throw new ConfigurationException(String.format("%s is not a matcher type", matcherNode.getNodeName()));
     }
 
     private ILicense parseLicense(Node licenseNode) {
@@ -175,23 +262,25 @@ public class XMLConfigurationReader implements Reader {
         IHeaderMatcher matcher[] = { null };
         StringBuilder notesBuilder = new StringBuilder();
         nodeListConsumer(licenseNode.getChildNodes(), x -> {
-            if (x.getLocalName().equals("notes")) {
-                notesBuilder.append(x.getTextContent()).append("\n");
-            } else {
-                matcher[0] = parseMatcher(x);
+            if (x.getNodeType() == Node.ELEMENT_NODE) {
+                if (x.getNodeName().equals("note")) {
+                    notesBuilder.append(x.getTextContent()).append("\n");
+                } else {
+                    matcher[0] = parseMatcher(x);
+                }
             }
         });
         ILicense derivedFrom = attributes.get("derived-from") == null ? null
                 : new ILicenseProxy(attributes.get("derived-from"));
-        String notes = notesBuilder.length() == 0 ? null : notesBuilder.toString();
+        String notes = StringUtils.defaultIfBlank(notesBuilder.toString().trim(), null);
         return new SimpleLicense(family, matcher[0], derivedFrom, notes);
     }
 
     @Override
     public SortedSet<ILicense> readLicenses() {
         if (licenses.size() == 0) {
-            nodeListConsumer(complete.getElementsByTagName("license"), x -> licenses.add(parseLicense(x)));
-            complete = null;
+            nodeListConsumer(document.getElementsByTagName("license"), x -> licenses.add(parseLicense(x)));
+            document = null;
         }
         return Collections.unmodifiableSortedSet(licenses);
     }
@@ -206,8 +295,9 @@ public class XMLConfigurationReader implements Reader {
 
         private void checkProxy() {
             if (wrapped == null) {
-                Optional<ILicense> lic = licenses.stream()
-                        .filter(l -> l.getLicenseFamily().getFamilyCategory().equals(proxyId)).findFirst();
+                ILicenseFamily testLic = new SimpleLicenseFamily(proxyId, "searching proxy");
+                Optional<ILicense> lic = licenses.stream().filter(l -> l.getLicenseFamily().compareTo(testLic) == 0)
+                        .findFirst();
                 if (!lic.isPresent()) {
                     throw new IllegalStateException(String.format("%s is not a valid family category", proxyId));
                 }
@@ -246,22 +336,14 @@ public class XMLConfigurationReader implements Reader {
         }
 
         @Override
-        public boolean matches(String line) throws RatHeaderAnalysisException {
+        public boolean matches(String line) {
             checkProxy();
             return wrapped.matches(line);
         }
 
         @Override
-        public void reportFamily(Consumer<ILicenseFamily> consumer) {
-            checkProxy();
-            wrapped.reportFamily(consumer);
+        public int compareTo(ILicense arg0) {
+            return ILicense.getComparator().compare(this, arg0);
         }
-
-        @Override
-        public void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator) {
-            checkProxy();
-            wrapped.extractMatcher(consumer, comparator);
-        }
-
     }
 }

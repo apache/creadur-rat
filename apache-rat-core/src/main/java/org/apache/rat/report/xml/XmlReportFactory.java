@@ -40,19 +40,19 @@ import java.util.List;
  */
 public class XmlReportFactory {
     public static final RatReport createStandardReport(IXmlWriter writer,
-            final ClaimStatistic pStatistic, ReportConfiguration pConfiguration) {
+            final ClaimStatistic statistic, ReportConfiguration configuration) {
         final List<RatReport> reporters = new ArrayList<>();
-        if (pStatistic != null) {
-            reporters.add(new ClaimAggregator(pStatistic));
+        if (statistic != null) {
+            reporters.add(new ClaimAggregator(statistic));
         }
-        if (pConfiguration.isAddingLicenses()) {
-            reporters.add(new LicenseAddingReport(pConfiguration.getCopyrightMessage(), pConfiguration.isAddingLicensesForced()));
+        if (configuration.isAddingLicenses()) {
+            reporters.add(new LicenseAddingReport(configuration.getCopyrightMessage(), configuration.isAddingLicensesForced()));
         }
         reporters.add(new SimpleXmlClaimReporter(writer));
 
         final IDocumentAnalyser analyser =
-            DefaultAnalyserFactory.createDefaultAnalyser(pConfiguration.getHeaderMatcher());
-        final DefaultPolicy policy = new DefaultPolicy(pConfiguration.getApprovedLicenseNames(), pConfiguration.isApproveDefaultLicenses());
+            DefaultAnalyserFactory.createDefaultAnalyser(configuration.getLicense());
+        final DefaultPolicy policy = new DefaultPolicy(configuration.getApprovedLicenseNames(), configuration.isApproveDefaultLicenses());
 
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);

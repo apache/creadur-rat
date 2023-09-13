@@ -39,12 +39,7 @@ public class AnalyserFactoryTest {
     private static ILicense MATCHES_NOTHING_MATCHER = mock(ILicense.class);
 
     static {
-        try {
             when(MATCHES_NOTHING_MATCHER.matches(any())).thenReturn(false);
-        } catch (RatHeaderAnalysisException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
     private StringWriter out;

@@ -50,8 +50,6 @@ import java.util.regex.Pattern;
  */
 public class CopyrightLicense extends BaseLicense {
 
-    
-
     protected CopyrightLicense(ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
         super(licenseFamily, notes, new CopyrightMatcher(start, stop, owner));
     }
@@ -59,5 +57,4 @@ public class CopyrightLicense extends BaseLicense {
     public CopyrightLicense(String id, ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
         super(id, licenseFamily, notes, new CopyrightMatcher(start, stop, owner));
     }
-
 }

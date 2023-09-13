@@ -19,11 +19,6 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Locale;
-import java.util.UUID;
-
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.license.ILicenseFamily;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
@@ -48,6 +43,8 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
 
     private boolean seenFirstLine = false;
 
+    private boolean result = false;
+
     private final StringBuilder buffer = new StringBuilder();
 
     public FullTextMatcher(String fullText) {
@@ -55,19 +52,18 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
         setFullText(fullText);
     }
 
-
     public FullTextMatcher(String id, String fullText) {
         super(id);
         setFullText(fullText);
     }
-    
+
     /**
      * Removes everything except letter or digit from text.
      * 
      * @param text The text to remove extra chars from.
      * @return the pruned text.
      */
-    protected final String prune(String text) {
+    public static final String prune(String text) {
         final int length = text.length();
         final StringBuilder buffer = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
@@ -94,7 +90,10 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public boolean matches(String line) throws RatHeaderAnalysisException {
+    public boolean matches(String line) {
+        if (result) {
+            return true;
+        }
         final String inputToMatch = prune(line).toLowerCase(Locale.ENGLISH);
         if (seenFirstLine) { // Accumulate more input
             buffer.append(inputToMatch);
@@ -113,6 +112,7 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
 
         if (buffer.length() >= fullText.length()) { // we have enough data to match
             if (buffer.toString().contains(fullText)) {
+                result = true;
                 return true; // we found a match
             }
             // buffer contains first line but does not contain full text
@@ -136,5 +136,6 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
     private void init() {
         buffer.setLength(0);
         seenFirstLine = false;
+        result = false;
     }
 }

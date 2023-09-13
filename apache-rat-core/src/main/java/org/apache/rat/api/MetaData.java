@@ -154,7 +154,7 @@ public class MetaData {
     }
     
     public void reportOnLicense(ILicense license) {
-        if (license.getNotes() != null && StringUtils.isNotBlank(license.getNotes())) {
+        if (StringUtils.isNotBlank(license.getNotes())) {
             set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, license.getNotes()));
         }
         set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, license.getLicenseFamily().getFamilyCategory()));

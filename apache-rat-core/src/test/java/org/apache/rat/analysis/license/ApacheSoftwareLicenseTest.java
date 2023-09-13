@@ -18,28 +18,25 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.junit.Test;
-import org.apache.rat.analysis.IHeaderMatcher;
-
 /**
  * Apache Software License detection tests.
  *
  */
-public class ApacheSoftwareLicenseTest extends AbstractMatcherTest {
+public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
     private static String category = "AL";
     private static String name = "Apache License Version 2.0";
     private static String[][] targets = {
-            { "short", "", "Licensed under the Apache License, Version 2.0 (the \"License\")" },
-            { "short2", "",
+            { "short", "Licensed under the Apache License, Version 2.0 (the \"License\")" },
+            { "short2",
                     "Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0." },
-            { "http", "", "http://www.apache.org/licenses/LICENSE-2.0" },
-            { "https", "", "https://www.apache.org/licenses/LICENSE-2.0" },
-            { "html", "", "http://www.apache.org/licenses/LICENSE-2.0.html" },
-            { "htmls", "", "https://www.apache.org/licenses/LICENSE-2.0.html" },
-            { "txt", "", "http://www.apache.org/licenses/LICENSE-2.0.txt" },
-            { "txts", "", "https://www.apache.org/licenses/LICENSE-2.0.txt" },
-            { "fullTxt", "",
+            { "http", "http://www.apache.org/licenses/LICENSE-2.0" },
+            { "https", "https://www.apache.org/licenses/LICENSE-2.0" },
+            { "html", "http://www.apache.org/licenses/LICENSE-2.0.html" },
+            { "htmls", "https://www.apache.org/licenses/LICENSE-2.0.html" },
+            { "txt", "http://www.apache.org/licenses/LICENSE-2.0.txt" },
+            { "txts", "https://www.apache.org/licenses/LICENSE-2.0.txt" },
+            { "fullTxt",
                     "Licensed under the Apache License, Version 2.0 (the \"License\")\nyou may not use this file except "
                             + "in compliance with the License.\nYou may obtain a copy of the License at\n"
                             + "http://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable "
@@ -47,30 +44,26 @@ public class ApacheSoftwareLicenseTest extends AbstractMatcherTest {
                             + "distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either "
                             + "express or implied.\nSee the License for the specific language governing permissions and\n"
                             + "limitations under the License.\n" },
-            { "spdx-tab", "", "SPDX-License-Identifier:\tApache-2.0" },
-            { "spdx-space", "", "SPDX-License-Identifier: Apache-2.0" },
-            { "long text", "", "/*\n"
-                    + " *  Copyright 2012-2013 FooBar.\n"
-                    + " *\n"
-                    + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
-                    + " *  you may not use this file except in compliance with the License.\n"
-                    + " *\n"
-                    + " *  You may obtain a copy of the License at\n"
-                    + " *       http://www.apache.org/licenses/LICENSE-2.0\n"
-                    + " *\n"
-                    + " *  Unless required by applicable law or agreed to in writing, software\n"
-                    + " *  distributed under the License is distributed on an \"AS IS\" BASIS,\n"
-                    + " *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
-                    + " *  See the License for the specific language governing permissions and\n"
-                    + " *  limitations under the License.\n"
-                    + " */\n"}
-    
+            { "spdx-tab", "SPDX-License-Identifier:\tApache-2.0" },
+            { "spdx-space", "SPDX-License-Identifier: Apache-2.0" },
+            { "long text",
+                    "/*\n" + " *  Copyright 2012-2013 FooBar.\n" + " *\n"
+                            + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+                            + " *  you may not use this file except in compliance with the License.\n" + " *\n"
+                            + " *  You may obtain a copy of the License at\n"
+                            + " *       http://www.apache.org/licenses/LICENSE-2.0\n" + " *\n"
+                            + " *  Unless required by applicable law or agreed to in writing, software\n"
+                            + " *  distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+                            + " *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+                            + " *  See the License for the specific language governing permissions and\n"
+                            + " *  limitations under the License.\n" + " */\n" }
+
     };
 
     public ApacheSoftwareLicenseTest() {
-        super(category, name, targets);
+        super(category, name, null, targets);
     }
-    
+
 //
 //    @Test(timeout = 2000) // may need to be adjusted if many more files are added
 //    public void goodFiles() throws Exception {

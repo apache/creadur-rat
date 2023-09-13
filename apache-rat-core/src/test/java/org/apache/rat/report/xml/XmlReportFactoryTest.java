@@ -21,6 +21,8 @@ package org.apache.rat.report.xml;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.SimpleLicenseFamily;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -65,13 +67,14 @@ public class XmlReportFactoryTest {
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         
-        final IHeaderMatcher mockLicenseMatcher = mock(IHeaderMatcher.class);
-        when(mockLicenseMatcher.match(any(),any())).thenReturn( true );
+        final ILicense mockLicense = mock(ILicense.class);
+        when(mockLicense.matches(any())).thenReturn( true );
+        when(mockLicense.getLicenseFamily()).thenReturn( new SimpleLicenseFamily( "TEST", "Testing family"));
         
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.addHeaderMatcher(mockLicenseMatcher);
+        configuration.addLicense(mockLicense);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
         report(directory, report);

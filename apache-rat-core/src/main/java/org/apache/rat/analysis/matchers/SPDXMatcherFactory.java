@@ -20,17 +20,10 @@ package org.apache.rat.analysis.matchers;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.analysis.license.BaseLicense;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.license.ILicenseFamily;
 
 /**
  * Defines a matcher for an SPDX tag. SPDX tag is of the format
@@ -57,7 +50,7 @@ public class SPDXMatcherFactory {
 
     private String lastLine;
     private Match lastMatch;
-    
+
     /**
      * Constructor.
      * 
@@ -79,7 +72,7 @@ public class SPDXMatcherFactory {
         return matcher;
     }
 
-    private boolean check(String line, Match caller) throws RatHeaderAnalysisException {
+    private boolean check(String line, Match caller) {
         if (lastLine == null || !lastLine.equals(line)) {
             Matcher matcher = groupSelector.matcher(line);
             if (matcher.find()) {
@@ -92,8 +85,7 @@ public class SPDXMatcherFactory {
     }
 
     public class Match extends AbstractHeaderMatcher {
-        private String spdx;
-
+        
         /**
          * Constructor.
          * 
@@ -103,9 +95,8 @@ public class SPDXMatcherFactory {
          * @param licenseFamilyName the RAT license family name for the license.
          * @param notes The notes for this matcher.
          */
-        Match(final String spdxId ) {
-            super("SPDX:"+spdxId);
-            spdx = spdxId;
+        Match(final String spdxId) {
+            super("SPDX:" + spdxId);
         }
 
         @Override
@@ -113,7 +104,7 @@ public class SPDXMatcherFactory {
         }
 
         @Override
-        public boolean matches(String line) throws RatHeaderAnalysisException {
+        public boolean matches(String line) {
             return SPDXMatcherFactory.this.check(line, this);
         }
 

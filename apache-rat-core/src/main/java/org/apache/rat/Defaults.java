@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.configuration.Reader;
+import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.Readers;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -45,7 +45,7 @@ import org.apache.rat.license.SimpleLicenseFamily;
  * Utility class that holds constants shared by the CLI tool and the Ant tasks.
  */
 public class Defaults {
-    static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.config");
+    static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.xml");
 
     /**
      * no instances
@@ -53,7 +53,7 @@ public class Defaults {
     private Defaults() {
     }
 
-    private static Collection<ILicense> licenses = new ArrayList<>();
+    private static SortedSet<ILicense> licenses = new TreeSet<>();
     private static SortedSet<ILicenseFamily> licenseFamilies = new TreeSet<>();
 
     public static Builder builder() {
@@ -67,7 +67,7 @@ public class Defaults {
 
     private static void readConfigFiles(Collection<URL> urls) {
         for (URL url : urls) {
-            Reader reader = Readers.get(url);
+            LicenseReader reader = Readers.get(url);
             reader.add(url);
             licenseFamilies.addAll(reader.readFamilies());
             licenses.addAll(reader.readLicenses());
@@ -93,8 +93,8 @@ public class Defaults {
         return new LicenseCollectionMatcher(licenses);
     }
 
-    public static Collection<ILicense> getLicenses() {
-        return Collections.unmodifiableCollection(licenses);
+    public static Set<ILicense> getLicenses() {
+        return Collections.unmodifiableSet(licenses);
     }
 
     public static Set<String> getLicenseNames() {
@@ -185,16 +185,6 @@ public class Defaults {
         }
 
         @Override
-        public void reportFamily(Consumer<ILicenseFamily> consumer) {
-            enclosed.stream().forEach(x -> x.reportFamily(consumer));
-        }
-
-        @Override
-        public void extractMatcher(Consumer<IHeaderMatcher> consumer, Predicate<ILicenseFamily> comparator) {
-            enclosed.stream().forEach(x -> x.extractMatcher(consumer, comparator));
-        }
-
-        @Override
         public ILicenseFamily getLicenseFamily() {
             return family;
         }
@@ -207,6 +197,11 @@ public class Defaults {
         @Override
         public ILicense derivedFrom() {
             return null;
+        }
+
+        @Override
+        public int compareTo(ILicense arg0) {
+            return ILicense.getComparator().compare(this, arg0);
         }
     }
 }
