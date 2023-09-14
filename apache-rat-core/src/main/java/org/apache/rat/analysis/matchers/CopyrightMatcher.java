@@ -58,7 +58,11 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     private final Pattern ownerDatePattern;
 
     public CopyrightMatcher(String start, String stop, String owner) {
-        super();
+        this(null, start, stop, owner);
+    }
+    
+    public CopyrightMatcher(String id, String start, String stop, String owner) {
+        super(id);
         String dateDefn = "";
         if (StringUtils.isNotEmpty(start)) {
             if (StringUtils.isNotEmpty(stop)) {

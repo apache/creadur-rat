@@ -18,29 +18,23 @@
  */
 package org.apache.rat.policy;
 
-import org.apache.rat.Defaults;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.document.MockLocation;
-import org.apache.rat.license.ILicenseFamily;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
+import org.apache.rat.Defaults;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
+import org.apache.rat.api.MetaData.Datum;
+import org.apache.rat.document.MockLocation;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.SimpleLicenseFamily;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DefaultPolicyTest {
-    private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 12;
-
-    private static final ILicenseFamily JUST_A_TEST_LIC_FAMILY = mock(ILicenseFamily.class);
-    static {
-        when(JUST_A_TEST_LIC_FAMILY.getFamilyName()).thenReturn("justATest" );
-        
-    }
+    private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 15;
 
     private Document subject;
     private DefaultPolicy policy;
@@ -48,108 +42,119 @@ public class DefaultPolicyTest {
     @Before
     public void setUp() throws Exception {
         Defaults.builder().build();
-        policy = new DefaultPolicy();
+        policy = new DefaultPolicy(Defaults.getLicenseFamilies());
         subject = new MockLocation("subject");
     }
 
-    @SuppressWarnings("boxing") // OK in test code
     private void assertApproval(boolean pApproved) {
-        assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(subject.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
+        assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE
+                .equals(subject.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
+    }
+
+    private void setMetadata(ILicenseFamily family) {
+        subject.getMetaData().add(new Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, family.getFamilyName()));
+        subject.getMetaData().add(new Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, family.getFamilyCategory()));
+    }
+
+    @Test
+    public void testCount() {
+        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
     }
 
     @Test
     public void testALFamily() throws Exception {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0);
+        setMetadata(new SimpleLicenseFamily("AL", "Apache License Version 2.0"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testOASISFamily() throws Exception {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE);
+        setMetadata(new SimpleLicenseFamily("OASIS", "OASIS Open License"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testW3CFamily() throws Exception {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT);
+        setMetadata(new SimpleLicenseFamily("W3C", "W3C Software Copyright"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testW3CDocFamily() throws Exception {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT);
+        setMetadata(new SimpleLicenseFamily("W3CD", "W3C Document Copyright"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testModifiedBSDFamily() throws Exception {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE);
+        setMetadata(new SimpleLicenseFamily("TMF", "The Telemanagement Forum License"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testMITFamily() throws Exception {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_MIT);
+        setMetadata(new SimpleLicenseFamily("MIT", "The MIT License"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testCDDL1Family() throws Exception {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1);
+        setMetadata(new SimpleLicenseFamily("CDDL1", "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testUnknownFamily() throws Exception {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        subject.getMetaData().set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
+        setMetadata(new SimpleLicenseFamily("?????", "Unknown document"));
         policy.analyse(subject);
         assertApproval(false);
     }
 
     @Test
     public void testNullAsMarkerOfDefaults() {
-        // with defaults
-        for (DefaultPolicy policy : new DefaultPolicy[]{//
-                new DefaultPolicy(), //
-                new DefaultPolicy(new ArrayList<ILicenseFamily>(0), true),//
-                new DefaultPolicy(new ILicenseFamily[]{}, true),
-        }) {
-            assertEquals("Did you add new license defaults?", NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
-        }
-
         // without defaults and no additions == 0
-        for (DefaultPolicy policy : new DefaultPolicy[]{//
-                new DefaultPolicy(new ArrayList<ILicenseFamily>(0), false),//
-                new DefaultPolicy(new ILicenseFamily[]{}, false),
-        }) {
+        for (DefaultPolicy policy : new DefaultPolicy[] { //
+                new DefaultPolicy(new ArrayList<ILicenseFamily>(0)), //
+                new DefaultPolicy(new ILicenseFamily[] {}), }) {
             assertEquals(0, policy.getApprovedLicenseNames().size());
         }
     }
 
     @Test
     public void testAddNewApprovedLicenseAndDefaults() {
-        assertEquals("justATest", new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, false).getApprovedLicenseNames().first().getFamilyName());
-        assertEquals("Did not properly merge approved licenses with default", 1, new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, false).getApprovedLicenseNames().size());
+        ILicenseFamily testingFamily = new SimpleLicenseFamily("test", "Testing License Family");
+        setMetadata(testingFamily);
+        policy.analyse(subject);
+        assertApproval(false);
+
+        policy.add(testingFamily);
+        assertNotNull("Did not properly add ILicenseFamily",
+                ILicenseFamily.search(testingFamily, policy.getApprovedLicenseNames()));
+        policy.analyse(subject);
+        assertApproval(true);
     }
 
     @Test
     public void testAddNewApprovedLicenseNoDefaults() {
-        assertEquals("justATest", new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, false).getApprovedLicenseNames().first().getFamilyName());
-        assertEquals("Did not properly merge approved licenses with default", NUMBER_OF_DEFAULT_ACCEPTED_LICENSES + 1, new DefaultPolicy(new ILicenseFamily[]{JUST_A_TEST_LIC_FAMILY}, true).getApprovedLicenseNames().size());
+        policy = new DefaultPolicy();
+        assertEquals(0, policy.getApprovedLicenseNames().size());
+        ILicenseFamily testingFamily = new SimpleLicenseFamily("test", "Testing License Family");
+        setMetadata(testingFamily);
+        policy.analyse(subject);
+        assertApproval(false);
+
+        policy.add(testingFamily);
+        assertEquals(1, policy.getApprovedLicenseNames().size());
+        assertNotNull("Did not properly add ILicenseFamily",
+                ILicenseFamily.search(testingFamily, policy.getApprovedLicenseNames()));
+        policy.analyse(subject);
+        assertApproval(true);
     }
 }

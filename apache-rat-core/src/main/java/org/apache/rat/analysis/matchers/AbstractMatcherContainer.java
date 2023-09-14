@@ -15,7 +15,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
     }
 
     public AbstractMatcherContainer(Collection<? extends IHeaderMatcher> enclosed) {
-        super();
+        super(null);
         this.enclosed = new ArrayList<>(enclosed);
     }
 

@@ -27,18 +27,20 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.rat.Defaults.LicenseCollectionMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.IReportable;
 
 /**
- * A configuration object is used by the frontend to invoke the {@link Report}.
- * Basically, the sole purpose of the frontends is to create the configuration
- * and invoke the {@link Report}.
+ * A configuration object is used by the front end to invoke the {@link Reporter}.
+ * Basically, the sole purpose of the front ends is to create the configuration
+ * and invoke the {@link Reporter}.
  */
 public class ReportConfiguration implements AutoCloseable {
     private List<ILicense> licenses = new ArrayList<>();
@@ -46,45 +48,74 @@ public class ReportConfiguration implements AutoCloseable {
     private boolean addingLicenses;
     private boolean addingLicensesForced;
     private String copyrightMessage;
-    private boolean approveDefaultLicenses = true;
     private OutputStream out = null;
     private boolean styleReport = true;
     private InputStream styleSheet = null;
     private IReportable reportable = null;
     private FilenameFilter inputFileFilter = null;
 
+    /**
+     * @return The filename filter for the potential input files.
+     */
     public FilenameFilter getInputFileFilter() {
         return inputFileFilter;
     }
 
+    /**
+     * @param inputFileFilter the filter to filter the on disk files being evaluated.
+     */
     public void setInputFileFilter(FilenameFilter inputFileFilter) {
         this.inputFileFilter = inputFileFilter;
     }
 
+    /**
+     * @return the thing being reported on.
+     */
     public IReportable getReportable() {
         return reportable;
     }
 
+    /**
+     * @param reportable the thing being reported on.
+     */
     public void setReportable(IReportable reportable) {
         this.reportable = reportable;
     }
 
+    /**
+     * @return the XSLT style sheet to style the report with. 
+     */
     public InputStream getStyleSheet() {
         return styleSheet;
     }
 
+    /**
+     * 
+     * @param styleSheet the XSLT style sheet to style the report with. 
+     */
     public void setStyleSheet(InputStream styleSheet) {
         this.styleSheet = styleSheet;
     }
 
+    /**
+     * 
+     * @return True if the XML report should be styled.
+     */
     public boolean isStyleReport() {
         return styleReport;
     }
 
+    /**
+     * 
+     * @param styleReport true if the XML report should be styled
+     */
     public void setStyleReport(boolean styleReport) {
         this.styleReport = styleReport;
     }
 
+    /**
+     * @param out The stream to write the output to.
+     */
     public void setOut(OutputStream out) {
         this.out = out;
     }
@@ -99,7 +130,6 @@ public class ReportConfiguration implements AutoCloseable {
     }
 
     /**
-     * Returns a PrintWriter that wraps the output stream.
      * 
      * @return A PrintWriter that wraps the output stream.
      */
@@ -107,21 +137,11 @@ public class ReportConfiguration implements AutoCloseable {
         return new PrintWriter(new OutputStreamWriter(getOutput(), Charset.forName("UTF-8")));
     }
 
-    /**
-     * @return whether default licenses shall be approved by default.
-     */
-    public boolean isApproveDefaultLicenses() {
-        return approveDefaultLicenses;
-    }
-
-    public void setApproveDefaultLicenses(boolean approveDefaultLicenses) {
-        this.approveDefaultLicenses = approveDefaultLicenses;
-    }
 
     /**
-     * Returns the header matcher.
+     * Returns the license that is the combination of all licenses being tested.
      *
-     * @return the header matcher.
+     * @return the license matcher, or null if no licenses are specified.
      */
     public ILicense getLicense() {
         if (licenses.isEmpty()) {
@@ -134,16 +154,23 @@ public class ReportConfiguration implements AutoCloseable {
     }
 
     /**
-     * Sets the header matcher.
+     * Adds licenses to the list of licenses to be checked.
      *
-     * @param headerMatcher header matcher.
+     * @param license The license t oadd.
      */
-    public void addLicense(ILicense headerMatcher) {
-        this.licenses.add(headerMatcher);
+    public void addLicense(ILicense license) {
+        this.licenses.add(license);
     }
 
     /**
-     * Returns the set of approved license names.
+     * Adds licenses to the list of licenses to be checked.
+     *
+     * @param license The license t oadd.
+     */
+    public void addLicenses(Collection<ILicense> licenses) {
+        this.licenses.addAll(licenses);
+    }
+    /**
      *
      * @return the set of approved license names.
      */
@@ -174,7 +201,7 @@ public class ReportConfiguration implements AutoCloseable {
      *
      * @param approvedLicenseNames set of approved license names.
      */
-    public void addApprovedLicenseNames(List<ILicenseFamily> approvedLicenseNames) {
+    public void addApprovedLicenseNames(Collection<ILicenseFamily> approvedLicenseNames) {
         this.approvedLicenseNames.addAll(approvedLicenseNames);
     }
 
@@ -238,6 +265,10 @@ public class ReportConfiguration implements AutoCloseable {
         this.addingLicenses = addingLicenses;
     }
 
+    /**
+     * Validates that the configuration is valid.
+     * @param logger the system to write warnings to.
+     */
     public void validate(Consumer<String> logger) {
         if (reportable == null) {
             throw new ConfigurationException("Reportable may not be null");
@@ -248,6 +279,10 @@ public class ReportConfiguration implements AutoCloseable {
         if (styleSheet != null && !isStyleReport()) {
             logger.accept("Ignoring stylesheet '%s' because styling is not selected");
         }
+    }
+    
+    public DefaultPolicy getDefaultPolicy() {
+        return new DefaultPolicy(getApprovedLicenseNames());
     }
 
     @Override

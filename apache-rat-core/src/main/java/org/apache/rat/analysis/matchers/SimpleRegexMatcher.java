@@ -35,8 +35,7 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
      * @param pPatterns
      */
     public SimpleRegexMatcher(Pattern pattern) {
-        super();
-        this.pattern = pattern;
+        this(null, pattern);
     }
 
     public SimpleRegexMatcher(String id, Pattern pattern) {

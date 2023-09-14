@@ -51,21 +51,65 @@ import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
 public class Report {
+    /**
+     * Adds license headers to files missing headers.
+     */
+    private static final String ADD = "A";
+    private static final String ADD_OLD="a";
+    /**
+     * Forces changes to be written to new files.
+     */
+    private static final String FORCE = "f";
+    /**
+     * Defines the copyright header to add to the file.
+     */
+    private static final String COPYRIGHT = "c";
+    /**
+     * Name of File to exclude from report consideration.
+     */
     private static final String EXCLUDE_CLI = "e";
+    /**
+     * Name of file that contains a list of files to exclude from report consideration.
+     */
     private static final String EXCLUDE_FILE_CLI = "E";
+    /**
+     * The stylesheet to use to style the XML output.
+     */
     private static final String STYLESHEET_CLI = "s";
+    /**
+     * Produce help
+     */
     private static final String HELP = "h";
+    /**
+     * Flag to identify a file with license definitions.
+     */
     private static final String LICENSES = "licenses";
-    private static final String NO_DEFAULTS = "no-defaults";
+    /**
+     * Do not use the default files.
+     */
+    private static final String NO_DEFAULTS = "no-default-licenses";
+    private static final String ALL_DEFAULT_LICENSES = "all-default-licenses";
+    /**
+     * List the licenses that were used for the run.
+     */
     private static final String LIST_LICENSES = "list-licenses";
-    private static final String LIST_LICENSE_FAMILIES = "list-license-families";
+    /**
+     * List the approved families for the run.
+     */
+    private static final String LIST_LICENSE_FAMILIES = "list-approved-families";
+    
+    /*
+     * Format used for listing license families
+     */
     private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s\n";
+    
+    /**
+     * Format used for listing licenses.
+     */
     private static final String LICENSE_FORMAT = "%s:\t%s\n\t\t%s\n";
 
     public static final void main(String[] args) throws Exception {
         try (final ReportConfiguration configuration = new ReportConfiguration()) {
-            configuration.addLicense(Defaults.createDefaultMatcher());
-            configuration.setApproveDefaultLicenses(true);
             Options opts = buildOptions();
 
             CommandLine cl = null;
@@ -111,7 +155,11 @@ public class Report {
 
                 Defaults.Builder defaults = Defaults.builder();
                 if (cl.hasOption(NO_DEFAULTS)) {
-                    defaults.noDefault();
+                    defaults.setApprovalFilter(Defaults.Filter.none);
+                } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
+                    defaults.setApprovalFilter(Defaults.Filter.all);
+                } else {
+                    defaults.setApprovalFilter(Defaults.Filter.approved);
                 }
                 if (cl.hasOption(LICENSES)) {
                     for (String fn : cl.getOptionValues(LICENSES)) {
@@ -119,6 +167,8 @@ public class Report {
                     }
                 }
                 defaults.build();
+                configuration.addLicense(Defaults.createDefaultMatcher());
+                configuration.addApprovedLicenseNames(Defaults.getLicenseFamilies());
                 if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
                     listLicenseFamilies(System.out);
                 }
@@ -197,7 +247,13 @@ public class Report {
         Option help = new Option(HELP, "help", false, "Print help for the RAT command line interface and exit");
         opts.addOption(help);
 
-        opts.addOption(null, NO_DEFAULTS, false, "Ignore default configuration");
+        OptionGroup defaultHandling = new OptionGroup();
+        String defaultHandlingText=" By default all approved default licenses are used";
+        Option noDefaults = new Option(null, NO_DEFAULTS, false, "Ignore default configuration."+defaultHandlingText);
+        Option allDefaults = new Option(null, ALL_DEFAULT_LICENSES, false, "Approve all default licenses"+defaultHandlingText);
+        defaultHandling.addOption(noDefaults);
+        defaultHandling.addOption(allDefaults);
+        
         opts.addOption(null, LICENSES, true, "File names or URLs for license definitions");
         opts.addOption(null, LIST_LICENSES, false, "List all active licenses");
         opts.addOption(null, LIST_LICENSE_FAMILIES, false, "List all defined license families");
@@ -209,17 +265,17 @@ public class Report {
 
         // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
         // compatibility
-        Option addLicence = new Option("a", "addLicence", false, addLicenseDesc);
+        Option addLicence = new Option(ADD_OLD, "addLicence", false, addLicenseDesc);
         addLicenseGroup.addOption(addLicence);
-        Option addLicense = new Option("A", "addLicense", false, addLicenseDesc);
+        Option addLicense = new Option(ADD, "addLicense", false, addLicenseDesc);
         addLicenseGroup.addOption(addLicense);
         opts.addOptionGroup(addLicenseGroup);
 
-        Option write = new Option("f", "force", false,
+        Option write = new Option(FORCE, "force", false,
                 "Forces any changes in files to be written directly to the source files (i.e. new files are not created)");
         opts.addOption(write);
 
-        Option copyright = new Option("c", "copyright", true,
+        Option copyright = new Option(COPYRIGHT, "copyright", true,
                 "The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\"");
         opts.addOption(copyright);
 

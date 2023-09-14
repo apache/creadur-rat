@@ -29,7 +29,7 @@ import org.junit.Test;
 public class ConfigurationReaderTest {
 
     private static String[] FAMILIES = { "GEN  ", "AL   ", "ASL  ", "TMF  ", "DOJO ", "OASIS", "W3CD ", "W3C  ",
-            "GPL1 ", "GPL2 ", "GPL3 ", "MIT  ", "CDDL1", "ILLUM" };
+            "GPL1 ", "GPL2 ", "GPL3 ", "MIT  ", "CDDL1", "ILLUM", "BSD-3" };
 
     @Test
     public void readDefault() {

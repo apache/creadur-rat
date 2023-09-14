@@ -29,7 +29,7 @@ import org.apache.rat.license.ILicense;
 import org.junit.Test;
 
 public class DefaultsTest {
-    private static final String[] FAMILIES = { "GEN  ", "ASL  ", "AL   ", "DOJO ", "OASIS", "W3CD ", "W3C  ", "GPL1 ",
+    private static final String[] FAMILIES = { "BSD-3", "GEN  ", "ASL  ", "AL   ", "DOJO ", "OASIS", "W3CD ", "W3C  ", "GPL1 ",
             "GPL2 ", "GPL3 ", "MIT  ", "CDDL1", "ILLUM", "TMF  " };
 
     @Test

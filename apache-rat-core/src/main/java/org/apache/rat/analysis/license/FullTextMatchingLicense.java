@@ -18,12 +18,7 @@
  */
 package org.apache.rat.analysis.license;
 
-import java.util.Locale;
-
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicenseFamily;
 
 /**

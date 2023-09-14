@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 
 /**
  * Data about the subject.
@@ -161,6 +162,7 @@ public class MetaData {
         set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, license.getLicenseFamily().getFamilyCategory()));
         set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, license.getLicenseFamily().getFamilyName()));
     }
+
     
     /**
      * Gets the content type for the subject.

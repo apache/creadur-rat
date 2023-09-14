@@ -84,7 +84,7 @@ public class Reporter {
                     configuration.setStyleSheet(Defaults.getDefaultStyleSheet());
                 }
                 PipedReader reader = new PipedReader();
-                PipedWriter writer = new PipedWriter();
+                PipedWriter writer = new PipedWriter(reader);
                 ReportTransformer transformer = new ReportTransformer(configuration.getWriter(),
                         configuration.getStyleSheet(), reader);
                 Thread transformerThread = new Thread(transformer);

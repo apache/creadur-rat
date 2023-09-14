@@ -48,8 +48,7 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
     private final StringBuilder buffer = new StringBuilder();
 
     public FullTextMatcher(String fullText) {
-        super();
-        setFullText(fullText);
+        this(null,fullText);
     }
 
     public FullTextMatcher(String id, String fullText) {

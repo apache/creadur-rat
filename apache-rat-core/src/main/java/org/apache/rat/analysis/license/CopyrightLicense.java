@@ -18,33 +18,29 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.api.MetaData.Datum;
-import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
-import java.util.regex.Pattern;
-
 /**
- * Matches a typical Copyright header line only based on a regex pattern
- * which allows for one (starting) year or year range, and a
- * configurable copyright owner.
+ * Matches a typical Copyright header line only based on a regex pattern which
+ * allows for one (starting) year or year range, and a configurable copyright
+ * owner. <br>
  * <br>
- * <br>The matching is done case insensitive<br>
+ * The matching is done case insensitive<br>
  * <br>
- * Example supported Copyright header lines, using copyright owner &quot;FooBar&quot;
+ * Example supported Copyright header lines, using copyright owner
+ * &quot;FooBar&quot;
  * <ul>
  * <li>* Copyright 2010 FooBar. *</li>
  * <li>* Copyright 2010-2012 FooBar. *</li>
  * <li>*copyright 2012 foobar*</li>
  * </ul>
- * <p>Note also that the copyright owner is appended to the regex pattern, so
- * can support additional regex but also requires escaping where needed,<br>
- * e.g. use &quot;FooBar \(www\.foobar\.com\)&quot; for matching &quot;FooBar (www.foobar.com)&quot;</p>
+ * <p>
+ * Note also that the copyright owner is appended to the regex pattern, so can
+ * support additional regex but also requires escaping where needed,<br>
+ * e.g. use &quot;FooBar \(www\.foobar\.com\)&quot; for matching &quot;FooBar
+ * (www.foobar.com)&quot;
+ * </p>
  *
  * @since Rat 0.9
  */
@@ -54,7 +50,8 @@ public class CopyrightLicense extends BaseLicense {
         super(licenseFamily, notes, new CopyrightMatcher(start, stop, owner));
     }
 
-    public CopyrightLicense(String id, ILicenseFamily licenseFamily, String notes, String start, String stop, String owner) {
+    public CopyrightLicense(String id, ILicenseFamily licenseFamily, String notes, String start, String stop,
+            String owner) {
         super(id, licenseFamily, notes, new CopyrightMatcher(start, stop, owner));
     }
 }

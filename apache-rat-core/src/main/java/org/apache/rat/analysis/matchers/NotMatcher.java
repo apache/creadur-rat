@@ -7,8 +7,7 @@ public class NotMatcher extends AbstractHeaderMatcher {
     private final IHeaderMatcher enclosed;
 
     public NotMatcher(IHeaderMatcher enclosed) {
-        super();
-        this.enclosed = enclosed;
+        this(null, enclosed);
     }
 
     public NotMatcher(String id, IHeaderMatcher enclosed) {

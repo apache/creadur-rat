@@ -28,12 +28,14 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
@@ -69,6 +71,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /*
+ *  <licenses> 
  *  <license id=id name=name >
         <notes></notes>
         <text>  </text>
@@ -76,19 +79,40 @@ import org.xml.sax.SAXException;
         <spdx></spdx> 
         <and> <license>...</and>
         <or> <license>...</or> 
+        <matcher_ref refid='' />
     </license>
+    </licenses>
+    <approved>
+        <family refid=''>
+    </approved>
  */
 
 public class XMLConfigurationReader implements LicenseReader {
 
     enum MatcherType {
-        text, copyright, spdx, any, all, license_ref, not
+        text, copyright, spdx, any, all, matcher_ref, not
     };
+    
+    enum AttributeName {
+        id, name, license_ref, refid, start, end, owner, resource, derived_from;
+    }
 
+    private final static String ROOT = "rat-config";
+    private final static String LICENSES = "licenses";
+    private final static String LICENSE = "license";
+    private final static String APPROVED = "approved";
+    private final static String FAMILY = "family";
+    private final static String NOTE = "note";
+    
     private Document document;
-    private final Element baseElement;
+    private final Element rootElement;
     private final Element licensesElement;
+    private final Element approvedElement;
+    
     private final SortedSet<ILicense> licenses;
+    private final Map<String,IHeaderMatcher> matchers;
+    private final SortedSet<ILicenseFamily> licenseFamilies;
+    private final SortedSet<ILicenseFamily> approvedFamilies;
 
     public XMLConfigurationReader() {
         try {
@@ -96,11 +120,16 @@ public class XMLConfigurationReader implements LicenseReader {
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("No XML parser defined", e);
         }
-        baseElement = document.createElement("rat-config");
-        document.appendChild(baseElement);
-        licensesElement = document.createElement("licenses");
-        baseElement.appendChild(licensesElement);
+        rootElement = document.createElement(ROOT);
+        document.appendChild(rootElement);
+        licensesElement = document.createElement(LICENSES);
+        rootElement.appendChild(licensesElement);
+        approvedElement = document.createElement(APPROVED);
+        rootElement.appendChild(approvedElement);
         licenses = new TreeSet<>((x, y) -> x.getLicenseFamily().compareTo(y.getLicenseFamily()));
+        approvedFamilies = new TreeSet<>();
+        licenseFamilies = new TreeSet<>();
+        matchers = new HashMap<>();
     }
 
     public void printDocument(OutputStream out) {
@@ -154,34 +183,37 @@ public class XMLConfigurationReader implements LicenseReader {
     }
 
     public void add(Document newDoc) {
-        printDocument(System.out, newDoc);
         List<Node> lst = new ArrayList<>();
-        nodeListConsumer(newDoc.getElementsByTagName("license"), lst::add);
-        nodeListConsumer(newDoc.getElementsByTagName("license"),
-                (n) -> licensesElement.appendChild(baseElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
+        nodeListConsumer(newDoc.getElementsByTagName(LICENSE), lst::add);
+        nodeListConsumer(newDoc.getElementsByTagName(LICENSE),
+                (n) -> licensesElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
+        nodeListConsumer(newDoc.getElementsByTagName(APPROVED),
+                (n) -> licensesElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
+
     }
 
     @Override
     public SortedSet<ILicenseFamily> readFamilies() {
-        SortedSet<ILicenseFamily> result = new TreeSet<>();
-        readLicenses().stream().map(ILicense::getLicenseFamily).forEach(result::add);
-        return result;
+        if (licenses.size() == 0) {
+            readLicenses();
+        }
+        return Collections.unmodifiableSortedSet(licenseFamilies);
     }
 
-    Map<String, String> attributes(Node node) {
+    Map<AttributeName, String> attributes(Node node) {
         NamedNodeMap nnm = node.getAttributes();
-        Map<String, String> result = new HashMap<>();
+        Map<AttributeName, String> result = new HashMap<>();
         for (int i = 0; i < nnm.getLength(); i++) {
             Node n = nnm.item(i);
-            result.put(n.getNodeName(), n.getNodeValue());
+            result.put(AttributeName.valueOf(n.getNodeName()), n.getNodeValue());
         }
         return result;
     }
 
-    private IHeaderMatcher createTextMatcher(String txt) {
+    private IHeaderMatcher createTextMatcher(String id, String txt) {
         boolean complex = txt.contains(" ") | txt.contains("\\t") | txt.contains("\\n") | txt.contains("\\r")
                 | txt.contains("\\f") | txt.contains("\\v");
-        return complex ? new FullTextMatcher(txt) : new SimpleTextMatcher(txt);
+        return complex ? new FullTextMatcher(id, txt) : new SimpleTextMatcher(id, txt);
     }
 
     /**
@@ -199,7 +231,7 @@ public class XMLConfigurationReader implements LicenseReader {
             while (null != (txt = buffer.readLine())) {
                 txt = txt.trim();
                 if (StringUtils.isNotBlank(txt)) {
-                    matchers.add(createTextMatcher(txt));
+                    matchers.add(createTextMatcher(null,txt));
                 }
             }
             return matchers;
@@ -209,19 +241,21 @@ public class XMLConfigurationReader implements LicenseReader {
     }
 
     private IHeaderMatcher parseMatcher(Node matcherNode) {
-        Map<String, String> attr = attributes(matcherNode);
+        Map<AttributeName, String> attr = attributes(matcherNode);
         MatcherType type = MatcherType.valueOf(matcherNode.getNodeName());
         List<IHeaderMatcher> children;
+        IHeaderMatcher result = null;
+        String id = attr.get(AttributeName.id);
 
         switch (type) {
         case text:
-            return createTextMatcher(matcherNode.getTextContent().trim());
+            result = createTextMatcher(id, matcherNode.getTextContent().trim());
+            break;
 
         case any:
         case all:
-
-            if (attr.get("resource") != null) {
-                children = readTextResource(attr.get("resource"));
+            if (attr.containsKey(AttributeName.resource)) {
+                children = readTextResource(attr.get(AttributeName.resource));
             } else {
                 children = new ArrayList<>();
                 nodeListConsumer(matcherNode.getChildNodes(), x -> {
@@ -230,15 +264,20 @@ public class XMLConfigurationReader implements LicenseReader {
                     }
                 });
             }
-            return type == MatcherType.any ? new OrMatcher(children) : new AndMatcher(children);
+            result = type == MatcherType.any ? new OrMatcher(id, children) : new AndMatcher(id, children);
+            break;
 
         case copyright:
-            return new CopyrightMatcher(attr.get("start"), attr.get("end"), attr.get("owner"));
+            result = new CopyrightMatcher(id, attr.get(AttributeName.start), attr.get(AttributeName.end), attr.get(AttributeName.owner));
+            break;
 
         case spdx:
-            return SPDXMatcherFactory.INSTANCE.create(attr.get("name"));
-        case license_ref:
-            return new ILicenseProxy(attr.get("refid"));
+            result = SPDXMatcherFactory.INSTANCE.create(attr.get(AttributeName.name));
+            break;
+
+        case matcher_ref:
+            result = IHeaderMatcherProxy.create(attr.get(AttributeName.refid), matchers);
+            break;
 
         case not:
             children = new ArrayList<>();
@@ -250,28 +289,32 @@ public class XMLConfigurationReader implements LicenseReader {
             if (children.size() != 1) {
                 throw new ConfigurationException("'Not' type matcher requires one and only one enclosed matcher");
             }
-            return new NotMatcher(children.get(0));
+            result = new NotMatcher(children.get(0));
+            break;
         }
-        throw new ConfigurationException(String.format("%s is not a matcher type", matcherNode.getNodeName()));
+        if (attr.containsKey(AttributeName.id)) {
+            matchers.put(attr.get(AttributeName.id), result);
+        }
+        return result;
     }
 
     private ILicense parseLicense(Node licenseNode) {
-        Map<String, String> attributes = attributes(licenseNode);
+        Map<AttributeName, String> attributes = attributes(licenseNode);
 
-        ILicenseFamily family = new SimpleLicenseFamily(attributes.get("id"), attributes.get("name"));
+        ILicenseFamily family = new SimpleLicenseFamily(attributes.get(AttributeName.id), attributes.get(AttributeName.name));
         IHeaderMatcher matcher[] = { null };
         StringBuilder notesBuilder = new StringBuilder();
         nodeListConsumer(licenseNode.getChildNodes(), x -> {
             if (x.getNodeType() == Node.ELEMENT_NODE) {
-                if (x.getNodeName().equals("note")) {
+                if (x.getNodeName().equals(NOTE)) {
                     notesBuilder.append(x.getTextContent()).append("\n");
                 } else {
                     matcher[0] = parseMatcher(x);
                 }
             }
         });
-        ILicense derivedFrom = attributes.get("derived-from") == null ? null
-                : new ILicenseProxy(attributes.get("derived-from"));
+        ILicense derivedFrom = !attributes.containsKey(AttributeName.derived_from) ? null
+                : ILicenseProxy.create(attributes.get(AttributeName.derived_from), licenses);
         String notes = StringUtils.defaultIfBlank(notesBuilder.toString().trim(), null);
         return new SimpleLicense(family, matcher[0], derivedFrom, notes);
     }
@@ -279,71 +322,47 @@ public class XMLConfigurationReader implements LicenseReader {
     @Override
     public SortedSet<ILicense> readLicenses() {
         if (licenses.size() == 0) {
-            nodeListConsumer(document.getElementsByTagName("license"), x -> licenses.add(parseLicense(x)));
+            nodeListConsumer(document.getElementsByTagName(LICENSE), x -> licenses.add(parseLicense(x)));
+            licenses.stream().map(ILicense::getLicenseFamily).forEach(licenseFamilies::add);
+            nodeListConsumer(document.getElementsByTagName(FAMILY), x -> approvedFamilies.add(parseFamily(x)));
+            Stack<ILicense> stack = new Stack<>();
+            for (ILicense license : licenses) {
+                ILicense derivedFrom = license.derivedFrom();
+                if (derivedFrom != null) {
+                    stack.push(license);
+                    while (derivedFrom != null) {
+                        stack.push(derivedFrom);
+                        derivedFrom = derivedFrom.derivedFrom();
+                    }
+                }
+                while (!stack.isEmpty()) {
+                    derivedFrom = stack.pop();
+                    ILicenseFamily found = ILicenseFamily.search(
+                            derivedFrom.getLicenseFamily(), approvedFamilies);
+                   if (found != null) {
+                        while (!stack.isEmpty()) {
+                            approvedFamilies.add(stack.pop().getLicenseFamily());
+                        }
+                    }
+                }
+                
+            }
             document = null;
         }
         return Collections.unmodifiableSortedSet(licenses);
     }
 
-    class ILicenseProxy implements ILicense {
-        final String proxyId;
-        ILicense wrapped;
-
-        ILicenseProxy(String proxyId) {
-            this.proxyId = proxyId;
+    private ILicenseFamily parseFamily(Node familyNode) {
+        Map<AttributeName, String> attributes = attributes(familyNode);
+        if (attributes.containsKey(AttributeName.license_ref)) {
+            return ILicenseFamilyProxy.create(ILicenseProxy.create(attributes.get(AttributeName.license_ref), licenses));
         }
+        throw new ConfigurationException("family tag requires " + AttributeName.license_ref + " attribute");
+    }
 
-        private void checkProxy() {
-            if (wrapped == null) {
-                ILicenseFamily testLic = new SimpleLicenseFamily(proxyId, "searching proxy");
-                Optional<ILicense> lic = licenses.stream().filter(l -> l.getLicenseFamily().compareTo(testLic) == 0)
-                        .findFirst();
-                if (!lic.isPresent()) {
-                    throw new IllegalStateException(String.format("%s is not a valid family category", proxyId));
-                }
-                wrapped = lic.get();
-            }
-        }
 
-        @Override
-        public ILicenseFamily getLicenseFamily() {
-            checkProxy();
-            return wrapped.getLicenseFamily();
-        }
-
-        @Override
-        public String getNotes() {
-            checkProxy();
-            return wrapped.getNotes();
-        }
-
-        @Override
-        public ILicense derivedFrom() {
-            checkProxy();
-            return wrapped.derivedFrom();
-        }
-
-        @Override
-        public String getId() {
-            checkProxy();
-            return wrapped.getId();
-        }
-
-        @Override
-        public void reset() {
-            checkProxy();
-            wrapped.reset();
-        }
-
-        @Override
-        public boolean matches(String line) {
-            checkProxy();
-            return wrapped.matches(line);
-        }
-
-        @Override
-        public int compareTo(ILicense arg0) {
-            return ILicense.getComparator().compare(this, arg0);
-        }
+    @Override
+    public Collection<ILicenseFamily> approvedLicenseFamilies() {
+        return approvedFamilies.isEmpty() ? readFamilies() : approvedFamilies;
     }
 }

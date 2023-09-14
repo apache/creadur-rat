@@ -8,12 +8,12 @@ public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
 
     private String id;
 
-    protected AbstractHeaderMatcher() {
-        this(UUID.randomUUID().toString());
-    }
+//    protected AbstractHeaderMatcher() {
+//        this(null);
+//    }
 
     protected AbstractHeaderMatcher(String id) {
-        this.id = id;
+        this.id = id == null ? UUID.randomUUID().toString() : id;
     }
 
     @Override

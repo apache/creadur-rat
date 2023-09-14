@@ -115,21 +115,24 @@ public class ReportTest {
     public void plainReportWithArchivesAndUnapprovedLicenses() throws Exception {
         Defaults.builder().build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        LicenseCollectionMatcher licenseMatcher = new LicenseCollectionMatcher(Defaults.getLicenses());
+        
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setApproveDefaultLicenses(true);
-        configuration.addLicense(licenseMatcher);
+        configuration.addLicenses(Defaults.getLicenses());
+        configuration.addApprovedLicenseNames(Defaults.getLicenseFamilies());
         configuration.setReportable(new DirectoryWalker(new File(elementsPath)));
         configuration.setOut(out);
         Reporter.report(configuration);
 
         String result = out.toString();
+        System.out.println( result );
         assertTrue("'Generated at' is present in " + result, result.startsWith(HEADER));
 
         final int generatedAtLineEnd = result.indexOf(NL, HEADER.length());
 
         final String elementsReports = getElementsReports(elementsPath);
+        
+        System.err.println( elementsReports );
         assertEquals("Report created was: " + result, elementsReports,
                 result.substring(generatedAtLineEnd + NL.length()));
     }

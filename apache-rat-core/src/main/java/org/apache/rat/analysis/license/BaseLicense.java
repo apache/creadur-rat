@@ -19,17 +19,11 @@
 package org.apache.rat.analysis.license;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.SimpleLicenseFamily;
 
 public abstract class BaseLicense extends AbstractMatcherContainer implements ILicense {
     private ILicenseFamily family;
@@ -43,8 +37,9 @@ public abstract class BaseLicense extends AbstractMatcherContainer implements IL
     public BaseLicense(String idPrefix, ILicenseFamily family, String notes, IHeaderMatcher matcher) {
         this(null, family, notes, matcher, null);
     }
-    
-    public BaseLicense(String idPrefix, ILicenseFamily family, String notes, IHeaderMatcher matcher, ILicense derivedFrom) {
+
+    public BaseLicense(String idPrefix, ILicenseFamily family, String notes, IHeaderMatcher matcher,
+            ILicense derivedFrom) {
         super(String.format("%s:%s:%s/%s", idPrefix == null ? "" : idPrefix, family.getFamilyCategory(),
                 matcher.getClass().getSimpleName(), matcher.getId()), Arrays.asList(matcher));
         this.family = family;
@@ -52,26 +47,26 @@ public abstract class BaseLicense extends AbstractMatcherContainer implements IL
         this.derivedFrom = derivedFrom;
     }
 
+    @Override
     public ILicenseFamily getLicenseFamily() {
         return family;
     }
-
 
     @Override
     public int compareTo(ILicense arg0) {
         return ILicense.getComparator().compare(this, arg0);
     }
 
-    
+    @Override
     public String getNotes() {
         return notes;
     }
 
     @Override
-    public boolean matches(String line) throws RatHeaderAnalysisException {
+    public boolean matches(String line) {
         return enclosed.iterator().next().matches(line);
     }
-    
+
     @Override
     public ILicense derivedFrom() {
         return derivedFrom;

@@ -36,24 +36,24 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
         return getFamilyCategory().compareTo(other.getFamilyCategory());
     }
     
-    public static ILicenseFamily searchSet(SortedSet<ILicenseFamily> set, String category) {
-        ILicenseFamily target = new ILicenseFamily() {
-
-            @Override
-            public String getFamilyName() {
-                return "";
-            }
-
-            @Override
-            public String getFamilyCategory() {
-               return makeCategory(category);
-            }};
-            
-        SortedSet<ILicenseFamily> partialSet = set.tailSet(target );
-        if (partialSet.isEmpty()) {
-            return null;
-        }
-        ILicenseFamily candidate = partialSet.first();
-        return candidate.compareTo(target) == 0 ? candidate : null;
+//    does not work -- revisit if needed
+//    static ILicenseFamily search(String licenseCategory, SortedSet<ILicenseFamily> licenses) {
+//        ILicenseFamily target = new ILicenseFamily() {
+//            @Override
+//            public String getFamilyName() {
+//                return licenseCategory;
+//            }
+//
+//            @Override
+//            public String getFamilyCategory() {
+//                return "Searching family";
+//            }
+//        };
+//        return search(target, licenses);
+//    }
+    
+    static ILicenseFamily search(ILicenseFamily target, SortedSet<ILicenseFamily> licenses) {
+        SortedSet<ILicenseFamily> part = licenses.tailSet(target);
+        return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
 }

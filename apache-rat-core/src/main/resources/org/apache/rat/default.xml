@@ -9,13 +9,12 @@
 		<spdx name=''/> 
 		<and> <license>...</and>
 		<or> <license>...</or> 
-		<license_ref refid='licenceid' />
+		<matcher_ref refid='licenceid' />
 	</license>
 -->
-
 		<license id="AL" name="Apache License Version 2.0">
-			<all>
-				<any>
+		<all>
+			<any id="ALStandard">
 					<text>Licensed under the Apache License, Version 2.0 (the
 						"License")</text>
 					<text>Licensed to the Apache Software Foundation (ASF) under
@@ -39,22 +38,7 @@
 
 		<license id="ASL" name="Applied Apahce License Version 2.0">
 			<all>
-				<any>
-					<text>Licensed under the Apache License, Version 2.0 (the
-						"License")</text>
-					<text>Licensed to the Apache Software Foundation (ASF) under
-						one
-						or more contributor license agreements; and to You under
-						the
-						Apache License, Version 2.0.</text>
-					<text>http://www.apache.org/licenses/LICENSE-2.0</text>
-					<text>https://www.apache.org/licenses/LICENSE-2.0</text>
-					<text>http://www.apache.org/licenses/LICENSE-2.0.html</text>
-					<text>https://www.apache.org/licenses/LICENSE-2.0.html</text>
-					<text>http://www.apache.org/licenses/LICENSE-2.0.txt</text>
-					<text>https://www.apache.org/licenses/LICENSE-2.0.txt</text>
-					<spdx name='Apache-2.0' />
-				</any>
+				<matcher_ref refid="ALStandard"/>
 				<copyright />
 			</all>
 		</license>
@@ -71,7 +55,7 @@
 		</license>
 
 		<license id="ILLUMOS" name="ILLUMOS CDDL1 Derived license"
-			derived-from='CDDL1'>
+			derived_from='CDDL1'>
 			<note>Modified CDDL1 license</note>
 			<any>
 				<text>The contents of this file are subject to the terms of
@@ -81,7 +65,7 @@
 			</any>
 		</license>
 
-		<license id="DOJO" name="DOJO License" derived-from="BSD">
+		<license id="DOJO" name="DOJO License" derived_from="BSD-3">
 			<text>http://dojotoolkit.org/community/licensing.shtml</text>
 		</license>
 
@@ -177,12 +161,13 @@
 		</license>
 
 		<license id="TMF" name="The Telemanagement Forum License"
-			derived-from="BSD">
-			<any>
+			derived_from="BSD-3">
+			<all>
 				<text>TMF854 Version 1.0</text>
 				<copyright
 					owner="TeleManagement Forum" />
-			</any>
+					<matcher_ref refid="BSD-3-txt"/>
+			</all>
 		</license>
 
 		<license id="W3C" name="W3C Software Copyright">
@@ -206,5 +191,41 @@
 			<text>
 				http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</text>
 		</license>
+		
+		<license id='BSD-3' name="BSD 3 clause">
+			<any>
+				<all>
+					<copyright />
+					<text id="BSD-3-txt">
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</text>
+
+				</all>
+				<spdx name='BSD-3-Clause' />
+			</any>
+		</license>
 	</licenses>
+	<approved>
+		<family license_ref="BSD-3"/>
+		<family license_ref='AL'/>
+		<family license_ref='ASL'/>
+		<family license_ref='CDDL1'/>
+		<family license_ref='DOJO'/>
+		<family license_ref='GPL1'/>
+		<family license_ref='GPL2'/>
+		<family license_ref='GPL3'/>
+		<family license_ref='GEN'/>
+		<family license_ref='MIT'/>
+		<family license_ref='OASIS'/>
+		<family license_ref='W3C'/>
+		<family license_ref='W3CD'/>
+	</approved>
 </rat-config>

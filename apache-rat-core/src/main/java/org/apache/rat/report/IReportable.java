@@ -20,7 +20,15 @@ package org.apache.rat.report;
 
 import org.apache.rat.api.RatException;
 
+/**
+ * An interface that identifies things that can be reported upon.
+ */
 public interface IReportable {
 
+    /**
+     * Runs a report against the thing to be reported on.
+     * @param report The report to run.
+     * @throws RatException on error.
+     */
     void run(RatReport report) throws RatException;
 }

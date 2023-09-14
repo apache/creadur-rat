@@ -35,15 +35,14 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
      * @param pPatterns
      */
     public SimpleTextMatcher(String pattern) {
-        super();
-        if (StringUtils.isBlank(pattern)) {
-            throw new IllegalArgumentException( "Pattern may not be null, empty or blank");
-        }
-        this.pattern = pattern;
+        this(null,pattern);
     }
 
     public SimpleTextMatcher(String id, String pattern) {
         super(id);
+        if (StringUtils.isBlank(pattern)) {
+            throw new IllegalArgumentException( "Pattern may not be null, empty or blank");
+        }
         this.pattern = pattern;
     }
 

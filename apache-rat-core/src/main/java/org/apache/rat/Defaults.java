@@ -32,6 +32,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
@@ -45,7 +46,9 @@ import org.apache.rat.license.SimpleLicenseFamily;
  * Utility class that holds constants shared by the CLI tool and the Ant tasks.
  */
 public class Defaults {
-    static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.xml");
+    public enum Filter { all, approved, none };
+    
+    private static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.xml");
 
     /**
      * no instances
@@ -53,8 +56,10 @@ public class Defaults {
     private Defaults() {
     }
 
-    private static SortedSet<ILicense> licenses = new TreeSet<>();
+    private static Filter approvalFilter = Filter.approved;
+    private static SortedSet<ILicense> licenses = new TreeSet<>(ILicense.getComparator());
     private static SortedSet<ILicenseFamily> licenseFamilies = new TreeSet<>();
+    private static SortedSet<ILicenseFamily> approvedLicenseFamilies = new TreeSet<>();
 
     public static Builder builder() {
         return new Builder();
@@ -64,13 +69,14 @@ public class Defaults {
         licenses.clear();
         licenseFamilies.clear();
     }
-
+    
     private static void readConfigFiles(Collection<URL> urls) {
         for (URL url : urls) {
             LicenseReader reader = Readers.get(url);
             reader.add(url);
             licenseFamilies.addAll(reader.readFamilies());
             licenses.addAll(reader.readLicenses());
+            approvedLicenseFamilies.addAll(reader.approvedLicenseFamilies());
         }
     }
 
@@ -90,19 +96,39 @@ public class Defaults {
     }
 
     public static ILicense createDefaultMatcher() {
-        return new LicenseCollectionMatcher(licenses);
+        return new LicenseCollectionMatcher(getLicenses());
     }
 
-    public static Set<ILicense> getLicenses() {
-        return Collections.unmodifiableSet(licenses);
+    /**
+     * Returns the set of defined licenses unless filter is set to no-defaults.
+     * if no-defaults was set then an empty set is returned.
+     * @return The set of defined licenses.
+     */
+    public static SortedSet<ILicense> getLicenses() {
+        switch (approvalFilter) {
+        case all :
+        case approved:
+            return Collections.unmodifiableSortedSet(licenses);
+        case none:
+            default:
+        return Collections.emptySortedSet();
+        }
     }
 
     public static Set<String> getLicenseNames() {
-        return licenseFamilies.stream().map(ILicenseFamily::getFamilyName).collect(Collectors.toSet());
+        return getLicenseFamilies().stream().map(ILicenseFamily::getFamilyName).collect(Collectors.toSet());
     }
 
     public static SortedSet<ILicenseFamily> getLicenseFamilies() {
-        return Collections.unmodifiableSortedSet(licenseFamilies);
+        switch (approvalFilter) {
+        case all:
+            return Collections.unmodifiableSortedSet(licenseFamilies);
+        case approved:
+            return Collections.unmodifiableSortedSet(approvedLicenseFamilies);
+        case none:
+            default:
+        return Collections.emptySortedSet();
+        }
     }
 
     public static class Builder {
@@ -147,6 +173,11 @@ public class Defaults {
         public Builder noDefault() {
             return remove(DEFAULT_CONFIG_URL);
         }
+        
+        public Builder setApprovalFilter(Filter filter) {
+            approvalFilter = filter;
+            return this;
+        }
 
         public void build() {
             Defaults.readConfigFiles(fileNames);
@@ -174,7 +205,7 @@ public class Defaults {
         }
 
         @Override
-        public boolean matches(String line) throws RatHeaderAnalysisException {
+        public boolean matches(String line) {
             for (ILicense license : enclosed) {
                 if (license.matches(line)) {
                     this.family = license.getLicenseFamily();

@@ -23,10 +23,8 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
 import org.apache.rat.analysis.matchers.OrMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicenseFamily;
 
 /**
@@ -35,14 +33,14 @@ import org.apache.rat.license.ILicenseFamily;
 public class SimplePatternBasedLicense extends BaseLicense {
 
     private static IHeaderMatcher getMatcher(String[] patterns) {
-        if (patterns.length == 1)
-        {
+        if (patterns.length == 1) {
             return new SimpleTextMatcher(patterns[0]);
-        } 
+        }
         Collection<IHeaderMatcher> collection = Arrays.stream(patterns).map(SimpleTextMatcher::new)
                 .collect(Collectors.toList());
         return new OrMatcher(collection);
     }
+
     /**
      * Creates a pattern based license with full documentation.
      * 
