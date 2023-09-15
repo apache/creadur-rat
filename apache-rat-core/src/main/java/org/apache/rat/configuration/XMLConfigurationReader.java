@@ -173,7 +173,6 @@ public class XMLConfigurationReader implements LicenseReader {
                 throw new ConfigurationException("Unable to read url: " + url, e);
             }
         }
-
     }
 
     private void nodeListConsumer(NodeList list, Consumer<Node> consumer) {
