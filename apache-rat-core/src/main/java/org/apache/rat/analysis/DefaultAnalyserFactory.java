@@ -42,7 +42,6 @@ public class DefaultAnalyserFactory {
         private final ILicense license;
 
         public DefaultAnalyser(final ILicense license) {
-            super();
             this.license = license;
         }
 

@@ -28,7 +28,6 @@ import java.util.TreeSet;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.SimpleLicenseFamily;
 
@@ -39,19 +38,19 @@ public class DefaultPolicy implements IDocumentAnalyser {
      * Creates a policy that matches the default licenses. Mainly used for testing
      * purposes.
      */
-    DefaultPolicy() {
-        this(new ArrayList<ILicenseFamily>(0));
-    }
+//    DefaultPolicy() {
+//        this(new ArrayList<ILicenseFamily>(0));
+//    }
 
-    public DefaultPolicy(final ILicenseFamily[] approvedLicenses) {
-        this(Arrays.asList(approvedLicenses));
-    }
+//    public DefaultPolicy(final ILicenseFamily[] approvedLicenses) {
+//        this(Arrays.asList(approvedLicenses));
+//    }
 
     public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseNames) {
         this.approvedLicenseNames = new TreeSet<>();
         this.approvedLicenseNames.addAll(approvedLicenseNames);
     }
-    
+
     public void add(ILicenseFamily approvedLicense) {
         this.approvedLicenseNames.add(approvedLicense);
     }

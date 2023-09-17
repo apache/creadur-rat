@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat;
 
 import java.io.InputStream;
@@ -29,29 +29,27 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-
 class ReportTransformer implements Runnable {
 
     private final Writer out;
     private final Transformer transformer;
     private final Reader in;
-    
-    public ReportTransformer(final Writer out, final Reader style, 
-            final Reader in) throws TransformerConfigurationException {
+
+    public ReportTransformer(final Writer out, final Reader style, final Reader in)
+            throws TransformerConfigurationException {
         this.out = out;
-        transformer = TransformerFactory.newInstance().newTransformer(
-                new StreamSource(style));
+        transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(style));
         this.in = in;
     }
-    
-    public ReportTransformer(final Writer out, final InputStream style, 
-            final Reader in) throws TransformerConfigurationException {
+
+    public ReportTransformer(final Writer out, final InputStream style, final Reader in)
+            throws TransformerConfigurationException {
         this.out = out;
-        transformer = TransformerFactory.newInstance().newTransformer(
-                new StreamSource(style));
+        transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(style));
         this.in = in;
     }
-    
+
+    @Override
     public void run() {
         try {
             transform();

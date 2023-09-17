@@ -55,9 +55,8 @@
   </target>
 
   <target name="testWithALUnknown">
-    <rat:report addDefaultLicenseMatchers="false">
+    <rat:report removeApprovedLicense="AL">
       <file file="${ant.file}"/>
-      <rat:w3c/>
     </rat:report>
   </target>
 
@@ -73,7 +72,7 @@
   </target>
 
   <target name="testNoLicenseMatchers">
-    <rat:report addDefaultLicenseMatchers="false">
+    <rat:report useDefaultLicenses="false">
       <file file="${ant.file}"/>
     </rat:report>
   </target>
@@ -81,7 +80,7 @@
   <target name="testAddLicenseHeaders">
     <delete dir="${output.dir}/it-sources"/>
     <mkdir dir="${output.dir}/it-sources"/>
-    <copy file="src/test/resources/antunit/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
+    <copy file="${output.dir}/../../src/test/resources/antunit/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
     <rat:report addLicenseHeaders="true">
        <file file="${output.dir}/it-sources/index.apt"/>
     </rat:report>

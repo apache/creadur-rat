@@ -28,7 +28,6 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.Readers;
@@ -48,19 +47,15 @@ public class Defaults {
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
-    private final Filter approvalFilter;
     private final SortedSet<ILicense> licenses;
-    private final SortedSet<ILicenseFamily> licenseFamilies;
-    private final SortedSet<ILicenseFamily> approvedLicenseFamilies;
+    private final SortedSet<String> approvedLicenseIds;
 
     /**
      * Builder constructs instances.
      */
-    private Defaults(Filter approvalFilter) {
-        this.approvalFilter = approvalFilter;
+    private Defaults() {
         licenses = new TreeSet<>(ILicense.getComparator());
-        licenseFamilies = new TreeSet<>();
-        approvedLicenseFamilies = new TreeSet<>();
+        approvedLicenseIds = new TreeSet<>();
     }
 
     public static Builder builder() {
@@ -69,16 +64,15 @@ public class Defaults {
 
     public void clear() {
         licenses.clear();
-        licenseFamilies.clear();
+        approvedLicenseIds.clear();
     }
 
     private void readConfigFiles(Collection<URL> urls) {
         for (URL url : urls) {
             LicenseReader reader = Readers.get(url);
             reader.add(url);
-            licenseFamilies.addAll(reader.readFamilies());
             licenses.addAll(reader.readLicenses());
-            approvedLicenseFamilies.addAll(reader.approvedLicenseFamilies());
+            reader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
         }
     }
 
@@ -90,41 +84,17 @@ public class Defaults {
         return Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
     }
 
-    public ILicense createDefaultMatcher() {
-        return getLicenses().isEmpty() ? null : new LicenseCollectionMatcher(getLicenses());
-    }
-
-    /**
-     * Returns the set of defined licenses unless filter is set to no-defaults. if
-     * no-defaults was set then an empty set is returned.
-     * 
-     * @return The set of defined licenses.
-     */
     public SortedSet<ILicense> getLicenses() {
-        switch (approvalFilter) {
-        case all:
-        case approved:
-            return Collections.unmodifiableSortedSet(licenses);
-        case none:
-        default:
-            return Collections.emptySortedSet();
-        }
+        return Collections.unmodifiableSortedSet(licenses);
     }
 
-    public Set<String> getLicenseNames() {
-        return getLicenseFamilies().stream().map(ILicenseFamily::getFamilyName).collect(Collectors.toSet());
-    }
-
-    public SortedSet<ILicenseFamily> getLicenseFamilies() {
-        switch (approvalFilter) {
-        case all:
-            return Collections.unmodifiableSortedSet(licenseFamilies);
-        case approved:
-            return Collections.unmodifiableSortedSet(approvedLicenseFamilies);
-        case none:
-        default:
-            return Collections.emptySortedSet();
+    public SortedSet<String> getLicenseIds() {
+        if (approvedLicenseIds.isEmpty()) {
+            SortedSet<String> result = new TreeSet<>();
+            licenses.stream().map(x -> x.getLicenseFamily().getFamilyCategory()).forEach(result::add);
+            return result;
         }
+        return Collections.unmodifiableSortedSet(approvedLicenseIds);
     }
 
     public static class Builder {
@@ -135,8 +105,6 @@ public class Defaults {
                 return url1.toString().compareTo(url2.toString());
             }
         });
-
-        private Filter approvalFilter = Filter.approved;
 
         private Builder() {
             fileNames.add(DEFAULT_CONFIG_URL);
@@ -217,21 +185,10 @@ public class Defaults {
         }
 
         /**
-         * Set which files will be listed as approved.
-         * 
-         * @param filter the fileter type.
-         * @return this Builder for chaining
-         */
-        public Builder setApprovalFilter(Filter filter) {
-            approvalFilter = filter;
-            return this;
-        }
-
-        /**
          * Builds the defaults object.
          */
         public Defaults build() {
-            Defaults result = new Defaults(approvalFilter);
+            Defaults result = new Defaults();
             result.readConfigFiles(fileNames);
             return result;
         }
@@ -279,7 +236,7 @@ public class Defaults {
         }
 
         @Override
-        public ILicense derivedFrom() {
+        public String derivedFrom() {
             return null;
         }
 

@@ -24,10 +24,10 @@ public class SimpleLicense implements ILicense {
 
     private ILicenseFamily family;
     private IHeaderMatcher matcher;
-    private ILicense derivedFrom;
+    private String derivedFrom;
     private String notes;
 
-    public SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, ILicense derivedFrom, String notes) {
+    public SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes) {
         this.family = family;
         this.matcher = matcher;
         this.derivedFrom = derivedFrom;
@@ -55,7 +55,7 @@ public class SimpleLicense implements ILicense {
         this.matcher = matcher;
     }
 
-    public void setDerivedFrom(ILicense derivedFrom) {
+    public void setDerivedFrom(String derivedFrom) {
         this.derivedFrom = derivedFrom;
     }
 
@@ -90,7 +90,7 @@ public class SimpleLicense implements ILicense {
     }
 
     @Override
-    public ILicense derivedFrom() {
+    public String derivedFrom() {
         return derivedFrom;
     }
 }

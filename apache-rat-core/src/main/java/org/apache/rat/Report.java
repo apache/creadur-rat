@@ -161,20 +161,13 @@ public class Report {
                     }
                 }
 
-                Defaults.Builder defaultBuilder = Defaults.builder();
                 if (cl.hasOption(NO_DEFAULTS)) {
-                    defaultBuilder.setApprovalFilter(Defaults.Filter.none);
+                    configuration.setLicenseFilter(Defaults.Filter.none);
                 } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
-                    defaultBuilder.setApprovalFilter(Defaults.Filter.all);
+                    configuration.setLicenseFilter(Defaults.Filter.all);
                 } else {
-                    defaultBuilder.setApprovalFilter(Defaults.Filter.approved);
+                    configuration.setLicenseFilter(Defaults.Filter.approved);
                 }
-                if (cl.hasOption(LICENSES)) {
-                    for (String fn : cl.getOptionValues(LICENSES)) {
-                        defaultBuilder.add(fn);
-                    }
-                }
-
                 if (cl.hasOption(XML)) {
                     configuration.setStyleReport(false);
                 } else {
@@ -193,16 +186,23 @@ public class Report {
                         }
                     }
                 }
+
+                Defaults.Builder defaultBuilder = Defaults.builder();
+                if (cl.hasOption(LICENSES)) {
+                    for (String fn : cl.getOptionValues(LICENSES)) {
+                        defaultBuilder.add(fn);
+                    }
+                }
                 Defaults defaults = defaultBuilder.build();
                 configuration.setFrom(defaults);;
                 configuration.setReportable(getDirectory(args[0], configuration));
                 configuration.validate(s -> System.err.println(s));
                 
                 if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
-                    listLicenseFamilies(defaults.getLicenseFamilies(), System.out);
+                    listLicenseFamilies(configuration.getApprovedLicenses(), System.out);
                 }
                 if (cl.hasOption(LIST_LICENSES)) {
-                    listLicenses(defaults.getLicenses(), System.out);
+                    listLicenses(configuration.getLicenses(), System.out);
                 }
                 
                 Reporter.report(configuration);

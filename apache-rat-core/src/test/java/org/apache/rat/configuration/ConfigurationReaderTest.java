@@ -16,32 +16,40 @@
  */
 package org.apache.rat.configuration;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.apache.rat.license.ILicenseFamily;
 import org.junit.Test;
 
 public class ConfigurationReaderTest {
 
-    private static String[] FAMILIES = { "GEN  ", "AL   ", "ASL  ", "TMF  ", "DOJO ", "OASIS", "W3CD ", "W3C  ",
-            "GPL1 ", "GPL2 ", "GPL3 ", "MIT  ", "CDDL1", "ILLUM", "BSD-3" };
+    private static String[] EXPECTED_IDS = { "AL", "ASL", "BSD-3", "CDDL1", "DOJO", "GEN", "GPL1", "GPL2", "GPL3",
+            "MIT", "OASIS", "W3C", "W3CD" };
+    private static String[] EXPECTED_LICENSES = { "AL   ", "ASL  ", "BSD-3", "CDDL1", "DOJO ", "GEN  ", "GPL1 ",
+            "GPL2 ", "GPL3 ", "ILLUM", "MIT  ", "OASIS", "TMF  ", "W3C  ", "W3CD " };
 
     @Test
-    public void readDefault() {
+    public void approvedLicenseIdTest() {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URL url = XMLConfigurationReader.class.getResource("/org/apache/rat/default.xml");
+        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
-        List<String> familyCategories = Arrays.asList(FAMILIES);
-        List<String> readCategories = reader.readFamilies().stream().map(ILicenseFamily::getFamilyCategory)
-                .collect(Collectors.toList());
-        assertTrue(readCategories.containsAll(familyCategories));
-        readCategories.removeAll(familyCategories);
-        assertTrue(readCategories.isEmpty());
+
+        Collection<String> readCategories = reader.approvedLicenseId();
+        assertArrayEquals(EXPECTED_IDS, readCategories.toArray(new String[readCategories.size()]));
+    }
+
+    @Test
+    public void LicensesTest() {
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        reader.read(url);
+
+        Collection<String> readCategories = reader.readLicenses().stream()
+                .map(x -> x.getLicenseFamily().getFamilyCategory()).collect(Collectors.toList());
+        assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[readCategories.size()]));
     }
 
 }

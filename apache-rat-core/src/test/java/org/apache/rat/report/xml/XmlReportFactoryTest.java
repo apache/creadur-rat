@@ -15,11 +15,23 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.StringWriter;
+import java.util.regex.Pattern;
+
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.Defaults.Filter;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.SimpleLicenseFamily;
@@ -31,27 +43,14 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
-import java.io.File;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class XmlReportFactoryTest {
 
     private static final Pattern IGNORE_EMPTY = Pattern.compile(".svn|Empty.txt");
-    
+
     private StringWriter out;
     private IXmlWriter writer;
-    
+
     @Before
     public void setUp() throws Exception {
         out = new StringWriter();
@@ -62,19 +61,20 @@ public class XmlReportFactoryTest {
     private void report(DirectoryWalker directory, RatReport report) throws Exception {
         directory.run(report);
     }
-    
+
     @Test
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        
+
         final ILicense mockLicense = mock(ILicense.class);
-        when(mockLicense.matches(any())).thenReturn( true );
-        when(mockLicense.getLicenseFamily()).thenReturn( new SimpleLicenseFamily( "TEST", "Testing family"));
-        
+        when(mockLicense.matches(any())).thenReturn(true);
+        when(mockLicense.getLicenseFamily()).thenReturn(new SimpleLicenseFamily("TEST", "Testing family"));
+
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.addLicense(mockLicense);
+        configuration.setLicenseFilter(Filter.all);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
         report(directory, report);
@@ -82,13 +82,34 @@ public class XmlReportFactoryTest {
         writer.closeDocument();
         final String output = out.toString();
         assertTrue("Preamble and document element are OK",
-                   output.startsWith("<?xml version='1.0'?>" +
-                "<rat-report timestamp="));
-        
+                output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="));
+
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
-        assertEquals("Binary files", Integer.valueOf(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
-        assertEquals("Notice files", Integer.valueOf(2), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
-        assertEquals("Standard files", Integer.valueOf(6), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
-        assertEquals("Archives", Integer.valueOf(1), statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
+        assertEquals("Binary files", Integer.valueOf(2),
+                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
+        assertEquals("Notice files", Integer.valueOf(2),
+                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
+        assertEquals("Standard files", Integer.valueOf(6),
+                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
+        assertEquals("Archives", Integer.valueOf(1),
+                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
+    }
+
+    @Test
+    public void testNoLicense() throws Exception {
+        final ILicense mockLicense = mock(ILicense.class);
+        when(mockLicense.matches(any())).thenReturn(true);
+        when(mockLicense.getLicenseFamily()).thenReturn(new SimpleLicenseFamily("TEST", "Testing family"));
+
+        final ClaimStatistic statistic = new ClaimStatistic();
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.addLicense(mockLicense);
+        try {
+            XmlReportFactory.createStandardReport(writer, statistic, configuration);
+            fail("Should have thrown exception");
+        } catch (ConfigurationException e) {
+            // expected;
+        }
+
     }
 }

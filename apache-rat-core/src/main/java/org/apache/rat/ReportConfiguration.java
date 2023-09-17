@@ -27,19 +27,16 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.rat.Defaults.Filter;
 import org.apache.rat.Defaults.LicenseCollectionMatcher;
-import org.apache.rat.configuration.ILicenseFamilyProxy;
-import org.apache.rat.configuration.ILicenseProxy;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.policy.DefaultPolicy;
@@ -53,7 +50,8 @@ import org.apache.rat.report.IReportable;
 public class ReportConfiguration implements AutoCloseable {
     private static final Log logger = LogFactory.getLog(ReportConfiguration.class);
     private SortedSet<ILicense> licenses = new TreeSet<>(ILicense.getComparator());
-    private List<ILicenseFamily> approvedLicenseNames = new ArrayList<>();
+    private SortedSet<String> approvedLicenseId = new TreeSet<>();
+    private SortedSet<String> removedLicenseId = new TreeSet<>();
     private boolean addingLicenses;
     private boolean addingLicensesForced;
     private String copyrightMessage;
@@ -62,6 +60,7 @@ public class ReportConfiguration implements AutoCloseable {
     private InputStream styleSheet = null;
     private IReportable reportable = null;
     private FilenameFilter inputFileFilter = null;
+    private Filter approvalFilter = Filter.approved;
 
     /**
      * @return The filename filter for the potential input files.
@@ -113,10 +112,10 @@ public class ReportConfiguration implements AutoCloseable {
         }
         this.styleSheet = styleSheet;
     }
-    
+
     public void setFrom(Defaults defaults) {
-        addLicense(defaults.createDefaultMatcher());
-        addApprovedLicenseNames(defaults.getLicenseFamilies());
+        addLicenses(defaults.getLicenses());
+        addApprovedLicenseNames(defaults.getLicenseIds());
         if (isStyleReport() && getStyleSheet() == null) {
             setStyleSheet(Defaults.getPlainStyleSheet());
         }
@@ -178,13 +177,14 @@ public class ReportConfiguration implements AutoCloseable {
      * @return the license matcher, or null if no licenses are specified.
      */
     public ILicense getLicense() {
-        if (licenses.isEmpty()) {
-            return null;
+        SortedSet<ILicense> licSet = getLicenses();
+        if (licSet.isEmpty()) {
+            throw new ConfigurationException("At least one license must be specified");
         }
-        if (licenses.size() == 1) {
-            return licenses.first();
+        if (licSet.size() == 1) {
+            return licSet.first();
         }
-        return new LicenseCollectionMatcher(licenses);
+        return new LicenseCollectionMatcher(licSet);
     }
 
     /**
@@ -207,22 +207,22 @@ public class ReportConfiguration implements AutoCloseable {
         this.licenses.addAll(licenses);
     }
 
-    /**
-     *
-     * @return the set of approved license names.
-     */
-    public ILicenseFamily[] getApprovedLicenseNames() {
-        return approvedLicenseNames.toArray(new ILicenseFamily[approvedLicenseNames.size()]);
-    }
-
-    /**
-     * Adds to the set of approved license names.
-     *
-     * @param approvedLicenseNames set of approved license names.
-     */
-    public void addApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
-        addApprovedLicenseNames(Arrays.asList(approvedLicenseNames));
-    }
+//    /**
+//     *
+//     * @return the set of approved license names.
+//     */
+//    public ILicenseFamily[] getApprovedLicenseNames() {
+//        return a.toArray(new ILicenseFamily[approvedLicenseNames.size()]);
+//    }
+//
+//    /**
+//     * Adds to the set of approved license names.
+//     *
+//     * @param approvedLicenseNames set of approved license names.
+//     */
+//    public void addApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
+//        addApprovedLicenseNames(Arrays.asList(approvedLicenseNames));
+//    }
 
     /**
      * Adds a license to the list of approved license names.
@@ -230,12 +230,11 @@ public class ReportConfiguration implements AutoCloseable {
      * @param approvedLicenseNames set of approved license names.
      */
     public void addApprovedLicenseName(ILicenseFamily approvedLicenseName) {
-        approvedLicenseNames.add(approvedLicenseName);
+        approvedLicenseId.add(approvedLicenseName.getFamilyCategory());
     }
 
     public void addApprovedLicenseName(String familyCategory) {
-        ILicense licenseProxy = ILicenseProxy.create(familyCategory, licenses);
-        addApprovedLicenseName(ILicenseFamilyProxy.create(licenseProxy));
+        approvedLicenseId.add(familyCategory);
     }
 
     /**
@@ -243,8 +242,12 @@ public class ReportConfiguration implements AutoCloseable {
      *
      * @param approvedLicenseNames set of approved license names.
      */
-    public void addApprovedLicenseNames(Collection<ILicenseFamily> approvedLicenseNames) {
-        this.approvedLicenseNames.addAll(approvedLicenseNames);
+    public void addApprovedLicenseNames(Collection<String> approvedLicenseNames) {
+        approvedLicenseNames.stream().forEach(this::addApprovedLicenseName);
+    }
+
+    public void removeApprovedLicenseName(String familyCategory) {
+        removedLicenseId.add(ILicenseFamily.makeCategory(familyCategory));
     }
 
     /**
@@ -308,6 +311,80 @@ public class ReportConfiguration implements AutoCloseable {
     }
 
     /**
+     * Returns the set of defined licenses unless filter is set to no-defaults. if
+     * no-defaults was set then an empty set is returned.
+     * 
+     * @return The set of defined licenses.
+     */
+    public SortedSet<ILicense> getLicenses() {
+
+//              This code addes derived licenses to the approved families if they are derived from appoved licenses.        
+//            Stack<ILicense> stack = new Stack<>();
+//            for (ILicense license : licenses) {
+//                ILicense derivedFrom = license.derivedFrom();
+//                if (derivedFrom != null) {
+//                    stack.push(license);
+//                    while (derivedFrom != null) {
+//                        stack.push(derivedFrom);
+//                        derivedFrom = derivedFrom.derivedFrom();
+//                    }
+//                }
+//                while (!stack.isEmpty()) {
+//                    derivedFrom = stack.pop();
+//                    boolean found = approvedLicenseId.contains(derivedFrom.getLicenseFamily().getFamilyCategory());
+//                    if (found) {
+//                        while (!stack.isEmpty()) {
+//                            approvedLicenseId.add(stack.pop().getLicenseFamily().getFamilyCategory());
+//                        }
+//                    }
+//                }
+//                
+//            }
+
+        switch (approvalFilter) {
+        case all:
+            return Collections.unmodifiableSortedSet(licenses);
+        case approved:
+            SortedSet<String> approvedLicenses = getFilteredLicenses();
+            SortedSet<ILicense> result = new TreeSet<>(ILicense.getComparator());
+            licenses.stream().filter(x -> approvedLicenses.contains(x.getLicenseFamily().getFamilyCategory()))
+                    .forEach(result::add);
+            return result;
+        case none:
+        default:
+            return Collections.emptySortedSet();
+        }
+    }
+
+    public SortedSet<ILicenseFamily> getApprovedLicenses() {
+        SortedSet<String> approvedLicenses = getFilteredLicenses();
+        SortedSet<ILicenseFamily> result = new TreeSet<>();
+        licenses.stream().filter(x -> approvedLicenses.contains(x.getLicenseFamily().getFamilyCategory()))
+                .forEach(x -> result.add(x.getLicenseFamily()));
+        return result;
+    }
+
+    private SortedSet<String> getFilteredLicenses() {
+        SortedSet<String> result = new TreeSet<>(approvedLicenseId);
+        result.removeAll(removedLicenseId);
+        return result;
+    }
+
+    /**
+     * Set which files will be listed as approved.
+     * 
+     * @param filter the fileter type.
+     * @return this Builder for chaining
+     */
+    public void setLicenseFilter(Filter filter) {
+        approvalFilter = filter;
+    }
+
+    public ILicense createDefaultMatcher() {
+        return getLicenses().isEmpty() ? null : new LicenseCollectionMatcher(getLicenses());
+    }
+
+    /**
      * Validates that the configuration is valid.
      * 
      * @param logger the system to write warnings to.
@@ -328,7 +405,7 @@ public class ReportConfiguration implements AutoCloseable {
     }
 
     public DefaultPolicy getDefaultPolicy() {
-        return new DefaultPolicy(getApprovedLicenseNames());
+        return new DefaultPolicy(getApprovedLicenses());
     }
 
     @Override

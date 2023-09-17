@@ -54,6 +54,7 @@ public class AndMatcher extends AbstractMatcherContainer {
                 flags[i] = iter.next().matches(line);
                 result &= flags[i];
             }
+            i++;
         }
         return result;
     }

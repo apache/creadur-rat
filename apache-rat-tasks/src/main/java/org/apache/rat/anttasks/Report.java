@@ -25,6 +25,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.rat.ConfigurationException;
@@ -64,7 +66,6 @@ public class Report extends Task {
 
     private Defaults.Builder defaultsBuilder;
     private final ReportConfiguration configuration;
-
     /**
      * will hold any nested resource collection
      */
@@ -118,7 +119,7 @@ public class Report extends Task {
             LicenseReader reader = Readers.get(fileName);
             reader.add(fileName.toURI().toURL());
             configuration.addLicenses(reader.readLicenses());
-            configuration.addApprovedLicenseNames(reader.approvedLicenseFamilies());
+            configuration.addApprovedLicenseNames(reader.approvedLicenseId());
         } catch (MalformedURLException e) {
             throw new BuildException("Can not read license file " + fileName, e);
         }
@@ -134,8 +135,16 @@ public class Report extends Task {
         }
     }
     
-    public void addApprovedLicense(String familyCategory) {
+    public void setApprovalFilter(ApprovalFilter filter) {
+        configuration.setLicenseFilter(filter.internalFilter());
+    }
+    
+    public void setAddApprovedLicense(String familyCategory) {
         configuration.addApprovedLicenseName(familyCategory);
+    }
+    
+    public void setRemoveApprovedLicense(String familyCategory) {
+        configuration.removeApprovedLicenseName(familyCategory);
     }
 
     public void setCopyrightMessage(String copyrightMessage) {
@@ -143,16 +152,16 @@ public class Report extends Task {
     }
 
     public void setAddLicenseHeaders(AddLicenseHeaders setting) {
-        if (setting.containsValue(AddLicenseHeaders.FALSE)) {
+        if (setting.getValue().equals(AddLicenseHeaders.FALSE)) {
             configuration.setAddingLicenses(false);
             configuration.setAddingLicensesForced(false);
         } else {
             configuration.setAddingLicenses(true);
-            configuration.setAddingLicensesForced(setting.containsValue(AddLicenseHeaders.FORCED));
+            configuration.setAddingLicensesForced(setting.getValue().equals(AddLicenseHeaders.FORCED));
         }
     }
 
-    public void setAddDefaultDefinitions(String fileName) {
+    public void setAddDefaultDefinitions(File fileName) {
         try {
             defaultsBuilder.add(fileName);
         } catch (MalformedURLException e) {
@@ -193,31 +202,6 @@ public class Report extends Task {
             throw new BuildException("You must specify at least one file to" + " create the report for.");
         }
         configuration.setReportable(new ResourceCollectionContainer(nestedResources));
-    }
-
-    /**
-     * Type for the format attribute.
-     */
-    public static class Format extends EnumeratedAttribute {
-        static final String XML_KEY = "xml";
-        static final String STYLED_KEY = "styled";
-        static final String PLAIN_KEY = "plain";
-
-        static final Format PLAIN = new Format(PLAIN_KEY);
-
-        public Format() {
-            super();
-        }
-
-        private Format(String s) {
-            this();
-            setValue(s);
-        }
-
-        @Override
-        public String[] getValues() {
-            return new String[] { XML_KEY, STYLED_KEY, PLAIN_KEY };
-        }
     }
 
     /**

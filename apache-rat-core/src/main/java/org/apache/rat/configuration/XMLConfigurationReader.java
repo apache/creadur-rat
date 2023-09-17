@@ -111,8 +111,7 @@ public class XMLConfigurationReader implements LicenseReader {
 
     private final SortedSet<ILicense> licenses;
     private final Map<String, IHeaderMatcher> matchers;
-    private final SortedSet<ILicenseFamily> licenseFamilies;
-    private final SortedSet<ILicenseFamily> approvedFamilies;
+    private final SortedSet<String> licenseFamilies;
 
     public XMLConfigurationReader() {
         try {
@@ -127,7 +126,6 @@ public class XMLConfigurationReader implements LicenseReader {
         approvedElement = document.createElement(APPROVED);
         rootElement.appendChild(approvedElement);
         licenses = new TreeSet<>((x, y) -> x.getLicenseFamily().compareTo(y.getLicenseFamily()));
-        approvedFamilies = new TreeSet<>();
         licenseFamilies = new TreeSet<>();
         matchers = new HashMap<>();
     }
@@ -191,15 +189,7 @@ public class XMLConfigurationReader implements LicenseReader {
 
     }
 
-    @Override
-    public SortedSet<ILicenseFamily> readFamilies() {
-        if (licenses.size() == 0) {
-            readLicenses();
-        }
-        return Collections.unmodifiableSortedSet(licenseFamilies);
-    }
-
-    Map<AttributeName, String> attributes(Node node) {
+    private Map<AttributeName, String> attributes(Node node) {
         NamedNodeMap nnm = node.getAttributes();
         Map<AttributeName, String> result = new HashMap<>();
         for (int i = 0; i < nnm.getLength(); i++) {
@@ -320,8 +310,7 @@ public class XMLConfigurationReader implements LicenseReader {
                 }
             }
         });
-        ILicense derivedFrom = !attributes.containsKey(AttributeName.derived_from) ? null
-                : ILicenseProxy.create(attributes.get(AttributeName.derived_from), licenses);
+        String derivedFrom = StringUtils.defaultIfBlank(attributes.get(AttributeName.derived_from),null);
         String notes = StringUtils.defaultIfBlank(notesBuilder.toString().trim(), null);
         return new SimpleLicense(family, matcher[0], derivedFrom, notes);
     }
@@ -330,45 +319,30 @@ public class XMLConfigurationReader implements LicenseReader {
     public SortedSet<ILicense> readLicenses() {
         if (licenses.size() == 0) {
             nodeListConsumer(document.getElementsByTagName(LICENSE), x -> licenses.add(parseLicense(x)));
-            licenses.stream().map(ILicense::getLicenseFamily).forEach(licenseFamilies::add);
-            nodeListConsumer(document.getElementsByTagName(FAMILY), x -> approvedFamilies.add(parseFamily(x)));
-            Stack<ILicense> stack = new Stack<>();
-            for (ILicense license : licenses) {
-                ILicense derivedFrom = license.derivedFrom();
-                if (derivedFrom != null) {
-                    stack.push(license);
-                    while (derivedFrom != null) {
-                        stack.push(derivedFrom);
-                        derivedFrom = derivedFrom.derivedFrom();
-                    }
-                }
-                while (!stack.isEmpty()) {
-                    derivedFrom = stack.pop();
-                    ILicenseFamily found = ILicenseFamily.search(derivedFrom.getLicenseFamily(), approvedFamilies);
-                    if (found != null) {
-                        while (!stack.isEmpty()) {
-                            approvedFamilies.add(stack.pop().getLicenseFamily());
-                        }
-                    }
-                }
-
-            }
+            nodeListConsumer(document.getElementsByTagName(FAMILY), x -> licenseFamilies.add(parseFamily(x)));
             document = null;
         }
         return Collections.unmodifiableSortedSet(licenses);
     }
 
-    private ILicenseFamily parseFamily(Node familyNode) {
+    private String parseFamily(Node familyNode) {
         Map<AttributeName, String> attributes = attributes(familyNode);
         if (attributes.containsKey(AttributeName.license_ref)) {
-            return ILicenseFamilyProxy
-                    .create(ILicenseProxy.create(attributes.get(AttributeName.license_ref), licenses));
+            return attributes.get(AttributeName.license_ref);
         }
         throw new ConfigurationException("family tag requires " + AttributeName.license_ref + " attribute");
     }
 
     @Override
-    public SortedSet<ILicenseFamily> approvedLicenseFamilies() {
-        return approvedFamilies.isEmpty() ? readFamilies() : approvedFamilies;
+    public SortedSet<String> approvedLicenseId() {
+        if (licenses.isEmpty()) {
+            this.readLicenses();
+        }
+        if (licenseFamilies.isEmpty()) {
+            SortedSet<String> result = new TreeSet<>();
+            licenses.stream().map( x -> x.getLicenseFamily().getFamilyCategory()).forEach(result::add);
+            return result;
+        }
+        return Collections.unmodifiableSortedSet(licenseFamilies);
     }
 }

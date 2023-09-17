@@ -26,7 +26,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     ILicenseFamily getLicenseFamily();
     String getNotes();
-    ILicense derivedFrom();
+    String derivedFrom();
     
     /**
      * Search a set
@@ -69,7 +69,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
             }
     
             @Override
-            public ILicense derivedFrom() {
+            public String derivedFrom() {
                 return null;
             }
             
