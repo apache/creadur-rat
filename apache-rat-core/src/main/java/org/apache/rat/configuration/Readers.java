@@ -20,6 +20,7 @@ package org.apache.rat.configuration;
 
 import java.util.Map;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -85,15 +86,21 @@ public class Readers {
      * license.id.spdx=
      */
 
-    private static Map<Format,LicenseReader> readers;
+    private static Map<Format,Class<? extends LicenseReader>> readers;
 
     static {
         readers = new HashMap<>();
-        readers.put( Format.XML, new XMLConfigurationReader());
+        readers.put( Format.XML, XMLConfigurationReader.class);
     }
 
     public static LicenseReader get(URL fileName) {
-        return readers.get(Format.fromName(fileName.getFile()));
+        Format fmt = Format.fromName(fileName.getFile());
+        try {
+            return readers.get(fmt).getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
+            throw new IllegalStateException( "Can not construct reader for "+fmt, e);
+        }
     }
     
     private Readers() {

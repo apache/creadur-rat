@@ -45,12 +45,12 @@ public interface LicenseReader {
      * 
      * @return A collection of Base licenses.
      */
-    Collection<ILicense> readLicenses();
+    SortedSet<ILicense> readLicenses();
 
     /**
      * Reads the configuration and extracts the list of approved licenses.
      * 
      * @return The list of approved licenses.
      */
-    Collection<ILicenseFamily> approvedLicenseFamilies();
+    SortedSet<ILicenseFamily> approvedLicenseFamilies();
 }

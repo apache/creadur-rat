@@ -31,7 +31,7 @@
       resource="org/apache/rat/anttasks/antlib.xml"
       classpath="${test.classpath}"/>
 
-  <property name="output.dir" location="target/anttasks"/>
+  <property name="output.dir" location="${basedir}/../../../../target/anttasks"/>
   <pathconvert dirsep="/" property="file.name">
     <path>
       <pathelement location="${ant.file}"/>
@@ -62,16 +62,9 @@
   </target>
 
   <target name="testCustomMatcher">
-    <mkdir dir="${output.dir}/dest"/>
-    <mkdir dir="${output.dir}/src/org/example"/>
-    <typedef name="exmpl" classname="org.example.Matcher"
-        classpath="${test.classpath}"/>
-    <typedef name="exmpl-license" classname="org.example.LicenseFamily"
-        classpath="${test.classpath}"/>
-    <rat:report>
+    <property name="license.file" location="customMatcher.xml"/>
+    <rat:report licenses="${license.file}" useDefaultLicenses="false">
       <file file="${ant.file}"/>
-      <exmpl/>
-      <exmpl-license/>
     </rat:report>
   </target>
 

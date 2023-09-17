@@ -45,7 +45,7 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
 
     @Override
     public boolean matches(String line) {
-        return line != null && pattern.matcher(line).matches();
+        return line != null && pattern.matcher(line).find();
     }
 
     @Override

@@ -18,32 +18,41 @@
  */
 package org.apache.rat;
 
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.rat.Defaults.LicenseCollectionMatcher;
+import org.apache.rat.configuration.ILicenseFamilyProxy;
+import org.apache.rat.configuration.ILicenseProxy;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.IReportable;
 
 /**
- * A configuration object is used by the front end to invoke the {@link Reporter}.
- * Basically, the sole purpose of the front ends is to create the configuration
- * and invoke the {@link Reporter}.
+ * A configuration object is used by the front end to invoke the
+ * {@link Reporter}. Basically, the sole purpose of the front ends is to create
+ * the configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration implements AutoCloseable {
-    private List<ILicense> licenses = new ArrayList<>();
+    private static final Log logger = LogFactory.getLog(ReportConfiguration.class);
+    private SortedSet<ILicense> licenses = new TreeSet<>(ILicense.getComparator());
     private List<ILicenseFamily> approvedLicenseNames = new ArrayList<>();
     private boolean addingLicenses;
     private boolean addingLicensesForced;
@@ -62,7 +71,8 @@ public class ReportConfiguration implements AutoCloseable {
     }
 
     /**
-     * @param inputFileFilter the filter to filter the on disk files being evaluated.
+     * @param inputFileFilter the filter to filter the on disk files being
+     * evaluated.
      */
     public void setInputFileFilter(FilenameFilter inputFileFilter) {
         this.inputFileFilter = inputFileFilter;
@@ -83,7 +93,7 @@ public class ReportConfiguration implements AutoCloseable {
     }
 
     /**
-     * @return the XSLT style sheet to style the report with. 
+     * @return the XSLT style sheet to style the report with.
      */
     public InputStream getStyleSheet() {
         return styleSheet;
@@ -91,10 +101,35 @@ public class ReportConfiguration implements AutoCloseable {
 
     /**
      * 
-     * @param styleSheet the XSLT style sheet to style the report with. 
+     * @param styleSheet the XSLT style sheet to style the report with.
      */
     public void setStyleSheet(InputStream styleSheet) {
+        if (this.styleSheet != null) {
+            try {
+                this.styleSheet.close();
+            } catch (IOException e) {
+                logger.warn("Error closing earlier style sheet", e);
+            }
+        }
         this.styleSheet = styleSheet;
+    }
+    
+    public void setFrom(Defaults defaults) {
+        addLicense(defaults.createDefaultMatcher());
+        addApprovedLicenseNames(defaults.getLicenseFamilies());
+        if (isStyleReport() && getStyleSheet() == null) {
+            setStyleSheet(Defaults.getPlainStyleSheet());
+        }
+    }
+
+    /**
+     * 
+     * @param styleSheet the XSLT style sheet to style the report with.
+     * @throws IOException
+     * @throws MalformedURLException
+     */
+    public void setStyleSheet(File styleSheet) throws MalformedURLException, IOException {
+        setStyleSheet(styleSheet.toURI().toURL().openStream());
     }
 
     /**
@@ -137,7 +172,6 @@ public class ReportConfiguration implements AutoCloseable {
         return new PrintWriter(new OutputStreamWriter(getOutput(), Charset.forName("UTF-8")));
     }
 
-
     /**
      * Returns the license that is the combination of all licenses being tested.
      *
@@ -148,7 +182,7 @@ public class ReportConfiguration implements AutoCloseable {
             return null;
         }
         if (licenses.size() == 1) {
-            return licenses.get(0);
+            return licenses.first();
         }
         return new LicenseCollectionMatcher(licenses);
     }
@@ -159,7 +193,9 @@ public class ReportConfiguration implements AutoCloseable {
      * @param license The license t oadd.
      */
     public void addLicense(ILicense license) {
-        this.licenses.add(license);
+        if (license != null) {
+            this.licenses.add(license);
+        }
     }
 
     /**
@@ -170,6 +206,7 @@ public class ReportConfiguration implements AutoCloseable {
     public void addLicenses(Collection<ILicense> licenses) {
         this.licenses.addAll(licenses);
     }
+
     /**
      *
      * @return the set of approved license names.
@@ -194,6 +231,11 @@ public class ReportConfiguration implements AutoCloseable {
      */
     public void addApprovedLicenseName(ILicenseFamily approvedLicenseName) {
         approvedLicenseNames.add(approvedLicenseName);
+    }
+
+    public void addApprovedLicenseName(String familyCategory) {
+        ILicense licenseProxy = ILicenseProxy.create(familyCategory, licenses);
+        addApprovedLicenseName(ILicenseFamilyProxy.create(licenseProxy));
     }
 
     /**
@@ -267,6 +309,7 @@ public class ReportConfiguration implements AutoCloseable {
 
     /**
      * Validates that the configuration is valid.
+     * 
      * @param logger the system to write warnings to.
      */
     public void validate(Consumer<String> logger) {
@@ -274,13 +317,16 @@ public class ReportConfiguration implements AutoCloseable {
             throw new ConfigurationException("Reportable may not be null");
         }
         if (licenses.size() == 0) {
-            throw new ConfigurationException("You must specify at least one license" + " matcher");
+            throw new ConfigurationException("You must specify at least one license");
         }
         if (styleSheet != null && !isStyleReport()) {
-            logger.accept("Ignoring stylesheet '%s' because styling is not selected");
+            logger.accept("Ignoring stylesheet because styling is not selected");
+        }
+        if (styleSheet == null && isStyleReport()) {
+            throw new ConfigurationException("Stylesheet must be specified if report styling is selected");
         }
     }
-    
+
     public DefaultPolicy getDefaultPolicy() {
         return new DefaultPolicy(getApprovedLicenseNames());
     }

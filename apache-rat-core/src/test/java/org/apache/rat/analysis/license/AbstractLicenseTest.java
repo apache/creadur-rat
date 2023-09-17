@@ -49,21 +49,23 @@ import org.junit.Test;
 abstract public class AbstractLicenseTest {
     private static int NAME = 0;
     private static int TEXT = 1;
+    private static Defaults DEFAULTS;
     protected MetaData data;
 
     private final String category;
     private final String name;
     private final String notes;
     private final String[][] targets;
+    
 
     @BeforeClass
     public static void init() {
-        Defaults.builder().build();
+        DEFAULTS = Defaults.builder().build();
     }
 
     @AfterClass
     public static void shutdown() {
-        Defaults.clear();
+        DEFAULTS.clear();
     }
 
     protected AbstractLicenseTest(String cat, String name, String notes, String[][] targets) {
@@ -81,7 +83,7 @@ abstract public class AbstractLicenseTest {
     protected static ILicense extractCategory(String category) {
         ILicenseFamily testingFamily = new SimpleLicenseFamily(category, "Testing category");
         List<ILicense> matchers = new ArrayList<>();
-        Defaults.getLicenses().stream().filter(x -> x.getLicenseFamily().compareTo(testingFamily) == 0)
+        DEFAULTS.getLicenses().stream().filter(x -> x.getLicenseFamily().compareTo(testingFamily) == 0)
                 .forEach(matchers::add);
         if (matchers.isEmpty()) {
             fail("No machers for category: " + category);

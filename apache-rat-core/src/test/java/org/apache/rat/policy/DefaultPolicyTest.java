@@ -41,8 +41,8 @@ public class DefaultPolicyTest {
 
     @Before
     public void setUp() throws Exception {
-        Defaults.builder().build();
-        policy = new DefaultPolicy(Defaults.getLicenseFamilies());
+        Defaults defaults = Defaults.builder().build();
+        policy = new DefaultPolicy(defaults.getLicenseFamilies());
         subject = new MockLocation("subject");
     }
 

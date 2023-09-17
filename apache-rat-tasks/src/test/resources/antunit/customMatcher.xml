@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rat-config>
+	<licenses>
+		<!--
+	<license id=id name=name>
+		<note></note>
+	    <text>  </text>
+		<copyright start='' end='' owner=''/>
+		<spdx name=''/> 
+		<and> <license>...</and>
+		<or> <license>...</or> 
+		<matcher_ref refid='matcherid' />
+		<regex exp='' />
+	</license>
+-->
+		<license id="EXAMPLE" name="Example License">
+			<regex exp='.' />
+		</license>
+
+	</licenses>
+</rat-config>

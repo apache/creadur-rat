@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.cli.CommandLine;
@@ -46,6 +47,8 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.license.BaseLicense;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
@@ -97,6 +100,11 @@ public class Report {
      * List the approved families for the run.
      */
     private static final String LIST_LICENSE_FAMILIES = "list-approved-families";
+    
+    /**
+     * Set unstyled XML output
+     */
+    private static final String XML="x";
     
     /*
      * Format used for listing license families
@@ -153,30 +161,21 @@ public class Report {
                     }
                 }
 
-                Defaults.Builder defaults = Defaults.builder();
+                Defaults.Builder defaultBuilder = Defaults.builder();
                 if (cl.hasOption(NO_DEFAULTS)) {
-                    defaults.setApprovalFilter(Defaults.Filter.none);
+                    defaultBuilder.setApprovalFilter(Defaults.Filter.none);
                 } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
-                    defaults.setApprovalFilter(Defaults.Filter.all);
+                    defaultBuilder.setApprovalFilter(Defaults.Filter.all);
                 } else {
-                    defaults.setApprovalFilter(Defaults.Filter.approved);
+                    defaultBuilder.setApprovalFilter(Defaults.Filter.approved);
                 }
                 if (cl.hasOption(LICENSES)) {
                     for (String fn : cl.getOptionValues(LICENSES)) {
-                        defaults.add(fn);
+                        defaultBuilder.add(fn);
                     }
                 }
-                defaults.build();
-                configuration.addLicense(Defaults.createDefaultMatcher());
-                configuration.addApprovedLicenseNames(Defaults.getLicenseFamilies());
-                if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
-                    listLicenseFamilies(System.out);
-                }
-                if (cl.hasOption(LIST_LICENSES)) {
-                    listLicenses(System.out);
-                }
 
-                if (cl.hasOption('x')) {
+                if (cl.hasOption(XML)) {
                     configuration.setStyleReport(false);
                 } else {
                     configuration.setStyleReport(true);
@@ -194,29 +193,38 @@ public class Report {
                         }
                     }
                 }
+                Defaults defaults = defaultBuilder.build();
+                configuration.setFrom(defaults);;
                 configuration.setReportable(getDirectory(args[0], configuration));
                 configuration.validate(s -> System.err.println(s));
+                
+                if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
+                    listLicenseFamilies(defaults.getLicenseFamilies(), System.out);
+                }
+                if (cl.hasOption(LIST_LICENSES)) {
+                    listLicenses(defaults.getLicenses(), System.out);
+                }
+                
                 Reporter.report(configuration);
             }
         }
     }
 
-    private static void listLicenseFamilies(PrintStream out) {
+    private static void listLicenseFamilies(SortedSet<ILicenseFamily> families, PrintStream out) {
         out.println("Families:");
-        Defaults.getLicenseFamilies()
-                .forEach(x -> out.format(LICENSE_FAMILY_FORMAT, x.getFamilyCategory(), x.getFamilyName()));
+        families.forEach(x -> out.format(LICENSE_FAMILY_FORMAT, x.getFamilyCategory(), x.getFamilyName()));
         out.println();
     }
 
-    private static void listLicenses(PrintStream out) {
+    private static void listLicenses(SortedSet<ILicense> licenses, PrintStream out) {
         out.println("Licenses:");
-        Defaults.getLicenses().stream().filter(lic -> lic instanceof BaseLicense).map(BaseLicense.class::cast)
+        licenses.stream().filter(lic -> lic instanceof BaseLicense).map(BaseLicense.class::cast)
                 .forEach(lic -> out.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
                         lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
         out.println();
     }
 
-    static FilenameFilter parseExclusions(List<String> excludes) throws IOException {
+    static FilenameFilter parseExclusions(List<String> excludes) {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
         for (String exclude : excludes) {
@@ -296,7 +304,7 @@ public class Report {
 
         OptionGroup outputType = new OptionGroup();
 
-        Option xml = new Option("x", "xml", false, "Output the report in raw XML format.  Not compatible with -s");
+        Option xml = new Option(XML, "xml", false, "Output the report in raw XML format.  Not compatible with -s");
         outputType.addOption(xml);
 
         Option xslt = new Option(STYLESHEET_CLI, "stylesheet", true,
