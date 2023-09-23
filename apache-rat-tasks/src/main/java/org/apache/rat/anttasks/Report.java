@@ -152,13 +152,7 @@ public class Report extends Task {
     }
 
     public void setAddLicenseHeaders(AddLicenseHeaders setting) {
-        if (setting.getValue().equals(AddLicenseHeaders.FALSE)) {
-            configuration.setAddingLicenses(false);
-            configuration.setAddingLicensesForced(false);
-        } else {
-            configuration.setAddingLicenses(true);
-            configuration.setAddingLicensesForced(setting.getValue().equals(AddLicenseHeaders.FORCED));
-        }
+        configuration.setAddLicenseHeaders(setting.getNative());
     }
 
     public void setAddDefaultDefinitions(File fileName) {
@@ -222,6 +216,10 @@ public class Report extends Task {
         @Override
         public String[] getValues() {
             return new String[] { TRUE, FALSE, FORCED };
+        }
+        
+        public org.apache.rat.config.AddLicenseHeaders getNative() {
+            return org.apache.rat.config.AddLicenseHeaders.valueOf(getValue().toUpperCase());
         }
     }
 

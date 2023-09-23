@@ -199,7 +199,7 @@ public class XMLConfigurationReader implements LicenseReader {
         return result;
     }
 
-    private IHeaderMatcher createTextMatcher(String id, String txt) {
+    public static IHeaderMatcher createTextMatcher(String id, String txt) {
         boolean complex = txt.contains(" ") | txt.contains("\\t") | txt.contains("\\n") | txt.contains("\\r")
                 | txt.contains("\\f") | txt.contains("\\v");
         return complex ? new FullTextMatcher(id, txt) : new SimpleTextMatcher(id, txt);

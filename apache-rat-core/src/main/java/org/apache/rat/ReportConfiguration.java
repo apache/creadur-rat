@@ -37,6 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rat.Defaults.Filter;
 import org.apache.rat.Defaults.LicenseCollectionMatcher;
+import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.policy.DefaultPolicy;
@@ -280,17 +281,6 @@ public class ReportConfiguration implements AutoCloseable {
     }
 
     /**
-     * If Rat is adding license headers: Sets, whether adding license headers is
-     * enforced. This value is ignored, if no license headers are added.
-     *
-     * @param addingLicensesForced enable/disable forcibly adding licenses.
-     * @see #isAddingLicenses()
-     */
-    public void setAddingLicensesForced(boolean addingLicensesForced) {
-        this.addingLicensesForced = addingLicensesForced;
-    }
-
-    /**
      * @return Returns, whether Rat should add missing license headers.
      * @see #isAddingLicensesForced()
      * @see #getCopyrightMessage()
@@ -306,41 +296,34 @@ public class ReportConfiguration implements AutoCloseable {
      * @see #setAddingLicensesForced(boolean)
      * @see #setCopyrightMessage(String)
      */
-    public void setAddingLicenses(boolean addingLicenses) {
-        this.addingLicenses = addingLicenses;
+    public void setAddLicenseHeaders(AddLicenseHeaders addLicenseHeaders) {
+        addingLicenses = false;
+        addingLicensesForced = false;
+        switch (addLicenseHeaders) {
+        case FALSE:
+            // do nothing
+            break;
+        case FORCED:
+            addingLicensesForced = true;
+            // fall thorugh
+        case TRUE:
+            addingLicenses = true;
+            break;
+        }
     }
 
     /**
-     * Returns the set of defined licenses unless filter is set to no-defaults. if
-     * no-defaults was set then an empty set is returned.
+     * Returns a set Licenses of depending on the approvalFilter setting.
+     * if approvalFilter is set:
+     * <ul>
+     * <li>{@code all} - All licenses will be returned.</li>
+     * <li>{@code approved} - (default) All approved licenses will be returned</li>
+     * <li>{@code none} - No licenses will be returned</li>
+     * </ul>
      * 
      * @return The set of defined licenses.
      */
     public SortedSet<ILicense> getLicenses() {
-
-//              This code addes derived licenses to the approved families if they are derived from appoved licenses.        
-//            Stack<ILicense> stack = new Stack<>();
-//            for (ILicense license : licenses) {
-//                ILicense derivedFrom = license.derivedFrom();
-//                if (derivedFrom != null) {
-//                    stack.push(license);
-//                    while (derivedFrom != null) {
-//                        stack.push(derivedFrom);
-//                        derivedFrom = derivedFrom.derivedFrom();
-//                    }
-//                }
-//                while (!stack.isEmpty()) {
-//                    derivedFrom = stack.pop();
-//                    boolean found = approvedLicenseId.contains(derivedFrom.getLicenseFamily().getFamilyCategory());
-//                    if (found) {
-//                        while (!stack.isEmpty()) {
-//                            approvedLicenseId.add(stack.pop().getLicenseFamily().getFamilyCategory());
-//                        }
-//                    }
-//                }
-//                
-//            }
-
         switch (approvalFilter) {
         case all:
             return Collections.unmodifiableSortedSet(licenses);

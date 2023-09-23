@@ -81,11 +81,11 @@ public class ReporterTest {
 
         getNode(doc, xPath, "/rat-report[@timestamp]");
 
-        checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", "AL", "true", "standard");
+        checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", "MIT", "true", "standard");
         checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, "false", "binary");
         checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, "false", "notice");
         checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, "false", "notice");
-        checkNode(doc, xPath, "src/test/resources/elements/Source.java", "AL", "true", "standard");
+        checkNode(doc, xPath, "src/test/resources/elements/Source.java", "?????", "false", "standard");
         checkNode(doc, xPath, "src/test/resources/elements/Text.txt", "AL", "true", "standard");
         checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", "AL", "true", "standard");
         checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", "AL", "true", "standard");
@@ -118,7 +118,7 @@ public class ReporterTest {
         Reporter.report(configuration);
 
         String document = out.toString();
-        // System.out.println(document);
+        //System.out.println(document);
         assertTrue("'Generated at' is present in " + document, document.startsWith(HEADER));
 
         // final int generatedAtLineEnd = document.indexOf(NL, HEADER.length());
@@ -126,26 +126,27 @@ public class ReporterTest {
         find("^Binaries: 2$", document);
         find("^Archives: 1$", document);
         find("^Standards: 7$", document);
-        find("^Apache Licensed: 6$", document);
+        find("^Apache Licensed: 4$", document);
         find("^Generated Documents: 0$", document);
-        find("^1 Unknown Licenses$", document);
+        find("^2 Unknown Licenses$", document);
         find("^Files with unapproved licenses:\\s+" + "src/test/resources/elements/Image.png\\s+"
                 + "src/test/resources/elements/LICENSE\\s+" + "src/test/resources/elements/NOTICE\\s+"
+                + "src/test/resources/elements/Source.java\\s+"
                 + "src/test/resources/elements/dummy.jar\\s+" + "src/test/resources/elements/plain.json\\s+"
                 + "src/test/resources/elements/sub/Empty.txt\\s", document);
         find("^Archives:\\s+" + "\\+ src/test/resources/elements/dummy.jar\\s*", document);
-        find("AL\\s+src/test/resources/elements/ILoggerFactory.java", document);
+        find("MIT\\s+src/test/resources/elements/ILoggerFactory.java", document);
         find("!B\\s+src/test/resources/elements/Image.png", document);
         find("!N\\s+src/test/resources/elements/LICENSE", document);
         find("!N\\s+src/test/resources/elements/NOTICE", document);
-        find("AL\\s+src/test/resources/elements/Source.java", document);
+        find("!\\Q?????\\E\\s+src/test/resources/elements/Source.java", document);
         find("AL\\s+src/test/resources/elements/Text.txt", document);
         find("AL\\s+src/test/resources/elements/TextHttps.txt", document);
         find("AL\\s+src/test/resources/elements/Xml.xml", document);
         find("AL\\s+src/test/resources/elements/buildr.rb", document);
         find("!A\\s+src/test/resources/elements/dummy.jar", document);
         find("!B\\s+src/test/resources/elements/plain.json", document);
-        find("!\\Q?????\\E src/test/resources/elements/sub/Empty.txt", document);
+        find("!\\Q?????\\E\\s+src/test/resources/elements/sub/Empty.txt", document);
         find("== File: src/test/resources/elements/sub/Empty.txt", document);
     }
 

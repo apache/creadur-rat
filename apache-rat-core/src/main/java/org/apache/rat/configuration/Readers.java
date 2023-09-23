@@ -93,10 +93,12 @@ public class Readers {
         readers.put( Format.XML, XMLConfigurationReader.class);
     }
 
-    public static LicenseReader get(URL fileName) {
-        Format fmt = Format.fromName(fileName.getFile());
+    public static LicenseReader get(URL url) {
+        Format fmt = getFormat(url);
         try {
-            return readers.get(fmt).getDeclaredConstructor().newInstance();
+            LicenseReader result = readers.get(fmt).getDeclaredConstructor().newInstance();
+            result.add(url);
+            return result;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
             throw new IllegalStateException( "Can not construct reader for "+fmt, e);
@@ -113,5 +115,17 @@ public class Readers {
     
     public static LicenseReader get(String fileName) throws MalformedURLException {
         return get(new File(fileName));
+    }
+    
+    public static Format getFormat(URL file) {
+        return Format.fromName(file.getFile());
+    }
+    
+    public static Format getFormat(File file) throws MalformedURLException {
+        return getFormat(file.toURI().toURL());
+    }
+    
+    public static Format getFormat(String fileName) throws MalformedURLException {
+        return getFormat(new File(fileName));
     }
 }

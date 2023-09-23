@@ -31,13 +31,11 @@
         <version>@pom.version@</version>
         <configuration>
           <licenses>
-            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
+            <license>
               <licenseFamilyCategory>YAL__</licenseFamilyCategory>
               <licenseFamilyName>Yet Another Software License</licenseFamilyName>
               <notes></notes>
-              <patterns>
-                <pattern>Yet Another License</pattern>
-              </patterns>
+              <text>Yet Another License</text>
             </license>
           </licenses>
           <licenseFamilies>

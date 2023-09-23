@@ -26,12 +26,12 @@ import org.apache.rat.analysis.IHeaderMatcher;
 public class AndMatcher extends AbstractMatcherContainer {
     private boolean[] flags = null;
 
-    public AndMatcher(String id, Collection<IHeaderMatcher> enclosed) {
+    public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
         flags = new boolean[enclosed.size()];
     }
 
-    public AndMatcher(Collection<IHeaderMatcher> enclosed) {
+    public AndMatcher(Collection<? extends IHeaderMatcher> enclosed) {
         super(enclosed);
         flags = new boolean[enclosed.size()];
     }

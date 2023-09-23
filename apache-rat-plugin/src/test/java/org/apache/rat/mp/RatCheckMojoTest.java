@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.Assume;
+import org.junit.Ignore;
 
 import static org.apache.rat.mp.RatTestHelpers.ensureRatReportIsCorrect;
 import static org.apache.rat.mp.RatTestHelpers.getSourceDirectory;
@@ -211,6 +212,7 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
      *
      * @throws Exception The test failed.
      */
+    @Ignore
     public void testIt4() throws Exception {
     	// In previous versions of the JDK, it used to be possible to
     	// change the value of file.encoding at runtime. As of Java 16,

@@ -24,11 +24,11 @@ import org.apache.rat.analysis.IHeaderMatcher;
 
 public class OrMatcher extends AbstractMatcherContainer {
 
-    public OrMatcher(Collection<IHeaderMatcher> enclosed) {
+    public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
         super(enclosed);
     }
 
-    public OrMatcher(String id, Collection<IHeaderMatcher> enclosed) {
+    public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
     }
 

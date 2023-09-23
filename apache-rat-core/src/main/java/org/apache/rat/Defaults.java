@@ -70,7 +70,6 @@ public class Defaults {
     private void readConfigFiles(Collection<URL> urls) {
         for (URL url : urls) {
             LicenseReader reader = Readers.get(url);
-            reader.add(url);
             licenses.addAll(reader.readLicenses());
             reader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
         }

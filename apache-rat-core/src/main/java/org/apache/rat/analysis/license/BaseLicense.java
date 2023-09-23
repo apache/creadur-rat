@@ -21,14 +21,16 @@ package org.apache.rat.analysis.license;
 import java.util.Arrays;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
 import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
-public abstract class BaseLicense extends AbstractMatcherContainer implements ILicense {
+public abstract class BaseLicense extends AbstractHeaderMatcher implements ILicense {
     private ILicenseFamily family;
     private String notes;
     private String derivedFrom;
+    private IHeaderMatcher matcher;
 
     public BaseLicense(ILicenseFamily family, String notes, IHeaderMatcher matcher) {
         this(null, family, notes, matcher);
@@ -41,10 +43,11 @@ public abstract class BaseLicense extends AbstractMatcherContainer implements IL
     public BaseLicense(String idPrefix, ILicenseFamily family, String notes, IHeaderMatcher matcher,
             String derivedFrom) {
         super(String.format("%s:%s:%s/%s", idPrefix == null ? "" : idPrefix, family.getFamilyCategory(),
-                matcher.getClass().getSimpleName(), matcher.getId()), Arrays.asList(matcher));
+                matcher.getClass().getSimpleName(), matcher.getId()));
         this.family = family;
         this.notes = notes;
         this.derivedFrom = derivedFrom;
+        this.matcher = matcher;
     }
 
     @Override
@@ -64,7 +67,12 @@ public abstract class BaseLicense extends AbstractMatcherContainer implements IL
 
     @Override
     public boolean matches(String line) {
-        return enclosed.iterator().next().matches(line);
+        return matcher.matches(line);
+    }
+    
+    @Override
+    public void reset() {
+        matcher.reset();
     }
 
     @Override

@@ -27,7 +27,7 @@ public class OASISLicenseTest extends AbstractLicenseTest {
             "This document and translations of it may be copied and furnished to "
                     + "others and derivative works that comment on or otherwise explain it or assist "
                     + "in its implementation may be prepared copied published and distributed"
-                    + "\\nCopyright OAISIS Open, 1999" }, };
+                    + "\\nCopyright OASIS Open, 1999" }, };
 
     public OASISLicenseTest() {
         super(category, name, notes, targets);

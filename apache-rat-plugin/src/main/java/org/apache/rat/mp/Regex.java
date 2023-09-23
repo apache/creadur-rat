@@ -1,5 +1,3 @@
-package org.apache.rat.mp;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,32 +16,26 @@ package org.apache.rat.mp;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.rat.mp;
 
-/**
- * Used to specify additional license families. A license family is basically a
- * class, which implements {@link org.apache.rat.license.ILicenseFamily}.
- */
-public class LicenseFamilySpecification {
-    /**
-     * The license family's class name.
-     */
-    private String className;
+import java.util.regex.Pattern;
 
-    /**
-     * Returns the license familys class name.
-     * 
-     * @return Class name of the license family.
-     */
-    public String getClassName() {
-        return className;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
+
+public class Regex implements EnclosingMatcher.Holder {
+
+    private SimpleRegexMatcher regexMatcher;
+
+    public Regex() {
     }
 
-    /**
-     * Sets the license family's class name. Required.
-     * 
-     * @param pClassName Class name of the license family.
-     */
-    public void setClassName(String pClassName) {
-        className = pClassName;
+    public void set(String pattern) {
+        regexMatcher = new SimpleRegexMatcher(Pattern.compile(pattern));
+    }
+
+    @Override
+    public IHeaderMatcher getMatcher() {
+        return regexMatcher;
     }
 }

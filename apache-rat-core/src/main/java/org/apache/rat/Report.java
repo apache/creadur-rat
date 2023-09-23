@@ -47,6 +47,7 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.license.BaseLicense;
+import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.IReportable;
@@ -141,8 +142,8 @@ public class Report {
             } else {
 
                 if (cl.hasOption('a') || cl.hasOption('A')) {
-                    configuration.setAddingLicenses(true);
-                    configuration.setAddingLicensesForced(cl.hasOption('f'));
+                    configuration.setAddLicenseHeaders(cl.hasOption('f') ? 
+                        AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
                     configuration.setCopyrightMessage(cl.getOptionValue("c"));
                 }
 
