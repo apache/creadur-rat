@@ -18,6 +18,15 @@
  */
 package org.apache.rat.analysis;
 
+import org.apache.rat.configuration.builders.AllBuilder;
+import org.apache.rat.configuration.builders.AnyBuilder;
+import org.apache.rat.configuration.builders.CopyrightBuilder;
+import org.apache.rat.configuration.builders.MatcherRefBuilder;
+import org.apache.rat.configuration.builders.NotBuilder;
+import org.apache.rat.configuration.builders.RegexBuilder;
+import org.apache.rat.configuration.builders.SpdxBuilder;
+import org.apache.rat.configuration.builders.TextBuilder;
+
 /**
  * Matches text headers to known licenses.
  */
@@ -48,4 +57,40 @@ public interface IHeaderMatcher {
      * @throws RatHeaderAnalysisException in case of internal RAT errors.
      */
     boolean matches(String line);
+    
+    interface Builder {
+        IHeaderMatcher build();
+
+        static TextBuilder text() {
+            return new TextBuilder();
+        }
+
+        static AnyBuilder any() {
+            return new AnyBuilder();
+        }
+
+        static AllBuilder all() {
+            return new AllBuilder();
+        }
+
+        static CopyrightBuilder copyright() {
+            return new CopyrightBuilder();
+        }
+
+        static SpdxBuilder spdx() {
+            return new SpdxBuilder();
+        }
+
+        static MatcherRefBuilder matcherRef() {
+            return new MatcherRefBuilder();
+        }
+
+        static NotBuilder not() {
+            return new NotBuilder();
+        }
+
+        static RegexBuilder regex() {
+            return new RegexBuilder();
+        }
+    }
 }

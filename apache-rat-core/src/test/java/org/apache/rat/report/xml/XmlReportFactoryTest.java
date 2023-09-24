@@ -34,7 +34,7 @@ import org.apache.rat.Defaults.Filter;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.license.SimpleLicenseFamily;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -47,6 +47,8 @@ import org.junit.Test;
 public class XmlReportFactoryTest {
 
     private static final Pattern IGNORE_EMPTY = Pattern.compile(".svn|Empty.txt");
+    private ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("TEST")
+            .setLicenseFamilyName("Testing family").build();
 
     private StringWriter out;
     private IXmlWriter writer;
@@ -66,9 +68,11 @@ public class XmlReportFactoryTest {
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
 
+        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("TEST")
+                .setLicenseFamilyName("Testing family").build();
         final ILicense mockLicense = mock(ILicense.class);
         when(mockLicense.matches(any())).thenReturn(true);
-        when(mockLicense.getLicenseFamily()).thenReturn(new SimpleLicenseFamily("TEST", "Testing family"));
+        when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
         final ClaimStatistic statistic = new ClaimStatistic();
@@ -97,9 +101,10 @@ public class XmlReportFactoryTest {
 
     @Test
     public void testNoLicense() throws Exception {
+
         final ILicense mockLicense = mock(ILicense.class);
         when(mockLicense.matches(any())).thenReturn(true);
-        when(mockLicense.getLicenseFamily()).thenReturn(new SimpleLicenseFamily("TEST", "Testing family"));
+        when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();

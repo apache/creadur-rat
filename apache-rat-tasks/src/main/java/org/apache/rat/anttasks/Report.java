@@ -19,7 +19,6 @@
 package org.apache.rat.anttasks;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -27,9 +26,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.rat.ConfigurationException;
@@ -97,16 +94,16 @@ public class Report extends Task {
     public void setInputFileFilter(FilenameFilter inputFileFilter) {
         configuration.setInputFileFilter(inputFileFilter);
     }
-    
+
     public void setReportFile(File reportFile) {
-        System.err.println( reportFile );
+        System.err.println(reportFile);
         try {
-            configuration.setOut( new FileOutputStream(reportFile));
+            configuration.setOut(new FileOutputStream(reportFile));
         } catch (FileNotFoundException e) {
             throw new BuildException("Can not open report file", e);
         }
     }
-    
+
     public void addLicense(License lic) {
         licenses.add(lic);
     }
@@ -120,7 +117,7 @@ public class Report extends Task {
     public void addStylesheet(Resource styleSheet) {
         addStyleSheet(styleSheet);
     }
-    
+
     public void addStyleSheet(Resource styleSheet) {
         try {
             configuration.setStyleSheet(styleSheet.getInputStream());
@@ -133,7 +130,7 @@ public class Report extends Task {
     public void setStyleReport(boolean styleReport) {
         configuration.setStyleReport(styleReport);
     }
-    
+
     /**
      * 
      * @param style
@@ -142,7 +139,7 @@ public class Report extends Task {
     @Deprecated
     public void setFormat(String style) {
         setStyleReport("styled".equalsIgnoreCase(style));
-        
+
     }
 
     public void setLicenses(File fileName) {
@@ -156,24 +153,24 @@ public class Report extends Task {
         }
     }
 
-
     /**
-     * @param useDefaultLicenses Whether to add the default list of license matchers.
+     * @param useDefaultLicenses Whether to add the default list of license
+     * matchers.
      */
     public void setUseDefaultLicenses(boolean useDefaultLicenses) {
         if (!useDefaultLicenses) {
             defaultsBuilder.noDefault();
         }
     }
-    
+
     public void setApprovalFilter(ApprovalFilter filter) {
         configuration.setLicenseFilter(filter.internalFilter());
     }
-    
+
     public void setAddApprovedLicense(String familyCategory) {
         configuration.addApprovedLicenseName(familyCategory);
     }
-    
+
     public void setRemoveApprovedLicense(String familyCategory) {
         configuration.removeApprovedLicenseName(familyCategory);
     }
@@ -202,7 +199,10 @@ public class Report extends Task {
         Defaults defaults = defaultsBuilder.build();
         configuration.setFrom(defaults);
         configuration.setReportable(new ResourceCollectionContainer(nestedResources));
-        licenses.stream().map(License::build).forEach(configuration::addLicense);
+        licenses.stream().map(License::build).forEach((l) -> {
+            configuration.addLicense(l);
+            configuration.addApprovedLicenseName(l.getLicenseFamily());
+        });
         try {
             validate();
             Reporter.report(configuration);
@@ -249,7 +249,7 @@ public class Report extends Task {
         public String[] getValues() {
             return new String[] { TRUE, FALSE, FORCED };
         }
-        
+
         public org.apache.rat.config.AddLicenseHeaders getNative() {
             return org.apache.rat.config.AddLicenseHeaders.valueOf(getValue().toUpperCase());
         }

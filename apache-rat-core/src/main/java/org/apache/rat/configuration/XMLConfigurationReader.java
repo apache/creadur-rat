@@ -33,10 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.Stack;
 import java.util.TreeSet;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -51,18 +49,12 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.AndMatcher;
-import org.apache.rat.analysis.matchers.CopyrightMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
-import org.apache.rat.analysis.matchers.NotMatcher;
-import org.apache.rat.analysis.matchers.OrMatcher;
-import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
-import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
+import org.apache.rat.configuration.builders.AbstractBuilder;
+import org.apache.rat.configuration.builders.ChildContainerBuilder;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.SimpleLicense;
-import org.apache.rat.license.SimpleLicenseFamily;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -211,16 +203,16 @@ public class XMLConfigurationReader implements LicenseReader {
      * @param resourceName the name of the resource to read.
      * @return a List of Matchers, one for each non empty line in the input file.
      */
-    private List<IHeaderMatcher> readTextResource(String resourceName) {
+    private List<IHeaderMatcher.Builder> readTextResource(String resourceName) {
         URL url = XMLConfigurationReader.class.getResource(resourceName);
-        List<IHeaderMatcher> matchers = new ArrayList<>();
+        List<IHeaderMatcher.Builder> matchers = new ArrayList<>();
         try (final InputStream in = url.openStream()) {
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String txt;
             while (null != (txt = buffer.readLine())) {
                 txt = txt.trim();
                 if (StringUtils.isNotBlank(txt)) {
-                    matchers.add(createTextMatcher(null, txt));
+                    matchers.add(Builder.text().setText(txt));
                 }
             }
             return matchers;
@@ -229,16 +221,14 @@ public class XMLConfigurationReader implements LicenseReader {
         }
     }
 
-    private IHeaderMatcher parseMatcher(Node matcherNode) {
+    private AbstractBuilder parseMatcher(Node matcherNode) {
         Map<AttributeName, String> attr = attributes(matcherNode);
         MatcherType type = MatcherType.valueOf(matcherNode.getNodeName());
-        List<IHeaderMatcher> children;
-        IHeaderMatcher result = null;
-        String id = attr.get(AttributeName.id);
-
+        List<IHeaderMatcher.Builder> children;
+        AbstractBuilder builder = null;
         switch (type) {
         case text:
-            result = createTextMatcher(id, matcherNode.getTextContent().trim());
+            builder = Builder.text().setText(matcherNode.getTextContent().trim());
             break;
 
         case any:
@@ -253,20 +243,21 @@ public class XMLConfigurationReader implements LicenseReader {
                     }
                 });
             }
-            result = type == MatcherType.any ? new OrMatcher(id, children) : new AndMatcher(id, children);
+            builder = type == MatcherType.any ? Builder.any() : Builder.all();
+            ((ChildContainerBuilder) builder).add(children);
             break;
 
         case copyright:
-            result = new CopyrightMatcher(id, attr.get(AttributeName.start), attr.get(AttributeName.end),
-                    attr.get(AttributeName.owner));
+            builder = Builder.copyright().setStart(attr.get(AttributeName.start)).setEnd(attr.get(AttributeName.end))
+                    .setOwner(attr.get(AttributeName.owner));
             break;
 
         case spdx:
-            result = SPDXMatcherFactory.INSTANCE.create(attr.get(AttributeName.name));
+            builder = Builder.spdx().setName(attr.get(AttributeName.name));
             break;
 
         case matcher_ref:
-            result = IHeaderMatcherProxy.create(attr.get(AttributeName.refid), matchers);
+            builder = Builder.matcherRef().setRefId(attr.get(AttributeName.refid)).setMatchers(matchers);
             break;
 
         case not:
@@ -279,40 +270,48 @@ public class XMLConfigurationReader implements LicenseReader {
             if (children.size() != 1) {
                 throw new ConfigurationException("'not' type matcher requires one and only one enclosed matcher");
             }
-            result = new NotMatcher(children.get(0));
+            builder = Builder.not().setChild(children.get(0));
+
             break;
 
         case regex:
-            if (!attr.containsKey(AttributeName.exp)) {
-                throw new ConfigurationException("'regex' type matcher requires an 'exp' attribute");
-            }
-            result = new SimpleRegexMatcher(Pattern.compile(attr.get(AttributeName.exp)));
+            builder = Builder.regex().setExpression(attr.get(AttributeName.exp));
         }
-        if (attr.containsKey(AttributeName.id)) {
-            matchers.put(attr.get(AttributeName.id), result);
+
+        builder.setId(attr.get(AttributeName.id));
+        if (builder.hasId()) {
+            builder = new DelegatingBuilder(builder) {
+                @Override
+                public IHeaderMatcher build() {
+                    IHeaderMatcher result = delegate.build();
+                    matchers.put(result.getId(), result);
+                    return result;
+                }
+            };
         }
-        return result;
+        return builder;
     }
 
     private ILicense parseLicense(Node licenseNode) {
         Map<AttributeName, String> attributes = attributes(licenseNode);
+        ILicense.Builder builder = ILicense.builder();
 
-        ILicenseFamily family = new SimpleLicenseFamily(attributes.get(AttributeName.id),
-                attributes.get(AttributeName.name));
-        IHeaderMatcher matcher[] = { null };
+        builder.setLicenseFamilyCategory(attributes.get(AttributeName.id));
+        builder.setLicenseFamilyName(attributes.get(AttributeName.name));
+
         StringBuilder notesBuilder = new StringBuilder();
         nodeListConsumer(licenseNode.getChildNodes(), x -> {
             if (x.getNodeType() == Node.ELEMENT_NODE) {
                 if (x.getNodeName().equals(NOTE)) {
                     notesBuilder.append(x.getTextContent()).append("\n");
                 } else {
-                    matcher[0] = parseMatcher(x);
+                    builder.setMatcher(parseMatcher(x));
                 }
             }
         });
-        String derivedFrom = StringUtils.defaultIfBlank(attributes.get(AttributeName.derived_from),null);
-        String notes = StringUtils.defaultIfBlank(notesBuilder.toString().trim(), null);
-        return new SimpleLicense(family, matcher[0], derivedFrom, notes);
+        builder.setDerivedFrom(StringUtils.defaultIfBlank(attributes.get(AttributeName.derived_from), null));
+        builder.setNotes(StringUtils.defaultIfBlank(notesBuilder.toString().trim(), null));
+        return builder.build();
     }
 
     @Override
@@ -340,9 +339,18 @@ public class XMLConfigurationReader implements LicenseReader {
         }
         if (licenseFamilies.isEmpty()) {
             SortedSet<String> result = new TreeSet<>();
-            licenses.stream().map( x -> x.getLicenseFamily().getFamilyCategory()).forEach(result::add);
+            licenses.stream().map(x -> x.getLicenseFamily().getFamilyCategory()).forEach(result::add);
             return result;
         }
         return Collections.unmodifiableSortedSet(licenseFamilies);
+    }
+
+    public abstract class DelegatingBuilder extends AbstractBuilder {
+        protected final AbstractBuilder delegate;
+
+        DelegatingBuilder(AbstractBuilder delegate) {
+            this.delegate = delegate;
+        }
+
     }
 }

@@ -18,31 +18,24 @@
  */
 package org.apache.rat.mp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.OrMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.Builder;
+import org.apache.rat.configuration.builders.AnyBuilder;
 
-public class Any extends EnclosingMatcher implements EnclosingMatcher.Holder {
+public class Any extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
-    OrMatcher orMatcher;
-    List<IHeaderMatcher> matchers = new ArrayList<>();
+    AnyBuilder builder = Builder.any();
 
     public Any() {
     }
 
     @Override
-    public IHeaderMatcher getMatcher() {
-        if (orMatcher == null) {
-            orMatcher = new OrMatcher(matchers);
-        }
-        return orMatcher;
+    protected void setBuilder(IHeaderMatcher.Builder builder) {
+        this.builder.add(builder);
     }
 
     @Override
-    protected void setHolder(Holder holder) {
-        matchers.add(holder.getMatcher());
+    public IHeaderMatcher build() {
+        return builder.build();
     }
-
 }

@@ -18,24 +18,7 @@
  */
 package org.apache.rat.mp;
 
-import java.util.regex.Pattern;
+import org.apache.rat.configuration.builders.RegexBuilder;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
-
-public class Regex implements EnclosingMatcher.Holder {
-
-    private SimpleRegexMatcher regexMatcher;
-
-    public Regex() {
-    }
-
-    public void set(String pattern) {
-        regexMatcher = new SimpleRegexMatcher(Pattern.compile(pattern));
-    }
-
-    @Override
-    public IHeaderMatcher getMatcher() {
-        return regexMatcher;
-    }
+public class Regex extends RegexBuilder {
 }

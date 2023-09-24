@@ -16,34 +16,30 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.license;
+package org.apache.rat.configuration.builders;
 
-/**
- * Trivial bean implementing ILicenseFamily
- * 
- * @since Rat 0.8
- */
-class SimpleLicenseFamily implements ILicenseFamily {
-    private String familyName;
-    private String familyCategory;
+import org.apache.rat.analysis.IHeaderMatcher;
 
-    public SimpleLicenseFamily(String familyId, String familyName) {
-        this.familyCategory = ILicenseFamily.makeCategory(familyId);
-        this.familyName = familyName;
+public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
+
+    private String id;
+
+    protected AbstractBuilder() {
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s %s", getFamilyCategory(), getFamilyName());
+    public final AbstractBuilder setId(String id) {
+        this.id = id;
+        return this;
     }
 
-    @Override
-    public final String getFamilyName() {
-        return familyName;
+    public final boolean hasId() {
+        return id != null;
+    }
+    
+    protected String getId() {
+        return id;
     }
 
-    @Override
-    public String getFamilyCategory() {
-        return familyCategory;
-    }
+    public abstract IHeaderMatcher build();
+
 }

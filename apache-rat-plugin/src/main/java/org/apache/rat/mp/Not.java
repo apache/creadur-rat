@@ -18,22 +18,24 @@
  */
 package org.apache.rat.mp;
 
-import org.apache.rat.analysis.matchers.NotMatcher;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.Builder;
+import org.apache.rat.configuration.builders.NotBuilder;
 
-public class Not extends EnclosingMatcher implements EnclosingMatcher.Holder {
+public class Not extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
-    NotMatcher notMatcher;
+    NotBuilder builder = Builder.not();
 
     public Not() {
     }
 
     @Override
-    public NotMatcher getMatcher() {
-        return notMatcher;
+    protected void setBuilder(IHeaderMatcher.Builder builder) {
+        this.builder.setChild(builder);
     }
 
     @Override
-    protected void setHolder(Holder holder) {
-        notMatcher =new NotMatcher(holder.getMatcher());
+    public IHeaderMatcher build() {
+        return builder.build();
     }
 }

@@ -18,8 +18,6 @@
  */
 package org.apache.rat.policy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
@@ -29,22 +27,10 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.SimpleLicenseFamily;
 
 public class DefaultPolicy implements IDocumentAnalyser {
     private SortedSet<ILicenseFamily> approvedLicenseNames;
 
-    /**
-     * Creates a policy that matches the default licenses. Mainly used for testing
-     * purposes.
-     */
-//    DefaultPolicy() {
-//        this(new ArrayList<ILicenseFamily>(0));
-//    }
-
-//    public DefaultPolicy(final ILicenseFamily[] approvedLicenses) {
-//        this(Arrays.asList(approvedLicenses));
-//    }
 
     public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseNames) {
         this.approvedLicenseNames = new TreeSet<>();
@@ -58,9 +44,9 @@ public class DefaultPolicy implements IDocumentAnalyser {
     @Override
     public void analyse(final Document document) {
         if (document != null) {
-            final ILicenseFamily licenseFamily = new SimpleLicenseFamily(
-                    document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY),
-                    document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME));
+            final ILicenseFamily licenseFamily = ILicenseFamily.builder()
+                    .setLicenseFamilyCategory(document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY))
+                    .setLicenseFamilyName(document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME)).build();
 
             reportLicenseApprovalClaim(document, approvedLicenseNames.contains(licenseFamily));
         }

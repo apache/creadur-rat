@@ -16,34 +16,32 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.license;
+package org.apache.rat.configuration.builders;
 
-/**
- * Trivial bean implementing ILicenseFamily
- * 
- * @since Rat 0.8
- */
-class SimpleLicenseFamily implements ILicenseFamily {
-    private String familyName;
-    private String familyCategory;
+import java.util.regex.Pattern;
 
-    public SimpleLicenseFamily(String familyId, String familyName) {
-        this.familyCategory = ILicenseFamily.makeCategory(familyId);
-        this.familyName = familyName;
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
+
+public class RegexBuilder extends AbstractBuilder {
+
+    private Pattern exp;
+
+    public RegexBuilder setExpression(String exp) {
+        if (null == exp) {
+            throw new ConfigurationException("'regex' type matcher expression value may not be null");
+        }
+        this.exp = Pattern.compile(exp);
+        return this;
     }
 
     @Override
-    public String toString() {
-        return String.format("%s %s", getFamilyCategory(), getFamilyName());
+    public IHeaderMatcher build() {
+        if (null == exp) {
+            throw new ConfigurationException("'regex' type matcher requires an expression");
+        }
+        return new SimpleRegexMatcher(exp);
     }
 
-    @Override
-    public final String getFamilyName() {
-        return familyName;
-    }
-
-    @Override
-    public String getFamilyCategory() {
-        return familyCategory;
-    }
 }

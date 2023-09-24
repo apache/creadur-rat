@@ -33,7 +33,6 @@ import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.Readers;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.SimpleLicenseFamily;
 
 /**
  * Utility class that holds constants shared by the CLI tool and the Ant tasks.
@@ -199,7 +198,9 @@ public class Defaults {
         private ILicenseFamily family;
 
         public LicenseCollectionMatcher(Collection<ILicense> enclosed) {
-            family = new SimpleLicenseFamily("", "System License Collection");
+            family = ILicenseFamily.builder()
+                    .setLicenseFamilyCategory("")
+                    .setLicenseFamilyName("System License Collection").build();
             this.enclosed = enclosed;
         }
 

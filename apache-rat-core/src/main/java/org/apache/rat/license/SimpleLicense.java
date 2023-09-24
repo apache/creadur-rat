@@ -20,7 +20,7 @@ package org.apache.rat.license;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
-public class SimpleLicense implements ILicense {
+class SimpleLicense implements ILicense {
 
     private ILicenseFamily family;
     private IHeaderMatcher matcher;

@@ -101,7 +101,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     private String approvedLicenseFile;
 
     @Parameter
-    private ILicense[] licenses;
+    private License[] licenses;
 
     /**
      * Specifies files, which are included in the report. By default, all files are
@@ -262,15 +262,16 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             if (log.isDebugEnabled()) {
                 log.debug(String.format("%s licenses loaded from pom", licenses.length));
             }
-            Consumer<ILicense> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("License: %s", l)) :
-                (l) -> {} ;
+            Consumer<ILicense> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("License: %s", l))
+                    : (l) -> {
+                    };
             Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)
                     ? (l) -> result.addApprovedLicenseName(l.getLicenseFamily())
                     : (l) -> {
                     };
 
             Consumer<ILicense> process = logger.andThen(result::addLicense).andThen(addApproved);
-            Arrays.stream(licenses).forEach(process);
+            Arrays.stream(licenses).map(License::build).forEach(process);
         }
 
         if (approvedLicenses != null && approvedLicenses.length > 0) {

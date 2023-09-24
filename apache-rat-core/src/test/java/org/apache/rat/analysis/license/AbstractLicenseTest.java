@@ -36,7 +36,6 @@ import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.SimpleLicenseFamily;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -81,7 +80,9 @@ abstract public class AbstractLicenseTest {
     }
 
     protected static ILicense extractCategory(String category) {
-        ILicenseFamily testingFamily = new SimpleLicenseFamily(category, "Testing category");
+        ILicenseFamily testingFamily = ILicenseFamily.builder()
+                .setLicenseFamilyCategory(category)
+                .setLicenseFamilyName("Testing category").build();
         List<ILicense> matchers = new ArrayList<>();
         DEFAULTS.getLicenses().stream().filter(x -> x.getLicenseFamily().compareTo(testingFamily) == 0)
                 .forEach(matchers::add);

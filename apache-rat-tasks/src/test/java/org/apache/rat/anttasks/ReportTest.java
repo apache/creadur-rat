@@ -97,9 +97,10 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testCopyrightBuild() throws Exception {
         try {
+            String fileName = new File(getAntFile().getParent(), "index.apt").getPath().replace('\\', '/');
             buildRule.executeTarget("testCopyrightBuild");
-
-            assertLogDoesNotMatch("AL +\\Q" + getAntFileName() + "\\E");
+            assertLogMatches("YASL1 +\\Q" + fileName + "\\E");
+            assertLogDoesNotMatch("AL +\\Q" + fileName + "\\E");
         } catch (BuildException e) {
             final String expect = "You must specify at least one file";
             assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));

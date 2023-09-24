@@ -18,27 +18,7 @@
  */
 package org.apache.rat.mp;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
+import org.apache.rat.configuration.builders.SpdxBuilder;
 
-public class Spdx implements EnclosingMatcher.Holder {
-
-    IHeaderMatcher spdxMatcher;
-
-    private String spdxId;
-
-    public Spdx() {
-    }
-
-    public void set(String spdxId) {
-        this.spdxId = spdxId;
-    }
-
-    @Override
-    public IHeaderMatcher getMatcher() {
-        if (spdxMatcher == null) {
-            spdxMatcher = SPDXMatcherFactory.INSTANCE.create(spdxId);
-        }
-        return spdxMatcher;
-    }
+public class Spdx extends SpdxBuilder {
 }

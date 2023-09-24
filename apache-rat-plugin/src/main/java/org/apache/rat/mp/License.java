@@ -21,13 +21,10 @@ package org.apache.rat.mp;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.SimpleLicenseFamily;
 
-public class License extends EnclosingMatcher implements ILicense {
-    private ILicenseFamily family;
+public class License extends EnclosingMatcher {
 
-    private IHeaderMatcher matcher;
+    private ILicense.Builder builder = ILicense.builder();
 
     @Parameter(required = false)
     private String notes;
@@ -46,54 +43,17 @@ public class License extends EnclosingMatcher implements ILicense {
 
     @Parameter(required = false)
     public void setNot(Not not) {
-        setHolder(not);
+        setBuilder(not);
     }
 
     @Override
-    public ILicenseFamily getLicenseFamily() {
-        if (family == null) {
-            family = new SimpleLicenseFamily(licenseFamilyCategory, licenseFamilyName);
-        }
-        return family;
+    protected void setBuilder(IHeaderMatcher.Builder builder) {
+        this.builder.setMatcher(builder);
     }
 
-    @Override
-    public int compareTo(ILicense arg0) {
-        return ILicense.getComparator().compare(this, arg0);
+    public ILicense build() {
+        return builder.setDerivedFrom(derivedFrom).setLicenseFamilyCategory(licenseFamilyCategory)
+                .setLicenseFamilyCategory(licenseFamilyName).setNotes(notes).build();
     }
 
-    @Override
-    public String getNotes() {
-        return notes;
-    }
-
-    @Override
-    public boolean matches(String line) {
-        return matcher.matches(line);
-    }
-
-    @Override
-    public String derivedFrom() {
-        return derivedFrom;
-    }
-
-    @Override
-    public String getId() {
-        return matcher.getId();
-    }
-
-    @Override
-    public void reset() {
-        matcher.reset();
-    }
-
-    @Override
-    protected void setHolder(Holder holder) {
-        this.matcher = holder.getMatcher();
-    }
-    
-    @Override
-    public String toString() {
-        return getLicenseFamily().toString();
-    }
 }

@@ -31,7 +31,6 @@ import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.SimpleLicenseFamily;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,6 +59,10 @@ public class DefaultPolicyTest {
         subject.getMetaData().add(new Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, family.getFamilyCategory()));
     }
 
+    private ILicenseFamily makeFamily(String category, String name) {
+        return ILicenseFamily.builder().setLicenseFamilyCategory(category)
+                .setLicenseFamilyName(name).build();
+    }
     @Test
     public void testCount() {
         assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
@@ -67,56 +70,56 @@ public class DefaultPolicyTest {
 
     @Test
     public void testALFamily() throws Exception {
-        setMetadata(new SimpleLicenseFamily("AL", "Apache License Version 2.0"));
+        setMetadata(makeFamily("AL", "Apache License Version 2.0"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testOASISFamily() throws Exception {
-        setMetadata(new SimpleLicenseFamily("OASIS", "OASIS Open License"));
+        setMetadata(makeFamily("OASIS", "OASIS Open License"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testW3CFamily() throws Exception {
-        setMetadata(new SimpleLicenseFamily("W3C", "W3C Software Copyright"));
+        setMetadata(makeFamily("W3C", "W3C Software Copyright"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testW3CDocFamily() throws Exception {
-        setMetadata(new SimpleLicenseFamily("W3CD", "W3C Document Copyright"));
+        setMetadata(makeFamily("W3CD", "W3C Document Copyright"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testModifiedBSDFamily() throws Exception {
-        setMetadata(new SimpleLicenseFamily("TMF", "The Telemanagement Forum License"));
+        setMetadata(makeFamily("TMF", "The Telemanagement Forum License"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testMITFamily() throws Exception {
-        setMetadata(new SimpleLicenseFamily("MIT", "The MIT License"));
+        setMetadata(makeFamily("MIT", "The MIT License"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testCDDL1Family() throws Exception {
-        setMetadata(new SimpleLicenseFamily("CDDL1", "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"));
+        setMetadata(makeFamily("CDDL1", "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"));
         policy.analyse(subject);
         assertApproval(true);
     }
 
     @Test
     public void testUnknownFamily() throws Exception {
-        setMetadata(new SimpleLicenseFamily("?????", "Unknown document"));
+        setMetadata(makeFamily("?????", "Unknown document"));
         policy.analyse(subject);
         assertApproval(false);
     }
@@ -133,7 +136,7 @@ public class DefaultPolicyTest {
 
     @Test
     public void testAddNewApprovedLicenseAndDefaults() {
-        ILicenseFamily testingFamily = new SimpleLicenseFamily("test", "Testing License Family");
+        ILicenseFamily testingFamily = makeFamily("test", "Testing License Family");
         setMetadata(testingFamily);
         policy.analyse(subject);
         assertApproval(false);
@@ -149,7 +152,7 @@ public class DefaultPolicyTest {
     public void testAddNewApprovedLicenseNoDefaults() {
         policy = new DefaultPolicy(Collections.emptySet());
         assertEquals(0, policy.getApprovedLicenseNames().size());
-        ILicenseFamily testingFamily = new SimpleLicenseFamily("test", "Testing License Family");
+        ILicenseFamily testingFamily = makeFamily("test", "Testing License Family");
         setMetadata(testingFamily);
         policy.analyse(subject);
         assertApproval(false);

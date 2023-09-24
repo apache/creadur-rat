@@ -16,34 +16,31 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.license;
+package org.apache.rat.configuration.builders;
 
-/**
- * Trivial bean implementing ILicenseFamily
- * 
- * @since Rat 0.8
- */
-class SimpleLicenseFamily implements ILicenseFamily {
-    private String familyName;
-    private String familyCategory;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.FullTextMatcher;
+import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 
-    public SimpleLicenseFamily(String familyId, String familyName) {
-        this.familyCategory = ILicenseFamily.makeCategory(familyId);
-        this.familyName = familyName;
+public class TextBuilder extends AbstractBuilder {
+
+    private String text;
+
+    public TextBuilder setText(String text) {
+        this.text = text;
+        return this;
     }
 
     @Override
-    public String toString() {
-        return String.format("%s %s", getFamilyCategory(), getFamilyName());
-    }
+    public IHeaderMatcher build() {
+        if (StringUtils.isBlank(text)) {
+            throw new ConfigurationException("text value is required");
+        }
+        boolean complex = text.contains(" ") | text.contains("\\t") | text.contains("\\n") | text.contains("\\r")
+                | text.contains("\\f") | text.contains("\\v");
 
-    @Override
-    public final String getFamilyName() {
-        return familyName;
-    }
-
-    @Override
-    public String getFamilyCategory() {
-        return familyCategory;
+        return complex ? new FullTextMatcher(getId(), text) : new SimpleTextMatcher(getId(), text);
     }
 }

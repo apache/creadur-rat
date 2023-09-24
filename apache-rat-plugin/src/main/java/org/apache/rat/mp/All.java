@@ -18,27 +18,24 @@
  */
 package org.apache.rat.mp;
 
-import java.util.List;
-
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.AndMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.Builder;
+import org.apache.rat.configuration.builders.AllBuilder;
 
-public class All implements EnclosingMatcher.Holder {
+public class All extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
-    AndMatcher andMatcher;
+    AllBuilder builder = Builder.all();
 
     public All() {
     }
 
-    @Parameter(required = true)
-    public void setMatchers(List<Matcher> matchers) {
-        andMatcher = new AndMatcher(matchers);
+    @Override
+    protected void setBuilder(IHeaderMatcher.Builder builder) {
+        this.builder.add(builder);
     }
 
     @Override
-    public IHeaderMatcher getMatcher() {
-        return andMatcher;
+    public IHeaderMatcher build() {
+        return builder.build();
     }
-
 }

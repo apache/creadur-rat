@@ -18,27 +18,7 @@
  */
 package org.apache.rat.mp;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.configuration.XMLConfigurationReader;
+import org.apache.rat.configuration.builders.TextBuilder;
 
-public class Text implements EnclosingMatcher.Holder {
-
-    IHeaderMatcher textMatcher;
-
-    private String pattern;
-
-    public Text() {
-    }
-
-    public void set(String pattern) {
-        this.pattern = pattern;
-    }
-
-    @Override
-    public IHeaderMatcher getMatcher() {
-        if (textMatcher == null) {
-            textMatcher = XMLConfigurationReader.createTextMatcher(null, pattern);
-        }
-        return textMatcher;
-    }
+public class Text extends TextBuilder {
 }
