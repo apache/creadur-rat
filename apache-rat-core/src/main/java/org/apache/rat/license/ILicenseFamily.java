@@ -20,16 +20,13 @@ package org.apache.rat.license;
 
 import java.util.SortedSet;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ConfigurationException;
-
 public interface ILicenseFamily extends Comparable<ILicenseFamily> {
     String getFamilyName();
 
     String getFamilyCategory();
 
     static ILicenseFamily.Builder builder() {
-        return new Builder();
+        return new ILicenseFamilyBuilder();
     }
 
     static String makeCategory(String cat) {
@@ -62,29 +59,11 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
         return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
 
-    public static class Builder {
+    interface Builder {
+        public Builder setLicenseFamilyCategory(String licenseFamilyCategory);
 
-        private String licenseFamilyCategory;
-        private String licenseFamilyName;
+        public Builder setLicenseFamilyName(String licenseFamilyName);
 
-        public Builder setLicenseFamilyCategory(String licenseFamilyCategory) {
-            this.licenseFamilyCategory = licenseFamilyCategory;
-            return this;
-        }
-
-        public Builder setLicenseFamilyName(String licenseFamilyName) {
-            this.licenseFamilyName = licenseFamilyName;
-            return this;
-        }
-
-        public ILicenseFamily build() {
-            if (StringUtils.isBlank(licenseFamilyCategory)) {
-                throw new ConfigurationException("LicenseFamily Category must be specified");
-            }
-            if (StringUtils.isBlank(licenseFamilyName)) {
-                throw new ConfigurationException("LicenseFamily Name must be specified");
-            }
-            return new SimpleLicenseFamily(licenseFamilyCategory, licenseFamilyName);
-        }
+        public ILicenseFamily build();
     }
 }
