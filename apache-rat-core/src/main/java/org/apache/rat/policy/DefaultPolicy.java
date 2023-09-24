@@ -31,7 +31,6 @@ import org.apache.rat.license.ILicenseFamily;
 public class DefaultPolicy implements IDocumentAnalyser {
     private SortedSet<ILicenseFamily> approvedLicenseNames;
 
-
     public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseNames) {
         this.approvedLicenseNames = new TreeSet<>();
         this.approvedLicenseNames.addAll(approvedLicenseNames);
@@ -44,11 +43,16 @@ public class DefaultPolicy implements IDocumentAnalyser {
     @Override
     public void analyse(final Document document) {
         if (document != null) {
-            final ILicenseFamily licenseFamily = ILicenseFamily.builder()
-                    .setLicenseFamilyCategory(document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY))
-                    .setLicenseFamilyName(document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME)).build();
-
-            reportLicenseApprovalClaim(document, approvedLicenseNames.contains(licenseFamily));
+            boolean approval = false;
+            if (document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY) != null) {
+                ILicenseFamily licenseFamily = ILicenseFamily.builder()
+                        .setLicenseFamilyCategory(
+                                document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY))
+                        .setLicenseFamilyName(document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME))
+                        .build();
+                approval = approvedLicenseNames.contains(licenseFamily);
+            }
+            reportLicenseApprovalClaim(document, approval);
         }
     }
 

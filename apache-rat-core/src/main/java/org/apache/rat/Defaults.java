@@ -199,7 +199,7 @@ public class Defaults {
 
         public LicenseCollectionMatcher(Collection<ILicense> enclosed) {
             family = ILicenseFamily.builder()
-                    .setLicenseFamilyCategory("")
+                    .setLicenseFamilyCategory("testing")
                     .setLicenseFamilyName("System License Collection").build();
             this.enclosed = enclosed;
         }
