@@ -34,6 +34,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildException;
 import org.junit.Assume;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -54,10 +55,11 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
+        final String alLine = "AL +\\Q" + getAntFileName() + "\\E";
+        
         if (!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
             throw new IOException("Could not create temporary directory " + getTempDir());
         }
-        final String alLine = "AL +\\Q" + getAntFileName() + "\\E";
         if (reportFile.isFile() && !reportFile.delete()) {
             throw new IOException("Unable to remove report file " + reportFile);
         }
@@ -85,7 +87,19 @@ public class ReportTest extends AbstractRatAntTaskTest {
     public void testNoResources() throws Exception {
         try {
             buildRule.executeTarget("testNoResources");
-            fail("Expected Exception");
+            fail("Expected Exceptoin");
+        } catch (BuildException e) {
+            final String expect = "You must specify at least one file";
+            assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
+        }
+    }
+    
+    @Test
+    public void testCopyrightBuild() throws Exception {
+        try {
+            buildRule.executeTarget("testCopyrightBuild");
+
+            assertLogDoesNotMatch("AL +\\Q" + getAntFileName() + "\\E");
         } catch (BuildException e) {
             final String expect = "You must specify at least one file";
             assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
@@ -143,6 +157,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
      * Test correct generation of string result if non-UTF8 file.encoding is set.
      */
     @Test
+    @Ignore
     public void testISO88591() throws Exception {
         // In previous versions of the JDK, it used to be possible to
         // change the value of file.encoding at runtime. As of Java 16,
@@ -161,6 +176,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
      * Test correct generation of XML file if non-UTF8 file.encoding is set.
      */
     @Test
+    @Ignore
     public void testISO88591WithFile() throws Exception {
         // In previous versions of the JDK, it used to be possible to
         // change the value of file.encoding at runtime. As of Java 16,

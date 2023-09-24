@@ -52,7 +52,7 @@
 
   <target name="testNoLicenseMatchers">
     <au:expectfailure expectedMessage="at least one license">
-      <rat:report addDefaultLicenseMatchers="false">
+      <rat:report useDefaultLicenses="false">
         <file file="${ant.file}"/>
       </rat:report>
     </au:expectfailure>
@@ -76,86 +76,75 @@
     <au:assertLogContains text="Ignoring stylesheet"/>
   </target>
 
-  <target name="testSubstringMatcherRequiresFamilyName">
+  <target name="testLicenseRequiresFamilyName">
     <au:expectfailure
-        expectedMessage="The licenseFamilyName attribute is required.">
+        expectedMessage="LicenseFamily Name must be specified.">
       <rat:report>
         <file file="${ant.file}"/>
-        <rat:substringMatcher
+        <rat:license
             licenseFamilyCategory="YASL1"
             notes="Interesting License">
-          <pattern substring="exmpl"/>
-        </rat:substringMatcher>
+          <text>exmpl</text>
+        </rat:license>
       </rat:report>
     </au:expectfailure>
   </target>
 
-  <target name="testSubstringMatcherRequiresFamilyCategory">
+  <target name="testLicenseRequiresFamilyCategory">
     <au:expectfailure
-        expectedMessage="The licenseFamilyCategory attribute is required.">
+        expectedMessage="LicenseFamily Category must be specified">
       <rat:report>
         <file file="${ant.file}"/>
-        <rat:substringMatcher
+        <rat:license
             licenseFamilyName="Yet Another Software License (YASL) 1.0"
             notes="Interesting License">
-          <pattern substring="exmpl"/>
-        </rat:substringMatcher>
+          <rat:text text="exampl"/>
+        </rat:license>
       </rat:report>
     </au:expectfailure>
   </target>
 
-  <target name="testSubstringMatcherRequiresPattern">
+  <target name="testRegexLicenseRequiresPattern">
     <au:expectfailure
         expectedMessage="You must specify at least one nested pattern.">
       <rat:report>
         <file file="${ant.file}"/>
-        <rat:substringMatcher
+        <rat:license
             licenseFamilyCategory="YASL1"
             licenseFamilyName="Yet Another Software License (YASL) 1.0"
             notes="Interesting License">
-        </rat:substringMatcher>
+            <rat:regex />
+        </rat:license>
       </rat:report>
     </au:expectfailure>
   </target>
 
-  <target name="testFullTextMatcherRequiresFamilyName">
+<target name="testCopyrightBuild">
     <au:expectfailure
-        expectedMessage="The licenseFamilyName attribute is required.">
+        expectedMessage="You must specify at least one nested pattern.">
       <rat:report>
         <file file="${ant.file}"/>
-        <rat:fullTextMatcher
+        <rat:license
             licenseFamilyCategory="YASL1"
-            notes="Interesting License"
-            fullText="exmpl">
-        </rat:fullTextMatcher>
-      </rat:report>
-    </au:expectfailure>
-  </target>
-
-  <target name="testFullTextMatcherRequiresFamilyCategory">
-    <au:expectfailure
-        expectedMessage="The licenseFamilyCategory attribute is required.">
-      <rat:report>
-        <file file="${ant.file}"/>
-        <rat:fullTextMatcher
             licenseFamilyName="Yet Another Software License (YASL) 1.0"
-            notes="Interesting License"
-            fullText="exmpl">
-        </rat:fullTextMatcher>
+            notes="Interesting License">
+            <rat:copyright start="1990" end="1991" owner="public domain" />
+        </rat:license>
       </rat:report>
     </au:expectfailure>
   </target>
 
-  <target name="testFullTextMatcherRequiresText">
+  <target name="testTextLicenseRequiresText">
     <au:expectfailure
         expectedMessage="You must specify the text to match.">
       <rat:report>
         <file file="${ant.file}"/>
-        <rat:fullTextMatcher
+        <rat:license
             licenseFamilyCategory="YASL1"
             licenseFamilyName="Yet Another Software License (YASL) 1.0"
             notes="Interesting License">
-        </rat:fullTextMatcher>
+        	<rat:text/>
+        </rat:license>
       </rat:report>
     </au:expectfailure>
   </target>

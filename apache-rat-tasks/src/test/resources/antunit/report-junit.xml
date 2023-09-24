@@ -31,7 +31,6 @@
       resource="org/apache/rat/anttasks/antlib.xml"
       classpath="${test.classpath}"/>
 
-  <property name="output.dir" location="${basedir}/../../../../target/anttasks"/>
   <pathconvert dirsep="/" property="file.name">
     <path>
       <pathelement location="${ant.file}"/>
@@ -46,7 +45,6 @@
   </target>
 
   <target name="all"/>
-
   <target name="testWithReportSentToFile">
     <property name="report.file" location="${output.dir}/selftest.report"/>
     <rat:report reportFile="${report.file}">
@@ -61,7 +59,7 @@
   </target>
 
   <target name="testCustomMatcher">
-    <property name="license.file" location="customMatcher.xml"/>
+    <property name="license.file" location="${resource.dir}/customMatcher.xml"/>
     <rat:report licenses="${license.file}" useDefaultLicenses="false">
       <file file="${ant.file}"/>
     </rat:report>
@@ -80,7 +78,7 @@
   <target name="testAddLicenseHeaders">
     <delete dir="${output.dir}/it-sources"/>
     <mkdir dir="${output.dir}/it-sources"/>
-    <copy file="${output.dir}/../../src/test/resources/antunit/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
+    <copy file="${resource.dir}/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
     <rat:report addLicenseHeaders="true">
        <file file="${output.dir}/it-sources/index.apt"/>
     </rat:report>
@@ -97,5 +95,17 @@
     <rat:report reportFile="${report.file}" format="xml">
       <file file="src/test/resources/org/example/iso-8859-1.html"/>
     </rat:report>
+  </target>
+  
+  <target name="testCopyrightBuild">
+      <rat:report>
+        <file file="${resource.dir}/index.apt"/>
+        <rat:license
+            licenseFamilyCategory="YASL1"
+            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            notes="Interesting License">
+            <rat:copyright start="2023" end="2024" owner="public domain" />
+        </rat:license>
+      </rat:report>
   </target>
 </project>

@@ -23,9 +23,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
 import org.apache.tools.ant.types.EnumeratedAttribute;
+import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 
@@ -66,6 +70,7 @@ public class Report extends Task {
 
     private Defaults.Builder defaultsBuilder;
     private final ReportConfiguration configuration;
+    private List<License> licenses = new ArrayList<>();
     /**
      * will hold any nested resource collection
      */
@@ -94,17 +99,32 @@ public class Report extends Task {
     }
     
     public void setReportFile(File reportFile) {
+        System.err.println( reportFile );
         try {
             configuration.setOut( new FileOutputStream(reportFile));
         } catch (FileNotFoundException e) {
             throw new BuildException("Can not open report file", e);
         }
     }
+    
+    public void addLicense(License lic) {
+        licenses.add(lic);
+    }
 
-    public void setStyleSheet(File styleSheet) {
+    /**
+     * 
+     * @param styleSheet
+     * @deprecated us {@link #addStyleSheet(File)}
+     */
+    @Deprecated
+    public void addStylesheet(Resource styleSheet) {
+        addStyleSheet(styleSheet);
+    }
+    
+    public void addStyleSheet(Resource styleSheet) {
         try {
-            configuration.setStyleSheet(new FileInputStream(styleSheet));
-        } catch (FileNotFoundException e) {
+            configuration.setStyleSheet(styleSheet.getInputStream());
+        } catch (IOException e) {
             throw new BuildException("Can not open style sheet", e);
         }
         configuration.setStyleReport(true);
@@ -112,6 +132,17 @@ public class Report extends Task {
 
     public void setStyleReport(boolean styleReport) {
         configuration.setStyleReport(styleReport);
+    }
+    
+    /**
+     * 
+     * @param style
+     * @deprecated use #setStyleReport
+     */
+    @Deprecated
+    public void setFormat(String style) {
+        setStyleReport("styled".equalsIgnoreCase(style));
+        
     }
 
     public void setLicenses(File fileName) {
@@ -171,6 +202,7 @@ public class Report extends Task {
         Defaults defaults = defaultsBuilder.build();
         configuration.setFrom(defaults);
         configuration.setReportable(new ResourceCollectionContainer(nestedResources));
+        licenses.stream().map(License::build).forEach(configuration::addLicense);
         try {
             validate();
             Reporter.report(configuration);
