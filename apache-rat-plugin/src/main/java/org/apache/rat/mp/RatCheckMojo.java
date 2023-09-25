@@ -32,6 +32,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.Reporter;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.report.claim.ClaimStatistic;
@@ -111,7 +112,7 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
         ReportConfiguration config = getConfiguration();
         config.setFrom(getDefaultsBuilder().build());
-        logLicenses(config.getLicenses());
+        logLicenses(config.getLicenses(LicenseFilter.all));
         final File parent = reportFile.getParentFile();
         if (!parent.mkdirs() && !parent.isDirectory()) {
             throw new MojoExecutionException("Could not create report parent directory " + parent);

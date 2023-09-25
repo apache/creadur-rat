@@ -20,6 +20,7 @@ package org.apache.rat.analysis;
 
 import java.util.Collection;
 
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
@@ -36,6 +37,9 @@ import org.apache.rat.license.ILicense;
 public class DefaultAnalyserFactory {
 
     public static final IDocumentAnalyser createDefaultAnalyser(Collection<ILicense> licenses) {
+        if (licenses.size() ==0) {
+            throw new ConfigurationException("At least one license must be defined");
+        }
         return new DefaultAnalyser(new LicenseCollection(licenses));
     }
 

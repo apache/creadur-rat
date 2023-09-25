@@ -108,7 +108,7 @@ public class XmlReportFactoryTest {
 
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.addLicense(mockLicense);
+        //configuration.addLicense(mockLicense);
         try {
             XmlReportFactory.createStandardReport(writer, statistic, configuration);
             fail("Should have thrown exception");

@@ -74,6 +74,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.Reporter;
 import org.codehaus.plexus.util.ReaderFactory;
 
@@ -425,7 +426,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
             ReportConfiguration config = getConfiguration();
             config.setFrom(getDefaultsBuilder().build());
             //config.setStyleSheet(Defaults.getUnapprovedLicensesStyleSheet());
-            logLicenses(config.getLicenses());
+            logLicenses(config.getLicenses(LicenseFilter.all));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             config.setOut(baos);
             Reporter.report(config);
