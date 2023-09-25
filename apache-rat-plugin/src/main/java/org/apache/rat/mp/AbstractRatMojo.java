@@ -251,7 +251,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 try {
                     LicenseReader reader = Readers.get(additionalLicenseFiles[i]);
                     result.addLicenses(reader.readLicenses());
-                    result.addApprovedLicenseNames(reader.approvedLicenseId());
+                    result.addApprovedLicenseCategories(reader.approvedLicenseId());
                 } catch (MalformedURLException e) {
                     throw new ConfigurationException(additionalLicenseFiles[i] + " is not a valid license file", e);
                 }
@@ -266,7 +266,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     : (l) -> {
                     };
             Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)
-                    ? (l) -> result.addApprovedLicenseName(l.getLicenseFamily())
+                    ? (l) -> result.addApprovedLicenseCategory(l.getLicenseFamily())
                     : (l) -> {
                     };
 
@@ -275,7 +275,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         }
 
         if (approvedLicenses != null && approvedLicenses.length > 0) {
-            Arrays.stream(approvedLicenses).forEach(result::addApprovedLicenseName);
+            Arrays.stream(approvedLicenses).forEach(result::addApprovedLicenseCategory);
         }
         result.setReportable(getReportable());
         return result;

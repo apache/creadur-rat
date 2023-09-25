@@ -35,8 +35,7 @@ import java.util.function.Consumer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.rat.Defaults.Filter;
-import org.apache.rat.Defaults.LicenseCollectionMatcher;
+import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -49,10 +48,14 @@ import org.apache.rat.report.IReportable;
  * the configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration implements AutoCloseable {
+    public enum LicenseFilter {
+        all, approved, none
+    }
+
     private static final Log logger = LogFactory.getLog(ReportConfiguration.class);
     private SortedSet<ILicense> licenses = new TreeSet<>(ILicense.getComparator());
-    private SortedSet<String> approvedLicenseId = new TreeSet<>();
-    private SortedSet<String> removedLicenseId = new TreeSet<>();
+    private SortedSet<String> approvedLicenseCategories = new TreeSet<>();
+    private SortedSet<String> removedLicenseCategories = new TreeSet<>();
     private boolean addingLicenses;
     private boolean addingLicensesForced;
     private String copyrightMessage;
@@ -61,7 +64,7 @@ public class ReportConfiguration implements AutoCloseable {
     private InputStream styleSheet = null;
     private IReportable reportable = null;
     private FilenameFilter inputFileFilter = null;
-    private Filter approvalFilter = Filter.approved;
+    private LicenseFilter approvalFilter = LicenseFilter.approved;
 
     /**
      * @return The filename filter for the potential input files.
@@ -116,7 +119,7 @@ public class ReportConfiguration implements AutoCloseable {
 
     public void setFrom(Defaults defaults) {
         addLicenses(defaults.getLicenses());
-        addApprovedLicenseNames(defaults.getLicenseIds());
+        addApprovedLicenseCategories(defaults.getLicenseIds());
         if (isStyleReport() && getStyleSheet() == null) {
             setStyleSheet(Defaults.getPlainStyleSheet());
         }
@@ -173,22 +176,6 @@ public class ReportConfiguration implements AutoCloseable {
     }
 
     /**
-     * Returns the license that is the combination of all licenses being tested.
-     *
-     * @return the license matcher, or null if no licenses are specified.
-     */
-    public ILicense getLicense() {
-        SortedSet<ILicense> licSet = getLicenses();
-        if (licSet.isEmpty()) {
-            throw new ConfigurationException("At least one license must be specified");
-        }
-        if (licSet.size() == 1) {
-            return licSet.first();
-        }
-        return new LicenseCollectionMatcher(licSet);
-    }
-
-    /**
      * Adds licenses to the list of licenses to be checked.
      *
      * @param license The license t oadd.
@@ -208,34 +195,17 @@ public class ReportConfiguration implements AutoCloseable {
         this.licenses.addAll(licenses);
     }
 
-//    /**
-//     *
-//     * @return the set of approved license names.
-//     */
-//    public ILicenseFamily[] getApprovedLicenseNames() {
-//        return a.toArray(new ILicenseFamily[approvedLicenseNames.size()]);
-//    }
-//
-//    /**
-//     * Adds to the set of approved license names.
-//     *
-//     * @param approvedLicenseNames set of approved license names.
-//     */
-//    public void addApprovedLicenseNames(ILicenseFamily[] approvedLicenseNames) {
-//        addApprovedLicenseNames(Arrays.asList(approvedLicenseNames));
-//    }
-
     /**
      * Adds a license to the list of approved license names.
      *
      * @param approvedLicenseNames set of approved license names.
      */
-    public void addApprovedLicenseName(ILicenseFamily approvedLicenseName) {
-        approvedLicenseId.add(approvedLicenseName.getFamilyCategory());
+    public void addApprovedLicenseCategory(ILicenseFamily approvedLicenseName) {
+        approvedLicenseCategories.add(approvedLicenseName.getFamilyCategory());
     }
 
-    public void addApprovedLicenseName(String familyCategory) {
-        approvedLicenseId.add(familyCategory);
+    public void addApprovedLicenseCategory(String familyCategory) {
+        approvedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
     }
 
     /**
@@ -243,14 +213,23 @@ public class ReportConfiguration implements AutoCloseable {
      *
      * @param approvedLicenseNames set of approved license names.
      */
-    public void addApprovedLicenseNames(Collection<String> approvedLicenseNames) {
-        approvedLicenseNames.stream().forEach(this::addApprovedLicenseName);
+    public void addApprovedLicenseCategories(Collection<String> approvedLicenseNames) {
+        approvedLicenseNames.stream().forEach(this::addApprovedLicenseCategory);
     }
 
-    public void removeApprovedLicenseName(String familyCategory) {
-        removedLicenseId.add(ILicenseFamily.makeCategory(familyCategory));
+    public void removeApprovedLicenseCategory(String familyCategory) {
+        removedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
     }
 
+    public void removeApprovedLicenseCategories(Collection<String> familyCategory) {
+        familyCategory.stream().forEach(this::removeApprovedLicenseCategory);
+    }
+    
+    public SortedSet<String> getApprovedLicenseCategories() {
+        SortedSet<String> result = new TreeSet<>(approvedLicenseCategories);
+        result.removeAll(removedLicenseCategories);
+        return result;
+    }
     /**
      * @return If Rat is adding license headers: Returns the optional copyright
      * message. This value is ignored, if no license headers are added.
@@ -305,7 +284,7 @@ public class ReportConfiguration implements AutoCloseable {
             break;
         case FORCED:
             addingLicensesForced = true;
-            // fall thorugh
+            // fall through
         case TRUE:
             addingLicenses = true;
             break;
@@ -323,12 +302,12 @@ public class ReportConfiguration implements AutoCloseable {
      * 
      * @return The set of defined licenses.
      */
-    public SortedSet<ILicense> getLicenses() {
-        switch (approvalFilter) {
+    public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
+        switch (filter) {
         case all:
             return Collections.unmodifiableSortedSet(licenses);
         case approved:
-            SortedSet<String> approvedLicenses = getFilteredLicenses();
+            SortedSet<String> approvedLicenses = getApprovedLicenseCategories();
             SortedSet<ILicense> result = new TreeSet<>(ILicense.getComparator());
             licenses.stream().filter(x -> approvedLicenses.contains(x.getLicenseFamily().getFamilyCategory()))
                     .forEach(result::add);
@@ -339,17 +318,9 @@ public class ReportConfiguration implements AutoCloseable {
         }
     }
 
-    public SortedSet<ILicenseFamily> getApprovedLicenses() {
-        SortedSet<String> approvedLicenses = getFilteredLicenses();
+    public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
         SortedSet<ILicenseFamily> result = new TreeSet<>();
-        licenses.stream().filter(x -> approvedLicenses.contains(x.getLicenseFamily().getFamilyCategory()))
-                .forEach(x -> result.add(x.getLicenseFamily()));
-        return result;
-    }
-
-    private SortedSet<String> getFilteredLicenses() {
-        SortedSet<String> result = new TreeSet<>(approvedLicenseId);
-        result.removeAll(removedLicenseId);
+        getLicenses(filter).stream().map(ILicense::getLicenseFamily).forEach(result::add);
         return result;
     }
 
@@ -359,14 +330,14 @@ public class ReportConfiguration implements AutoCloseable {
      * @param filter the fileter type.
      * @return this Builder for chaining
      */
-    public void setLicenseFilter(Filter filter) {
+    public void setLicenseFilter(LicenseFilter filter) {
         approvalFilter = filter;
     }
 
-    public ILicense createDefaultMatcher() {
-        return getLicenses().isEmpty() ? null : new LicenseCollectionMatcher(getLicenses());
+    public LicenseFilter getLicenseFilter() {
+        return approvalFilter;
     }
-
+    
     /**
      * Validates that the configuration is valid.
      * 
@@ -385,10 +356,6 @@ public class ReportConfiguration implements AutoCloseable {
         if (styleSheet == null && isStyleReport()) {
             throw new ConfigurationException("Stylesheet must be specified if report styling is selected");
         }
-    }
-
-    public DefaultPolicy getDefaultPolicy() {
-        return new DefaultPolicy(getApprovedLicenses());
     }
 
     @Override

@@ -100,18 +100,28 @@
   </target>
 
   <target name="xtestWithALUnknown">
-    <rat:report addDefaultLicenseMatchers="false">
+    <rat:report useDefaultLicenses="false">
       <file file="${ant.file}"/>
-      <rat:w3c/>
+      <rat:license
+          licenseFamilyCategory="YASL1"
+          licenseFamilyName="Yet Another Software License (YASL) 1.0"
+          notes="Interesting License">
+        <text text="exmpl"/>
+      </rat:license>
     </rat:report>
     <au:assertLogDoesntContain text="${expectedOutput}"/>
     <au:assertLogContains text="!????? ${file.name}"/>
   </target>
 
   <target name="testWithALUnknownSentToFile" depends="fileReportTest">
-    <rat:report addDefaultLicenseMatchers="false" reportFile="${report.file}">
+    <rat:report useDefaultLicenses="false" reportFile="${report.file}">
       <file file="${ant.file}"/>
-      <rat:w3c/>
+<!--      <rat:license-->
+<!--          licenseFamilyCategory="YASL1"-->
+<!--          licenseFamilyName="Yet Another Software License (YASL) 1.0"-->
+<!--          notes="Interesting License">-->
+<!--        <text text="exmpl"/>-->
+<!--      </rat:license>-->
     </rat:report>
     <au:assertLogDoesntContain text="${expectedOutput}"/>
     <au:assertLogDoesntContain text="!????? ${file.name}"/>
@@ -143,14 +153,14 @@
   <target name="testSubstringMatcherNotApprovedSentToFile"
           depends="fileReportTest">
     <rat:report reportFile="${report.file}"
-                addDefaultLicenseMatchers="false">
+                useDefaultLicenses="false">
       <file file="${ant.file}"/>
-      <rat:substringMatcher
+      <rat:license
           licenseFamilyCategory="YASL1"
           licenseFamilyName="Yet Another Software License (YASL) 1.0"
           notes="Interesting License">
-        <pattern substring="exmpl"/>
-      </rat:substringMatcher>
+        <text text="exmpl"/>
+      </rat:license>
     </rat:report>
     <assertReportContains text="!YASL1 ${file.name}"/>
     <assertReportDoesntContain text=" YASL1 ${file.name}"/>
@@ -159,14 +169,14 @@
   <target name="testSubstringMatcherApprovedSentToFile"
           depends="fileReportTest">
     <rat:report reportFile="${report.file}"
-                addDefaultLicenseMatchers="false">
+                useDefaultLicenses="false">
       <file file="${ant.file}"/>
-      <rat:substringMatcher
+      <rat:license
           licenseFamilyCategory="YASL1"
           licenseFamilyName="Yet Another Software License (YASL) 1.0"
           notes="Interesting License">
-        <pattern substring="exmpl"/>
-      </rat:substringMatcher>
+        <text text="exmpl"/>
+      </rat:license>
       <rat:approvedLicense
           familyName="Yet Another Software License (YASL) 1.0"/>
     </rat:report>
@@ -177,18 +187,18 @@
   <target name="testSubstringMatcherSentToFileNoMatch"
           depends="fileReportTest">
     <rat:report reportFile="${report.file}"
-                addDefaultLicenseMatchers="false">
+                useDefaultLicenses="false">
       <file file="${ant.file}"/>
-      <rat:substringMatcher
+      <rat:license
           licenseFamilyCategory="YASL1"
           licenseFamilyName="Yet Another Software License (YASL) 1.0"
           notes="Interesting License">
         <!-- abusing XML attribute whitespace normalization to create
              a substring that is not contained inside the build file
              itself -->
-        <pattern substring="exmpl
+        <text text="exmpl
 "/>
-      </rat:substringMatcher>
+      </rat:license>
     </rat:report>
     <assertReportDoesntContain text="!YASL1 ${file.name}"/>
     <assertReportDoesntContain text=" YASL1 ${file.name}"/>
@@ -197,14 +207,15 @@
   <target name="testFullTextMatcherNotApprovedSentToFile"
           depends="fileReportTest">
     <rat:report reportFile="${report.file}"
-                addDefaultLicenseMatchers="false">
+                useDefaultLicenses="false">
       <file file="${ant.file}"/>
-      <rat:fullTextMatcher
+      <rat:license
           licenseFamilyCategory="YASL1"
           licenseFamilyName="Yet Another Software License (YASL) 1.0"
           notes="Interesting License">
-        License Family Name: Yet Another Software License (YASL) 1.0
-      </rat:fullTextMatcher>
+        <rat:text>License Family Name: Yet Another Software License (YASL) 1.0</rat:text>
+      </rat:license>
+      <rat:removeApprovedLicense>YASL1</rat:removeApprovedLicense>
     </rat:report>
     <assertReportContains text="!YASL1 ${file.name}"/>
     <assertReportDoesntContain text=" YASL1 ${file.name}"/>
@@ -213,14 +224,14 @@
   <target name="testFullTextMatcherApprovedSentToFile"
           depends="fileReportTest">
     <rat:report reportFile="${report.file}"
-                addDefaultLicenseMatchers="false">
+                useDefaultLicenses="false">
       <file file="${ant.file}"/>
-      <rat:fullTextMatcher
+      <rat:license
           licenseFamilyCategory="YASL1"
           licenseFamilyName="Yet Another Software License (YASL) 1.0"
           notes="Interesting License">
-        License Family Name: Yet Another Software License (YASL) 1.0
-      </rat:fullTextMatcher>
+        <rat:text>License Family Name: Yet Another Software License (YASL) 1.0</rat:text>
+      </rat:license>
       <rat:approvedLicense
           familyName="Yet Another Software License (YASL) 1.0"/>
     </rat:report>
@@ -236,14 +247,14 @@
       </path>
     </pathconvert>
     <rat:report reportFile="${report.file}"
-                addDefaultLicenseMatchers="false">
+                useDefaultLicenses="false">
       <file file="report-bad-configurations.xml"/>
-      <rat:fullTextMatcher
+      <rat:license
           licenseFamilyCategory="YASL1"
           licenseFamilyName="Yet Another Software License (YASL) 1.0"
           notes="Interesting License">
-This text shouldn't exist in report-bad-configuration.xml
-      </rat:fullTextMatcher>
+<rat:text>This text shouldn't exist in report-bad-configuration.xml</rat:text>
+      </rat:license>
     </rat:report>
     <assertReportDoesntContain text="!YASL1 ${alt.file.name}"/>
     <assertReportDoesntContain text=" YASL1 ${alt.file.name}"/>
@@ -258,14 +269,14 @@ This text shouldn't exist in report-bad-configuration.xml
     </pathconvert>
     <property name="test.version" value="1.0"/>
     <rat:report reportFile="${report.file}"
-                addDefaultLicenseMatchers="false">
+                useDefaultLicenses="false">
       <file file="report-bad-configurations.xml"/>
-      <rat:fullTextMatcher
+      <rat:license
           licenseFamilyCategory="YASL1"
           licenseFamilyName="Yet Another Software License (YASL) 1.0"
           notes="Interesting License">
-        License Family Name: Yet Another Software License (YASL) ${test.version}
-      </rat:fullTextMatcher>
+        <rat:text>License Family Name: Yet Another Software License (YASL) ${test.version}</rat:text>
+      </rat:license>
     </rat:report>
     <assertReportContains text="!YASL1 ${alt.file.name}"/>
     <assertReportDoesntContain text=" YASL1 ${alt.file.name}"/>
@@ -306,16 +317,17 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.analysis.RatHeaderAnalysisException;
-public class Matcher extends BaseLicense implements IHeaderMatcher {
+import org.apache.rat.license.ILicenseFamily;
+public class Matcher extends BaseLicense {
     public Matcher() {
-        super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"),
-              new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, "Example License"),
-              "");
+        super(ILicenseFamily.builder().setLicenseFamilyCategory("EXMPL").setLicenseFamilyName("Example License").build(), 
+        "", 
+        null
+        );
     }
     public void reset() {}
     
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        reportOnLicense(subject);
+    public boolean matches(String line) {
         return true;
     }
 }
@@ -326,6 +338,9 @@ import org.apache.rat.license.ILicenseFamily;
 public class LicenseFamily implements ILicenseFamily {
     public String getFamilyName() {
         return "Example License";
+    }
+    public String getFamilyCategory() {
+    	return "Example Category";
     }
 }
 ]]></echo>

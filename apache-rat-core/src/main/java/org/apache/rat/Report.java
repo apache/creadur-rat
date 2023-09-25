@@ -46,6 +46,7 @@ import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
@@ -163,11 +164,11 @@ public class Report {
                 }
 
                 if (cl.hasOption(NO_DEFAULTS)) {
-                    configuration.setLicenseFilter(Defaults.Filter.none);
+                    configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.none);
                 } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
-                    configuration.setLicenseFilter(Defaults.Filter.all);
+                    configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.all);
                 } else {
-                    configuration.setLicenseFilter(Defaults.Filter.approved);
+                    configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.approved);
                 }
                 if (cl.hasOption(XML)) {
                     configuration.setStyleReport(false);
@@ -200,10 +201,10 @@ public class Report {
                 configuration.validate(s -> System.err.println(s));
                 
                 if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
-                    listLicenseFamilies(configuration.getApprovedLicenses(), System.out);
+                    listLicenseFamilies(configuration.getLicenseFamilies(LicenseFilter.all), System.out);
                 }
                 if (cl.hasOption(LIST_LICENSES)) {
-                    listLicenses(configuration.getLicenses(), System.out);
+                    listLicenses(configuration.getLicenses(LicenseFilter.all), System.out);
                 }
                 
                 Reporter.report(configuration);

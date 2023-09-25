@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -59,7 +60,7 @@ public class XmlReportTest {
         final ILicense matcher = mock(ILicense.class);
         when(matcher.matches(any())).thenReturn(false);
 
-        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(matcher);
+        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(Arrays.asList(matcher));
         final List<AbstractReport> reporters = new ArrayList<>();
         reporters.add(reporter);
         report = new ClaimReporterMultiplexer(analyser, reporters);

@@ -18,14 +18,14 @@
  */ 
 package org.apache.rat.analysis;
 
+import java.io.IOException;
+import java.io.Reader;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
-
-import java.io.IOException;
-import java.io.Reader;
 
 public class DocumentHeaderAnalyser implements IDocumentAnalyser {
 

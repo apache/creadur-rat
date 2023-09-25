@@ -58,7 +58,7 @@ public class MockLocation implements Document {
     }
 
     public Reader reader() throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException( "Opening Reader in MockLocation");
     }
 
     public MetaData getMetaData() {
@@ -67,6 +67,6 @@ public class MockLocation implements Document {
     
 
     public InputStream inputStream() throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Opening inputStream in MockLocation");
     }
 }

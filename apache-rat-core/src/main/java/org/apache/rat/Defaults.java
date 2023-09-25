@@ -38,10 +38,6 @@ import org.apache.rat.license.ILicenseFamily;
  * Utility class that holds constants shared by the CLI tool and the Ant tasks.
  */
 public class Defaults {
-    public enum Filter {
-        all, approved, none
-    };
-
     private static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.xml");
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
@@ -189,60 +185,6 @@ public class Defaults {
             Defaults result = new Defaults();
             result.readConfigFiles(fileNames);
             return result;
-        }
-    }
-
-    public static class LicenseCollectionMatcher implements ILicense {
-
-        private Collection<ILicense> enclosed;
-        private ILicenseFamily family;
-
-        public LicenseCollectionMatcher(Collection<ILicense> enclosed) {
-            family = ILicenseFamily.builder()
-                    .setLicenseFamilyCategory("testing")
-                    .setLicenseFamilyName("System License Collection").build();
-            this.enclosed = enclosed;
-        }
-
-        @Override
-        public String getId() {
-            return "Default License Collection";
-        }
-
-        @Override
-        public void reset() {
-            enclosed.stream().forEach(ILicense::reset);
-        }
-
-        @Override
-        public boolean matches(String line) {
-            for (ILicense license : enclosed) {
-                if (license.matches(line)) {
-                    this.family = license.getLicenseFamily();
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public ILicenseFamily getLicenseFamily() {
-            return family;
-        }
-
-        @Override
-        public String getNotes() {
-            return null;
-        }
-
-        @Override
-        public String derivedFrom() {
-            return null;
-        }
-
-        @Override
-        public int compareTo(ILicense arg0) {
-            return ILicense.getComparator().compare(this, arg0);
         }
     }
 }

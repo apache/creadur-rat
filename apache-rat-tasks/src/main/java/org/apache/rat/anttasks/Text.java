@@ -29,6 +29,9 @@ public class Text implements IHeaderMatcher.Builder {
         builder.setText(text);
     }
 
+    public void setText(String text) {
+        builder.setText(text);
+    }
     @Override
     public IHeaderMatcher build() {
         return builder.build();

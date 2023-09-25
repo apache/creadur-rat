@@ -147,7 +147,7 @@ public class Report extends Task {
             LicenseReader reader = Readers.get(fileName);
             reader.add(fileName.toURI().toURL());
             configuration.addLicenses(reader.readLicenses());
-            configuration.addApprovedLicenseNames(reader.approvedLicenseId());
+            configuration.addApprovedLicenseCategories(reader.approvedLicenseId());
         } catch (MalformedURLException e) {
             throw new BuildException("Can not read license file " + fileName, e);
         }
@@ -168,11 +168,14 @@ public class Report extends Task {
     }
 
     public void setAddApprovedLicense(String familyCategory) {
-        configuration.addApprovedLicenseName(familyCategory);
+        configuration.addApprovedLicenseCategory(familyCategory);
     }
 
     public void setRemoveApprovedLicense(String familyCategory) {
-        configuration.removeApprovedLicenseName(familyCategory);
+        configuration.removeApprovedLicenseCategory(familyCategory);
+    }
+    public void setRemoveApprovedLicense(String[] familyCategory) {
+        configuration.removeApprovedLicenseCategories(Arrays.asList(familyCategory));
     }
 
     public void setCopyrightMessage(String copyrightMessage) {
@@ -196,14 +199,14 @@ public class Report extends Task {
      */
     @Override
     public void execute() {
-        Defaults defaults = defaultsBuilder.build();
-        configuration.setFrom(defaults);
-        configuration.setReportable(new ResourceCollectionContainer(nestedResources));
-        licenses.stream().map(License::build).forEach((l) -> {
-            configuration.addLicense(l);
-            configuration.addApprovedLicenseName(l.getLicenseFamily());
-        });
         try {
+            Defaults defaults = defaultsBuilder.build();
+            configuration.setFrom(defaults);
+            configuration.setReportable(new ResourceCollectionContainer(nestedResources));
+            licenses.stream().map(License::build).forEach((l) -> {
+                configuration.addLicense(l);
+                configuration.addApprovedLicenseCategory(l.getLicenseFamily());
+            });
             validate();
             Reporter.report(configuration);
         } catch (BuildException e) {
@@ -225,9 +228,8 @@ public class Report extends Task {
             throw new BuildException(e.getMessage(), e.getCause());
         }
         if (nestedResources == null) {
-            throw new BuildException("You must specify at least one file to" + " create the report for.");
+            throw new BuildException("You must specify at least one file to create the report for.");
         }
-        configuration.setReportable(new ResourceCollectionContainer(nestedResources));
     }
 
     /**
@@ -269,12 +271,12 @@ public class Report extends Task {
 
         @Override
         public String[] getValues() {
-            return Arrays.stream(Defaults.Filter.values()).map(Defaults.Filter::name).collect(Collectors.toList())
-                    .toArray(new String[Defaults.Filter.values().length]);
+            return Arrays.stream(ReportConfiguration.LicenseFilter.values()).map(ReportConfiguration.LicenseFilter::name).collect(Collectors.toList())
+                    .toArray(new String[ReportConfiguration.LicenseFilter.values().length]);
         }
 
-        public Defaults.Filter internalFilter() {
-            return Defaults.Filter.valueOf(getValue());
+        public ReportConfiguration.LicenseFilter internalFilter() {
+            return ReportConfiguration.LicenseFilter.valueOf(getValue());
         }
     }
 }

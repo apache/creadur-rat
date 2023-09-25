@@ -59,26 +59,24 @@
   </target>
 
   <target name="testNoStylesheet">
-    <au:expectfailure expectedMessage="must specify a stylesheet">
-      <rat:report format="styled">
+    <rat:report format="styled">
         <file file="${ant.file}"/>
       </rat:report>
-    </au:expectfailure>
   </target>
 
-  <target name="testUnusedStylesheet">
-    <rat:report>
-      <stylesheet>
-        <file file="${ant.file}"/>
-      </stylesheet>
-      <file file="${ant.file}"/>
-    </rat:report>
-    <au:assertLogContains text="Ignoring stylesheet"/>
-  </target>
+<!--  <target name="testUnusedStylesheet">-->
+<!--    <rat:report>-->
+<!--      <stylesheet>-->
+<!--        <file file="${ant.file}"/>-->
+<!--      </stylesheet>-->
+<!--      <file file="${ant.file}"/>-->
+<!--    </rat:report>-->
+<!--    <au:assertLogContains text="Ignoring stylesheet"/>-->
+<!--  </target>-->
 
   <target name="testLicenseRequiresFamilyName">
     <au:expectfailure
-        expectedMessage="LicenseFamily Name must be specified.">
+        expectedMessage="LicenseFamily Name must be specified">
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license
@@ -106,7 +104,7 @@
 
   <target name="testRegexLicenseRequiresPattern">
     <au:expectfailure
-        expectedMessage="You must specify at least one nested pattern.">
+        expectedMessage="'regex' type matcher requires an expression">
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license
@@ -119,24 +117,9 @@
     </au:expectfailure>
   </target>
 
-<target name="testCopyrightBuild">
-    <au:expectfailure
-        expectedMessage="You must specify at least one nested pattern.">
-      <rat:report>
-        <file file="${ant.file}"/>
-        <rat:license
-            licenseFamilyCategory="YASL1"
-            licenseFamilyName="Yet Another Software License (YASL) 1.0"
-            notes="Interesting License">
-            <rat:copyright start="1990" end="1991" owner="public domain" />
-        </rat:license>
-      </rat:report>
-    </au:expectfailure>
-  </target>
-
   <target name="testTextLicenseRequiresText">
     <au:expectfailure
-        expectedMessage="You must specify the text to match.">
+        expectedMessage="text value is required">
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license

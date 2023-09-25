@@ -18,14 +18,14 @@ package org.apache.rat.analysis;
  * under the License.                                           *
  */
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
 
 /**
  * <p>Reads from a stream to check license.</p>

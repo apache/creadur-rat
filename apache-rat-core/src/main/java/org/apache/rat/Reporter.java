@@ -79,7 +79,7 @@ public class Reporter {
      */
     public static ClaimStatistic report(ReportConfiguration configuration) throws Exception {
         if (configuration.getReportable() != null) {
-            if (configuration.isStyleReport()) {                
+            if (configuration.isStyleReport()) {
                 PipedReader reader = new PipedReader();
                 PipedWriter writer = new PipedWriter(reader);
                 ReportTransformer transformer = new ReportTransformer(configuration.getWriter(),

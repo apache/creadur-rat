@@ -18,6 +18,8 @@
  */
 package org.apache.rat.analysis;
 
+import java.util.Collection;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
@@ -33,8 +35,8 @@ import org.apache.rat.license.ILicense;
  */
 public class DefaultAnalyserFactory {
 
-    public static final IDocumentAnalyser createDefaultAnalyser(final ILicense license) {
-        return new DefaultAnalyser(license);
+    public static final IDocumentAnalyser createDefaultAnalyser(Collection<ILicense> licenses) {
+        return new DefaultAnalyser(new LicenseCollection(licenses));
     }
 
     private final static class DefaultAnalyser implements IDocumentAnalyser {

@@ -30,8 +30,8 @@ import java.io.StringWriter;
 import java.util.regex.Pattern;
 
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.Defaults.Filter;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -78,7 +78,7 @@ public class XmlReportFactoryTest {
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.addLicense(mockLicense);
-        configuration.setLicenseFilter(Filter.all);
+        configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.all);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
         report(directory, report);

@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
@@ -51,7 +52,7 @@ public class AnalyserFactoryTest {
         out = new StringWriter();
         final XmlWriter writer = new XmlWriter(out);
         reporter = new SimpleXmlClaimReporter(writer);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(MATCHES_NOTHING_MATCHER);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(Arrays.asList(MATCHES_NOTHING_MATCHER));
     }
 
     @Test
