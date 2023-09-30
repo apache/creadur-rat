@@ -77,12 +77,33 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     @Test
+    public void testCustomLicense() throws Exception {
+        buildRule.executeTarget("testCustomLicense");
+        assertLogDoesNotMatch(" AS +\\Q" + getAntFileName() + "\\E");
+        assertLogMatches(" EXAMP +\\Q" + getAntFileName() + "\\E");
+    }
+    
+    @Test
     public void testCustomMatcher() throws Exception {
         buildRule.executeTarget("testCustomMatcher");
-        assertLogDoesNotMatch("AS +\\Q" + getAntFileName() + "\\E");
-        assertLogMatches("YASL1 +\\Q" + getAntFileName() + "\\E");
+        assertLogDoesNotMatch(" AS +\\Q" + getAntFileName() + "\\E");
+        assertLogMatches(" YASL1 +\\Q" + getAntFileName() + "\\E");
     }
 
+    @Test
+    public void testInlineCustomMatcher() throws Exception {
+        buildRule.executeTarget("testInlineCustomMatcher");
+        assertLogDoesNotMatch(" AS +\\Q" + getAntFileName() + "\\E");
+        assertLogMatches(" YASL1 +\\Q" + getAntFileName() + "\\E");
+    }
+    
+    @Test
+    public void testCustomMatcherBuilder() throws Exception {
+        buildRule.executeTarget("testCustomMatcherBuilder");
+        assertLogDoesNotMatch(" AS +\\Q" + getAntFileName() + "\\E");
+        assertLogMatches(" YASL1 +\\Q" + getAntFileName() + "\\E");
+    }
+    
     @Test
     public void testNoResources() throws Exception {
         try {

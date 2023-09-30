@@ -50,8 +50,11 @@ public class License {
         builder.setLicenseFamilyName(licenseFamilyName);
     }
 
-
     public void add(IHeaderMatcher.Builder builder) {
         this.builder.setMatcher(builder);
+    }
+    
+    public void add(IHeaderMatcher matcher) {
+        this.builder.setMatcher(matcher);
     }
 }

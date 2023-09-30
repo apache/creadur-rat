@@ -24,8 +24,7 @@ import org.apache.rat.configuration.builders.AllBuilder;
 
 public class All implements IHeaderMatcher.Builder {
 
-    AllBuilder builder = Builder.all();
-
+    private AllBuilder builder = Builder.all();
 
     @Override
     public IHeaderMatcher build() {

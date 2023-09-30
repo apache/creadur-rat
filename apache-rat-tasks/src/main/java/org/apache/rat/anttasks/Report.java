@@ -176,10 +176,7 @@ public class Report extends Task {
     public void setRemoveApprovedLicense(String familyCategory) {
         configuration.removeApprovedLicenseCategory(familyCategory);
     }
-    
-    public void addRemoveApprovedLicense(String familyCategory) {
-        configuration.removeApprovedLicenseCategory(familyCategory);
-    }
+
     public void setRemoveApprovedLicense(String[] familyCategory) {
         configuration.removeApprovedLicenseCategories(Arrays.asList(familyCategory));
     }

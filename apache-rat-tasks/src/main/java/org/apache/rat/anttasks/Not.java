@@ -24,7 +24,7 @@ import org.apache.rat.configuration.builders.NotBuilder;
 
 public class Not implements IHeaderMatcher.Builder {
 
-    NotBuilder builder = Builder.not();
+    private NotBuilder builder = Builder.not();
 
     @Override
     public IHeaderMatcher build() {

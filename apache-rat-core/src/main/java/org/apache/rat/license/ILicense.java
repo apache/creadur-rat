@@ -98,6 +98,8 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         ILicense build();
         
         Builder setMatcher(IHeaderMatcher.Builder matcher);
+        
+        Builder setMatcher(IHeaderMatcher matcher);
 
         Builder setNotes(String notes);
 

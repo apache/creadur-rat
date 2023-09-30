@@ -23,7 +23,7 @@
 <project default="all"
 	xmlns:au="antlib:org.apache.ant.antunit"
 	xmlns:rat="antlib:org.apache.rat.anttasks">
-	
+
 	<taskdef uri="antlib:org.apache.ant.antunit"
 		resource="org/apache/ant/antunit/antlib.xml"
 		classpath="${test.classpath}" />
@@ -33,13 +33,17 @@
 		classpath="${test.classpath}" />
 
 	<typedef name="matcher" classname="org.example.Matcher"
-		classpath="${test.classpath}"/>
+		classpath="${test.classpath}" />
+
+	<typedef name="matcherBuilder" classname="org.example.MatcherBuilder"
+		classpath="${test.classpath}" />
 
 	<pathconvert dirsep="/" property="file.name">
 		<path>
 			<pathelement location="${ant.file}" />
 		</path>
 	</pathconvert>
+	
 	<property name="expectedOutput" value="AL    ${file.name}" />
 
 	<target name="testWithReportSentToAnt">
@@ -70,8 +74,20 @@
 
 	<target name="testCustomLicense">
 		<property name="license.file"
-			location="${resource.dir}/customMatcher.xml" />
+			location="${resource.dir}/customLicense.xml" />
 		<rat:report licenses="${license.file}" useDefaultLicenses="false">
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
+
+	<target name="testInlineCustomMatcher" depends="prepareCustomMatcher">
+		<rat:report useDefaultLicenses="false">
+			<rat:license
+				licenseFamilyCategory="YASL1"
+				licenseFamilyName="Yet Another Software License (YASL) 1.0"
+				notes="Interesting License">
+				<inlineMatcher />
+			</rat:license>
 			<file file="${ant.file}" />
 		</rat:report>
 	</target>
@@ -83,6 +99,18 @@
 				licenseFamilyName="Yet Another Software License (YASL) 1.0"
 				notes="Interesting License">
 				<matcher />
+			</rat:license>
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
+
+	<target name="testCustomMatcherBuilder">
+		<rat:report useDefaultLicenses="false">
+			<rat:license
+				licenseFamilyCategory="YASL1"
+				licenseFamilyName="Yet Another Software License (YASL) 1.0"
+				notes="Interesting License">
+				<matcherBuilder />
 			</rat:license>
 			<file file="${ant.file}" />
 		</rat:report>
@@ -132,4 +160,42 @@
 			</rat:license>
 		</rat:report>
 	</target>
+
+	<target name="prepareCustomMatcher">
+
+		<mkdir dir="${output.dir}/test-classes" />
+		<mkdir dir="${output.dir}/src/org/example" />
+		<echo file="${output.dir}/src/org/example/InlineMatcher.java"><![CDATA[
+package org.example;
+
+import org.apache.rat.analysis.IHeaderMatcher;
+
+public class InlineMatcher implements IHeaderMatcher {
+    public InlineMatcher() {
+    }
+
+    @Override
+    public String getId() {
+        return "MyCustomMatcher";
+    }
+
+
+    @Override
+    public void reset() {
+    }
+
+
+    @Override
+    public boolean matches(String line) {
+        return true;
+    }
+}
+]]></echo>
+
+		<javac srcdir="${output.dir}/src"
+			destdir="${output.dir}/../test-classes"
+			classpath="${test.classpath}" fork="true" />
+		<typedef name="inlineMatcher" classname="org.example.InlineMatcher" />
+	</target>
+
 </project>

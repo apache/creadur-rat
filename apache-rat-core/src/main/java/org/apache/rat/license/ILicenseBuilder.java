@@ -36,6 +36,12 @@ class ILicenseBuilder implements Builder {
         this.matcher = matcher;
         return this;
     }
+    
+    @Override
+    public Builder setMatcher(IHeaderMatcher matcher) {
+        this.matcher = ()->matcher;
+        return this;
+    }
 
     @Override
     public Builder setNotes(String notes) {
