@@ -29,11 +29,9 @@ public class Copyright implements IHeaderMatcher.Builder {
         builder.setStart(start);
     }
 
-
     public void setEnd(String end) {
         builder.setEnd(end);
     }
-
 
     public void setOwner(String owner) {
         builder.setOwner(owner);

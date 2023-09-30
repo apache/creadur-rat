@@ -29,7 +29,7 @@ public class Spdx implements IHeaderMatcher.Builder  {
         builder.setName(spdxId);
     }
     
-    public void setText(String spdxId) {
+    public void addText(String spdxId) {
         builder.setName(spdxId);
     }
 

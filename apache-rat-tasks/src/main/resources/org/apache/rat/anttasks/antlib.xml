@@ -22,4 +22,11 @@
 
 <antlib>
   <taskdef name="report" classname="org.apache.rat.anttasks.Report"/>
+    <typedef name="all" classname="org.apache.rat.anttasks.All"/>
+    <typedef name="any" classname="org.apache.rat.anttasks.Any"/>
+    <typedef name="copyright" classname="org.apache.rat.anttasks.Copyright"/>
+    <typedef name="not" classname="org.apache.rat.anttasks.Not"/>
+    <typedef name="regex" classname="org.apache.rat.anttasks.Regex"/>
+    <typedef name="spdx" classname="org.apache.rat.anttasks.Spdx"/>
+    <typedef name="text" classname="org.apache.rat.anttasks.Text"/>
 </antlib>

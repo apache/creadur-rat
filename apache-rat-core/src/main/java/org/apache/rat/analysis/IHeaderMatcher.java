@@ -58,6 +58,7 @@ public interface IHeaderMatcher {
      */
     boolean matches(String line);
     
+    @FunctionalInterface
     interface Builder {
         IHeaderMatcher build();
 

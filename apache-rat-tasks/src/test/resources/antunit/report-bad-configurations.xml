@@ -82,7 +82,7 @@
         <rat:license
             licenseFamilyCategory="YASL1"
             notes="Interesting License">
-          <text>exmpl</text>
+          <rat:text>exmpl</rat:text>
         </rat:license>
       </rat:report>
     </au:expectfailure>

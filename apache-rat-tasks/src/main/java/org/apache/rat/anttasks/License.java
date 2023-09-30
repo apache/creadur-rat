@@ -21,7 +21,7 @@ package org.apache.rat.anttasks;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.analysis.IHeaderMatcher;
 
-public class License extends EnclosingMatcher  {
+public class License {
 
     private ILicense.Builder builder = ILicense.builder();
 
@@ -50,8 +50,8 @@ public class License extends EnclosingMatcher  {
         builder.setLicenseFamilyName(licenseFamilyName);
     }
 
-    @Override
-    protected void setBuilder(IHeaderMatcher.Builder builder) {
+
+    public void add(IHeaderMatcher.Builder builder) {
         this.builder.setMatcher(builder);
     }
 }

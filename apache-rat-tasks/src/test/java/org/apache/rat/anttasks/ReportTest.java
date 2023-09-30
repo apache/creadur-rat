@@ -79,8 +79,8 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testCustomMatcher() throws Exception {
         buildRule.executeTarget("testCustomMatcher");
-        assertLogDoesNotMatch("AL +\\Q" + getAntFileName() + "\\E");
-        assertLogMatches("EXAMP +\\Q" + getAntFileName() + "\\E");
+        assertLogDoesNotMatch("AS +\\Q" + getAntFileName() + "\\E");
+        assertLogMatches("YASL1 +\\Q" + getAntFileName() + "\\E");
     }
 
     @Test

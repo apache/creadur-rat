@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.stream.Stream;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -43,6 +44,10 @@ class ResourceCollectionContainer implements IReportable {
 
     ResourceCollectionContainer(ResourceCollection rc) {
         this.rc = rc;
+    }
+    
+    public Stream<? extends Resource> getFiles() {
+        return rc.stream().filter( r -> !r.isDirectory());
     }
 
     @Override

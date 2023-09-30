@@ -22,17 +22,16 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.configuration.builders.NotBuilder;
 
-public class Not extends EnclosingMatcher implements IHeaderMatcher.Builder {
+public class Not implements IHeaderMatcher.Builder {
 
     NotBuilder builder = Builder.not();
 
     @Override
-    protected void setBuilder(IHeaderMatcher.Builder builder) {
-        this.builder.setChild(builder);
-    }
-
-    @Override
     public IHeaderMatcher build() {
         return builder.build();
+    }
+    
+    public void add(IHeaderMatcher.Builder builder) {
+        this.builder.setChild(builder);
     }
 }
