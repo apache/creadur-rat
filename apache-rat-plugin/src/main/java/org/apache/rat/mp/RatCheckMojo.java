@@ -145,7 +145,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                 try {
                     config.setStyleSheet(Defaults.getUnapprovedLicensesStyleSheet());
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    config.setOut(baos);
+                    config.setOut(()->baos);
                     Reporter.report(config);
                     getLog().warn(baos.toString());
                 } catch (Exception e) {
@@ -173,14 +173,10 @@ public class RatCheckMojo extends AbstractRatMojo {
             configuration.setCopyrightMessage(copyrightMessage);
         }
         if (reportFile != null) {
-            try {
-                if (!reportFile.exists()) {
-                    reportFile.getParentFile().mkdirs();
-                }
-                configuration.setOut(new FileOutputStream(reportFile));
-            } catch (FileNotFoundException e) {
-                throw new MojoExecutionException("Can not read style file: " + reportStyle, e);
+            if (!reportFile.exists()) {
+                reportFile.getParentFile().mkdirs();
             }
+            configuration.setOut(reportFile);
         }
         if (StringUtils.isNotBlank(reportStyle)) {
             if ("xml".equalsIgnoreCase(reportStyle)) {
@@ -188,11 +184,7 @@ public class RatCheckMojo extends AbstractRatMojo {
             } else {
                 configuration.setStyleReport(true);
                 if (!"plain".equalsIgnoreCase(reportStyle)) {
-                    try {
-                        configuration.setStyleSheet(new FileInputStream(reportStyle));
-                    } catch (FileNotFoundException e) {
-                        throw new MojoExecutionException("Can not read style file: " + reportStyle, e);
-                    }
+                    configuration.setStyleSheet(() -> new FileInputStream(reportStyle));
                 }
             }
         }

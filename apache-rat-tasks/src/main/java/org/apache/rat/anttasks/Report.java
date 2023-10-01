@@ -75,7 +75,7 @@ public class Report extends Task {
 
     public Report() {
         configuration = new ReportConfiguration();
-        configuration.setOut(new LogOutputStream(this, Project.MSG_INFO));
+        configuration.setOut(()->new LogOutputStream(this, Project.MSG_INFO));
         defaultsBuilder = Defaults.builder();
     }
 
@@ -96,12 +96,7 @@ public class Report extends Task {
     }
 
     public void setReportFile(File reportFile) {
-        System.err.println(reportFile);
-        try {
-            configuration.setOut(new FileOutputStream(reportFile));
-        } catch (FileNotFoundException e) {
-            throw new BuildException("Can not open report file", e);
-        }
+        configuration.setOut(reportFile);
     }
 
     public void addLicense(License lic) {
@@ -119,11 +114,7 @@ public class Report extends Task {
     }
 
     public void addStyleSheet(Resource styleSheet) {
-        try {
-            configuration.setStyleSheet(styleSheet.getInputStream());
-        } catch (IOException e) {
-            throw new BuildException("Can not open style sheet", e);
-        }
+        configuration.setStyleSheet(()->styleSheet.getInputStream());
         configuration.setStyleReport(true);
     }
 
@@ -216,8 +207,6 @@ public class Report extends Task {
             throw e;
         } catch (Exception ioex) {
             throw new BuildException(ioex);
-        } finally {
-            configuration.close();
         }
     }
 

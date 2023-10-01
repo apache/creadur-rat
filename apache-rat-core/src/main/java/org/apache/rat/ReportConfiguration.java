@@ -19,6 +19,7 @@
 package org.apache.rat;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -126,12 +127,10 @@ public class ReportConfiguration {
      * 
      * @param styleSheet the XSLT style sheet to style the report with.
      * @throws IOException
-     * @throws MalformedURLException
      */
-    public void setStyleSheet(File styleSheet) throws MalformedURLException, IOException {
+    public void setStyleSheet(File styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
-        final URL url = styleSheet.toURI().toURL();
-        setStyleSheet(()->url.openStream());
+        setStyleSheet(()->styleSheet.toURI().toURL().openStream());
     }
 
     /**
@@ -155,6 +154,11 @@ public class ReportConfiguration {
      */
     public void setOut(IOSupplier<OutputStream> out) {
         this.out = out;
+    }
+    
+    public void setOut(File file) {
+        Objects.requireNonNull(file, "output file should not be null");
+        setOut(() -> new FileOutputStream(file));
     }
 
     /**
