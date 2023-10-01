@@ -79,7 +79,7 @@ import org.xml.sax.SAXException;
     </approved>
  */
 
-public class XMLConfigurationReader implements LicenseReader {
+public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     enum MatcherType {
         text, copyright, spdx, any, all, matcher_ref, not, regex

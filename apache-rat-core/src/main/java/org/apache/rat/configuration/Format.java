@@ -21,7 +21,8 @@ package org.apache.rat.configuration;
 import java.util.Arrays;
 
 public enum Format {
-    XML( "xml");
+    XML( "xml"),
+    TXT ( "txt","text");
     
     
     String[] suffix;
