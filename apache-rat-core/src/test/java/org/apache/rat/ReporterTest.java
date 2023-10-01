@@ -74,7 +74,7 @@ public class ReporterTest {
         configuration.setStyleReport(false);
         configuration.setFrom(defaults);
         configuration.setReportable(new DirectoryWalker(new File(elementsPath)));
-        configuration.setOut(out);
+        configuration.setOut(()->out);
         Reporter.report(configuration);
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -114,7 +114,7 @@ public class ReporterTest {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
         configuration.setReportable(new DirectoryWalker(new File(elementsPath)));
-        configuration.setOut(out);
+        configuration.setOut(()->out);
         Reporter.report(configuration);
 
         String document = out.toString();

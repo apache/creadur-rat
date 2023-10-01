@@ -26,13 +26,17 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rat.ReportConfiguration.LicenseFilter;
@@ -47,7 +51,7 @@ import org.apache.rat.report.IReportable;
  * {@link Reporter}. Basically, the sole purpose of the front ends is to create
  * the configuration and invoke the {@link Reporter}.
  */
-public class ReportConfiguration implements AutoCloseable {
+public class ReportConfiguration {
     public enum LicenseFilter {
         all, approved, none
     }
@@ -59,9 +63,9 @@ public class ReportConfiguration implements AutoCloseable {
     private boolean addingLicenses;
     private boolean addingLicensesForced;
     private String copyrightMessage;
-    private OutputStream out = null;
+    private IOSupplier<OutputStream> out = null;
     private boolean styleReport = true;
-    private InputStream styleSheet = null;
+    private IOSupplier<InputStream> styleSheet = null;
     private IReportable reportable = null;
     private FilenameFilter inputFileFilter = null;
     private LicenseFilter approvalFilter = LicenseFilter.approved;
@@ -98,7 +102,7 @@ public class ReportConfiguration implements AutoCloseable {
     /**
      * @return the XSLT style sheet to style the report with.
      */
-    public InputStream getStyleSheet() {
+    public IOSupplier<InputStream> getStyleSheet() {
         return styleSheet;
     }
 
@@ -106,14 +110,7 @@ public class ReportConfiguration implements AutoCloseable {
      * 
      * @param styleSheet the XSLT style sheet to style the report with.
      */
-    public void setStyleSheet(InputStream styleSheet) {
-        if (this.styleSheet != null) {
-            try {
-                this.styleSheet.close();
-            } catch (IOException e) {
-                logger.warn("Error closing earlier style sheet", e);
-            }
-        }
+    public void setStyleSheet(IOSupplier<InputStream> styleSheet) {
         this.styleSheet = styleSheet;
     }
 
@@ -132,7 +129,9 @@ public class ReportConfiguration implements AutoCloseable {
      * @throws MalformedURLException
      */
     public void setStyleSheet(File styleSheet) throws MalformedURLException, IOException {
-        setStyleSheet(styleSheet.toURI().toURL().openStream());
+        Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
+        final URL url = styleSheet.toURI().toURL();
+        setStyleSheet(()->url.openStream());
     }
 
     /**
@@ -154,7 +153,7 @@ public class ReportConfiguration implements AutoCloseable {
     /**
      * @param out The stream to write the output to.
      */
-    public void setOut(OutputStream out) {
+    public void setOut(IOSupplier<OutputStream> out) {
         this.out = out;
     }
 
@@ -163,16 +162,16 @@ public class ReportConfiguration implements AutoCloseable {
      * 
      * @return The output stream to write to.
      */
-    public OutputStream getOutput() {
-        return out == null ? System.out : out;
+    public IOSupplier<OutputStream> getOutput() {
+        return out == null ? ()->System.out : out;
     }
 
     /**
      * 
      * @return A PrintWriter that wraps the output stream.
      */
-    public PrintWriter getWriter() {
-        return new PrintWriter(new OutputStreamWriter(getOutput(), Charset.forName("UTF-8")));
+    public IOSupplier<PrintWriter> getWriter() {
+        return () -> new PrintWriter(new OutputStreamWriter(getOutput().get(), Charset.forName("UTF-8")));
     }
 
     /**
@@ -355,29 +354,6 @@ public class ReportConfiguration implements AutoCloseable {
         }
         if (styleSheet == null && isStyleReport()) {
             throw new ConfigurationException("Stylesheet must be specified if report styling is selected");
-        }
-    }
-
-    @Override
-    public void close() {
-        if (styleSheet != null) {
-            try {
-                styleSheet.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                styleSheet = null;
-            }
-        }
-        if (out != null) {
-            if (out != System.out && out != System.err) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            out = null;
         }
     }
 }

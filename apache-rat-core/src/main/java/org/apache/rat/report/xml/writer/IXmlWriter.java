@@ -25,7 +25,7 @@ import java.io.IOException;
  * Performs basic validation and escaping.
  * Not namespace aware (may reconsider this later).
  */
-public interface IXmlWriter {
+public interface IXmlWriter extends AutoCloseable{
 
     /**
      * Starts a document by writing a prolog.

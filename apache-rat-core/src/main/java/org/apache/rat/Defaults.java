@@ -28,7 +28,9 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.Readers;
 import org.apache.rat.license.ILicense;
@@ -70,12 +72,12 @@ public class Defaults {
         }
     }
 
-    public static InputStream getPlainStyleSheet() {
-        return Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
+    public static IOSupplier<InputStream> getPlainStyleSheet() {
+        return ()->Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
     }
 
-    public static InputStream getUnapprovedLicensesStyleSheet() {
-        return Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
+    public static IOSupplier<InputStream> getUnapprovedLicensesStyleSheet() {
+        return ()->Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
     }
 
     public SortedSet<ILicense> getLicenses() {

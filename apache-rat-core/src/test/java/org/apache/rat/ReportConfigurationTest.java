@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
@@ -209,15 +210,15 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void outputTest() {
+    public void outputTest() throws IOException {
         // defaults to system.out
-        assertEquals(System.out, underTest.getOutput());
+        assertEquals(System.out, underTest.getOutput().get());
         assertNotNull(underTest.getWriter());
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        underTest.setOut(stream);
-        assertEquals(stream, underTest.getOutput());
-        PrintWriter writer = underTest.getWriter();
+        underTest.setOut(() -> stream);
+        assertEquals(stream, underTest.getOutput().get());
+        PrintWriter writer = underTest.getWriter().get();
         assertNotNull(writer);
         writer.write('a');
         writer.flush();
@@ -240,15 +241,16 @@ public class ReportConfigurationTest {
 
         assertNull(underTest.getStyleSheet());
         InputStream stream = mock(InputStream.class);
-        underTest.setStyleSheet(stream);
-        assertEquals(stream, underTest.getStyleSheet());
-        underTest.setStyleSheet((InputStream) null);
+        underTest.setStyleSheet(() -> stream);
+        assertEquals(stream, underTest.getStyleSheet().get());
+        IOSupplier<InputStream> sup = null;
+        underTest.setStyleSheet(sup);
         assertNull(underTest.getStyleSheet());
+        
         File file = mock(File.class);
-
         when(file.toURI()).thenReturn(url.toURI());
         underTest.setStyleSheet(file);
-        BufferedReader d = new BufferedReader(new InputStreamReader(underTest.getStyleSheet()));
+        BufferedReader d = new BufferedReader(new InputStreamReader(underTest.getStyleSheet().get()));
         assertEquals("/*", d.readLine());
         assertEquals(" * Licensed to the Apache Software Foundation (ASF) under one   *", d.readLine());
     }
@@ -331,7 +333,7 @@ public class ReportConfigurationTest {
             assertEquals(0, sb.length());
         }
 
-        underTest.setStyleSheet(mock(InputStream.class));
+        underTest.setStyleSheet(()->mock(InputStream.class));
         underTest.setStyleReport(false);
         underTest.validate(s -> sb.append(s));
         assertEquals("Ignoring stylesheet because styling is not selected", sb.toString());

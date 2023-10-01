@@ -119,7 +119,7 @@ public class Report {
     private static final String LICENSE_FORMAT = "%s:\t%s\n\t\t%s\n";
 
     public static final void main(String[] args) throws Exception {
-        try (final ReportConfiguration configuration = new ReportConfiguration()) {
+        final ReportConfiguration configuration = new ReportConfiguration();
             Options opts = buildOptions();
 
             CommandLine cl = null;
@@ -180,12 +180,7 @@ public class Report {
                             System.err.println("please specify a single stylesheet");
                             System.exit(1);
                         }
-                        try {
-                            configuration.setStyleSheet(new FileInputStream(style[0]));
-                        } catch (FileNotFoundException fnfe) {
-                            System.err.println("stylesheet " + style[0] + " doesn't exist");
-                            System.exit(1);
-                        }
+                        configuration.setStyleSheet(() -> new FileInputStream(style[0]));
                     }
                 }
 
@@ -209,7 +204,6 @@ public class Report {
                 
                 Reporter.report(configuration);
             }
-        }
     }
 
     private static void listLicenseFamilies(SortedSet<ILicenseFamily> families, PrintStream out) {
@@ -338,7 +332,7 @@ public class Report {
     }
 
     public static IReportable getDirectory(String baseDirectory, ReportConfiguration config) {
-        PrintStream out = new PrintStream(config.getOutput());
+        try (PrintStream out = new PrintStream(config.getOutput().get())) {
         File base = new File(baseDirectory);
         if (!base.exists()) {
             out.print("ERROR: ");
@@ -358,6 +352,9 @@ public class Report {
             out.print(baseDirectory);
             out.print(" is not valid gzip data.\n");
             return null;
+        }
+        } catch (IOException e) {
+            throw new ConfigurationException("Error opening output", e);
         }
     }
 
