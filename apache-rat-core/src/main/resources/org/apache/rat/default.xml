@@ -9,7 +9,7 @@
 		<spdx name=''/> 
 		<and> <license>...</and>
 		<or> <license>...</or> 
-		<matcher_ref refid='licenceid' />
+		<matcherRef refId='licenceid' />
 	</license>
 -->
 		<license id="AL" name="Apache License Version 2.0">
@@ -38,7 +38,7 @@
 
 		<license id="ASL" name="Applied Apahce License Version 2.0">
 			<all>
-				<matcher_ref refid="ALStandard" />
+				<matcherRef refId="ALStandard" />
 				<copyright />
 			</all>
 		</license>
@@ -166,7 +166,7 @@
 				<text>TMF854 Version 1.0</text>
 				<copyright
 					owner="TeleManagement Forum" />
-				<matcher_ref refid="BSD-3-txt" />
+				<matcherRef refId="BSD-3-txt" />
 			</all>
 		</license>
 
@@ -254,4 +254,14 @@
 		<family license_ref='W3C' />
 		<family license_ref='W3CD' />
 	</approved>
+	<matchers>
+		<matcher class="org.apache.rat.configuration.builders.AllBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.AnyBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.CopyrightBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.MatcherRefBuilder"/>
+		<matcher class="org.apache.rat.configuration.builders.NotBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.RegexBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.SpdxBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.TextBuilder" />
+	</matchers>
 </rat-config>

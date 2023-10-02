@@ -32,6 +32,6 @@ public class Not implements IHeaderMatcher.Builder {
     }
     
     public void add(IHeaderMatcher.Builder builder) {
-        this.builder.setChild(builder);
+        this.builder.add(builder);
     }
 }

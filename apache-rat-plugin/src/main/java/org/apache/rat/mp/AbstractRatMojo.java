@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,8 +53,10 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.SourceCodeManagementSystems;
+import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
-import org.apache.rat.configuration.Readers;
+import org.apache.rat.configuration.MatcherReader;
+import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.mp.util.ScmIgnoreParser;
 import org.apache.rat.report.IReportable;
@@ -246,14 +249,24 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         @SuppressWarnings("resource")
         ReportConfiguration result = new ReportConfiguration();
+        
         if (additionalLicenseFiles != null) {
-            for (int i = 0; i < additionalLicenseFiles.length; i++) {
+            for (String licenseFile : additionalLicenseFiles) {
                 try {
-                    LicenseReader reader = Readers.get(additionalLicenseFiles[i]);
-                    result.addLicenses(reader.readLicenses());
-                    result.addApprovedLicenseCategories(reader.approvedLicenseId());
+                    URL url = new File(licenseFile).toURI().toURL();
+                    Format fmt = Format.fromName(licenseFile);
+                    MatcherReader mReader = fmt.matcherReader();
+                    if (mReader != null) {
+                        mReader.addMatchers(url);
+                    }
+                    LicenseReader lReader = fmt.licenseReader();
+                    if (lReader != null) {
+                            lReader.addLicenses(url);
+                    result.addLicenses(lReader.readLicenses());
+                    result.addApprovedLicenseCategories(lReader.approvedLicenseId());
+                    }
                 } catch (MalformedURLException e) {
-                    throw new ConfigurationException(additionalLicenseFiles[i] + " is not a valid license file", e);
+                    throw new ConfigurationException(licenseFile + " is not a valid license file", e);
                 }
             }
         }

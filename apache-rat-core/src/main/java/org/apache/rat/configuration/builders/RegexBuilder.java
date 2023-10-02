@@ -28,7 +28,7 @@ public class RegexBuilder extends AbstractBuilder {
 
     private Pattern exp;
 
-    public RegexBuilder setExpression(String exp) {
+    public RegexBuilder setRegex(String exp) {
         if (null == exp) {
             throw new ConfigurationException("'regex' type matcher expression value may not be null");
         }

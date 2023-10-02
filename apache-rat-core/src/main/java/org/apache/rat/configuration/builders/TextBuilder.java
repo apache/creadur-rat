@@ -24,7 +24,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 
-public class TextBuilder extends AbstractBuilder {
+public class TextBuilder extends AbstractBuilder implements TextCaptureBuilder {
 
     private String text;
 

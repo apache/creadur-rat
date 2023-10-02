@@ -25,12 +25,18 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
-import org.apache.rat.configuration.Readers;
+import org.apache.rat.configuration.MatcherReader;
+import org.apache.rat.configuration.MatcherBuilderTracker;
+import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -44,6 +50,13 @@ public class Defaults {
 
     private final SortedSet<ILicense> licenses;
     private final SortedSet<String> approvedLicenseIds;
+    
+    public static void init() {
+        Format fmt = Format.fromURL(DEFAULT_CONFIG_URL);
+        MatcherReader mReader = fmt.matcherReader();
+        mReader.addMatchers(DEFAULT_CONFIG_URL);
+        mReader.readMatcherBuilders();
+    }
 
     /**
      * Builder constructs instances.
@@ -63,10 +76,21 @@ public class Defaults {
     }
 
     private void readConfigFiles(Collection<URL> urls) {
+
         for (URL url : urls) {
-            LicenseReader reader = Readers.get(url);
-            licenses.addAll(reader.readLicenses());
-            reader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
+            Format fmt = Format.fromURL(url);
+            MatcherReader mReader = fmt.matcherReader();
+            if (mReader != null) {
+                mReader.addMatchers(url);
+                mReader.readMatcherBuilders();
+            }
+
+            LicenseReader lReader = fmt.licenseReader();
+            if (lReader != null) {
+                lReader.addLicenses(url);
+                licenses.addAll(lReader.readLicenses());
+                lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
+            }
         }
     }
 

@@ -19,14 +19,18 @@ package org.apache.rat.configuration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.io.File;
+import java.net.MalformedURLException;
+
 import org.junit.Test;
 
 public class FormatTest {
     @Test
-    public void fromNameTest() {
+    public void fromNameTest() throws MalformedURLException {
         assertEquals(Format.XML, Format.fromName("foo/x.xml"));
         assertEquals(Format.XML, Format.fromName("x.xml"));
         assertThrows(IllegalArgumentException.class, () ->Format.fromName("junk"));
+        assertEquals(Format.XML, Format.fromFile( new File("foo/y.xml")));
     }
 
 }

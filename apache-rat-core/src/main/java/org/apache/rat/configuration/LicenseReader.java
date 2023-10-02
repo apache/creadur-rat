@@ -29,13 +29,7 @@ public interface LicenseReader {
      * 
      * @param url the URL to read.
      */
-    void add(URL url);
-    
-    /**
-     * Adds matchers from the associated URL to this reader.
-     * @param url the URL to read.
-     */
-    void addMatchers(URL url);
+    void addLicenses(URL url);
 
     /**
      * Reads the configuration and extracts the BaseLicenses.

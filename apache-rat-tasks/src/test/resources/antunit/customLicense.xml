@@ -34,7 +34,7 @@
 	</license>
 -->
 		<license id="EXAMPLE" name="Example License">
-			<regex exp='.' />
+			<regex regex='.' />
 		</license>
 
 	</licenses>

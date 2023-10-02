@@ -16,25 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.anttasks;
+package org.apache.rat.configuration.builders;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.configuration.builders.RegexBuilder;
-
-public class Regex implements IHeaderMatcher.Builder {
-
-    private RegexBuilder builder = new RegexBuilder();
-
-    public void setRegex(String pattern) {
-        builder.setRegex(pattern);
-    }
-    
-    public void addText(String pattern) {
-        builder.setRegex(pattern);
-    }
-
-    @Override
-    public IHeaderMatcher build() {
-        return builder.build();
-    }
+public interface TextCaptureBuilder {
+    <T extends TextCaptureBuilder> T setText(String text);
 }

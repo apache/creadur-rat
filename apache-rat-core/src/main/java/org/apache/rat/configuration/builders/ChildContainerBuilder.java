@@ -18,20 +18,51 @@
  */
 package org.apache.rat.configuration.builders;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.Builder;
 
 public abstract class ChildContainerBuilder extends AbstractBuilder {
 
-    List<IHeaderMatcher.Builder> children = new ArrayList<IHeaderMatcher.Builder>();
+    protected final List<IHeaderMatcher.Builder> children = new ArrayList<IHeaderMatcher.Builder>();
 
     protected ChildContainerBuilder() {
     }
 
+    /**
+     * Reads a text file. Each line becomes a text matcher in the resulting List.
+     * 
+     * @param resourceName the name of the resource to read.
+     * @return a List of Matchers, one for each non empty line in the input file.
+     */
+    public AbstractBuilder setResource(String resourceName) {
+          URL url = this.getClass().getResource(resourceName);
+            try (final InputStream in = url.openStream()) {
+                BufferedReader buffer = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+                String txt;
+                while (null != (txt = buffer.readLine())) {
+                    txt = txt.trim();
+                    if (StringUtils.isNotBlank(txt)) {
+                        children.add(Builder.text().setText(txt));
+                    }
+                }
+                return this;
+            } catch (IOException e) {
+                throw new ConfigurationException("Unable to read matching text file: " + resourceName, e);
+            }
+    }
+    
     public AbstractBuilder add(IHeaderMatcher.Builder child) {
         children.add(child);
         return this;

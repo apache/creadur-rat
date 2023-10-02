@@ -17,11 +17,22 @@
 package org.apache.rat.configuration;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.apache.rat.configuration.builders.AbstractBuilder;
+import org.apache.rat.configuration.builders.AllBuilder;
+import org.apache.rat.configuration.builders.AnyBuilder;
+import org.apache.rat.configuration.builders.CopyrightBuilder;
+import org.apache.rat.configuration.builders.MatcherRefBuilder;
+import org.apache.rat.configuration.builders.NotBuilder;
+import org.apache.rat.configuration.builders.RegexBuilder;
+import org.apache.rat.configuration.builders.SpdxBuilder;
+import org.apache.rat.configuration.builders.TextBuilder;
 import org.junit.Test;
 
 public class ConfigurationReaderTest {
@@ -50,6 +61,29 @@ public class ConfigurationReaderTest {
         Collection<String> readCategories = reader.readLicenses().stream()
                 .map(x -> x.getLicenseFamily().getFamilyCategory()).collect(Collectors.toList());
         assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[readCategories.size()]));
+    }
+    
+    private void checkMatcher( String name, Class<? extends AbstractBuilder> clazz)
+    {
+        AbstractBuilder builder =  MatcherBuilderTracker.getMatcherBuilder(name);
+        assertNotNull( builder );
+        assertTrue( name+" is not an instanceof "+clazz.getName(), clazz.isAssignableFrom(builder.getClass()));
+    }
+    
+    @Test
+    public void checkSystemMatcherTest() {
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        reader.read(url);
+        reader.readMatcherBuilders();
+        checkMatcher( "all", AllBuilder.class);
+        checkMatcher( "any", AnyBuilder.class);
+        checkMatcher( "copyright", CopyrightBuilder.class);
+        checkMatcher( "matcherRef", MatcherRefBuilder.class);
+        checkMatcher( "not", NotBuilder.class);
+        checkMatcher( "regex", RegexBuilder.class);
+        checkMatcher( "spdx", SpdxBuilder.class);
+        checkMatcher( "text", TextBuilder.class);
     }
 
 }
