@@ -428,7 +428,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
             //config.setStyleSheet(Defaults.getUnapprovedLicensesStyleSheet());
             logLicenses(config.getLicenses(LicenseFilter.all));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            config.setOut(baos);
+            config.setOut(()->baos);
             Reporter.report(config);
             sink.text(baos.toString());
         } catch (Exception e) {

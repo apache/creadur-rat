@@ -647,4 +647,9 @@ public final class XmlWriter implements IXmlWriter {
         final byte code = CHARACTER_CODES[character];
         return (code & NAME_MASK) > 0;
     }
+
+    @Override
+    public void close() throws Exception {
+        closeDocument();
+    }
 }

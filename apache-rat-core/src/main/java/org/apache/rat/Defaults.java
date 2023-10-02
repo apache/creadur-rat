@@ -31,8 +31,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
 import org.apache.rat.configuration.Format;
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
 import org.apache.rat.configuration.MatcherBuilderTracker;
@@ -94,12 +96,12 @@ public class Defaults {
         }
     }
 
-    public static InputStream getPlainStyleSheet() {
-        return Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
+    public static IOSupplier<InputStream> getPlainStyleSheet() {
+        return ()->Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
     }
 
-    public static InputStream getUnapprovedLicensesStyleSheet() {
-        return Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
+    public static IOSupplier<InputStream> getUnapprovedLicensesStyleSheet() {
+        return ()->Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
     }
 
     public SortedSet<ILicense> getLicenses() {

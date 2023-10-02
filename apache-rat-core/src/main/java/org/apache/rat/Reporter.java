@@ -24,6 +24,7 @@ import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.io.filefilter.NameFileFilter;
@@ -79,11 +80,12 @@ public class Reporter {
      */
     public static ClaimStatistic report(ReportConfiguration configuration) throws Exception {
         if (configuration.getReportable() != null) {
-            if (configuration.isStyleReport()) {
+            if (configuration.isStyleReport()) { 
+                try (
                 PipedReader reader = new PipedReader();
-                PipedWriter writer = new PipedWriter(reader);
-                ReportTransformer transformer = new ReportTransformer(configuration.getWriter(),
-                        configuration.getStyleSheet(), reader);
+                PipedWriter writer = new PipedWriter(reader);) {
+                ReportTransformer transformer = new ReportTransformer(configuration.getWriter().get(),
+                        configuration.getStyleSheet().get(), reader);
                 Thread transformerThread = new Thread(transformer);
                 transformerThread.start();
                 final ClaimStatistic statistic = report(writer, configuration);
@@ -91,8 +93,11 @@ public class Reporter {
                 writer.close();
                 transformerThread.join();
                 return statistic;
+                }
             }
-            return report(configuration.getWriter(), configuration);
+            try (Writer writer = configuration.getWriter().get()) {
+            return report(writer, configuration);
+            }
         }
         return null;
     }
@@ -107,13 +112,17 @@ public class Reporter {
      */
     private static ClaimStatistic report(Writer outputWriter, ReportConfiguration configuration)
             throws IOException, RatException {
-        IXmlWriter writer = new XmlWriter(outputWriter);
+        try (
+        IXmlWriter writer = new XmlWriter(outputWriter)){
         final ClaimStatistic statistic = new ClaimStatistic();
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
         configuration.getReportable().run(report);
         report.endReport();
-        writer.closeDocument();
+
         return statistic;
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 }
