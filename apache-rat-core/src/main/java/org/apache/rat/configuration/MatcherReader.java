@@ -16,25 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.anttasks;
+package org.apache.rat.configuration;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.configuration.builders.RegexBuilder;
+import java.net.URL;
 
-public class Regex implements IHeaderMatcher.Builder {
+public interface MatcherReader {
+    /**
+     * Adds a URL to the set of files to be read.
+     * 
+     * @param url the URL to read.
+     */
+    void addMatchers(URL url);
 
-    private RegexBuilder builder = new RegexBuilder();
-
-    public void setRegex(String pattern) {
-        builder.setRegex(pattern);
-    }
-    
-    public void addText(String pattern) {
-        builder.setRegex(pattern);
-    }
-
-    @Override
-    public IHeaderMatcher build() {
-        return builder.build();
-    }
+    /**
+     * Reads the configuration and MatcherBuilder classes and adds them to Readers..
+     */
+    void readMatcherBuilders();
 }

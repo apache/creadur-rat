@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +34,10 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
+import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
-import org.apache.rat.configuration.Readers;
+import org.apache.rat.configuration.MatcherReader;
+import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -135,10 +138,18 @@ public class Report extends Task {
 
     public void setLicenses(File fileName) {
         try {
-            LicenseReader reader = Readers.get(fileName);
-            reader.add(fileName.toURI().toURL());
-            configuration.addLicenses(reader.readLicenses());
-            configuration.addApprovedLicenseCategories(reader.approvedLicenseId());
+            URL url = fileName.toURI().toURL();
+            Format fmt = Format.fromFile(fileName);
+            MatcherReader mReader = fmt.matcherReader();
+            if (mReader != null) {
+                mReader.addMatchers(url);
+            }
+            LicenseReader lReader = fmt.licenseReader();
+            if (lReader != null) {
+                    lReader.addLicenses(url);
+            configuration.addLicenses(lReader.readLicenses());
+            configuration.addApprovedLicenseCategories(lReader.approvedLicenseId());
+            }
         } catch (MalformedURLException e) {
             throw new BuildException("Can not read license file " + fileName, e);
         }

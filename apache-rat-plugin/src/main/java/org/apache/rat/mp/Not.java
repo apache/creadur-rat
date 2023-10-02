@@ -31,7 +31,7 @@ public class Not extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
     @Override
     protected void setBuilder(IHeaderMatcher.Builder builder) {
-        this.builder.setChild(builder);
+        this.builder.add(builder);
     }
 
     @Override

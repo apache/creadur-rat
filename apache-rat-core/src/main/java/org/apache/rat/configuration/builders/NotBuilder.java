@@ -22,20 +22,13 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.NotMatcher;
 
-public class NotBuilder extends AbstractBuilder {
-
-    IHeaderMatcher.Builder child;
-
-    public AbstractBuilder setChild(IHeaderMatcher.Builder child) {
-        this.child = child;
-        return this;
-    }
-
+public class NotBuilder extends ChildContainerBuilder {
+    
     @Override
     public IHeaderMatcher build() {
-        if (child == null) {
-            throw new ConfigurationException("NotBuilder child must be set");
+        if (children.size() != 1) {
+            throw new ConfigurationException("'not' type matcher requires one and only one enclosed matcher");
         }
-        return new NotMatcher(getId(), child.build());
+        return new NotMatcher(getId(), children.get(0).build());
     }
 }
