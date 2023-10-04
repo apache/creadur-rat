@@ -18,6 +18,7 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.junit.Test;
 
 public class AndMatcherTest {
@@ -35,11 +37,12 @@ public class AndMatcherTest {
     public void standardTest() {
         IHeaderMatcher one = mock(IHeaderMatcher.class);
         IHeaderMatcher two = mock(IHeaderMatcher.class);
-        when(one.matches(any())).thenReturn( true ).thenReturn(false);
-        when(two.matches(any())).thenReturn( false ).thenReturn(true);
+        when(one.matches(any())).thenReturn( State.t ).thenReturn(State.t);
+        when(two.matches(any())).thenReturn( State.i ).thenReturn(State.t);
         
         AndMatcher target = new AndMatcher( "Testing", Arrays.asList( one, two ));
-        assertFalse( target.matches("hello"));
-        assertTrue( target.matches("world"));
+        assertEquals( State.i, target.currentState());
+        assertEquals( State.i, target.matches("hello"));
+        assertEquals( State.t, target.matches("world"));
     }
 }

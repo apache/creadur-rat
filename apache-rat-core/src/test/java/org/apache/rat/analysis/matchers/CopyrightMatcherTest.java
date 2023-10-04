@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -122,7 +123,7 @@ public class CopyrightMatcherTest {
     public void testPass() {
         for (String[] target : pass) {
             String errMsg = String.format("%s:%s failed", testName, target[NAME]);
-            assertTrue(errMsg, matcher.matches(target[TEXT]));
+            assertEquals(errMsg, State.t,matcher.matches(target[TEXT]));
             matcher.reset();
         }
     }
@@ -131,7 +132,8 @@ public class CopyrightMatcherTest {
     public void testFail() {
         for (String[] target : fail) {
             String errMsg = String.format("%s:%s passed", testName, target[NAME]);
-            assertFalse(errMsg, matcher.matches(target[TEXT]));
+            assertEquals(errMsg, State.i, matcher.matches(target[TEXT]));
+            assertEquals(errMsg, State.f, matcher.finalizeState());
             matcher.reset();
         }
     }

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.DefaultAnalyserFactory;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.report.AbstractReport;
@@ -58,7 +59,7 @@ public class XmlReportTest {
         writer.startDocument();
         final SimpleXmlClaimReporter reporter = new SimpleXmlClaimReporter(writer);
         final ILicense matcher = mock(ILicense.class);
-        when(matcher.matches(any())).thenReturn(false);
+        when(matcher.matches(any())).thenReturn(State.t);
 
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(Arrays.asList(matcher));
         final List<AbstractReport> reporters = new ArrayList<>();

@@ -18,44 +18,48 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 
 public class AndMatcher extends AbstractMatcherContainer {
-    private boolean[] flags = null;
-
+    
     public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
-        flags = new boolean[enclosed.size()];
     }
 
     public AndMatcher(Collection<? extends IHeaderMatcher> enclosed) {
-        super(enclosed);
-        flags = new boolean[enclosed.size()];
+        this(null,enclosed);
     }
 
     @Override
-    public void reset() {
-        super.reset();
-        flags = new boolean[enclosed.size()];
-    }
-
-    @Override
-    public boolean matches(String line) {
-        boolean result = true;
-        Iterator<IHeaderMatcher> iter = enclosed.iterator();
-        int i = 0;
-        while (iter.hasNext()) {
-            if (flags[i]) {
-                iter.next();
-            } else {
-                flags[i] = iter.next().matches(line);
-                result &= flags[i];
+    public State currentState() {
+        State dflt = State.t;
+        for (IHeaderMatcher matcher : enclosed) {
+            switch (matcher.currentState()) {
+            case f: return State.f;
+            case i: dflt = State.i;
+            break;
+            default:
+                // do nothing
+                break;
             }
-            i++;
         }
-        return result;
+        return dflt;
+    }
+    
+    @Override
+    public State matches(String line) {
+        enclosed.stream().filter( x -> x.currentState() == State.i).forEach(x -> x.matches(line));
+        return currentState();
+    }
+
+    @Override
+    public State finalizeState() {
+        enclosed.forEach(IHeaderMatcher::finalizeState);
+        return currentState();
     }
 }

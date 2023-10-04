@@ -75,9 +75,19 @@ public class MatcherRefBuilder extends AbstractBuilder {
         }
 
         @Override
-        public boolean matches(String line) {
+        public State matches(String line) {
             checkProxy();
             return wrapped.matches(line);
+        }
+
+        @Override
+        public State currentState() {
+            return wrapped.currentState();
+        }
+
+        @Override
+        public State finalizeState() {
+            return wrapped.finalizeState();
         }
     }
 

@@ -84,7 +84,7 @@ public class SPDXMatcherFactory {
         return caller == lastMatch;
     }
 
-    public class Match extends AbstractHeaderMatcher {
+    public class Match extends AbstractSimpleMatcher {
         
         /**
          * Constructor.
@@ -100,11 +100,7 @@ public class SPDXMatcherFactory {
         }
 
         @Override
-        public void reset() {
-        }
-
-        @Override
-        public boolean matches(String line) {
+        protected boolean doMatch(String line) {
             return SPDXMatcherFactory.this.check(line, this);
         }
 

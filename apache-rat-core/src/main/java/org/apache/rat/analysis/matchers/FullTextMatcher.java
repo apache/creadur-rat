@@ -32,7 +32,7 @@ import java.util.Locale;
  *
  * @since Rat 0.9
  */
-public class FullTextMatcher extends AbstractHeaderMatcher {
+public class FullTextMatcher extends AbstractSimpleMatcher {
 
     // Number of match characters assumed to be present on first line
     private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
@@ -43,8 +43,6 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
 
     private boolean seenFirstLine = false;
 
-    private boolean result = false;
-
     private final StringBuilder buffer = new StringBuilder();
 
     public FullTextMatcher(String fullText) {
@@ -53,7 +51,14 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
 
     public FullTextMatcher(String id, String fullText) {
         super(id);
-        setFullText(fullText);
+        int offset = fullText.indexOf('\n');
+        if (offset == -1) {
+            offset = Math.min(DEFAULT_INITIAL_LINE_LENGTH, fullText.length());
+        }
+        firstLine = prune(fullText.substring(0, offset)).toLowerCase(Locale.ENGLISH);
+        this.fullText = prune(fullText).toLowerCase(Locale.ENGLISH);
+        buffer.setLength(0);
+        seenFirstLine = false;
     }
 
     /**
@@ -74,25 +79,12 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
         return buffer.toString();
     }
 
-    public final void setFullText(String text) {
-        int offset = text.indexOf('\n');
-        if (offset == -1) {
-            offset = Math.min(DEFAULT_INITIAL_LINE_LENGTH, text.length());
-        }
-        firstLine = prune(text.substring(0, offset)).toLowerCase(Locale.ENGLISH);
-        fullText = prune(text).toLowerCase(Locale.ENGLISH);
-        init();
-    }
-
     public final boolean hasFullText() {
         return fullText != null;
     }
 
     @Override
-    public boolean matches(String line) {
-        if (result) {
-            return true;
-        }
+    public boolean doMatch(String line) {
         final String inputToMatch = prune(line).toLowerCase(Locale.ENGLISH);
         if (seenFirstLine) { // Accumulate more input
             buffer.append(inputToMatch);
@@ -111,8 +103,7 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
 
         if (buffer.length() >= fullText.length()) { // we have enough data to match
             if (buffer.toString().contains(fullText)) {
-                result = true;
-                return true; // we found a match
+                return true;
             }
             // buffer contains first line but does not contain full text
             // It's possible that the buffer contains the first line again
@@ -120,21 +111,17 @@ public class FullTextMatcher extends AbstractHeaderMatcher {
             if (offset >= 0) { // first line found again
                 buffer.delete(0, offset); // reset buffer to the new start
             } else { // buffer does not even contain first line, so cannot be used to match full text
-                init();
+                reset();
             }
         }
         return false;
     }
 
-    @Override
-    public void reset() {
-        init();
-    }
-
     // This is called indirectly from a ctor so must be final or private
-    private void init() {
+    public void reset() {
+        super.reset();
         buffer.setLength(0);
         seenFirstLine = false;
-        result = false;
     }
+
 }

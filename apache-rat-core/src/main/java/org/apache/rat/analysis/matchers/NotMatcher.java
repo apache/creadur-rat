@@ -34,12 +34,29 @@ public class NotMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public boolean matches(String line) {
-        return !enclosed.matches(line);
+    public State matches(String line) {
+        enclosed.matches(line);
+        return currentState();
     }
 
     @Override
     public void reset() {
         enclosed.reset();
+    }
+
+    @Override
+    public State finalizeState() {
+        enclosed.finalizeState();
+        return currentState();
+    }
+
+    @Override
+    public State currentState() {
+        switch (enclosed.currentState()) {
+        case t : return State.f;
+        case f : return State.t;
+        default:
+        case i : return State.i;
+        }
     }
 }

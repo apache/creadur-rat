@@ -31,6 +31,34 @@ import org.apache.rat.configuration.builders.TextBuilder;
  * Matches text headers to known licenses.
  */
 public interface IHeaderMatcher {
+    /**
+     * The state of the matcher.
+     * </ul>
+     * <li>{@code t} - The matcher has located a match.</li>
+     * <li>{@code f} - The matcher has determined that it will not match the
+     * document.</li>
+     * <li>{@code i} - The matcher can not yet determine if a matche is made or
+     * not.</li>
+     * </ul>
+     */
+    enum State {
+        t("true"), f("false"), i("indeterminent");
+
+        private String desc;
+
+        State(String desc) {
+            this.desc = desc;
+        }
+
+        public boolean asBoolean() {
+            switch (this) {
+            case t : return true;
+            case f : return false;
+            default:
+            case i : throw new IllegalStateException( "'asBoolean' should never be called on an indeterminate state");
+            }
+        }
+    }
 
     /**
      * Get the identifier for this matcher.
@@ -46,18 +74,30 @@ public interface IHeaderMatcher {
     void reset();
 
     /**
-     * Matches the text accumulated to licenses. TODO probably a poor design choice
-     * - hope to fix later
+     * Attempts to match the text after adding the line and returns the State after
+     * the match is attempted.
      * 
-     * @param subject current document.
      * @param line next line of text, not null
-     * 
-     * @return whether the current line matched in the document.
+     * @return the new state after the matching was attempted.
      * 
      * @throws RatHeaderAnalysisException in case of internal RAT errors.
      */
-    boolean matches(String line);
-    
+    State matches(String line);
+
+    /**
+     * Gets the final state for this matcher. This is called after the EOF on the
+     * input. At this point there should be no matchers in an indeterminent state.
+     */
+    State finalizeState();
+
+    /**
+     * Gets the the current state of the matcher. All matchers should be
+     * indeterminant at the start.
+     * 
+     * @return the current state of the matcher.
+     */
+    State currentState();
+
     @FunctionalInterface
     interface Builder {
         IHeaderMatcher build();

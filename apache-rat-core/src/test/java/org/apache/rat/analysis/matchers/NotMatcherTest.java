@@ -18,6 +18,7 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.junit.Test;
 
 public class NotMatcherTest {
@@ -32,16 +34,20 @@ public class NotMatcherTest {
     @Test
     public void testTrue() {
         IHeaderMatcher enclosed = mock(IHeaderMatcher.class);
-        when(enclosed.matches(any())).thenReturn(true);
+        when(enclosed.matches(any())).thenReturn(State.i);
+        when(enclosed.finalizeState()).thenReturn(State.t);
         NotMatcher matcher = new NotMatcher(enclosed);
-        assertFalse( matcher.matches("dummy"));
+        assertEquals( State.i, matcher.matches("dummy"));
+        assertEquals( State.f, matcher.finalizeState());
     }
     
     @Test
     public void testFalse() {
         IHeaderMatcher enclosed = mock(IHeaderMatcher.class);
-        when(enclosed.matches(any())).thenReturn(false);
+        when(enclosed.matches(any())).thenReturn(State.i);
+        when(enclosed.finalizeState()).thenReturn(State.f);
         NotMatcher matcher = new NotMatcher(enclosed);
-        assertTrue( matcher.matches("dummy"));
+        assertEquals( State.i, matcher.matches("dummy"));
+        assertEquals( State.t, matcher.finalizeState());
     }
 }

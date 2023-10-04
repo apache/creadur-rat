@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
@@ -40,5 +41,11 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
     @Override
     public void reset() {
         enclosed.stream().forEach(x -> x.reset());
+    }
+
+    @Override
+    public State finalizeState() {
+        enclosed.forEach(IHeaderMatcher::finalizeState);
+        return currentState();
     }
 }

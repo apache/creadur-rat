@@ -25,6 +25,7 @@ import java.io.File;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.MockLocation;
 import org.apache.rat.license.ILicense;
@@ -54,7 +55,7 @@ class DirectoryScanner {
                 br = Resources.getBufferedReader(f);
                 String line;
                 while(!result && (line = br.readLine()) != null) {
-                    result = license.matches(line);
+                    result = license.matches(line) == State.t;
                 }
                 assertEquals(f.toString(), expected, result);
             } finally {

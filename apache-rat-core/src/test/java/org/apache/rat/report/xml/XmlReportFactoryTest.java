@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfiguration.LicenseFilter;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -71,7 +72,7 @@ public class XmlReportFactoryTest {
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("TEST")
                 .setLicenseFamilyName("Testing family").build();
         final ILicense mockLicense = mock(ILicense.class);
-        when(mockLicense.matches(any())).thenReturn(true);
+        when(mockLicense.matches(any())).thenReturn(State.t);
         when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
@@ -103,7 +104,7 @@ public class XmlReportFactoryTest {
     public void testNoLicense() throws Exception {
 
         final ILicense mockLicense = mock(ILicense.class);
-        when(mockLicense.matches(any())).thenReturn(true);
+        when(mockLicense.matches(any())).thenReturn(State.t);
         when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         final ClaimStatistic statistic = new ClaimStatistic();

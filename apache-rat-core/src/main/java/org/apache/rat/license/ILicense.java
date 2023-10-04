@@ -57,8 +57,8 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
             }
 
             @Override
-            public boolean matches(String line) {
-                return false;
+            public State matches(String line) {
+                return State.f;
             }
 
             @Override
@@ -79,6 +79,16 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
             @Override
             public String derivedFrom() {
                 return null;
+            }
+
+            @Override
+            public State finalizeState() {
+                return State.f;
+            }
+
+            @Override
+            public State currentState() {
+                return State.f;
             }
 
         };

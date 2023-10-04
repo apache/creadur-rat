@@ -18,36 +18,45 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.regex.Pattern;
 
-/**
- * @since Rat 0.8
- */
-public class SimpleTextMatcher extends AbstractSimpleMatcher {
-    private String pattern;
+public abstract class AbstractSimpleMatcher extends AbstractHeaderMatcher {
+    private Pattern pattern;
+    private State lastState;
 
-    /**
-     * Creates a pattern based license with full documentation.
-     * 
-     * @param pLicenseFamilyCategory
-     * @param pLicenseFamilyName
-     * @param pNotes
-     * @param pPatterns
-     */
-    public SimpleTextMatcher(String pattern) {
-        this(null,pattern);
+    public AbstractSimpleMatcher(String id) {
+        super(id);
+        this.lastState = State.i;
     }
 
-    public SimpleTextMatcher(String id, String pattern) {
-        super(id);
-        if (StringUtils.isBlank(pattern)) {
-            throw new IllegalArgumentException( "Pattern may not be null, empty or blank");
+    abstract protected boolean doMatch(String line);
+    
+    @Override
+    public final State matches(String line) {
+        if (lastState == State.t) {
+            return lastState;
         }
-        this.pattern = pattern;
+        if (line != null && doMatch(line)) {
+            lastState = State.t;
+        }
+        return lastState;
     }
 
     @Override
-    public boolean doMatch(String line) {
-        return line.contains(pattern);
+    public void reset() {
+        lastState = State.i;
+    }
+
+    @Override
+    public final State finalizeState() {
+        if (lastState == State.i) {
+            lastState = State.f;
+        }
+        return lastState;
+    }
+
+    @Override
+    public final State currentState() {
+        return lastState;
     }
 }

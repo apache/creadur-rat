@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
@@ -39,8 +40,6 @@ class HeaderCheckWorker {
     private final BufferedReader reader;
     private final ILicense license;
     private final Document document;
-    
-    private boolean match = false;
 
     private int headerLinesToRead;
     private boolean finished = false;
@@ -80,7 +79,7 @@ class HeaderCheckWorker {
                 while(readLine(headers)) {
                     // do nothing
                 }
-                if (!match) {
+                if (!license.finalizeState().asBoolean()) {
                     final String notes = headers.toString();
                     final MetaData metaData = document.getMetaData();
                     metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
@@ -104,11 +103,16 @@ class HeaderCheckWorker {
                 headers.append(line);
                 headers.append('\n');
             }
-            match = license.matches(line);
-            if (match) {
+            switch (license.matches(line)) {
+            case t:
                 document.getMetaData().reportOnLicense(license);
+                result = false;
+                break;
+            case f:
+            case i:
+                result = true;
+                break;
             }
-            result = !match;
         }
         return result;
     }

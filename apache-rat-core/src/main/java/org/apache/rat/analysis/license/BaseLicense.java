@@ -66,8 +66,18 @@ public abstract class BaseLicense extends AbstractHeaderMatcher implements ILice
     }
 
     @Override
-    public boolean matches(String line) {
+    public State matches(String line) {
         return matcher.matches(line);
+    }
+    
+    @Override
+    public State currentState() {
+        return matcher.currentState();
+    }
+    
+    @Override
+    public State finalizeState() {
+        return matcher.finalizeState();
     }
     
     @Override

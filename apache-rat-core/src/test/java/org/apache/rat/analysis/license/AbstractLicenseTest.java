@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
@@ -132,7 +133,7 @@ abstract public class AbstractLicenseTest {
         try (BufferedReader in = new BufferedReader(new StringReader(text))) {
             String line;
             while (null != (line = in.readLine())) {
-                if (license.matches(line)) {
+                if (license.matches(line) == State.t) {
                     return true;
                 }
             }

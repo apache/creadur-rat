@@ -70,8 +70,18 @@ class SimpleLicense implements ILicense {
     }
 
     @Override
-    public boolean matches(String line) {
+    public State matches(String line) {
         return matcher.matches(line);
+    }
+    
+    @Override
+    public State finalizeState() {
+        return matcher.finalizeState();
+    }
+
+    @Override
+    public State currentState() {
+        return matcher.currentState();
     }
 
     @Override
@@ -93,4 +103,6 @@ class SimpleLicense implements ILicense {
     public String derivedFrom() {
         return derivedFrom;
     }
+
+    
 }

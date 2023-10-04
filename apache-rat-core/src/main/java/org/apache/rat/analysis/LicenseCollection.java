@@ -20,18 +20,22 @@ package org.apache.rat.analysis;
 
 import java.util.Collection;
 
+import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
-class LicenseCollection implements ILicense {
+class LicenseCollection extends AbstractMatcherContainer implements ILicense {
     private static final ILicenseFamily DEFAULT = ILicenseFamily.builder().setLicenseFamilyCategory("Dummy")
             .setLicenseFamilyName("HeaderMatcherCollection default license family").build();
     private Collection<ILicense> enclosed;
     private ILicense matchingLicense;
+    private State lastState;
 
     public LicenseCollection(Collection<ILicense> enclosed) {
-        this.matchingLicense = null;
+        super(enclosed);
         this.enclosed = enclosed;
+        this.matchingLicense = null;
+        this.lastState = State.i;
     }
 
     @Override
@@ -42,17 +46,52 @@ class LicenseCollection implements ILicense {
     @Override
     public void reset() {
         enclosed.stream().forEach(ILicense::reset);
+        this.lastState = State.i;
+        this.matchingLicense = null;
     }
 
     @Override
-    public boolean matches(String line) {
+    public State matches(String line) {
+        State dflt = State.f;
         for (ILicense license : enclosed) {
-            if (license.matches(line)) {
+            switch (license.matches(line)) {
+            case t:
                 this.matchingLicense = license;
-                return true;
+                lastState = State.t;
+                return State.t;
+            case i:
+                dflt = State.i;
+                break;
+            default:
+                // do nothing
+                break;
             }
         }
-        return false;
+        lastState = dflt;
+        return dflt;
+    }
+
+    @Override
+    public State currentState() {
+        if (lastState == State.t) {
+            return lastState;
+        }
+        for (ILicense license : enclosed) {
+            switch (license.currentState()) {
+            case t:
+                this.matchingLicense = license;
+                lastState = State.t;
+                return lastState;
+            case i:
+                lastState = State.i;
+                return lastState;
+            case f:
+                // do nothing;
+                break;
+            }
+        }
+        lastState = State.f;
+        return lastState;
     }
 
     @Override
@@ -60,15 +99,19 @@ class LicenseCollection implements ILicense {
         return getLicenseFamily().compareTo(arg0.getLicenseFamily());
     }
 
+    @Override
     public ILicenseFamily getLicenseFamily() {
         return matchingLicense == null ? DEFAULT : matchingLicense.getLicenseFamily();
     }
 
+    @Override
     public String getNotes() {
         return matchingLicense == null ? null : matchingLicense.getNotes();
     }
 
+    @Override
     public String derivedFrom() {
         return matchingLicense == null ? null : matchingLicense.derivedFrom();
     }
+
 }
