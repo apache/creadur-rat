@@ -31,4 +31,9 @@ public class NotBuilder extends ChildContainerBuilder {
         }
         return new NotMatcher(getId(), children.get(0).build());
     }
+    
+    @Override
+    public String toString() {
+        return String.format( "NotBuilder: %s", children.size()>0 ? children.get(0) : null );
+    }
 }

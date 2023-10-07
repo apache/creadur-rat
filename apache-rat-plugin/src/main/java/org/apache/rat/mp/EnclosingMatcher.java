@@ -23,35 +23,40 @@ import org.apache.rat.analysis.IHeaderMatcher;
 
 abstract class EnclosingMatcher {
 
-    protected abstract void setBuilder(IHeaderMatcher.Builder builder);
+    protected abstract void setMatcher(IHeaderMatcher.Builder builder);
 
     @Parameter(required = false)
-    public void setAnd(All all) {
-        setBuilder(all);
+    public void setAll(All all) {
+        setMatcher(all);
     }
 
     @Parameter(required = false)
-    public void setOr(Any any) {
-        setBuilder(any);
+    public void setAny(Any any) {
+        setMatcher(any);
     }
 
     @Parameter(required = false)
     public void setText(Text text) {
-        setBuilder(text);
+        setMatcher(text);
     }
 
     @Parameter(required = false)
     public void setCopyright(Copyright copyright) {
-        setBuilder(copyright);
+        setMatcher(copyright);
     }
 
     @Parameter(required = false)
     public void setRegex(Regex regex) {
-        setBuilder(regex);
+        setMatcher(regex);
     }
 
     @Parameter(required = false)
     public void setSpdx(Spdx spdx) {
-        setBuilder(spdx);
+        setMatcher(spdx);
+    }
+    
+    @Parameter(required = false)
+    public void setNot(Not not) {
+        setMatcher(not);
     }
 }

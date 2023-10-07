@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 
 /**
@@ -64,6 +66,9 @@ public class SPDXMatcherFactory {
     };
 
     public IHeaderMatcher create(String spdxId) {
+        if (StringUtils.isBlank(spdxId)) {
+            throw new ConfigurationException("'spdx' type matcher requires a name");
+        }
         Match matcher = matchers.get(spdxId);
         if (matcher == null) {
             matcher = new Match(spdxId);

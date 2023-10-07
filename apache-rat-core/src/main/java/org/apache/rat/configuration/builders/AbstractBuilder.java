@@ -41,5 +41,10 @@ public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
     }
 
     public abstract IHeaderMatcher build();
+    
+    @Override
+    public String toString() {
+        return String.format( "%s with id %s", this.getClass(), id);
+    }
 
 }

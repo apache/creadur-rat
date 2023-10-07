@@ -45,4 +45,9 @@ public class CopyrightBuilder extends AbstractBuilder {
     public IHeaderMatcher build() {
         return new CopyrightMatcher(getId(), start, end, owner);
     }
+    
+    @Override
+    public String toString() {
+        return String.format("Copyright Builder: s:%s e:%s o:%s", start, end, owner);
+    }
 }

@@ -26,22 +26,24 @@ import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
 
 public class RegexBuilder extends AbstractBuilder {
 
-    private Pattern exp;
+    private Pattern pattern;
 
-    public RegexBuilder setRegex(String exp) {
-        if (null == exp) {
-            throw new ConfigurationException("'regex' type matcher expression value may not be null");
-        }
-        this.exp = Pattern.compile(exp);
+    public RegexBuilder setExpr(String exp) {
+        this.pattern = exp == null ? null : Pattern.compile(exp);
         return this;
     }
 
     @Override
     public IHeaderMatcher build() {
-        if (null == exp) {
+        if (null == pattern) {
             throw new ConfigurationException("'regex' type matcher requires an expression");
         }
-        return new SimpleRegexMatcher(exp);
+        return new SimpleRegexMatcher(pattern);
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("RegexBuilder: %s", pattern==null? null: pattern.pattern());
     }
 
 }

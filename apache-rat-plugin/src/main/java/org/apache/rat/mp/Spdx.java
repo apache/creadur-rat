@@ -18,7 +18,13 @@
  */
 package org.apache.rat.mp;
 
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.configuration.builders.SpdxBuilder;
 
 public class Spdx extends SpdxBuilder {
+    
+    @Parameter(name="name")
+    public void set(String name) {
+        super.setName(name);
+    }
 }

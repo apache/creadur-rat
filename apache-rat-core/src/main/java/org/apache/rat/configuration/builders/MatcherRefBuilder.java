@@ -42,6 +42,11 @@ public class MatcherRefBuilder extends AbstractBuilder {
         return result != null ? result : new IHeaderMatcherProxy(referenceId, matchers);
     }
 
+    @Override
+    public String toString() {
+        return "MathcerRefBuilder: "+referenceId;
+    }
+    
     private class IHeaderMatcherProxy implements IHeaderMatcher {
         private final String proxyId;
         private IHeaderMatcher wrapped;

@@ -33,27 +33,22 @@ public class License extends EnclosingMatcher {
     private String derivedFrom;
 
     @Parameter(required = true)
-    private String licenseFamilyCategory;
+    private String id;
 
     @Parameter(required = true)
-    private String licenseFamilyName;
+    private String name;
 
     public License() {
     }
 
-    @Parameter(required = false)
-    public void setNot(Not not) {
-        setBuilder(not);
-    }
-
     @Override
-    protected void setBuilder(IHeaderMatcher.Builder builder) {
+    protected void setMatcher(IHeaderMatcher.Builder builder) {
         this.builder.setMatcher(builder);
     }
 
     public ILicense build() {
-        return builder.setDerivedFrom(derivedFrom).setLicenseFamilyCategory(licenseFamilyCategory)
-                .setLicenseFamilyCategory(licenseFamilyName).setNotes(notes).build();
+        return builder.setDerivedFrom(derivedFrom).setLicenseFamilyCategory(id)
+                .setLicenseFamilyName(name).setNotes(notes).build();
     }
 
 }

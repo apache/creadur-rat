@@ -1,5 +1,16 @@
 package org.apache.rat.mp;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -29,17 +40,6 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.DirectoryScanner;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  * Test helpers used when verifying mojo interaction in RAT integration tests.
@@ -71,8 +71,8 @@ public final class RatTestHelpers {
     }
 
     /**
-     * Copies the given files recursively in order to get all integration test
-     * files into a target directory.
+     * Copies the given files recursively in order to get all integration test files
+     * into a target directory.
      *
      * @param pSource source files.
      * @param pTarget target directory
@@ -86,7 +86,7 @@ public final class RatTestHelpers {
             final DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir(pSource);
             scanner.addDefaultExcludes();
-            scanner.setIncludes(new String[]{"*"});
+            scanner.setIncludes(new String[] { "*" });
             scanner.scan();
             final String[] dirs = scanner.getIncludedDirectories();
 
@@ -100,20 +100,19 @@ public final class RatTestHelpers {
                 copy(new File(pSource, file), new File(pTarget, file));
             }
         } else if (pSource.isFile()) {
-            final FileInputStream fis = new FileInputStream(pSource);
-            final FileOutputStream fos = new FileOutputStream(pTarget);
-            final byte[] buffer = new byte[8192];
-            for (; ; ) {
-                int res = fis.read(buffer);
-                if (res == -1) {
-                    break;
-                }
-                if (res > 0) {
-                    fos.write(buffer, 0, res);
+            try (final FileInputStream fis = new FileInputStream(pSource);
+                    final FileOutputStream fos = new FileOutputStream(pTarget);) {
+                final byte[] buffer = new byte[8192];
+                for (;;) {
+                    int res = fis.read(buffer);
+                    if (res == -1) {
+                        break;
+                    }
+                    if (res > 0) {
+                        fos.write(buffer, 0, res);
+                    }
                 }
             }
-            fos.close();
-            fis.close();
         } else {
             throw new IOException("Unable to copy unknown object " + pSource);
         }
@@ -126,8 +125,7 @@ public final class RatTestHelpers {
      * @return A configured instance of a Default renderer.
      * @throws Exception Creating the object failed.
      */
-    public static Renderer newSiteRenderer(PlexusContainer container)
-            throws Exception {
+    public static Renderer newSiteRenderer(PlexusContainer container) throws Exception {
         return (Renderer) container.lookup(Renderer.ROLE, "default");
     }
 
@@ -139,15 +137,14 @@ public final class RatTestHelpers {
      */
     public static ArtifactFactory newArtifactFactory() throws Exception {
         final InvocationHandler handler = new InvocationHandler() {
-            public Object invoke(Object pProxy, Method pMethod, Object[] pArgs)
-                    throws Throwable {
+            @Override
+            public Object invoke(Object pProxy, Method pMethod, Object[] pArgs) throws Throwable {
                 System.out.println("Invoking method " + pMethod);
                 throw new IllegalStateException("Not implemented");
             }
         };
-        return (ArtifactFactory) Proxy.newProxyInstance(Thread.currentThread()
-                        .getContextClassLoader(),
-                new Class[]{ArtifactFactory.class}, handler);
+        return (ArtifactFactory) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                new Class[] { ArtifactFactory.class }, handler);
     }
 
     /**
@@ -157,14 +154,12 @@ public final class RatTestHelpers {
      * @return A configured instance of {@link MavenArtifactRepository}.
      * @throws Exception Creating the object failed.
      */
-    public static ArtifactRepository newArtifactRepository(
-            PlexusContainer container) throws Exception {
+    public static ArtifactRepository newArtifactRepository(PlexusContainer container) throws Exception {
         File m2Dir = new File(System.getProperty("user.home"), ".m2");
         File settingsFile = new File(m2Dir, "settings.xml");
         String localRepo = null;
         if (settingsFile.exists()) {
-            Settings settings = new SettingsXpp3Reader().read(new FileReader(
-                    settingsFile));
+            Settings settings = new SettingsXpp3Reader().read(new FileReader(settingsFile));
             localRepo = settings.getLocalRepository();
         }
         if (localRepo == null) {
@@ -172,42 +167,42 @@ public final class RatTestHelpers {
         }
         ArtifactRepositoryLayout repositoryLayout = (ArtifactRepositoryLayout) container
                 .lookup(ArtifactRepositoryLayout.ROLE, "default");
-        return new MavenArtifactRepository("local", "file://" + localRepo,
-                repositoryLayout, new ArtifactRepositoryPolicy(), new ArtifactRepositoryPolicy());
+        return new MavenArtifactRepository("local", "file://" + localRepo, repositoryLayout,
+                new ArtifactRepositoryPolicy(), new ArtifactRepositoryPolicy());
     }
 
-    public static File makeSourceDirectory(String mvnBaseDir, File pFile,
-                                           String pDir, boolean pCreateCopy) throws IOException {
+    public static File makeSourceDirectory(String mvnBaseDir, File pFile, String pDir, boolean pCreateCopy)
+            throws IOException {
         if (!pCreateCopy) {
             return pFile;
         }
 
-        final File targetDir = new File(new File(new File(mvnBaseDir),
-                "target/it-source"), pDir);
+        final File targetDir = new File(new File(new File(mvnBaseDir), "target/it-source"), pDir);
         remove(targetDir);
         copy(pFile, targetDir);
         return targetDir;
     }
 
-    public static File getSourceDirectory(String mvnBaseDir, String pDir,
-                                          boolean pCreateCopy, final File baseDir) throws IOException {
-        return makeSourceDirectory(mvnBaseDir, new File(new File(baseDir,
-                "src/test/resources/unit"), pDir), pDir, pCreateCopy);
+    public static File getSourceDirectory(String mvnBaseDir, String pDir, boolean pCreateCopy, final File baseDir)
+            throws IOException {
+        return makeSourceDirectory(mvnBaseDir, new File(new File(baseDir, "src/test/resources/unit"), pDir), pDir,
+                pCreateCopy);
     }
 
     /**
-     * Reads the created report file and verifies, whether the detected numbers
-     * are matching.
+     * Reads the created report file and verifies, whether the detected numbers are
+     * matching.
      *
-     * @param pRatTxtFile        The file to read.
-     * @param pNumALFiles        The number of files with AL.
+     * @param pRatTxtFile The file to read.
+     * @param pNumALFiles The number of files with AL.
      * @param pNumNoLicenseFiles The number of files without license.
-     * @throws IOException              An error occurred while reading the file or the file does not
-     *                                  exist at all.
-     * @throws IllegalArgumentException In case of mismatches in file numbers passed in as parameter.
+     * @throws IOException An error occurred while reading the file or the file does
+     * not exist at all.
+     * @throws IllegalArgumentException In case of mismatches in file numbers passed
+     * in as parameter.
      */
-    public static void ensureRatReportIsCorrect(File pRatTxtFile,
-                                                int pNumALFiles, int pNumNoLicenseFiles) throws IOException {
+    public static void ensureRatReportIsCorrect(File pRatTxtFile, int pNumALFiles, int pNumNoLicenseFiles)
+            throws IOException {
         if (!pRatTxtFile.exists()) {
             throw new FileNotFoundException("Could not find " + pRatTxtFile);
         }
@@ -217,34 +212,25 @@ public final class RatTestHelpers {
             reader = new BufferedReader(new FileReader(pRatTxtFile));
             Integer numALFiles = null;
             Integer numNoLicenseFiles = null;
-            for (; ; ) {
+            for (;;) {
                 String line = reader.readLine();
                 if (line == null) {
                     break;
                 }
                 int offset = line.indexOf("Apache Licensed: ");
                 if (offset >= 0) {
-                    numALFiles = Integer.valueOf(line.substring(
-                            offset + "Apache Licensed: ".length()).trim());
+                    numALFiles = Integer.valueOf(line.substring(offset + "Apache Licensed: ".length()).trim());
                 }
                 offset = line.indexOf("Unknown Licenses");
                 if (offset >= 0) {
-                    numNoLicenseFiles = Integer.valueOf(line.substring(0, offset)
-                            .trim());
+                    numNoLicenseFiles = Integer.valueOf(line.substring(0, offset).trim());
                 }
             }
             reader.close();
 
-            if (!Integer.valueOf(pNumALFiles).equals(numALFiles)) {
+            if (!Integer.valueOf(pNumALFiles).equals(numALFiles) || !Integer.valueOf(pNumNoLicenseFiles).equals(numNoLicenseFiles)) {
                 throw new IllegalArgumentException(
-                        "Amount of licensed files does not match. Expected "
-                                + pNumALFiles + ", got " + numALFiles);
-            }
-
-            if (!Integer.valueOf(pNumNoLicenseFiles).equals(numNoLicenseFiles)) {
-                throw new IllegalArgumentException(
-                        "Amount of licensed files does not match. Expected "
-                                + pNumALFiles + ", got " + numALFiles);
+                        "Amount of licensed files does not match. Expected " + pNumALFiles + ", got " + numALFiles);
             }
         } finally {
             IOUtils.closeQuietly(reader);

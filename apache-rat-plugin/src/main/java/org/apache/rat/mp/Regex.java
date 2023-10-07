@@ -18,7 +18,21 @@
  */
 package org.apache.rat.mp;
 
+import javax.inject.Named;
+
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.configuration.builders.RegexBuilder;
 
 public class Regex extends RegexBuilder {
+
+    @Named("expr")
+    public RegexBuilder setExpr(String exp) {
+        System.out.format("Calling setText() with %s\n", exp);
+        return super.setExpr(exp);
+    }
+    public void set(String exp) {
+        System.out.format("Calling set() with %s\n", exp);
+        setExpr(exp);
+    }
+
 }

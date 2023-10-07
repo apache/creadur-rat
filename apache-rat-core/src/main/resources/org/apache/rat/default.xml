@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rat-config>
 	<licenses>
-		<!--
-	<license id=id name=name>
-		<note></note>
-	    <text>  </text>
-		<copyright start='' end='' owner=''/>
-		<spdx name=''/> 
-		<and> <license>...</and>
-		<or> <license>...</or> 
-		<matcherRef refId='licenceid' />
-	</license>
--->
 		<license id="AL" name="Apache License Version 2.0">
 			<all>
 				<any id="ALStandard">
