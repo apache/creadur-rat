@@ -26,11 +26,11 @@ public class Regex implements IHeaderMatcher.Builder {
     private RegexBuilder builder = new RegexBuilder();
 
     public void setRegex(String pattern) {
-        builder.setRegex(pattern);
+        builder.setExpr(pattern);
     }
     
     public void addText(String pattern) {
-        builder.setRegex(pattern);
+        builder.setExpr(pattern);
     }
 
     @Override
