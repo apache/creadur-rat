@@ -37,6 +37,7 @@ public enum Format {
     private Constructor<MatcherReader> matcherReader;
     private Constructor<LicenseReader> licenseReader;
     
+    @SuppressWarnings("unchecked")
     Format(Class<?> reader, String... suffix) {
         if (reader != null)
         {

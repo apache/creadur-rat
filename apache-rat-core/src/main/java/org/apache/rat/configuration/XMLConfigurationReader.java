@@ -18,10 +18,7 @@
  */
 package org.apache.rat.configuration;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -33,7 +30,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
@@ -52,7 +48,6 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 import org.apache.rat.configuration.builders.AbstractBuilder;
@@ -90,13 +85,12 @@ import org.xml.sax.SAXException;
 
 public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
-
     private final static String ATT_ID = "id";
     private final static String ATT_NAME = "name";
     private final static String ATT_DERIVED_FROM = "derived_from";
     private final static String ATT_LICENSE_REF = "license_ref";
     private final static String ATT_CLASS_NAME = "class";
-    
+
     private final static String ROOT = "rat-config";
     private final static String LICENSES = "licenses";
     private final static String LICENSE = "license";
@@ -222,8 +216,8 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                 MethodUtils.invokeExactMethod(builder, methodName, n.getNodeValue());
             } catch (NoSuchMethodException e) {
                 throw new ConfigurationException(
-                        String.format( "'%s' does not have a setter '%s' that takes a String argument",
-                        matcherNode.getNodeName(), methodName));
+                        String.format("'%s' does not have a setter '%s' that takes a String argument",
+                                matcherNode.getNodeName(), methodName));
             } catch (IllegalAccessException | InvocationTargetException | DOMException e) {
                 throw new ConfigurationException(e);
             }
@@ -322,7 +316,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     private void parseMatcherBuilder(Node classNode) {
         Map<String, String> attributes = attributes(classNode);
         if (attributes.get(ATT_CLASS_NAME) == null) {
-            throw new ConfigurationException( "matcher must have a "+ATT_CLASS_NAME+" attribute");
+            throw new ConfigurationException("matcher must have a " + ATT_CLASS_NAME + " attribute");
         }
         MatcherBuilderTracker.addBuilder(attributes.get(ATT_CLASS_NAME), attributes.get(ATT_NAME));
     }

@@ -39,8 +39,6 @@ public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
     protected String getId() {
         return id;
     }
-
-    public abstract IHeaderMatcher build();
     
     @Override
     public String toString() {

@@ -18,11 +18,7 @@
  */
 package org.apache.rat.configuration;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -37,7 +33,7 @@ public class MatcherBuilderTracker {
     private static MatcherBuilderTracker INSTANCE;
 
     private final Map<String, Class<? extends AbstractBuilder>> matcherBuilders;
-    
+
     private static synchronized MatcherBuilderTracker instance() {
         if (INSTANCE == null) {
             INSTANCE = new MatcherBuilderTracker();
@@ -49,22 +45,22 @@ public class MatcherBuilderTracker {
     public static void addBuilder(String className, String name) {
         instance().addBuilderImpl(className, name);
     }
-    
+
     public static AbstractBuilder getMatcherBuilder(String name) {
-        Class<? extends AbstractBuilder> clazz =  instance().matcherBuilders.get(name);
+        Class<? extends AbstractBuilder> clazz = instance().matcherBuilders.get(name);
         if (clazz == null) {
-            StringBuilder sb = new StringBuilder("\nValid builders\n" );
+            StringBuilder sb = new StringBuilder("\nValid builders\n");
             instance().matcherBuilders.keySet().stream().forEach(x -> sb.append(x).append("\n"));
-            sb.append( "ERROR MSG\n");
-            
-            throw new ConfigurationException( sb.append("No matcher builder named "+name).toString());
+            sb.append("ERROR MSG\n");
+
+            throw new ConfigurationException(sb.append("No matcher builder named " + name).toString());
         }
         try {
             return clazz.getConstructor().newInstance();
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new ConfigurationException( String.format(
-                    "Can not instantiate matcher builder named %s (%s)",
-                    name, clazz.getName()), e);
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
+            throw new ConfigurationException(
+                    String.format("Can not instantiate matcher builder named %s (%s)", name, clazz.getName()), e);
         }
     }
 
@@ -73,7 +69,7 @@ public class MatcherBuilderTracker {
     }
 
     private void addBuilderImpl(String className, String name) {
-        Objects.requireNonNull(className, "className may not be null" );
+        Objects.requireNonNull(className, "className may not be null");
         Class<?> clazz;
         try {
             clazz = getClass().getClassLoader().loadClass(className);
@@ -95,7 +91,7 @@ public class MatcherBuilderTracker {
                     throw new ConfigurationException("Last segment of " + candidate.getName()
                             + " may not be 'Builder', but must end in 'Builder'");
                 }
-                name = name.replaceFirst(".", StringUtils.lowerCase(name.substring(0,1)));
+                name = name.replaceFirst(".", StringUtils.lowerCase(name.substring(0, 1)));
             }
             matcherBuilders.put(name, candidate);
         } else {

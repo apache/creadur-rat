@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.walker;
 
 import java.io.File;
@@ -23,6 +23,7 @@ import java.util.Comparator;
 
 class FileNameComparator implements Comparator<File> {
 
+    @Override
     public int compare(File firstFile, File secondFile) {
         int result = 0;
         if (firstFile == null) {
