@@ -16,23 +16,15 @@
  */
 package org.example;
 
-import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
 
-public class Matcher implements IHeaderMatcher {
+public class Matcher extends AbstractSimpleMatcher {
     public Matcher() {
+        super("MyCustomMatcher");
     }
 
     @Override
-    public String getId() {
-        return "MyCustomMatcher";
-    }
-
-    @Override
-    public void reset() {
-    }
-
-    @Override
-    public boolean matches(String line) {
+    public boolean doMatch(String line) {
         return true;
     }
 

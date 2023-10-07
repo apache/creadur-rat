@@ -453,25 +453,15 @@ SPDX-License-Identifier: Apache-2.0
 		<echo file="${output.dir}/src/org/example/MyMatcher.java"><![CDATA[
 package org.example;
 
-import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
 
-public class MyMatcher implements IHeaderMatcher {
+public class MyMatcher extends AbstractSimpleMatcher {
     public MyMatcher() {
+        super("MyCustomMatcher");
     }
 
     @Override
-    public String getId() {
-        return "MyCustomMatcher";
-    }
-
-
-    @Override
-    public void reset() {
-    }
-
-
-    @Override
-    public boolean matches(String line) {
+    public boolean doMatch(String line) {
         return true;
     }
 }
