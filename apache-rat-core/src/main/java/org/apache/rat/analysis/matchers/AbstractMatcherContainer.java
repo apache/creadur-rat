@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.State;
 
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 

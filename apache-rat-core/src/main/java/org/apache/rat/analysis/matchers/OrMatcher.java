@@ -24,7 +24,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 
 public class OrMatcher extends AbstractMatcherContainer {
 
-    State lastState;
+    private State lastState;
 
     public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
         this(null, enclosed);
@@ -32,7 +32,7 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
-        lastState = State.i;
+        // lastState = State.i;
     }
 
     @Override
@@ -73,6 +73,12 @@ public class OrMatcher extends AbstractMatcherContainer {
         }
         lastState = State.f;
         return lastState;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        lastState = State.i;
     }
 
 }

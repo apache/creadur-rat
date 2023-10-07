@@ -46,7 +46,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
     private final StringBuilder buffer = new StringBuilder();
 
     public FullTextMatcher(String fullText) {
-        this(null,fullText);
+        this(null, fullText);
     }
 
     public FullTextMatcher(String id, String fullText) {
@@ -118,6 +118,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
     }
 
     // This is called indirectly from a ctor so must be final or private
+    @Override
     public void reset() {
         super.reset();
         buffer.setLength(0);

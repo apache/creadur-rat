@@ -137,7 +137,7 @@ abstract public class AbstractLicenseTest {
                     return true;
                 }
             }
-            return false;
+            return license.finalizeState().asBoolean();
         }
     }
 

@@ -15,8 +15,8 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.document;
+ */
+package org.apache.rat.testhelpers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,26 +25,27 @@ import java.io.Reader;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
-public class MockLocation implements Document {
+public class TestingLocation implements Document {
 
     public final String name;
     public final String url;
     private final MetaData metaData = new MetaData();
-    
-    public MockLocation() {
+
+    public TestingLocation() {
         this("name", "url");
     }
-    
-    public MockLocation(String name) {
+
+    public TestingLocation(String name) {
         this(name, "url");
     }
 
-    public MockLocation(String name, String url) {
+    public TestingLocation(String name, String url) {
         super();
         this.name = name;
         this.url = url;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -53,20 +54,23 @@ public class MockLocation implements Document {
         return url;
     }
 
+    @Override
     public boolean isComposite() {
         return false;
     }
 
+    @Override
     public Reader reader() throws IOException {
-        throw new UnsupportedOperationException( "Opening Reader in MockLocation");
+        throw new UnsupportedOperationException("Opening Reader in TestingLocation");
     }
 
+    @Override
     public MetaData getMetaData() {
         return metaData;
     }
-    
 
+    @Override
     public InputStream inputStream() throws IOException {
-        throw new UnsupportedOperationException("Opening inputStream in MockLocation");
+        throw new UnsupportedOperationException("Opening inputStream in TestingLocation");
     }
 }

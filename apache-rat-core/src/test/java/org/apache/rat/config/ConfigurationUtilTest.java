@@ -1,13 +1,5 @@
 package org.apache.rat.config;
 
-import org.apache.rat.api.MetaData;
-import org.apache.rat.license.ILicenseFamily;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -38,6 +30,8 @@ public class ConfigurationUtilTest {
 //    }
 //    @Test
 //    public void toNamesRegular() {
-        //assertEquals(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_1, ConfigurationUtil.toNames(new ILicenseFamily[]{new GPL1LicenseFamily()}).get(0));
+    // assertEquals(MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_1,
+    // ConfigurationUtil.toNames(new ILicenseFamily[]{new
+    // GPL1LicenseFamily()}).get(0));
 //    }
 }

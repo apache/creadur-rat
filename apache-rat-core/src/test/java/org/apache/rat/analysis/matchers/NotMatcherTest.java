@@ -19,35 +19,45 @@
 package org.apache.rat.analysis.matchers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.State;
+import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.Test;
 
 public class NotMatcherTest {
 
+    private void assertValues(IHeaderMatcher target, State hello, State world, State finalize) {
+        assertEquals(State.i, target.currentState());
+        assertEquals("hello match", hello, target.matches("hello"));
+        assertEquals("hello current", hello, target.currentState());
+        assertEquals("world match", world, target.matches("world"));
+        assertEquals("world current", world, target.currentState());
+        assertEquals("finalize", finalize, target.finalizeState());
+        assertEquals("finalize current", finalize, target.currentState());
+    }
+
     @Test
     public void testTrue() {
-        IHeaderMatcher enclosed = mock(IHeaderMatcher.class);
-        when(enclosed.matches(any())).thenReturn(State.i);
-        when(enclosed.finalizeState()).thenReturn(State.t);
-        NotMatcher matcher = new NotMatcher(enclosed);
-        assertEquals( State.i, matcher.matches("dummy"));
-        assertEquals( State.f, matcher.finalizeState());
+        IHeaderMatcher one = new TestingMatcher("one", true);
+        NotMatcher target = new NotMatcher("Testing", one);
+        assertValues(target, State.f, State.f, State.f);
+
+        one = new TestingMatcher("one", false, true);
+        target = new NotMatcher("Testing", one);
+        assertValues(target, State.i, State.f, State.f);
+        target.reset();
+        assertEquals(State.i, target.currentState());
     }
-    
+
     @Test
     public void testFalse() {
-        IHeaderMatcher enclosed = mock(IHeaderMatcher.class);
-        when(enclosed.matches(any())).thenReturn(State.i);
-        when(enclosed.finalizeState()).thenReturn(State.f);
-        NotMatcher matcher = new NotMatcher(enclosed);
-        assertEquals( State.i, matcher.matches("dummy"));
-        assertEquals( State.t, matcher.finalizeState());
+        TestingMatcher one = new TestingMatcher("one", false, false);
+        one.finalState = State.t;
+        NotMatcher target = new NotMatcher("Testing", one);
+        assertValues(target, State.i, State.i, State.f);
+        target.reset();
+        assertEquals(State.i, target.currentState());
+
     }
 }

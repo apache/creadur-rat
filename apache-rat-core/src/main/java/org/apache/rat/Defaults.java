@@ -78,7 +78,6 @@ public class Defaults {
     }
 
     private void readConfigFiles(Collection<URL> urls) {
-
         for (URL url : urls) {
             Format fmt = Format.fromURL(url);
             MatcherReader mReader = fmt.matcherReader();

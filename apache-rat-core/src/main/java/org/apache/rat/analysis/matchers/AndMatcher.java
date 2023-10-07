@@ -18,21 +18,18 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.State;
 
 public class AndMatcher extends AbstractMatcherContainer {
-    
+
     public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
     }
 
     public AndMatcher(Collection<? extends IHeaderMatcher> enclosed) {
-        this(null,enclosed);
+        this(null, enclosed);
     }
 
     @Override
@@ -40,9 +37,11 @@ public class AndMatcher extends AbstractMatcherContainer {
         State dflt = State.t;
         for (IHeaderMatcher matcher : enclosed) {
             switch (matcher.currentState()) {
-            case f: return State.f;
-            case i: dflt = State.i;
-            break;
+            case f:
+                return State.f;
+            case i:
+                dflt = State.i;
+                break;
             default:
                 // do nothing
                 break;
@@ -50,10 +49,10 @@ public class AndMatcher extends AbstractMatcherContainer {
         }
         return dflt;
     }
-    
+
     @Override
     public State matches(String line) {
-        enclosed.stream().filter( x -> x.currentState() == State.i).forEach(x -> x.matches(line));
+        enclosed.stream().filter(x -> x.currentState() == State.i).forEach(x -> x.matches(line));
         return currentState();
     }
 

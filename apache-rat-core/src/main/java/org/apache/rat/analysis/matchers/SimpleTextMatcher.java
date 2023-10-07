@@ -35,13 +35,13 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
      * @param pPatterns
      */
     public SimpleTextMatcher(String pattern) {
-        this(null,pattern);
+        this(null, pattern);
     }
 
     public SimpleTextMatcher(String id, String pattern) {
         super(id);
         if (StringUtils.isBlank(pattern)) {
-            throw new IllegalArgumentException( "Pattern may not be null, empty or blank");
+            throw new IllegalArgumentException("Pattern may not be null, empty or blank");
         }
         this.pattern = pattern;
     }

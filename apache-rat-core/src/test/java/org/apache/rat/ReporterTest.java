@@ -28,41 +28,16 @@ import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.report.xml.XmlUtils;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class ReporterTest {
-
-    private Node checkNode(Document doc, XPath xpath, String resource, String family, String approval, String type)
-            throws Exception {
-
-        Node root = getNode(doc, xpath, String.format("/rat-report/resource[@name='%s']", resource));
-        if (family != null) {
-            getNode(root, xpath, String.format("header-type[@name='%s']", ILicenseFamily.makeCategory(family)));
-            getNode(root, xpath, "license-family[@name]");
-            if (family.equals("?????")) {
-                getNode(root, xpath, "header-sample");
-            }
-        }
-        getNode(root, xpath, String.format("license-approval[@name='%s']", approval));
-        getNode(root, xpath, String.format("type[@name='%s']", type));
-        return root;
-    }
-
-    private Node getNode(Object source, XPath xPath, String xpath) throws XPathExpressionException {
-        NodeList nodeList = (NodeList) xPath.compile(xpath).evaluate(source, XPathConstants.NODESET);
-        assertEquals("Could not find " + xpath, 1, nodeList.getLength());
-        return nodeList.item(0);
-    }
 
     @Test
     public void xmlReportTest() throws Exception {
@@ -74,25 +49,25 @@ public class ReporterTest {
         configuration.setStyleReport(false);
         configuration.setFrom(defaults);
         configuration.setReportable(new DirectoryWalker(new File(elementsPath)));
-        configuration.setOut(()->out);
+        configuration.setOut(() -> out);
         Reporter.report(configuration);
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
         XPath xPath = XPathFactory.newInstance().newXPath();
 
-        getNode(doc, xPath, "/rat-report[@timestamp]");
+        XmlUtils.getNode(doc, xPath, "/rat-report[@timestamp]");
 
-        checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", "MIT", "true", "standard");
-        checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, "false", "binary");
-        checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, "false", "notice");
-        checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, "false", "notice");
-        checkNode(doc, xPath, "src/test/resources/elements/Source.java", "?????", "false", "standard");
-        checkNode(doc, xPath, "src/test/resources/elements/Text.txt", "AL", "true", "standard");
-        checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", "AL", "true", "standard");
-        checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", "AL", "true", "standard");
-        checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", "AL", "true", "standard");
-        checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, "false", "archive");
-        checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "false", "binary");
-        checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", "?????", "false", "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", "MIT", "true", "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, "false", "binary");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, "false", "notice");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, "false", "notice");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Source.java", "?????", "false", "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Text.txt", "AL", "true", "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", "AL", "true", "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", "AL", "true", "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", "AL", "true", "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, "false", "archive");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "false", "binary");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", "?????", "false", "standard");
 
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
         assertEquals(12, nodeList.getLength());
@@ -114,11 +89,11 @@ public class ReporterTest {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
         configuration.setReportable(new DirectoryWalker(new File(elementsPath)));
-        configuration.setOut(()->out);
+        configuration.setOut(() -> out);
         Reporter.report(configuration);
 
         String document = out.toString();
-        //System.out.println(document);
+        // System.out.println(document);
         assertTrue("'Generated at' is present in " + document, document.startsWith(HEADER));
 
         // final int generatedAtLineEnd = document.indexOf(NL, HEADER.length());
@@ -131,9 +106,9 @@ public class ReporterTest {
         find("^2 Unknown Licenses$", document);
         find("^Files with unapproved licenses:\\s+" + "src/test/resources/elements/Image.png\\s+"
                 + "src/test/resources/elements/LICENSE\\s+" + "src/test/resources/elements/NOTICE\\s+"
-                + "src/test/resources/elements/Source.java\\s+"
-                + "src/test/resources/elements/dummy.jar\\s+" + "src/test/resources/elements/plain.json\\s+"
-                + "src/test/resources/elements/sub/Empty.txt\\s", document);
+                + "src/test/resources/elements/Source.java\\s+" + "src/test/resources/elements/dummy.jar\\s+"
+                + "src/test/resources/elements/plain.json\\s+" + "src/test/resources/elements/sub/Empty.txt\\s",
+                document);
         find("^Archives:\\s+" + "\\+ src/test/resources/elements/dummy.jar\\s*", document);
         find("MIT\\s+src/test/resources/elements/ILoggerFactory.java", document);
         find("!B\\s+src/test/resources/elements/Image.png", document);

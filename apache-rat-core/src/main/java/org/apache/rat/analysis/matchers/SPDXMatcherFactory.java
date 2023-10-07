@@ -85,7 +85,7 @@ public class SPDXMatcherFactory {
     }
 
     public class Match extends AbstractSimpleMatcher {
-        
+
         /**
          * Constructor.
          * 

@@ -16,9 +16,12 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.report.xml;
+package org.apache.rat.testhelpers;
 
+import org.apache.rat.license.ILicenseFamily;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -28,6 +31,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -62,6 +71,40 @@ public final class XmlUtils {
         } catch (IOException | ParserConfigurationException e) {
             throw new UndeclaredThrowableException(e);
         }
+    }
+    
+    /**
+     * Finds a node via xpath on the document.  And then checks family, approval and type of elements of the node.
+     * @param doc The document to check/
+     * @param xpath the XPath instance to use.
+     * @param resource the xpath statement to locate the node.
+     * @param family the expected family for the node (may be null)
+     * @param approval the expected approval value (may be null)
+     * @param type the type of resource located.
+     * @return The node that was located
+     * @throws Exception on XPath error.
+     */
+    public static Node checkNode(Document doc, XPath xpath, String resource, String family, String approval, String type)
+            throws Exception {
+        Node root = getNode(doc, xpath, String.format("/rat-report/resource[@name='%s']", resource));
+        if (family != null) {
+            getNode(root, xpath, String.format("header-type[@name='%s']", ILicenseFamily.makeCategory(family)));
+            getNode(root, xpath, "license-family[@name]");
+            if (family.equals("?????")) {
+                getNode(root, xpath, "header-sample");
+            }
+        }
+        if (approval != null) {
+            getNode(root, xpath, String.format("license-approval[@name='%s']", approval));
+        }
+        getNode(root, xpath, String.format("type[@name='%s']", type));
+        return root;
+    }
+
+    public static Node getNode(Object source, XPath xPath, String xpath) throws XPathExpressionException {
+        NodeList nodeList = (NodeList) xPath.compile(xpath).evaluate(source, XPathConstants.NODESET);
+        assertEquals("Could not find " + xpath, 1, nodeList.getLength());
+        return nodeList.item(0);
     }
 
     public static final boolean isWellFormedXml(final InputStream in) throws Exception {

@@ -18,30 +18,15 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class IllumosLicenseTest extends AbstractLicenseTest {
     private static String category = "ILLUMOS";
     private static String name = "ILLUMOS CDDL1 Derived license";
     private static String note = "Modified CDDL1 license";
-    private static String[][] targets = {
-            { "illumos", "The contents of this file are subject to the terms of the "
+    private static String[][] targets = { { "illumos",
+            "The contents of this file are subject to the terms of the "
                     + "Common Development and Distribution License (the \"License\") "
-                    + "You may not use this file except in compliance with the License. "}
-    };
-    
+                    + "You may not use this file except in compliance with the License. " } };
+
     public IllumosLicenseTest() {
         super(category, name, note, targets);
     }

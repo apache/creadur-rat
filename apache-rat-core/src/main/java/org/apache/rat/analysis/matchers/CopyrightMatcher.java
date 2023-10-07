@@ -56,13 +56,13 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
 
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
-    
+
     private State state;
 
     public CopyrightMatcher(String start, String stop, String owner) {
         this(null, start, stop, owner);
     }
-    
+
     public CopyrightMatcher(String id, String start, String stop, String owner) {
         super(id);
         state = State.i;
@@ -111,7 +111,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
         }
         return currentState();
     }
-    
+
     @Override
     public State currentState() {
         return state;

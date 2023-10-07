@@ -23,14 +23,17 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 
 /**
- * <p>Reads from a stream to check license.</p>
- * <p><strong>Note</strong> that this class is not thread safe.</p> 
+ * <p>
+ * Reads from a stream to check license.
+ * </p>
+ * <p>
+ * <strong>Note</strong> that this class is not thread safe.
+ * </p>
  */
 class HeaderCheckWorker {
 
@@ -45,8 +48,9 @@ class HeaderCheckWorker {
     private boolean finished = false;
 
     /**
-     * Convenience constructor wraps given <code>Reader</code>
-     * in a <code>BufferedReader</code>.
+     * Convenience constructor wraps given <code>Reader</code> in a
+     * <code>BufferedReader</code>.
+     * 
      * @param reader a <code>Reader</code> for the content, not null
      * @param name the name of the checked content, possibly null
      */
@@ -54,8 +58,7 @@ class HeaderCheckWorker {
         this(new BufferedReader(reader), license, name);
     }
 
-    public HeaderCheckWorker(BufferedReader reader, final ILicense license,
-            final Document name) {
+    public HeaderCheckWorker(BufferedReader reader, final ILicense license, final Document name) {
         this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, license, name);
     }
 
@@ -76,14 +79,17 @@ class HeaderCheckWorker {
             final StringBuilder headers = new StringBuilder();
             headerLinesToRead = numberOfRetainedHeaderLines;
             try {
-                while(readLine(headers)) {
+                while (readLine(headers)) {
                     // do nothing
                 }
-                if (!license.finalizeState().asBoolean()) {
+                if (license.finalizeState().asBoolean()) {
+                    document.getMetaData().reportOnLicense(license);
+                } else {
                     final String notes = headers.toString();
                     final MetaData metaData = document.getMetaData();
                     metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
+                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY,
+                            MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
                     metaData.set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
                 }
             } catch (IOException e) {
@@ -105,7 +111,6 @@ class HeaderCheckWorker {
             }
             switch (license.matches(line)) {
             case t:
-                document.getMetaData().reportOnLicense(license);
                 result = false;
                 break;
             case f:

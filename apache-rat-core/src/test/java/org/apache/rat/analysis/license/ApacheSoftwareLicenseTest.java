@@ -47,8 +47,7 @@ public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
             { "spdx-tab", "SPDX-License-Identifier:\tApache-2.0" },
             { "spdx-space", "SPDX-License-Identifier: Apache-2.0" },
             { "long text",
-                    "/*\n" + " *  Copyright 2012-2013 FooBar.\n" + " *\n"
-                            + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+                    "/*\n" + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
                             + " *  you may not use this file except in compliance with the License.\n" + " *\n"
                             + " *  You may obtain a copy of the License at\n"
                             + " *       http://www.apache.org/licenses/LICENSE-2.0\n" + " *\n"

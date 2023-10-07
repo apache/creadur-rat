@@ -16,24 +16,40 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.matchers;
+package org.apache.rat.testhelpers;
 
-public abstract class AbstractSimpleMatcher extends AbstractHeaderMatcher {
+import java.util.LinkedList;
+import java.util.Queue;
+
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+
+public class TestingMatcher extends AbstractHeaderMatcher {
     private State lastState;
+    private final boolean[] initialResults;
+    private Queue<Boolean> results;
+    public State finalState = State.f;
 
-    public AbstractSimpleMatcher(String id) {
-        super(id);
-        this.lastState = State.i;
+    public TestingMatcher() {
+        this("dfltMtch", false);
     }
 
-    abstract protected boolean doMatch(String line);
+    public TestingMatcher(String id, boolean result) {
+        this(id, new boolean[] { result });
+    }
+
+    public TestingMatcher(String id, boolean... results) {
+        super(id);
+        initialResults = results;
+        this.results = new LinkedList<>();
+        reset();
+    }
 
     @Override
     public final State matches(String line) {
         if (lastState == State.t) {
             return lastState;
         }
-        if (line != null && doMatch(line)) {
+        if (line != null && results.poll()) {
             lastState = State.t;
         }
         return lastState;
@@ -42,12 +58,16 @@ public abstract class AbstractSimpleMatcher extends AbstractHeaderMatcher {
     @Override
     public void reset() {
         lastState = State.i;
+        results.clear();
+        for (boolean b : initialResults) {
+            this.results.add(b);
+        }
     }
 
     @Override
     public State finalizeState() {
         if (lastState == State.i) {
-            lastState = State.f;
+            lastState = finalState;
         }
         return lastState;
     }

@@ -53,10 +53,13 @@ public class NotMatcher extends AbstractHeaderMatcher {
     @Override
     public State currentState() {
         switch (enclosed.currentState()) {
-        case t : return State.f;
-        case f : return State.t;
+        case t:
+            return State.f;
+        case f:
+            return State.t;
         default:
-        case i : return State.i;
+        case i:
+            return State.i;
         }
     }
 }

@@ -82,11 +82,13 @@ public class MatcherRefBuilder extends AbstractBuilder {
 
         @Override
         public State currentState() {
+            checkProxy();
             return wrapped.currentState();
         }
 
         @Override
         public State finalizeState() {
+            checkProxy();
             return wrapped.finalizeState();
         }
     }
