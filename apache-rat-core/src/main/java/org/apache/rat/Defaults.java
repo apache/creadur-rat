@@ -46,6 +46,7 @@ import org.apache.rat.license.ILicenseFamily;
  * Utility class that holds constants shared by the CLI tool and the Ant tasks.
  */
 public class Defaults {
+
     private static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.xml");
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
