@@ -15,32 +15,29 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.document;
-
-import org.junit.Test;
+ */
+package org.apache.rat.analysis.matchers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-import org.apache.rat.testhelpers.TestingLocation;
+import org.apache.rat.analysis.IHeaderMatcher.State;
+import org.junit.Test;
 
-public class ToNameTransformerTest {
+public class SimpleCopyrightTests {
 
-    private final ToNameTransformer transformer = new ToNameTransformer();
+    CopyrightMatcher target = new CopyrightMatcher(null,null,null);
     
     @Test
-    public void transformLocation() {
-        TestingLocation location = new TestingLocation();
-        Object result = transformer.transform(location);
-        assertNotNull("Transform into name", result);
-        assertEquals("Transform into name", location.name, result);
-    }
-
-    @Test
-    public void transformNull() {
-        Object result = transformer.transform(null);
-        assertNull("Null transforms to null", result);
+    public void testTrueIsAlwaysTrue() {
+        
+        assertEquals( State.i, target.currentState());
+        assertEquals( State.t, target.matches("hello Copyright 1999"));
+        assertEquals( State.t, target.currentState());
+        assertEquals( State.t, target.matches("A non matching line"));
+        assertEquals( State.t, target.currentState());        
+        assertEquals( State.t, target.finalizeState()); 
+        assertEquals( State.t, target.currentState());
+        target.reset();
+        assertEquals( State.i, target.currentState());
     }
 }

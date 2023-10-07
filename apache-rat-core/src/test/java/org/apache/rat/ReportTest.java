@@ -21,14 +21,13 @@ package org.apache.rat;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.Test;
 
 public class ReportTest {
     @Test
-    public void parseExclusionsForCLIUsage() throws IOException {
+    public void parseExclusionsForCLIUsage() {
         final FilenameFilter filter = Report
                 .parseExclusions(Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertNotNull(filter);

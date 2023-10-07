@@ -42,6 +42,11 @@ public class MatcherRefBuilder extends AbstractBuilder {
         return result != null ? result : new IHeaderMatcherProxy(referenceId, matchers);
     }
 
+    @Override
+    public String toString() {
+        return "MathcerRefBuilder: "+referenceId;
+    }
+    
     private class IHeaderMatcherProxy implements IHeaderMatcher {
         private final String proxyId;
         private IHeaderMatcher wrapped;
@@ -75,9 +80,21 @@ public class MatcherRefBuilder extends AbstractBuilder {
         }
 
         @Override
-        public boolean matches(String line) {
+        public State matches(String line) {
             checkProxy();
             return wrapped.matches(line);
+        }
+
+        @Override
+        public State currentState() {
+            checkProxy();
+            return wrapped.currentState();
+        }
+
+        @Override
+        public State finalizeState() {
+            checkProxy();
+            return wrapped.finalizeState();
         }
     }
 

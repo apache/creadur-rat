@@ -27,23 +27,23 @@ import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.Test;
 
-public class AndMatcherTest {
+public class OrMatcherTest {
 
     private void assertValues(IHeaderMatcher target, State hello, State world, State finalize) {
         assertEquals(State.i, target.currentState());
-        assertEquals(hello, target.matches("hello"));
-        assertEquals(hello, target.currentState());
-        assertEquals(world, target.matches("world"));
-        assertEquals(world, target.currentState());
-        assertEquals(finalize, target.finalizeState());
-        assertEquals(finalize, target.currentState());
+        assertEquals("hello match", hello, target.matches("hello"));
+        assertEquals("hello current", hello, target.currentState());
+        assertEquals("world match", world, target.matches("world"));
+        assertEquals("world current", world, target.currentState());
+        assertEquals("finalize", finalize, target.finalizeState());
+        assertEquals("finalize current", finalize, target.currentState());
     }
 
     @Test
     public void trueTest() {
-        IHeaderMatcher one = new TestingMatcher("one", true);
+        IHeaderMatcher one = new TestingMatcher("one", false, false);
         IHeaderMatcher two = new TestingMatcher("two", false, true);
-        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
         assertValues(target, State.i, State.t, State.t);
         target.reset();
         assertEquals(State.i, one.currentState());
@@ -53,9 +53,9 @@ public class AndMatcherTest {
 
     @Test
     public void falseTest() {
-        IHeaderMatcher one = new TestingMatcher("one", true);
+        IHeaderMatcher one = new TestingMatcher("one", false, false);
         IHeaderMatcher two = new TestingMatcher("two", false, false);
-        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
         assertValues(target, State.i, State.i, State.f);
         target.reset();
         assertEquals(State.i, one.currentState());
@@ -67,7 +67,7 @@ public class AndMatcherTest {
     public void indeterminentTest() {
         IHeaderMatcher one = new TestingMatcher("one", false, false);
         IHeaderMatcher two = new TestingMatcher("two", false, false);
-        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
         assertValues(target, State.i, State.i, State.f);
         target.reset();
         assertEquals(State.i, one.currentState());

@@ -16,50 +16,64 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.matchers;
+package org.apache.rat.testhelpers;
 
-import org.apache.rat.analysis.IHeaderMatcher;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class NotMatcher extends AbstractHeaderMatcher {
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
 
-    private final IHeaderMatcher enclosed;
+public class TestingMatcher extends AbstractHeaderMatcher {
+    private State lastState;
+    private final boolean[] initialResults;
+    private Queue<Boolean> results;
+    public State finalState = State.f;
 
-    public NotMatcher(IHeaderMatcher enclosed) {
-        this(null, enclosed);
+    public TestingMatcher() {
+        this("dfltMtch", false);
     }
 
-    public NotMatcher(String id, IHeaderMatcher enclosed) {
+    public TestingMatcher(String id, boolean result) {
+        this(id, new boolean[] { result });
+    }
+
+    public TestingMatcher(String id, boolean... results) {
         super(id);
-        this.enclosed = enclosed;
+        initialResults = results;
+        this.results = new LinkedList<>();
+        reset();
     }
 
     @Override
-    public State matches(String line) {
-        enclosed.matches(line);
-        return currentState();
+    public final State matches(String line) {
+        if (lastState == State.t) {
+            return lastState;
+        }
+        if (line != null && results.poll()) {
+            lastState = State.t;
+        }
+        return lastState;
     }
 
     @Override
     public void reset() {
-        enclosed.reset();
+        lastState = State.i;
+        results.clear();
+        for (boolean b : initialResults) {
+            this.results.add(b);
+        }
     }
 
     @Override
     public State finalizeState() {
-        enclosed.finalizeState();
-        return currentState();
+        if (lastState == State.i) {
+            lastState = finalState;
+        }
+        return lastState;
     }
 
     @Override
-    public State currentState() {
-        switch (enclosed.currentState()) {
-        case t:
-            return State.f;
-        case f:
-            return State.t;
-        default:
-        case i:
-            return State.i;
-        }
+    public final State currentState() {
+        return lastState;
     }
 }

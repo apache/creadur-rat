@@ -19,18 +19,25 @@
 package org.apache.rat.report.xml;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.StringWriter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.rat.analysis.DefaultAnalyserFactory;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.CopyrightMatcher;
+import org.apache.rat.analysis.matchers.OrMatcher;
+import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.report.AbstractReport;
@@ -40,27 +47,35 @@ import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 public class XmlReportTest {
 
     private static final Pattern IGNORE = Pattern.compile(".svn");
-    private StringWriter out;
+    private ByteArrayOutputStream out;
     private IXmlWriter writer;
     private RatReport report;
 
     @Before
     public void setUp() throws Exception {
-        out = new StringWriter();
-        writer = new XmlWriter(out);
+        out = new ByteArrayOutputStream();
+        writer = new XmlWriter(new BufferedWriter(new OutputStreamWriter(out)));
         writer.startDocument();
         final SimpleXmlClaimReporter reporter = new SimpleXmlClaimReporter(writer);
-        final ILicense matcher = mock(ILicense.class);
-        when(matcher.matches(any())).thenReturn(false);
+        final IHeaderMatcher asf1Matcher = new SimpleTextMatcher("http://www.apache.org/licenses/LICENSE-2.0");
+        final IHeaderMatcher asf2Matcher = new SimpleTextMatcher("https://www.apache.org/licenses/LICENSE-2.0.txt");
+        final IHeaderMatcher asfMatcher = new OrMatcher(Arrays.asList(asf1Matcher, asf2Matcher));
+        final ILicense asfLic = new TestingLicense("ASF", asfMatcher);
 
-        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(Arrays.asList(matcher));
+        final IHeaderMatcher qosMatcher = new CopyrightMatcher("2004", "2011", "QOS.ch");
+        final ILicense qosLic = new TestingLicense("QOS", qosMatcher);
+
+        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(Arrays.asList(asfLic, qosLic));
         final List<AbstractReport> reporters = new ArrayList<>();
         reporters.add(reporter);
         report = new ClaimReporterMultiplexer(analyser, reporters);
@@ -81,97 +96,23 @@ public class XmlReportTest {
         final String output = out.toString();
         assertTrue("Preamble and document element are OK",
                 output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="));
-        assertTrue(output + "Part after timestamp attribute is OK", output.endsWith(">" + "<resource name='"
-                + elementsPath + "/Image.png'><type name='binary'/></resource>" + "<resource name='" + elementsPath
-                + "/LICENSE'><type name='notice'/></resource>" + "<resource name='" + elementsPath
-                + "/NOTICE'><type name='notice'/></resource>" + "<resource name='" + elementsPath
-                + "/Source.java'><header-sample>package elements;\n" + "\n" + "/*\n"
-                + " * This file does intentionally *NOT* contain an AL license header,\n"
-                + " * because it is used in the test suite.\n" + " */\n" + "public class Source {\n" + "\n" + "}\n"
-                + "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>"
-                + "<resource name='" + elementsPath + "/Text.txt'><header-sample>/*\n"
-                + " * Licensed to the Apache Software Foundation (ASF) under one\n"
-                + " * or more contributor license agreements.  See the NOTICE file\n"
-                + " * distributed with this work for additional information\n"
-                + " * regarding copyright ownership.  The ASF licenses this file\n"
-                + " * to you under the Apache License, Version 2.0 (the \"License\");\n"
-                + " * you may not use this file except in compliance with the License.\n"
-                + " * You may obtain a copy of the License at\n" + " *\n"
-                + " *    http://www.apache.org/licenses/LICENSE-2.0\n" + " *\n"
-                + " * Unless required by applicable law or agreed to in writing,\n"
-                + " * software distributed under the License is distributed on an\n"
-                + " * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n"
-                + " * KIND, either express or implied.  See the License for the\n"
-                + " * specific language governing permissions and limitations\n" + " * under the License.    \n"
-                + " */\n" + "\n" + "            \n"
-                + "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>"
-                + "<resource name='" + elementsPath + "/TextHttps.txt'><header-sample>/*\n"
-                + " * Licensed to the Apache Software Foundation (ASF) under one\n"
-                + " * or more contributor license agreements.  See the NOTICE file\n"
-                + " * distributed with this work for additional information\n"
-                + " * regarding copyright ownership.  The ASF licenses this file\n"
-                + " * to you under the Apache License, Version 2.0 (the \"License\");\n"
-                + " * you may not use this file except in compliance with the License.\n"
-                + " * You may obtain a copy of the License at\n" + " *\n"
-                + " *    https://www.apache.org/licenses/LICENSE-2.0.txt\n" + " *\n"
-                + " * Unless required by applicable law or agreed to in writing,\n"
-                + " * software distributed under the License is distributed on an\n"
-                + " * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n"
-                + " * KIND, either express or implied.  See the License for the\n"
-                + " * specific language governing permissions and limitations\n" + " * under the License.    \n"
-                + " */\n" + "\n" + "            \n"
-                + "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>"
-                + "<resource name='" + elementsPath + "/Xml.xml'><header-sample>&lt;?xml version='1.0'?&gt;\n"
-                + "&lt;!--\n" + " Licensed to the Apache Software Foundation (ASF) under one   *\n"
-                + " or more contributor license agreements.  See the NOTICE file *\n"
-                + " distributed with this work for additional information        *\n"
-                + " regarding copyright ownership.  The ASF licenses this file   *\n"
-                + " to you under the Apache License, Version 2.0 (the            *\n"
-                + " \"License\"); you may not use this file except in compliance   *\n"
-                + " with the License.  You may obtain a copy of the License at   *\n"
-                + "                                                              *\n"
-                + "   http://www.apache.org/licenses/LICENSE-2.0                 *\n"
-                + "                                                              *\n"
-                + " Unless required by applicable law or agreed to in writing,   *\n"
-                + " software distributed under the License is distributed on an  *\n"
-                + " \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *\n"
-                + " KIND, either express or implied.  See the License for the    *\n"
-                + " specific language governing permissions and limitations      *\n"
-                + " under the License.                                           *\n" + "--&gt;\n"
-                + "&lt;document/&gt;\n"
-                + "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>"
-                + "<resource name='" + elementsPath
-                + "/buildr.rb'><header-sample># Licensed to the Apache Software Foundation (ASF) under one or more\n"
-                + "# contributor license agreements.  See the NOTICE file distributed with this\n"
-                + "# work for additional information regarding copyright ownership.  The ASF\n"
-                + "# licenses this file to you under the Apache License, Version 2.0 (the\n"
-                + "# \"License\"); you may not use this file except in compliance with the License.\n"
-                + "# You may obtain a copy of the License at\n" + "#\n"
-                + "#    http://www.apache.org/licenses/LICENSE-2.0\n" + "#\n"
-                + "# Unless required by applicable law or agreed to in writing, software\n"
-                + "# distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT\n"
-                + "# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the\n"
-                + "# License for the specific language governing permissions and limitations under\n"
-                + "# the License.\n" + "\n" + "unless defined?(Buildr::VERSION)\n" + "  require 'buildr/version'\n"
-                + "end\n" + "\n" + "require 'buildr/core'\n" + "require 'buildr/packaging'\n"
-                + "require 'buildr/java'\n" + "require 'buildr/ide'\n" + "require 'buildr/shell'\n"
-                + "require 'buildr/run'\n" + "\n"
-                + "# Methods defined in Buildr are both instance methods (e.g. when included in Project)\n"
-                + "# and class methods when invoked like Buildr.artifacts().\n" + "module Buildr ; extend self ; end\n"
-                + "\n" + "# The Buildfile object (self) has access to all the Buildr methods and constants.\n"
-                + "class &lt;&lt; self ; include Buildr ; end\n" + "\n"
-                + "# All modules defined under Buildr::* can be referenced without Buildr:: prefix\n"
-                + "# unless a conflict exists (e.g.  Buildr::RSpec vs ::RSpec)\n" + "class Object #:nodoc:\n"
-                + "  Buildr.constants.each do |name|\n" + "    const = Buildr.const_get(name)\n"
-                + "    if const.is_a?(Module)\n" + "      const_set name, const unless const_defined?(name)\n"
-                + "    end\n" + "  end\n" + "end\n" + "\n"
-                + "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>"
-                + "<resource name='" + elementsPath + "/dummy.jar'><type name='archive'/></resource>"
-                + "<resource name='" + elementsPath + "/plain.json'><type name='binary'/></resource>"
-                + "<resource name='" + elementsPath
-                + "/sub/Empty.txt'><header-sample>\n</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/></resource>"
-                + "</rat-report>"));
         assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
+
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", "QOS", null, "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, null, "binary");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, null, "notice");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, null, "notice");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Source.java", "?????", null, "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Text.txt", "ASF", null, "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", "ASF", null, "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", "ASF", null, "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", "ASF", null, "standard");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, null, "archive");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, null, "binary");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", "?????", null, "standard");
     }
 
 }

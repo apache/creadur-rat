@@ -18,11 +18,8 @@
  */
 package org.apache.rat.analysis.license;
 
-import java.util.Arrays;
-
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
-import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -66,10 +63,20 @@ public abstract class BaseLicense extends AbstractHeaderMatcher implements ILice
     }
 
     @Override
-    public boolean matches(String line) {
+    public State matches(String line) {
         return matcher.matches(line);
     }
-    
+
+    @Override
+    public State currentState() {
+        return matcher.currentState();
+    }
+
+    @Override
+    public State finalizeState() {
+        return matcher.finalizeState();
+    }
+
     @Override
     public void reset() {
         matcher.reset();

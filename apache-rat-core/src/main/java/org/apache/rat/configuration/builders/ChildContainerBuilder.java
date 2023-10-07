@@ -76,5 +76,12 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
     public List<IHeaderMatcher> getChildren() {
         return children.stream().map(IHeaderMatcher.Builder::build).collect(Collectors.toList());
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(this.getClass().getSimpleName()).append( ":");
+        children.stream().map(Object::toString).forEach( x -> sb.append("\n").append(x));
+        return sb.toString();
+    }
 
 }

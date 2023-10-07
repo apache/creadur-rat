@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @since Rat 0.8
  */
-public class SimpleTextMatcher extends AbstractHeaderMatcher {
+public class SimpleTextMatcher extends AbstractSimpleMatcher {
     private String pattern;
 
     /**
@@ -35,24 +35,19 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
      * @param pPatterns
      */
     public SimpleTextMatcher(String pattern) {
-        this(null,pattern);
+        this(null, pattern);
     }
 
     public SimpleTextMatcher(String id, String pattern) {
         super(id);
         if (StringUtils.isBlank(pattern)) {
-            throw new IllegalArgumentException( "Pattern may not be null, empty or blank");
+            throw new IllegalArgumentException("Pattern may not be null, empty or blank");
         }
         this.pattern = pattern;
     }
 
     @Override
-    public boolean matches(String line) {
-        return line != null && line.contains(pattern);
-    }
-
-    @Override
-    public void reset() {
-        // Nothing to do
+    public boolean doMatch(String line) {
+        return line.contains(pattern);
     }
 }

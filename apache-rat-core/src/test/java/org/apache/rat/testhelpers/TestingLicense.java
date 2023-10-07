@@ -16,22 +16,29 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.license;
+package org.apache.rat.testhelpers;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 
-class SimpleLicense implements ILicense {
+public class TestingLicense implements ILicense {
 
-    private ILicenseFamily family;
-    private IHeaderMatcher matcher;
+    private final ILicenseFamily family;
+    IHeaderMatcher matcher;
     private String derivedFrom;
     private String notes;
 
-    public SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes) {
-        this.family = family;
+    public TestingLicense() {
+        this("DfltTst", new TestingMatcher());
+    }
+
+    public TestingLicense(String id, IHeaderMatcher matcher) {
+        this.family = ILicenseFamily.builder().setLicenseFamilyCategory(id)
+                .setLicenseFamilyName("TestingLicense: " + id).build();
         this.matcher = matcher;
-        this.derivedFrom = derivedFrom;
-        this.notes = notes;
+        this.derivedFrom = null;
+        this.notes = null;
     }
 
     @Override
@@ -41,10 +48,6 @@ class SimpleLicense implements ILicense {
 
     public ILicenseFamily getFamily() {
         return family;
-    }
-
-    public void setFamily(ILicenseFamily family) {
-        this.family = family;
     }
 
     public IHeaderMatcher getMatcher() {
@@ -73,7 +76,7 @@ class SimpleLicense implements ILicense {
     public State matches(String line) {
         return matcher.matches(line);
     }
-    
+
     @Override
     public State finalizeState() {
         return matcher.finalizeState();
@@ -104,5 +107,4 @@ class SimpleLicense implements ILicense {
         return derivedFrom;
     }
 
-    
 }

@@ -15,32 +15,45 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.document;
+ */
+package org.apache.rat.analysis.matchers;
 
-import org.junit.Test;
+public abstract class AbstractSimpleMatcher extends AbstractHeaderMatcher {
+    private State lastState;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import org.apache.rat.testhelpers.TestingLocation;
-
-public class ToNameTransformerTest {
-
-    private final ToNameTransformer transformer = new ToNameTransformer();
-    
-    @Test
-    public void transformLocation() {
-        TestingLocation location = new TestingLocation();
-        Object result = transformer.transform(location);
-        assertNotNull("Transform into name", result);
-        assertEquals("Transform into name", location.name, result);
+    public AbstractSimpleMatcher(String id) {
+        super(id);
+        this.lastState = State.i;
     }
 
-    @Test
-    public void transformNull() {
-        Object result = transformer.transform(null);
-        assertNull("Null transforms to null", result);
+    abstract protected boolean doMatch(String line);
+
+    @Override
+    public final State matches(String line) {
+        if (lastState == State.t) {
+            return lastState;
+        }
+        if (line != null && doMatch(line)) {
+            lastState = State.t;
+        }
+        return lastState;
+    }
+
+    @Override
+    public void reset() {
+        lastState = State.i;
+    }
+
+    @Override
+    public State finalizeState() {
+        if (lastState == State.i) {
+            lastState = State.f;
+        }
+        return lastState;
+    }
+
+    @Override
+    public final State currentState() {
+        return lastState;
     }
 }

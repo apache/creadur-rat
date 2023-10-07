@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * @since Rat 0.8
  */
-public class SimpleRegexMatcher extends AbstractHeaderMatcher {
+public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     private Pattern pattern;
 
     /**
@@ -44,12 +44,7 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public boolean matches(String line) {
-        return line != null && pattern.matcher(line).find();
-    }
-
-    @Override
-    public void reset() {
-        // Nothing to do
+    public boolean doMatch(String line) {
+        return pattern.matcher(line).find();
     }
 }

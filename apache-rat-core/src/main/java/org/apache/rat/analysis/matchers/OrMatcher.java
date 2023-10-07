@@ -24,21 +24,61 @@ import org.apache.rat.analysis.IHeaderMatcher;
 
 public class OrMatcher extends AbstractMatcherContainer {
 
+    private State lastState;
+
     public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
-        super(enclosed);
+        this(null, enclosed);
     }
 
     public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
+        // lastState = State.i;
     }
 
     @Override
-    public boolean matches(String line) {
+    public State matches(String line) {
+        if (lastState == State.t) {
+            return State.t;
+        }
         for (IHeaderMatcher matcher : enclosed) {
-            if (matcher.matches(line)) {
-                return true;
+            switch (matcher.matches(line)) {
+            case t:
+                lastState = State.t;
+                return lastState;
+            case f:
+            case i:
+                lastState = State.i;
             }
         }
-        return false;
+        return lastState;
     }
+
+    @Override
+    public State currentState() {
+        if (lastState == State.t) {
+            return lastState;
+        }
+        for (IHeaderMatcher matcher : enclosed) {
+            switch (matcher.currentState()) {
+            case t:
+                lastState = State.t;
+                return lastState;
+            case i:
+                lastState = State.i;
+                return lastState;
+            case f:
+                // do nothing;
+                break;
+            }
+        }
+        lastState = State.f;
+        return lastState;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        lastState = State.i;
+    }
+
 }

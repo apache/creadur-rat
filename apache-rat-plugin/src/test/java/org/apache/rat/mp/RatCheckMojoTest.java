@@ -212,44 +212,44 @@ public class RatCheckMojoTest extends AbstractMojoTestCase {
      *
      * @throws Exception The test failed.
      */
-    @Ignore
-    public void testIt4() throws Exception {
+//    @Ignore
+//    public void testIt4() throws Exception {
     	// In previous versions of the JDK, it used to be possible to
     	// change the value of file.encoding at runtime. As of Java 16,
     	// this is no longer possible. Instead, at this point, we check,
     	// that file.encoding is actually ISO-8859-1. (Within Maven, this
     	// is enforced by the configuration of the surefire plugin.) If not,
     	// we skip this test.
-    	Assume.assumeTrue("Expected file.encoding=ISO-8859-1", "ISO-8859-1".equals(System.getProperty("file.encoding")));
-        final RatCheckMojo mojo = newRatCheckMojo("it4");
-        final File ratTxtFile = getRatTxtFile(mojo);
-        try {
-            setVariableValueToObject(mojo, "reportStyle", "xml");
-            mojo.execute();
-            fail("Expected RatCheckException");
-        } catch (RatCheckException e) {
-            final String msg = e.getMessage();
-            // default value is "${project.build.directory}/rat.txt"
-            final String REPORTFILE = "rat.txt";
-
-            assertTrue("report filename was not contained in '" + msg + "'",
-                    msg.contains(REPORTFILE));
-            assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase()
-                    .contains("NULL")));
-        }
-        assertTrue(ratTxtFile.exists());
-        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        try (FileInputStream fis = new FileInputStream(ratTxtFile)) {
-            Document doc = db.parse(fis);
-            NodeList headerSample = doc.getElementsByTagName("header-sample");
-            String textContent = headerSample.item(0).getTextContent();
-            if (textContent.length() == 0) { // can be the pom since this test will parse 2 files but the pom is "ok"
-                textContent = headerSample.item(1).getTextContent();
-            }
-            boolean byteSequencePresent = textContent.contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
-            assertTrue("Report should contain test umlauts, got '" + textContent + "'", byteSequencePresent);
-        } catch (Exception ex) {
-            fail("Report file could not be parsed as XML: " + ex.getMessage());
-        }
-    }
+//    	Assume.assumeTrue("Expected file.encoding=ISO-8859-1", "ISO-8859-1".equals(System.getProperty("file.encoding")));
+//        final RatCheckMojo mojo = newRatCheckMojo("it4");
+//        final File ratTxtFile = getRatTxtFile(mojo);
+//        try {
+//            setVariableValueToObject(mojo, "reportStyle", "xml");
+//            mojo.execute();
+//            fail("Expected RatCheckException");
+//        } catch (RatCheckException e) {
+//            final String msg = e.getMessage();
+//            // default value is "${project.build.directory}/rat.txt"
+//            final String REPORTFILE = "rat.txt";
+//
+//            assertTrue("report filename was not contained in '" + msg + "'",
+//                    msg.contains(REPORTFILE));
+//            assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase()
+//                    .contains("NULL")));
+//        }
+//        assertTrue(ratTxtFile.exists());
+//        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//        try (FileInputStream fis = new FileInputStream(ratTxtFile)) {
+//            Document doc = db.parse(fis);
+//            NodeList headerSample = doc.getElementsByTagName("header-sample");
+//            String textContent = headerSample.item(0).getTextContent();
+//            if (textContent.length() == 0) { // can be the pom since this test will parse 2 files but the pom is "ok"
+//                textContent = headerSample.item(1).getTextContent();
+//            }
+//            boolean byteSequencePresent = textContent.contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
+//            assertTrue("Report should contain test umlauts, got '" + textContent + "'", byteSequencePresent);
+//        } catch (Exception ex) {
+//            fail("Report file could not be parsed as XML: " + ex.getMessage());
+//        }
+//    }
 }

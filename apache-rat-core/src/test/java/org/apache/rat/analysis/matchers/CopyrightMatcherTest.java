@@ -20,7 +20,6 @@ package org.apache.rat.analysis.matchers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -122,8 +122,10 @@ public class CopyrightMatcherTest {
     public void testPass() {
         for (String[] target : pass) {
             String errMsg = String.format("%s:%s failed", testName, target[NAME]);
-            assertTrue(errMsg, matcher.matches(target[TEXT]));
+            assertEquals(errMsg, State.i, matcher.currentState());
+            assertEquals(errMsg, State.t, matcher.matches(target[TEXT]));
             matcher.reset();
+            assertEquals(errMsg, State.i, matcher.currentState());
         }
     }
 
@@ -131,8 +133,11 @@ public class CopyrightMatcherTest {
     public void testFail() {
         for (String[] target : fail) {
             String errMsg = String.format("%s:%s passed", testName, target[NAME]);
-            assertFalse(errMsg, matcher.matches(target[TEXT]));
+            assertEquals(errMsg, State.i, matcher.currentState());
+            assertEquals(errMsg, State.i, matcher.matches(target[TEXT]));
+            assertEquals(errMsg, State.f, matcher.finalizeState());
             matcher.reset();
+            assertEquals(errMsg, State.i, matcher.currentState());
         }
     }
 }

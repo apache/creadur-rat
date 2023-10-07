@@ -20,8 +20,10 @@ package org.apache.rat;
 
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.function.Supplier;
@@ -80,23 +82,22 @@ public class Reporter {
      */
     public static ClaimStatistic report(ReportConfiguration configuration) throws Exception {
         if (configuration.getReportable() != null) {
-            if (configuration.isStyleReport()) { 
-                try (
-                PipedReader reader = new PipedReader();
-                PipedWriter writer = new PipedWriter(reader);) {
-                ReportTransformer transformer = new ReportTransformer(configuration.getWriter().get(),
-                        configuration.getStyleSheet().get(), reader);
-                Thread transformerThread = new Thread(transformer);
-                transformerThread.start();
-                final ClaimStatistic statistic = report(writer, configuration);
-                writer.flush();
-                writer.close();
-                transformerThread.join();
-                return statistic;
+            if (configuration.isStyleReport()) {
+                try (PipedReader reader = new PipedReader(); PipedWriter writer = new PipedWriter(reader);
+                        InputStream style = configuration.getStyleSheet().get();
+                        PrintWriter reportWriter = configuration.getWriter().get();) {
+                    ReportTransformer transformer = new ReportTransformer(reportWriter, style, reader);
+                    Thread transformerThread = new Thread(transformer);
+                    transformerThread.start();
+                    final ClaimStatistic statistic = report(writer, configuration);
+                    writer.flush();
+                    writer.close();
+                    transformerThread.join();
+                    return statistic;
                 }
             }
             try (Writer writer = configuration.getWriter().get()) {
-            return report(writer, configuration);
+                return report(writer, configuration);
             }
         }
         return null;
@@ -112,15 +113,14 @@ public class Reporter {
      */
     private static ClaimStatistic report(Writer outputWriter, ReportConfiguration configuration)
             throws IOException, RatException {
-        try (
-        IXmlWriter writer = new XmlWriter(outputWriter)){
-        final ClaimStatistic statistic = new ClaimStatistic();
-        RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
-        report.startReport();
-        configuration.getReportable().run(report);
-        report.endReport();
+        try (IXmlWriter writer = new XmlWriter(outputWriter)) {
+            final ClaimStatistic statistic = new ClaimStatistic();
+            RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
+            report.startReport();
+            configuration.getReportable().run(report);
+            report.endReport();
 
-        return statistic;
+            return statistic;
         } catch (Exception e) {
             throw new IOException(e);
         }

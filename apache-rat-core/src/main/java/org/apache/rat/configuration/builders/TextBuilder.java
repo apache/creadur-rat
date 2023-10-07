@@ -28,6 +28,8 @@ public class TextBuilder extends AbstractBuilder implements TextCaptureBuilder {
 
     private String text;
 
+    @SuppressWarnings("unchecked")
+    @Override
     public TextBuilder setText(String text) {
         this.text = text;
         return this;
@@ -42,5 +44,13 @@ public class TextBuilder extends AbstractBuilder implements TextCaptureBuilder {
                 | text.contains("\\f") | text.contains("\\v");
 
         return complex ? new FullTextMatcher(getId(), text) : new SimpleTextMatcher(getId(), text);
+    }
+
+    @Override
+    public String toString() {
+        if (text.length() > 20) {
+            return "TextBuilder: " + text.substring(0, 20) + "...";
+        }
+        return "TextBuilder: " + text;
     }
 }

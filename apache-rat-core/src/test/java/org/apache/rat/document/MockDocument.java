@@ -15,15 +15,15 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
-
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+
+import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
 
 public class MockDocument implements Document {
 
@@ -38,30 +38,34 @@ public class MockDocument implements Document {
     public MockDocument(String name) {
         this(null, name);
     }
-    
+
     public MockDocument(Reader reader, String name) {
         super();
         this.reader = reader;
         this.name = name;
     }
 
+    @Override
     public Reader reader() throws IOException {
         return reader;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public boolean isComposite() {
         return false;
     }
-    
+
+    @Override
     public MetaData getMetaData() {
         return metaData;
     }
-    
 
+    @Override
     public InputStream inputStream() throws IOException {
         throw new UnsupportedOperationException("in MockDocument inputStream()");
     }

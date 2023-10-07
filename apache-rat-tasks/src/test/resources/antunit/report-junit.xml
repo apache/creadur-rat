@@ -168,25 +168,15 @@
 		<echo file="${output.dir}/src/org/example/InlineMatcher.java"><![CDATA[
 package org.example;
 
-import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
 
-public class InlineMatcher implements IHeaderMatcher {
+public class InlineMatcher extends AbstractSimpleMatcher {
     public InlineMatcher() {
+        super("InlineMatcher");
     }
 
     @Override
-    public String getId() {
-        return "MyCustomMatcher";
-    }
-
-
-    @Override
-    public void reset() {
-    }
-
-
-    @Override
-    public boolean matches(String line) {
+    public boolean doMatch(String line) {
         return true;
     }
 }

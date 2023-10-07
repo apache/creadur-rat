@@ -16,38 +16,105 @@
   limitations under the License.
 -->
 <project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.rat.test</groupId>
-  <artifactId>it1</artifactId>
-  <version>1.0</version>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <version>@pom.version@</version>
-        <configuration>
-          <licenses>
-            <license>
-              <licenseFamilyCategory>YAL__</licenseFamilyCategory>
-              <licenseFamilyName>Yet Another Software License</licenseFamilyName>
-              <notes></notes>
-              <text>Yet Another License</text>
-            </license>
-          </licenses>
-          <licenseFamilies>
-            <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
-              <familyName>Yet Another Software License</familyName>
-            </licenseFamily>
-          </licenseFamilies>
-          <includes>
-            <include>src.apt</include>
-          </includes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.apache.rat.test</groupId>
+	<artifactId>it1</artifactId>
+	<version>1.0</version>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.rat</groupId>
+				<artifactId>apache-rat-plugin</artifactId>
+				<version>@pom.version@</version>
+				<configuration>
+					<licenses>
+<!--						<license>-->
+<!--							<id>CpyrP</id>-->
+<!--							<name>Copyright with properties</name>-->
+<!--							<notes></notes>-->
+<!--							<copyright start="1990" end="1991" owner="foo" />-->
+<!--						</license>-->
+						<license>
+							<id>CpyrT</id>
+							<name>Copyright with tags</name>
+							<notes></notes>
+							<copyright>
+								<start>1990</start>
+								<end>1991</end>
+								<owner>foo</owner>
+							</copyright>
+						</license>
+<!--						<license>-->
+<!--							<id>RegxP</id>-->
+<!--							<name>Regex with properties</name>-->
+<!--							<notes></notes>-->
+<!--							<regex expr="regex property" />-->
+<!--						</license>-->
+						<license>
+							<id>RegxT</id>
+							<name>Regex with tag</name>
+							<notes></notes>
+							<regex>regex tag</regex>
+						</license>
+<!--						<license>-->
+<!--							<id>SpdxP</id>-->
+<!--							<name>Spdx with properties</name>-->
+<!--							<notes></notes>-->
+<!--							<spdx name="spdx-property" />-->
+<!--						</license>-->
+						<license>
+							<id>SpdxT</id>
+							<name>Spdx with tag</name>
+							<notes></notes>
+							<spdx>spxd-tag</spdx>
+						</license>
+<!--						<license>-->
+<!--							<id>TextP</id>-->
+<!--							<name>Text with properties</name>-->
+<!--							<notes></notes>-->
+<!--							<text text="text-property" />-->
+<!--						</license>-->
+						<license>
+							<id>TextT</id>
+							<name>Text with tag</name>
+							<notes></notes>
+							<text>text-tag</text>
+						</license>
+						<license>
+							<id>Not</id>
+							<name>Not testing</name>
+							<notes></notes>
+							<not>
+								<text>not test text</text>
+							</not>
+						</license>
+						<license>
+							<id>All</id>
+							<name>All testing</name>
+							<notes></notes>
+							<all>
+								<text>all test text</text>
+								<spdx>all spdx text</spdx>
+							</all>
+						</license>
+						<license>
+							<id>Any</id>
+							<name>Any testing</name>
+							<notes></notes>
+							<any>
+								<text>any test text</text>
+								<spdx>any spdx text</spdx>
+							</any>
+						</license>
+					</licenses>
+					<includes>
+						<include>src.apt</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

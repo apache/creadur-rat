@@ -34,4 +34,9 @@ public class SpdxBuilder extends AbstractBuilder {
     public IHeaderMatcher build() {
         return SPDXMatcherFactory.INSTANCE.create(name);
     }
+    
+    @Override
+    public String toString() {
+        return "SpdxBuilder: "+name;
+    }
 }

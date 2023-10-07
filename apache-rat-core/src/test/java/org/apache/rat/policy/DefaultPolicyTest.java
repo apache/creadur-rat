@@ -28,9 +28,9 @@ import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
-import org.apache.rat.document.MockLocation;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.testhelpers.TestingLocation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class DefaultPolicyTest {
 
         policy = new DefaultPolicy(
                 defaults.getLicenses().stream().map(ILicense::getLicenseFamily).collect(Collectors.toList()));
-        subject = new MockLocation("subject");
+        subject = new TestingLocation("subject");
     }
 
     private void assertApproval(boolean pApproved) {

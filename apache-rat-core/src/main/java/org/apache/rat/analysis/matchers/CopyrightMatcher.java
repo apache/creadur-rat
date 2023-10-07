@@ -57,12 +57,15 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
 
+    private State state;
+
     public CopyrightMatcher(String start, String stop, String owner) {
         this(null, start, stop, owner);
     }
-    
+
     public CopyrightMatcher(String id, String start, String stop, String owner) {
         super(id);
+        state = State.i;
         String dateDefn = "";
         if (StringUtils.isNotEmpty(start)) {
             if (StringUtils.isNotEmpty(stop)) {
@@ -91,26 +94,39 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public boolean matches(String line) {
+    public State matches(String line) {
         Matcher matcher = COPYRIGHT_PATTERN.matcher(line);
         if (matcher.find()) {
             String buffer = line.substring(matcher.end());
             matcher = dateOwnerPattern.matcher(buffer);
             if (matcher.find() && matcher.start() == 0) {
-                return true;
+                this.state = State.t;
             }
             if (ownerDatePattern != null) {
                 matcher = ownerDatePattern.matcher(buffer);
                 if (matcher.find() && matcher.start() == 0) {
-                    return true;
+                    this.state = State.t;
                 }
             }
-            return false;
         }
-        return false;
+        return currentState();
+    }
+
+    @Override
+    public State currentState() {
+        return state;
     }
 
     @Override
     public void reset() {
+        state = State.i;
+    }
+
+    @Override
+    public State finalizeState() {
+        if (state == State.i) {
+            state = State.f;
+        }
+        return state;
     }
 }
