@@ -18,7 +18,12 @@
  */
 package org.apache.rat;
 
+/**
+ * An exception thrown when there is an issue with the Configuration.
+ */
 public class ConfigurationException extends RuntimeException {
+
+    private static final long serialVersionUID = 7257245932787579431L;
 
     public ConfigurationException(String message, Throwable cause) {
         super(message, cause);

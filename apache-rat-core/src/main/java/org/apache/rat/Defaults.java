@@ -25,35 +25,47 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.Supplier;
 
-import org.apache.rat.configuration.Format;
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
-import org.apache.rat.configuration.MatcherBuilderTracker;
-import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
 /**
- * Utility class that holds constants shared by the CLI tool and the Ant tasks.
+ * A class that holds the list of licenses and approved licences from one or more Configuration file.
  */
 public class Defaults {
 
+    /**
+     * The default configuration file from the package.
+     */
     private static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.xml");
+    /**
+     * The default XSLT stylesheet to produce a text output file.
+     */
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
+    /**
+     * The default XSLT stylesheet to produce a list of unapproved licenses.
+     */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
+    /**
+     * The set of defined licenses.
+     */
     private final SortedSet<ILicense> licenses;
+    /**
+     * The set of approved license ids.
+     */
     private final SortedSet<String> approvedLicenseIds;
-    
+
+    /**
+     * Initialize the system configuration reader..
+     */
     public static void init() {
         Format fmt = Format.fromURL(DEFAULT_CONFIG_URL);
         MatcherReader mReader = fmt.matcherReader();
@@ -69,15 +81,26 @@ public class Defaults {
         approvedLicenseIds = new TreeSet<>();
     }
 
+    /**
+     * Gets a builder for a Defaults object.
+     * @return the Builder.
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * Clears all licenses and approved licenses.
+     */
     public void clear() {
         licenses.clear();
         approvedLicenseIds.clear();
     }
 
+    /**
+     * Reads the configuration files.
+     * @param urls the URLS to read.
+     */
     private void readConfigFiles(Collection<URL> urls) {
         for (URL url : urls) {
             Format fmt = Format.fromURL(url);
@@ -96,18 +119,34 @@ public class Defaults {
         }
     }
 
+    /**
+     * Gets a supplier for the "plain" text styleseet.
+     * @return an IOSupplier for the plain text stylesheet.
+     */
     public static IOSupplier<InputStream> getPlainStyleSheet() {
-        return ()->Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
+        return () -> Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
     }
 
+    /**
+     * Gets a supplier for the unapproved licences list stylesheet
+     * @return an IOSupplier for the unapproved licenses list stylesheet.
+     */
     public static IOSupplier<InputStream> getUnapprovedLicensesStyleSheet() {
-        return ()->Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
+        return () -> Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
     }
 
+    /**
+     * @return the sorted set of defined licenses.
+     */
     public SortedSet<ILicense> getLicenses() {
         return Collections.unmodifiableSortedSet(licenses);
     }
 
+    /**
+     * Gets the sorted set of approved license ids.
+     * If not licenses have been explicitly listed as approved all licenses are assumed to be approved.
+     * @return The sorted set of approved licenseIds.
+     */
     public SortedSet<String> getLicenseIds() {
         if (approvedLicenseIds.isEmpty()) {
             SortedSet<String> result = new TreeSet<>();
@@ -117,6 +156,9 @@ public class Defaults {
         return Collections.unmodifiableSortedSet(approvedLicenseIds);
     }
 
+    /**
+     * The Defaults builder.
+     */
     public static class Builder {
         private Set<URL> fileNames = new TreeSet<>(new Comparator<URL>() {
 
@@ -131,8 +173,7 @@ public class Defaults {
         }
 
         /**
-         * Adds a URL defining the Licenses and which are appoved to the list of files
-         * to read.
+         * Adds a URL to a configuration file to be read.
          * 
          * @param url the URL to add
          * @return this Builder for chaining
@@ -143,10 +184,9 @@ public class Defaults {
         }
 
         /**
-         * Adds a File defining the Licenses and which are appoved to the list of files
-         * to read.
+         * Adds the name of a configuration file to be read.
          * 
-         * @param fileName the name of the file to add
+         * @param fileName the name of the file to add.
          * @return this Builder for chaining
          */
         public Builder add(String fileName) throws MalformedURLException {
@@ -154,10 +194,9 @@ public class Defaults {
         }
 
         /**
-         * Adds a file defining the Licenses and which are appoved to the list of files
-         * to read.
+         * Adds a configuration file to be read.
          * 
-         * @param file the File to add
+         * @param file the File to add.
          * @return this Builder for chaining
          */
         public Builder add(File file) throws MalformedURLException {
@@ -165,7 +204,7 @@ public class Defaults {
         }
 
         /**
-         * Removes a file from the list of files to process.
+         * Removes a file from the list of configuration files to process.
          * 
          * @param url the URL of the file to remove.
          * @return this Builder for chaining
@@ -176,7 +215,7 @@ public class Defaults {
         }
 
         /**
-         * Removes a file from the list of files to process.
+         * Removes a file name from the list of configuration files to process.
          * 
          * @param fileName the fileName of the file to remove.
          * @return this Builder for chaining
@@ -186,7 +225,7 @@ public class Defaults {
         }
 
         /**
-         * Removes a file from the list of files to process.
+         * Removes a file from the list of configuration files to process.
          * 
          * @param file the File of the file to remove.
          * @return this Builder for chaining
@@ -196,7 +235,7 @@ public class Defaults {
         }
 
         /**
-         * Removes the default definitions.
+         * Removes the default definitions from the list of files to process.
          * 
          * @return this Builder for chaining
          */

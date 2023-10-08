@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,29 +33,31 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import org.apache.commons.io.function.IOSupplier;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.IReportable;
 
 /**
  * A configuration object is used by the front end to invoke the
- * {@link Reporter}. Basically, the sole purpose of the front ends is to create
- * the configuration and invoke the {@link Reporter}.
+ * {@link Reporter}. The sole purpose of the front ends is to create the
+ * configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration {
+    /**
+     * An enum that defines the types of License filters.
+     */
     public enum LicenseFilter {
-        all, approved, none
+        /** All defined licenses are returned */
+        all,
+        /** Only approved licenses are returned */
+        approved,
+        /** No licenses are returned */
+        none
     }
 
-    private static final Log logger = LogFactory.getLog(ReportConfiguration.class);
     private SortedSet<ILicense> licenses = new TreeSet<>(ILicense.getComparator());
     private SortedSet<String> approvedLicenseCategories = new TreeSet<>();
     private SortedSet<String> removedLicenseCategories = new TreeSet<>();
@@ -69,7 +69,7 @@ public class ReportConfiguration {
     private IOSupplier<InputStream> styleSheet = null;
     private IReportable reportable = null;
     private FilenameFilter inputFileFilter = null;
-    private LicenseFilter approvalFilter = LicenseFilter.approved;
+    // private LicenseFilter approvalFilter = LicenseFilter.approved;
 
     /**
      * @return The filename filter for the potential input files.
@@ -79,8 +79,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * @param inputFileFilter the filter to filter the on disk files being
-     * evaluated.
+     * @param inputFileFilter the filename filter to filter the input files.
      */
     public void setInputFileFilter(FilenameFilter inputFileFilter) {
         this.inputFileFilter = inputFileFilter;
@@ -108,13 +107,19 @@ public class ReportConfiguration {
     }
 
     /**
-     * 
      * @param styleSheet the XSLT style sheet to style the report with.
      */
     public void setStyleSheet(IOSupplier<InputStream> styleSheet) {
         this.styleSheet = styleSheet;
     }
 
+    /**
+     * Adds the licenses and approved licenses from the defaults object to the
+     * configuration. <em>Side effect: </em> if the report should be styled and no
+     * style sheet has been set the plain stylesheet from the defaults will be used.
+     * 
+     * @param defaults The defaults to set.
+     */
     public void setFrom(Defaults defaults) {
         addLicenses(defaults.getLicenses());
         addApprovedLicenseCategories(defaults.getLicenseIds());
@@ -130,58 +135,65 @@ public class ReportConfiguration {
      */
     public void setStyleSheet(File styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
-        setStyleSheet(()->styleSheet.toURI().toURL().openStream());
+        setStyleSheet(() -> styleSheet.toURI().toURL().openStream());
     }
 
     /**
-     * 
-     * @return True if the XML report should be styled.
+     * @return {@code true} if the XML report should be styled.
      */
     public boolean isStyleReport() {
         return styleReport;
     }
 
     /**
-     * 
-     * @param styleReport true if the XML report should be styled
+     * @param styleReport specifies whether or not the XML report should be styled.
      */
     public void setStyleReport(boolean styleReport) {
         this.styleReport = styleReport;
     }
 
     /**
-     * @param out The stream to write the output to.
+     * @param out The OutputStream supplier that provides the output stream to write
+     * the report to. (may be null)
      */
     public void setOut(IOSupplier<OutputStream> out) {
         this.out = out;
     }
-    
+
+    /**
+     * Sets the OutputStream supplier to use the specified file.
+     * 
+     * @see #setOut(IOSupplier)
+     * @param file The file to create the supplier with.
+     */
     public void setOut(File file) {
         Objects.requireNonNull(file, "output file should not be null");
         setOut(() -> new FileOutputStream(file));
     }
 
     /**
-     * Returns the output stream. If no stream has been set returns System.out.
+     * Returns the output stream supplier. If no stream has been set returns a
+     * supplier for System.out.
      * 
-     * @return The output stream to write to.
+     * @return The supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
-        return out == null ? ()->System.out : out;
+        return out == null ? () -> System.out : out;
     }
 
     /**
-     * 
-     * @return A PrintWriter that wraps the output stream.
+     * @return A supplier for a PrintWriter that wraps the output stream.
+     * @see #getOutput()
      */
     public IOSupplier<PrintWriter> getWriter() {
         return () -> new PrintWriter(new OutputStreamWriter(getOutput().get(), Charset.forName("UTF-8")));
     }
 
     /**
-     * Adds licenses to the list of licenses to be checked.
-     *
-     * @param license The license t oadd.
+     * Adds a license to the list of licenses. Does not add the license to the list
+     * of approved licenses.
+     * 
+     * @param license The license to add to the list of licenses.
      */
     public void addLicense(ILicense license) {
         if (license != null) {
@@ -190,7 +202,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * Adds licenses to the list of licenses to be checked.
+     * Adds multiple licenses to the list of licenses. Does not add the licenses to
+     * the list of approved licenses.
      *
      * @param license The license t oadd.
      */
@@ -199,43 +212,71 @@ public class ReportConfiguration {
     }
 
     /**
-     * Adds a license to the list of approved license names.
+     * Adds an ILicenseFamily to the list of approved licenses.
      *
-     * @param approvedLicenseNames set of approved license names.
+     * @param approvedILicenseFamily the LicenseFamily to add..
      */
-    public void addApprovedLicenseCategory(ILicenseFamily approvedLicenseName) {
-        approvedLicenseCategories.add(approvedLicenseName.getFamilyCategory());
+    public void addApprovedLicenseCategory(ILicenseFamily approvedILicenseFamily) {
+        approvedLicenseCategories.add(approvedILicenseFamily.getFamilyCategory());
     }
 
+    /**
+     * Adds a license family category (id) to the list of approved licenses
+     * 
+     * @param familyCategory the category to add.
+     */
     public void addApprovedLicenseCategory(String familyCategory) {
         approvedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
     }
 
     /**
-     * Adds to the set of approved license names (convenience).
+     * Adds a collection of license family categories to the set of approved license
+     * names.
      *
-     * @param approvedLicenseNames set of approved license names.
+     * @param approvedLicenseCategories set of approved license categories..
      */
-    public void addApprovedLicenseCategories(Collection<String> approvedLicenseNames) {
-        approvedLicenseNames.stream().forEach(this::addApprovedLicenseCategory);
+    public void addApprovedLicenseCategories(Collection<String> approvedLicenseCategories) {
+        approvedLicenseCategories.stream().forEach(this::addApprovedLicenseCategory);
     }
 
+    /**
+     * Adds a license family category to the list of approved licenses. <em>Once a
+     * license has been removed from the approved list it can not be re-added</em>
+     * 
+     * @param familyCategory the category to add.
+     */
     public void removeApprovedLicenseCategory(String familyCategory) {
         removedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
     }
 
+    /**
+     * Removes a license family category from the list of approved licenses.
+     * <em>Once a license has been removed from the approved list it can not be
+     * re-added</em>
+     * 
+     * @param familyCategory the family category to remove.
+     */
     public void removeApprovedLicenseCategories(Collection<String> familyCategory) {
         familyCategory.stream().forEach(this::removeApprovedLicenseCategory);
     }
-    
+
+    /**
+     * Gets the SortedSet of approved license categories. <em>Once a license has
+     * been removed from the approved list it can not be re-added</em>
+     * 
+     * @return the Sorted set of approved license categories.
+     */
     public SortedSet<String> getApprovedLicenseCategories() {
         SortedSet<String> result = new TreeSet<>(approvedLicenseCategories);
         result.removeAll(removedLicenseCategories);
         return result;
     }
+
     /**
-     * @return If Rat is adding license headers: Returns the optional copyright
-     * message. This value is ignored, if no license headers are added.
+     * Returns the optional license copyright being added if RAT is adding headers.
+     * This value is ignored, if no license headers are added.
+     * 
+     * @return the optional copyright message.
      * @see #isAddingLicenses()
      */
     public String getCopyrightMessage() {
@@ -243,8 +284,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * If Rat is adding license headers: Sets the optional copyright message. This
-     * value is ignored, if no license headers are added.
+     * Sets the optional copyright message used if RAT is adding license headers.
+     * This value is ignored, if no license headers are added.
      *
      * @param copyrightMessage message to set.
      * @see #setAddingLicenses(boolean)
@@ -254,8 +295,9 @@ public class ReportConfiguration {
     }
 
     /**
-     * @return If Rat is adding license headers: Returns, whether adding license
-     * headers is enforced. This value is ignored, if no license headers are added.
+     * This value is ignored if RAT is not adding licenses.
+     * 
+     * @return {@code true} if RAT is forcing the adding license headers.
      * @see #isAddingLicenses()
      */
     public boolean isAddingLicensesForced() {
@@ -263,7 +305,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * @return Returns, whether Rat should add missing license headers.
+     * @return whether RAT should add missing license headers.
      * @see #isAddingLicensesForced()
      * @see #getCopyrightMessage()
      */
@@ -272,9 +314,11 @@ public class ReportConfiguration {
     }
 
     /**
-     * Returns, whether Rat should add missing license headers.
-     *
-     * @param addingLicenses enables/disables adding of licenses.
+     * Sets whether RAT should enable, disable, or force the adidng of license
+     * headers.
+     * 
+     * @param addLicenseHeaders enables/disables or forces adding of licenses
+     * headers.
      * @see #setAddingLicensesForced(boolean)
      * @see #setCopyrightMessage(String)
      */
@@ -295,14 +339,14 @@ public class ReportConfiguration {
     }
 
     /**
-     * Returns a set Licenses of depending on the approvalFilter setting.
-     * if approvalFilter is set:
+     * Gets a set Licenses of depending on the {@code filter} if filter is set:
      * <ul>
      * <li>{@code all} - All licenses will be returned.</li>
-     * <li>{@code approved} - (default) All approved licenses will be returned</li>
+     * <li>{@code approved} - Only approved licenses will be returned</li>
      * <li>{@code none} - No licenses will be returned</li>
      * </ul>
      * 
+     * @param filter The license filter.
      * @return The set of defined licenses.
      */
     public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
@@ -321,6 +365,18 @@ public class ReportConfiguration {
         }
     }
 
+    /**
+     * Gets a sorted set of ILicenseFamily objects based on {@code filter}. if
+     * filter is set:
+     * <ul>
+     * <li>{@code all} - All licenses families will be returned.</li>
+     * <li>{@code approved} - Only approved license families will be returned</li>
+     * <li>{@code none} - No license families will be returned</li>
+     * </ul>
+     * 
+     * @param filter The license filter.
+     * @return The set of defined licenses.
+     */
     public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
         SortedSet<ILicenseFamily> result = new TreeSet<>();
         getLicenses(filter).stream().map(ILicense::getLicenseFamily).forEach(result::add);
@@ -328,23 +384,9 @@ public class ReportConfiguration {
     }
 
     /**
-     * Set which files will be listed as approved.
-     * 
-     * @param filter the fileter type.
-     * @return this Builder for chaining
-     */
-    public void setLicenseFilter(LicenseFilter filter) {
-        approvalFilter = filter;
-    }
-
-    public LicenseFilter getLicenseFilter() {
-        return approvalFilter;
-    }
-    
-    /**
      * Validates that the configuration is valid.
      * 
-     * @param logger the system to write warnings to.
+     * @param a String consumer to log warning messages to.
      */
     public void validate(Consumer<String> logger) {
         if (reportable == null) {

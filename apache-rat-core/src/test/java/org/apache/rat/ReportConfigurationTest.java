@@ -177,17 +177,6 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testLicenseFilter() {
-        assertEquals(LicenseFilter.approved, underTest.getLicenseFilter());
-        underTest.setLicenseFilter(LicenseFilter.all);
-        assertEquals(LicenseFilter.all, underTest.getLicenseFilter());
-        underTest.setLicenseFilter(LicenseFilter.none);
-        assertEquals(LicenseFilter.none, underTest.getLicenseFilter());
-        underTest.setLicenseFilter(LicenseFilter.approved);
-        assertEquals(LicenseFilter.approved, underTest.getLicenseFilter());
-    }
-
-    @Test
     public void licensesTest() {
         assertTrue(underTest.getLicenses(LicenseFilter.all).isEmpty());
         assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());

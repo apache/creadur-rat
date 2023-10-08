@@ -18,23 +18,13 @@
  */
 package org.apache.rat;
 
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.NotFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
@@ -42,48 +32,27 @@ import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
+/**
+ * Class the executes the report as defined in a ReportConfiguration.
+ */
 public class Reporter {
-
-    static FilenameFilter parseExclusions(List<String> excludes) {
-        final OrFileFilter orFilter = new OrFileFilter();
-        int ignoredLines = 0;
-        for (String exclude : excludes) {
-            try {
-                // skip comments
-                if (exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
-                    ignoredLines++;
-                    continue;
-                }
-
-                String exclusion = exclude.trim();
-                // interpret given patterns as regular expression, direct file names or
-                // wildcards to give users more choices to configure exclusions
-                orFilter.addFileFilter(new RegexFileFilter(exclusion));
-                orFilter.addFileFilter(new NameFileFilter(exclusion));
-                orFilter.addFileFilter(new WildcardFileFilter(exclusion));
-            } catch (PatternSyntaxException e) {
-                System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
-            }
-        }
-        System.err.println("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
-        return new NotFileFilter(orFilter);
-    }
 
     private Reporter() {
         // Do not instantiate
     }
 
     /**
-     * @param out - the output stream to receive the styled report
-     * @param configuration - current configuration options.
+     * Execut the report.
+     * 
+     * @param configuration The report configuration..
      * @return the currently collected numerical statistics.
      * @throws Exception in case of errors.
-     * @since Rat 0.8
      */
     public static ClaimStatistic report(ReportConfiguration configuration) throws Exception {
         if (configuration.getReportable() != null) {
             if (configuration.isStyleReport()) {
-                try (PipedReader reader = new PipedReader(); PipedWriter writer = new PipedWriter(reader);
+                try (PipedReader reader = new PipedReader();
+                        PipedWriter writer = new PipedWriter(reader);
                         InputStream style = configuration.getStyleSheet().get();
                         PrintWriter reportWriter = configuration.getWriter().get();) {
                     ReportTransformer transformer = new ReportTransformer(reportWriter, style, reader);
@@ -104,9 +73,9 @@ public class Reporter {
     }
 
     /**
-     * @param container the files or directories to report on
-     * @param out the writer to write the report to
-     * @param configuration current report configuration.
+     * Execute the report.
+     * @param coutputWriter the writer to send output to.
+     * @param configuration The report configuration..
      * @return the currently collected numerical statistics.
      * @throws IOException in case of I/O errors.
      * @throws RatException in case of internal errors.
