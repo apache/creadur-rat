@@ -21,10 +21,12 @@ package org.apache.rat.mp;
 
 import org.apache.maven.plugin.MojoFailureException;
 
-public class RatCheckException extends MojoFailureException {
+public class RatCheckException extends MojoFailureException
+{
     private static final long serialVersionUID = -1720861476741779140L;
 
-    public RatCheckException(String message) {
-        super(message);
+    public RatCheckException( String message )
+    {
+        super( message );
     }
 }

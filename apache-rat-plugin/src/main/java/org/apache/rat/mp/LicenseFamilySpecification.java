@@ -20,10 +20,11 @@ package org.apache.rat.mp;
  */
 
 /**
- * Used to specify additional license families. A license family is basically a
- * class, which implements {@link org.apache.rat.license.ILicenseFamily}.
+ * Used to specify additional license families. A license family is basically a class, which implements
+ * {@link org.apache.rat.license.ILicenseFamily}.
  */
-public class LicenseFamilySpecification {
+public class LicenseFamilySpecification
+{
     /**
      * The license family's class name.
      */
@@ -34,16 +35,19 @@ public class LicenseFamilySpecification {
      * 
      * @return Class name of the license family.
      */
-    public String getClassName() {
+    public String getClassName()
+    {
         return className;
     }
 
     /**
      * Sets the license family's class name. Required.
      * 
-     * @param pClassName Class name of the license family.
+     * @param pClassName
+     *            Class name of the license family.
      */
-    public void setClassName(String pClassName) {
+    public void setClassName( String pClassName )
+    {
         className = pClassName;
     }
 }

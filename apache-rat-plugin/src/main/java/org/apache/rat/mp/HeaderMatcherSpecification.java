@@ -20,10 +20,11 @@ package org.apache.rat.mp;
  */
 
 /**
- * Used to specify additional license matchers. A license matcher is basically a
- * class, which implements {@link org.apache.rat.analysis.IHeaderMatcher}.
+ * Used to specify additional license matchers. A license matcher is basically a class, which implements
+ * {@link org.apache.rat.analysis.IHeaderMatcher}.
  */
-public class HeaderMatcherSpecification {
+public class HeaderMatcherSpecification
+{
     /**
      * The license matchers class name.
      */
@@ -34,16 +35,19 @@ public class HeaderMatcherSpecification {
      * 
      * @return Class name of the license matcher.
      */
-    public String getClassName() {
+    public String getClassName()
+    {
         return className;
     }
 
     /**
      * Sets the license matchers class name. Required.
      * 
-     * @param pClassName Class name of the license matcher.
+     * @param pClassName
+     *            Class name of the license matcher.
      */
-    public void setClassName(String pClassName) {
+    public void setClassName( String pClassName )
+    {
         className = pClassName;
     }
 }
