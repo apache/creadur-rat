@@ -80,7 +80,7 @@
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license
-            licenseFamilyCategory="YASL1"
+            id="YASL1"
             notes="Interesting License">
           <rat:text>exmpl</rat:text>
         </rat:license>
@@ -94,7 +94,7 @@
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license
-            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            name="Yet Another Software License (YASL) 1.0"
             notes="Interesting License">
           <rat:text text="exampl"/>
         </rat:license>
@@ -108,8 +108,8 @@
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license
-            licenseFamilyCategory="YASL1"
-            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            id="YASL1"
+            name="Yet Another Software License (YASL) 1.0"
             notes="Interesting License">
             <rat:regex />
         </rat:license>
@@ -123,8 +123,8 @@
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license
-            licenseFamilyCategory="YASL1"
-            licenseFamilyName="Yet Another Software License (YASL) 1.0"
+            id="YASL1"
+            name="Yet Another Software License (YASL) 1.0"
             notes="Interesting License">
         	<rat:text/>
         </rat:license>

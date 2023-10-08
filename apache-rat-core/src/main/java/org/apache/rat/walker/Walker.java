@@ -19,11 +19,11 @@
 
 package org.apache.rat.walker;
 
+import org.apache.rat.report.IReportable;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.regex.Pattern;
-
-import org.apache.rat.report.IReportable;
 
 /**
  * Abstract walker.
@@ -37,7 +37,6 @@ public abstract class Walker implements IReportable {
 
     protected static FilenameFilter regexFilter(final Pattern pattern) {
         return new FilenameFilter() {
-            @Override
             public boolean accept(File dir, String name) {
                 final boolean result;
                 if (pattern == null) {
@@ -53,7 +52,7 @@ public abstract class Walker implements IReportable {
     protected boolean isRestricted(File file) {
         return file.getName().startsWith(".");
     }
-
+ 
     protected final boolean isNotIgnored(final File file) {
         boolean result = false;
         if (filter != null) {

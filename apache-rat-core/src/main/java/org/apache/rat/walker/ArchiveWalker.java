@@ -60,7 +60,6 @@ public class ArchiveWalker extends Walker implements IReportable {
      * @param report the defined RatReport to run on this GZIP walker.
      * 
      */
-    @Override
     public void run(final RatReport report) throws RatException {
 
         try {

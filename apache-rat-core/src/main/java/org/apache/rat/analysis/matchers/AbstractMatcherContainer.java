@@ -25,7 +25,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
-    protected Collection<IHeaderMatcher> enclosed;
+    protected final Collection<IHeaderMatcher> enclosed;
 
     public AbstractMatcherContainer(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id);

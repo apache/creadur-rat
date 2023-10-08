@@ -15,11 +15,12 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */
+ */ 
 package org.apache.rat.document.impl;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+
 
 /**
  * Abstract base class for monolithic documents.
@@ -33,17 +34,14 @@ public abstract class AbstractMonolithicDocument implements Document {
         this.metaData = new MetaData();
     }
 
-    @Override
     public boolean isComposite() {
         return false;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public MetaData getMetaData() {
         return metaData;
     }

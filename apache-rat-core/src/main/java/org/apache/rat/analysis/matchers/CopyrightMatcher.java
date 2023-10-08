@@ -46,7 +46,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @since Rat 0.9
  */
-public class CopyrightMatcher extends AbstractHeaderMatcher {
+public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©";
     private static final String COPYRIGHT_PATTERN_DEFN = "(\\b)?" + COPYRIGHT_SYMBOL_DEFN + "|Copyright\\b";
@@ -57,15 +57,12 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
 
-    private State state;
-
     public CopyrightMatcher(String start, String stop, String owner) {
         this(null, start, stop, owner);
     }
 
     public CopyrightMatcher(String id, String start, String stop, String owner) {
         super(id);
-        state = State.i;
         String dateDefn = "";
         if (StringUtils.isNotEmpty(start)) {
             if (StringUtils.isNotEmpty(stop)) {
@@ -94,39 +91,21 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public State matches(String line) {
+    protected boolean doMatch(String line) {
         Matcher matcher = COPYRIGHT_PATTERN.matcher(line);
         if (matcher.find()) {
             String buffer = line.substring(matcher.end());
             matcher = dateOwnerPattern.matcher(buffer);
             if (matcher.find() && matcher.start() == 0) {
-                this.state = State.t;
+                return true;
             }
             if (ownerDatePattern != null) {
                 matcher = ownerDatePattern.matcher(buffer);
                 if (matcher.find() && matcher.start() == 0) {
-                    this.state = State.t;
+                    return true;
                 }
             }
         }
-        return currentState();
-    }
-
-    @Override
-    public State currentState() {
-        return state;
-    }
-
-    @Override
-    public void reset() {
-        state = State.i;
-    }
-
-    @Override
-    public State finalizeState() {
-        if (state == State.i) {
-            state = State.f;
-        }
-        return state;
+        return false;
     }
 }

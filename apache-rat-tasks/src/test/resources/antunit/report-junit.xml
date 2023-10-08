@@ -63,8 +63,8 @@
 	<target name="testWithALUnknown">
 		<rat:report useDefaultLicenses="false">
 			<rat:license
-				licenseFamilyCategory="YASL1"
-				licenseFamilyName="Yet Another Software License (YASL) 1.0"
+				id="YASL1"
+				name="Yet Another Software License (YASL) 1.0"
 				notes="Interesting License">
 				<rat:copyright start="2023" end="2024" owner="public domain" />
 			</rat:license>
@@ -83,8 +83,8 @@
 	<target name="testInlineCustomMatcher" depends="prepareCustomMatcher">
 		<rat:report useDefaultLicenses="false">
 			<rat:license
-				licenseFamilyCategory="YASL1"
-				licenseFamilyName="Yet Another Software License (YASL) 1.0"
+				id="YASL1"
+				name="Yet Another Software License (YASL) 1.0"
 				notes="Interesting License">
 				<inlineMatcher />
 			</rat:license>
@@ -95,8 +95,8 @@
 	<target name="testCustomMatcher">
 		<rat:report useDefaultLicenses="false">
 			<rat:license
-				licenseFamilyCategory="YASL1"
-				licenseFamilyName="Yet Another Software License (YASL) 1.0"
+				id="YASL1"
+				name="Yet Another Software License (YASL) 1.0"
 				notes="Interesting License">
 				<matcher />
 			</rat:license>
@@ -107,8 +107,8 @@
 	<target name="testCustomMatcherBuilder">
 		<rat:report useDefaultLicenses="false">
 			<rat:license
-				licenseFamilyCategory="YASL1"
-				licenseFamilyName="Yet Another Software License (YASL) 1.0"
+				id="YASL1"
+				name="Yet Another Software License (YASL) 1.0"
 				notes="Interesting License">
 				<matcherBuilder />
 			</rat:license>
@@ -153,8 +153,8 @@
 		<rat:report>
 			<file file="${resource.dir}/index.apt" />
 			<rat:license
-				licenseFamilyCategory="YASL1"
-				licenseFamilyName="Yet Another Software License (YASL) 1.0"
+				id="YASL1"
+				name="Yet Another Software License (YASL) 1.0"
 				notes="Interesting License">
 				<rat:copyright start="2023" end="2024" owner="public domain" />
 			</rat:license>

@@ -15,16 +15,17 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */
+ */ 
 package org.apache.rat.report.claim.util;
-
-import java.util.List;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
+
+import java.util.List;
+
 
 public class ClaimReporterMultiplexer implements RatReport {
     private final IDocumentAnalyser analyser;
@@ -35,7 +36,6 @@ public class ClaimReporterMultiplexer implements RatReport {
         this.reporters = reporters;
     }
 
-    @Override
     public void report(Document document) throws RatException {
         if (analyser != null) {
             try {
@@ -46,20 +46,18 @@ public class ClaimReporterMultiplexer implements RatReport {
         }
         for (RatReport report : reporters) {
             report.report(document);
-        }
+        } 
     }
 
-    @Override
     public void startReport() throws RatException {
         for (RatReport report : reporters) {
             report.startReport();
-        }
+        } 
     }
 
-    @Override
     public void endReport() throws RatException {
         for (RatReport report : reporters) {
             report.endReport();
-        }
+        } 
     }
 }

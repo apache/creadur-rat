@@ -42,11 +42,11 @@ public class License {
         builder.setDerivedFrom(derivedFrom);
     }
 
-    public void setLicenseFamilyCategory(String licenseFamilyCategory) {
+    public void setId(String licenseFamilyCategory) {
         builder.setLicenseFamilyCategory(licenseFamilyCategory);
     }
 
-    public void setLicenseFamilyName(String licenseFamilyName) {
+    public void setName(String licenseFamilyName) {
         builder.setLicenseFamilyName(licenseFamilyName);
     }
 

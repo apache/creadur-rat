@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */
+ */ 
 package org.apache.rat.document.impl;
 
 import java.io.File;
@@ -37,47 +37,47 @@ public class FileDocument implements Document {
     private final File file;
     private final String name;
     private final MetaData metaData = new MetaData();
-
+    
     public FileDocument(final File file) {
         super();
         this.file = file;
         name = DocumentImplUtils.toName(file);
     }
 
-    @Override
     public boolean isComposite() {
         return DocumentImplUtils.isZip(file);
     }
 
-    @Override
     public Reader reader() throws IOException {
         return new FileReader(file);
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public MetaData getMetaData() {
         return metaData;
-    }
-
-    @Override
+    }    
+    
     public InputStream inputStream() throws IOException {
         return new FileInputStream(file);
     }
 
     /**
      * Representations suitable for logging.
-     * 
-     * @return a <code>String</code> representation of this object.
+     * @return a <code>String</code> representation 
+     * of this object.
      */
     @Override
-    public String toString() {
-        return "FileDocument ( " + "file = " + this.file + " " + "name = " + this.name + " " + "metaData = "
-                + this.metaData + " " + " )";
+    public String toString()
+    {
+        return "FileDocument ( "
+            + "file = " + this.file + " "
+            + "name = " + this.name + " "
+            + "metaData = " + this.metaData + " "
+            + " )";
     }
-
+    
+    
 }

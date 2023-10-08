@@ -15,13 +15,14 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */
+ */ 
 package org.apache.rat.document.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
@@ -32,7 +33,7 @@ public class DocumentImplUtils {
         String path = file.getPath();
         return path.replace('\\', '/');
     }
-
+    
     public static final boolean isZipStream(InputStream stream) {
         ZipInputStream zip = new ZipInputStream(stream);
         try {

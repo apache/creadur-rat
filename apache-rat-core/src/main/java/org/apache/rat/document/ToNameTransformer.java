@@ -21,18 +21,20 @@ package org.apache.rat.document;
 import org.apache.commons.collections4.Transformer;
 import org.apache.rat.api.Document;
 
-/* this class does not appear to be used */
-@Deprecated
-public class ToNameTransformer implements Transformer<Document,String> {
+public class ToNameTransformer implements Transformer {
 
-    private static final Transformer<Document,String> TO_NAME_TRANSFORMER = new ToNameTransformer();
+    private static final Transformer TO_NAME_TRANSFORMER = new ToNameTransformer();
     
-    public static final Transformer<Document,String> toNameTransformer() {
+    public static final Transformer toNameTransformer() {
         return TO_NAME_TRANSFORMER;
     }
     
-    @Override
-    public String transform(Document location) {
-        return location == null ? null : location.getName();
+    public Object transform(Object subject) {
+        Object result = null;
+        if (subject instanceof Document) {
+            Document location = (Document) subject;
+            result = location.getName();
+        }
+        return result;
     }
 }

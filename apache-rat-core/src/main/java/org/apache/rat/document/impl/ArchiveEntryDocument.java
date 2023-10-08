@@ -28,6 +28,7 @@ import java.io.Reader;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
+import org.apache.rat.api.RatException;
 
 public class ArchiveEntryDocument implements Document {
 
@@ -36,44 +37,44 @@ public class ArchiveEntryDocument implements Document {
 
     private final MetaData metaData = new MetaData();
 
-    public ArchiveEntryDocument(File file, byte[] contents) {
+    public ArchiveEntryDocument(File file, byte[] contents) throws RatException {
         super();
         name = DocumentImplUtils.toName(file);
         this.contents = contents;
     }
 
-    @Override
     public MetaData getMetaData() {
         return metaData;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public InputStream inputStream() throws IOException {
         return new ByteArrayInputStream(contents);
     }
 
-    @Override
     public boolean isComposite() {
         return DocumentImplUtils.isZipStream(new ByteArrayInputStream(contents));
     }
 
-    @Override
     public Reader reader() throws IOException {
         return new InputStreamReader(new ByteArrayInputStream(contents));
     }
 
+
     /**
      * Representations suitable for logging.
-     * 
-     * @return a <code>String</code> representation of this object.
+     * @return a <code>String</code> representation 
+     * of this object.
      */
     @Override
-    public String toString() {
-        return "TarEntryDocument ( " + "name = " + this.name + " " + "metaData = " + this.metaData + " " + " )";
+    public String toString()
+    {
+        return "TarEntryDocument ( "
+            + "name = " + this.name + " "
+            + "metaData = " + this.metaData + " "
+            + " )";
     }
 }

@@ -130,8 +130,8 @@ SPDX-License-Identifier: Apache-2.0
 		<rat:report useDefaultLicenses="false">
 			<file file="${ant.file}" />
 			<rat:license
-				licenseFamilyCategory="YASL1"
-				licenseFamilyName="Yet Another Software License (YASL) 1.0"
+				id="YASL1"
+				name="Yet Another Software License (YASL) 1.0"
 				notes="Interesting License">
 				<!-- non existant copyright in this file -->
 				<rat:copyright owner="non existant" />
@@ -147,8 +147,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false" reportFile="${report.file}">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					 <!--  non existant copyright in this file  -->
 					<rat:copyright owner="non existant" />
@@ -164,8 +164,8 @@ SPDX-License-Identifier: Apache-2.0
 <!-- 			<rat:report useDefaultLicenses="false">-->
 <!--				<file file="${ant.file}" />-->
 <!--				<rat:license-->
-<!--					licenseFamilyCategory="EXMPL"-->
-<!--					licenseFamilyName="Yet Another Software License (EXAMPLE) 1.0"-->
+<!--					id="EXMPL"-->
+<!--					name="Yet Another Software License (EXAMPLE) 1.0"-->
 <!--					notes="Interesting License">-->
 <!--					<matcher />-->
 <!--				</rat:license>-->
@@ -178,8 +178,8 @@ SPDX-License-Identifier: Apache-2.0
 <!--			<rat:report useDefaultLicenses="false">-->
 <!--				<file file="${ant.file}" />-->
 <!--				<rat:license-->
-<!--					licenseFamilyCategory="EXMPL"-->
-<!--					licenseFamilyName="Yet Another Software License (EXAMPLE) 1.0"-->
+<!--					id="EXMPL"-->
+<!--					name="Yet Another Software License (EXAMPLE) 1.0"-->
 <!--					notes="Interesting License">-->
 <!--					<matcherBuilder />-->
 <!--				</rat:license>-->
@@ -193,8 +193,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="EXMPL"
-					licenseFamilyName="Yet Another Software License (EXAMPLE) 1.0"
+					id="EXMPL"
+					name="Yet Another Software License (EXAMPLE) 1.0"
 					notes="Interesting License">
 					<myMatcher />
 				</rat:license>
@@ -219,8 +219,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:any>
 						<rat:copyright start="2023" end="2024" owner="public domain" />
@@ -234,8 +234,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:all>
 						<rat:text text="the other text" />
@@ -249,8 +249,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${resource.dir}/index.apt" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:copyright start="2023" end="2024" owner="public domain" />
 				</rat:license>
@@ -261,8 +261,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:not>
 						 <!--  non existant copyright in this file  -->
@@ -276,8 +276,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:regex regex="regex\sregex" />
 				</rat:license>
@@ -288,8 +288,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:regex>regex\sregex</rat:regex>
 				</rat:license>
@@ -300,8 +300,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:spdx name="Apache-2.0" />
 				</rat:license>
@@ -312,8 +312,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:spdx>Apache-2.0</rat:spdx>
 				</rat:license>
@@ -324,8 +324,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:text text="The text" />
 				</rat:license>
@@ -336,8 +336,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:report useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:text>The text</rat:text>
 				</rat:license>
@@ -351,8 +351,8 @@ SPDX-License-Identifier: Apache-2.0
 				removeApprovedLicense="YASL1">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:text>License Family Name: Yet Another Software License
 						(YASL) 1.0</rat:text>
@@ -369,8 +369,8 @@ SPDX-License-Identifier: Apache-2.0
 				useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					<rat:text>License Family Name: Yet Another Software License
 						(YASL) 1.0</rat:text>
@@ -387,8 +387,8 @@ SPDX-License-Identifier: Apache-2.0
 				useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
 					 <!--  non existant copyright in this file  -->
 					<rat:copyright owner="non existant" />
@@ -406,10 +406,10 @@ SPDX-License-Identifier: Apache-2.0
 				useDefaultLicenses="false">
 				<file file="${ant.file}" />
 				<rat:license
-					licenseFamilyCategory="YASL1"
-					licenseFamilyName="Yet Another Software License (YASL) 1.0"
+					id="YASL1"
+					name="Yet Another Software License (YASL) 1.0"
 					notes="Interesting License">
-					<rat:text>licenseFamilyName="Yet Another Software License (YASL)
+					<rat:text>name="Yet Another Software License (YASL)
 						${test.version}</rat:text>
 				</rat:license>
 			</rat:report>
