@@ -124,16 +124,6 @@ public class DefaultPolicyTest {
         assertApproval(false);
     }
 
-//    @Test
-//    public void testNullAsMarkerOfDefaults() {
-//        // without defaults and no additions == 0
-//        for (DefaultPolicy policy : new DefaultPolicy[] { //
-//                new DefaultPolicy(new ArrayList<ILicenseFamily>(0)), //
-//                new DefaultPolicy(new ILicenseFamily[] {}), }) {
-//            assertEquals(0, policy.getApprovedLicenseNames().size());
-//        }
-//    }
-
     @Test
     public void testAddNewApprovedLicenseAndDefaults() {
         ILicenseFamily testingFamily = makeFamily("test", "Testing License Family");

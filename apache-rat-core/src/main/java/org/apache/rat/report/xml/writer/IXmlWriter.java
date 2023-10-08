@@ -21,11 +21,11 @@ package org.apache.rat.report.xml.writer;
 import java.io.IOException;
 
 /**
- * Simple interface for creating basic xml documents.
+ * Simple interface for creating basic XML documents.
  * Performs basic validation and escaping.
- * Not namespace aware (may reconsider this later).
+ * Not namespace aware.
  */
-public interface IXmlWriter extends AutoCloseable{
+public interface IXmlWriter extends AutoCloseable {
 
     /**
      * Starts a document by writing a prolog.

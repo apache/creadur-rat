@@ -28,16 +28,27 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
 
+/**
+ * A default Document Analyser that determines if the matched license is in the set of approved licenses.
+ */
 public class DefaultPolicy implements IDocumentAnalyser {
-    private SortedSet<ILicenseFamily> approvedLicenseNames;
+    private SortedSet<ILicenseFamily> approvedLicenseFamilies;
 
-    public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseNames) {
-        this.approvedLicenseNames = new TreeSet<>();
-        this.approvedLicenseNames.addAll(approvedLicenseNames);
+    /**
+     * Constructor with the list of approved license families.
+     * @param approvedLicenseFamilies the approved license families.
+     */
+    public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseFamilies) {
+        this.approvedLicenseFamilies = new TreeSet<>();
+        this.approvedLicenseFamilies.addAll(approvedLicenseFamilies);
     }
 
+    /**
+     * adds an ILicenseFamily to the list of approved licenses.
+     * @param approvedLicense
+     */
     public void add(ILicenseFamily approvedLicense) {
-        this.approvedLicenseNames.add(approvedLicense);
+        this.approvedLicenseFamilies.add(approvedLicense);
     }
 
     @Override
@@ -50,18 +61,27 @@ public class DefaultPolicy implements IDocumentAnalyser {
                                 document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY))
                         .setLicenseFamilyName(document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME))
                         .build();
-                approval = approvedLicenseNames.contains(licenseFamily);
+                approval = approvedLicenseFamilies.contains(licenseFamily);
             }
             reportLicenseApprovalClaim(document, approval);
         }
     }
 
-    public void reportLicenseApprovalClaim(final Document subject, final boolean isAcceptable) {
-        subject.getMetaData().set(//
+    /**
+     * Report if the document as either having approved license or not.
+     * @param document the document to approve.
+     * @param isAcceptable {@code true} if the license is an approved one, {@code false} otherwise.
+     */
+    public void reportLicenseApprovalClaim(final Document document, final boolean isAcceptable) {
+        document.getMetaData().set(
                 isAcceptable ? MetaData.RAT_APPROVED_LICENSE_DATIM_TRUE : MetaData.RAT_APPROVED_LICENSE_DATIM_FALSE);
     }
 
+    /**
+     * Gets and unmodifiable reference to the SortedSet of approved licenses that this policy is holding.
+     * @return
+     */
     public SortedSet<ILicenseFamily> getApprovedLicenseNames() {
-        return Collections.unmodifiableSortedSet(approvedLicenseNames);
+        return Collections.unmodifiableSortedSet(approvedLicenseFamilies);
     }
 }

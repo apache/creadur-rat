@@ -36,10 +36,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates reports.
+ * A factory to create reports from a writer and a configuration.
  *
  */
 public class XmlReportFactory {
+    /**
+     * Creates a RatReport from the arguments.
+     * The {@code statistic} is used to create a ClaimAggregator.
+     * If the {@code configuration} indicates that licenses should be added a LicenseAddingReport is added.
+     * @param writer The XML writer to send output to.
+     * @param statistic the ClaimStatistics for the report. may be null.
+     * @param configuration The report configuration.
+     * @return a RatReport instance.
+     */
     public static final RatReport createStandardReport(IXmlWriter writer,
             final ClaimStatistic statistic, ReportConfiguration configuration) {
         final List<RatReport> reporters = new ArrayList<>();
