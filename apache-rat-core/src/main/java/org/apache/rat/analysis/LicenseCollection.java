@@ -24,13 +24,25 @@ import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
+/**
+ * A collection of ILicenses that acts as a single License for purposes of Analysis.
+ * <p>
+ * This class process each license in turn on each {@code matches(String)} call.  When a match is found the 
+ * ILicenseFamily for the matching license is captured and used as the family for this license. If no matching 
+ * license has been found the default {@code dummy} license category is used.
+ */
 class LicenseCollection extends AbstractMatcherContainer implements ILicense {
+
     private static final ILicenseFamily DEFAULT = ILicenseFamily.builder().setLicenseFamilyCategory("Dummy")
             .setLicenseFamilyName("HeaderMatcherCollection default license family").build();
     private Collection<ILicense> enclosed;
     private ILicense matchingLicense;
     private State lastState;
 
+    /**
+     * Constructs the LicenseCollection from the provided ILicense collection.
+     * @param enclosed The collection of ILicenses to compose this License implementation from.  May not be null.
+     */
     public LicenseCollection(Collection<ILicense> enclosed) {
         super(enclosed);
         this.enclosed = enclosed;
@@ -113,5 +125,4 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
     public String derivedFrom() {
         return matchingLicense == null ? null : matchingLicense.derivedFrom();
     }
-
 }

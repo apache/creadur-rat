@@ -20,14 +20,22 @@ package org.apache.rat.analysis.matchers;
 
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ * An abstract class to simplify IHeaderMatcher creation.  This class ensures that the id is set.
+ */
 public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
 
     private String id;
 
+    /**
+     * Constructs the IHeaderMatcher with an id value.  If {@code id} is null then a unique random id is created.
+     * @param id the Id to use.
+     */
     protected AbstractHeaderMatcher(String id) {
-        this.id = id == null ? UUID.randomUUID().toString() : id;
+        this.id = StringUtils.isBlank(id) ? UUID.randomUUID().toString() : id;
     }
 
     @Override

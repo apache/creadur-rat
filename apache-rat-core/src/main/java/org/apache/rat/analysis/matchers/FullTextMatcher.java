@@ -19,6 +19,7 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
@@ -29,8 +30,6 @@ import java.util.Locale;
  * The text comparison is case insensitive but assumes only characters in the
  * US-ASCII charset are being matched.
  * </p>
- *
- * @since Rat 0.9
  */
 public class FullTextMatcher extends AbstractSimpleMatcher {
 
@@ -45,12 +44,22 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
 
     private final StringBuilder buffer = new StringBuilder();
 
+    /**
+     * Constructs the full text matcher with a unique random id and the specified text to match.
+     * @param fullText the text to match
+     */
     public FullTextMatcher(String fullText) {
         this(null, fullText);
     }
 
+    /**
+     * Constructs the full text matcher for the specified text.
+     * @param id the id for the matcher
+     * @param fullText the text to match
+     */
     public FullTextMatcher(String id, String fullText) {
         super(id);
+        Objects.requireNonNull(fullText, "fullText may not be null");
         int offset = fullText.indexOf('\n');
         if (offset == -1) {
             offset = Math.min(DEFAULT_INITIAL_LINE_LENGTH, fullText.length());
@@ -77,10 +86,6 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
             }
         }
         return buffer.toString();
-    }
-
-    public final boolean hasFullText() {
-        return fullText != null;
     }
 
     @Override
@@ -117,7 +122,6 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
         return false;
     }
 
-    // This is called indirectly from a ctor so must be final or private
     @Override
     public void reset() {
         super.reset();

@@ -134,7 +134,7 @@ public class MetaData {
             "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0";
     @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1 = "Academic Free License, Version 2.1";
-    @Deprecated
+
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN = "?????";
     @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT 
@@ -169,7 +169,7 @@ public class MetaData {
     @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_ACADEMIC_FREE_LICENSE_VERSION_2_1
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1);
-    @Deprecated
+
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN); 
     

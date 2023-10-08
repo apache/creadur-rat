@@ -20,21 +20,39 @@ package org.apache.rat.analysis.matchers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ * A class that implements IHeaderMatcher as a collection of other IHeaderMatchers.
+ */
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
     protected final Collection<IHeaderMatcher> enclosed;
 
+    /**
+     * Constructs the abstract matcher container.
+     * If the {@code id} is not set then a unique random identifier is created.
+     * The {@code enclosed} collection is preserved in a new collection that retains the order of
+     * of the original collection.
+     * @param id The id for the matcher.
+     * @param enclosed the collection of enclosed matchers.  
+     */
     public AbstractMatcherContainer(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id);
+        Objects.requireNonNull(enclosed, "The collection of IHeaderMatcher may not be null");
         this.enclosed = new ArrayList<>(enclosed);
     }
 
+    /**
+     * Constructs the abstract matcher container with a unique random id.
+     * The {@code enclosed} collection is preserved in a new collection that retains the order of
+     * of the original collection.
+     * @param enclosed the collection of enclosed matchers.  
+     */
     public AbstractMatcherContainer(Collection<? extends IHeaderMatcher> enclosed) {
-        super(null);
-        this.enclosed = new ArrayList<>(enclosed);
+        this(null, enclosed);
     }
 
     @Override

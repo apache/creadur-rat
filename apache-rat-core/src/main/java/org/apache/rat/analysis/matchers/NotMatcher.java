@@ -18,18 +18,32 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import org.apache.rat.analysis.IHeaderMatcher;
+import java.util.Objects;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+/**
+ * An IHeaderMatcher that reverses the result of an enclosed matcher.
+ */
 public class NotMatcher extends AbstractHeaderMatcher {
 
     private final IHeaderMatcher enclosed;
 
+    /**
+     * Create the matcher with the enclosed matcher.
+     * @param enclosed the enclosed matcher
+     */
     public NotMatcher(IHeaderMatcher enclosed) {
         this(null, enclosed);
     }
 
+    /**
+     * Create the matcher with the enclosed matcher and id.
+     * @param id the id for this matcher.
+     * @param enclosed the enclosed matcher
+     */
     public NotMatcher(String id, IHeaderMatcher enclosed) {
         super(id);
+        Objects.requireNonNull(enclosed, "enclosed matcher may not be null");
         this.enclosed = enclosed;
     }
 

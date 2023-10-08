@@ -79,7 +79,6 @@ public class XmlReportFactoryTest {
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.addLicense(mockLicense);
-        configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.all);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
         report(directory, report);

@@ -46,7 +46,6 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ReportConfiguration.LicenseFilter;
-import org.apache.rat.analysis.license.BaseLicense;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -224,7 +223,7 @@ public class Report {
 
     private static void listLicenses(SortedSet<ILicense> licenses, PrintStream out) {
         out.println("Licenses:");
-        licenses.stream().filter(lic -> lic instanceof BaseLicense).map(BaseLicense.class::cast)
+        licenses.stream()
                 .forEach(lic -> out.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
                         lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
         out.println();

@@ -21,23 +21,24 @@ package org.apache.rat.analysis.matchers;
 import java.util.regex.Pattern;
 
 /**
- * @since Rat 0.8
+ * A simple regular expression matching IHeaderMatcher
  */
 public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     private Pattern pattern;
 
     /**
-     * Creates a pattern based license with full documentation.
-     * 
-     * @param pLicenseFamilyCategory
-     * @param pLicenseFamilyName
-     * @param pNotes
-     * @param pPatterns
+     * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.
+     * @param pattern the pattern to match.  Pattern will only match a single line from the input stream.
      */
     public SimpleRegexMatcher(Pattern pattern) {
         this(null, pattern);
     }
 
+    /**
+     * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.
+     * @param id the id for this matcher
+     * @param pattern the pattern to match.  Pattern will only match a single line from the input stream.
+     */
     public SimpleRegexMatcher(String id, Pattern pattern) {
         super(id);
         this.pattern = pattern;

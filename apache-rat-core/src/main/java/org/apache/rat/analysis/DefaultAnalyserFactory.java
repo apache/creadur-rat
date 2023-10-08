@@ -32,10 +32,14 @@ import org.apache.rat.license.ILicense;
 
 /**
  * Creates default analysers.
- *
  */
 public class DefaultAnalyserFactory {
 
+    /**
+     * Creates a DocumentAnalyser from a collection of ILicenses.
+     * @param licenses The licenses to use in  the Analyser.
+     * @return A document analyser that uses the provides licenses.
+     */
     public static final IDocumentAnalyser createDefaultAnalyser(Collection<ILicense> licenses) {
         if (licenses.size() ==0) {
             throw new ConfigurationException("At least one license must be defined");
@@ -43,10 +47,20 @@ public class DefaultAnalyserFactory {
         return new DefaultAnalyser(new LicenseCollection(licenses));
     }
 
+    /**
+     * A DocumentAnalyser for the license
+     */
     private final static class DefaultAnalyser implements IDocumentAnalyser {
 
+        /**
+         * The license to analyze
+         */
         private final ILicense license;
 
+        /**
+         * Constructs a DocumentAnalyser for the specified license.
+         * @param license The license to analyse
+         */
         public DefaultAnalyser(final ILicense license) {
             this.license = license;
         }

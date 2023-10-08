@@ -28,7 +28,9 @@ import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
 
 /**
- * Matches text headers to known licenses.
+ * Performs explicit checks against a line from the header of a file.
+ * For implementations that need to check multiple lines the implementation must cache the earlier lines.
+ * 
  */
 public interface IHeaderMatcher {
     /**
@@ -58,78 +60,121 @@ public interface IHeaderMatcher {
             case i : throw new IllegalStateException( "'asBoolean' should never be called on an indeterminate state");
             }
         }
+        
+        @Override
+        public String toString() {
+            return super.toString()+" "+desc;
+        }
     }
 
     /**
      * Get the identifier for this matcher.
+     * <p>All matchers must have unique identifiers</p>
      * 
      * @return the Identifier for this matcher.
      */
     String getId();
 
     /**
-     * Resets this matches. Subsequent calls to {@link #match} will accumulate new
-     * text.
+     * Resets this state {@code State.i}. 
+     * If text is being cached this method should clear that cache.
      */
     void reset();
 
     /**
-     * Attempts to match the text after adding the line and returns the State after
+     * Attempts to match {@code line} and returns the State after
      * the match is attempted.
      * 
      * @param line next line of text, not null
      * @return the new state after the matching was attempted.
-     * 
-     * @throws RatHeaderAnalysisException in case of internal RAT errors.
      */
     State matches(String line);
 
     /**
      * Gets the final state for this matcher. This is called after the EOF on the
-     * input. At this point there should be no matchers in an indeterminent state.
+     * input. At this point there should be no matchers in an {@code State.i} state.
      */
     State finalizeState();
 
     /**
      * Gets the the current state of the matcher. All matchers should be
-     * indeterminant at the start.
+     * in {@code State.i} at the start.
      * 
      * @return the current state of the matcher.
      */
     State currentState();
 
+    /**
+     * An IHeaderMatcher builder.
+     */
     @FunctionalInterface
     interface Builder {
+        /**
+         * Build the IHeaderMatcher.
+         * @return a new IHeaderMatcher.
+         */
         IHeaderMatcher build();
 
+        /**
+         * @return an instance of the standard TextBuilder.
+         * @see TextBuilder
+         */
         static TextBuilder text() {
             return new TextBuilder();
         }
 
+        /**
+         * @return an instance of the standard AnyBuilder.
+         * @see AnyBuilder
+         */
         static AnyBuilder any() {
             return new AnyBuilder();
         }
 
+        /**
+         * @return an instance of the standard AllBuilder.
+         * @see AllBuilder
+         */
         static AllBuilder all() {
             return new AllBuilder();
         }
 
+        /**
+         * @return an instance of the standard CopyrightBuilder.
+         * @see CopyrightBuilder
+         */
         static CopyrightBuilder copyright() {
             return new CopyrightBuilder();
         }
 
+        /**
+         * @return an instance of the standard SpdxBuilder.
+         * @see SpdxBuilder
+         */
         static SpdxBuilder spdx() {
             return new SpdxBuilder();
         }
 
+        /**
+         * @return an instance of the standard MatcherRefBuilder.
+         * @see MatcherRefBuilder
+         */
         static MatcherRefBuilder matcherRef() {
             return new MatcherRefBuilder();
         }
 
+        /**
+         * @return an instance of the standard NotBuilder.
+         * @see NotBuilder
+         */
         static NotBuilder not() {
             return new NotBuilder();
         }
 
+        /**
+         * @return an instance of the standard RegexBuilder.
+         * @see RegexBuilder
+         */
         static RegexBuilder regex() {
             return new RegexBuilder();
         }

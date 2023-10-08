@@ -22,17 +22,29 @@ import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ * A matcher that performs a logical {@code OR} across all the contained matchers.
+ */
 public class OrMatcher extends AbstractMatcherContainer {
 
     private State lastState;
 
+    /**
+     * Constructs the matcher from the enclosed matchers.
+     * @param enclosed the enclosed matchers.
+     */
     public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
         this(null, enclosed);
     }
 
+    /**
+     * Constructs the matcher with the specified id from the enclosed matchers.
+     * @param id the id to use.
+     * @param enclosed the enclosed matchers.
+     */
     public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
-        // lastState = State.i;
+        lastState = State.i;
     }
 
     @Override
@@ -80,5 +92,4 @@ public class OrMatcher extends AbstractMatcherContainer {
         super.reset();
         lastState = State.i;
     }
-
 }

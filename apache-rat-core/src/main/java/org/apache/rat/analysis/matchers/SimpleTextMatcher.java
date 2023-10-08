@@ -21,23 +21,24 @@ package org.apache.rat.analysis.matchers;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @since Rat 0.8
+ * A simple text matching IHeaderMatcher implementation.
  */
 public class SimpleTextMatcher extends AbstractSimpleMatcher {
     private String pattern;
 
     /**
-     * Creates a pattern based license with full documentation.
-     * 
-     * @param pLicenseFamilyCategory
-     * @param pLicenseFamilyName
-     * @param pNotes
-     * @param pPatterns
+     * Constructs the simple text matcher for the simple string.
+     * @param pattern The pattern to match.  Will only match a single line from the input stream.
      */
     public SimpleTextMatcher(String pattern) {
         this(null, pattern);
     }
 
+    /**
+     * Constructs the simple text matcher for the simple string.
+     * @param id The id for this matcher.
+     * @param pattern The pattern to match.  Will only match a single line from the input stream.
+     */
     public SimpleTextMatcher(String id, String pattern) {
         super(id);
         if (StringUtils.isBlank(pattern)) {

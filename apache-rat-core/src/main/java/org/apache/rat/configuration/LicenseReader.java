@@ -32,7 +32,7 @@ public interface LicenseReader {
     void addLicenses(URL url);
 
     /**
-     * Reads the configuration and extracts the BaseLicenses.
+     * Reads the configuration and extracts instances of ILicense.
      * 
      * @return A collection of Base licenses.
      */

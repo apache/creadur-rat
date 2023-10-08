@@ -165,10 +165,6 @@ public class Report extends Task {
         }
     }
 
-    public void setApprovalFilter(ApprovalFilter filter) {
-        configuration.setLicenseFilter(filter.internalFilter());
-    }
-
     public void setAddApprovedLicense(String familyCategory) {
         configuration.addApprovedLicenseCategory(familyCategory);
     }

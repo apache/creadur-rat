@@ -22,12 +22,24 @@ import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ * A matcher that performs a logical {@code AND} across all the contained matchers.
+ */
 public class AndMatcher extends AbstractMatcherContainer {
 
+    /**
+     * Constructs the AndMatcher with the specified id and enclosed collection.
+     * @param id the to use.  If null or an empty string a unique random id will be created.
+     * @param enclosed the enclosed collection.
+     */
     public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
     }
 
+    /**
+     * Constructs the AndMatcher with the a unique random id and the enclosed collection.
+     * @param enclosed the enclosed collection.
+     */
     public AndMatcher(Collection<? extends IHeaderMatcher> enclosed) {
         this(null, enclosed);
     }
