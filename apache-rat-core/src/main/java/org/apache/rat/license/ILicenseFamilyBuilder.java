@@ -22,6 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.license.ILicenseFamily.Builder;
 
+/**
+ * An instance of the ILicenseFamily Builder.
+ */
 public class ILicenseFamilyBuilder implements Builder {
 
     private String licenseFamilyCategory;

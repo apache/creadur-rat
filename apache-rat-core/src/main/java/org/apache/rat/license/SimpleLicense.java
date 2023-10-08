@@ -20,6 +20,9 @@ package org.apache.rat.license;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ * A simple implementation of ILicense.
+ */
 class SimpleLicense implements ILicense {
 
     private ILicenseFamily family;
@@ -27,7 +30,7 @@ class SimpleLicense implements ILicense {
     private String derivedFrom;
     private String notes;
 
-    public SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes) {
+    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes) {
         this.family = family;
         this.matcher = matcher;
         this.derivedFrom = derivedFrom;
@@ -103,6 +106,4 @@ class SimpleLicense implements ILicense {
     public String derivedFrom() {
         return derivedFrom;
     }
-
-    
 }

@@ -21,6 +21,9 @@ package org.apache.rat.license;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense.Builder;
 
+/**
+ * An implementation of the ILicense Builder.
+ */
 class ILicenseBuilder implements Builder {
 
     private IHeaderMatcher.Builder matcher;

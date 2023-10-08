@@ -33,8 +33,14 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
 
+/**
+ * Constructs a builder that contains other builders.
+ */
 public abstract class ChildContainerBuilder extends AbstractBuilder {
 
+    /**
+     * The list of builders that will build the enclosed matchers.
+     */
     protected final List<IHeaderMatcher.Builder> children = new ArrayList<IHeaderMatcher.Builder>();
 
     protected ChildContainerBuilder() {
@@ -63,16 +69,29 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
             }
     }
     
+    /**
+     * Adds a builder to the list of builders.
+     * @param child the child builder to add.
+     * @return this for chaining.
+     */
     public AbstractBuilder add(IHeaderMatcher.Builder child) {
         children.add(child);
         return this;
     }
     
+    /**
+     * Adds a collection of builders to the list of child builders.
+     * @param children the children to add.
+     * @return this for chaining.
+     */
     public AbstractBuilder add(Collection<IHeaderMatcher.Builder> children) {
         this.children.addAll(children);
         return this;
     }
 
+    /**
+     * @return the list of child builders for this builder.
+     */
     public List<IHeaderMatcher> getChildren() {
         return children.stream().map(IHeaderMatcher.Builder::build).collect(Collectors.toList());
     }

@@ -24,10 +24,21 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
 
+/**
+ * A builder for the regex matcher.
+ */
 public class RegexBuilder extends AbstractBuilder {
 
     private Pattern pattern;
 
+    /**
+     * Sets the regex expression. 
+     * This method compiles the string into a pattern and may throw any exception thrown by the 
+     * {@code Pattern.compile(String)} method.
+     * @param exp the expression as a string.
+     * @return this builder for chaining.
+     * @see Pattern#compile(String)
+     */
     public RegexBuilder setExpr(String exp) {
         this.pattern = exp == null ? null : Pattern.compile(exp);
         return this;

@@ -18,6 +18,9 @@
  */
 package org.apache.rat.configuration.builders;
 
+/**
+ * A marker interface for builders that accept text plain text to match.
+ */
 public interface TextCaptureBuilder {
     <T extends TextCaptureBuilder> T setText(String text);
 }

@@ -22,6 +22,9 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.NotMatcher;
 
+/**
+ * A builder for the NotMatcher.
+ */
 public class NotBuilder extends ChildContainerBuilder {
     
     @Override

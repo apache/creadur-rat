@@ -21,21 +21,39 @@ package org.apache.rat.configuration.builders;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 
+/**
+ * A copyright builder.
+ */
 public class CopyrightBuilder extends AbstractBuilder {
     private String start;
     private String end;
     private String owner;
 
+    /**
+     * Sets the start date.
+     * @param start the start date for the copyright
+     * @return this for chaining
+     */
     public CopyrightBuilder setStart(String start) {
         this.start = start;
         return this;
     }
 
+    /**
+     * Sets the end date.
+     * @param end the End data for the copyright.
+     * @return this for chaining.
+     */
     public CopyrightBuilder setEnd(String end) {
         this.end = end;
         return this;
     }
 
+    /**
+     * Sets the owner.
+     * @param owner the owner for the copyright
+     * @return this for chaining.
+     */
     public CopyrightBuilder setOwner(String owner) {
         this.owner = owner;
         return this;

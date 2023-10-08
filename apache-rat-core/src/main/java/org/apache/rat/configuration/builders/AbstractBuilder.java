@@ -18,8 +18,12 @@
  */
 package org.apache.rat.configuration.builders;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ * An abstract IHeaderMatcher.Builder.
+ */
 public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
 
     private String id;
@@ -27,15 +31,26 @@ public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
     protected AbstractBuilder() {
     }
 
+    /**
+     * Set the id for the matcher.
+     * @param id the id to use.
+     * @return this builder for chaining.
+     */
     public final AbstractBuilder setId(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * @return {@code true} if the id is not null and not blank.
+     */
     public final boolean hasId() {
-        return id != null;
+        return !StringUtils.isBlank(id);
     }
     
+    /**
+     * @return the id as specified in the builder.
+     */
     protected String getId() {
         return id;
     }

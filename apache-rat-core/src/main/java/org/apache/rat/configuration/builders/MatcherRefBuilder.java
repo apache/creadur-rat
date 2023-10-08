@@ -22,15 +22,33 @@ import java.util.Map;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ * A reference matching Matcher builder.
+ * <p>
+ * This class stores a matcher id as a reference to the matcher.  It also has a map of matcher ids to the matcher
+ * instances.  When build is called the matcher reference is looked up in the map.  If it is found then it is returned
+ * value from the {@code build()} call.  If the reference is not located then a IHeaderMatcherProxy is returned.
+ * the IHeaderMatcherProxy is resolved in a later configuration construction phase.
+ */
 public class MatcherRefBuilder extends AbstractBuilder {
     private String referenceId;
     private Map<String, IHeaderMatcher> matchers;
 
+    /**
+     * Constructs the MatcherReferenceBuilder using the provided reference id.
+     * @param refId the reverence to the matcher id.
+     * @return this builder for chaining.
+     */
     public MatcherRefBuilder setRefId(String refId) {
         this.referenceId = refId;
         return this;
     }
 
+    /**
+     * Set the Map of matcher ids to matcher instances.
+     * @param matchers the Map of ids to instances.
+     * @return this builder for chaining.
+     */
     public MatcherRefBuilder setMatchers(Map<String, IHeaderMatcher> matchers) {
         this.matchers = matchers;
         return this;
@@ -47,6 +65,12 @@ public class MatcherRefBuilder extends AbstractBuilder {
         return "MathcerRefBuilder: "+referenceId;
     }
     
+    /**
+     * A class that is a proxy to the actual matcher.  It retrieves the actual matcher from the map of
+     * matcher ids to matcher instances one the first use of the matcher.  This allows earlier read matchers
+     * to reference later constructed matchers as long as all the matchers are constructed before the earlier one is 
+     * used.
+     */
     private class IHeaderMatcherProxy implements IHeaderMatcher {
         private final String proxyId;
         private IHeaderMatcher wrapped;

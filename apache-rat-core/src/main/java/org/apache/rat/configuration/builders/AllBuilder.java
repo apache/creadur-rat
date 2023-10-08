@@ -21,6 +21,9 @@ package org.apache.rat.configuration.builders;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.AndMatcher;
 
+/**
+ * Constructs a All matcher.
+ */
 public class AllBuilder extends ChildContainerBuilder {
 
     @Override

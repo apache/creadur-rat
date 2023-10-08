@@ -18,14 +18,25 @@
  */
 package org.apache.rat.configuration.builders;
 
+import java.util.Objects;
+
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
 
+/**
+ * A build for SPDX matchers.
+ */
 public class SpdxBuilder extends AbstractBuilder {
 
     private String name;
 
+    /**
+     * sets the name for the SPDX matcher
+     * @param name
+     * @return
+     */
     public SpdxBuilder setName(String name) {
+        Objects.requireNonNull(name, "name must not be null");
         this.name = name;
         return this;
     }

@@ -19,15 +19,13 @@
 package org.apache.rat.license;
 
 /**
- * Trivial bean implementing ILicenseFamily
- * 
- * @since Rat 0.8
+ * An implementation of the ILicenseFamily.
  */
 class SimpleLicenseFamily implements ILicenseFamily {
     private String familyName;
     private String familyCategory;
 
-    public SimpleLicenseFamily(String familyId, String familyName) {
+    SimpleLicenseFamily(String familyId, String familyName) {
         this.familyCategory = ILicenseFamily.makeCategory(familyId);
         this.familyName = familyName;
     }
