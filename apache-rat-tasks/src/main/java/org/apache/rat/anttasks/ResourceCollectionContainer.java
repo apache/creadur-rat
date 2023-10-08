@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */
+ */ 
 package org.apache.rat.anttasks;
 
 import java.io.File;
@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.stream.Stream;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -36,8 +35,8 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;
 
 /**
- * Implementation of IReportable that traverses over a resource collection
- * internally.
+ * Implementation of IReportable that traverses over a resource
+ * collection internally.
  */
 class ResourceCollectionContainer implements IReportable {
     private final ResourceCollection rc;
@@ -45,12 +44,7 @@ class ResourceCollectionContainer implements IReportable {
     ResourceCollectionContainer(ResourceCollection rc) {
         this.rc = rc;
     }
-    
-    public Stream<? extends Resource> getFiles() {
-        return rc.stream().filter( r -> !r.isDirectory());
-    }
 
-    @Override
     public void run(RatReport report) throws RatException {
         ResourceDocument document = new ResourceDocument();
         for (Resource r : rc) {
@@ -61,7 +55,6 @@ class ResourceCollectionContainer implements IReportable {
             }
         }
     }
-
     private class ResourceDocument implements Document {
 
         private Resource resource;
@@ -70,14 +63,12 @@ class ResourceCollectionContainer implements IReportable {
         private void setResource(Resource resource) {
             this.resource = resource;
         }
-
-        @Override
+        
         public Reader reader() throws IOException {
             final InputStream in = resource.getInputStream();
             return new InputStreamReader(in);
         }
 
-        @Override
         public String getName() {
             // TODO: reconsider names
             String result = null;
@@ -91,7 +82,6 @@ class ResourceCollectionContainer implements IReportable {
             return result;
         }
 
-        @Override
         public boolean isComposite() {
             if (resource instanceof FileResource) {
                 final FileResource fileResource = (FileResource) resource;
@@ -100,13 +90,11 @@ class ResourceCollectionContainer implements IReportable {
             }
             return false;
         }
-
-        @Override
+        
         public MetaData getMetaData() {
             return metaData;
         }
-
-        @Override
+        
         public InputStream inputStream() throws IOException {
             return resource.getInputStream();
         }
