@@ -18,6 +18,8 @@
  */
 package org.apache.rat.test.utils;
 
+import org.apache.rat.document.impl.DocumentImplUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -29,10 +31,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.rat.document.impl.DocumentImplUtils;
 
 /**
- * Utility class, which provides static methods for creating test cases.
+ * Utility class, which provides static methods for creating
+ * test cases.
  */
 public class Resources {
     /**
@@ -62,8 +64,7 @@ public class Resources {
     }
 
     /**
-     * Try to to load the given file from baseDir, in case of errors try to add
-     * module names to fix behaviour from within IntelliJ.
+     * Try to to load the given file from baseDir, in case of errors try to add module names to fix behaviour from within IntelliJ.
      */
     private static File getResourceFromBase(File baseDir, String pResource) throws IOException {
         File f = new File(baseDir, pResource);
@@ -74,8 +75,8 @@ public class Resources {
     }
 
     /**
-     * Locates a set of resource files in the class path. In case of errors try to
-     * add module names to fix behaviour from within IntelliJ.
+     * Locates a set of resource files in the class path.
+     * In case of errors try to add module names to fix behaviour from within IntelliJ.
      */
     public static File[] getResourceFiles(String pResource) throws IOException {
         File f = new File(TEST_RESOURCE_BASE_PATH, pResource);
@@ -84,7 +85,6 @@ public class Resources {
         }
 
         return f.listFiles(new FileFilter() {
-            @Override
             public boolean accept(File pathname) {
                 return pathname.isFile();
             }
@@ -106,23 +106,22 @@ public class Resources {
     }
 
     /**
-     * Locates a resource file in the class path and returns a
-     * {@link BufferedReader}.
+     * Locates a resource file in the class path and returns a {@link BufferedReader}.
      */
     public static BufferedReader getBufferedResourceReader(String pResource) throws IOException {
         return new BufferedReader(getResourceReader(pResource));
     }
 
     /**
-     * Locates a resource file in the class path and returns a
-     * {@link BufferedReader}.
+     * Locates a resource file in the class path and returns a {@link BufferedReader}.
      */
     public static BufferedReader getBufferedReader(File file) throws IOException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
     }
 
     /**
-     * Locates the name of a directory, which contains the given resource file.
+     * Locates the name of a directory, which contains the given
+     * resource file.
      */
     public static String getResourceDirectory(String pResource) throws IOException {
         final File resource = getResourceFile(pResource);
