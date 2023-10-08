@@ -411,6 +411,10 @@ public final class XmlWriter implements IXmlWriter {
     boolean inElement = false;
     boolean prologWritten = false;
 
+    /**
+     * Constructs an XmlWriter with the specified writer for output.
+     * @param writer the writer to write to.
+     */
     public XmlWriter(final Writer writer) {
         this.writer = writer;
         this.elementNames = new ArrayDeque<>();
