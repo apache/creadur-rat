@@ -23,6 +23,9 @@ import java.util.SortedSet;
 
 import org.apache.rat.license.ILicense;
 
+/**
+ * An interface describing the methods of a LicenseReader.
+ */
 public interface LicenseReader {
     /**
      * Adds a URL to the set of files to be read.

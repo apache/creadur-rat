@@ -28,6 +28,10 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 
+/**
+ * A class to track the Matcher Builders as they are defined.  Matchers may be defined in multiple configuration files
+ * this method tracks them so that they can be referenced across the configuration files.
+ */
 public class MatcherBuilderTracker {
 
     private static MatcherBuilderTracker INSTANCE;
@@ -42,17 +46,27 @@ public class MatcherBuilderTracker {
         return INSTANCE;
     }
 
+    /**
+     * Adds a builder to the tracker.
+     * If the {@code name} is null then the builder class name simple is used with the "Builder" suffix removed.
+     * @param className the Class name for the builder.
+     * @param name the short name for the builder. 
+     */
     public static void addBuilder(String className, String name) {
         instance().addBuilderImpl(className, name);
     }
 
+    /**
+     * Get the matching builder for the name.
+     * @param name The name of the builder.
+     * @return the builder for that name.
+     */
     public static AbstractBuilder getMatcherBuilder(String name) {
         Class<? extends AbstractBuilder> clazz = instance().matcherBuilders.get(name);
         if (clazz == null) {
             StringBuilder sb = new StringBuilder("\nValid builders\n");
             instance().matcherBuilders.keySet().stream().forEach(x -> sb.append(x).append("\n"));
             sb.append("ERROR MSG\n");
-
             throw new ConfigurationException(sb.append("No matcher builder named " + name).toString());
         }
         try {

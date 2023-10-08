@@ -18,7 +18,6 @@
  */
 package org.apache.rat.configuration;
 
-
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,64 +27,93 @@ import java.util.Arrays;
 
 import org.apache.rat.ConfigurationException;
 
+/**
+ * An enumeration of the types of files that can contain the configurtion
+ * information.
+ */
 public enum Format {
-    XML( XMLConfigurationReader.class, "xml"),
-    TXT ( null, "txt","text");
-    
+    /** an XML file */
+    XML(XMLConfigurationReader.class, "xml"),
+    /** A plain text file */
+    TXT(null, "txt", "text");
+
     private String[] suffix;
-    
+
     private Constructor<MatcherReader> matcherReader;
     private Constructor<LicenseReader> licenseReader;
-    
+
     @SuppressWarnings("unchecked")
     Format(Class<?> reader, String... suffix) {
-        if (reader != null)
-        {
-        try {
-            matcherReader =  MatcherReader.class.isAssignableFrom(reader) ? (Constructor<MatcherReader>) reader.getConstructor() : null;
-            licenseReader = LicenseReader.class.isAssignableFrom(reader) ? (Constructor<LicenseReader>) reader.getConstructor() : null;
-        } catch (NoSuchMethodException | SecurityException e) {
-            throw new ConfigurationException( "Error retrieving no argument constructor for "+reader.getName(), e);
-        }
+        if (reader != null) {
+            try {
+                matcherReader = MatcherReader.class.isAssignableFrom(reader)
+                        ? (Constructor<MatcherReader>) reader.getConstructor()
+                        : null;
+                licenseReader = LicenseReader.class.isAssignableFrom(reader)
+                        ? (Constructor<LicenseReader>) reader.getConstructor()
+                        : null;
+            } catch (NoSuchMethodException | SecurityException e) {
+                throw new ConfigurationException("Error retrieving no argument constructor for " + reader.getName(), e);
+            }
         }
         this.suffix = suffix;
     }
-    
+
+    /**
+     * @return a new instance of MatcherReader for this format.
+     */
     public MatcherReader matcherReader() {
         try {
             return matcherReader == null ? null : matcherReader.newInstance();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
-            throw new ConfigurationException( "Can not instantiate MatcherReader for "+this.name(), e);
+            throw new ConfigurationException("Can not instantiate MatcherReader for " + this.name(), e);
         }
     }
 
+    /**
+     * @return a new instance of the LicenseReader for this format.
+     */
     public LicenseReader licenseReader() {
         try {
             return licenseReader == null ? null : licenseReader.newInstance();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
-            throw new ConfigurationException( "Can not instantiate LicenseReader for "+this.name(), e);
+            throw new ConfigurationException("Can not instantiate LicenseReader for " + this.name(), e);
         }
     }
-    
+
+    /**
+     * Determine the {@code Format} from the file name.
+     * @param name the file name to check.
+     * @return the Format
+     */
     public static Format fromName(String name) {
         String[] parts = name.split("\\.");
-        String suffix = parts[parts.length-1];
-        for (Format f: Format.values()) {
-            if (Arrays.stream(f.suffix).anyMatch( suffix::equals )) {
+        String suffix = parts[parts.length - 1];
+        for (Format f : Format.values()) {
+            if (Arrays.stream(f.suffix).anyMatch(suffix::equals)) {
                 return f;
             }
         }
         throw new IllegalArgumentException(String.format("No such suffix: %s", suffix));
     }
-    
-    public static Format fromURL(URL url) {
+
+   /**
+    * Determine the {@code Format} from a URL.
+    * @param name the URL to check.
+    * @return the Format
+    */
+   public static Format fromURL(URL url) {
         return Format.fromName(url.getFile());
     }
 
-    public static Format fromFile(File file) throws MalformedURLException {
+   /**
+    * Determine the {@code Format} from a File.
+    * @param name the File to check.
+    * @return the Format
+    */
+   public static Format fromFile(File file) throws MalformedURLException {
         return Format.fromURL(file.toURI().toURL());
     }
-
 }

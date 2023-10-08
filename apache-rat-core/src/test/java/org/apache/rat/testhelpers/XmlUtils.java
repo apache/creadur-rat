@@ -15,32 +15,43 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.testhelpers;
 
-import org.apache.rat.license.ILicenseFamily;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.lang.reflect.UndeclaredThrowableException;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 public final class XmlUtils {
     /**
@@ -72,9 +83,11 @@ public final class XmlUtils {
             throw new UndeclaredThrowableException(e);
         }
     }
-    
+
     /**
-     * Finds a node via xpath on the document.  And then checks family, approval and type of elements of the node.
+     * Finds a node via xpath on the document. And then checks family, approval and
+     * type of elements of the node.
+     * 
      * @param doc The document to check/
      * @param xpath the XPath instance to use.
      * @param resource the xpath statement to locate the node.
@@ -84,8 +97,8 @@ public final class XmlUtils {
      * @return The node that was located
      * @throws Exception on XPath error.
      */
-    public static Node checkNode(Document doc, XPath xpath, String resource, String family, String approval, String type)
-            throws Exception {
+    public static Node checkNode(Document doc, XPath xpath, String resource, String family, String approval,
+            String type) throws Exception {
         Node root = getNode(doc, xpath, String.format("/rat-report/resource[@name='%s']", resource));
         if (family != null) {
             getNode(root, xpath, String.format("header-type[@name='%s']", ILicenseFamily.makeCategory(family)));
@@ -110,11 +123,43 @@ public final class XmlUtils {
     public static final boolean isWellFormedXml(final InputStream in) throws Exception {
         return isWellFormedXml(new InputSource(in));
     }
-    
-    public static final Document toDom(final InputStream in) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
+
+    public static final Document toDom(final InputStream in)
+            throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
         final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document result;
         result = builder.parse(in);
         return result;
     }
+
+    public static final void writeAttribute(final IXmlWriter writer, final String name, final boolean booleanValue)
+            throws IOException {
+        final String value = Boolean.toString(booleanValue);
+        writer.attribute(name, value);
+    }
+
+    /**
+     * Print the and XML document to the output stream
+     * 
+     * @param out the OutputStream to print the document to.
+     * @param document The XML DOM document to print
+     */
+    public static void printDocument(OutputStream out, Document document) {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+            transformer.transform(new DOMSource(document), new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+        } catch (TransformerException | UnsupportedEncodingException e) {
+            e.printStackTrace(new PrintStream(out));
+        }
+    }
+
 }

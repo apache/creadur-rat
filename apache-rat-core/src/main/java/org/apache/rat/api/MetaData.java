@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.license.ILicense;
 
 /**
- * Data about the subject.
+ * Data about the document under test..
  */
 public class MetaData {
 
@@ -182,23 +182,24 @@ public class MetaData {
     public static final String RAT_APPROVED_LICENSE_VALUE_FALSE = Boolean.FALSE.toString();
     public static final Datum RAT_APPROVED_LICENSE_DATIM_TRUE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_TRUE);
     public static final Datum RAT_APPROVED_LICENSE_DATIM_FALSE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_FALSE);
-    
-    private ContentType contentType;
+
     /** 
      * Only likely to be a small quantity of data 
      * so trade some performance for simplicity.
      */
     private final List<Datum> data;
 
+    /**
+     * Create metadata without a content type.
+     */
     public MetaData() {
-        this(null);
-    }
-    
-    public MetaData(final ContentType contentType) {
-        this.contentType = contentType;
         this.data = new ArrayList<>(16);
     }
     
+    /**
+     * Add the license information to the metadata.
+     * @param license the license to add metadata for.
+     */
     public void reportOnLicense(ILicense license) {
         if (StringUtils.isNotBlank(license.getNotes())) {
             set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, license.getNotes()));
@@ -208,23 +209,6 @@ public class MetaData {
         set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, license.getLicenseFamily().getFamilyName()));
     }
 
-    
-    /**
-     * Gets the content type for the subject.
-     * @return or null when the type is unknown
-     */
-    public ContentType getContentType() {
-        return contentType;
-    }
-    
-    /**
-     * Sets the content type for this subject.
-     * @param contentType <code>ContentType</code>,
-     * or null when the content type is unknown
-     */
-    public void setContentType(final ContentType contentType) {
-        this.contentType = contentType;
-    }
     
     /**
      * Gets all data.
@@ -311,7 +295,6 @@ public class MetaData {
      */
     public void clear() {
         data.clear();
-        this.contentType = null;
     }
     
     /**

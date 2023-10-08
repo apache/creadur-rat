@@ -19,10 +19,6 @@
 package org.apache.rat.configuration;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,12 +33,6 @@ import java.util.function.Consumer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -63,24 +53,31 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/*
- *  <licenses> 
- *  <license id=id name=name >
-        <notes></notes>
-        <text>  </text>
-        <copyright start='' end='' owner=''/>
-        <spdx></spdx> 
-        <and> <license>...</and>
-        <or> <license>...</or> 
-        <matcher_ref refid='' />
-    </license>
-    </licenses>
-    <approved>
-        <family refid=''>
-    </approved>
-    <matchers>
-        <matcher className=''/>
-    </matchers>
+/**
+ * A class that reads the XML configuration file format.
+ * <p>
+ * {@code <rat-config>}<br/>
+ * {@code   <licenses>}<br/>
+ * {@code     <license id=id name=name >}<br/>
+ * {@code       <notes></notes>}<br/>
+ * {@code       <text>  </text>}<br/>
+ * {@code       <copyright start='' end='' owner=''/>}<br/>
+ * {@code       <spdx></spdx> }<br/>
+ * {@code       <and> <matcher/>...</and>}<br/>
+ * {@code       <or> <matcher/>...</or> }<br/>
+ * {@code       <matcher_ref refid='' />}<br/>
+ * {@code       <not><matcher /></not>}<br/>
+ * {@code     </license>}<br/>
+ * {@code   </licenses>}<br/>
+ * {@code   <approved>}<br/>
+ * {@code     <family refid=''>}<br/>
+ * {@code   </approved>}<br/>
+ * {@code   <matchers>}<br/>
+ * {@code     <matcher className=''/>}<br/>
+ * {@code     <matcher className=''/>}<br/>
+ * {@code   </matchers>}<br/>
+ * {@code </rat-config>}<br/>
+ * </p>
  */
 
 public class XMLConfigurationReader implements LicenseReader, MatcherReader {
@@ -110,6 +107,9 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     private final Map<String, IHeaderMatcher> matchers;
     private final SortedSet<String> licenseFamilies;
 
+    /**
+     * Constructs the XML configuration read.
+     */
     public XMLConfigurationReader() {
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -129,33 +129,16 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         matchers = new HashMap<>();
     }
 
-    public void printDocument(OutputStream out) {
-        printDocument(out, document);
-    }
-
-    public void printDocument(OutputStream out, Document document) {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer;
-        try {
-            transformer = tf.newTransformer();
-
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-            transformer.transform(new DOMSource(document), new StreamResult(new OutputStreamWriter(out, "UTF-8")));
-        } catch (TransformerException | UnsupportedEncodingException e) {
-            e.printStackTrace(new PrintStream(out));
-        }
-    }
-
     @Override
     public void addLicenses(URL url) {
         read(url);
     }
 
+    /**
+     * Read the urls and create a single document to process.
+     * 
+     * @param urls The URLs to read.
+     */
     public void read(URL... urls) {
         DocumentBuilder builder;
         try {
@@ -172,12 +155,23 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         }
     }
 
+    /**
+     * Applies the {@code consumer} to each node in the {@code list}
+     * 
+     * @param list the NodeList to process
+     * @param consumer the consumer to apply to each node in the list.
+     */
     private void nodeListConsumer(NodeList list, Consumer<Node> consumer) {
         for (int i = 0; i < list.getLength(); i++) {
             consumer.accept(list.item(i));
         }
     }
 
+    /**
+     * Merge the new document into the document that this reader processes.
+     * 
+     * @param newDoc the Document to merge.
+     */
     public void add(Document newDoc) {
         List<Node> lst = new ArrayList<>();
         nodeListConsumer(newDoc.getElementsByTagName(LICENSE), lst::add);
@@ -189,6 +183,12 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                 (n) -> matchersElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
     }
 
+    /**
+     * Get a map of Node attribute names to values.
+     * 
+     * @param node The node to process
+     * @return the map of attributes on the node
+     */
     private Map<String, String> attributes(Node node) {
         NamedNodeMap nnm = node.getAttributes();
         Map<String, String> result = new HashMap<>();
@@ -199,6 +199,14 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         return result;
     }
 
+    /**
+     * Create a text matcher. Will construct a FullTextMatcher or a
+     * SimpleTextMatcher depending on the complexity of the text.
+     * 
+     * @param id the id for the Matcher.
+     * @param txt the text to match
+     * @return the IHeaderMatcher that matches the text.
+     */
     public static IHeaderMatcher createTextMatcher(String id, String txt) {
         boolean complex = txt.contains(" ") | txt.contains("\\t") | txt.contains("\\n") | txt.contains("\\r")
                 | txt.contains("\\f") | txt.contains("\\v");
@@ -305,14 +313,6 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         return Collections.unmodifiableSortedSet(licenseFamilies);
     }
 
-    public abstract class DelegatingBuilder extends AbstractBuilder {
-        protected final AbstractBuilder delegate;
-
-        DelegatingBuilder(AbstractBuilder delegate) {
-            this.delegate = delegate;
-        }
-    }
-
     private void parseMatcherBuilder(Node classNode) {
         Map<String, String> attributes = attributes(classNode);
         if (attributes.get(ATT_CLASS_NAME) == null) {
@@ -329,5 +329,16 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     @Override
     public void addMatchers(URL url) {
         read(url);
+    }
+
+    /**
+     * An abstract builder that delegates to another abstract builder.
+     */
+    abstract class DelegatingBuilder extends AbstractBuilder {
+        protected final AbstractBuilder delegate;
+
+        DelegatingBuilder(AbstractBuilder delegate) {
+            this.delegate = delegate;
+        }
     }
 }
