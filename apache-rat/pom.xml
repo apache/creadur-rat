@@ -94,11 +94,11 @@
             <manifestEntries>
               <Main-Class>org.apache.rat.Report</Main-Class>
               <Extension-Name>rat</Extension-Name>
-              <Specification-Title>Apache Rat</Specification-Title>
+              <Specification-Title>Apache Creadur RAT</Specification-Title>
               <Specification-Vendor>apache.org</Specification-Vendor>
               <Specification-Version>${project.version}</Specification-Version>
               <Implementation-Vendor-Id>apache.org</Implementation-Vendor-Id>
-              <Implementation-Title>Apache Rat</Implementation-Title>
+              <Implementation-Title>Apache Creadur RAT</Implementation-Title>
               <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
               <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
@@ -112,7 +112,7 @@
         <executions>
           <execution>
             <!-- This sub project has no source code, so we need to skip animal sniffer -->
-            <id>check-java-1.5-compat</id>
+            <id>check-java-1.8-compat</id>
             <configuration>
               <skip>true</skip>
             </configuration>
