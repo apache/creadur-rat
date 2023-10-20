@@ -19,6 +19,7 @@
 package org.apache.rat.report.xml.writer;
 
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,13 +41,13 @@ public class XmlWriterUtilsTest {
 
     @Test
     public void writeTrue() throws Exception {
-        XmlWriterUtils.writeAttribute(writer, "name", true);
+        XmlUtils.writeAttribute(writer, "name", true);
         assertEquals("Attribute written as True", "<alpha name='true'", out.toString());
     }
 
     @Test
     public void writeFalse() throws Exception {
-        XmlWriterUtils.writeAttribute(writer, "name", false);
+        XmlUtils.writeAttribute(writer, "name", false);
         assertEquals("Attribute written as False", "<alpha name='false'", out.toString());
     }
 }

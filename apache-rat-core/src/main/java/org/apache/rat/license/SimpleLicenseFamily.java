@@ -15,29 +15,33 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.license;
 
 /**
- * Trivial bean implementing ILicenseFamily
- * @since Rat 0.8
+ * An implementation of the ILicenseFamily.
  */
-public class SimpleLicenseFamily implements ILicenseFamily {
+class SimpleLicenseFamily implements ILicenseFamily {
     private String familyName;
+    private String familyCategory;
 
-    public SimpleLicenseFamily(String familyName) {
-        setFamilyName(familyName);
-    }
-
-    public SimpleLicenseFamily() {
-        this(null);
-    }
-
-    public final void setFamilyName(String familyName) {
+    SimpleLicenseFamily(String familyId, String familyName) {
+        this.familyCategory = ILicenseFamily.makeCategory(familyId);
         this.familyName = familyName;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s %s", getFamilyCategory(), getFamilyName());
+    }
+
+    @Override
     public final String getFamilyName() {
         return familyName;
+    }
+
+    @Override
+    public String getFamilyCategory() {
+        return familyCategory;
     }
 }

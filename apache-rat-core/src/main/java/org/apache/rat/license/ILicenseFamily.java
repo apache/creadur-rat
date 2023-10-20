@@ -15,10 +15,81 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.license;
 
+import java.util.SortedSet;
 
-public interface ILicenseFamily {
+/**
+ * The definition of the license family.
+ */
+public interface ILicenseFamily extends Comparable<ILicenseFamily> {
+    /**
+     * @return the license family name.
+     */
     String getFamilyName();
+
+    /**
+     * @return the license family category.
+     */
+    String getFamilyCategory();
+
+    /**
+     * @return A builder for an ILicenseFamily.
+     */
+    static ILicenseFamily.Builder builder() {
+        return new ILicenseFamilyBuilder();
+    }
+
+    /**
+     * Convert a potential category string into a category string of exactly 5 characters either buy truncating
+     * the string or appending spaces as necessary.
+     * @param cat the string to convert.
+     * @return a string of exactly 5 characters.
+     */
+    static String makeCategory(String cat) {
+        return cat == null ? "     " : cat.concat("     ").substring(0, 5);
+    }
+
+    @Override
+    default int compareTo(ILicenseFamily other) {
+        return getFamilyCategory().compareTo(other.getFamilyCategory());
+    }
+
+
+    /**
+     * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
+     * @param target The instance to serch  for.
+     * @param licenseFamilies the license families to search
+     * @return
+     */
+    static ILicenseFamily search(ILicenseFamily target, SortedSet<ILicenseFamily> licenseFamilies) {
+        SortedSet<ILicenseFamily> part = licenseFamilies.tailSet(target);
+        return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
+    }
+
+    /**
+     * The definition of an ILicenseFamily builder.
+     */
+    interface Builder {
+        /**
+         * Sets the license family category.  Will trim or extends the string with spaces to ensure that it is
+         * exactly 5 characters.
+         * @param licenseFamilyCategory the category string
+         * @return this builder for chaining.
+         */
+        Builder setLicenseFamilyCategory(String licenseFamilyCategory);
+
+        /**
+         * Sets the license family name. 
+         * @param licenseFamilyName the name string
+         * @return this builder for chaining.
+         */
+        Builder setLicenseFamilyName(String licenseFamilyName);
+
+        /**
+         * @return a new ILicenseFamily instance.
+         */
+        ILicenseFamily build();
+    }
 }

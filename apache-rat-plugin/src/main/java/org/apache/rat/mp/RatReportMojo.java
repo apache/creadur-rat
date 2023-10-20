@@ -1,4 +1,37 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.rat.mp;
+
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.nio.charset.StandardCharsets;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -34,23 +67,16 @@ import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.shared.utils.WriterFactory;
-import org.apache.rat.Defaults;
+import org.apache.rat.ReportConfiguration;
+import org.apache.rat.ReportConfiguration.LicenseFilter;
+import org.apache.rat.Reporter;
 import org.codehaus.plexus.util.ReaderFactory;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.util.*;
-
-import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
-
 
 /**
  * Generates a report with Rat's output.
@@ -59,9 +85,10 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageReport {
 
     /**
-     * The output directory for the report. Note that this parameter is only evaluated if the goal is run directly from
-     * the command line. If the goal is run indirectly as part of a site generation, the output directory configured in
-     * the Maven Site Plugin is used instead.
+     * The output directory for the report. Note that this parameter is only
+     * evaluated if the goal is run directly from the command line. If the goal is
+     * run indirectly as part of a site generation, the output directory configured
+     * in the Maven Site Plugin is used instead.
      */
     @Parameter(defaultValue = "${project.reporting.outputDirectory}", readonly = true, required = true)
     protected File outputDirectory;
@@ -117,16 +144,15 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      */
     private File reportOutputDirectory;
 
-
     /**
-     * This method is called when the report generation is invoked directly as a standalone Mojo.
+     * This method is called when the report generation is invoked directly as a
+     * standalone Mojo.
      *
      * @throws MojoExecutionException if an error occurs when generating the report
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     @Override
-    public void execute()
-            throws MojoExecutionException {
+    public void execute() throws MojoExecutionException {
         if (!canGenerateReport()) {
             return;
         }
@@ -154,9 +180,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
             if (!isExternalReport()) {
                 outputDirectory.mkdirs();
 
-                try (Writer writer =
-                             new OutputStreamWriter(Files.newOutputStream(new File(outputDirectory, filename).toPath()),
-                                     getOutputEncoding())) {
+                try (Writer writer = new OutputStreamWriter(
+                        Files.newOutputStream(new File(outputDirectory, filename).toPath()), getOutputEncoding())) {
                     // render report
                     getSiteRenderer().mergeDocumentIntoSite(writer, sink, siteContext);
                 }
@@ -170,8 +195,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         }
     }
 
-    private SiteRenderingContext createSiteRenderingContext(Locale locale)
-            throws MavenReportException, IOException {
+    private SiteRenderingContext createSiteRenderingContext(Locale locale) throws MavenReportException, IOException {
         DecorationModel decorationModel = new DecorationModel();
 
         Map<String, Object> templateProperties = new HashMap<>();
@@ -187,11 +211,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
 
         SiteRenderingContext context;
         try {
-            Artifact skinArtifact =
-                    siteTool.getSkinArtifactFromRepository(session.getLocalRepository(), remoteRepositories, decorationModel);
+            Artifact skinArtifact = siteTool.getSkinArtifactFromRepository(session.getLocalRepository(),
+                    remoteRepositories, decorationModel);
 
-            getLog().debug(buffer().a("Rendering content with ").strong(skinArtifact.getId()
-                    + " skin").a('.').toString());
+            getLog().debug(
+                    buffer().a("Rendering content with ").strong(skinArtifact.getId() + " skin").a('.').build());
 
             context = siteRenderer.createContextForSkin(skinArtifact, templateProperties, decorationModel,
                     project.getName(), locale);
@@ -210,15 +234,14 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Generate a report.
      *
-     * @param sink   the sink to use for the generation.
+     * @param sink the sink to use for the generation.
      * @param locale the wanted locale to generate the report, could be null.
      * @throws MavenReportException if any
      * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
      */
     @Deprecated
     @Override
-    public void generate(org.codehaus.doxia.sink.Sink sink, Locale locale)
-            throws MavenReportException {
+    public void generate(org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
         generate(sink, null, locale);
     }
 
@@ -231,13 +254,13 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
      */
     @Deprecated
-    public void generate(Sink sink, Locale locale)
-            throws MavenReportException {
+    public void generate(Sink sink, Locale locale) throws MavenReportException {
         generate(sink, null, locale);
     }
 
     /**
-     * This method is called when the report generation is invoked by maven-site-plugin.
+     * This method is called when the report generation is invoked by
+     * maven-site-plugin.
      *
      * @param sink
      * @param sinkFactory
@@ -245,8 +268,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @throws MavenReportException
      */
     @Override
-    public void generate(Sink sink, SinkFactory sinkFactory, Locale locale)
-            throws MavenReportException {
+    public void generate(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
         if (!canGenerateReport()) {
             getLog().info("This report cannot be generated as part of the current build. "
                     + "The report name should be referenced in this line of output.");
@@ -305,10 +327,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Gets the effective reporting output files encoding.
      *
-     * @return The effective reporting output file encoding, never <code>null</code>.
+     * @return The effective reporting output file encoding, never
+     * <code>null</code>.
      */
     protected String getOutputEncoding() {
-        return (outputEncoding == null) ? WriterFactory.UTF_8 : outputEncoding;
+        return (outputEncoding == null) ? StandardCharsets.UTF_8.toString() : outputEncoding;
     }
 
     /**
@@ -351,9 +374,10 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      *
      * @return Version number, if found, or null.
      */
-    // TODO The canonical way is to read the pom.properties for the artifact desired in META-INF/maven
+    // TODO The canonical way is to read the pom.properties for the artifact desired
+    // in META-INF/maven
     private String getRatVersion() {
-        //noinspection unchecked
+        // noinspection unchecked
         for (Artifact a : getProject().getDependencyArtifacts()) {
             if ("rat-lib".equals(a.getArtifactId())) {
                 return a.getVersion();
@@ -399,8 +423,15 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.paragraph();
         sink.verbatim(SinkEventAttributeSet.BOXED);
         try {
-            sink.text(createReport(Defaults.getDefaultStyleSheet()));
-        } catch (MojoExecutionException | MojoFailureException e) {
+            ReportConfiguration config = getConfiguration();
+            config.setFrom(getDefaultsBuilder().build());
+            //config.setStyleSheet(Defaults.getUnapprovedLicensesStyleSheet());
+            logLicenses(config.getLicenses(LicenseFilter.all));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            config.setOut(()->baos);
+            Reporter.report(config);
+            sink.text(baos.toString());
+        } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }
         sink.verbatim_();
@@ -423,8 +454,10 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * Returns the reports description.
      *
      * @param locale Requested locale of the bundle
-     * @return Report description, as given by the key "report.rat.description" in the bundle.
+     * @return Report description, as given by the key "report.rat.description" in
+     * the bundle.
      */
+    @Override
     public String getDescription(Locale locale) {
         return getBundle(locale).getString("report.rat.description");
     }
@@ -435,6 +468,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @param locale Requested locale of the bundle
      * @return Report name, as given by the key "report.rat.name" in the bundle.
      */
+    @Override
     public String getName(Locale locale) {
         return getBundle(locale).getString("report.rat.name");
     }
@@ -444,6 +478,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      *
      * @return "rat-report"
      */
+    @Override
     public String getOutputName() {
         return "rat-report";
     }
