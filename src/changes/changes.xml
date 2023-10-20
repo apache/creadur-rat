@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-321" type="add" dev="pottlinger" due-to="Claude Warren">
+         Allow text-based XML configuration of RAT.
+      </action>
       <action issue="RAT-311" type="fix" dev="pottlinger">
          Update commons-compress to 1.24.0 in order to circumvent CVE-2023-42503.
       </action>
