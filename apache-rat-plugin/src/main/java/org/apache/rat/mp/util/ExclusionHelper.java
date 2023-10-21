@@ -40,6 +40,7 @@ public final class ExclusionHelper {
             .unmodifiableList(Arrays.asList(//
                     "target/**/*", //
                     "cobertura.ser", //
+                    "**/MANIFEST.MF", // a MANIFEST.MF file cannot contain comment lines. In other words: It is not possible, to include a license.
                     "release.properties", //
                     ".repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
                     "build.log", // RAT-160: until now maven-invoker-plugin runs create a build.log that is not part of a release
