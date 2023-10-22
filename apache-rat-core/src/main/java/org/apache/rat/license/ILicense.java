@@ -19,7 +19,6 @@
 package org.apache.rat.license;
 
 import java.util.Comparator;
-import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
@@ -47,79 +46,6 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
      */
     public static ILicense.Builder builder() {
         return new ILicenseBuilder();
-    }
-
-    /**
-     * Search a SortedSet of licenses for the matching license id.
-     * 
-     * @param licenseId the id to search for.
-     * @param licenses the SortedSet of licenses to search.
-     * @return the matching license or {@code null} if not found.
-     */
-    static ILicense search(String licenseId, SortedSet<ILicense> licenses) {
-        ILicenseFamily searchFamily = ILicenseFamily.builder().setLicenseFamilyCategory(licenseId)
-                .setLicenseFamilyCategory("searching proxy").build();
-        ILicense target = new ILicense() {
-
-            @Override
-            public String getId() {
-                return licenseId;
-            }
-
-            @Override
-            public void reset() {
-                // do nothing
-            }
-
-            @Override
-            public State matches(String line) {
-                return State.f;
-            }
-
-            @Override
-            public int compareTo(ILicense arg0) {
-                return searchFamily.compareTo(arg0.getLicenseFamily());
-            }
-
-            @Override
-            public ILicenseFamily getLicenseFamily() {
-                return searchFamily;
-            }
-
-            @Override
-            public String getNotes() {
-                return null;
-            }
-
-            @Override
-            public String derivedFrom() {
-                return null;
-            }
-
-            @Override
-            public State finalizeState() {
-                return State.f;
-            }
-
-            @Override
-            public State currentState() {
-                return State.f;
-            }
-
-        };
-        return search(target, licenses);
-    }
-
-    /**
-     * Search a SortedSet of licenses for the matching license.
-     * 
-     * @param target the license to search for.
-     * @param licenses the SortedSet of licenses to search.
-     * @return the matching license or {@code null} if not found.
-     */
-    static ILicense search(ILicense target, SortedSet<ILicense> licenses) {
-        SortedSet<ILicense> part = licenses.tailSet(target);
-        return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
 
     /**

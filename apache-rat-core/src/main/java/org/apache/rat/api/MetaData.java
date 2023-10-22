@@ -180,8 +180,12 @@ public class MetaData {
     public static final String RAT_URL_APPROVED_LICENSE = RAT_BASE_URL + "#ApprovedLicense";
     public static final String RAT_APPROVED_LICENSE_VALUE_TRUE = Boolean.TRUE.toString();
     public static final String RAT_APPROVED_LICENSE_VALUE_FALSE = Boolean.FALSE.toString();
-    public static final Datum RAT_APPROVED_LICENSE_DATIM_TRUE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_TRUE);
-    public static final Datum RAT_APPROVED_LICENSE_DATIM_FALSE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_FALSE);
+    public static final Datum RAT_APPROVED_LICENSE_DATUM_TRUE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_TRUE);
+    public static final Datum RAT_APPROVED_LICENSE_DATUM_FALSE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_FALSE);
+    @Deprecated
+    public static final Datum RAT_APPROVED_LICENSE_DATIM_TRUE = RAT_APPROVED_LICENSE_DATUM_TRUE;
+    @Deprecated
+    public static final Datum RAT_APPROVED_LICENSE_DATIM_FALSE = RAT_APPROVED_LICENSE_DATUM_FALSE;
 
     /** 
      * Only likely to be a small quantity of data 

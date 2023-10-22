@@ -18,8 +18,6 @@
  */
 package org.apache.rat.license;
 
-import java.util.SortedSet;
-
 /**
  * The definition of the license family.
  */
@@ -54,18 +52,6 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
     @Override
     default int compareTo(ILicenseFamily other) {
         return getFamilyCategory().compareTo(other.getFamilyCategory());
-    }
-
-
-    /**
-     * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
-     * @param target The instance to serch  for.
-     * @param licenseFamilies the license families to search
-     * @return
-     */
-    static ILicenseFamily search(ILicenseFamily target, SortedSet<ILicenseFamily> licenseFamilies) {
-        SortedSet<ILicenseFamily> part = licenseFamilies.tailSet(target);
-        return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
 
     /**

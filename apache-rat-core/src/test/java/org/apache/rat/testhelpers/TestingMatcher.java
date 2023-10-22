@@ -23,20 +23,37 @@ import java.util.Queue;
 
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
 
+/**
+ * An Matcher for testing.
+ */
 public class TestingMatcher extends AbstractHeaderMatcher {
     private State lastState;
     private final boolean[] initialResults;
     private Queue<Boolean> results;
     public State finalState = State.f;
 
+    /**
+     * Constructs a matcher with an ID of "dfltMtch" that does not match anyting.
+     */
     public TestingMatcher() {
         this("dfltMtch", false);
     }
 
+    /**
+     * Constructs a matcher with the specified id and matching result.
+     * @param id the ID for this matcher
+     * @param result if {@code true} will match everything, otherwise it matches nothing.
+     */
     public TestingMatcher(String id, boolean result) {
         this(id, new boolean[] { result });
     }
 
+    /**
+     * Constructs a matcher with the specified ID that returns the matching values in order.
+     * Will throw NPE if more {@code matches()} are called than there are results.
+     * @param id the id of the matcher.
+     * @param results the result for each call to match.
+     */
     public TestingMatcher(String id, boolean... results) {
         super(id);
         initialResults = results;

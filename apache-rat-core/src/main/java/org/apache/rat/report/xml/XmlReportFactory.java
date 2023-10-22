@@ -19,10 +19,10 @@
 package org.apache.rat.report.xml;
 
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;

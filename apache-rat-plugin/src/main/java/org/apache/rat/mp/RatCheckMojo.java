@@ -21,8 +21,6 @@ package org.apache.rat.mp;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,9 +30,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.ReportConfiguration.LicenseFilter;
 import org.apache.rat.Reporter;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 /**

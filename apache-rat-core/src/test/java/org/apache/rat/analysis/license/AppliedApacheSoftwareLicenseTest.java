@@ -21,7 +21,7 @@ package org.apache.rat.analysis.license;
 public class AppliedApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
     private static String CATEGORY = "ASL";
-    private static String NAME = "Applied Apahce License Version 2.0";
+    private static String NAME = "Applied Apache License Version 2.0";
     private static String[][] targets = { { "simple", "/*\n" + " *  Copyright 2012-2013 FooBar.\n" + " *\n"
             + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
             + " *  you may not use this file except in compliance with the License.\n" + " *\n"

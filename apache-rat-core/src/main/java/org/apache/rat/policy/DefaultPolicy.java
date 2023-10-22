@@ -21,12 +21,12 @@ package org.apache.rat.policy;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
 
 /**
  * A default Document Analyser that determines if the matched license is in the set of approved licenses.
@@ -39,7 +39,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
      * @param approvedLicenseFamilies the approved license families.
      */
     public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseFamilies) {
-        this.approvedLicenseFamilies = new TreeSet<>();
+        this.approvedLicenseFamilies = LicenseSetFactory.emptyLicenseFamilySet();
         this.approvedLicenseFamilies.addAll(approvedLicenseFamilies);
     }
 
@@ -55,15 +55,15 @@ public class DefaultPolicy implements IDocumentAnalyser {
     public void analyse(final Document document) {
         if (document != null) {
             boolean approval = false;
-            if (document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY) != null) {
+            if (document.getMetaData().value(MetaData.RAT_URL_HEADER_CATEGORY) != null) {
                 ILicenseFamily licenseFamily = ILicenseFamily.builder()
                         .setLicenseFamilyCategory(
-                                document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY))
+                                document.getMetaData().value(MetaData.RAT_URL_HEADER_CATEGORY))
                         .setLicenseFamilyName(document.getMetaData().value(MetaData.RAT_URL_LICENSE_FAMILY_NAME))
                         .build();
                 approval = approvedLicenseFamilies.contains(licenseFamily);
+                reportLicenseApprovalClaim(document, approval);
             }
-            reportLicenseApprovalClaim(document, approval);
         }
     }
 
@@ -74,7 +74,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
      */
     public void reportLicenseApprovalClaim(final Document document, final boolean isAcceptable) {
         document.getMetaData().set(
-                isAcceptable ? MetaData.RAT_APPROVED_LICENSE_DATIM_TRUE : MetaData.RAT_APPROVED_LICENSE_DATIM_FALSE);
+                isAcceptable ? MetaData.RAT_APPROVED_LICENSE_DATUM_TRUE : MetaData.RAT_APPROVED_LICENSE_DATUM_FALSE);
     }
 
     /**
