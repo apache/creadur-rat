@@ -188,7 +188,23 @@ public class ReportConfiguration {
     public void addLicense(ILicense license) {
         if (license != null) {
             this.licenses.add(license);
+            this.families.add(license.getLicenseFamily());
         }
+    }
+    
+    /**
+     * Adds a license to the list of licenses. Does not add the license to the list
+     * of approved licenses.
+     * 
+     * @param builder The license builder to build and add to the list of licenses.
+     */
+    public ILicense addLicense(ILicense.Builder builder) {
+        if (builder != null) {
+            ILicense license = builder.build(families);
+            this.licenses.add(license);
+            return license;
+        }
+        return null;
     }
 
     /**
@@ -199,13 +215,14 @@ public class ReportConfiguration {
      */
     public void addLicenses(Collection<ILicense> licenses) {
         this.licenses.addAll(licenses);
+        licenses.stream().map(ILicense::getLicenseFamily).forEach(families::add);
     }
     
     /**
      * Adds a license family to the list of families. Does not add the family to the list
      * of approved licenses.
      * 
-     * @param family The license to add to the list of licenses.
+     * @param family The license family to add to the list of license families.
      */
     public void addFamily(ILicenseFamily family) {
         if (family != null) {
@@ -214,10 +231,22 @@ public class ReportConfiguration {
     }
 
     /**
+     * Adds a license family to the list of families. Does not add the family to the list
+     * of approved licenses.
+     * 
+     * @param builder The licenseFamily.Builder to build and add to the list of licenses.
+     */
+    public void addFamily(ILicenseFamily.Builder builder) {
+        if (builder != null) {
+            this.families.add(builder.build());
+        }
+    }
+    
+    /**
      * Adds multiple families to the list of license families. Does not add the licenses to
      * the list of approved licenses.
      *
-     * @param license The license t oadd.
+     * @param license The licensefamily to add.
      */
     public void addFamilies(Collection<ILicenseFamily> families) {
         this.families.addAll(families);

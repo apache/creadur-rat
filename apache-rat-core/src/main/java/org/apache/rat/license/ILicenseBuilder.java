@@ -18,6 +18,7 @@
  */
 package org.apache.rat.license;
 
+import java.util.Objects;
 import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -86,6 +87,7 @@ class ILicenseBuilder implements Builder {
     @Override
     public ILicense build(SortedSet<ILicenseFamily> licenseFamilies) {
         ILicenseFamily family = LicenseSetFactory.search(licenseFamily.build(), licenseFamilies);
+        Objects.requireNonNull(family, "License family may not be null.  Family "+licenseFamily.getCategory()+" not found.");
         return new SimpleLicense(family, matcher.build(), derivedFrom, notes, name, id);
     }
 }

@@ -80,7 +80,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     public void testCustomLicense() throws Exception {
         buildRule.executeTarget("testCustomLicense");
         assertLogDoesNotMatch(" AS +\\Q" + getAntFileName() + "\\E");
-        assertLogMatches(" EXAMP +\\Q" + getAntFileName() + "\\E");
+        assertLogMatches(" newFa +\\Q" + getAntFileName() + "\\E");
     }
     
     @Test

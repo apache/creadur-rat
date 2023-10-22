@@ -37,7 +37,9 @@ import org.apache.rat.Reporter;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -72,6 +74,7 @@ public class Report extends Task {
     private Defaults.Builder defaultsBuilder;
     private final ReportConfiguration configuration;
     private List<License> licenses = new ArrayList<>();
+    private List<Family> families = new ArrayList<>();
     /**
      * will hold any nested resource collection
      */
@@ -105,6 +108,10 @@ public class Report extends Task {
 
     public void addLicense(License lic) {
         licenses.add(lic);
+    }
+    
+    public void addFamily(Family family) {
+        families.add(family);
     }
 
     /**
@@ -203,12 +210,13 @@ public class Report extends Task {
     public void execute() {
         try {
             Defaults defaults = defaultsBuilder.build();
+            
             configuration.setFrom(defaults);
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
-            licenses.stream().map(License::build).forEach((l) -> {
-                configuration.addLicense(l);
-                configuration.addApprovedLicenseCategory(l.getLicenseFamily());
-            });
+            families.stream().map(Family::build).forEach(configuration::addFamily);
+            licenses.stream().map(License::asBuilder).forEach(l -> 
+                configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily())
+            );
             validate();
             Reporter.report(configuration);
         } catch (BuildException e) {
