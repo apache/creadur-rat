@@ -47,7 +47,8 @@ import org.apache.rat.report.IReportable;
  * {@link Reporter}. The sole purpose of the front ends is to create the
  * configuration and invoke the {@link Reporter}.
  */
-public class ReportConfiguration {
+public class ReportConfiguration {    
+    private SortedSet<ILicenseFamily> families = LicenseSetFactory.emptyLicenseFamilySet();
     private SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
     private SortedSet<String> approvedLicenseCategories = new TreeSet<>();
     private SortedSet<String> removedLicenseCategories = new TreeSet<>();

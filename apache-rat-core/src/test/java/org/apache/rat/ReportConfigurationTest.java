@@ -144,12 +144,10 @@ public class ReportConfigurationTest {
         assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
     }
 
-    private ILicense mockLicense(String category, String name) {
+    private ILicense testingLicense(String category, String name) {
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory(category).setLicenseFamilyName(name)
                 .build();
-        ILicense result = mock(ILicense.class);
-        when(result.getLicenseFamily()).thenReturn(family);
-        return result;
+        return new TestingLicense( family );
     }
 
     @Test
@@ -158,14 +156,14 @@ public class ReportConfigurationTest {
         List<ILicense> expected = new ArrayList<>();
         assertTrue(underTest.getLicenses(LicenseFilter.all).isEmpty());
 
-        ILicense lic1 = mockLicense("TheCat", "TheName");
+        ILicense lic1 = testingLicense("TheCat", "TheName");
         expected.add(lic1);
         underTest.addLicense(lic1);
         SortedSet<ILicense> result = underTest.getLicenses(LicenseFilter.all);
         assertEquals(expected.size(), result.size());
         assertTrue(result.containsAll(expected));
 
-        ILicense[] lics = { mockLicense("Spot", "Data's cat"), mockLicense("Felix", "Cartoon cat") };
+        ILicense[] lics = { testingLicense("Spot", "Data's cat"), testingLicense("Felix", "Cartoon cat") };
         expected.addAll(Arrays.asList(lics));
         underTest.addLicenses(Arrays.asList(lics));
         result = underTest.getLicenses(LicenseFilter.all);
@@ -194,8 +192,8 @@ public class ReportConfigurationTest {
         assertTrue(underTest.getLicenseFamilies(LicenseFilter.approved).isEmpty());
         assertTrue(underTest.getLicenseFamilies(LicenseFilter.none).isEmpty());
 
-        ILicense[] lics = { mockLicense("TheCat", "TheName"), mockLicense("Spot", "Data's cat"),
-                mockLicense("Felix", "Cartoon cat") };
+        ILicense[] lics = { testingLicense("TheCat", "TheName"), testingLicense("Spot", "Data's cat"),
+                testingLicense("Felix", "Cartoon cat") };
         underTest.addLicenses(Arrays.asList(lics));
 
         assertEquals(lics.length, underTest.getLicenseFamilies(LicenseFilter.all).size());
@@ -216,8 +214,8 @@ public class ReportConfigurationTest {
         assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
         assertTrue(underTest.getLicenses(LicenseFilter.none).isEmpty());
 
-        ILicense[] lics = { mockLicense("TheCat", "TheName"), mockLicense("Spot", "Data's cat"),
-                mockLicense("Felix", "Cartoon cat") };
+        ILicense[] lics = { testingLicense("TheCat", "TheName"), testingLicense("Spot", "Data's cat"),
+                testingLicense("Felix", "Cartoon cat") };
         underTest.addLicenses(Arrays.asList(lics));
 
         assertEquals(lics.length, underTest.getLicenses(LicenseFilter.all).size());
@@ -347,7 +345,7 @@ public class ReportConfigurationTest {
             assertEquals(0, sb.length());
         }
 
-        underTest.addLicense(mockLicense("valid", "Validation testing license"));
+        underTest.addLicense(testingLicense("valid", "Validation testing license"));
         try {
             underTest.validate(s -> sb.append(s));
             fail("should have thrown ConfigurationException");

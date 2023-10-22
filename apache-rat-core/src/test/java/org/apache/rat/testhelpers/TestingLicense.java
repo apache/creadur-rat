@@ -18,6 +18,7 @@
  */
 package org.apache.rat.testhelpers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -31,6 +32,8 @@ public class TestingLicense implements ILicense {
     private IHeaderMatcher matcher;
     private String derivedFrom;
     private String notes;
+    private String name;
+    private String id;
 
     /**
      * Creates a testing license named "DfltTst" with category of "DfltT" and a default 
@@ -109,10 +112,21 @@ public class TestingLicense implements ILicense {
     public void setDerivedFrom(String derivedFrom) {
         this.derivedFrom = derivedFrom;
     }
+    
+    /**
+     * Sets the name from value for this license.
+     * @param name the name of this license.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
     @Override
     public String getId() {
-        return matcher.getId();
+        return StringUtils.defaultIfBlank(id, family.getFamilyCategory().trim());
     }
 
     @Override
@@ -150,6 +164,11 @@ public class TestingLicense implements ILicense {
         return notes;
     }
 
+    @Override
+    public String getName() {
+        return StringUtils.defaultIfBlank(name, family.getFamilyName());
+    }
+    
     @Override
     public String derivedFrom() {
         return derivedFrom;

@@ -42,7 +42,7 @@ public class UnknownLicense implements ILicense {
      */
     private UnknownLicense() {
         family = new ILicenseFamilyBuilder().setLicenseFamilyCategory("?????")
-                .setLicenseFamilyName("?????").build();
+                .setLicenseFamilyName("Unknown license").build();
     }
     
     @Override
@@ -83,6 +83,11 @@ public class UnknownLicense implements ILicense {
     @Override
     public String getNotes() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return family.getFamilyName();
     }
 
     @Override

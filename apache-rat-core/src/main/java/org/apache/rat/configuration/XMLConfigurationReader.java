@@ -45,6 +45,8 @@ import org.apache.rat.configuration.builders.ChildContainerBuilder;
 import org.apache.rat.configuration.builders.MatcherRefBuilder;
 import org.apache.rat.configuration.builders.TextCaptureBuilder;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -89,6 +91,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     private final static String ATT_CLASS_NAME = "class";
 
     private final static String ROOT = "rat-config";
+    private final static String FAMILIES = "families";
     private final static String LICENSES = "licenses";
     private final static String LICENSE = "license";
     private final static String APPROVED = "approved";
@@ -99,13 +102,15 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     private Document document;
     private final Element rootElement;
+    private final Element familiesElement;
     private final Element licensesElement;
     private final Element approvedElement;
     private final Element matchersElement;
 
     private final SortedSet<ILicense> licenses;
     private final Map<String, IHeaderMatcher> matchers;
-    private final SortedSet<String> licenseFamilies;
+    private final SortedSet<ILicenseFamily> licenseFamilies;
+    private final SortedSet<String> approvedFamilies;
 
     /**
      * Constructs the XML configuration read.
@@ -118,14 +123,17 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         }
         rootElement = document.createElement(ROOT);
         document.appendChild(rootElement);
+        familiesElement = document.createElement(FAMILIES);
+        rootElement.appendChild(familiesElement);
         licensesElement = document.createElement(LICENSES);
         rootElement.appendChild(licensesElement);
         approvedElement = document.createElement(APPROVED);
         rootElement.appendChild(approvedElement);
         matchersElement = document.createElement(MATCHERS);
         rootElement.appendChild(matchersElement);
-        licenses = new TreeSet<>((x, y) -> x.getLicenseFamily().compareTo(y.getLicenseFamily()));
-        licenseFamilies = new TreeSet<>();
+        licenses = LicenseSetFactory.emptyLicenseSet();
+        licenseFamilies = LicenseSetFactory.emptyLicenseFamilySet();
+        approvedFamilies = new TreeSet<>();
         matchers = new HashMap<>();
     }
 
@@ -173,14 +181,16 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
      * @param newDoc the Document to merge.
      */
     public void add(Document newDoc) {
-        List<Node> lst = new ArrayList<>();
-        nodeListConsumer(newDoc.getElementsByTagName(LICENSE), lst::add);
+        nodeListConsumer(newDoc.getElementsByTagName(FAMILIES),
+                nl -> nodeListConsumer( nl.getChildNodes(), 
+                n -> familiesElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true)))));
         nodeListConsumer(newDoc.getElementsByTagName(LICENSE),
-                (n) -> licensesElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
+                n -> licensesElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
         nodeListConsumer(newDoc.getElementsByTagName(APPROVED),
-                (n) -> approvedElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
+                nl -> nodeListConsumer( nl.getChildNodes(),
+                n -> approvedElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true)))));
         nodeListConsumer(newDoc.getElementsByTagName(MATCHERS),
-                (n) -> matchersElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
+                n -> matchersElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
     }
 
     /**
@@ -263,8 +273,9 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         Map<String, String> attributes = attributes(licenseNode);
         ILicense.Builder builder = ILicense.builder();
 
-        builder.setLicenseFamilyCategory(attributes.get(ATT_ID));
-        builder.setLicenseFamilyName(attributes.get(ATT_NAME));
+        builder.setLicenseFamilyCategory(attributes.get(FAMILY));
+        builder.setName(attributes.get(ATT_NAME));
+        builder.setId(attributes.get(ATT_ID));
 
         StringBuilder notesBuilder = new StringBuilder();
         nodeListConsumer(licenseNode.getChildNodes(), x -> {
@@ -278,26 +289,57 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         });
         builder.setDerivedFrom(StringUtils.defaultIfBlank(attributes.get(ATT_DERIVED_FROM), null));
         builder.setNotes(StringUtils.defaultIfBlank(notesBuilder.toString().trim(), null));
-        return builder.build();
+        return builder.build(licenseFamilies);
     }
 
     @Override
     public SortedSet<ILicense> readLicenses() {
         readMatcherBuilders();
         if (licenses.size() == 0) {
+            nodeListConsumer(document.getElementsByTagName(FAMILIES),
+                    x -> nodeListConsumer(x.getChildNodes(), y -> parseFamily(y)));
+            nodeListConsumer(document.getElementsByTagName(APPROVED),
+                    x -> nodeListConsumer(x.getChildNodes(), y -> parseApproved(y)));
             nodeListConsumer(document.getElementsByTagName(LICENSE), x -> licenses.add(parseLicense(x)));
-            nodeListConsumer(document.getElementsByTagName(FAMILY), x -> licenseFamilies.add(parseFamily(x)));
             document = null;
         }
         return Collections.unmodifiableSortedSet(licenses);
     }
 
-    private String parseFamily(Node familyNode) {
-        Map<String, String> attributes = attributes(familyNode);
-        if (attributes.containsKey(ATT_LICENSE_REF)) {
-            return attributes.get(ATT_LICENSE_REF);
+    private ILicenseFamily parseFamily(Map<String, String> attributes) {
+        if (attributes.containsKey(ATT_ID)) {
+            ILicenseFamily.Builder builder = ILicenseFamily.builder();
+            builder.setLicenseFamilyCategory(attributes.get(ATT_ID));
+            builder.setLicenseFamilyName(StringUtils.defaultIfBlank(attributes.get(ATT_NAME), attributes.get(ATT_ID)));
+            return builder.build();
         }
-        throw new ConfigurationException("family tag requires " + ATT_LICENSE_REF + " attribute");
+        return null;
+    }
+
+    private void parseFamily(Node familyNode) {
+        if (FAMILY.equals(familyNode.getNodeName())) {
+            ILicenseFamily result = parseFamily(attributes(familyNode));
+            if (result == null) {
+                throw new ConfigurationException(String.format("families/family tag requires %s attribute", ATT_ID));
+            }
+            licenseFamilies.add(result);
+        }
+    }
+
+    private void parseApproved(Node approvedNode) {
+        if (FAMILY.equals(approvedNode.getNodeName())) {
+            Map<String, String> attributes = attributes(approvedNode);
+            if (attributes.containsKey(ATT_LICENSE_REF)) {
+                approvedFamilies.add(attributes.get(ATT_LICENSE_REF));
+            } else if (attributes.containsKey(ATT_ID)) {
+                ILicenseFamily target = parseFamily(attributes);
+                licenseFamilies.add(target);
+                approvedFamilies.add(target.getFamilyCategory());
+            } else {
+                throw new ConfigurationException(
+                        String.format("family tag requires %s or %s attribute", ATT_LICENSE_REF, ATT_ID));
+            }
+        }
     }
 
     @Override
@@ -305,12 +347,12 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         if (licenses.isEmpty()) {
             this.readLicenses();
         }
-        if (licenseFamilies.isEmpty()) {
+        if (approvedFamilies.isEmpty()) {
             SortedSet<String> result = new TreeSet<>();
             licenses.stream().map(x -> x.getLicenseFamily().getFamilyCategory()).forEach(result::add);
             return result;
         }
-        return Collections.unmodifiableSortedSet(licenseFamilies);
+        return Collections.unmodifiableSortedSet(approvedFamilies);
     }
 
     private void parseMatcherBuilder(Node classNode) {

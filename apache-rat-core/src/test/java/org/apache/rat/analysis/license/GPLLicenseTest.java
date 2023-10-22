@@ -64,7 +64,7 @@ public class GPLLicenseTest extends AbstractLicenseTest {
         return Arrays.asList(GPL1, GPL2, GPL3);
     }
 
-    public GPLLicenseTest(String cat, String name, String[][] targets) {
-        super(cat, name, null, targets);
+    public GPLLicenseTest(String id, String name, String[][] targets) {
+        super(id, id, name, null, targets);
     }
 }

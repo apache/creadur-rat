@@ -18,6 +18,8 @@
  */
 package org.apache.rat.license;
 
+import java.util.SortedSet;
+
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense.Builder;
 
@@ -31,6 +33,10 @@ class ILicenseBuilder implements Builder {
     private String notes;
 
     private String derivedFrom;
+    
+    private String name;
+    
+    private String id;
 
     private final ILicenseFamily.Builder licenseFamily = ILicenseFamily.builder();
 
@@ -53,6 +59,12 @@ class ILicenseBuilder implements Builder {
     }
 
     @Override
+    public Builder setId(String id) {
+        this.id = id;
+        return this;
+    }
+    
+    @Override
     public Builder setDerivedFrom(String derivedFrom) {
         this.derivedFrom = derivedFrom;
         return this;
@@ -61,17 +73,19 @@ class ILicenseBuilder implements Builder {
     @Override
     public Builder setLicenseFamilyCategory(String licenseFamilyCategory) {
         this.licenseFamily.setLicenseFamilyCategory(licenseFamilyCategory);
+        this.licenseFamily.setLicenseFamilyName("License Family for searching");
         return this;
     }
 
     @Override
-    public Builder setLicenseFamilyName(String licenseFamilyName) {
-        this.licenseFamily.setLicenseFamilyName(licenseFamilyName);
+    public Builder setName(String name) {
+        this.name = name;
         return this;
     }
 
     @Override
-    public ILicense build() {
-        return new SimpleLicense(licenseFamily.build(), matcher.build(), derivedFrom, notes);
+    public ILicense build(SortedSet<ILicenseFamily> licenseFamilies) {
+        ILicenseFamily family = LicenseSetFactory.search(licenseFamily.build(), licenseFamilies);
+        return new SimpleLicense(family, matcher.build(), derivedFrom, notes, name, id);
     }
 }

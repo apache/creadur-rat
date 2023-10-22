@@ -33,14 +33,17 @@ import org.apache.rat.configuration.builders.NotBuilder;
 import org.apache.rat.configuration.builders.RegexBuilder;
 import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
+import org.apache.rat.license.ILicenseFamily;
 import org.junit.Test;
 
 public class ConfigurationReaderTest {
 
-    private static String[] EXPECTED_IDS = { "AL", "ASL", "BSD-3", "CDDL1", "DOJO", "GEN", "GPL1", "GPL2", "GPL3",
+    
+    private static String[] EXPECTED_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3",
             "MIT", "OASIS", "W3C", "W3CD" };
-    private static String[] EXPECTED_LICENSES = { "AL   ", "ASL  ", "BSD-3", "CDDL1", "DOJO ", "GEN  ", "GPL1 ",
-            "GPL2 ", "GPL3 ", "ILLUM", "MIT  ", "OASIS", "TMF  ", "W3C  ", "W3CD " };
+    
+    private static String[] EXPECTED_LICENSES = { "AL", "ASL", "BSD-3", "CDDL1", "DOJO", "GEN", "GPL1",
+            "GPL2", "GPL3", "ILLUMOS", "MIT", "OASIS", "TMF", "W3C", "W3CD" };
 
     @Test
     public void approvedLicenseIdTest() {
@@ -49,6 +52,7 @@ public class ConfigurationReaderTest {
         reader.read(url);
 
         Collection<String> readCategories = reader.approvedLicenseId();
+        
         assertArrayEquals(EXPECTED_IDS, readCategories.toArray(new String[readCategories.size()]));
     }
 
@@ -59,7 +63,7 @@ public class ConfigurationReaderTest {
         reader.read(url);
 
         Collection<String> readCategories = reader.readLicenses().stream()
-                .map(x -> x.getLicenseFamily().getFamilyCategory()).collect(Collectors.toList());
+                .map(x -> x.getId()).collect(Collectors.toList());
         assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[readCategories.size()]));
     }
     

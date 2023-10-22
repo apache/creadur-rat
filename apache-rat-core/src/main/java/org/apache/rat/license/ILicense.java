@@ -19,6 +19,7 @@
 package org.apache.rat.license;
 
 import java.util.Comparator;
+import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
@@ -37,9 +38,15 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     String getNotes();
 
     /**
-     * @return the id of a licens that this license is derived from. May be null.
+     * @return the id of a license that this license is derived from. May be null.
      */
     String derivedFrom();
+    
+    /**
+     * Returns the name of this license.  If no name was specified then the name of the family is returned.
+     * @return the name of this license.
+     */
+    String getName();
 
     /**
      * @return An ILicense.Builder instance.
@@ -52,7 +59,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
      * @return The comparator for used to sort Licenses. 
      */
     static Comparator<ILicense> getComparator() {
-        return (x, y) -> x.getLicenseFamily().compareTo(y.getLicenseFamily());
+        return (x, y) ->  x.getId().compareTo( y.getId() );
     }
 
     /**
@@ -60,9 +67,10 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
      */
     interface Builder {
         /**
-         * @return A new License implementatin.
+         * @param families the set of defined license families.
+         * @return A new License implementation.
          */
-        ILicense build();
+        ILicense build(SortedSet<ILicenseFamily> families);
         
         /**
          * Sets the matcher from a builder.
@@ -104,11 +112,20 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         Builder setLicenseFamilyCategory(String licenseFamilyCategory);
 
         /**
-         * Set the family name for this license.
-         * @param licenseFamilyName the family name for the license.
+         * Sets the name of the license.
+         * If the name is not set then the name of the license family is used.
+         * @param name the name for the license
          * @return this builder for chaining.
          */
-        Builder setLicenseFamilyName(String licenseFamilyName);
+        Builder setName(String name);
+        
+        /**
+         * Sets the ID of the license.
+         * If the ID is not set then the ID of the license family is used.
+         * @param id the ID for the license
+         * @return this builder for chaining.
+         */
+        Builder setId(String id);
     }
 
 }

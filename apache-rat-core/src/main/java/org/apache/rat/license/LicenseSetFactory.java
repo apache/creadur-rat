@@ -188,6 +188,11 @@ public class LicenseSetFactory {
             public String derivedFrom() {
                 return null;
             }
+            
+            @Override
+            public String getName() {
+                return searchFamily.getFamilyName();
+            }
     
             @Override
             public State finalizeState() {
@@ -225,4 +230,5 @@ public class LicenseSetFactory {
         SortedSet<ILicenseFamily> part = licenseFamilies.tailSet(target);
         return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
+    
 }

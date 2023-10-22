@@ -80,7 +80,7 @@ public class AnalyserFactoryTest {
                         + " * KIND, either express or implied.  See the License for the\n"
                         + " * specific language governing permissions and limitations\n" + " * under the License.    \n"
                         + " */\n" + "\n" + "            \n"
-                        + "</header-sample><header-type name='?????'/><license-family name='?????'/><type name='standard'/>",
+                        + "</header-sample><header-type name='?????'/><license-family name='Unknown license'/><type name='standard'/>",
                 out.toString());
     }
 
