@@ -1,5 +1,3 @@
-package org.apache.rat.mp;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,36 +16,29 @@ package org.apache.rat.mp;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.rat.mp;
 
-/**
- * Used to specify additional license families. A license family is basically a class, which implements
- * {@link org.apache.rat.license.ILicenseFamily}.
- */
-public class LicenseFamilySpecification
-{
-    /**
-     * The license family's class name.
-     */
-    private String className;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 
-    /**
-     * Returns the license familys class name.
-     * 
-     * @return Class name of the license family.
-     */
-    public String getClassName()
-    {
-        return className;
+public class Family  {
+
+    private ILicenseFamily.Builder builder = ILicenseFamily.builder();
+
+    @Parameter(required = true)
+    private String id;
+
+    @Parameter(required = true)
+    private String name;
+
+    public Family() {
     }
 
-    /**
-     * Sets the license family's class name. Required.
-     * 
-     * @param pClassName
-     *            Class name of the license family.
-     */
-    public void setClassName( String pClassName )
-    {
-        className = pClassName;
+    public ILicenseFamily build() {
+        return builder.setLicenseFamilyCategory(id)
+                .setLicenseFamilyName(name).build();
     }
+
 }

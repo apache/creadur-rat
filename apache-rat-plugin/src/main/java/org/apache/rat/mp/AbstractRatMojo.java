@@ -58,6 +58,8 @@ import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.mp.util.ScmIgnoreParser;
 import org.apache.rat.report.IReportable;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -105,6 +107,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
     @Parameter
     private License[] licenses;
+    
+    @Parameter
+    private Family[] families;
 
     /**
      * Specifies files, which are included in the report. By default, all files are
@@ -247,7 +252,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     }
 
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
-        @SuppressWarnings("resource")
+        //@SuppressWarnings("resource")
         ReportConfiguration result = new ReportConfiguration();
         
         if (additionalLicenseFiles != null) {
@@ -270,6 +275,18 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 }
             }
         }
+        if (families != null) {
+            Log log = getLog();
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("%s license families loaded from pom", families.length));
+            }
+            Consumer<ILicenseFamily> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("Family: %s", l))
+                    : (l) -> {
+                    };
+
+            Consumer<ILicenseFamily> process = logger.andThen(result::addFamily);
+            Arrays.stream(families).map(Family::build).forEach(process);
+        }
         if (licenses != null) {
             Log log = getLog();
             if (log.isDebugEnabled()) {
@@ -284,7 +301,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     };
 
             Consumer<ILicense> process = logger.andThen(result::addLicense).andThen(addApproved);
-            Arrays.stream(licenses).map(License::build).forEach(process);
+            Arrays.stream(licenses).map(x -> x.build(result.getLicenseFamilies(LicenseFilter.all))).forEach(process);
         }
 
         if (approvedLicenses != null && approvedLicenses.length > 0) {

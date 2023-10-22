@@ -67,6 +67,17 @@ public class ConfigurationReaderTest {
         assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[readCategories.size()]));
     }
     
+    @Test
+    public void LicenseFamiliesTest() {
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        reader.read(url);
+
+        Collection<String> readCategories = reader.readFamilies().stream()
+                .map(x -> x.getFamilyCategory().trim()).collect(Collectors.toList());
+        assertArrayEquals(EXPECTED_IDS, readCategories.toArray(new String[readCategories.size()]));
+    }
+    
     private void checkMatcher( String name, Class<? extends AbstractBuilder> clazz)
     {
         AbstractBuilder builder =  MatcherBuilderTracker.getMatcherBuilder(name);

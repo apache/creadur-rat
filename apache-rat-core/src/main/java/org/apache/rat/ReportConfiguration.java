@@ -195,12 +195,38 @@ public class ReportConfiguration {
      * Adds multiple licenses to the list of licenses. Does not add the licenses to
      * the list of approved licenses.
      *
-     * @param license The license t oadd.
+     * @param license The license to add.
      */
     public void addLicenses(Collection<ILicense> licenses) {
         this.licenses.addAll(licenses);
     }
+    
+    /**
+     * Adds a license family to the list of families. Does not add the family to the list
+     * of approved licenses.
+     * 
+     * @param family The license to add to the list of licenses.
+     */
+    public void addFamily(ILicenseFamily family) {
+        if (family != null) {
+            this.families.add(family);
+        }
+    }
 
+    /**
+     * Adds multiple families to the list of license families. Does not add the licenses to
+     * the list of approved licenses.
+     *
+     * @param license The license t oadd.
+     */
+    public void addFamilies(Collection<ILicenseFamily> families) {
+        this.families.addAll(families);
+    }
+    
+    public SortedSet<ILicenseFamily> getFamilies() {
+        return Collections.unmodifiableSortedSet(families);
+    }
+    
     /**
      * Adds an ILicenseFamily to the list of approved licenses.
      *

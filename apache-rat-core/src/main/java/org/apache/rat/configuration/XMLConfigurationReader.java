@@ -294,18 +294,27 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     @Override
     public SortedSet<ILicense> readLicenses() {
+        readFamilies();
         readMatcherBuilders();
         if (licenses.size() == 0) {
-            nodeListConsumer(document.getElementsByTagName(FAMILIES),
-                    x -> nodeListConsumer(x.getChildNodes(), y -> parseFamily(y)));
-            nodeListConsumer(document.getElementsByTagName(APPROVED),
-                    x -> nodeListConsumer(x.getChildNodes(), y -> parseApproved(y)));
             nodeListConsumer(document.getElementsByTagName(LICENSE), x -> licenses.add(parseLicense(x)));
             document = null;
         }
         return Collections.unmodifiableSortedSet(licenses);
     }
+    
 
+    @Override
+    public SortedSet<ILicenseFamily> readFamilies() {
+        if (licenseFamilies.isEmpty()) {
+            nodeListConsumer(document.getElementsByTagName(FAMILIES),
+                    x -> nodeListConsumer(x.getChildNodes(), y -> parseFamily(y)));
+            nodeListConsumer(document.getElementsByTagName(APPROVED),
+                    x -> nodeListConsumer(x.getChildNodes(), y -> parseApproved(y)));
+        }
+        return Collections.unmodifiableSortedSet(licenseFamilies);
+    }
+    
     private ILicenseFamily parseFamily(Map<String, String> attributes) {
         if (attributes.containsKey(ATT_ID)) {
             ILicenseFamily.Builder builder = ILicenseFamily.builder();
