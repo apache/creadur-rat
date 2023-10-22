@@ -37,9 +37,8 @@ import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.junit.AfterClass;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -49,7 +48,8 @@ import org.junit.Test;
 abstract public class AbstractLicenseTest {
     private static int NAME = 0;
     private static int TEXT = 1;
-    private static Defaults DEFAULTS;
+    
+    private Defaults defaults;
     protected MetaData data;
 
     private final String category;
@@ -57,16 +57,6 @@ abstract public class AbstractLicenseTest {
     private final String notes;
     private final String[][] targets;
     
-
-    @BeforeClass
-    public static void init() {
-        DEFAULTS = Defaults.builder().build();
-    }
-
-    @AfterClass
-    public static void shutdown() {
-        DEFAULTS.clear();
-    }
 
     protected AbstractLicenseTest(String cat, String name, String notes, String[][] targets) {
         this.category = ILicenseFamily.makeCategory(cat);
@@ -78,14 +68,15 @@ abstract public class AbstractLicenseTest {
     @Before
     public void setup() {
         data = new MetaData();
+        defaults = Defaults.builder().build();
     }
 
-    protected static ILicense extractCategory(String category) {
+    protected ILicense extractCategory(String category) {
         ILicenseFamily testingFamily = ILicenseFamily.builder()
                 .setLicenseFamilyCategory(category)
                 .setLicenseFamilyName("Testing category").build();
         List<ILicense> matchers = new ArrayList<>();
-        DEFAULTS.getLicenses().stream().filter(x -> x.getLicenseFamily().compareTo(testingFamily) == 0)
+        defaults.getLicenses(LicenseFilter.all).stream().filter(x -> x.getLicenseFamily().compareTo(testingFamily) == 0)
                 .forEach(matchers::add);
         if (matchers.isEmpty()) {
             fail("No machers for category: " + category);

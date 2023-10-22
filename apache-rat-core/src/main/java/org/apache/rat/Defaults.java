@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
@@ -35,6 +34,8 @@ import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 
 /**
  * A class that holds the list of licenses and approved licences from one or more Configuration file.
@@ -54,15 +55,8 @@ public class Defaults {
      */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
-    /**
-     * The set of defined licenses.
-     */
-    private final SortedSet<ILicense> licenses;
-    /**
-     * The set of approved license ids.
-     */
-    private final SortedSet<String> approvedLicenseIds;
-
+    private LicenseSetFactory setFactory;
+    
     /**
      * Initialize the system configuration reader..
      */
@@ -76,9 +70,8 @@ public class Defaults {
     /**
      * Builder constructs instances.
      */
-    private Defaults() {
-        licenses = new TreeSet<>(ILicense.getComparator());
-        approvedLicenseIds = new TreeSet<>();
+    private Defaults(Set<URL> urls) {
+        this.setFactory = Defaults.readConfigFiles(urls);
     }
 
     /**
@@ -90,18 +83,15 @@ public class Defaults {
     }
 
     /**
-     * Clears all licenses and approved licenses.
-     */
-    public void clear() {
-        licenses.clear();
-        approvedLicenseIds.clear();
-    }
-
-    /**
      * Reads the configuration files.
      * @param urls the URLS to read.
      */
-    private void readConfigFiles(Collection<URL> urls) {
+    private static LicenseSetFactory readConfigFiles(Collection<URL> urls) {
+
+        SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
+
+        SortedSet<String> approvedLicenseIds = new TreeSet<String>();
+
         for (URL url : urls) {
             Format fmt = Format.fromURL(url);
             MatcherReader mReader = fmt.matcherReader();
@@ -117,6 +107,7 @@ public class Defaults {
                 lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
             }
         }
+        return new LicenseSetFactory(licenses, approvedLicenseIds);
     }
 
     /**
@@ -135,11 +126,12 @@ public class Defaults {
         return () -> Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
     }
 
-    /**
-     * @return the sorted set of defined licenses.
-     */
-    public SortedSet<ILicense> getLicenses() {
-        return Collections.unmodifiableSortedSet(licenses);
+    public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
+        return setFactory.getLicenses(filter);
+    }
+    
+    public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
+        return setFactory.getLicenseFamilies(filter);
     }
 
     /**
@@ -147,15 +139,10 @@ public class Defaults {
      * If not licenses have been explicitly listed as approved all licenses are assumed to be approved.
      * @return The sorted set of approved licenseIds.
      */
-    public SortedSet<String> getLicenseIds() {
-        if (approvedLicenseIds.isEmpty()) {
-            SortedSet<String> result = new TreeSet<>();
-            licenses.stream().map(x -> x.getLicenseFamily().getFamilyCategory()).forEach(result::add);
-            return result;
-        }
-        return Collections.unmodifiableSortedSet(approvedLicenseIds);
+    public SortedSet<String> getLicenseIds(LicenseFilter filter) {
+        return setFactory.getLicenseFamilyIds(filter);
     }
-
+    
     /**
      * The Defaults builder.
      */
@@ -247,9 +234,7 @@ public class Defaults {
          * Builds the defaults object.
          */
         public Defaults build() {
-            Defaults result = new Defaults();
-            result.readConfigFiles(fileNames);
-            return result;
+            return new Defaults(fileNames);
         }
     }
 }

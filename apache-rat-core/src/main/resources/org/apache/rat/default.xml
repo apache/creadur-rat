@@ -25,7 +25,7 @@
 			</all>
 		</license>
 
-		<license id="ASL" name="Applied Apahce License Version 2.0">
+		<license id="ASL" name="Applied Apache License Version 2.0">
 			<all>
 				<matcherRef refId="ALStandard" />
 				<copyright />
@@ -229,15 +229,15 @@
 		</license>
 	</licenses>
 	<approved>
-		<family license_ref="BSD-3" />
 		<family license_ref='AL' />
 		<family license_ref='ASL' />
+		<family license_ref="BSD-3" />
 		<family license_ref='CDDL1' />
 		<family license_ref='DOJO' />
+		<family license_ref='GEN' />
 		<family license_ref='GPL1' />
 		<family license_ref='GPL2' />
 		<family license_ref='GPL3' />
-		<family license_ref='GEN' />
 		<family license_ref='MIT' />
 		<family license_ref='OASIS' />
 		<family license_ref='W3C' />

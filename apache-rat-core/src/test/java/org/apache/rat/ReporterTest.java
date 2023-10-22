@@ -37,6 +37,9 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+/**
+ * Tests the output of the Reporter.
+ */
 public class ReporterTest {
 
     @Test
@@ -57,16 +60,16 @@ public class ReporterTest {
         XmlUtils.getNode(doc, xPath, "/rat-report[@timestamp]");
 
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", "MIT", "true", "standard");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, "false", "binary");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, "false", "notice");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, "false", "notice");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, null, "binary");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, null, "notice");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, null, "notice");
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Source.java", "?????", "false", "standard");
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Text.txt", "AL", "true", "standard");
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", "AL", "true", "standard");
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", "AL", "true", "standard");
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", "AL", "true", "standard");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, "false", "archive");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "false", "binary");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, null, "archive");
+        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, null, "binary");
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", "?????", "false", "standard");
 
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
@@ -104,23 +107,22 @@ public class ReporterTest {
         find("^Apache Licensed: 4$", document);
         find("^Generated Documents: 0$", document);
         find("^2 Unknown Licenses$", document);
-        find("^Files with unapproved licenses:\\s+" + "src/test/resources/elements/Image.png\\s+"
-                + "src/test/resources/elements/LICENSE\\s+" + "src/test/resources/elements/NOTICE\\s+"
-                + "src/test/resources/elements/Source.java\\s+" + "src/test/resources/elements/dummy.jar\\s+"
-                + "src/test/resources/elements/plain.json\\s+" + "src/test/resources/elements/sub/Empty.txt\\s",
+        find("^Files with unapproved licenses:\\s+"
+                + "src/test/resources/elements/Source.java\\s+" 
+                + "src/test/resources/elements/sub/Empty.txt\\s",
                 document);
         find("^Archives:\\s+" + "\\+ src/test/resources/elements/dummy.jar\\s*", document);
         find("MIT\\s+src/test/resources/elements/ILoggerFactory.java", document);
-        find("!B\\s+src/test/resources/elements/Image.png", document);
-        find("!N\\s+src/test/resources/elements/LICENSE", document);
-        find("!N\\s+src/test/resources/elements/NOTICE", document);
+        find("B\\s+src/test/resources/elements/Image.png", document);
+        find("N\\s+src/test/resources/elements/LICENSE", document);
+        find("N\\s+src/test/resources/elements/NOTICE", document);
         find("!\\Q?????\\E\\s+src/test/resources/elements/Source.java", document);
         find("AL\\s+src/test/resources/elements/Text.txt", document);
         find("AL\\s+src/test/resources/elements/TextHttps.txt", document);
         find("AL\\s+src/test/resources/elements/Xml.xml", document);
         find("AL\\s+src/test/resources/elements/buildr.rb", document);
-        find("!A\\s+src/test/resources/elements/dummy.jar", document);
-        find("!B\\s+src/test/resources/elements/plain.json", document);
+        find("A\\s+src/test/resources/elements/dummy.jar", document);
+        find("B\\s+src/test/resources/elements/plain.json", document);
         find("!\\Q?????\\E\\s+src/test/resources/elements/sub/Empty.txt", document);
         find("== File: src/test/resources/elements/sub/Empty.txt", document);
     }

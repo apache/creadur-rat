@@ -110,12 +110,8 @@ class HeaderCheckWorker {
                 if (license.finalizeState().asBoolean()) {
                     document.getMetaData().reportOnLicense(license);
                 } else {
-                    final String notes = headers.toString();
-                    final MetaData metaData = document.getMetaData();
-                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY,
-                            MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
-                    metaData.set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
+                    document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
+                    document.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, headers.toString()));
                 }
             } catch (IOException e) {
                 throw new RatHeaderAnalysisException("Cannot read header for " + document, e);

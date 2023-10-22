@@ -37,6 +37,7 @@ import org.apache.rat.Reporter;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -270,12 +271,12 @@ public class Report extends Task {
 
         @Override
         public String[] getValues() {
-            return Arrays.stream(ReportConfiguration.LicenseFilter.values()).map(ReportConfiguration.LicenseFilter::name).collect(Collectors.toList())
-                    .toArray(new String[ReportConfiguration.LicenseFilter.values().length]);
+            return Arrays.stream(LicenseSetFactory.LicenseFilter.values()).map(LicenseSetFactory.LicenseFilter::name).collect(Collectors.toList())
+                    .toArray(new String[LicenseSetFactory.LicenseFilter.values().length]);
         }
 
-        public ReportConfiguration.LicenseFilter internalFilter() {
-            return ReportConfiguration.LicenseFilter.valueOf(getValue());
+        public LicenseSetFactory.LicenseFilter internalFilter() {
+            return LicenseSetFactory.LicenseFilter.valueOf(getValue());
         }
     }
 }

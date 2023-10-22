@@ -38,6 +38,8 @@ import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 
 /**
@@ -46,19 +48,7 @@ import org.apache.rat.report.IReportable;
  * configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration {
-    /**
-     * An enum that defines the types of License filters.
-     */
-    public enum LicenseFilter {
-        /** All defined licenses are returned */
-        all,
-        /** Only approved licenses are returned */
-        approved,
-        /** No licenses are returned */
-        none
-    }
-
-    private SortedSet<ILicense> licenses = new TreeSet<>(ILicense.getComparator());
+    private SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
     private SortedSet<String> approvedLicenseCategories = new TreeSet<>();
     private SortedSet<String> removedLicenseCategories = new TreeSet<>();
     private boolean addingLicenses;
@@ -69,7 +59,6 @@ public class ReportConfiguration {
     private IOSupplier<InputStream> styleSheet = null;
     private IReportable reportable = null;
     private FilenameFilter inputFileFilter = null;
-    // private LicenseFilter approvalFilter = LicenseFilter.approved;
 
     /**
      * @return The filename filter for the potential input files.
@@ -121,8 +110,8 @@ public class ReportConfiguration {
      * @param defaults The defaults to set.
      */
     public void setFrom(Defaults defaults) {
-        addLicenses(defaults.getLicenses());
-        addApprovedLicenseCategories(defaults.getLicenseIds());
+        addLicenses(defaults.getLicenses(LicenseFilter.all));
+        addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.approved));
         if (isStyleReport() && getStyleSheet() == null) {
             setStyleSheet(Defaults.getPlainStyleSheet());
         }
@@ -354,14 +343,10 @@ public class ReportConfiguration {
         case all:
             return Collections.unmodifiableSortedSet(licenses);
         case approved:
-            SortedSet<String> approvedLicenses = getApprovedLicenseCategories();
-            SortedSet<ILicense> result = new TreeSet<>(ILicense.getComparator());
-            licenses.stream().filter(x -> approvedLicenses.contains(x.getLicenseFamily().getFamilyCategory()))
-                    .forEach(result::add);
-            return result;
+            return new LicenseSetFactory(licenses, getApprovedLicenseCategories()).getLicenses(filter);
         case none:
         default:
-            return Collections.emptySortedSet();
+            return LicenseSetFactory.emptyLicenseSet();
         }
     }
 
@@ -378,9 +363,7 @@ public class ReportConfiguration {
      * @return The set of defined licenses.
      */
     public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
-        SortedSet<ILicenseFamily> result = new TreeSet<>();
-        getLicenses(filter).stream().map(ILicense::getLicenseFamily).forEach(result::add);
-        return result;
+        return new LicenseSetFactory(licenses, getApprovedLicenseCategories()).getLicenseFamilies(filter);
     }
 
     /**

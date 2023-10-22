@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.junit.Test;
 
 public class DefaultsTest {
@@ -36,7 +37,7 @@ public class DefaultsTest {
     public void defaultConfigTest() {
         Defaults defaults = Defaults.builder().build();
 
-        Set<ILicense> licenses = defaults.getLicenses();
+        Set<ILicense> licenses = defaults.getLicenses(LicenseFilter.all);
 
         Set<String> names = new TreeSet<>();
         licenses.forEach(x -> names.add(x.getLicenseFamily().getFamilyCategory()));

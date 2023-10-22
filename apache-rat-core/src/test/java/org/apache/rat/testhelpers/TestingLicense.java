@@ -22,23 +22,63 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
+/**
+ * A class to quickly build testing licenses.
+ */
 public class TestingLicense implements ILicense {
 
     private final ILicenseFamily family;
-    IHeaderMatcher matcher;
+    private IHeaderMatcher matcher;
     private String derivedFrom;
     private String notes;
 
+    /**
+     * Creates a testing license named "DfltTst" with category of "DfltT" and a default 
+     * TestingMatcher.
+     * @see TestingMatcher
+     */
     public TestingLicense() {
         this("DfltTst", new TestingMatcher());
     }
+    
+    /**
+     * Creates a testing license with the specified id and a default TestingMatcher
+     * @param id The ID to use.
+     * @see TestingMatcher
+     */
+    public TestingLicense(String id) {
+        this(id, new TestingMatcher());
+    }
 
+    /**
+     * Creates a testing license wit the specified id and matcher.
+     * @param id the ID to use
+     * @param matcher the matcher to execute.
+     */
     public TestingLicense(String id, IHeaderMatcher matcher) {
-        this.family = ILicenseFamily.builder().setLicenseFamilyCategory(id)
-                .setLicenseFamilyName("TestingLicense: " + id).build();
+        this(matcher, ILicenseFamily.builder().setLicenseFamilyCategory(id)
+                .setLicenseFamilyName("TestingLicense: " + id).build());
+    }
+    
+    /**
+     * Creates a testing license with the specified matcher and family.
+     * @param matcher the matcher to use.
+     * @param family the family for this license.
+     */
+    public TestingLicense(IHeaderMatcher matcher, ILicenseFamily family) {
+        this.family = family;
         this.matcher = matcher;
         this.derivedFrom = null;
         this.notes = null;
+    }
+    
+    /**
+     * Create a testing license for the specified family using a default TestingMatcher
+     * @param family the family for the license.
+     * @see TestingMatcher
+     */
+    public TestingLicense(ILicenseFamily family) {
+        this(new TestingMatcher(), family );
     }
 
     @Override
@@ -46,18 +86,26 @@ public class TestingLicense implements ILicense {
         return family.toString();
     }
 
+    /**
+     * Gets the family from  the license
+     * @return the license family.
+     */
     public ILicenseFamily getFamily() {
         return family;
     }
 
+    /**
+     * Gets the matcher from the license
+     * @return the matcher.
+     */
     public IHeaderMatcher getMatcher() {
         return matcher;
     }
 
-    public void setMatcher(IHeaderMatcher matcher) {
-        this.matcher = matcher;
-    }
-
+    /**
+     * Sets the derived from value for this license.
+     * @param derivedFrom the license this license is derived from.
+     */
     public void setDerivedFrom(String derivedFrom) {
         this.derivedFrom = derivedFrom;
     }
