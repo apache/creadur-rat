@@ -16,33 +16,26 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat;
+package org.apache.rat.testhelpers;
 
-import static org.junit.Assert.assertNotNull;
+import java.util.regex.Pattern;
 
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.Arrays;
+import org.junit.Assert;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.ParseException;
-import org.junit.Test;
-
-public class ReportTest {
-    @Test
-    public void parseExclusionsForCLIUsage() {
-        final FilenameFilter filter = Report
-                .parseExclusions(Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
-        assertNotNull(filter);
+public class TextUtils {
+    public static final String[] EMPTY = {};
+    
+    public static void assertPatternInOutput(String pPattern, String out) {
+        Assert.assertTrue("Output does not match string: " + pPattern,
+                isMatching(pPattern, out));
     }
     
-    @Test
-    public void testDefaultConfiguration() throws ParseException, IOException {
-        String[] empty = {};
-        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), empty);
-        ReportConfiguration config = Report.createConfiguration("", cl);
-        ReportConfigurationTest.validateDefault(config);
+    public static void assertPatternNotInOutput(String pPattern, String out) {
+        Assert.assertFalse("Output matches the pattern: " + pPattern,
+                isMatching(pPattern, out));
     }
 
+   public static boolean isMatching(final String pPattern, final String pValue) {
+        return Pattern.compile(pPattern, Pattern.MULTILINE).matcher(pValue).find();
+    }
 }

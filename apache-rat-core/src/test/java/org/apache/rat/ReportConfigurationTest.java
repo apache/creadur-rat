@@ -44,6 +44,7 @@ import java.util.SortedSet;
 
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.configuration.ConfigurationReaderTest;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -363,5 +364,58 @@ public class ReportConfigurationTest {
         underTest.setStyleReport(true);
         underTest.validate(s -> sb2.append(s));
         assertEquals(0, sb2.length());
+    }
+    
+    /**
+     * Validates that the configuration contains the default approved licenses.
+     * @param config The configuration to test.
+     */
+    public static void validateDefaultApprovedLicenses(ReportConfiguration config) {
+        assertEquals("Wrong number of approved licenses", ConfigurationReaderTest.EXPECTED_IDS.length,config.getApprovedLicenseCategories().size());
+        for (String s : ConfigurationReaderTest.EXPECTED_IDS) {
+            assertTrue("Missing apporved license category "+s, config.getApprovedLicenseCategories().contains(ILicenseFamily.makeCategory(s)));
+        }
+    }
+    
+    /**
+     * Validates that the configruation contains the default license families.
+     * @param config the configuration to test.
+     */
+    public static void validateDefaultLicenseFamilies(ReportConfiguration config) {
+        assertEquals("wrong number of license families",ConfigurationReaderTest.EXPECTED_IDS.length,config.getFamilies().size());
+        List<String> expected = Arrays.asList(ConfigurationReaderTest.EXPECTED_IDS);
+        for (ILicenseFamily family : config.getFamilies()) {
+            assertTrue("Missing license family "+family.getFamilyCategory(),  expected.contains(family.getFamilyCategory().trim()));
+        }
+    }
+    
+    /**
+     * Validates that the configuration contains the default licenses.
+     * @param config the configuration to test.
+     */
+    public static void validateDefaultLicenses(ReportConfiguration config) {
+        assertEquals("wrong number of licenses", ConfigurationReaderTest.EXPECTED_LICENSES.length, config.getLicenses(LicenseFilter.all).size());
+        List<String>  expected = Arrays.asList(ConfigurationReaderTest.EXPECTED_LICENSES);
+        for (ILicense license : config.getLicenses(LicenseFilter.all)) {
+            assertTrue("Missing license "+license.getId(), expected.contains(license.getId()));
+        }
+        
+    }
+    
+    /**
+     * Validates that the configuration matches the default.
+     * @param config The configuration to test.
+     */
+    public static void validateDefault(ReportConfiguration config) {
+        assertFalse("Adding licenses should be false", config.isAddingLicenses());
+        assertFalse("forced licenses should be false",  config.isAddingLicensesForced());
+        assertNull("copyright message should be null", config.getCopyrightMessage());
+        assertNull("Input file filter should be null", config.getInputFileFilter());
+        assertTrue("Style report should be true", config.isStyleReport());
+        assertNotNull("Stylesheet should not be null", config.getStyleSheet());
+        
+        validateDefaultApprovedLicenses(config);
+        validateDefaultLicenseFamilies(config);
+        validateDefaultLicenses(config);
     }
 }

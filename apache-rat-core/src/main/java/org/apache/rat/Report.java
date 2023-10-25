@@ -125,7 +125,6 @@ public class Report {
      * @throws Exception on error.
      */
     public static final void main(String[] args) throws Exception {
-        final ReportConfiguration configuration = new ReportConfiguration();
         Options opts = buildOptions();
 
         CommandLine cl = null;
@@ -147,61 +146,72 @@ public class Report {
         if (args == null || args.length != 1) {
             printUsage(opts);
         } else {
-
-            if (cl.hasOption('a') || cl.hasOption('A')) {
-                configuration
-                        .setAddLicenseHeaders(cl.hasOption('f') ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
-                configuration.setCopyrightMessage(cl.getOptionValue("c"));
-            }
-
-            if (cl.hasOption(EXCLUDE_CLI)) {
-                String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
-                if (excludes != null) {
-                    final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
-                    configuration.setInputFileFilter(filter);
-                }
-            } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
-                String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
-                if (excludeFileName != null) {
-                    final FilenameFilter filter = parseExclusions(
-                            FileUtils.readLines(new File(excludeFileName), Charset.forName("UTF-8")));
-                    configuration.setInputFileFilter(filter);
-                }
-            }
-
-//            if (cl.hasOption(NO_DEFAULTS)) {
-//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.none);
-//            } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
-//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.all);
-//            } else {
-//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.approved);
+            
+        
+//
+//            if (cl.hasOption('a') || cl.hasOption('A')) {
+//                configuration
+//                        .setAddLicenseHeaders(cl.hasOption('f') ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
+//                configuration.setCopyrightMessage(cl.getOptionValue("c"));
 //            }
-            if (cl.hasOption(XML)) {
-                configuration.setStyleReport(false);
-            } else {
-                configuration.setStyleReport(true);
-                if (cl.hasOption(STYLESHEET_CLI)) {
-                    String[] style = cl.getOptionValues(STYLESHEET_CLI);
-                    if (style.length != 1) {
-                        System.err.println("please specify a single stylesheet");
-                        System.exit(1);
-                    }
-                    configuration.setStyleSheet(() -> new FileInputStream(style[0]));
-                }
-            }
-
-            Defaults.Builder defaultBuilder = Defaults.builder();
-            if (cl.hasOption(NO_DEFAULTS)) {
-                defaultBuilder.noDefault();
-            }
-            if (cl.hasOption(LICENSES)) {
-                for (String fn : cl.getOptionValues(LICENSES)) {
-                    defaultBuilder.add(fn);
-                }
-            }
-            Defaults defaults = defaultBuilder.build();
-            configuration.setFrom(defaults);
-            configuration.setReportable(getDirectory(args[0], configuration));
+//
+//            if (cl.hasOption(EXCLUDE_CLI)) {
+//                String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
+//                if (excludes != null) {
+//                    final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
+//                    configuration.setInputFileFilter(filter);
+//                }
+//            } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
+//                String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
+//                if (excludeFileName != null) {
+//                    final FilenameFilter filter = parseExclusions(
+//                            FileUtils.readLines(new File(excludeFileName), Charset.forName("UTF-8")));
+//                    configuration.setInputFileFilter(filter);
+//                }
+//            }
+//
+////            if (cl.hasOption(NO_DEFAULTS)) {
+////                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.none);
+////            } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
+////                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.all);
+////            } else {
+////                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.approved);
+////            }
+//            if (cl.hasOption(XML)) {
+//                configuration.setStyleReport(false);
+//            } else {
+//                configuration.setStyleReport(true);
+//                if (cl.hasOption(STYLESHEET_CLI)) {
+//                    String[] style = cl.getOptionValues(STYLESHEET_CLI);
+//                    if (style.length != 1) {
+//                        System.err.println("please specify a single stylesheet");
+//                        System.exit(1);
+//                    }
+//                    configuration.setStyleSheet(() -> new FileInputStream(style[0]));
+//                }
+//            }
+//
+//            Defaults.Builder defaultBuilder = Defaults.builder();
+//            if (cl.hasOption(NO_DEFAULTS)) {
+//                defaultBuilder.noDefault();
+//            }
+//            if (cl.hasOption(LICENSES)) {
+//                for (String fn : cl.getOptionValues(LICENSES)) {
+//                    defaultBuilder.add(fn);
+//                }
+//            }
+//            Defaults defaults = defaultBuilder.build();
+//            configuration.setFrom(defaults);
+//            configuration.setReportable(getDirectory(args[0], configuration));
+//            configuration.validate(s -> System.err.println(s));
+//
+//            if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
+//                listLicenseFamilies(configuration.getLicenseFamilies(LicenseFilter.all), System.out);
+//            }
+//            if (cl.hasOption(LIST_LICENSES)) {
+//                listLicenses(configuration.getLicenses(LicenseFilter.all), System.out);
+//            }
+            ReportConfiguration configuration = createConfiguration(args[0],cl);
             configuration.validate(s -> System.err.println(s));
 
             if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
@@ -210,9 +220,67 @@ public class Report {
             if (cl.hasOption(LIST_LICENSES)) {
                 listLicenses(configuration.getLicenses(LicenseFilter.all), System.out);
             }
-
             Reporter.report(configuration);
         }
+    }
+
+    static ReportConfiguration createConfiguration(String baseDirectory, CommandLine cl) throws IOException {
+        final ReportConfiguration configuration = new ReportConfiguration();
+
+        if (cl.hasOption('a') || cl.hasOption('A')) {
+            configuration.setAddLicenseHeaders(cl.hasOption('f') ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
+            configuration.setCopyrightMessage(cl.getOptionValue("c"));
+        }
+
+        if (cl.hasOption(EXCLUDE_CLI)) {
+            String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
+            if (excludes != null) {
+                final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
+                configuration.setInputFileFilter(filter);
+            }
+        } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
+            String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
+            if (excludeFileName != null) {
+                final FilenameFilter filter = parseExclusions(
+                        FileUtils.readLines(new File(excludeFileName), Charset.forName("UTF-8")));
+                configuration.setInputFileFilter(filter);
+            }
+        }
+
+//            if (cl.hasOption(NO_DEFAULTS)) {
+//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.none);
+//            } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
+//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.all);
+//            } else {
+//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.approved);
+//            }
+        if (cl.hasOption(XML)) {
+            configuration.setStyleReport(false);
+        } else {
+            configuration.setStyleReport(true);
+            if (cl.hasOption(STYLESHEET_CLI)) {
+                String[] style = cl.getOptionValues(STYLESHEET_CLI);
+                if (style.length != 1) {
+                    System.err.println("please specify a single stylesheet");
+                    System.exit(1);
+                }
+                configuration.setStyleSheet(() -> new FileInputStream(style[0]));
+            }
+        }
+
+        Defaults.Builder defaultBuilder = Defaults.builder();
+        if (cl.hasOption(NO_DEFAULTS)) {
+            defaultBuilder.noDefault();
+        }
+        if (cl.hasOption(LICENSES)) {
+            for (String fn : cl.getOptionValues(LICENSES)) {
+                defaultBuilder.add(fn);
+            }
+        }
+        Defaults defaults = defaultBuilder.build();
+        configuration.setFrom(defaults);
+        configuration.setReportable(getDirectory(baseDirectory, configuration));
+        return configuration;
     }
 
     private static void listLicenseFamilies(SortedSet<ILicenseFamily> families, PrintStream out) {
@@ -223,14 +291,14 @@ public class Report {
 
     private static void listLicenses(SortedSet<ILicense> licenses, PrintStream out) {
         out.println("Licenses:");
-        licenses.stream()
-                .forEach(lic -> out.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
-                        lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
+        licenses.stream().forEach(lic -> out.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
+                lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
         out.println();
     }
 
     /**
      * Creates a filename filter from patterns to exclude.
+     * 
      * @param excludes the list of patterns to exclude.
      * @return the FilenameFilter tht excludes the patterns
      */
@@ -259,7 +327,7 @@ public class Report {
         return new NotFileFilter(orFilter);
     }
 
-    private static Options buildOptions() {
+    static Options buildOptions() {
         Options opts = new Options();
 
         Option help = new Option(HELP, "help", false, "Print help for the RAT command line interface and exit");
@@ -343,7 +411,9 @@ public class Report {
     }
 
     /**
-     * Creates an IReporatble object from the directory name and ReportConfiguration object.
+     * Creates an IReporatble object from the directory name and ReportConfiguration
+     * object.
+     * 
      * @param baseDirectory the directory that contains the files to report on.
      * @param config the ReportConfiguration.
      * @return the IReportale instance containing the files.

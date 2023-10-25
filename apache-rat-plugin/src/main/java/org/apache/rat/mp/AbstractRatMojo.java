@@ -52,6 +52,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.SourceCodeManagementSystems;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
@@ -252,9 +253,11 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     }
 
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
-        //@SuppressWarnings("resource")
-        ReportConfiguration result = new ReportConfiguration();
         
+        ReportConfiguration config = new ReportConfiguration();
+        if (addDefaultLicenses) {
+            config.setFrom(getDefaultsBuilder().build());
+        }
         if (additionalLicenseFiles != null) {
             for (String licenseFile : additionalLicenseFiles) {
                 try {
@@ -267,8 +270,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     LicenseReader lReader = fmt.licenseReader();
                     if (lReader != null) {
                             lReader.addLicenses(url);
-                    result.addLicenses(lReader.readLicenses());
-                    result.addApprovedLicenseCategories(lReader.approvedLicenseId());
+                    config.addLicenses(lReader.readLicenses());
+                    config.addApprovedLicenseCategories(lReader.approvedLicenseId());
                     }
                 } catch (MalformedURLException e) {
                     throw new ConfigurationException(licenseFile + " is not a valid license file", e);
@@ -284,7 +287,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     : (l) -> {
                     };
 
-            Consumer<ILicenseFamily> process = logger.andThen(result::addFamily);
+            Consumer<ILicenseFamily> process = logger.andThen(config::addFamily);
             Arrays.stream(families).map(Family::build).forEach(process);
         }
         if (licenses != null) {
@@ -296,19 +299,19 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     : (l) -> {
                     };
             Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)
-                    ? (l) -> result.addApprovedLicenseCategory(l.getLicenseFamily())
+                    ? (l) -> config.addApprovedLicenseCategory(l.getLicenseFamily())
                     : (l) -> {
                     };
 
-            Consumer<ILicense> process = logger.andThen(result::addLicense).andThen(addApproved);
-            Arrays.stream(licenses).map(x -> x.build(result.getLicenseFamilies(LicenseFilter.all))).forEach(process);
+            Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
+            Arrays.stream(licenses).map(x -> x.build(config.getLicenseFamilies(LicenseFilter.all))).forEach(process);
         }
 
         if (approvedLicenses != null && approvedLicenses.length > 0) {
-            Arrays.stream(approvedLicenses).forEach(result::addApprovedLicenseCategory);
+            Arrays.stream(approvedLicenses).forEach(config::addApprovedLicenseCategory);
         }
-        result.setReportable(getReportable());
-        return result;
+        config.setReportable(getReportable());
+        return config;
     }
 
     protected void logLicenses(Collection<ILicense> licenses) {

@@ -20,7 +20,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.apache.rat.test</groupId>
+	<groupId>org.codehaus.mojo.rat.test</groupId>
 	<artifactId>it1</artifactId>
 	<version>1.0</version>
 	<build>
@@ -29,14 +29,15 @@
 				<groupId>org.apache.rat</groupId>
 				<artifactId>apache-rat-plugin</artifactId>
 				<version>@pom.version@</version>
-				<configuration>
+				<configuration>		
 					<licenses>
-<!--						<license>-->
-<!--							<id>CpyrP</id>-->
-<!--							<name>Copyright with properties</name>-->
-<!--							<notes></notes>-->
-<!--							<copyright start="1990" end="1991" owner="foo" />-->
-<!--						</license>-->
+						<!--						<license>-->
+						<!--							<id>CpyrP</id>-->
+						<!--							<name>Copyright with properties</name>-->
+						<!--							<notes></notes>-->
+						<!--							<copyright start="1990" end="1991" owner="foo"
+						/>-->
+						<!--						</license>-->
 						<license>
 							<family>GEN</family>
 							<id>CpyrT</id>
@@ -48,12 +49,12 @@
 								<owner>foo</owner>
 							</copyright>
 						</license>
-<!--						<license>-->
-<!--							<id>RegxP</id>-->
-<!--							<name>Regex with properties</name>-->
-<!--							<notes></notes>-->
-<!--							<regex expr="regex property" />-->
-<!--						</license>-->
+						<!--						<license>-->
+						<!--							<id>RegxP</id>-->
+						<!--							<name>Regex with properties</name>-->
+						<!--							<notes></notes>-->
+						<!--							<regex expr="regex property" />-->
+						<!--						</license>-->
 						<license>
 							<family>GEN</family>
 							<id>RegxT</id>
@@ -61,12 +62,12 @@
 							<notes></notes>
 							<regex>regex tag</regex>
 						</license>
-<!--						<license>-->
-<!--							<id>SpdxP</id>-->
-<!--							<name>Spdx with properties</name>-->
-<!--							<notes></notes>-->
-<!--							<spdx name="spdx-property" />-->
-<!--						</license>-->
+						<!--						<license>-->
+						<!--							<id>SpdxP</id>-->
+						<!--							<name>Spdx with properties</name>-->
+						<!--							<notes></notes>-->
+						<!--							<spdx name="spdx-property" />-->
+						<!--						</license>-->
 						<license>
 							<family>GEN</family>
 							<id>SpdxT</id>
@@ -74,12 +75,12 @@
 							<notes></notes>
 							<spdx>spxd-tag</spdx>
 						</license>
-<!--						<license>-->
-<!--							<id>TextP</id>-->
-<!--							<name>Text with properties</name>-->
-<!--							<notes></notes>-->
-<!--							<text text="text-property" />-->
-<!--						</license>-->
+						<!--						<license>-->
+						<!--							<id>TextP</id>-->
+						<!--							<name>Text with properties</name>-->
+						<!--							<notes></notes>-->
+						<!--							<text text="text-property" />-->
+						<!--						</license>-->
 						<license>
 							<family>GEN</family>
 							<id>TextT</id>

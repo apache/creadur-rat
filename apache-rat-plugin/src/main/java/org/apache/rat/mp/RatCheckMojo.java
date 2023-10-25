@@ -109,7 +109,6 @@ public class RatCheckMojo extends AbstractRatMojo {
             return;
         }
         ReportConfiguration config = getConfiguration();
-        config.setFrom(getDefaultsBuilder().build());
         logLicenses(config.getLicenses(LicenseFilter.all));
         final File parent = reportFile.getParentFile();
         if (!parent.mkdirs() && !parent.isDirectory()) {

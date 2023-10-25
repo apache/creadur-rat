@@ -18,7 +18,6 @@
  */
 package org.apache.rat.mp;
 
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.configuration.builders.TextBuilder;
 
 public class Text extends TextBuilder {

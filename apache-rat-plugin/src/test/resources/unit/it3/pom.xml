@@ -30,6 +30,8 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
+				<numUnapprovedLicenses>1</numUnapprovedLicenses>
+				<addLicenseHeaders>true</addLicenseHeaders>
         </configuration>
       </plugin>
     </plugins>

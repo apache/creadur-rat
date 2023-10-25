@@ -19,11 +19,9 @@
 package org.apache.rat.mp;
 
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
-public class Family  {
+public class Family {
 
     private ILicenseFamily.Builder builder = ILicenseFamily.builder();
 
@@ -37,8 +35,7 @@ public class Family  {
     }
 
     public ILicenseFamily build() {
-        return builder.setLicenseFamilyCategory(id)
-                .setLicenseFamilyName(name).build();
+        return builder.setLicenseFamilyCategory(id).setLicenseFamilyName(name).build();
     }
 
 }
