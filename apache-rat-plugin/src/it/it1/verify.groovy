@@ -20,4 +20,4 @@ assert f.exists()
 
 content = f.text
 
-assert content.contains( 'Not   src.apt' )
+assert content.contains( 'YAL   src.apt' )

@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -290,6 +291,11 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             Consumer<ILicenseFamily> process = logger.andThen(config::addFamily);
             Arrays.stream(families).map(Family::build).forEach(process);
         }
+
+        if (approvedLicenses != null && approvedLicenses.length > 0) {
+            Arrays.stream(approvedLicenses).forEach(config::addApprovedLicenseCategory);
+        }
+        
         if (licenses != null) {
             Log log = getLog();
             if (log.isDebugEnabled()) {
@@ -304,12 +310,10 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     };
 
             Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
-            Arrays.stream(licenses).map(x -> x.build(config.getLicenseFamilies(LicenseFilter.all))).forEach(process);
+            SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.all);
+            Arrays.stream(licenses).map(x -> x.build(families)).forEach(process);
         }
 
-        if (approvedLicenses != null && approvedLicenses.length > 0) {
-            Arrays.stream(approvedLicenses).forEach(config::addApprovedLicenseCategory);
-        }
         config.setReportable(getReportable());
         return config;
     }

@@ -53,7 +53,7 @@ public class License extends EnclosingMatcher {
     }
 
     public ILicense build(SortedSet<ILicenseFamily> context) {
-        return builder.setDerivedFrom(derivedFrom).setLicenseFamilyCategory(family)
+        return builder.setDerivedFrom(derivedFrom).setLicenseFamilyCategory(family).setId(id)
                 .setName(name).setNotes(notes).build(context);
     }
 

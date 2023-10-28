@@ -30,6 +30,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
@@ -105,7 +106,7 @@ public class DefaultPolicyTest {
     @Test
     public void testUnApprovedLicenses() {
         SortedSet<ILicenseFamily> all = defaults.getLicenseFamilies(LicenseFilter.all);
-        SortedSet<ILicenseFamily> unapproved = LicenseSetFactory.emptyLicenseFamilySet();
+        SortedSet<ILicenseFamily> unapproved = LicenseFamilySetFactory.emptyLicenseFamilySet();
         unapproved.addAll(all);
         unapproved.removeAll(defaults.getLicenseFamilies(LicenseFilter.approved));
 
@@ -134,7 +135,7 @@ public class DefaultPolicyTest {
 
         policy.add(testingFamily);
         assertNotNull("Did not properly add ILicenseFamily",
-                LicenseSetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
+                LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
         policy.analyse(document);
         assertApproval(true);
     }
@@ -151,7 +152,7 @@ public class DefaultPolicyTest {
         policy.add(testingFamily);
         assertEquals(1, policy.getApprovedLicenseNames().size());
         assertNotNull("Did not properly add ILicenseFamily",
-                LicenseSetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
+                LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
         policy.analyse(document);
         assertApproval(true);
     }

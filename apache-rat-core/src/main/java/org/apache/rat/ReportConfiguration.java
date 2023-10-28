@@ -38,6 +38,7 @@ import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
@@ -48,7 +49,7 @@ import org.apache.rat.report.IReportable;
  * configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration {    
-    private SortedSet<ILicenseFamily> families = LicenseSetFactory.emptyLicenseFamilySet();
+    private SortedSet<ILicenseFamily> families = LicenseFamilySetFactory.emptyLicenseFamilySet();
     private SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
     private SortedSet<String> approvedLicenseCategories = new TreeSet<>();
     private SortedSet<String> removedLicenseCategories = new TreeSet<>();
@@ -419,7 +420,7 @@ public class ReportConfiguration {
      * @return The set of defined licenses.
      */
     public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
-        return new LicenseSetFactory(licenses, getApprovedLicenseCategories()).getLicenseFamilies(filter);
+        return new LicenseFamilySetFactory(families, getApprovedLicenseCategories()).getFamilies(filter);
     }
 
     /**

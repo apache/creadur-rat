@@ -59,14 +59,6 @@ public class LicenseSetFactory {
     public static SortedSet<ILicense> emptyLicenseSet() {
         return new TreeSet<>(ILicense.getComparator());
     }
-    
-    /**
-     * Create an empty sorted Set with proper comparator.
-     * @return An empty sorted set of ILicenseFamily objects.
-     */
-    public static SortedSet<ILicenseFamily> emptyLicenseFamilySet() {
-        return new TreeSet<>();
-    }
 
     /**
      * Create a sorted set of licenses families from the collection.
@@ -109,7 +101,7 @@ public class LicenseSetFactory {
         case all:
             return extractFamily(licenses);
         case approved:
-            SortedSet<ILicenseFamily> result = LicenseSetFactory.emptyLicenseFamilySet();
+            SortedSet<ILicenseFamily> result = LicenseFamilySetFactory.emptyLicenseFamilySet();
             licenses.stream().map(ILicense::getLicenseFamily)
             .filter(x -> approvedLicenses.contains(x.getFamilyCategory()))
                     .forEach(result::add);
@@ -151,7 +143,7 @@ public class LicenseSetFactory {
      */
     public static ILicense search(String licenseId, SortedSet<ILicense> licenses) {
         ILicenseFamily searchFamily = ILicenseFamily.builder().setLicenseFamilyCategory(licenseId)
-                .setLicenseFamilyCategory("searching proxy").build();
+                .setLicenseFamilyName("searching proxy").build();
         ILicense target = new ILicense() {
     
             @Override
@@ -217,17 +209,6 @@ public class LicenseSetFactory {
      */
     public static ILicense search(ILicense target, SortedSet<ILicense> licenses) {
         SortedSet<ILicense> part = licenses.tailSet(target);
-        return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
-    }
-
-    /**
-     * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
-     * @param target The instance to serch  for.
-     * @param licenseFamilies the license families to search
-     * @return
-     */
-    public static ILicenseFamily search(ILicenseFamily target, SortedSet<ILicenseFamily> licenseFamilies) {
-        SortedSet<ILicenseFamily> part = licenseFamilies.tailSet(target);
         return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
     

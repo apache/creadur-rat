@@ -371,35 +371,47 @@ public class ReportConfigurationTest {
      * @param config The configuration to test.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config) {
-        assertEquals("Wrong number of approved licenses", ConfigurationReaderTest.EXPECTED_IDS.length,config.getApprovedLicenseCategories().size());
+        validateDefaultApprovedLicenses(config, 0);
+    }
+    
+    /**
+     * Validates that the configuration contains the default approved licenses.
+     * @param config The configuration to test.
+     */
+    public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
+        assertEquals("Wrong number of approved licenses", ConfigurationReaderTest.EXPECTED_IDS.length+additionalIdCount,config.getApprovedLicenseCategories().size());
         for (String s : ConfigurationReaderTest.EXPECTED_IDS) {
             assertTrue("Missing apporved license category "+s, config.getApprovedLicenseCategories().contains(ILicenseFamily.makeCategory(s)));
         }
     }
     
+
     /**
      * Validates that the configruation contains the default license families.
      * @param config the configuration to test.
      */
-    public static void validateDefaultLicenseFamilies(ReportConfiguration config) {
-        assertEquals("wrong number of license families",ConfigurationReaderTest.EXPECTED_IDS.length,config.getFamilies().size());
-        List<String> expected = Arrays.asList(ConfigurationReaderTest.EXPECTED_IDS);
+    public static void validateDefaultLicenseFamilies(ReportConfiguration config, String...additionalIds) {
+        assertEquals("wrong number of license families",ConfigurationReaderTest.EXPECTED_IDS.length+additionalIds.length,config.getFamilies().size());
+        List<String> expected = new ArrayList<>();
+        expected.addAll(Arrays.asList(ConfigurationReaderTest.EXPECTED_IDS));
+        expected.addAll(Arrays.asList(additionalIds));
         for (ILicenseFamily family : config.getFamilies()) {
             assertTrue("Missing license family "+family.getFamilyCategory(),  expected.contains(family.getFamilyCategory().trim()));
         }
     }
-    
+
     /**
      * Validates that the configuration contains the default licenses.
      * @param config the configuration to test.
      */
-    public static void validateDefaultLicenses(ReportConfiguration config) {
-        assertEquals("wrong number of licenses", ConfigurationReaderTest.EXPECTED_LICENSES.length, config.getLicenses(LicenseFilter.all).size());
-        List<String>  expected = Arrays.asList(ConfigurationReaderTest.EXPECTED_LICENSES);
+    public static void validateDefaultLicenses(ReportConfiguration config, String...additionalLicenses) {
+        assertEquals("wrong number of licenses", ConfigurationReaderTest.EXPECTED_LICENSES.length+additionalLicenses.length, config.getLicenses(LicenseFilter.all).size());
+        List<String> expected = new ArrayList<>();
+        expected.addAll(Arrays.asList(ConfigurationReaderTest.EXPECTED_LICENSES));
+        expected.addAll(Arrays.asList(additionalLicenses));
         for (ILicense license : config.getLicenses(LicenseFilter.all)) {
             assertTrue("Missing license "+license.getId(), expected.contains(license.getId()));
         }
-        
     }
     
     /**

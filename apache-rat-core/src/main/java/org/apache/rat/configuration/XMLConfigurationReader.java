@@ -21,10 +21,8 @@ package org.apache.rat.configuration;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -46,6 +44,7 @@ import org.apache.rat.configuration.builders.MatcherRefBuilder;
 import org.apache.rat.configuration.builders.TextCaptureBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -132,7 +131,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         matchersElement = document.createElement(MATCHERS);
         rootElement.appendChild(matchersElement);
         licenses = LicenseSetFactory.emptyLicenseSet();
-        licenseFamilies = LicenseSetFactory.emptyLicenseFamilySet();
+        licenseFamilies = LicenseFamilySetFactory.emptyLicenseFamilySet();
         approvedFamilies = new TreeSet<>();
         matchers = new HashMap<>();
     }

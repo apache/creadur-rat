@@ -30,14 +30,21 @@
 				<artifactId>apache-rat-plugin</artifactId>
 				<version>@pom.version@</version>
 				<configuration>		
-					<licenses>
-						<!--						<license>-->
-						<!--							<id>CpyrP</id>-->
-						<!--							<name>Copyright with properties</name>-->
-						<!--							<notes></notes>-->
-						<!--							<copyright start="1990" end="1991" owner="foo"
-						/>-->
-						<!--						</license>-->
+					<families>
+                        <family>
+                        <id>YAL</id>
+                        <name>Yet another license</name>
+                        </family>
+                    </families>
+                    <approvedLicenses>
+                        <approvedLicense>YAL</approvedLicense>
+                    </approvedLicenses>
+                    <licenses>
+                        <license>
+                            <id>MyLicense</id>
+                            <family>YAL</family>
+                            <text>Yet Another License</text>
+                        </license>
 						<license>
 							<family>GEN</family>
 							<id>CpyrT</id>
@@ -49,12 +56,6 @@
 								<owner>foo</owner>
 							</copyright>
 						</license>
-						<!--						<license>-->
-						<!--							<id>RegxP</id>-->
-						<!--							<name>Regex with properties</name>-->
-						<!--							<notes></notes>-->
-						<!--							<regex expr="regex property" />-->
-						<!--						</license>-->
 						<license>
 							<family>GEN</family>
 							<id>RegxT</id>
@@ -62,12 +63,6 @@
 							<notes></notes>
 							<regex>regex tag</regex>
 						</license>
-						<!--						<license>-->
-						<!--							<id>SpdxP</id>-->
-						<!--							<name>Spdx with properties</name>-->
-						<!--							<notes></notes>-->
-						<!--							<spdx name="spdx-property" />-->
-						<!--						</license>-->
 						<license>
 							<family>GEN</family>
 							<id>SpdxT</id>
@@ -75,12 +70,6 @@
 							<notes></notes>
 							<spdx>spxd-tag</spdx>
 						</license>
-						<!--						<license>-->
-						<!--							<id>TextP</id>-->
-						<!--							<name>Text with properties</name>-->
-						<!--							<notes></notes>-->
-						<!--							<text text="text-property" />-->
-						<!--						</license>-->
 						<license>
 							<family>GEN</family>
 							<id>TextT</id>

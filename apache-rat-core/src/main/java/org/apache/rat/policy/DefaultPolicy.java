@@ -26,6 +26,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 
 /**
@@ -39,7 +40,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
      * @param approvedLicenseFamilies the approved license families.
      */
     public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseFamilies) {
-        this.approvedLicenseFamilies = LicenseSetFactory.emptyLicenseFamilySet();
+        this.approvedLicenseFamilies = LicenseFamilySetFactory.emptyLicenseFamilySet();
         this.approvedLicenseFamilies.addAll(approvedLicenseFamilies);
     }
 

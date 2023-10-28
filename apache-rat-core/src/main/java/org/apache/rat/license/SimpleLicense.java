@@ -18,6 +18,8 @@
  */
 package org.apache.rat.license;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 
@@ -34,12 +36,14 @@ class SimpleLicense implements ILicense {
     private String id;
 
     SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes, String name, String id) {
+        Objects.requireNonNull(matcher, "Matcher must not be null");
+        Objects.requireNonNull(family, "Family must not be null");  
         this.family = family;
         this.matcher = matcher;
         this.derivedFrom = derivedFrom;
         this.notes = notes;
-        this.name = name;
-        this.id = id;
+        this.name = StringUtils.defaultIfBlank(name, family.getFamilyName());
+        this.id = StringUtils.defaultIfBlank(id, family.getFamilyCategory().trim());
     }
 
     @Override
@@ -69,7 +73,7 @@ class SimpleLicense implements ILicense {
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(id, family.getFamilyCategory().trim());
+        return id;
     }
 
     @Override
@@ -114,6 +118,6 @@ class SimpleLicense implements ILicense {
     
     @Override
     public String getName() {
-        return StringUtils.defaultIfBlank(name, family.getFamilyName());
+        return name;
     }
 }
