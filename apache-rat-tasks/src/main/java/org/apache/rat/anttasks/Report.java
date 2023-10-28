@@ -19,10 +19,7 @@
 package org.apache.rat.anttasks;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,10 +34,7 @@ import org.apache.rat.Reporter;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
-import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -82,7 +76,7 @@ public class Report extends Task {
 
     public Report() {
         configuration = new ReportConfiguration();
-        configuration.setOut(()->new LogOutputStream(this, Project.MSG_INFO));
+        configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
         defaultsBuilder = Defaults.builder();
     }
 
@@ -109,7 +103,7 @@ public class Report extends Task {
     public void addLicense(License lic) {
         licenses.add(lic);
     }
-    
+
     public void addFamily(Family family) {
         families.add(family);
     }
@@ -125,7 +119,7 @@ public class Report extends Task {
     }
 
     public void addStyleSheet(Resource styleSheet) {
-        configuration.setStyleSheet(()->styleSheet.getInputStream());
+        configuration.setStyleSheet(() -> styleSheet.getInputStream());
         configuration.setStyleReport(true);
     }
 
@@ -154,9 +148,9 @@ public class Report extends Task {
             }
             LicenseReader lReader = fmt.licenseReader();
             if (lReader != null) {
-                    lReader.addLicenses(url);
-            configuration.addLicenses(lReader.readLicenses());
-            configuration.addApprovedLicenseCategories(lReader.approvedLicenseId());
+                lReader.addLicenses(url);
+                configuration.addLicenses(lReader.readLicenses());
+                configuration.addApprovedLicenseCategories(lReader.approvedLicenseId());
             }
         } catch (MalformedURLException e) {
             throw new BuildException("Can not read license file " + fileName, e);
@@ -176,9 +170,11 @@ public class Report extends Task {
     public void setAddApprovedLicense(String familyCategory) {
         configuration.addApprovedLicenseCategory(familyCategory);
     }
+
     public void addAddApprovedLicense(String familyCategory) {
         configuration.addApprovedLicenseCategory(familyCategory);
     }
+
     public void setRemoveApprovedLicense(String familyCategory) {
         configuration.removeApprovedLicenseCategory(familyCategory);
     }
@@ -202,16 +198,15 @@ public class Report extends Task {
             throw new BuildException("Can not open additional default definitions: " + fileName.toString(), e);
         }
     }
-    
+
     public ReportConfiguration getConfiguration() {
         Defaults defaults = defaultsBuilder.build();
-        
+
         configuration.setFrom(defaults);
         configuration.setReportable(new ResourceCollectionContainer(nestedResources));
         families.stream().map(Family::build).forEach(configuration::addFamily);
-        licenses.stream().map(License::asBuilder).forEach(l -> 
-            configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily())
-        );
+        licenses.stream().map(License::asBuilder)
+                .forEach(l -> configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily()));
         return configuration;
     }
 
@@ -283,8 +278,8 @@ public class Report extends Task {
 
         @Override
         public String[] getValues() {
-            return Arrays.stream(LicenseSetFactory.LicenseFilter.values()).map(LicenseSetFactory.LicenseFilter::name).collect(Collectors.toList())
-                    .toArray(new String[LicenseSetFactory.LicenseFilter.values().length]);
+            return Arrays.stream(LicenseSetFactory.LicenseFilter.values()).map(LicenseSetFactory.LicenseFilter::name)
+                    .collect(Collectors.toList()).toArray(new String[LicenseSetFactory.LicenseFilter.values().length]);
         }
 
         public LicenseSetFactory.LicenseFilter internalFilter() {
