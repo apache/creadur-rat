@@ -76,7 +76,7 @@
 
   <target name="testLicenseRequiresFamilyName">
     <au:expectfailure
-        expectedMessage="License family may not be null.  Family YASL1 not found">
+        expectedMessage="License family YASL1 not found">
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license

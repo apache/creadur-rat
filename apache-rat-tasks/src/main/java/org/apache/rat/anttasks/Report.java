@@ -202,6 +202,18 @@ public class Report extends Task {
             throw new BuildException("Can not open additional default definitions: " + fileName.toString(), e);
         }
     }
+    
+    public ReportConfiguration getConfiguration() {
+        Defaults defaults = defaultsBuilder.build();
+        
+        configuration.setFrom(defaults);
+        configuration.setReportable(new ResourceCollectionContainer(nestedResources));
+        families.stream().map(Family::build).forEach(configuration::addFamily);
+        licenses.stream().map(License::asBuilder).forEach(l -> 
+            configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily())
+        );
+        return configuration;
+    }
 
     /**
      * Generates the report.
@@ -209,16 +221,7 @@ public class Report extends Task {
     @Override
     public void execute() {
         try {
-            Defaults defaults = defaultsBuilder.build();
-            
-            configuration.setFrom(defaults);
-            configuration.setReportable(new ResourceCollectionContainer(nestedResources));
-            families.stream().map(Family::build).forEach(configuration::addFamily);
-            licenses.stream().map(License::asBuilder).forEach(l -> 
-                configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily())
-            );
-            validate();
-            Reporter.report(configuration);
+            Reporter.report(validate(getConfiguration()));
         } catch (BuildException e) {
             throw e;
         } catch (Exception ioex) {
@@ -229,15 +232,16 @@ public class Report extends Task {
     /**
      * validates the task's configuration.
      */
-    private void validate() {
+    private ReportConfiguration validate(ReportConfiguration cfg) {
         try {
-            configuration.validate(s -> log(s, Project.MSG_WARN));
+            cfg.validate(s -> log(s, Project.MSG_WARN));
         } catch (ConfigurationException e) {
             throw new BuildException(e.getMessage(), e.getCause());
         }
         if (nestedResources == null) {
             throw new BuildException("You must specify at least one file to create the report for.");
         }
+        return cfg;
     }
 
     /**

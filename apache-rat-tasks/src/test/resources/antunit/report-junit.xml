@@ -53,6 +53,11 @@
 	</target>
 
 	<target name="all" />
+	
+	<target name="testDefault">
+		<rat:report />
+	</target>
+	
 	<target name="testWithReportSentToFile">
 		<property name="report.file" location="${output.dir}/selftest.report" />
 		<rat:report reportFile="${report.file}">
