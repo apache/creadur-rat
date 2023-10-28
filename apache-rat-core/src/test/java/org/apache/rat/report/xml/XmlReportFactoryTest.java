@@ -75,7 +75,7 @@ public class XmlReportFactoryTest {
         when(mockLicense.matches(any())).thenReturn(State.t);
         when(mockLicense.getLicenseFamily()).thenReturn(family);
 
-        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
+        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY, false);
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.addLicense(mockLicense);

@@ -37,8 +37,10 @@ public class DirectoryWalker extends Walker implements IReportable {
 
     protected static final FileNameComparator COMPARATOR = new FileNameComparator();
 
-    public DirectoryWalker(File file) {
-        this(file, (FilenameFilter) null);
+    private boolean walkHiddenDirectories = false;
+
+    public DirectoryWalker(File file, boolean walkHiddenDirectories) {
+        this(file, (FilenameFilter) null, walkHiddenDirectories);
     }
 
     /**
@@ -47,17 +49,16 @@ public class DirectoryWalker extends Walker implements IReportable {
      * @param file   not null
      * @param filter filters input files (optional),
      *               or null when no filtering should be performed
+     * @param walkHiddenDirectories true to walk hidden directories (e.g. directory with a dot), false else
      */
-    public DirectoryWalker(File file, final FilenameFilter filter) {
+    public DirectoryWalker(File file, final FilenameFilter filter, boolean walkHiddenDirectories) {
         super(file.getPath(), file, filter);
+        this.walkHiddenDirectories = walkHiddenDirectories;
     }
 
-    public DirectoryWalker(File file, final Pattern ignoreNameRegex) {
+    public DirectoryWalker(File file, final Pattern ignoreNameRegex, boolean walkHiddenDirectories) {
         super(file.getPath(), file, regexFilter(ignoreNameRegex));
-    }
-
-    public boolean isRestricted() {
-        return false;
+        this.walkHiddenDirectories = walkHiddenDirectories;
     }
 
     /**
@@ -68,7 +69,11 @@ public class DirectoryWalker extends Walker implements IReportable {
      * @throws RatException
      */
     private void processDirectory(RatReport report, final File file) throws RatException {
-        if (!isRestricted(file)) {
+        if (file.getName().startsWith(".")) {
+            if (walkHiddenDirectories) {
+                process(report, file);
+            }
+        } else {
             process(report, file);
         }
     }

@@ -95,6 +95,15 @@ public class RatCheckMojo extends AbstractRatMojo {
     private boolean consoleOutput;
 
     /**
+     * Enable scan on hidden directories (e.g. directory starting with dot).
+     * Defaults is {@code false}.
+     *
+     * @since 0.16
+     */
+    @Parameter(property = "rat.scanHiddenDirectories", defaultValue = "false")
+    private boolean scanHiddenDirectories;
+
+    /**
      * Invoked by Maven to execute the Mojo.
      *
      * @throws MojoFailureException An error in the plugin configuration was
@@ -109,6 +118,7 @@ public class RatCheckMojo extends AbstractRatMojo {
             return;
         }
         ReportConfiguration config = getConfiguration();
+        config.setScanHiddenDirectories(scanHiddenDirectories);
         config.setFrom(getDefaultsBuilder().build());
         logLicenses(config.getLicenses(LicenseFilter.all));
         final File parent = reportFile.getParentFile();

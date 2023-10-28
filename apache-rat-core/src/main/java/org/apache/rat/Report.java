@@ -96,6 +96,10 @@ public class Report {
      */
     private static final String NO_DEFAULTS = "no-default-licenses";
     /**
+     * Scan hidden directory, e.g. directory starting with dot.
+     */
+    private static final String SCAN_HIDDEN_DIRECTORIES = "scan-hidden-directories";
+    /**
      * List the licenses that were used for the run.
      */
     private static final String LIST_LICENSES = "list-licenses";
@@ -147,6 +151,10 @@ public class Report {
         if (args == null || args.length != 1) {
             printUsage(opts);
         } else {
+
+            if (cl.hasOption(SCAN_HIDDEN_DIRECTORIES)) {
+                configuration.setScanHiddenDirectories(true);
+            }
 
             if (cl.hasOption('a') || cl.hasOption('A')) {
                 configuration
@@ -272,6 +280,7 @@ public class Report {
         opts.addOption(null, LICENSES, true, "File names or URLs for license definitions");
         opts.addOption(null, LIST_LICENSES, false, "List all active licenses");
         opts.addOption(null, LIST_LICENSE_FAMILIES, false, "List all defined license families");
+        opts.addOption(null, SCAN_HIDDEN_DIRECTORIES, false, "Scan hidden directories e.g. directory starting with dot");
 
         OptionGroup addLicenseGroup = new OptionGroup();
         String addLicenseDesc = "Add the default license header to any file with an unknown license that is not in the exclusion list. "
@@ -359,7 +368,7 @@ public class Report {
             }
 
             if (base.isDirectory()) {
-                return new DirectoryWalker(base, config.getInputFileFilter());
+                return new DirectoryWalker(base, config.getInputFileFilter(), config.isScanHiddenDirectories());
             }
 
             try {

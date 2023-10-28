@@ -59,6 +59,7 @@ public class ReportConfiguration {
     private IOSupplier<InputStream> styleSheet = null;
     private IReportable reportable = null;
     private FilenameFilter inputFileFilter = null;
+    private boolean scanHiddenDirectories = false;
 
     /**
      * @return The filename filter for the potential input files.
@@ -194,7 +195,7 @@ public class ReportConfiguration {
      * Adds multiple licenses to the list of licenses. Does not add the licenses to
      * the list of approved licenses.
      *
-     * @param license The license t oadd.
+     * @param licenses The licenses to add.
      */
     public void addLicenses(Collection<ILicense> licenses) {
         this.licenses.addAll(licenses);
@@ -277,7 +278,6 @@ public class ReportConfiguration {
      * This value is ignored, if no license headers are added.
      *
      * @param copyrightMessage message to set.
-     * @see #setAddingLicenses(boolean)
      */
     public void setCopyrightMessage(String copyrightMessage) {
         this.copyrightMessage = copyrightMessage;
@@ -308,7 +308,6 @@ public class ReportConfiguration {
      * 
      * @param addLicenseHeaders enables/disables or forces adding of licenses
      * headers.
-     * @see #setAddingLicensesForced(boolean)
      * @see #setCopyrightMessage(String)
      */
     public void setAddLicenseHeaders(AddLicenseHeaders addLicenseHeaders) {
@@ -367,9 +366,26 @@ public class ReportConfiguration {
     }
 
     /**
+     *
+     * @return true if rat scan hidden directories (e.g. directory starting with dot), false to ignore hidden directories
+     */
+    public boolean isScanHiddenDirectories() {
+        return this.scanHiddenDirectories;
+    }
+
+    /**
+     * Define if rat should scan hidden directories (e.g. directory starting with dot) or not.
+     *
+     * @param scanHiddenDirectories true to scan hidden directories, false else.
+     */
+    public void setScanHiddenDirectories(boolean scanHiddenDirectories) {
+        this.scanHiddenDirectories = scanHiddenDirectories;
+    }
+
+    /**
      * Validates that the configuration is valid.
      * 
-     * @param a String consumer to log warning messages to.
+     * @param logger String consumer to log warning messages to.
      */
     public void validate(Consumer<String> logger) {
         if (reportable == null) {

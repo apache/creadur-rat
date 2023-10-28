@@ -107,10 +107,14 @@ public class Report extends Task {
         licenses.add(lic);
     }
 
+    public void setScanHiddenDirectories(boolean scanHiddenDirectories) {
+        configuration.setScanHiddenDirectories(scanHiddenDirectories);
+    }
+
     /**
      * 
      * @param styleSheet
-     * @deprecated us {@link #addStyleSheet(File)}
+     * @deprecated us {@link #addStyleSheet(Resource)}
      */
     @Deprecated
     public void addStylesheet(Resource styleSheet) {
