@@ -146,71 +146,6 @@ public class Report {
         if (args == null || args.length != 1) {
             printUsage(opts);
         } else {
-            
-        
-//
-//            if (cl.hasOption('a') || cl.hasOption('A')) {
-//                configuration
-//                        .setAddLicenseHeaders(cl.hasOption('f') ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
-//                configuration.setCopyrightMessage(cl.getOptionValue("c"));
-//            }
-//
-//            if (cl.hasOption(EXCLUDE_CLI)) {
-//                String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
-//                if (excludes != null) {
-//                    final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
-//                    configuration.setInputFileFilter(filter);
-//                }
-//            } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
-//                String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
-//                if (excludeFileName != null) {
-//                    final FilenameFilter filter = parseExclusions(
-//                            FileUtils.readLines(new File(excludeFileName), Charset.forName("UTF-8")));
-//                    configuration.setInputFileFilter(filter);
-//                }
-//            }
-//
-////            if (cl.hasOption(NO_DEFAULTS)) {
-////                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.none);
-////            } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
-////                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.all);
-////            } else {
-////                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.approved);
-////            }
-//            if (cl.hasOption(XML)) {
-//                configuration.setStyleReport(false);
-//            } else {
-//                configuration.setStyleReport(true);
-//                if (cl.hasOption(STYLESHEET_CLI)) {
-//                    String[] style = cl.getOptionValues(STYLESHEET_CLI);
-//                    if (style.length != 1) {
-//                        System.err.println("please specify a single stylesheet");
-//                        System.exit(1);
-//                    }
-//                    configuration.setStyleSheet(() -> new FileInputStream(style[0]));
-//                }
-//            }
-//
-//            Defaults.Builder defaultBuilder = Defaults.builder();
-//            if (cl.hasOption(NO_DEFAULTS)) {
-//                defaultBuilder.noDefault();
-//            }
-//            if (cl.hasOption(LICENSES)) {
-//                for (String fn : cl.getOptionValues(LICENSES)) {
-//                    defaultBuilder.add(fn);
-//                }
-//            }
-//            Defaults defaults = defaultBuilder.build();
-//            configuration.setFrom(defaults);
-//            configuration.setReportable(getDirectory(args[0], configuration));
-//            configuration.validate(s -> System.err.println(s));
-//
-//            if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
-//                listLicenseFamilies(configuration.getLicenseFamilies(LicenseFilter.all), System.out);
-//            }
-//            if (cl.hasOption(LIST_LICENSES)) {
-//                listLicenses(configuration.getLicenses(LicenseFilter.all), System.out);
-//            }
             ReportConfiguration configuration = createConfiguration(args[0],cl);
             configuration.validate(s -> System.err.println(s));
 
@@ -247,13 +182,6 @@ public class Report {
             }
         }
 
-//            if (cl.hasOption(NO_DEFAULTS)) {
-//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.none);
-//            } else if (cl.hasOption(ALL_DEFAULT_LICENSES)) {
-//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.all);
-//            } else {
-//                configuration.setLicenseFilter(ReportConfiguration.LicenseFilter.approved);
-//            }
         if (cl.hasOption(XML)) {
             configuration.setStyleReport(false);
         } else {
