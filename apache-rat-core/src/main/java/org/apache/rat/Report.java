@@ -274,8 +274,7 @@ public class Report {
                 + "By default new files will be created with the license header, "
                 + "to force the modification of existing files use the --force option.";
 
-        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
-        // compatibility
+        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards compatibility
         Option addLicence = new Option(ADD_OLD, "addLicence", false, addLicenseDesc);
         addLicenseGroup.addOption(addLicence);
         Option addLicense = new Option(ADD, "addLicense", false, addLicenseDesc);
