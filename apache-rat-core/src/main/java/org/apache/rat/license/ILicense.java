@@ -63,37 +63,9 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         return (x, y) ->  x.getId().compareTo( y.getId() );
     }
 
-//    /**
-//     * The definition of a ILicense Builder.
-//     */
-//    interface Builder {
-//        ILicense build(SortedSet<ILicenseFamily> families);
-//        
-
-//        Builder setMatcher(IHeaderMatcher.Builder matcher);
-//        
-//        Builder setMatcher(IHeaderMatcher matcher);
-//
-
-//        Builder setNotes(String notes);
-
-//        Builder setDerivedFrom(String derivedFrom);
-//
-
-//        Builder setLicenseFamilyCategory(String licenseFamilyCategory);
-//
-
-//        Builder setName(String name);
-//        
-//        /**
-//         * Sets the ID of the license.
-//         * If the ID is not set then the ID of the license family is used.
-//         * @param id the ID for the license
-//         * @return this builder for chaining.
-//         */
-//        Builder setId(String id);
-//    }
-    
+    /**
+     * A builder for ILicense instances.
+     */
     class Builder  {
 
         private IHeaderMatcher.Builder matcher;
@@ -196,5 +168,4 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
             return new SimpleLicense(family, matcher.build(), derivedFrom, notes, name, id); 
         }
     }
-
 }
