@@ -31,7 +31,6 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseFamilySetFactory;
-import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingLocation;

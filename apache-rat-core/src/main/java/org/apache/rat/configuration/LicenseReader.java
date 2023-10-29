@@ -45,7 +45,7 @@ public interface LicenseReader {
     /**
      * Reads the configuration and extracts instances of ILicenseFamily.
      * 
-     * @return A collection of iLicensFamily.
+     * @return A collection of ILicensFamily.
      */
     SortedSet<ILicenseFamily> readFamilies();
 

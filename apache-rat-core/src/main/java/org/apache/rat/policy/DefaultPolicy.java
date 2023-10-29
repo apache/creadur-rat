@@ -27,7 +27,6 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseFamilySetFactory;
-import org.apache.rat.license.LicenseSetFactory;
 
 /**
  * A default Document Analyser that determines if the matched license is in the set of approved licenses.
