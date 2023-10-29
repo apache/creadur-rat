@@ -26,7 +26,7 @@
   <packaging>jar</packaging>
   <name>Apache Creadur Rat::Core</name>
   <description>The core functionality, shared by the Ant tasks
-		and the Maven plugin.</description>
+    and the Maven plugin.</description>
   <build>
     <resources>
       <resource>
@@ -52,26 +52,21 @@
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
             <excludes>
-              <!-- These files have bad license headers because
-							they are used to test bad license headers -->
+              <!-- These files have bad license headers because they are used to test bad license headers -->
               <exclude>src/test/resources/appliedAL20/bad/*.*</exclude>
               <exclude>src/test/resources/oasis/bad/*.*</exclude>
-              <!-- These files does not have license headers
-							because they are used to test license headers -->
+              <!-- These files does not have license headers because they are used to test license headers -->
               <exclude>src/test/resources/elements/Source.java</exclude>
               <exclude>
 								src/test/resources/elements/ILoggerFactory.java</exclude>
               <exclude>src/test/resources/elements/sub/Empty.txt</exclude>
               <exclude>src/test/resources/violations/bad.txt</exclude>
               <exclude>src/test/resources/violations/FilterTest.cs</exclude>
-              <!-- used to test for binary files; does not work on
-							UTF-8 (e.g. MacOSX) -->
+              <!-- used to test for binary files; does not work on UTF-8 (e.g. MacOSX) -->
               <exclude>src/test/resources/binaries/Image-png.not</exclude>
-              <!-- These files have a valid license header that
-							was not recognised by older rat versions -->
+              <!-- These files have a valid license header that was not recognised by older rat versions -->
               <exclude>src/test/resources/elements/TextHttps.txt</exclude>
-              <!-- Remove after using RAT 0.14 for dog-fooding
-							..... older versions do not ignore JSON -->
+              <!-- Remove after using RAT 0.14 for dog-fooding older versions do not ignore JSON -->
               <exclude>src/test/resources/elements/plain.json</exclude>
             </excludes>
           </configuration>
