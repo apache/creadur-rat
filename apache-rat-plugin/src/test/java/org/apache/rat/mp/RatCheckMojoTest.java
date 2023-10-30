@@ -91,6 +91,9 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         return (File) getVariableValueFromObject(pMojo, "reportFile");
     }
 
+    private String getDir(RatCheckMojo mojo) {
+        return mojo.getProject().getBasedir().getAbsolutePath().replace("\\","/") + "/";
+    }
     /**
      * Runs a check, which should expose no problems.
      *
@@ -100,8 +103,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         final RatCheckMojo mojo = newRatCheckMojo("it1");
         final File ratTxtFile = getRatTxtFile(mojo);
-        final String dir = mojo.getProject().getBasedir().getAbsolutePath() + "/";
-        final String[] expected = { " AL +\\Q" + dir + "pom.xml\\E", "Notes: 0", "Binaries: 0", "Archives: 0",
+        final String[] expected = { " AL +\\Q" + getDir(mojo) + "pom.xml\\E", "Notes: 0", "Binaries: 0", "Archives: 0",
                 "Standards: 1$", "Apache Licensed: 1$", "Generated Documents: 0", "^0 Unknown Licenses" };
 
         ReportConfiguration config = mojo.getConfiguration();
@@ -120,7 +122,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         final RatCheckMojo mojo = newRatCheckMojo("it2");
         final File ratTxtFile = getRatTxtFile(mojo);
-        final String dir = mojo.getProject().getBasedir().getAbsolutePath() + "/";
+        final String dir = getDir(mojo);
         final String[] expected = { "^Files with unapproved licenses:\\s+\\Q" + dir + "src.txt\\E\\s+", "Notes: 0",
                 "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
                 "^1 Unknown Licenses", " AL +\\Q" + dir + "pom.xml\\E$", "\\Q!????? " + dir + "src.txt\\E$",
@@ -142,7 +144,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testIt3() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it3", "check", true);
         final File ratTxtFile = getRatTxtFile(mojo);
-        final String dir = mojo.getProject().getBasedir().getAbsolutePath() + "/";
+        final String dir = getDir(mojo);
         final String[] expected = { "^Files with unapproved licenses:\\s+\\Q" + dir + "src.apt\\E\\s+", "Notes: 0",
                 "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
                 "^1 Unknown Licenses", " AL +\\Q" + dir + "pom.xml\\E$", "\\Q!????? " + dir + "src.apt\\E$",
