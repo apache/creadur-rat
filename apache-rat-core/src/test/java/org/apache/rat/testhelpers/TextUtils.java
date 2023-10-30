@@ -26,12 +26,12 @@ public class TextUtils {
     public static final String[] EMPTY = {};
     
     public static void assertPatternInOutput(String pPattern, String out) {
-        Assert.assertTrue("Output does not match string: " + pPattern,
+        Assert.assertTrue("Output does not match string: " + pPattern+"\n"+out,
                 isMatching(pPattern, out));
     }
     
     public static void assertPatternNotInOutput(String pPattern, String out) {
-        Assert.assertFalse("Output matches the pattern: " + pPattern,
+        Assert.assertFalse("Output matches the pattern: " + pPattern+"\n"+out,
                 isMatching(pPattern, out));
     }
 
