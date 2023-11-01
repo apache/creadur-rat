@@ -359,6 +359,7 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>apache-rat-plugin/src/test/resources/**</exclude>
               <exclude>apache-rat-plugin/src/it/**</exclude>
               <exclude>apache-rat-tasks/src/test/resources/**</exclude>
+              <!-- RAT-314: Can be removed after 0.16 is used for scanning -->
               <exclude>**/.mvn/**</exclude>
               <exclude>**/iso-8859-1.html</exclude>
               <exclude>**/velocity.log</exclude>
