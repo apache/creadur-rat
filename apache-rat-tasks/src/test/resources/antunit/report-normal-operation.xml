@@ -453,6 +453,7 @@ SPDX-License-Identifier: Apache-2.0
 		<echo file="${output.dir}/src/org/example/MyMatcher.java"><![CDATA[
 package org.example;
 
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
 
 public class MyMatcher extends AbstractSimpleMatcher {
@@ -461,7 +462,7 @@ public class MyMatcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    public boolean doMatch(String line) {
+    public boolean matches(IHeaders headers) {
         return true;
     }
 }

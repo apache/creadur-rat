@@ -21,6 +21,7 @@ package org.apache.rat.analysis.matchers;
 import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 /**
  * An IHeaderMatcher that reverses the result of an enclosed matcher.
  */
@@ -48,32 +49,12 @@ public class NotMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public State matches(String line) {
-        enclosed.matches(line);
-        return currentState();
+    public boolean matches(IHeaders headers) {
+        return !enclosed.matches(headers);
     }
 
     @Override
     public void reset() {
         enclosed.reset();
-    }
-
-    @Override
-    public State finalizeState() {
-        enclosed.finalizeState();
-        return currentState();
-    }
-
-    @Override
-    public State currentState() {
-        switch (enclosed.currentState()) {
-        case t:
-            return State.f;
-        case f:
-            return State.t;
-        default:
-        case i:
-            return State.i;
-        }
     }
 }

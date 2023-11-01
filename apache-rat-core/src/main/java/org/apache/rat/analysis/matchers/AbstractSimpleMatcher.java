@@ -24,7 +24,6 @@ package org.apache.rat.analysis.matchers;
  * {@code finalizeState()} method will convert {@code State.i} to {@code State.f}.
  */
 public abstract class AbstractSimpleMatcher extends AbstractHeaderMatcher {
-    private State lastState;
 
     /**
      * Constructs the AbstractSimpleMatcher with the specified id.
@@ -33,42 +32,11 @@ public abstract class AbstractSimpleMatcher extends AbstractHeaderMatcher {
      */
     protected AbstractSimpleMatcher(String id) {
         super(id);
-        this.lastState = State.i;
     }
-
-    /**
-     * Performs the actual match test.
-     * @param line the line to check.
-     * @return {@code true} if the line matches, {@code false} otherwise.
-     */
-    abstract protected boolean doMatch(String line);
-
-    @Override
-    public final State matches(String line) {
-        if (lastState == State.t) {
-            return lastState;
-        }
-        if (line != null && doMatch(line)) {
-            lastState = State.t;
-        }
-        return lastState;
-    }
-
+    
+    
     @Override
     public void reset() {
-        lastState = State.i;
-    }
-
-    @Override
-    public State finalizeState() {
-        if (lastState == State.i) {
-            lastState = State.f;
-        }
-        return lastState;
-    }
-
-    @Override
-    public final State currentState() {
-        return lastState;
+        // do nothing.
     }
 }

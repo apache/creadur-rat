@@ -21,6 +21,7 @@ package org.apache.rat.analysis.matchers;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 
 /**
  * A matcher that performs a logical {@code AND} across all the contained matchers.
@@ -45,32 +46,13 @@ public class AndMatcher extends AbstractMatcherContainer {
     }
 
     @Override
-    public State currentState() {
-        State dflt = State.t;
+    public boolean matches(IHeaders headers) {
         for (IHeaderMatcher matcher : enclosed) {
-            switch (matcher.currentState()) {
-            case f:
-                return State.f;
-            case i:
-                dflt = State.i;
-                break;
-            default:
-                // do nothing
-                break;
+            if (!matcher.matches(headers))
+            {
+                return false;
             }
         }
-        return dflt;
-    }
-
-    @Override
-    public State matches(String line) {
-        enclosed.stream().filter(x -> x.currentState() == State.i).forEach(x -> x.matches(line));
-        return currentState();
-    }
-
-    @Override
-    public State finalizeState() {
-        enclosed.forEach(IHeaderMatcher::finalizeState);
-        return currentState();
+        return true;
     }
 }

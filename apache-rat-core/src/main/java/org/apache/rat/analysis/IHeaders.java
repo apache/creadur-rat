@@ -1,3 +1,4 @@
+package org.apache.rat.analysis;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one   *
  * or more contributor license agreements.  See the NOTICE file *
@@ -16,25 +17,18 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Arrays;
-
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.testhelpers.TestingMatcher;
-import org.junit.jupiter.api.Test;
-
-public class OrMatcherTest extends AbstractMatcherTest {
-
+/**
+ * The processed headers from a file.
+ */
+public interface IHeaders {
+    /**
+     * @return the raw header as read from the file.
+     */
+    public String raw();
+    /**
+     * @return The pruned header.
+     */
+    public String pruned();
     
-    @Test
-    public void trueTest() {
-        IHeaderMatcher one = new TestingMatcher("one", false, false, true, true);
-        IHeaderMatcher two = new TestingMatcher("two", false, true, false, true);
-        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
-        assertValues(target, false, true, true, true);
-        target.reset();
-    }
 }
