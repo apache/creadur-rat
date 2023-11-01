@@ -24,7 +24,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.apache.rat.analysis.IHeaderMatcher.State;
+import java.util.Locale;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.analysis.IHeaders;
 
 public class FullTextMatcherTest {
 
@@ -34,43 +37,11 @@ public class FullTextMatcherTest {
     public void setup() {
         target.reset();
     }
-    
+
     @Test
     public void testMatch() {
-        assertEquals( State.i, target.currentState());
-        assertEquals( State.i, target.matches("what in the world"));
-        assertEquals( State.i, target.currentState());
-        assertEquals( State.t, target.matches("hello world"));
-        assertEquals( State.t, target.currentState());
-        assertEquals( State.t, target.finalizeState()); 
-        assertEquals( State.t, target.currentState());
-        target.reset();
-        assertEquals( State.i, target.currentState());
-    }
-    
-    @Test
-    public void testNoMatch() {
-        assertEquals( State.i, target.currentState());
-        assertEquals( State.i, target.matches("what in the world"));
-        assertEquals( State.i, target.currentState());
-        assertEquals( State.i, target.matches("hello there"));
-        assertEquals( State.i, target.currentState());
-        assertEquals( State.f, target.finalizeState());
-        assertEquals( State.f, target.currentState());
-        target.reset();
-        assertEquals( State.i, target.currentState());
-    }
-    
-    @Test
-    public void testTrueIsAlwaysTrue() {
-        assertEquals( State.i, target.currentState());
-        assertEquals( State.t, target.matches("hello world"));
-        assertEquals( State.t, target.currentState());
-        assertEquals( State.t, target.matches("A non matching line"));
-        assertEquals( State.t, target.currentState());        
-        assertEquals( State.t, target.finalizeState()); 
-        assertEquals( State.t, target.currentState());
-        target.reset();
-        assertEquals( State.i, target.currentState());
+        assertEquals(false, target.matches(AbstractMatcherTest.makeHeaders(null, "what in the world")));
+        assertEquals(true, target.matches(AbstractMatcherTest.makeHeaders(null, "hello world")));
+        assertEquals(true, target.matches(AbstractMatcherTest.makeHeaders(null, "HELLO world")));
     }
 }

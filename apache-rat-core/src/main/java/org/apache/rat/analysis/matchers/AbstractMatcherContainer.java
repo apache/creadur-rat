@@ -59,10 +59,4 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
     public void reset() {
         enclosed.forEach(IHeaderMatcher::reset);
     }
-
-    @Override
-    public State finalizeState() {
-        enclosed.forEach(IHeaderMatcher::finalizeState);
-        return currentState();
-    }
 }
