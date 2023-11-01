@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -104,7 +103,7 @@ public class XmlReportFactoryTest {
     public void testNoLicense() throws Exception {
 
         final ILicense mockLicense = mock(ILicense.class);
-        when(mockLicense.matches(any())).thenReturn(State.t);
+        when(mockLicense.matches(any())).thenReturn(true);
         when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         final ClaimStatistic statistic = new ClaimStatistic();

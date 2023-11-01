@@ -19,8 +19,6 @@
 package org.apache.rat.analysis.matchers;
 
 import static org.junit.Assert.assertEquals;
-
-import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.junit.Test;
 
 public class SimpleCopyrightTests {
@@ -29,15 +27,8 @@ public class SimpleCopyrightTests {
     
     @Test
     public void testTrueIsAlwaysTrue() {
-        
-        assertEquals( State.i, target.currentState());
-        assertEquals( State.t, target.matches("hello Copyright 1999"));
-        assertEquals( State.t, target.currentState());
-        assertEquals( State.t, target.matches("A non matching line"));
-        assertEquals( State.t, target.currentState());        
-        assertEquals( State.t, target.finalizeState()); 
-        assertEquals( State.t, target.currentState());
+        assertEquals( true, target.matches(AbstractMatcherTest.makeHeaders("hello Copyright 1999", null)));
+        assertEquals( false, target.matches(AbstractMatcherTest.makeHeaders("A non matching line",null)));
         target.reset();
-        assertEquals( State.i, target.currentState());
     }
 }

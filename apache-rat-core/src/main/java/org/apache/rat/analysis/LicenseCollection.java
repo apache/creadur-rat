@@ -37,7 +37,6 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
             .setLicenseFamilyName("HeaderMatcherCollection default license family").build();
     private Collection<ILicense> enclosed;
     private ILicense matchingLicense;
-    private State lastState;
 
     /**
      * Constructs the LicenseCollection from the provided ILicense collection.
@@ -47,7 +46,6 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
         super(enclosed);
         this.enclosed = enclosed;
         this.matchingLicense = null;
-        this.lastState = State.i;
     }
 
     @Override
@@ -58,52 +56,18 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
     @Override
     public void reset() {
         enclosed.stream().forEach(ILicense::reset);
-        this.lastState = State.i;
         this.matchingLicense = null;
     }
 
     @Override
-    public State matches(String line) {
-        State dflt = State.f;
+    public boolean matches(IHeaders headers) {
         for (ILicense license : enclosed) {
-            switch (license.matches(line)) {
-            case t:
-                this.matchingLicense = license;
-                lastState = State.t;
-                return State.t;
-            case i:
-                dflt = State.i;
-                break;
-            default:
-                // do nothing
-                break;
+            if (license.matches(headers)) {
+                matchingLicense = license;
+                return true;
             }
         }
-        lastState = dflt;
-        return dflt;
-    }
-
-    @Override
-    public State currentState() {
-        if (lastState == State.t) {
-            return lastState;
-        }
-        for (ILicense license : enclosed) {
-            switch (license.currentState()) {
-            case t:
-                this.matchingLicense = license;
-                lastState = State.t;
-                return lastState;
-            case i:
-                lastState = State.i;
-                return lastState;
-            case f:
-                // do nothing;
-                break;
-            }
-        }
-        lastState = State.f;
-        return lastState;
+        return false;
     }
 
     @Override

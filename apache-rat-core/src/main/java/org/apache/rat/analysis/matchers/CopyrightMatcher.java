@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.analysis.IHeaders;
 
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
@@ -105,10 +106,10 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    protected boolean doMatch(String line) {
-        Matcher matcher = COPYRIGHT_PATTERN.matcher(line);
+    public boolean matches(IHeaders headers) {
+        Matcher matcher = COPYRIGHT_PATTERN.matcher(headers.raw());
         if (matcher.find()) {
-            String buffer = line.substring(matcher.end());
+            String buffer = headers.raw().substring(matcher.end());
             matcher = dateOwnerPattern.matcher(buffer);
             if (matcher.find() && matcher.start() == 0) {
                 return true;

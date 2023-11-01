@@ -19,22 +19,50 @@
 package org.apache.rat.analysis.matchers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Locale;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.Test;
 
-public class OrMatcherTest extends AbstractMatcherTest {
+public class AbstractMatcherTest {
 
+    private IHeaders dummyHeader = makeHeaders(null,null);
     
-    @Test
-    public void trueTest() {
-        IHeaderMatcher one = new TestingMatcher("one", false, false, true, true);
-        IHeaderMatcher two = new TestingMatcher("two", false, true, false, true);
-        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
-        assertValues(target, false, true, true, true);
-        target.reset();
+    protected void assertValues(IHeaderMatcher target, boolean... values) {
+        for (int i=0;i<values.length;i++) {
+            assertEquals("Position "+i, values[i], target.matches(dummyHeader));
+        }
     }
+    
+    public static IHeaders makeHeaders(String raw, String pruned) {
+        return new IHeaders() {
+
+            @Override
+            public String raw() {
+                if (raw == null) {
+                    throw new UnsupportedOperationException("Should not be called");
+                }
+                return raw;
+            }
+
+            @Override
+            public String pruned() {
+                if (pruned == null) {
+                    throw new UnsupportedOperationException("Should not be called");
+                }
+                return FullTextMatcher.prune(pruned).toLowerCase(Locale.ENGLISH);
+            }
+            
+            public String toString() {
+                return "AbstractMatcherTest";
+            }
+        };
+    }
+ 
 }

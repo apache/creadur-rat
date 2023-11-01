@@ -1,3 +1,4 @@
+package org.apache.rat.analysis;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one   *
  * or more contributor license agreements.  See the NOTICE file *
@@ -16,40 +17,18 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.matchers;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.analysis.IHeaders;
 
 /**
- * A simple text matching IHeaderMatcher implementation.
+ * The processed headers from a file.
  */
-public class SimpleTextMatcher extends AbstractSimpleMatcher {
-    private String pattern;
-
+public interface IHeaders {
     /**
-     * Constructs the simple text matcher for the simple string.
-     * @param pattern The pattern to match.  Will only match a single line from the input stream.
+     * @return the raw header as read from the file.
      */
-    public SimpleTextMatcher(String pattern) {
-        this(null, pattern);
-    }
-
+    public String raw();
     /**
-     * Constructs the simple text matcher for the simple string.
-     * @param id The id for this matcher.
-     * @param pattern The pattern to match.  Will only match a single line from the input stream.
+     * @return The pruned header.
      */
-    public SimpleTextMatcher(String id, String pattern) {
-        super(id);
-        if (StringUtils.isBlank(pattern)) {
-            throw new IllegalArgumentException("Pattern may not be null, empty or blank");
-        }
-        this.pattern = pattern;
-    }
-
-    @Override
-    public boolean matches(IHeaders headers) {
-        return headers.raw().contains(pattern);
-    }
+    public String pruned();
+    
 }

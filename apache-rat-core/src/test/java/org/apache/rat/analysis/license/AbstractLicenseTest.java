@@ -33,7 +33,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
-import org.apache.rat.analysis.IHeaderMatcher.State;
+import org.apache.rat.analysis.HeaderCheckWorker;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
@@ -123,13 +124,8 @@ abstract public class AbstractLicenseTest {
 
     private boolean processText(ILicense license, String text) throws IOException {
         try (BufferedReader in = new BufferedReader(new StringReader(text))) {
-            String line;
-            while (null != (line = in.readLine())) {
-                if (license.matches(line) == State.t) {
-                    return true;
-                }
-            }
-            return license.finalizeState().asBoolean();
+            IHeaders headers = HeaderCheckWorker.readHeader(in,HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES);
+            return license.matches(headers);
         }
     }
 

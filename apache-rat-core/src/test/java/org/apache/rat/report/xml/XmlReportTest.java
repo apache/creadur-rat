@@ -101,6 +101,7 @@ public class XmlReportTest {
         XPath xPath = XPathFactory.newInstance().newXPath();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
 
+        XmlUtils.printDocument(System.out, doc);
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", "QOS", null, "standard");
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, null, "binary");
         XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, null, "notice");

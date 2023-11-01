@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
 import org.apache.rat.license.ILicense;
@@ -38,13 +37,7 @@ import org.junit.Test;
 
 public class AnalyserFactoryTest {
 
-    private static ILicense MATCHES_NOTHING_MATCHER = mock(ILicense.class);
-
-    static {
-            when(MATCHES_NOTHING_MATCHER.matches(any())).thenReturn(State.f);
-            when(MATCHES_NOTHING_MATCHER.currentState()).thenReturn(State.f);
-            when(MATCHES_NOTHING_MATCHER.finalizeState()).thenReturn(State.f);
-    }
+    private static ILicense MATCHES_NOTHING_MATCHER = new UnknownLicense();
 
     private StringWriter out;
     private SimpleXmlClaimReporter reporter;

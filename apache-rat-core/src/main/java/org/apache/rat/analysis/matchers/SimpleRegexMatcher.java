@@ -20,6 +20,8 @@ package org.apache.rat.analysis.matchers;
 
 import java.util.regex.Pattern;
 
+import org.apache.rat.analysis.IHeaders;
+
 /**
  * A simple regular expression matching IHeaderMatcher
  */
@@ -45,7 +47,7 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    public boolean doMatch(String line) {
-        return pattern.matcher(line).find();
+    public boolean matches(IHeaders headers) {
+        return pattern.matcher(headers.raw()).find();
     }
 }

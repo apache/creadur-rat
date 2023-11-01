@@ -16,6 +16,7 @@
  */
 package org.example;
 
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
 
 public class Matcher extends AbstractSimpleMatcher {
@@ -24,7 +25,7 @@ public class Matcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    public boolean doMatch(String line) {
+    public boolean matches(IHeaders headers) {
         return true;
     }
 

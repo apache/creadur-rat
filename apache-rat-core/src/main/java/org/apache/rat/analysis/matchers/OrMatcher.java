@@ -21,13 +21,12 @@ package org.apache.rat.analysis.matchers;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 
 /**
  * A matcher that performs a logical {@code OR} across all the contained matchers.
  */
 public class OrMatcher extends AbstractMatcherContainer {
-
-    private State lastState;
 
     /**
      * Constructs the matcher from the enclosed matchers.
@@ -44,52 +43,16 @@ public class OrMatcher extends AbstractMatcherContainer {
      */
     public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
         super(id, enclosed);
-        lastState = State.i;
     }
 
     @Override
-    public State matches(String line) {
-        if (lastState == State.t) {
-            return State.t;
-        }
+    public boolean matches(IHeaders headers) {
         for (IHeaderMatcher matcher : enclosed) {
-            switch (matcher.matches(line)) {
-            case t:
-                lastState = State.t;
-                return lastState;
-            case f:
-            case i:
-                lastState = State.i;
+            if (matcher.matches(headers)) {
+                return true;
             }
+            
         }
-        return lastState;
-    }
-
-    @Override
-    public State currentState() {
-        if (lastState == State.t) {
-            return lastState;
-        }
-        for (IHeaderMatcher matcher : enclosed) {
-            switch (matcher.currentState()) {
-            case t:
-                lastState = State.t;
-                return lastState;
-            case i:
-                lastState = State.i;
-                return lastState;
-            case f:
-                // do nothing;
-                break;
-            }
-        }
-        lastState = State.f;
-        return lastState;
-    }
-
-    @Override
-    public void reset() {
-        super.reset();
-        lastState = State.i;
+        return false;
     }
 }
