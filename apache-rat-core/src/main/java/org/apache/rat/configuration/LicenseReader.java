@@ -53,7 +53,7 @@ public interface LicenseReader {
      * Reads the configuration and extracts the list of approved licenses.
      * 
      * @return The list of approved licenses specified in the configuration or an
-     * empty list if non specified..
+     * empty list if non specified.
      */
     SortedSet<String> approvedLicenseId();
 }
