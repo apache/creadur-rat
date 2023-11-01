@@ -125,4 +125,9 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
     public String derivedFrom() {
         return matchingLicense == null ? null : matchingLicense.derivedFrom();
     }
+    
+    @Override
+    public String getName() {
+        return getLicenseFamily().getFamilyName();
+    }
 }

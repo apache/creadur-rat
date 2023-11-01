@@ -40,6 +40,8 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Before;
@@ -71,14 +73,13 @@ public class XmlReportFactoryTest {
 
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("TEST")
                 .setLicenseFamilyName("Testing family").build();
-        final ILicense mockLicense = mock(ILicense.class);
-        when(mockLicense.matches(any())).thenReturn(State.t);
-        when(mockLicense.getLicenseFamily()).thenReturn(family);
+        
+        final TestingLicense testingLicense = new TestingLicense(new TestingMatcher(true), family);
 
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.addLicense(mockLicense);
+        configuration.addLicense(testingLicense);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
         report(directory, report);

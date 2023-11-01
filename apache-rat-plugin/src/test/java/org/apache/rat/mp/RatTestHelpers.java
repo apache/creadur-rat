@@ -1,15 +1,14 @@
 package org.apache.rat.mp;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -38,8 +37,11 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
+import org.apache.rat.testhelpers.TextUtils;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.DirectoryScanner;
+
+import com.google.common.base.Charsets;
 
 /**
  * Test helpers used when verifying mojo interaction in RAT integration tests.
@@ -194,48 +196,22 @@ public final class RatTestHelpers {
      * matching.
      *
      * @param pRatTxtFile The file to read.
-     * @param pNumALFiles The number of files with AL.
-     * @param pNumNoLicenseFiles The number of files without license.
+     * @param in An array of regex expressions that must be in the file.
+     * @param notIn An array of regex expressions that must NOT be in the file.
      * @throws IOException An error occurred while reading the file or the file does
      * not exist at all.
      * @throws IllegalArgumentException In case of mismatches in file numbers passed
      * in as parameter.
      */
-    public static void ensureRatReportIsCorrect(File pRatTxtFile, int pNumALFiles, int pNumNoLicenseFiles)
-            throws IOException {
-        if (!pRatTxtFile.exists()) {
-            throw new FileNotFoundException("Could not find " + pRatTxtFile);
-        }
-        BufferedReader reader = null;
-        try {
-
-            reader = new BufferedReader(new FileReader(pRatTxtFile));
-            Integer numALFiles = null;
-            Integer numNoLicenseFiles = null;
-            for (;;) {
-                String line = reader.readLine();
-                if (line == null) {
-                    break;
-                }
-                int offset = line.indexOf("Apache Licensed: ");
-                if (offset >= 0) {
-                    numALFiles = Integer.valueOf(line.substring(offset + "Apache Licensed: ".length()).trim());
-                }
-                offset = line.indexOf("Unknown Licenses");
-                if (offset >= 0) {
-                    numNoLicenseFiles = Integer.valueOf(line.substring(0, offset).trim());
-                }
-            }
-            reader.close();
-
-            if (!Integer.valueOf(pNumALFiles).equals(numALFiles) || !Integer.valueOf(pNumNoLicenseFiles).equals(numNoLicenseFiles)) {
-                throw new IllegalArgumentException(
-                        "Amount of licensed files does not match. Expected " + pNumALFiles + ", got " + numALFiles);
-            }
-        } finally {
-            IOUtils.closeQuietly(reader);
+    public static void ensureRatReportIsCorrect(File pRatTxtFile, String[] in, String[] notIn) throws IOException {
+        List<String> lines = IOUtils.readLines(new FileInputStream(pRatTxtFile), Charsets.UTF_8);
+        String document = String.join("\n", lines);
+        for (String pattern : in) {
+            TextUtils.assertPatternInOutput(pattern, document);
         }
 
+        for (String pattern : notIn) {
+            TextUtils.assertPatternInOutput(pattern, document);
+        }
     }
-
 }

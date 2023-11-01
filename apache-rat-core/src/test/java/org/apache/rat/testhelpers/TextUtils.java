@@ -16,18 +16,26 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.license;
+package org.apache.rat.testhelpers;
 
-public class IllumosLicenseTest extends AbstractLicenseTest {
-    private static String id = "ILLUMOS";
-    private static String note = "Modified CDDL1 license";
-    private static String[][] targets = { { "illumos",
-            "The contents of this file are subject to the terms of the "
-                    + "Common Development and Distribution License (the \"License\") "
-                    + "You may not use this file except in compliance with the License. " } };
+import java.util.regex.Pattern;
 
-    public IllumosLicenseTest() {
-        super(id, CDDL1LicenseTest.id, CDDL1LicenseTest.name, note, targets);
+import org.junit.Assert;
+
+public class TextUtils {
+    public static final String[] EMPTY = {};
+    
+    public static void assertPatternInOutput(String pPattern, String out) {
+        Assert.assertTrue("Output does not match string: " + pPattern+"\n"+out,
+                isMatching(pPattern, out));
+    }
+    
+    public static void assertPatternNotInOutput(String pPattern, String out) {
+        Assert.assertFalse("Output matches the pattern: " + pPattern+"\n"+out,
+                isMatching(pPattern, out));
     }
 
+   public static boolean isMatching(final String pPattern, final String pValue) {
+        return Pattern.compile(pPattern, Pattern.MULTILINE).matcher(pValue).find();
+    }
 }

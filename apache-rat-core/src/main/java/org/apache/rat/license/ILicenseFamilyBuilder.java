@@ -35,6 +35,12 @@ public class ILicenseFamilyBuilder implements Builder {
         this.licenseFamilyCategory = licenseFamilyCategory;
         return this;
     }
+    
+
+    @Override
+    public String getCategory() {
+        return licenseFamilyCategory;
+    }
 
     @Override
     public Builder setLicenseFamilyName(String licenseFamilyName) {

@@ -20,8 +20,11 @@
 
 -->
 <rat-config>
+    <families>
+    	<family id="newFam" name="my new family" />
+    </families>
 	<licenses>
-		<license id="EXAMPLE" name="Example License">
+		<license family="newFam" id="EXAMPLE" name="Example License">
 			<regex expr='.' />
 		</license>
 	</licenses>

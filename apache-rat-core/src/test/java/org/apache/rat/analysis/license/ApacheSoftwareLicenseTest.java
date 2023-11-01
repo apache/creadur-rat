@@ -24,8 +24,8 @@ package org.apache.rat.analysis.license;
  */
 public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
-    private static String category = "AL";
-    private static String name = "Apache License Version 2.0";
+    public static final String id = "AL";
+    public static final String name = "Apache License Version 2.0";
     private static String[][] targets = {
             { "short", "Licensed under the Apache License, Version 2.0 (the \"License\")" },
             { "short2",
@@ -60,7 +60,7 @@ public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
     };
 
     public ApacheSoftwareLicenseTest() {
-        super(category, name, null, targets);
+        super(id, id, name, null, targets);
     }
 
 //

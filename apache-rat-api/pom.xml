@@ -23,12 +23,9 @@
     <version>0.16-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
-
   <artifactId>apache-rat-api</artifactId>
-
   <name>Apache Creadur Rat::API</name>
   <description>Shared beans and services.</description>
-
   <dependencies>
     <!-- Test Dependencies -->
     <dependency>

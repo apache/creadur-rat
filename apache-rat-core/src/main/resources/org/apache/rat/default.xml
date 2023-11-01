@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rat-config>
+	<families>
+		<family id="AL" name="Apache License Version 2.0" />
+		<family id="CDDL1"
+			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0" />
+		<family id="GEN" name="Generated Files" />
+		<family id="GPL1" name="GNU General Public License, version 1" />
+		<family id="GPL2" name="GNU General Public License, version 2" />
+		<family id="GPL3" name="GNU General Public License, version 3" />
+		<family id="MIT" name="The MIT License" />
+		<family id="OASIS" name="OASIS Open License" />
+		<family id="W3C" name="W3C Software Copyright" />
+		<family id="W3CD" name="W3C Document Copyright" />
+		<family id='BSD-3' name="BSD 3 clause" />
+	</families>
 	<licenses>
-		<license id="AL" name="Apache License Version 2.0">
+		<license family="AL">
 			<all>
 				<any id="ALStandard">
 					<text>Licensed under the Apache License, Version 2.0 (the
@@ -25,15 +39,14 @@
 			</all>
 		</license>
 
-		<license id="ASL" name="Applied Apache License Version 2.0">
+		<license family="AL" id="ASL" name="Applied Apache License Version 2.0">
 			<all>
 				<matcherRef refId="ALStandard" />
 				<copyright />
 			</all>
 		</license>
 
-		<license id="CDDL1"
-			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0">
+		<license family="CDDL1">
 			<any>
 				<text>The contents of this file are subject to the terms of the
 					Common Development and Distribution License("CDDL") (the
@@ -43,7 +56,7 @@
 			</any>
 		</license>
 
-		<license id="ILLUMOS" name="ILLUMOS CDDL1 Derived license"
+		<license family="CDDL1" id="ILLUMOS" name="ILLUMOS CDDL1 Derived license"
 			derived_from='CDDL1'>
 			<note>Modified CDDL1 license</note>
 			<any>
@@ -54,17 +67,17 @@
 			</any>
 		</license>
 
-		<license id="DOJO" name="DOJO License" derived_from="BSD-3">
+		<license family="BSD-3" id="DOJO" name="DOJO License" derived_from="BSD-3">
 			<text>http://dojotoolkit.org/community/licensing.shtml</text>
 		</license>
 
-		<license id="GEN" name="Generated Files">
+		<license family="GEN">
 			<note>
 				Files that are autmoatically generated.</note>
 			<any resource="/org/apache/rat/generation-keywords.txt" />
 		</license>
 
-		<license id="GPL1" name="GNU General Public License, version 1">
+		<license family="GPL1">
 			<any>
 				<text>This program is free software; you can redistribute it
 					and/or modify
@@ -78,7 +91,7 @@
 			</any>
 		</license>
 
-		<license id="GPL2" name="GNU General Public License, version 2">
+		<license family="GPL2">
 			<any>
 				<text>This program is free software; you can
 					redistribute it and/or modify it under the terms of the
@@ -91,7 +104,7 @@
 			</any>
 		</license>
 
-		<license id="GPL3" name="GNU General Public License, version 3">
+		<license family="GPL3">
 			<any>
 				<text>This program is free software: you can
 					redistribute it and/or modify it under the terms of the
@@ -104,7 +117,7 @@
 			</any>
 		</license>
 
-		<license id="MIT" name="The MIT License">
+		<license family="MIT">
 			<any>
 				<text>Permission is hereby granted, free of charge, to
 					any person obtaining a copy of this software and associated
@@ -135,7 +148,7 @@
 			</any>
 		</license>
 
-		<license id="OASIS" name="OASIS Open License">
+		<license family="OASIS">
 			<note>No modifications allowed</note>
 			<all>
 				<text>This document and translations of it may be
@@ -149,7 +162,7 @@
 			</all>
 		</license>
 
-		<license id="TMF" name="The Telemanagement Forum License"
+		<license family="BSD-3" id="TMF" name="The Telemanagement Forum License"
 			derived_from="BSD-3">
 			<all>
 				<text>TMF854 Version 1.0</text>
@@ -159,7 +172,7 @@
 			</all>
 		</license>
 
-		<license id="W3C" name="W3C Software Copyright">
+		<license family="W3C">
 			<note>Note that W3C requires a NOTICE.</note>
 			<note>All modifications require notes.</note>
 			<note>
@@ -173,7 +186,7 @@
 			</any>
 		</license>
 
-		<license id="W3CD" name="W3C Document Copyright">
+		<license family="W3CD">
 			<note>
 				Note that W3CD does not allow modifications.</note>
 			<note>
@@ -183,7 +196,7 @@
 				http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</text>
 		</license>
 
-		<license id='BSD-3' name="BSD 3 clause">
+		<license family='BSD-3'>
 			<any>
 				<all>
 					<copyright />
@@ -230,10 +243,8 @@
 	</licenses>
 	<approved>
 		<family license_ref='AL' />
-		<family license_ref='ASL' />
 		<family license_ref="BSD-3" />
 		<family license_ref='CDDL1' />
-		<family license_ref='DOJO' />
 		<family license_ref='GEN' />
 		<family license_ref='GPL1' />
 		<family license_ref='GPL2' />
@@ -247,7 +258,7 @@
 		<matcher class="org.apache.rat.configuration.builders.AllBuilder" />
 		<matcher class="org.apache.rat.configuration.builders.AnyBuilder" />
 		<matcher class="org.apache.rat.configuration.builders.CopyrightBuilder" />
-		<matcher class="org.apache.rat.configuration.builders.MatcherRefBuilder"/>
+		<matcher class="org.apache.rat.configuration.builders.MatcherRefBuilder" />
 		<matcher class="org.apache.rat.configuration.builders.NotBuilder" />
 		<matcher class="org.apache.rat.configuration.builders.RegexBuilder" />
 		<matcher class="org.apache.rat.configuration.builders.SpdxBuilder" />

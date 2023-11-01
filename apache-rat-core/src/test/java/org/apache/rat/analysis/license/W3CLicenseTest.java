@@ -45,8 +45,8 @@ public class W3CLicenseTest extends AbstractLicenseTest {
         return Arrays.asList(W3C, W3CD);
     }
 
-    public W3CLicenseTest(String cat, String name, String note, String[][] targets) {
-        super(cat, name, note, targets);
+    public W3CLicenseTest(String id, String name, String note, String[][] targets) {
+        super(id, id, name, note, targets);
     }
 
 }

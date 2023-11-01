@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.SortedSet;
 
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 
 /**
  * An interface describing the methods of a LicenseReader.
@@ -37,9 +38,16 @@ public interface LicenseReader {
     /**
      * Reads the configuration and extracts instances of ILicense.
      * 
-     * @return A collection of Base licenses.
+     * @return A collection of ILicense.
      */
     SortedSet<ILicense> readLicenses();
+    
+    /**
+     * Reads the configuration and extracts instances of ILicenseFamily.
+     * 
+     * @return A collection of ILicensFamily.
+     */
+    SortedSet<ILicenseFamily> readFamilies();
 
     /**
      * Reads the configuration and extracts the list of approved licenses.

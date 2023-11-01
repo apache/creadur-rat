@@ -53,6 +53,11 @@
 	</target>
 
 	<target name="all" />
+	
+	<target name="testDefault">
+		<rat:report />
+	</target>
+	
 	<target name="testWithReportSentToFile">
 		<property name="report.file" location="${output.dir}/selftest.report" />
 		<rat:report reportFile="${report.file}">
@@ -62,9 +67,9 @@
 
 	<target name="testWithALUnknown">
 		<rat:report useDefaultLicenses="false">
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
 			<rat:license
-				id="YASL1"
-				name="Yet Another Software License (YASL) 1.0"
+				family="YASL1"
 				notes="Interesting License">
 				<rat:copyright start="2023" end="2024" owner="public domain" />
 			</rat:license>
@@ -82,9 +87,9 @@
 
 	<target name="testInlineCustomMatcher" depends="prepareCustomMatcher">
 		<rat:report useDefaultLicenses="false">
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
 			<rat:license
-				id="YASL1"
-				name="Yet Another Software License (YASL) 1.0"
+				family="YASL1"
 				notes="Interesting License">
 				<inlineMatcher />
 			</rat:license>
@@ -94,9 +99,9 @@
 
 	<target name="testCustomMatcher">
 		<rat:report useDefaultLicenses="false">
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
 			<rat:license
-				id="YASL1"
-				name="Yet Another Software License (YASL) 1.0"
+				family="YASL1"
 				notes="Interesting License">
 				<matcher />
 			</rat:license>
@@ -106,9 +111,9 @@
 
 	<target name="testCustomMatcherBuilder">
 		<rat:report useDefaultLicenses="false">
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
 			<rat:license
-				id="YASL1"
-				name="Yet Another Software License (YASL) 1.0"
+				family="YASL1"
 				notes="Interesting License">
 				<matcherBuilder />
 			</rat:license>
@@ -152,9 +157,9 @@
 	<target name="testCopyrightBuild">
 		<rat:report>
 			<file file="${resource.dir}/index.apt" />
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
 			<rat:license
-				id="YASL1"
-				name="Yet Another Software License (YASL) 1.0"
+				family="YASL1"
 				notes="Interesting License">
 				<rat:copyright start="2023" end="2024" owner="public domain" />
 			</rat:license>
@@ -162,7 +167,6 @@
 	</target>
 
 	<target name="prepareCustomMatcher">
-
 		<mkdir dir="${output.dir}/test-classes" />
 		<mkdir dir="${output.dir}/src/org/example" />
 		<echo file="${output.dir}/src/org/example/InlineMatcher.java"><![CDATA[

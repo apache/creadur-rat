@@ -44,6 +44,14 @@ public class TestingMatcher extends AbstractHeaderMatcher {
      * @param id the ID for this matcher
      * @param result if {@code true} will match everything, otherwise it matches nothing.
      */
+    public TestingMatcher(boolean result) {
+        this("dfltMtch", result);
+    }
+    /**
+     * Constructs a matcher with the specified id and matching result.
+     * @param id the ID for this matcher
+     * @param result if {@code true} will match everything, otherwise it matches nothing.
+     */
     public TestingMatcher(String id, boolean result) {
         this(id, new boolean[] { result });
     }

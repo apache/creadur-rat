@@ -19,14 +19,22 @@
 package org.apache.rat.anttasks;
 
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
+
+import java.util.SortedSet;
+
 import org.apache.rat.analysis.IHeaderMatcher;
 
 public class License {
 
     private ILicense.Builder builder = ILicense.builder();
+    
+    ILicense.Builder asBuilder() {
+        return builder;
+    }
 
-    public ILicense build() {
-        return builder.build();
+    public ILicense build(SortedSet<ILicenseFamily> context) {
+        return builder.build(context);
     }
 
     public void setNotes(String notes) {
@@ -42,12 +50,16 @@ public class License {
         builder.setDerivedFrom(derivedFrom);
     }
 
-    public void setId(String licenseFamilyCategory) {
+    public void setFamily(String licenseFamilyCategory) {
         builder.setLicenseFamilyCategory(licenseFamilyCategory);
     }
+    
+    public void setId(String id) {
+        builder.setId(id);
+    }
 
-    public void setName(String licenseFamilyName) {
-        builder.setLicenseFamilyName(licenseFamilyName);
+    public void setName(String name) {
+        builder.setName(name);
     }
 
     public void add(IHeaderMatcher.Builder builder) {

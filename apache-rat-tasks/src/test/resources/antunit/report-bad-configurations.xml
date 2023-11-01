@@ -76,11 +76,11 @@
 
   <target name="testLicenseRequiresFamilyName">
     <au:expectfailure
-        expectedMessage="LicenseFamily Name must be specified">
+        expectedMessage="License family YASL1 not found">
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license
-            id="YASL1"
+            family="YASL1"
             notes="Interesting License">
           <rat:text>exmpl</rat:text>
         </rat:license>
@@ -94,7 +94,6 @@
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license
-            name="Yet Another Software License (YASL) 1.0"
             notes="Interesting License">
           <rat:text text="exampl"/>
         </rat:license>
@@ -107,9 +106,9 @@
         expectedMessage="'regex' type matcher requires an expression">
       <rat:report>
         <file file="${ant.file}"/>
+        <rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
         <rat:license
-            id="YASL1"
-            name="Yet Another Software License (YASL) 1.0"
+            family="YASL1"
             notes="Interesting License">
             <rat:regex />
         </rat:license>
@@ -122,9 +121,9 @@
         expectedMessage="text value is required">
       <rat:report>
         <file file="${ant.file}"/>
+        <rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
         <rat:license
-            id="YASL1"
-            name="Yet Another Software License (YASL) 1.0"
+            family="YASL1"
             notes="Interesting License">
         	<rat:text/>
         </rat:license>

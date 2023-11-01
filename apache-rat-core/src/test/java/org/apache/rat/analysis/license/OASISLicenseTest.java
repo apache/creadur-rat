@@ -20,7 +20,7 @@ package org.apache.rat.analysis.license;
 
 public class OASISLicenseTest extends AbstractLicenseTest {
 
-    private static String category = "OASIS";
+    private static String id = "OASIS";
     private static String name = "OASIS Open License";
     private static String notes = "No modifications allowed";
     private static String[][] targets = { { "fulltext",
@@ -30,7 +30,7 @@ public class OASISLicenseTest extends AbstractLicenseTest {
                     + "\\nCopyright OASIS Open, 1999" }, };
 
     public OASISLicenseTest() {
-        super(category, name, notes, targets);
+        super(id, id, name, notes, targets);
     }
     /*
     @Test(timeout = 2000) // may need to be adjusted if many more files are added

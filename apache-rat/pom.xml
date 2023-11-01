@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -31,7 +31,6 @@
     provides a JAR file, which is the combination of
     rat-core, rat-tasks, and its dependencies.
   </description>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
@@ -42,7 +41,6 @@
       <artifactId>apache-rat-tasks</artifactId>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
@@ -120,7 +118,6 @@
         </executions>
       </plugin>
     </plugins>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -152,7 +149,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -162,7 +159,6 @@
       </plugins>
     </pluginManagement>
   </build>
-
   <profiles>
     <profile>
       <id>apache-release</id>
@@ -178,10 +174,11 @@
             <executions>
               <execution>
                 <id>make-assembly</id>
-                  <phase>package</phase> <!-- append to the packaging phase. -->
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
+                <phase>package</phase>
+                <!-- append to the packaging phase. -->
+                <goals>
+                  <goal>single</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>

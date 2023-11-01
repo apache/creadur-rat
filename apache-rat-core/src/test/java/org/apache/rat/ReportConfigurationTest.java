@@ -44,6 +44,7 @@ import java.util.SortedSet;
 
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.configuration.ConfigurationReaderTest;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -144,12 +145,10 @@ public class ReportConfigurationTest {
         assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
     }
 
-    private ILicense mockLicense(String category, String name) {
+    private ILicense testingLicense(String category, String name) {
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory(category).setLicenseFamilyName(name)
                 .build();
-        ILicense result = mock(ILicense.class);
-        when(result.getLicenseFamily()).thenReturn(family);
-        return result;
+        return new TestingLicense( family );
     }
 
     @Test
@@ -158,14 +157,14 @@ public class ReportConfigurationTest {
         List<ILicense> expected = new ArrayList<>();
         assertTrue(underTest.getLicenses(LicenseFilter.all).isEmpty());
 
-        ILicense lic1 = mockLicense("TheCat", "TheName");
+        ILicense lic1 = testingLicense("TheCat", "TheName");
         expected.add(lic1);
         underTest.addLicense(lic1);
         SortedSet<ILicense> result = underTest.getLicenses(LicenseFilter.all);
         assertEquals(expected.size(), result.size());
         assertTrue(result.containsAll(expected));
 
-        ILicense[] lics = { mockLicense("Spot", "Data's cat"), mockLicense("Felix", "Cartoon cat") };
+        ILicense[] lics = { testingLicense("Spot", "Data's cat"), testingLicense("Felix", "Cartoon cat") };
         expected.addAll(Arrays.asList(lics));
         underTest.addLicenses(Arrays.asList(lics));
         result = underTest.getLicenses(LicenseFilter.all);
@@ -194,8 +193,8 @@ public class ReportConfigurationTest {
         assertTrue(underTest.getLicenseFamilies(LicenseFilter.approved).isEmpty());
         assertTrue(underTest.getLicenseFamilies(LicenseFilter.none).isEmpty());
 
-        ILicense[] lics = { mockLicense("TheCat", "TheName"), mockLicense("Spot", "Data's cat"),
-                mockLicense("Felix", "Cartoon cat") };
+        ILicense[] lics = { testingLicense("TheCat", "TheName"), testingLicense("Spot", "Data's cat"),
+                testingLicense("Felix", "Cartoon cat") };
         underTest.addLicenses(Arrays.asList(lics));
 
         assertEquals(lics.length, underTest.getLicenseFamilies(LicenseFilter.all).size());
@@ -216,8 +215,8 @@ public class ReportConfigurationTest {
         assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
         assertTrue(underTest.getLicenses(LicenseFilter.none).isEmpty());
 
-        ILicense[] lics = { mockLicense("TheCat", "TheName"), mockLicense("Spot", "Data's cat"),
-                mockLicense("Felix", "Cartoon cat") };
+        ILicense[] lics = { testingLicense("TheCat", "TheName"), testingLicense("Spot", "Data's cat"),
+                testingLicense("Felix", "Cartoon cat") };
         underTest.addLicenses(Arrays.asList(lics));
 
         assertEquals(lics.length, underTest.getLicenses(LicenseFilter.all).size());
@@ -347,7 +346,7 @@ public class ReportConfigurationTest {
             assertEquals(0, sb.length());
         }
 
-        underTest.addLicense(mockLicense("valid", "Validation testing license"));
+        underTest.addLicense(testingLicense("valid", "Validation testing license"));
         try {
             underTest.validate(s -> sb.append(s));
             fail("should have thrown ConfigurationException");
@@ -365,5 +364,71 @@ public class ReportConfigurationTest {
         underTest.setStyleReport(true);
         underTest.validate(s -> sb2.append(s));
         assertEquals(0, sb2.length());
+    }
+    
+    /**
+     * Validates that the configuration contains the default approved licenses.
+     * @param config The configuration to test.
+     */
+    public static void validateDefaultApprovedLicenses(ReportConfiguration config) {
+        validateDefaultApprovedLicenses(config, 0);
+    }
+    
+    /**
+     * Validates that the configuration contains the default approved licenses.
+     * @param config The configuration to test.
+     */
+    public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
+        assertEquals("Wrong number of approved licenses", ConfigurationReaderTest.EXPECTED_IDS.length+additionalIdCount,config.getApprovedLicenseCategories().size());
+        for (String s : ConfigurationReaderTest.EXPECTED_IDS) {
+            assertTrue("Missing apporved license category "+s, config.getApprovedLicenseCategories().contains(ILicenseFamily.makeCategory(s)));
+        }
+    }
+    
+
+    /**
+     * Validates that the configruation contains the default license families.
+     * @param config the configuration to test.
+     */
+    public static void validateDefaultLicenseFamilies(ReportConfiguration config, String...additionalIds) {
+        assertEquals("wrong number of license families",ConfigurationReaderTest.EXPECTED_IDS.length+additionalIds.length,config.getFamilies().size());
+        List<String> expected = new ArrayList<>();
+        expected.addAll(Arrays.asList(ConfigurationReaderTest.EXPECTED_IDS));
+        expected.addAll(Arrays.asList(additionalIds));
+        for (ILicenseFamily family : config.getFamilies()) {
+            assertTrue("Missing license family "+family.getFamilyCategory(),  expected.contains(family.getFamilyCategory().trim()));
+        }
+    }
+
+    /**
+     * Validates that the configuration contains the default licenses.
+     * @param config the configuration to test.
+     */
+    public static void validateDefaultLicenses(ReportConfiguration config, String...additionalLicenses) {
+        assertEquals("wrong number of licenses", ConfigurationReaderTest.EXPECTED_LICENSES.length+additionalLicenses.length, config.getLicenses(LicenseFilter.all).size());
+        List<String> expected = new ArrayList<>();
+        expected.addAll(Arrays.asList(ConfigurationReaderTest.EXPECTED_LICENSES));
+        expected.addAll(Arrays.asList(additionalLicenses));
+        for (ILicense license : config.getLicenses(LicenseFilter.all)) {
+            assertTrue("Missing license "+license.getId(), expected.contains(license.getId()));
+        }
+    }
+    
+    /**
+     * Validates that the configuration matches the default.
+     * @param config The configuration to test.
+     */
+    public static void validateDefault(ReportConfiguration config) {
+        //config.validate( System.err::println );
+        assertFalse("Adding licenses should be false", config.isAddingLicenses());
+        assertFalse("forced licenses should be false",  config.isAddingLicensesForced());
+        assertNull("copyright message should be null", config.getCopyrightMessage());
+        assertNull("Input file filter should be null", config.getInputFileFilter());
+        assertTrue("Style report should be true", config.isStyleReport());
+        assertNotNull("Stylesheet should not be null", config.getStyleSheet());
+        
+        validateDefaultApprovedLicenses(config);
+        validateDefaultLicenseFamilies(config);
+        validateDefaultLicenses(config);
     }
 }

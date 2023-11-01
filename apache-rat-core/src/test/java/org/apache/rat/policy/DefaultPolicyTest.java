@@ -30,7 +30,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingLocation;
@@ -44,14 +44,12 @@ public class DefaultPolicyTest {
     /**
      * This is the number of accepted licenses in the default license file : /org/apache/rat/default.xml
      */
-    private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 13;
+    private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 11;
     
     private static final ILicenseFamily[] APPROVED_FAMILIES = {
             makeFamily("AL", "Apache License Version 2.0"),
-            makeFamily("ASL", "Applied Apache License Version 2.0"),
             makeFamily("BSD-3", "BSD 3 clause"),
             makeFamily("CDDL1", "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"),
-            makeFamily("DOJO", "DOJO License"),
             makeFamily("GEN", "Generated Files"),
             makeFamily("GPL1", "GNU General Public License, version 1"),
             makeFamily("GPL2", "GNU General Public License, version 2"),
@@ -107,7 +105,7 @@ public class DefaultPolicyTest {
     @Test
     public void testUnApprovedLicenses() {
         SortedSet<ILicenseFamily> all = defaults.getLicenseFamilies(LicenseFilter.all);
-        SortedSet<ILicenseFamily> unapproved = LicenseSetFactory.emptyLicenseFamilySet();
+        SortedSet<ILicenseFamily> unapproved = LicenseFamilySetFactory.emptyLicenseFamilySet();
         unapproved.addAll(all);
         unapproved.removeAll(defaults.getLicenseFamilies(LicenseFilter.approved));
 
@@ -136,7 +134,7 @@ public class DefaultPolicyTest {
 
         policy.add(testingFamily);
         assertNotNull("Did not properly add ILicenseFamily",
-                LicenseSetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
+                LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
         policy.analyse(document);
         assertApproval(true);
     }
@@ -153,7 +151,7 @@ public class DefaultPolicyTest {
         policy.add(testingFamily);
         assertEquals(1, policy.getApprovedLicenseNames().size());
         assertNotNull("Did not properly add ILicenseFamily",
-                LicenseSetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
+                LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
         policy.analyse(document);
         assertApproval(true);
     }

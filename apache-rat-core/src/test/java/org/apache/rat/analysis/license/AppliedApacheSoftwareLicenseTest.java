@@ -20,7 +20,7 @@ package org.apache.rat.analysis.license;
 
 public class AppliedApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
-    private static String CATEGORY = "ASL";
+    private static String ID = "ASL";
     private static String NAME = "Applied Apache License Version 2.0";
     private static String[][] targets = { { "simple", "/*\n" + " *  Copyright 2012-2013 FooBar.\n" + " *\n"
             + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
@@ -33,7 +33,7 @@ public class AppliedApacheSoftwareLicenseTest extends AbstractLicenseTest {
             + " *  limitations under the License.\n" + " */\n" } };
 
     public AppliedApacheSoftwareLicenseTest() {
-        super(CATEGORY, NAME, null, targets);
+        super(ID, ApacheSoftwareLicenseTest.id, ApacheSoftwareLicenseTest.name, null, targets);
     }
     /*
       

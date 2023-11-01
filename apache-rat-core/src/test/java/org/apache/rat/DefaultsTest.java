@@ -30,8 +30,8 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.junit.Test;
 
 public class DefaultsTest {
-    private static final String[] FAMILIES = { "BSD-3", "GEN  ", "ASL  ", "AL   ", "DOJO ", "OASIS", "W3CD ", "W3C  ", "GPL1 ",
-            "GPL2 ", "GPL3 ", "MIT  ", "CDDL1", "ILLUM", "TMF  " };
+    private static final String[] FAMILIES = { "BSD-3", "GEN  ", "AL   ", "OASIS", "W3CD ", "W3C  ", "GPL1 ",
+            "GPL2 ", "GPL3 ", "MIT  ", "CDDL1" };
 
     @Test
     public void defaultConfigTest() {

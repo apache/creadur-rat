@@ -20,7 +20,6 @@ package org.apache.rat.mp;
 
 import javax.inject.Named;
 
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.configuration.builders.RegexBuilder;
 
 public class Regex extends RegexBuilder {

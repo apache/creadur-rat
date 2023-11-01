@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -29,11 +29,19 @@
  A plugin for Apache Ant that runs Apache Rat
    to audit the source to be distributed.
   </description>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-core</artifactId>
+      <version>${project.parent.version}</version>
+      <type>test-jar</type>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
@@ -52,7 +60,6 @@
       <artifactId>ant-testutil</artifactId>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
@@ -101,18 +108,18 @@
             <configuration>
               <target>
                 <ant antfile="src/test/resources/antunit/report-bad-configurations.xml" inheritAll="false" inheritRefs="false">
-                  <property name="jar.name" location="${project.build.outputDirectory}" />
-                  <property name="base.dir" location="${basedir}" />
-                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar" />
-                  <property name="test.skipped" value="${maven.test.skip}" />
-                  <property name="test.classpath" refid="maven.test.classpath" />
+                  <property name="jar.name" location="${project.build.outputDirectory}"/>
+                  <property name="base.dir" location="${basedir}"/>
+                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar"/>
+                  <property name="test.skipped" value="${maven.test.skip}"/>
+                  <property name="test.classpath" refid="maven.test.classpath"/>
                 </ant>
                 <ant antfile="src/test/resources/antunit/report-normal-operation.xml" inheritAll="false" inheritRefs="false">
-                  <property name="jar.name" location="${project.build.outputDirectory}" />
-                  <property name="base.dir" location="${basedir}" />
-                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar" />
-                  <property name="test.skipped" value="${maven.test.skip}" />
-                  <property name="test.classpath" refid="maven.test.classpath" />
+                  <property name="jar.name" location="${project.build.outputDirectory}"/>
+                  <property name="base.dir" location="${basedir}"/>
+                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar"/>
+                  <property name="test.skipped" value="${maven.test.skip}"/>
+                  <property name="test.classpath" refid="maven.test.classpath"/>
                 </ant>
               </target>
             </configuration>
@@ -120,7 +127,6 @@
         </executions>
       </plugin>
     </plugins>
-    
     <pluginManagement>
       <plugins>
         <plugin>
@@ -151,7 +157,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>

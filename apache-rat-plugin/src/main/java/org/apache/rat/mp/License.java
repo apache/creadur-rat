@@ -18,9 +18,12 @@
  */
 package org.apache.rat.mp;
 
+import java.util.SortedSet;
+
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 
 public class License extends EnclosingMatcher {
 
@@ -34,6 +37,9 @@ public class License extends EnclosingMatcher {
 
     @Parameter(required = true)
     private String id;
+    
+    @Parameter(required = true)
+    private String family;
 
     @Parameter(required = true)
     private String name;
@@ -46,9 +52,9 @@ public class License extends EnclosingMatcher {
         this.builder.setMatcher(builder);
     }
 
-    public ILicense build() {
-        return builder.setDerivedFrom(derivedFrom).setLicenseFamilyCategory(id)
-                .setLicenseFamilyName(name).setNotes(notes).build();
+    public ILicense build(SortedSet<ILicenseFamily> context) {
+        return builder.setDerivedFrom(derivedFrom).setLicenseFamilyCategory(family).setId(id)
+                .setName(name).setNotes(notes).build(context);
     }
 
 }

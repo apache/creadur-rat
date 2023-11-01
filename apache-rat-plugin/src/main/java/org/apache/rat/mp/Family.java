@@ -18,10 +18,24 @@
  */
 package org.apache.rat.mp;
 
-import org.apache.rat.configuration.builders.TextBuilder;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.rat.license.ILicenseFamily;
 
-public class Text extends TextBuilder {
-    public void set(String text) {
-        super.setText(text);
+public class Family {
+
+    private ILicenseFamily.Builder builder = ILicenseFamily.builder();
+
+    @Parameter(required = true)
+    private String id;
+
+    @Parameter(required = true)
+    private String name;
+
+    public Family() {
     }
+
+    public ILicenseFamily build() {
+        return builder.setLicenseFamilyCategory(id).setLicenseFamilyName(name).build();
+    }
+
 }

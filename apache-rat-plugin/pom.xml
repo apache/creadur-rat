@@ -27,7 +27,7 @@
   <packaging>maven-plugin</packaging>
   <name>Apache Creadur Rat::Plugin4Maven</name>
   <description>A plugin for Apache Maven that runs Apache Rat
-   to audit the source to be distributed.</description>
+                to audit the source to be distributed.</description>
   <inceptionYear>2007</inceptionYear>
   <prerequisites>
     <maven>${mavenVersion}</maven>
@@ -57,8 +57,8 @@
     </resources>
     <pluginManagement>
       <plugins>
-         <plugin>
-           <groupId>org.apache.maven.plugins</groupId>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -97,33 +97,29 @@
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
-        	<groupId>org.eclipse.m2e</groupId>
-        	<artifactId>lifecycle-mapping</artifactId>
-        	<version>1.0.0</version>
-        	<configuration>
-        		<lifecycleMappingMetadata>
-        			<pluginExecutions>
-        				<pluginExecution>
-        					<pluginExecutionFilter>
-        						<groupId>
-        							org.apache.maven.plugins
-        						</groupId>
-        						<artifactId>
-        							maven-plugin-plugin
-        						</artifactId>
-        						<versionRange>[3.3,)</versionRange>
-        						<goals>
-        							<goal>descriptor</goal>
-        							<goal>helpmojo</goal>
-        						</goals>
-        					</pluginExecutionFilter>
-        					<action>
-        						<ignore />
-        					</action>
-        				</pluginExecution>
-        			</pluginExecutions>
-        		</lifecycleMappingMetadata>
-        	</configuration>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId> org.apache.maven.plugins </groupId>
+                    <artifactId> maven-plugin-plugin </artifactId>
+                    <versionRange>[3.3,)</versionRange>
+                    <goals>
+                      <goal>descriptor</goal>
+                      <goal>helpmojo</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -131,7 +127,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>3.5.1</version>
         <configuration>
           <cloneProjectsTo>${project.build.directory}/invoker</cloneProjectsTo>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
@@ -151,11 +146,19 @@
       </plugin>
     </plugins>
   </build>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-core</artifactId>
+      <version>${project.parent.version}</version>
+      <type>test-jar</type>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -283,7 +286,6 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.12.0</version>
     </dependency>
   </dependencies>
   <reporting>

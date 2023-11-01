@@ -21,8 +21,12 @@ package org.apache.rat;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 
 public class ReportTest {
@@ -31,6 +35,14 @@ public class ReportTest {
         final FilenameFilter filter = Report
                 .parseExclusions(Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertNotNull(filter);
+    }
+    
+    @Test
+    public void testDefaultConfiguration() throws ParseException, IOException {
+        String[] empty = {};
+        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), empty);
+        ReportConfiguration config = Report.createConfiguration("", cl);
+        ReportConfigurationTest.validateDefault(config);
     }
 
 }

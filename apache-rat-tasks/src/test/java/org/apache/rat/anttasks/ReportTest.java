@@ -27,12 +27,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Optional;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.ReportConfiguration;
+import org.apache.rat.ReportConfigurationTest;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -56,7 +63,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
         final String alLine = "AL +\\Q" + getAntFileName() + "\\E";
-        
+
         if (!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
             throw new IOException("Could not create temporary directory " + getTempDir());
         }
@@ -80,9 +87,9 @@ public class ReportTest extends AbstractRatAntTaskTest {
     public void testCustomLicense() throws Exception {
         buildRule.executeTarget("testCustomLicense");
         assertLogDoesNotMatch(" AS +\\Q" + getAntFileName() + "\\E");
-        assertLogMatches(" EXAMP +\\Q" + getAntFileName() + "\\E");
+        assertLogMatches(" newFa +\\Q" + getAntFileName() + "\\E");
     }
-    
+
     @Test
     public void testCustomMatcher() throws Exception {
         buildRule.executeTarget("testCustomMatcher");
@@ -96,14 +103,14 @@ public class ReportTest extends AbstractRatAntTaskTest {
         assertLogDoesNotMatch(" AS +\\Q" + getAntFileName() + "\\E");
         assertLogMatches(" YASL1 +\\Q" + getAntFileName() + "\\E");
     }
-    
+
     @Test
     public void testCustomMatcherBuilder() throws Exception {
         buildRule.executeTarget("testCustomMatcherBuilder");
         assertLogDoesNotMatch(" AS +\\Q" + getAntFileName() + "\\E");
         assertLogMatches(" YASL1 +\\Q" + getAntFileName() + "\\E");
     }
-    
+
     @Test
     public void testNoResources() throws Exception {
         try {
@@ -114,7 +121,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
         }
     }
-    
+
     @Test
     public void testCopyrightBuild() throws Exception {
         try {
@@ -126,6 +133,22 @@ public class ReportTest extends AbstractRatAntTaskTest {
             final String expect = "You must specify at least one file";
             assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
         }
+    }
+
+    private Report getReport(String target) {
+        Target testDefault = buildRule.getProject().getTargets().get(target);
+        Optional<Task> optT = Arrays.stream(testDefault.getTasks()).filter(t -> t.getTaskName().equals("rat:report"))
+                .findFirst();
+        assertTrue(optT.isPresent());
+        optT.get().maybeConfigure();
+        return (Report) ((UnknownElement) optT.get()).getRealThing();
+    }
+
+    @Test
+    public void testDefault() {
+        Report report = getReport("testDefault");
+        ReportConfiguration config = report.getConfiguration();
+        ReportConfigurationTest.validateDefault(config);
     }
 
     @Test

@@ -72,6 +72,12 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
          * @return this builder for chaining.
          */
         Builder setLicenseFamilyName(String licenseFamilyName);
+        
+        /**
+         * Gets the category that this builder is building.
+         * @return the category that this builder is building.
+         */
+        String getCategory();
 
         /**
          * @return a new ILicenseFamily instance.

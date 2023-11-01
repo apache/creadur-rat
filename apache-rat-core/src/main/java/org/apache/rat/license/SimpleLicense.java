@@ -18,6 +18,9 @@
  */
 package org.apache.rat.license;
 
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 
 /**
@@ -29,17 +32,23 @@ class SimpleLicense implements ILicense {
     private IHeaderMatcher matcher;
     private String derivedFrom;
     private String notes;
+    private String name;
+    private String id;
 
-    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes) {
+    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes, String name, String id) {
+        Objects.requireNonNull(matcher, "Matcher must not be null");
+        Objects.requireNonNull(family, "Family must not be null");  
         this.family = family;
         this.matcher = matcher;
         this.derivedFrom = derivedFrom;
         this.notes = notes;
+        this.name = StringUtils.defaultIfBlank(name, family.getFamilyName());
+        this.id = StringUtils.defaultIfBlank(id, family.getFamilyCategory().trim());
     }
 
     @Override
     public String toString() {
-        return family.toString();
+        return String.format( "%s:%s", getId(), getName());
     }
 
     public ILicenseFamily getFamily() {
@@ -64,7 +73,7 @@ class SimpleLicense implements ILicense {
 
     @Override
     public String getId() {
-        return matcher.getId();
+        return id;
     }
 
     @Override
@@ -105,5 +114,10 @@ class SimpleLicense implements ILicense {
     @Override
     public String derivedFrom() {
         return derivedFrom;
+    }
+    
+    @Override
+    public String getName() {
+        return name;
     }
 }

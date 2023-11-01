@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +27,6 @@
   <name>Apache Creadur Rat::Core</name>
   <description>The core functionality, shared by the Ant tasks
     and the Maven plugin.</description>
-
   <build>
     <resources>
       <resource>
@@ -46,7 +45,6 @@
         </includes>
       </resource>
     </resources>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -57,7 +55,7 @@
               <!-- These files have bad license headers because they are used to test bad license headers -->
               <exclude>src/test/resources/appliedAL20/bad/*.*</exclude>
               <exclude>src/test/resources/oasis/bad/*.*</exclude>
-              <!-- These files does not have license headers because they are used to test license headers -->
+              <!-- These files do not have license headers because they are used to test license headers -->
               <exclude>src/test/resources/elements/Source.java</exclude>
               <exclude>src/test/resources/elements/ILoggerFactory.java</exclude>
               <exclude>src/test/resources/elements/sub/Empty.txt</exclude>
@@ -67,16 +65,27 @@
               <exclude>src/test/resources/binaries/Image-png.not</exclude>
               <!-- These files have a valid license header that was not recognised by older rat versions -->
               <exclude>src/test/resources/elements/TextHttps.txt</exclude>
-              <!-- Remove after using RAT 0.14 for dog-fooding ..... older versions do not ignore JSON -->
+              <!-- Remove after using RAT 0.14 for dog-fooding older versions do not ignore JSON -->
               <exclude>src/test/resources/elements/plain.json</exclude>
             </excludes>
           </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
-
-
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
@@ -115,13 +124,13 @@
       <artifactId>commons-cli</artifactId>
     </dependency>
     <dependency>
-        <groupId>commons-beanutils</groupId>
-        <artifactId>commons-beanutils</artifactId>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
     </dependency>
     <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <scope>test</scope>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

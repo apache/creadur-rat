@@ -38,6 +38,7 @@ import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
@@ -47,7 +48,8 @@ import org.apache.rat.report.IReportable;
  * {@link Reporter}. The sole purpose of the front ends is to create the
  * configuration and invoke the {@link Reporter}.
  */
-public class ReportConfiguration {
+public class ReportConfiguration {    
+    private SortedSet<ILicenseFamily> families = LicenseFamilySetFactory.emptyLicenseFamilySet();
     private SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
     private SortedSet<String> approvedLicenseCategories = new TreeSet<>();
     private SortedSet<String> removedLicenseCategories = new TreeSet<>();
@@ -187,19 +189,74 @@ public class ReportConfiguration {
     public void addLicense(ILicense license) {
         if (license != null) {
             this.licenses.add(license);
+            this.families.add(license.getLicenseFamily());
         }
+    }
+    
+    /**
+     * Adds a license to the list of licenses. Does not add the license to the list
+     * of approved licenses.
+     * 
+     * @param builder The license builder to build and add to the list of licenses.
+     */
+    public ILicense addLicense(ILicense.Builder builder) {
+        if (builder != null) {
+            ILicense license = builder.build(families);
+            this.licenses.add(license);
+            return license;
+        }
+        return null;
     }
 
     /**
      * Adds multiple licenses to the list of licenses. Does not add the licenses to
      * the list of approved licenses.
      *
-     * @param license The license t oadd.
+     * @param license The license to add.
      */
     public void addLicenses(Collection<ILicense> licenses) {
         this.licenses.addAll(licenses);
+        licenses.stream().map(ILicense::getLicenseFamily).forEach(families::add);
+    }
+    
+    /**
+     * Adds a license family to the list of families. Does not add the family to the list
+     * of approved licenses.
+     * 
+     * @param family The license family to add to the list of license families.
+     */
+    public void addFamily(ILicenseFamily family) {
+        if (family != null) {
+            this.families.add(family);
+        }
     }
 
+    /**
+     * Adds a license family to the list of families. Does not add the family to the list
+     * of approved licenses.
+     * 
+     * @param builder The licenseFamily.Builder to build and add to the list of licenses.
+     */
+    public void addFamily(ILicenseFamily.Builder builder) {
+        if (builder != null) {
+            this.families.add(builder.build());
+        }
+    }
+    
+    /**
+     * Adds multiple families to the list of license families. Does not add the licenses to
+     * the list of approved licenses.
+     *
+     * @param license The licensefamily to add.
+     */
+    public void addFamilies(Collection<ILicenseFamily> families) {
+        this.families.addAll(families);
+    }
+    
+    public SortedSet<ILicenseFamily> getFamilies() {
+        return Collections.unmodifiableSortedSet(families);
+    }
+    
     /**
      * Adds an ILicenseFamily to the list of approved licenses.
      *
@@ -363,7 +420,7 @@ public class ReportConfiguration {
      * @return The set of defined licenses.
      */
     public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
-        return new LicenseSetFactory(licenses, getApprovedLicenseCategories()).getLicenseFamilies(filter);
+        return new LicenseFamilySetFactory(families, getApprovedLicenseCategories()).getFamilies(filter);
     }
 
     /**

@@ -37,10 +37,11 @@ import org.junit.Test;
 
 public class ConfigurationReaderTest {
 
-    private static String[] EXPECTED_IDS = { "AL", "ASL", "BSD-3", "CDDL1", "DOJO", "GEN", "GPL1", "GPL2", "GPL3",
-            "MIT", "OASIS", "W3C", "W3CD" };
-    private static String[] EXPECTED_LICENSES = { "AL   ", "ASL  ", "BSD-3", "CDDL1", "DOJO ", "GEN  ", "GPL1 ",
-            "GPL2 ", "GPL3 ", "ILLUM", "MIT  ", "OASIS", "TMF  ", "W3C  ", "W3CD " };
+    public static final String[] EXPECTED_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3", "MIT", "OASIS",
+            "W3C", "W3CD" };
+
+    public static final String[] EXPECTED_LICENSES = { "AL", "ASL", "BSD-3", "CDDL1", "DOJO", "GEN", "GPL1", "GPL2",
+            "GPL3", "ILLUMOS", "MIT", "OASIS", "TMF", "W3C", "W3CD" };
 
     @Test
     public void approvedLicenseIdTest() {
@@ -49,6 +50,7 @@ public class ConfigurationReaderTest {
         reader.read(url);
 
         Collection<String> readCategories = reader.approvedLicenseId();
+
         assertArrayEquals(EXPECTED_IDS, readCategories.toArray(new String[readCategories.size()]));
     }
 
@@ -58,32 +60,42 @@ public class ConfigurationReaderTest {
         URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
 
-        Collection<String> readCategories = reader.readLicenses().stream()
-                .map(x -> x.getLicenseFamily().getFamilyCategory()).collect(Collectors.toList());
+        Collection<String> readCategories = reader.readLicenses().stream().map(x -> x.getId())
+                .collect(Collectors.toList());
         assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[readCategories.size()]));
     }
-    
-    private void checkMatcher( String name, Class<? extends AbstractBuilder> clazz)
-    {
-        AbstractBuilder builder =  MatcherBuilderTracker.getMatcherBuilder(name);
-        assertNotNull( builder );
-        assertTrue( name+" is not an instanceof "+clazz.getName(), clazz.isAssignableFrom(builder.getClass()));
+
+    @Test
+    public void LicenseFamiliesTest() {
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        reader.read(url);
+
+        Collection<String> readCategories = reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim())
+                .collect(Collectors.toList());
+        assertArrayEquals(EXPECTED_IDS, readCategories.toArray(new String[readCategories.size()]));
     }
-    
+
+    private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {
+        AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(name);
+        assertNotNull(builder);
+        assertTrue(name + " is not an instanceof " + clazz.getName(), clazz.isAssignableFrom(builder.getClass()));
+    }
+
     @Test
     public void checkSystemMatcherTest() {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
         reader.readMatcherBuilders();
-        checkMatcher( "all", AllBuilder.class);
-        checkMatcher( "any", AnyBuilder.class);
-        checkMatcher( "copyright", CopyrightBuilder.class);
-        checkMatcher( "matcherRef", MatcherRefBuilder.class);
-        checkMatcher( "not", NotBuilder.class);
-        checkMatcher( "regex", RegexBuilder.class);
-        checkMatcher( "spdx", SpdxBuilder.class);
-        checkMatcher( "text", TextBuilder.class);
+        checkMatcher("all", AllBuilder.class);
+        checkMatcher("any", AnyBuilder.class);
+        checkMatcher("copyright", CopyrightBuilder.class);
+        checkMatcher("matcherRef", MatcherRefBuilder.class);
+        checkMatcher("not", NotBuilder.class);
+        checkMatcher("regex", RegexBuilder.class);
+        checkMatcher("spdx", SpdxBuilder.class);
+        checkMatcher("text", TextBuilder.class);
     }
 
 }
