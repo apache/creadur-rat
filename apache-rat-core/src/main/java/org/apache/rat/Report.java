@@ -349,10 +349,7 @@ public class Report {
         try (PrintStream out = new PrintStream(config.getOutput().get())) {
             File base = new File(baseDirectory);
             if (!base.exists()) {
-                out.print("ERROR: ");
-                out.print(baseDirectory);
-                out.print(" does not exist.\n");
-                return null;
+                throw new ConfigurationException(String.format( "'%s' does not exist,", baseDirectory));
             }
 
             if (base.isDirectory()) {
@@ -362,10 +359,7 @@ public class Report {
             try {
                 return new ArchiveWalker(base, config.getInputFileFilter());
             } catch (IOException ex) {
-                out.print("ERROR: ");
-                out.print(baseDirectory);
-                out.print(" is not valid gzip data.\n");
-                return null;
+                throw new ConfigurationException(String.format( "'%s' is not valid gzip data.", baseDirectory));
             }
         } catch (IOException e) {
             throw new ConfigurationException("Error opening output", e);
