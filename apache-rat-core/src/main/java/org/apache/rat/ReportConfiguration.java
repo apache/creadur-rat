@@ -26,6 +26,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +51,7 @@ import org.apache.rat.report.IReportable;
  * {@link Reporter}. The sole purpose of the front ends is to create the
  * configuration and invoke the {@link Reporter}.
  */
-public class ReportConfiguration {    
+public class ReportConfiguration {
     private SortedSet<ILicenseFamily> families = LicenseFamilySetFactory.emptyLicenseFamilySet();
     private SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
     private SortedSet<String> approvedLicenseCategories = new TreeSet<>();
@@ -91,13 +94,16 @@ public class ReportConfiguration {
     }
 
     /**
-     * @return the XSLT style sheet to style the report with.
+     * @return the Supplier of the InputStream that is the XSLT style sheet to style the report with.
      */
     public IOSupplier<InputStream> getStyleSheet() {
         return styleSheet;
     }
 
     /**
+     * Sets the style sheet for custom processing.
+     * The IOSupplier may be called multiple times, so the input stream must be 
+     * able to be opened and closed multiple times.
      * @param styleSheet the XSLT style sheet to style the report with.
      */
     public void setStyleSheet(IOSupplier<InputStream> styleSheet) {
@@ -126,9 +132,38 @@ public class ReportConfiguration {
      */
     public void setStyleSheet(File styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
-        setStyleSheet(() -> styleSheet.toURI().toURL().openStream());
+        setStyleSheet(styleSheet.toURI());
     }
 
+    /**
+     * Sets the style sheet for custom processing.
+     * The stylesheet may be opened multiple times so the URI must be capable of being opened
+     * multiple times.
+     * @param styleSheet the URI of the XSLT style sheet to style the report with.
+     * @throws MalformedURLException 
+     * @throws IOException
+     */
+    public void setStyleSheet(URI styleSheet) {
+        Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
+        try {
+            setStyleSheet(styleSheet.toURL());
+        } catch (MalformedURLException e) {
+            throw new ConfigurationException( "Unable to process stylesheet", e);
+        }
+    }
+
+    /**
+     * Sets the style sheet for custom processing.
+     * The stylesheet may be opened multiple times so the URL must be capable of being opened
+     * multiple times.
+     * @param styleSheet the URL of the XSLT style sheet to style the report with.
+     * @throws IOException
+     */
+    public void setStyleSheet(URL styleSheet) {
+        Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
+        setStyleSheet(() -> styleSheet.openStream());
+    }
+    
     /**
      * @return {@code true} if the XML report should be styled.
      */
@@ -144,22 +179,29 @@ public class ReportConfiguration {
     }
 
     /**
+     * Sets the supplier for the output stream. The supplier may be called multiple
+     * times to provide the stream. Suppliers should prepare streams that are
+     * appended to and that can be closed. If an {@code OutputStream} should not be
+     * closed consider wrapping it in a {@code NoCloseOutputStream}
+     * 
      * @param out The OutputStream supplier that provides the output stream to write
      * the report to. (may be null)
+     * @see NoCloseOutputStream
      */
     public void setOut(IOSupplier<OutputStream> out) {
         this.out = out;
     }
 
     /**
-     * Sets the OutputStream supplier to use the specified file.
+     * Sets the OutputStream supplier to use the specified file. The file may be
+     * opened and closed several times. File is opened in append mode.
      * 
      * @see #setOut(IOSupplier)
      * @param file The file to create the supplier with.
      */
     public void setOut(File file) {
         Objects.requireNonNull(file, "output file should not be null");
-        setOut(() -> new FileOutputStream(file));
+        setOut(() -> new FileOutputStream(file, true));
     }
 
     /**
@@ -169,7 +211,7 @@ public class ReportConfiguration {
      * @return The supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
-        return out == null ? () -> System.out : out;
+        return out == null ? () -> new NoCloseOutputStream(System.out) : out;
     }
 
     /**
@@ -192,7 +234,7 @@ public class ReportConfiguration {
             this.families.add(license.getLicenseFamily());
         }
     }
-    
+
     /**
      * Adds a license to the list of licenses. Does not add the license to the list
      * of approved licenses.
@@ -218,10 +260,10 @@ public class ReportConfiguration {
         this.licenses.addAll(licenses);
         licenses.stream().map(ILicense::getLicenseFamily).forEach(families::add);
     }
-    
+
     /**
-     * Adds a license family to the list of families. Does not add the family to the list
-     * of approved licenses.
+     * Adds a license family to the list of families. Does not add the family to the
+     * list of approved licenses.
      * 
      * @param family The license family to add to the list of license families.
      */
@@ -232,31 +274,32 @@ public class ReportConfiguration {
     }
 
     /**
-     * Adds a license family to the list of families. Does not add the family to the list
-     * of approved licenses.
+     * Adds a license family to the list of families. Does not add the family to the
+     * list of approved licenses.
      * 
-     * @param builder The licenseFamily.Builder to build and add to the list of licenses.
+     * @param builder The licenseFamily.Builder to build and add to the list of
+     * licenses.
      */
     public void addFamily(ILicenseFamily.Builder builder) {
         if (builder != null) {
             this.families.add(builder.build());
         }
     }
-    
+
     /**
-     * Adds multiple families to the list of license families. Does not add the licenses to
-     * the list of approved licenses.
+     * Adds multiple families to the list of license families. Does not add the
+     * licenses to the list of approved licenses.
      *
      * @param license The licensefamily to add.
      */
     public void addFamilies(Collection<ILicenseFamily> families) {
         this.families.addAll(families);
     }
-    
+
     public SortedSet<ILicenseFamily> getFamilies() {
         return Collections.unmodifiableSortedSet(families);
     }
-    
+
     /**
      * Adds an ILicenseFamily to the list of approved licenses.
      *
@@ -440,6 +483,58 @@ public class ReportConfiguration {
         }
         if (styleSheet == null && isStyleReport()) {
             throw new ConfigurationException("Stylesheet must be specified if report styling is selected");
+        }
+    }
+
+    /**
+     * A wrapper around an output stream that does not close the output stream.
+     */
+    public static class NoCloseOutputStream extends OutputStream {
+        private OutputStream delegate;
+
+        public NoCloseOutputStream(OutputStream delegate) {
+            super();
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void write(int arg0) throws IOException {
+            delegate.write(arg0);
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.delegate.flush();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return delegate.equals(obj);
+        }
+
+        @Override
+        public void flush() throws IOException {
+            delegate.flush();
+        }
+
+        @Override
+        public int hashCode() {
+            return delegate.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return delegate.toString();
+        }
+
+        @Override
+        public void write(byte[] arg0, int arg1, int arg2) throws IOException {
+            delegate.write(arg0, arg1, arg2);
+        }
+
+        @Override
+        public void write(byte[] b) throws IOException {
+            delegate.write(b);
         }
     }
 }
