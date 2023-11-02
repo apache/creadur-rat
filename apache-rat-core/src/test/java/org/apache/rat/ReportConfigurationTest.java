@@ -34,6 +34,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -312,22 +313,6 @@ public class ReportConfigurationTest {
 
     @Test
     public void testValidate() {
-
-//        public void validate(Consumer<String> logger) {
-//            if (reportable == null) {
-//                throw new ConfigurationException("Reportable may not be null");
-//            }
-//            if (licenses.size() == 0) {
-//                throw new ConfigurationException("You must specify at least one license");
-//            }
-//            if (styleSheet != null && !isStyleReport()) {
-//                logger.accept("Ignoring stylesheet because styling is not selected");
-//            }
-//            if (styleSheet == null && isStyleReport()) {
-//                throw new ConfigurationException("Stylesheet must be specified if report styling is selected");
-//            }
-//        }
-
         final StringBuilder sb = new StringBuilder();
         try {
             underTest.validate(s -> sb.append(s));
@@ -364,6 +349,22 @@ public class ReportConfigurationTest {
         underTest.setStyleReport(true);
         underTest.validate(s -> sb2.append(s));
         assertEquals(0, sb2.length());
+    }
+    
+    @Test
+    public void testSetOut() throws IOException {
+        ReportConfiguration config = new ReportConfiguration();
+        OutputStreamIntercepter osi = new OutputStreamIntercepter();
+        config.setOut(() -> osi);
+        assertEquals( 0, osi.closeCount);
+        try (OutputStream os = config.getOutput().get()) {
+            assertEquals( 0, osi.closeCount);
+        }
+        assertEquals( 1, osi.closeCount);
+        try (OutputStream os = config.getOutput().get()) {
+            assertEquals( 1, osi.closeCount);
+        }
+        assertEquals( 2, osi.closeCount);
     }
     
     /**
@@ -430,5 +431,20 @@ public class ReportConfigurationTest {
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);
         validateDefaultLicenses(config);
+    }
+    
+    static class OutputStreamIntercepter extends OutputStream {
+        
+        int closeCount = 0;
+
+        @Override
+        public void write(int arg0) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        
+        @Override
+        public void close() {
+            ++closeCount;
+        }
     }
 }
