@@ -49,7 +49,7 @@ public class ReportTest {
     public void testDefaultConfiguration() throws ParseException, IOException {
         String[] empty = {};
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), empty);
-        ReportConfiguration config = Report.createConfiguration("", cl);
+        ReportConfiguration config = Report.createConfiguration(".", cl);
         ReportConfigurationTest.validateDefault(config);
     }
 
