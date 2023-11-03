@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-328" type="fix" dev="pottlinger" due-to="Claude Warren">
+         Ensure that System.out does not get closed during report generation and updated javadocs.
+      </action>
       <action issue="RAT-316" type="add" dev="pottlinger">
          Add default exclusion of MANIFEST.MF as it must not contain comment lines to include a license.
       </action>
