@@ -70,6 +70,9 @@ public abstract class AbstractLicenseAppender {
     private static final int TYPE_GO = 26;
     private static final int TYPE_PM = 27;
     private static final int TYPE_MD = 28;
+    private static final int TYPE_YAML = 29;
+    
+    
 
     /**
      * the line separator for this OS
@@ -86,7 +89,7 @@ public abstract class AbstractLicenseAppender {
     };
     private static final int[] FAMILY_SH = new int[]{
             TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
-            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION, TYPE_PM,
+            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION, TYPE_PM, TYPE_YAML,
     };
     private static final int[] FAMILY_BAT = new int[]{
             TYPE_BAT,
@@ -188,6 +191,8 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("xml", TYPE_XML);
         EXT2TYPE.put("xproj", TYPE_XML);
         EXT2TYPE.put("xsl", TYPE_XML);
+        EXT2TYPE.put("yaml", TYPE_YAML);
+        EXT2TYPE.put("yml", TYPE_YAML);
     }
 
     private boolean isForced;
