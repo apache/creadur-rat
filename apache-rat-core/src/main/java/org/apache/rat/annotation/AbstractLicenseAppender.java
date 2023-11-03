@@ -68,7 +68,8 @@ public abstract class AbstractLicenseAppender {
     private static final int TYPE_JSP = 24;
     private static final int TYPE_FML = 25;
     private static final int TYPE_GO = 26;
-    private static final int TYPE_PM = 27;    
+    private static final int TYPE_PM = 27;
+    private static final int TYPE_MD = 28;
 
     /**
      * the line separator for this OS
@@ -81,7 +82,7 @@ public abstract class AbstractLicenseAppender {
             TYPE_BEANSHELL, TYPE_GO,
     };
     private static final int[] FAMILY_SGML = new int[]{
-            TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML,
+            TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML, TYPE_MD,
     };
     private static final int[] FAMILY_SH = new int[]{
             TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
@@ -160,6 +161,7 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("java", TYPE_JAVA);
         EXT2TYPE.put("js", TYPE_JAVASCRIPT);
         EXT2TYPE.put("jsp", TYPE_JSP);
+        EXT2TYPE.put("md", TYPE_MD);
         EXT2TYPE.put("ndoc", TYPE_XML);
         EXT2TYPE.put("nunit", TYPE_XML);
         EXT2TYPE.put("php", TYPE_PHP);

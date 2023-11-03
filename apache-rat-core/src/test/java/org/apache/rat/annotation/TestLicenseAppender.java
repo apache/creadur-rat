@@ -735,4 +735,28 @@ public class TestLicenseAppender {
                     }
                 });
     }
+    
+    @Test
+    public void addLicenseMarkdown() throws IOException {
+        String filename = "tmp.md";
+
+        commonTestTemplate(filename, new FileCreator() {
+                    public void createFile(Writer writer)
+                            throws IOException {
+                        writer.write("## This is the first header\n");
+                        writer.write(" * this is a list entry\n");
+                        writer.write(" * this is another list entry\n");
+                        writer.write(" <!-- this is a comment line -->");
+                        writer.write("## This is the second header\n");
+                    }
+                },
+                new NewFileReader() {
+                    public void readFile(BufferedReader r) throws IOException {
+                        String line = r.readLine();
+                        assertEquals("First line is incorrect",
+                                "<!--", line);
+                        line = r.readLine();
+                    }
+                });
+    }
 }
