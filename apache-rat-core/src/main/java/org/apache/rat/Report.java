@@ -338,12 +338,12 @@ public class Report {
     }
 
     /**
-     * Creates an IReporatble object from the directory name and ReportConfiguration
+     * Creates an IReportable object from the directory name and ReportConfiguration
      * object.
      * 
      * @param baseDirectory the directory that contains the files to report on.
      * @param config the ReportConfiguration.
-     * @return the IReportale instance containing the files.
+     * @return the IReportable instance containing the files.
      */
     private static IReportable getDirectory(String baseDirectory, ReportConfiguration config) {
         try (PrintStream out = new PrintStream(config.getOutput().get())) {
