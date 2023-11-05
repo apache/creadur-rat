@@ -18,3 +18,4 @@
 */.idea
 /target/
 **/.gitignore
+**/lib/
