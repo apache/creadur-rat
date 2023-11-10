@@ -128,7 +128,6 @@ public class ReportConfiguration {
     /**
      * 
      * @param styleSheet the XSLT style sheet to style the report with.
-     * @throws IOException
      */
     public void setStyleSheet(File styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
@@ -140,8 +139,6 @@ public class ReportConfiguration {
      * The stylesheet may be opened multiple times so the URI must be capable of being opened
      * multiple times.
      * @param styleSheet the URI of the XSLT style sheet to style the report with.
-     * @throws MalformedURLException 
-     * @throws IOException
      */
     public void setStyleSheet(URI styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
@@ -157,7 +154,6 @@ public class ReportConfiguration {
      * The stylesheet may be opened multiple times so the URL must be capable of being opened
      * multiple times.
      * @param styleSheet the URL of the XSLT style sheet to style the report with.
-     * @throws IOException
      */
     public void setStyleSheet(URL styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
@@ -172,7 +168,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * @param styleReport specifies whether or not the XML report should be styled.
+     * @param styleReport specifies whether the XML report should be styled.
      */
     public void setStyleReport(boolean styleReport) {
         this.styleReport = styleReport;
@@ -254,7 +250,7 @@ public class ReportConfiguration {
      * Adds multiple licenses to the list of licenses. Does not add the licenses to
      * the list of approved licenses.
      *
-     * @param license The license to add.
+     * @param licenses The licenses to add.
      */
     public void addLicenses(Collection<ILicense> licenses) {
         this.licenses.addAll(licenses);
@@ -290,7 +286,7 @@ public class ReportConfiguration {
      * Adds multiple families to the list of license families. Does not add the
      * licenses to the list of approved licenses.
      *
-     * @param license The licensefamily to add.
+     * @param families The license families to add.
      */
     public void addFamilies(Collection<ILicenseFamily> families) {
         this.families.addAll(families);
@@ -303,7 +299,7 @@ public class ReportConfiguration {
     /**
      * Adds an ILicenseFamily to the list of approved licenses.
      *
-     * @param approvedILicenseFamily the LicenseFamily to add..
+     * @param approvedILicenseFamily the LicenseFamily to add.
      */
     public void addApprovedLicenseCategory(ILicenseFamily approvedILicenseFamily) {
         approvedLicenseCategories.add(approvedILicenseFamily.getFamilyCategory());
@@ -322,7 +318,7 @@ public class ReportConfiguration {
      * Adds a collection of license family categories to the set of approved license
      * names.
      *
-     * @param approvedLicenseCategories set of approved license categories..
+     * @param approvedLicenseCategories set of approved license categories.
      */
     public void addApprovedLicenseCategories(Collection<String> approvedLicenseCategories) {
         approvedLicenseCategories.stream().forEach(this::addApprovedLicenseCategory);
@@ -330,7 +326,7 @@ public class ReportConfiguration {
 
     /**
      * Adds a license family category to the list of approved licenses. <em>Once a
-     * license has been removed from the approved list it can not be re-added</em>
+     * license has been removed from the approved list it cannot be re-added</em>
      * 
      * @param familyCategory the category to add.
      */
@@ -340,7 +336,7 @@ public class ReportConfiguration {
 
     /**
      * Removes a license family category from the list of approved licenses.
-     * <em>Once a license has been removed from the approved list it can not be
+     * <em>Once a license has been removed from the approved list it cannot be
      * re-added</em>
      * 
      * @param familyCategory the family category to remove.
@@ -351,7 +347,7 @@ public class ReportConfiguration {
 
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
-     * been removed from the approved list it can not be re-added</em>
+     * been removed from the approved list it cannot be re-added</em>
      * 
      * @return the Sorted set of approved license categories.
      */
@@ -377,7 +373,7 @@ public class ReportConfiguration {
      * This value is ignored, if no license headers are added.
      *
      * @param copyrightMessage message to set.
-     * @see #setAddingLicenses(boolean)
+     * @see #isAddingLicenses()
      */
     public void setCopyrightMessage(String copyrightMessage) {
         this.copyrightMessage = copyrightMessage;
@@ -403,12 +399,12 @@ public class ReportConfiguration {
     }
 
     /**
-     * Sets whether RAT should enable, disable, or force the adidng of license
+     * Sets whether RAT should enable, disable, or force the adding of license
      * headers.
      * 
      * @param addLicenseHeaders enables/disables or forces adding of licenses
      * headers.
-     * @see #setAddingLicensesForced(boolean)
+     * @see #isAddingLicenses()
      * @see #setCopyrightMessage(String)
      */
     public void setAddLicenseHeaders(AddLicenseHeaders addLicenseHeaders) {
@@ -469,13 +465,13 @@ public class ReportConfiguration {
     /**
      * Validates that the configuration is valid.
      * 
-     * @param a String consumer to log warning messages to.
+     * @param logger String consumer to log warning messages to.
      */
     public void validate(Consumer<String> logger) {
         if (reportable == null) {
             throw new ConfigurationException("Reportable may not be null");
         }
-        if (licenses.size() == 0) {
+        if (licenses.isEmpty()) {
             throw new ConfigurationException("You must specify at least one license");
         }
         if (styleSheet != null && !isStyleReport()) {
