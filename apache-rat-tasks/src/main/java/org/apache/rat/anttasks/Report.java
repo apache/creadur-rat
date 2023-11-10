@@ -111,13 +111,17 @@ public class Report extends Task {
     /**
      * 
      * @param styleSheet
-     * @deprecated us {@link #addStyleSheet(File)}
+     * @deprecated use {@link #addStyleSheet(Resource)}
      */
     @Deprecated
     public void addStylesheet(Resource styleSheet) {
         addStyleSheet(styleSheet);
     }
 
+    /**
+     * Adds a given style sheet to the report.
+     * @param styleSheet style sheet to use in this report.
+     */
     public void addStyleSheet(Resource styleSheet) {
         configuration.setStyleSheet(() -> styleSheet.getInputStream());
         configuration.setStyleReport(true);
