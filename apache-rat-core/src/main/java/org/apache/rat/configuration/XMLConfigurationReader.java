@@ -57,27 +57,27 @@ import org.xml.sax.SAXException;
 /**
  * A class that reads the XML configuration file format.
  * <p>
- * {@code <rat-config>}<br/>
- * {@code   <licenses>}<br/>
- * {@code     <license id=id name=name >}<br/>
- * {@code       <notes></notes>}<br/>
- * {@code       <text>  </text>}<br/>
- * {@code       <copyright start='' end='' owner=''/>}<br/>
- * {@code       <spdx></spdx> }<br/>
- * {@code       <and> <matcher/>...</and>}<br/>
- * {@code       <or> <matcher/>...</or> }<br/>
- * {@code       <matcher_ref refid='' />}<br/>
- * {@code       <not><matcher /></not>}<br/>
- * {@code     </license>}<br/>
- * {@code   </licenses>}<br/>
- * {@code   <approved>}<br/>
- * {@code     <family refid=''>}<br/>
- * {@code   </approved>}<br/>
- * {@code   <matchers>}<br/>
- * {@code     <matcher className=''/>}<br/>
- * {@code     <matcher className=''/>}<br/>
- * {@code   </matchers>}<br/>
- * {@code </rat-config>}<br/>
+ * {@code <rat-config>}<br>
+ * {@code   <licenses>}<br>
+ * {@code     <license id=id name=name >}<br>
+ * {@code       <notes></notes>}<br>
+ * {@code       <text>  </text>}<br>
+ * {@code       <copyright start='' end='' owner=''/>}<br>
+ * {@code       <spdx></spdx> }<br>
+ * {@code       <and> <matcher/>...</and>}<br>
+ * {@code       <or> <matcher/>...</or> }<br>
+ * {@code       <matcher_ref refid='' />}<br>
+ * {@code       <not><matcher /></not>}<br>
+ * {@code     </license>}<br>
+ * {@code   </licenses>}<br>
+ * {@code   <approved>}<br>
+ * {@code     <family refid=''>}<br>
+ * {@code   </approved>}<br>
+ * {@code   <matchers>}<br>
+ * {@code     <matcher className=''/>}<br>
+ * {@code     <matcher className=''/>}<br>
+ * {@code   </matchers>}<br>
+ * {@code </rat-config>}<br>
  * </p>
  */
 
@@ -112,7 +112,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     private final SortedSet<String> approvedFamilies;
 
     /**
-     * Constructs the XML configuration read.
+     * Constructs the XML configuration reader.
      */
     public XMLConfigurationReader() {
         try {
@@ -295,7 +295,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     public SortedSet<ILicense> readLicenses() {
         readFamilies();
         readMatcherBuilders();
-        if (licenses.size() == 0) {
+        if (licenses.isEmpty()) {
             nodeListConsumer(document.getElementsByTagName(LICENSE), x -> licenses.add(parseLicense(x)));
             document = null;
         }
