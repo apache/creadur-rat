@@ -96,7 +96,6 @@ public enum RatLicenseFamily {
             "W3C Software Copyright",
             "W3C  ",
             "Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231."),
-
 	/**
 	 * W3C Document Copyright
 	 */
