@@ -42,9 +42,9 @@ public class Reporter {
     }
 
     /**
-     * Execut the report.
+     * Execute the report.
      * 
-     * @param configuration The report configuration..
+     * @param configuration The report configuration.
      * @return the currently collected numerical statistics.
      * @throws Exception in case of errors.
      */
@@ -74,8 +74,8 @@ public class Reporter {
 
     /**
      * Execute the report.
-     * @param coutputWriter the writer to send output to.
-     * @param configuration The report configuration..
+     * @param outputWriter the writer to send output to.
+     * @param configuration The report configuration.
      * @return the currently collected numerical statistics.
      * @throws IOException in case of I/O errors.
      * @throws RatException in case of internal errors.

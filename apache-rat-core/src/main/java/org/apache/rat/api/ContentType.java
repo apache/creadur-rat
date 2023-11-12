@@ -32,7 +32,7 @@ public class ContentType {
 
     /**
      * Constructs content types, 
-     * performing an necessary conversions.
+     * performing any necessary conversions.
      * @param mediaType not null
      * @param subType not null
      * @param parameters not null
