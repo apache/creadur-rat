@@ -31,18 +31,34 @@ import org.apache.rat.report.AbstractReport;
  * this class.
  */
 public abstract class AbstractClaimReporter extends AbstractReport {
+    /**
+     * Empty default implementation.
+     * @param documentCategoryName name of the category
+     */
     protected void handleDocumentCategoryClaim(String documentCategoryName) {
         // Does nothing
     }
 
+    /**
+     * Empty default implementation.
+     * @param licenseApproved name of the approved license
+     */
     protected void handleApprovedLicenseClaim(String licenseApproved) {
         // Does nothing
     }
 
+    /**
+     * Empty default implementation.
+     * @param licenseFamilyName name of the license family
+     */
     protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
         // Does Nothing
     }
 
+    /**
+     * Empty default implementation.
+     * @param headerCategory name of the header category
+     */
     protected void handleHeaderCategoryClaim(String headerCategory) {
         // Does nothing
     }

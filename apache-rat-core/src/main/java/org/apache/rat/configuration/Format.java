@@ -28,7 +28,7 @@ import java.util.Arrays;
 import org.apache.rat.ConfigurationException;
 
 /**
- * An enumeration of the types of files that can contain the configurtion
+ * An enumeration of the types of files that can contain the configuration
  * information.
  */
 public enum Format {
@@ -101,7 +101,7 @@ public enum Format {
 
    /**
     * Determine the {@code Format} from a URL.
-    * @param name the URL to check.
+    * @param url the URL to check.
     * @return the Format
     */
    public static Format fromURL(URL url) {
@@ -110,7 +110,7 @@ public enum Format {
 
    /**
     * Determine the {@code Format} from a File.
-    * @param name the File to check.
+    * @param file the File to check.
     * @return the Format
     */
    public static Format fromFile(File file) throws MalformedURLException {

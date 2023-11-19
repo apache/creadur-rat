@@ -28,6 +28,9 @@ public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
 
     private String id;
 
+    /**
+     * Protected empty constructor.
+     */
     protected AbstractBuilder() {
     }
 

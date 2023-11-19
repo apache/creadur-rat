@@ -36,13 +36,13 @@ import org.apache.rat.analysis.IHeaderMatcher;
  * SPDX identifiers are specified by the Software Package Data Exchange(R) also
  * known as SPDX(R) project from the Linux foundation.
  * </p>
- * 
- * @see https://spdx.dev/ids/
+ *
+ * @see <a href="https://spdx.dev/ids/">List of Ids at spdx.dev</a>
  */
 public class SPDXMatcherFactory {
 
     /**
-     * The collectoin of all matchers produced by this factory.
+     * The collection of all matchers produced by this factory.
      */
     private static final Map<String, SPDXMatcherFactory.Match> matchers = new HashMap<>();
 
@@ -52,7 +52,7 @@ public class SPDXMatcherFactory {
     public static final SPDXMatcherFactory INSTANCE = new SPDXMatcherFactory();
 
     /**
-     * The regular expression to locate the SPDX license identifer in the text stream
+     * The regular expression to locate the SPDX license identifier in the text stream
      */
     private static Pattern groupSelector = Pattern.compile(".*SPDX-License-Identifier:\\s([A-Za-z0-9\\.\\-]+)");
 
@@ -72,7 +72,7 @@ public class SPDXMatcherFactory {
     /**
      * Creates the spdx matcher.
      * @param spdxId the spdx name to match.
-     * @return and spdx matcher.
+     * @return a spdx matcher.
      */
     public IHeaderMatcher create(String spdxId) {
         if (StringUtils.isBlank(spdxId)) {
@@ -93,7 +93,7 @@ public class SPDXMatcherFactory {
      * @return true if the caller matches the text.
      */
     private boolean check(String line, Match caller) {
-        // if the line is has not been seen yet see if we can extract the SPDX id from the line.
+        // if the line has not been seen yet see if we can extract the SPDX id from the line.
         // if so then see if that name has been registered.  If so then we have a match and set 
         // lastMatch.
         if (lastLine == null || !lastLine.equals(line)) {
@@ -116,9 +116,6 @@ public class SPDXMatcherFactory {
          * 
          * @param spdxId A regular expression that matches the @{short-name} of the SPDX
          * Identifier.
-         * @param licenseFamilyCategory the RAT license family category for the license.
-         * @param licenseFamilyName the RAT license family name for the license.
-         * @param notes The notes for this matcher.
          */
         Match(final String spdxId) {
             super("SPDX:" + spdxId);
@@ -129,11 +126,6 @@ public class SPDXMatcherFactory {
         @Override
         protected boolean doMatch(String line) {
             return SPDXMatcherFactory.this.check(line, this);
-        }
-
-        @Override
-        public String toString() {
-            return getId();
         }
     }
 }

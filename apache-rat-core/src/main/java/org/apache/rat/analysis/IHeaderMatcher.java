@@ -30,12 +30,11 @@ import org.apache.rat.configuration.builders.TextBuilder;
 /**
  * Performs explicit checks against a line from the header of a file.
  * For implementations that need to check multiple lines the implementation must cache the earlier lines.
- * 
  */
 public interface IHeaderMatcher {
     /**
      * The state of the matcher.
-     * </ul>
+     * <ul>
      * <li>{@code t} - The matcher has located a match.</li>
      * <li>{@code f} - The matcher has determined that it will not match the
      * document.</li>
