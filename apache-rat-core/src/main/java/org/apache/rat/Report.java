@@ -162,6 +162,10 @@ public class Report {
     static ReportConfiguration createConfiguration(String baseDirectory, CommandLine cl) throws IOException {
         final ReportConfiguration configuration = new ReportConfiguration();
 
+        if (cl.hasOption('o')) {
+            configuration.setOut(new File(cl.getOptionValue('o')));
+        }
+
         if (cl.hasOption('a') || cl.hasOption('A')) {
             configuration.setAddLicenseHeaders(cl.hasOption('f') ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
             configuration.setCopyrightMessage(cl.getOptionValue("c"));
@@ -260,6 +264,9 @@ public class Report {
 
         Option help = new Option(HELP, "help", false, "Print help for the RAT command line interface and exit");
         opts.addOption(help);
+
+        Option out = new Option("o", "out", true, "Define the output file where to write report (default is System.out)");
+        opts.addOption(out);
 
         String defaultHandlingText = " By default all approved default licenses are used";
         Option noDefaults = new Option(null, NO_DEFAULTS, false, "Ignore default configuration." + defaultHandlingText);

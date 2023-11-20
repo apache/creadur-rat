@@ -20,13 +20,20 @@ package org.apache.rat;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ReportTest {
@@ -43,6 +50,35 @@ public class ReportTest {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), empty);
         ReportConfiguration config = Report.createConfiguration("", cl);
         ReportConfigurationTest.validateDefault(config);
+    }
+
+    @Test
+    public void testOutputOption() throws Exception {
+        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{ "-o", "target/test" });
+        ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
+        Reporter.report(config);
+        File output = new File("target/test");
+        Assert.assertTrue(output.exists());
+        String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
+        Assert.assertTrue(content.contains("2 Unknown Licenses"));
+        Assert.assertTrue(content.contains("target/test-classes/elements/Source.java"));
+        Assert.assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
+    }
+
+    @Test
+    public void testDefaultOutput() throws Exception {
+        PrintStream origin = System.out;
+        File output = new File("target/sysout");
+        System.setOut(new PrintStream(output));
+        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{});
+        ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
+        Reporter.report(config);
+        Assert.assertTrue(output.exists());
+        String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
+        Assert.assertTrue(content.contains("2 Unknown Licenses"));
+        Assert.assertTrue(content.contains("target/test-classes/elements/Source.java"));
+        Assert.assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
+        System.setOut(origin);
     }
 
 }
