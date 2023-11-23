@@ -37,6 +37,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
@@ -45,6 +48,7 @@ import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
  * A configuration object is used by the front end to invoke the
@@ -64,6 +68,7 @@ public class ReportConfiguration {
     private IOSupplier<InputStream> styleSheet = null;
     private IReportable reportable = null;
     private FilenameFilter inputFileFilter = null;
+    private IOFileFilter directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
 
     /**
      * @return The filename filter for the potential input files.
@@ -77,6 +82,22 @@ public class ReportConfiguration {
      */
     public void setInputFileFilter(FilenameFilter inputFileFilter) {
         this.inputFileFilter = inputFileFilter;
+    }
+
+    public IOFileFilter getDirectoryFilter() {
+        return directoryFilter;
+    }
+
+    public void setDirectoryFilter(IOFileFilter directoryFilter) {
+        if (directoryFilter == null) {
+            this.directoryFilter = FalseFileFilter.FALSE;
+        } else {
+            this.directoryFilter = directoryFilter;
+        }
+    }
+
+    public void addDirectoryFilter(IOFileFilter directoryFilter) {
+        this.directoryFilter = this.directoryFilter.and(directoryFilter);
     }
 
     /**

@@ -117,6 +117,7 @@ Available options
                                 report (default is System.out)
  -s,--stylesheet <arg>          XSLT stylesheet to use when creating the
                                 report.  Not compatible with -x
+    --scan-hidden-directories   Scan hidden directories
  -x,--xml                       Output the report in raw XML format.  Not
                                 compatible with -s
 +------------------------------------------+

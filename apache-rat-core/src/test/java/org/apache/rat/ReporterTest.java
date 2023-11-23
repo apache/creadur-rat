@@ -30,6 +30,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.walker.DirectoryWalker;
@@ -51,7 +52,7 @@ public class ReporterTest {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setStyleReport(false);
         configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new File(elementsPath)));
+        configuration.setReportable(new DirectoryWalker(new File(elementsPath), HiddenFileFilter.HIDDEN));
         configuration.setOut(() -> out);
         Reporter.report(configuration);
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
@@ -91,7 +92,7 @@ public class ReporterTest {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new File(elementsPath)));
+        configuration.setReportable(new DirectoryWalker(new File(elementsPath), HiddenFileFilter.HIDDEN));
         configuration.setOut(() -> out);
         Reporter.report(configuration);
 

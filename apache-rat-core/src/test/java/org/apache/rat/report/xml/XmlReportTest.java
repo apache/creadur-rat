@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
@@ -88,7 +89,7 @@ public class XmlReportTest {
     @Test
     public void baseReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE);
+        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE, HiddenFileFilter.HIDDEN);
         report.startReport();
         report(directory);
         report.endReport();

@@ -18,12 +18,7 @@
  */
 package org.apache.rat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +38,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.apache.commons.io.filefilter.AndFileFilter;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
 import org.apache.rat.config.AddLicenseHeaders;
@@ -52,6 +50,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.walker.NameBasedHiddenFileFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -68,31 +67,29 @@ public class ReportConfigurationTest {
     public void testAddAndRemoveApproveLicenseCategories() {
         List<String> expected = new ArrayList<>();
         underTest.addLicense( new TestingLicense("Unapproved"));
-        
-        assertTrue(underTest.getApprovedLicenseCategories().isEmpty());
+
+        assertThat(underTest.getApprovedLicenseCategories()).isEmpty();
 
         TestingLicense license = new TestingLicense("TheCat");
         underTest.addLicense(license);
         underTest.addApprovedLicenseCategory(license.getFamily());
         expected.add("TheCa");
         SortedSet<String> result = underTest.getApprovedLicenseCategories();
-        assertEquals(expected.size(), result.size());
-        assertTrue(result.containsAll(expected));
+        assertThat(expected).hasSize(result.size()).containsAll(result);
         SortedSet<ILicenseFamily> families = underTest.getLicenseFamilies(LicenseFilter.approved);
-        assertEquals(expected.size(), families.size());
+        assertThat(expected).hasSize(families.size());
         SortedSet<ILicense> licenses = underTest.getLicenses(LicenseFilter.approved);
-        assertEquals(expected.size(), licenses.size());
+        assertThat(expected).hasSize(licenses.size());
 
         underTest.addLicense(new TestingLicense("ACat"));
         underTest.addApprovedLicenseCategory("ACat");
         expected.add("ACat ");
         result = underTest.getApprovedLicenseCategories();
-        assertEquals(expected.size(), result.size());
-        assertTrue(result.containsAll(expected));
+        assertThat(expected).hasSize(result.size()).containsAll(result);
         families = underTest.getLicenseFamilies(LicenseFilter.approved);
-        assertEquals(expected.size(), families.size());
+        assertThat(expected).hasSize(families.size());
         licenses = underTest.getLicenses(LicenseFilter.approved);
-        assertEquals(expected.size(), licenses.size());
+        assertThat(expected).hasSize(licenses.size());
 
         String[] cats = { "Spot ", "Felix" };
         underTest.addLicense(new TestingLicense("Spot"));
@@ -100,51 +97,47 @@ public class ReportConfigurationTest {
         underTest.addApprovedLicenseCategories(Arrays.asList(cats));
         expected.addAll(Arrays.asList(cats));
         result = underTest.getApprovedLicenseCategories();
-        assertEquals(expected.size(), result.size());
-        assertTrue(result.containsAll(expected));
+        assertThat(expected).hasSize(result.size()).containsAll(result);
         families = underTest.getLicenseFamilies(LicenseFilter.approved);
-        assertEquals(expected.size(), families.size());
+        assertThat(expected).hasSize(families.size());
         licenses = underTest.getLicenses(LicenseFilter.approved);
-        assertEquals(expected.size(), licenses.size());
+        assertThat(expected).hasSize(licenses.size());
         
         underTest.removeApprovedLicenseCategory("Spot ");
         expected.remove("Spot ");
         result = underTest.getApprovedLicenseCategories();
-        assertEquals(expected.size(), result.size());
-        assertTrue(result.containsAll(expected));
+        assertThat(expected).hasSize(result.size()).containsAll(result);
         families = underTest.getLicenseFamilies(LicenseFilter.approved);
-        assertEquals(expected.size(), families.size());
+        assertThat(expected).hasSize(families.size());
         licenses = underTest.getLicenses(LicenseFilter.approved);
-        assertEquals(expected.size(), licenses.size());
-
+        assertThat(expected).hasSize(licenses.size());
 
         cats[0] = "TheCa";
         underTest.removeApprovedLicenseCategories(Arrays.asList(cats));
         expected.removeAll(Arrays.asList(cats));
         result = underTest.getApprovedLicenseCategories();
-        assertEquals(expected.size(), result.size());
-        assertTrue(result.containsAll(expected));
+        assertThat(expected).hasSize(result.size()).containsAll(result);
         families = underTest.getLicenseFamilies(LicenseFilter.approved);
-        assertEquals(expected.size(), families.size());
+        assertThat(expected).hasSize(families.size());
         licenses = underTest.getLicenses(LicenseFilter.approved);
-        assertEquals(expected.size(), licenses.size());    }
+        assertThat(expected).hasSize(licenses.size());    }
 
     @Test
     public void testRemoveBeforeAddApproveLicenseCategories() {
         underTest.addLicense( new TestingLicense("TheCat"));
-        assertTrue(underTest.getApprovedLicenseCategories().isEmpty());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.approved).isEmpty());
-        assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
+        assertThat(underTest.getApprovedLicenseCategories()).isEmpty();
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.approved)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.approved)).isEmpty();
         
         underTest.removeApprovedLicenseCategory("TheCat");
-        assertTrue(underTest.getApprovedLicenseCategories().isEmpty());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.approved).isEmpty());
-        assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
+        assertThat(underTest.getApprovedLicenseCategories()).isEmpty();
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.approved)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.approved)).isEmpty();
 
         underTest.addApprovedLicenseCategory("TheCat");
-        assertTrue(underTest.getApprovedLicenseCategories().isEmpty());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.approved).isEmpty());
-        assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
+        assertThat(underTest.getApprovedLicenseCategories()).isEmpty();
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.approved)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.approved)).isEmpty();
     }
 
     private ILicense testingLicense(String category, String name) {
@@ -157,158 +150,169 @@ public class ReportConfigurationTest {
     public void testAddLicense() {
 
         List<ILicense> expected = new ArrayList<>();
-        assertTrue(underTest.getLicenses(LicenseFilter.all).isEmpty());
+        assertThat(underTest.getLicenses(LicenseFilter.all)).isEmpty();
 
         ILicense lic1 = testingLicense("TheCat", "TheName");
         expected.add(lic1);
         underTest.addLicense(lic1);
         SortedSet<ILicense> result = underTest.getLicenses(LicenseFilter.all);
-        assertEquals(expected.size(), result.size());
-        assertTrue(result.containsAll(expected));
+        assertThat(expected).hasSize(result.size()).containsAll(result);
 
         ILicense[] lics = { testingLicense("Spot", "Data's cat"), testingLicense("Felix", "Cartoon cat") };
         expected.addAll(Arrays.asList(lics));
         underTest.addLicenses(Arrays.asList(lics));
         result = underTest.getLicenses(LicenseFilter.all);
-        assertEquals(expected.size(), result.size());
-        assertTrue(result.containsAll(expected));
+        assertThat(expected).hasSize(result.size()).containsAll(result);
     }
 
     @Test
     public void copyrightMessageTest() {
-        assertNull(underTest.getCopyrightMessage());
+        assertThat(underTest.getCopyrightMessage()).isNull();
         underTest.setCopyrightMessage("This is the message");
-        assertEquals("This is the message", underTest.getCopyrightMessage());
+        assertThat(underTest.getCopyrightMessage()).isEqualTo("This is the message");
     }
 
     @Test
     public void inputFileFilterTest() {
         FilenameFilter filter = mock(FilenameFilter.class);
-        assertNull(underTest.getInputFileFilter());
+        assertThat(underTest.getInputFileFilter()).isNull();
         underTest.setInputFileFilter(filter);
-        assertEquals(filter, underTest.getInputFileFilter());
+        assertThat(underTest.getInputFileFilter()).isEqualTo(filter);
+    }
+
+    @Test
+    public void directoryFilterTest() {
+        assertThat(underTest.getDirectoryFilter()).isNotNull();
+        assertThat(underTest.getDirectoryFilter()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+
+        underTest.setDirectoryFilter(DirectoryFileFilter.DIRECTORY);
+        underTest.addDirectoryFilter(NameBasedHiddenFileFilter.HIDDEN);
+        assertThat(underTest.getDirectoryFilter()).isExactlyInstanceOf(AndFileFilter.class);
+
+        underTest.setDirectoryFilter(null);
+        assertThat(underTest.getDirectoryFilter()).isExactlyInstanceOf(FalseFileFilter.class);
     }
 
     @Test
     public void licenseFamiliesTest() {
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.all).isEmpty());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.approved).isEmpty());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.none).isEmpty());
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.all)).isEmpty();
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.approved)).isEmpty();
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.none)).isEmpty();
 
         ILicense[] lics = { testingLicense("TheCat", "TheName"), testingLicense("Spot", "Data's cat"),
                 testingLicense("Felix", "Cartoon cat") };
         underTest.addLicenses(Arrays.asList(lics));
 
-        assertEquals(lics.length, underTest.getLicenseFamilies(LicenseFilter.all).size());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.approved).isEmpty());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.none).isEmpty());
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.all)).hasSize(lics.length);
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.approved)).isEmpty();
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.none)).isEmpty();
 
         underTest.addApprovedLicenseCategory(lics[1].getLicenseFamily());
-        assertEquals(lics.length, underTest.getLicenseFamilies(LicenseFilter.all).size());
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.all)).hasSize(lics.length);
         SortedSet<ILicenseFamily> result = underTest.getLicenseFamilies(LicenseFilter.approved);
-        assertEquals(1, result.size());
-        assertEquals(lics[1].getLicenseFamily(), result.first());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.none).isEmpty());
+        assertThat(result).hasSize(1);
+        assertThat(result.first()).isEqualTo(lics[1].getLicenseFamily());
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.none)).isEmpty();
     }
 
     @Test
     public void licensesTest() {
-        assertTrue(underTest.getLicenses(LicenseFilter.all).isEmpty());
-        assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
-        assertTrue(underTest.getLicenses(LicenseFilter.none).isEmpty());
+        assertThat(underTest.getLicenses(LicenseFilter.all)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.approved)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.none)).isEmpty();
 
         ILicense[] lics = { testingLicense("TheCat", "TheName"), testingLicense("Spot", "Data's cat"),
                 testingLicense("Felix", "Cartoon cat") };
         underTest.addLicenses(Arrays.asList(lics));
 
-        assertEquals(lics.length, underTest.getLicenses(LicenseFilter.all).size());
-        assertTrue(underTest.getLicenses(LicenseFilter.approved).isEmpty());
-        assertTrue(underTest.getLicenses(LicenseFilter.none).isEmpty());
+        assertThat(underTest.getLicenses(LicenseFilter.all)).hasSize(lics.length);
+        assertThat(underTest.getLicenses(LicenseFilter.approved)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.none)).isEmpty();
 
         underTest.addApprovedLicenseCategory(lics[1].getLicenseFamily());
-        assertEquals(lics.length, underTest.getLicenses(LicenseFilter.all).size());
+        assertThat(underTest.getLicenses(LicenseFilter.all)).hasSize(lics.length);
         SortedSet<ILicense> result = underTest.getLicenses(LicenseFilter.approved);
-        assertEquals(1, result.size());
-        assertEquals(lics[1], result.first());
-        assertTrue(underTest.getLicenseFamilies(LicenseFilter.none).isEmpty());
+        assertThat(result).hasSize(1);
+        assertThat(result.first()).isEqualTo(lics[1]);
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.none)).isEmpty();
     }
 
     @Test
     public void outputTest() throws IOException {
-        assertTrue(underTest.getOutput().get() instanceof NoCloseOutputStream);
-        assertNotNull(underTest.getWriter());
+        assertThat(underTest.getOutput().get()).isExactlyInstanceOf(NoCloseOutputStream.class);
+        assertThat(underTest.getWriter()).isNotNull();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         underTest.setOut(() -> stream);
-        assertEquals(stream, underTest.getOutput().get());
+        assertThat(underTest.getOutput().get()).isEqualTo(stream);
         PrintWriter writer = underTest.getWriter().get();
-        assertNotNull(writer);
+        assertThat(writer).isNotNull();
         writer.write('a');
         writer.flush();
-        assertEquals('a', stream.toByteArray()[0]);
+        assertThat(stream.toByteArray()[0]).isEqualTo((byte) 'a');
     }
 
     @Test
     public void reportableTest() {
-        assertNull(underTest.getReportable());
+        assertThat(underTest.getReportable()).isNull();
         IReportable reportable = mock(IReportable.class);
         underTest.setReportable(reportable);
-        assertEquals(reportable, underTest.getReportable());
+        assertThat(underTest.getReportable()).isEqualTo(reportable);
         underTest.setReportable(null);
-        assertNull(underTest.getReportable());
+        assertThat(underTest.getReportable()).isNull();
     }
 
     @Test
     public void stylesheetTest() throws IOException, URISyntaxException {
         URL url = this.getClass().getResource("ReportConfigurationTestFile");
 
-        assertNull(underTest.getStyleSheet());
+        assertThat(underTest.getStyleSheet()).isNull();
         InputStream stream = mock(InputStream.class);
         underTest.setStyleSheet(() -> stream);
-        assertEquals(stream, underTest.getStyleSheet().get());
+        assertThat(underTest.getStyleSheet().get()).isEqualTo(stream);
         IOSupplier<InputStream> sup = null;
         underTest.setStyleSheet(sup);
-        assertNull(underTest.getStyleSheet());
+        assertThat(underTest.getStyleSheet()).isNull();
         
         File file = mock(File.class);
         when(file.toURI()).thenReturn(url.toURI());
         underTest.setStyleSheet(file);
         BufferedReader d = new BufferedReader(new InputStreamReader(underTest.getStyleSheet().get()));
-        assertEquals("/*", d.readLine());
-        assertEquals(" * Licensed to the Apache Software Foundation (ASF) under one   *", d.readLine());
+        assertThat(d.readLine()).isEqualTo("/*");
+        assertThat(d.readLine()).isEqualTo(" * Licensed to the Apache Software Foundation (ASF) under one   *");
     }
 
     @Test
     public void testFlags() {
-        assertFalse(underTest.isAddingLicenses());
-        assertFalse(underTest.isAddingLicensesForced());
-        assertTrue(underTest.isStyleReport());
+        assertThat(underTest.isAddingLicenses()).isFalse();
+        assertThat(underTest.isAddingLicensesForced()).isFalse();
+        assertThat(underTest.isStyleReport()).isTrue();
 
         underTest.setAddLicenseHeaders(AddLicenseHeaders.TRUE);
-        assertTrue(underTest.isAddingLicenses());
-        assertFalse(underTest.isAddingLicensesForced());
-        assertTrue(underTest.isStyleReport());
+        assertThat(underTest.isAddingLicenses()).isTrue();
+        assertThat(underTest.isAddingLicensesForced()).isFalse();
+        assertThat(underTest.isStyleReport()).isTrue();
 
         underTest.setAddLicenseHeaders(AddLicenseHeaders.FALSE);
-        assertFalse(underTest.isAddingLicenses());
-        assertFalse(underTest.isAddingLicensesForced());
-        assertTrue(underTest.isStyleReport());
+        assertThat(underTest.isAddingLicenses()).isFalse();
+        assertThat(underTest.isAddingLicensesForced()).isFalse();
+        assertThat(underTest.isStyleReport()).isTrue();
 
         underTest.setAddLicenseHeaders(AddLicenseHeaders.FORCED);
-        assertTrue(underTest.isAddingLicenses());
-        assertTrue(underTest.isAddingLicensesForced());
-        assertTrue(underTest.isStyleReport());
+        assertThat(underTest.isAddingLicenses()).isTrue();
+        assertThat(underTest.isAddingLicensesForced()).isTrue();
+        assertThat(underTest.isStyleReport()).isTrue();
 
         underTest.setAddLicenseHeaders(AddLicenseHeaders.FALSE);
         underTest.setStyleReport(false);
-        assertFalse(underTest.isAddingLicenses());
-        assertFalse(underTest.isAddingLicensesForced());
-        assertFalse(underTest.isStyleReport());
+        assertThat(underTest.isAddingLicenses()).isFalse();
+        assertThat(underTest.isAddingLicensesForced()).isFalse();
+        assertThat(underTest.isStyleReport()).isFalse();
 
         underTest.setStyleReport(true);
-        assertFalse(underTest.isAddingLicenses());
-        assertFalse(underTest.isAddingLicensesForced());
-        assertTrue(underTest.isStyleReport());
+        assertThat(underTest.isAddingLicenses()).isFalse();
+        assertThat(underTest.isAddingLicensesForced()).isFalse();
+        assertThat(underTest.isStyleReport()).isTrue();
     }
 
     @Test
@@ -318,8 +322,8 @@ public class ReportConfigurationTest {
             underTest.validate(s -> sb.append(s));
             fail("should have thrown ConfigurationException");
         } catch (ConfigurationException e) {
-            assertEquals("Reportable may not be null", e.getMessage());
-            assertEquals(0, sb.length());
+            assertThat(e.getMessage()).isEqualTo("Reportable may not be null");
+            assertThat(sb.length()).isEqualTo(0);
         }
 
         underTest.setReportable(mock(IReportable.class));
@@ -327,8 +331,8 @@ public class ReportConfigurationTest {
             underTest.validate(s -> sb.append(s));
             fail("should have thrown ConfigurationException");
         } catch (ConfigurationException e) {
-            assertEquals("You must specify at least one license", e.getMessage());
-            assertEquals(0, sb.length());
+            assertThat(e.getMessage()).isEqualTo("You must specify at least one license");
+            assertThat(sb.length()).isEqualTo(0);
         }
 
         underTest.addLicense(testingLicense("valid", "Validation testing license"));
@@ -336,19 +340,19 @@ public class ReportConfigurationTest {
             underTest.validate(s -> sb.append(s));
             fail("should have thrown ConfigurationException");
         } catch (ConfigurationException e) {
-            assertEquals("Stylesheet must be specified if report styling is selected", e.getMessage());
-            assertEquals(0, sb.length());
+            assertThat(e.getMessage()).isEqualTo("Stylesheet must be specified if report styling is selected");
+            assertThat(sb.length()).isEqualTo(0);
         }
 
         underTest.setStyleSheet(()->mock(InputStream.class));
         underTest.setStyleReport(false);
         underTest.validate(s -> sb.append(s));
-        assertEquals("Ignoring stylesheet because styling is not selected", sb.toString());
+        assertThat(sb.toString()).isEqualTo("Ignoring stylesheet because styling is not selected");
 
         final StringBuilder sb2 = new StringBuilder();
         underTest.setStyleReport(true);
         underTest.validate(s -> sb2.append(s));
-        assertEquals(0, sb2.length());
+        assertThat(sb2.length()).isEqualTo(0);
     }
     
     @Test
@@ -356,15 +360,15 @@ public class ReportConfigurationTest {
         ReportConfiguration config = new ReportConfiguration();
         OutputStreamIntercepter osi = new OutputStreamIntercepter();
         config.setOut(() -> osi);
-        assertEquals( 0, osi.closeCount);
+        assertThat(osi.closeCount).isEqualTo(0);
         try (OutputStream os = config.getOutput().get()) {
-            assertEquals( 0, osi.closeCount);
+            assertThat(osi.closeCount).isEqualTo(0);
         }
-        assertEquals( 1, osi.closeCount);
+        assertThat(osi.closeCount).isEqualTo(1);
         try (OutputStream os = config.getOutput().get()) {
-            assertEquals( 1, osi.closeCount);
+            assertThat(osi.closeCount).isEqualTo(1);
         }
-        assertEquals( 2, osi.closeCount);
+        assertThat(osi.closeCount).isEqualTo(2);
     }
     
     /**
@@ -380,9 +384,9 @@ public class ReportConfigurationTest {
      * @param config The configuration to test.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
-        assertEquals("Wrong number of approved licenses", ConfigurationReaderTest.EXPECTED_IDS.length+additionalIdCount,config.getApprovedLicenseCategories().size());
+        assertThat(config.getApprovedLicenseCategories()).hasSize(ConfigurationReaderTest.EXPECTED_IDS.length + additionalIdCount);
         for (String s : ConfigurationReaderTest.EXPECTED_IDS) {
-            assertTrue("Missing apporved license category "+s, config.getApprovedLicenseCategories().contains(ILicenseFamily.makeCategory(s)));
+            assertThat(config.getApprovedLicenseCategories()).contains(ILicenseFamily.makeCategory(s));
         }
     }
     
@@ -392,12 +396,12 @@ public class ReportConfigurationTest {
      * @param config the configuration to test.
      */
     public static void validateDefaultLicenseFamilies(ReportConfiguration config, String...additionalIds) {
-        assertEquals("wrong number of license families",ConfigurationReaderTest.EXPECTED_IDS.length+additionalIds.length,config.getFamilies().size());
+        assertThat(config.getFamilies()).hasSize(ConfigurationReaderTest.EXPECTED_IDS.length + additionalIds.length);
         List<String> expected = new ArrayList<>();
         expected.addAll(Arrays.asList(ConfigurationReaderTest.EXPECTED_IDS));
         expected.addAll(Arrays.asList(additionalIds));
         for (ILicenseFamily family : config.getFamilies()) {
-            assertTrue("Missing license family "+family.getFamilyCategory(),  expected.contains(family.getFamilyCategory().trim()));
+            assertThat(expected).contains(family.getFamilyCategory().trim());
         }
     }
 
@@ -406,12 +410,12 @@ public class ReportConfigurationTest {
      * @param config the configuration to test.
      */
     public static void validateDefaultLicenses(ReportConfiguration config, String...additionalLicenses) {
-        assertEquals("wrong number of licenses", ConfigurationReaderTest.EXPECTED_LICENSES.length+additionalLicenses.length, config.getLicenses(LicenseFilter.all).size());
+        assertThat(config.getLicenses(LicenseFilter.all)).hasSize(ConfigurationReaderTest.EXPECTED_LICENSES.length + additionalLicenses.length);
         List<String> expected = new ArrayList<>();
         expected.addAll(Arrays.asList(ConfigurationReaderTest.EXPECTED_LICENSES));
         expected.addAll(Arrays.asList(additionalLicenses));
         for (ILicense license : config.getLicenses(LicenseFilter.all)) {
-            assertTrue("Missing license "+license.getId(), expected.contains(license.getId()));
+            assertThat(expected).contains(license.getId());
         }
     }
     
@@ -421,12 +425,14 @@ public class ReportConfigurationTest {
      */
     public static void validateDefault(ReportConfiguration config) {
         //config.validate( System.err::println );
-        assertFalse("Adding licenses should be false", config.isAddingLicenses());
-        assertFalse("forced licenses should be false",  config.isAddingLicensesForced());
-        assertNull("copyright message should be null", config.getCopyrightMessage());
-        assertNull("Input file filter should be null", config.getInputFileFilter());
-        assertTrue("Style report should be true", config.isStyleReport());
-        assertNotNull("Stylesheet should not be null", config.getStyleSheet());
+        assertThat(config.isAddingLicenses()).isFalse();
+        assertThat(config.isAddingLicensesForced()).isFalse();
+        assertThat(config.getCopyrightMessage()).isNull();
+        assertThat(config.getInputFileFilter()).isNull();
+        assertThat(config.isStyleReport()).isTrue();
+        assertThat(config.getStyleSheet()).isNotNull().withFailMessage("Stylesheet should not be null");
+        assertThat(config.getDirectoryFilter()).isNotNull().withFailMessage("Directory filter should not be null");
+        assertThat(config.getDirectoryFilter()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
         
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);

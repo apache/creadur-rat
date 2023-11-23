@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-322" type="add" dev="pottlinger" due-to="Jean-Baptiste Onofré">
+        Add configuration to scan hidden directories, include --scan-hidden-directories option on the command line, scanHiddenDirectories parameter on Maven plugin.
+      </action>
       <action issue="RAT-320" type="add" dev="pottlinger" due-to="Jean-Baptiste Onofré">
          Add new command line option -o/--output to write RAT's output to a file.
       </action>

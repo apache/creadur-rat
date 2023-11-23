@@ -48,10 +48,6 @@ public abstract class Walker implements IReportable {
             }
         };
     }
-
-    protected boolean isRestricted(File file) {
-        return file.getName().startsWith(".");
-    }
  
     protected final boolean isNotIgnored(final File file) {
         boolean result = false;

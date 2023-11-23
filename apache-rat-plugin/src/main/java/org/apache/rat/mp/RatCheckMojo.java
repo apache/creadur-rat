@@ -46,6 +46,9 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Parameter(property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
     private File reportFile;
 
+    @Parameter(property = "rat.scanHiddenDirectories", defaultValue = "false")
+    private boolean scanHiddenDirectories;
+
     /**
      * Output style of the report. Use "plain" (the default) for a plain text report
      * or "xml" for the raw XML report. Alternatively you can give the path of an
@@ -168,6 +171,9 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
         if (StringUtils.isNotBlank(copyrightMessage)) {
             configuration.setCopyrightMessage(copyrightMessage);
+        }
+        if (scanHiddenDirectories) {
+            configuration.setDirectoryFilter(null);
         }
         if (reportFile != null) {
             if (!reportFile.exists()) {
