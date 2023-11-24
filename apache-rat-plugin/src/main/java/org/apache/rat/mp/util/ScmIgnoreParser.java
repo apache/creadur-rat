@@ -20,16 +20,14 @@ package org.apache.rat.mp.util;
  */
 
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.config.SourceCodeManagementSystems;
+import org.apache.rat.mp.util.ignore.GitIgnoreMatcher;
+import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
+import org.apache.rat.mp.util.ignore.IgnoreMatcher;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,41 +39,6 @@ public final class ScmIgnoreParser {
         // prevent instantiation of utility class
     }
 
-    private static final List<String> COMMENT_PREFIXES = Arrays.asList("#", "##", "//", "/**", "/*");
-
-    /**
-     * Parses excludes from the given SCM ignore file.
-     *
-     * @param log       Maven log to show output during RAT runs.
-     * @param scmIgnore if <code>null</code> or invalid an empty list of exclusions is returned.
-     * @return all exclusions (=non-comment lines) from the SCM ignore file.
-     */
-    public static List<String> getExcludesFromFile(final Log log, final File scmIgnore) {
-
-        final List<String> exclusionLines = new ArrayList<>();
-
-        if (scmIgnore != null && scmIgnore.exists() && scmIgnore.isFile()) {
-            log.debug("Parsing exclusions from " + scmIgnore);
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(scmIgnore));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (!isComment(line)) {
-                        exclusionLines.add(line);
-                        log.debug("Added " + line);
-                    }
-                }
-            } catch (final IOException e) {
-                log.warn("Cannot parse " + scmIgnore + " for exclusions. Will skip this file.");
-                log.debug("Skip parsing " + scmIgnore + " due to " + e.getMessage());
-            } finally {
-                IOUtils.closeQuietly(reader);
-            }
-        }
-        return exclusionLines;
-    }
-
     /**
      * Parse ignore files from all known SCMs that have ignore files.
      *
@@ -83,36 +46,28 @@ public final class ScmIgnoreParser {
      * @param baseDir base directory from which to look for SCM ignores.
      * @return Exclusions from the SCM ignore files.
      */
-    public static List<String> getExclusionsFromSCM(final Log log, final File baseDir) {
-        List<String> exclusions = new ArrayList<>();
+    public static List<IgnoreMatcher> getExclusionsFromSCM(final Log log, final File baseDir) {
+        List<IgnoreMatcher> ignoreMatchers = new ArrayList<>();
         for (SourceCodeManagementSystems scm : SourceCodeManagementSystems.values()) {
-            if (scm.hasIgnoreFile()) {
-                exclusions.addAll(getExcludesFromFile(log, new File(baseDir, scm.getIgnoreFile())));
+            switch (scm) {
+                case GIT:
+                    GitIgnoreMatcher gitIgnoreMatcher = new GitIgnoreMatcher(log, baseDir);
+                    if (!gitIgnoreMatcher.isEmpty()) {
+                        ignoreMatchers.add(gitIgnoreMatcher);
+                    }
+                    break;
+                default:
+                    if (scm.hasIgnoreFile()) {
+                        GlobIgnoreMatcher ignoreMatcher = new GlobIgnoreMatcher(log, new File(baseDir, scm.getIgnoreFile()));
+                        if (!ignoreMatcher.isEmpty()) {
+                            ignoreMatchers.add(ignoreMatcher);
+                        }
+                    }
+                    break;
             }
         }
-        return exclusions;
-
+        return ignoreMatchers;
     }
 
-    /**
-     * Determines whether the given line is a comment or not based on scanning
-     * for prefixes
-     * {@see COMMENT_PREFIXES}.
-     *
-     * @param line line to verify.
-     * @return <code>true</code> if the given line is a commented out line.
-     */
-    static boolean isComment(final String line) {
-        if (line == null || line.length() <= 0) {
-            return false;
-        }
 
-        final String trimLine = line.trim();
-        for (String prefix : COMMENT_PREFIXES) {
-            if (trimLine.startsWith(prefix)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

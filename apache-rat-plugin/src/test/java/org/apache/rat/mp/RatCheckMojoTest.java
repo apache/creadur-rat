@@ -16,6 +16,7 @@
  */
 package org.apache.rat.mp;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.rat.mp.RatTestHelpers.ensureRatReportIsCorrect;
 import static org.apache.rat.mp.RatTestHelpers.getSourceDirectory;
 import static org.apache.rat.mp.RatTestHelpers.newArtifactFactory;
@@ -23,7 +24,11 @@ import static org.apache.rat.mp.RatTestHelpers.newArtifactRepository;
 import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.license.ILicenseFamily;
@@ -75,6 +80,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             setVariableValueToObject(mojo, "siteRenderer", newSiteRenderer(getContainer()));
         } else if (mojo instanceof RatCheckMojo) {
             final File ratTxtFile = new File(buildDirectory, "rat.txt");
+            FileUtils.write(ratTxtFile, "", UTF_8); // Ensure the output file exists and is empty (rerunning the test will append)
             setVariableValueToObject(mojo, "reportFile", ratTxtFile);
         }
         return mojo;
@@ -183,5 +189,39 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         mojo.execute();
 
         ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+    }
+
+    /**
+     * Tests verifying gitignore parsing
+     */
+    public void testRAT335GitIgnore() throws Exception {
+        final RatCheckMojo mojo = newRatCheckMojo("RAT-335-GitIgnore");
+        final File ratTxtFile = getRatTxtFile(mojo);
+        final String dir = getDir(mojo);
+        final String[] expected = {
+            "Notes: 1",
+            "Binaries: 0",
+            "Archives: 0",
+            "Standards: 5$",
+            "Apache Licensed: 2$",
+            "Generated Documents: 0",
+            "^3 Unknown Licenses",
+            " AL +\\Q" + dir + "pom.xml\\E$",
+            "\\Q!????? " + dir + "dir1/dir1.md\\E$",
+            "\\Q!????? " + dir + "dir2/dir2.txt\\E$",
+            "\\Q!????? " + dir + "dir3/file3.log\\E$",
+            "^== File: \\Q" + dir + "dir1/dir1.md\\E$",
+            "^== File: \\Q" + dir + "dir2/dir2.txt\\E$",
+            "^== File: \\Q" + dir + "dir3/file3.log\\E$"
+        };
+        try {
+            mojo.execute();
+            fail("Expected RatCheckException");
+        } catch (RatCheckException e) {
+            final String msg = e.getMessage();
+            assertTrue("report filename was not contained in '" + msg + "'", msg.contains(ratTxtFile.getName()));
+            assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase().contains("NULL")));
+            ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+        }
     }
 }

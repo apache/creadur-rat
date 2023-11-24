@@ -89,6 +89,8 @@
               <exclude>src/test/resources/unit/it2/src.txt</exclude>
               <exclude>src/test/resources/unit/it3/src.apt</exclude>
               <exclude>src/test/resources/unit/it4/*.html</exclude>
+              <exclude>src/test/resources/unit/RAT-335-GitIgnore/*</exclude>
+              <exclude>src/test/resources/unit/RAT-335-GitIgnore/**/*</exclude>
               <exclude>**/*.iml</exclude>
               <!-- RAT-171: needs to be added since SCM ignores are only parsed in project root -->
               <exclude>**/.bzrignore</exclude>
@@ -286,6 +288,17 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.36</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>nl.basjes.gitignore</groupId>
+      <artifactId>gitignore-reader</artifactId>
+      <version>1.2.1</version>
     </dependency>
   </dependencies>
   <reporting>

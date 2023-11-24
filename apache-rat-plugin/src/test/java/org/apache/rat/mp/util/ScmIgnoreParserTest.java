@@ -18,6 +18,7 @@ package org.apache.rat.mp.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -31,9 +32,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import static org.apache.rat.mp.util.ScmIgnoreParser.getExcludesFromFile;
 import static org.apache.rat.mp.util.ScmIgnoreParser.getExclusionsFromSCM;
-import static org.apache.rat.mp.util.ScmIgnoreParser.isComment;
+import static org.apache.rat.mp.util.ignore.GlobIgnoreMatcher.isComment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -67,6 +67,9 @@ public class ScmIgnoreParserTest {
         assertTrue(isComment("     /* comment that is */ "));
     }
 
+    public List<String> getExcludesFromFile(final Log log, final File scmIgnore) {
+        return new GlobIgnoreMatcher(log, scmIgnore).getExclusionLines();
+    }
 
     @Test
     public void parseFromNonExistingFileOrDirectoryOrNull() {
@@ -77,7 +80,8 @@ public class ScmIgnoreParserTest {
 
     @Test
     public void parseFromTargetDirectoryHopefullyWithoutSCMIgnores() {
-        assertTrue(getExclusionsFromSCM(log, new File("./target")).isEmpty());
+        // The target directory contains ignore files from other tests
+        assertTrue(getExclusionsFromSCM(log, new File("./target/classes")).isEmpty());
     }
 
     @Test
