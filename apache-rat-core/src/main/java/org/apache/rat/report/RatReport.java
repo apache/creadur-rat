@@ -21,11 +21,27 @@ package org.apache.rat.report;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 
+/**
+ * Interface that defines a RatReport. 
+ * A RatReport examines a document and may report issues or modify the underlying file.
+ */
 public interface RatReport {
 
+    /**
+     * Signals the start of execution for the report.  Will be called before the {@code report()} method
+     * to ensure proper setup.
+     * @throws RatException on error.
+     * @see #report(Document)
+     */
     void startReport() throws RatException;
     
     void report(Document document) throws RatException;
     
+    /**
+     * Signals the end of execution for the report.  Will be called after the {@code report()} method
+     * to ensure proper cleanup.
+     * @throws RatException on error.
+     * @see #report(Document)
+     */
     void endReport() throws RatException;
 }
