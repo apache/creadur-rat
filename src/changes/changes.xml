@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-320" type="add" dev="pottlinger" due-to="Jean Baptiste Onofré">
+         Add new command line option -o/--output to write RAT's output to a file.
+      </action>
       <action issue="RAT-329" type="add" dev="pottlinger" due-to="Claude Warren">
          Add markdown (MD) and yaml (YML/YAML) as a recognized extension for file and license processing.
       </action>
