@@ -44,15 +44,17 @@ java -jar apache-rat-${project.version}.jar
 Command Line Options
 ====================
 
-usage: java rat.report [options] [DIR|TARBALL]
-Options
- -A,--addLicense                Add the default license header to any file
+usage: java -jar apache-rat/target/apache-rat-{project.version}.jar
+            [options] [DIR|TARBALL]
+
+Available options
+ -a,--addLicence                Add the default license header to any file
                                 with an unknown license that is not in the
                                 exclusion list. By default new files will
                                 be created with the license header, to
                                 force the modification of existing files
                                 use the --force option.
- -a,--addlicense                Add the default license header to any file
+ -A,--addLicense                Add the default license header to any file
                                 with an unknown license that is not in the
                                 exclusion list. By default new files will
                                 be created with the license header, to
@@ -63,19 +65,27 @@ Options
                                 "Copyright 2008 Foo"
  -d,--dir                       Used to indicate source when using
                                 --exclude
- -E,--exclude-file <fileName>   Excludes files matching regular expression
-                                in <file> Note that --dir is required when
-                                using this parameter.
  -e,--exclude <expression>      Excludes files matching wildcard
                                 <expression>. Note that --dir is required
                                 when using this parameter. Allows multiple
                                 arguments.
+ -E,--exclude-file <fileName>   Excludes files matching regular expression
+                                in <file> Note that --dir is required when
+                                using this parameter.
  -f,--force                     Forces any changes in files to be written
                                 directly to the source files (i.e. new
                                 files are not created)
- -h,--help                      Print help for the Rat command line
+ -h,--help                      Print help for the RAT command line
                                 interface and exit
+    --licenses <arg>            File names or URLs for license definitions
+    --list-approved-families    List all defined license families
+    --list-licenses             List all active licenses
+    --no-default-licenses       Ignore default configuration. By default
+                                all approved default licenses are used
+ -o,--out <arg>                 Define the output file where to write
+                                report (default is System.out)
  -s,--stylesheet <arg>          XSLT stylesheet to use when creating the
                                 report.  Not compatible with -x
  -x,--xml                       Output the report in raw XML format.  Not
                                 compatible with -s
+
