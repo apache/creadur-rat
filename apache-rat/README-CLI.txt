@@ -44,7 +44,7 @@ java -jar apache-rat-${project.version}.jar
 Command Line Options
 ====================
 
-usage: java -jar apache-rat/target/apache-rat-{project.version}.jar
+usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
             [options] [DIR|TARBALL]
 
 Available options
@@ -86,6 +86,7 @@ Available options
                                 report (default is System.out)
  -s,--stylesheet <arg>          XSLT stylesheet to use when creating the
                                 report.  Not compatible with -x
+    --scan-hidden-directories   Scan hidden directories
  -x,--xml                       Output the report in raw XML format.  Not
                                 compatible with -s
 

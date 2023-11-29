@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.IHeaderMatcher.State;
@@ -76,7 +77,7 @@ public class XmlReportFactoryTest {
         
         final TestingLicense testingLicense = new TestingLicense(new TestingMatcher(true), family);
 
-        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY);
+        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY, HiddenFileFilter.HIDDEN);
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.addLicense(testingLicense);
