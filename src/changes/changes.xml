@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-335" type="add" dev="pottlinger" due-to="Niels Basjes">
+        Enhance .gitignore handling; support multiple .gitignore files and allow a more complete parsing of Git's ignore files.
+      </action>
       <action issue="RAT-322" type="add" dev="pottlinger" due-to="Jean-Baptiste Onofré">
         Add configuration option to scan hidden directories: --scan-hidden-directories on the command line and scanHiddenDirectories as a Maven plugin parameter.
       </action>
