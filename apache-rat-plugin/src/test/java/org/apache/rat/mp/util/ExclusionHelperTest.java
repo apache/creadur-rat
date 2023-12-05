@@ -56,33 +56,33 @@ public class ExclusionHelperTest {
     @Test
     public void testAddingEclipseExclusions() {
         final Set<String> exclusion = new HashSet<>();
-        addEclipseDefaults(log, false, exclusion);
+        exclusion.addAll(addEclipseDefaults(log, false));
         assertTrue(exclusion.isEmpty());
-        addEclipseDefaults(log, true, exclusion);
+        exclusion.addAll(addEclipseDefaults(log, true));
         assertEquals(5, exclusion.size());
-        addEclipseDefaults(log, true, exclusion);
+        exclusion.addAll(addEclipseDefaults(log, true));
         assertEquals(5, exclusion.size());
     }
 
     @Test
     public void testAddingIdeaExclusions() {
         final Set<String> exclusion = new HashSet<>();
-        addIdeaDefaults(log, false, exclusion);
+        exclusion.addAll(addIdeaDefaults(log, false));
         assertTrue(exclusion.isEmpty());
-        addIdeaDefaults(log, true, exclusion);
+        exclusion.addAll(addIdeaDefaults(log, true));
         assertEquals(4, exclusion.size());
-        addIdeaDefaults(log, true, exclusion);
+        exclusion.addAll(addIdeaDefaults(log, true));
         assertEquals(4, exclusion.size());
     }
 
     @Test
     public void testAddingMavenExclusions() {
         final Set<String> exclusion = new HashSet<>();
-        addMavenDefaults(log, false, exclusion);
+        exclusion.addAll(addMavenDefaults(log, false));
         assertTrue(exclusion.isEmpty());
-        addMavenDefaults(log, true, exclusion);
+        exclusion.addAll(addMavenDefaults(log, true));
         assertEquals(8, exclusion.size());
-        addMavenDefaults(log, true, exclusion);
+        exclusion.addAll(addMavenDefaults(log, true));
         assertEquals(8, exclusion.size());
     }
 
@@ -91,14 +91,14 @@ public class ExclusionHelperTest {
         final int expectedSizeMergedFromPlexusDefaultsAndScm = (37 + SourceCodeManagementSystems.getPluginExclusions().size());
 
         final Set<String> exclusion = new HashSet<>();
-        addPlexusAndScmDefaults(log, false, exclusion);
+        exclusion.addAll(addPlexusAndScmDefaults(log, false));
         assertTrue(exclusion.isEmpty());
-        addPlexusAndScmDefaults(log, true, exclusion);
+        exclusion.addAll(addPlexusAndScmDefaults(log, true));
         assertEquals(
                 "Did you upgrade plexus to get more default excludes?",//
                 expectedSizeMergedFromPlexusDefaultsAndScm,//
                 exclusion.size());
-        addPlexusAndScmDefaults(log, true, exclusion);
+        exclusion.addAll(addPlexusAndScmDefaults(log, true));
         assertEquals(
                 "Did you upgrade plexus to get more default excludes?",//
                 expectedSizeMergedFromPlexusDefaultsAndScm,//

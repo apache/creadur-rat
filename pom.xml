@@ -641,6 +641,10 @@ agnostic home for software distribution comprehension and audit tools.
       <name>Claude Warren</name>
       <email>claude@apache.org</email>
     </contributor>
+    <contributor>
+      <name>Niels Basjes</name>
+      <email>nielsbasjes@apache.org</email>
+    </contributor>
   </contributors>
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/creadur-rat.git</connection>
