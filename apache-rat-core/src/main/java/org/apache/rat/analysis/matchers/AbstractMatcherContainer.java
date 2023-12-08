@@ -57,7 +57,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
     @Override
     public void reset() {
-        enclosed.stream().forEach(x -> x.reset());
+        enclosed.forEach(IHeaderMatcher::reset);
     }
 
     @Override

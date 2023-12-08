@@ -23,7 +23,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Class to take a set of ILicenses and collecton of approved license categories and extract Subsets.
+ * Class to take a set of ILicenses and collection of approved license categories and extract Subsets.
  */
 public class LicenseSetFactory {
     

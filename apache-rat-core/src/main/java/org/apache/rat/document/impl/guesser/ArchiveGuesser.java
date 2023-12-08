@@ -44,7 +44,7 @@ public class ArchiveGuesser {
      * @param document the current document.
      * @return whether the given document is an archive.
      */
-    public static final boolean isArchive(final Document document) {
+    public static boolean isArchive(final Document document) {
         return isArchive(document.getName());
     }
 
@@ -52,7 +52,7 @@ public class ArchiveGuesser {
      * @return Is a file by that name an archive?
      * @param name file name to check against.
      */
-    public static final boolean isArchive(final String name) {
+    public static boolean isArchive(final String name) {
         if (name == null) {return false;}
         String nameToLower = name.toLowerCase(Locale.US);
         for (int i = 0; i < ArchiveGuesser.ARCHIVE_EXTENSIONS.length; i++) {

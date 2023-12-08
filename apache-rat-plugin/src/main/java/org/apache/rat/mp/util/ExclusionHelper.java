@@ -2,8 +2,6 @@ package org.apache.rat.mp.util;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.config.SourceCodeManagementSystems;
-import org.codehaus.plexus.util.AbstractScanner;
-import org.codehaus.plexus.util.DirectoryScanner;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
  * A simple text matching IHeaderMatcher implementation.
  */
 public class SimpleTextMatcher extends AbstractSimpleMatcher {
-    private String pattern;
+    private final String pattern;
 
     /**
      * Constructs the simple text matcher for the simple string.

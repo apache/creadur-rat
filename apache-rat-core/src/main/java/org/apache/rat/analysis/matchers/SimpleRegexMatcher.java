@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * A simple regular expression matching IHeaderMatcher
  */
 public class SimpleRegexMatcher extends AbstractSimpleMatcher {
-    private Pattern pattern;
+    private final Pattern pattern;
 
     /**
      * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.

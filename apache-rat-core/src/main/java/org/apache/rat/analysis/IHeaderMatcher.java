@@ -45,7 +45,7 @@ public interface IHeaderMatcher {
     enum State {
         t("true"), f("false"), i("indeterminent");
 
-        private String desc;
+        private final String desc;
 
         State(String desc) {
             this.desc = desc;

@@ -26,7 +26,6 @@ import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +33,7 @@ import java.io.Reader;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -241,11 +241,11 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     protected Defaults.Builder getDefaultsBuilder() {
         Defaults.Builder result = Defaults.builder();
         if (defaultLicenseFiles != null) {
-            for (int i = 0; i < defaultLicenseFiles.length; i++) {
+            for (String defaultLicenseFile : defaultLicenseFiles) {
                 try {
-                    result.add(defaultLicenseFiles[i]);
+                    result.add(defaultLicenseFile);
                 } catch (MalformedURLException e) {
-                    throw new ConfigurationException(defaultLicenseFiles[i] + " is not a valid license file", e);
+                    throw new ConfigurationException(defaultLicenseFile + " is not a valid license file", e);
                 }
             }
         }
@@ -392,7 +392,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 }
                 includeList.addAll(getPatternsFromFile(f, charset));
             }
-            ds.setIncludes(includeList.toArray(new String[includeList.size()]));
+            ds.setIncludes(includeList.toArray(new String[0]));
         }
     }
 
@@ -404,7 +404,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         Throwable th = null;
         final List<String> patterns = new ArrayList<>();
         try {
-            is = new FileInputStream(pFile);
+            is = Files.newInputStream(pFile.toPath());
             bis = new BufferedInputStream(is);
             r = new InputStreamReader(bis, pCharset);
             br = new BufferedReader(r);
@@ -501,7 +501,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             Collections.addAll(globExcludes, excludes);
         }
         if (!globExcludes.isEmpty()) {
-            final String[] allExcludes = globExcludes.toArray(new String[globExcludes.size()]);
+            final String[] allExcludes = globExcludes.toArray(new String[0]);
             ds.setExcludes(allExcludes);
         }
     }

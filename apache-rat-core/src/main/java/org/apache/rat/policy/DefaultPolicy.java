@@ -32,7 +32,7 @@ import org.apache.rat.license.LicenseFamilySetFactory;
  * A default Document Analyser that determines if the matched license is in the set of approved licenses.
  */
 public class DefaultPolicy implements IDocumentAnalyser {
-    private SortedSet<ILicenseFamily> approvedLicenseFamilies;
+    private final SortedSet<ILicenseFamily> approvedLicenseFamilies;
 
     /**
      * Constructor with the list of approved license families.
@@ -54,7 +54,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
     @Override
     public void analyse(final Document document) {
         if (document != null) {
-            boolean approval = false;
+            boolean approval;
             if (document.getMetaData().value(MetaData.RAT_URL_HEADER_CATEGORY) != null) {
                 ILicenseFamily licenseFamily = ILicenseFamily.builder()
                         .setLicenseFamilyCategory(

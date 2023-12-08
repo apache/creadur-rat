@@ -49,8 +49,8 @@ public class XmlReportFactory {
      * @param configuration The report configuration.
      * @return a RatReport instance.
      */
-    public static final RatReport createStandardReport(IXmlWriter writer,
-            final ClaimStatistic statistic, ReportConfiguration configuration) {
+    public static RatReport createStandardReport(IXmlWriter writer,
+                                                 final ClaimStatistic statistic, ReportConfiguration configuration) {
         final List<RatReport> reporters = new ArrayList<>();
         if (statistic != null) {
             reporters.add(new ClaimAggregator(statistic));

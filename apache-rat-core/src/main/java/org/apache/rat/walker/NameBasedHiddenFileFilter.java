@@ -78,10 +78,7 @@ public class NameBasedHiddenFileFilter extends AbstractFileFilter implements Ser
      */
     @Override
     public boolean accept(File file) {
-        if (file.getName().startsWith(".")) {
-            return true;
-        }
-        return false;
+        return file.getName().startsWith(".");
     }
 
 }

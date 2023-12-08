@@ -37,7 +37,7 @@ public enum Format {
     /** A plain text file */
     TXT(null, "txt", "text");
 
-    private String[] suffix;
+    private final String[] suffix;
 
     private Constructor<MatcherReader> matcherReader;
     private Constructor<LicenseReader> licenseReader;
@@ -92,7 +92,7 @@ public enum Format {
         String[] parts = name.split("\\.");
         String suffix = parts[parts.length - 1];
         for (Format f : Format.values()) {
-            if (Arrays.stream(f.suffix).anyMatch(suffix::equals)) {
+            if (Arrays.asList(f.suffix).contains(suffix)) {
                 return f;
             }
         }

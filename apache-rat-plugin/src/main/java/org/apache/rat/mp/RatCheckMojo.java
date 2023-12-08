@@ -20,7 +20,8 @@ package org.apache.rat.mp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -187,7 +188,7 @@ public class RatCheckMojo extends AbstractRatMojo {
             } else {
                 configuration.setStyleReport(true);
                 if (!"plain".equalsIgnoreCase(reportStyle)) {
-                    configuration.setStyleSheet(() -> new FileInputStream(reportStyle));
+                    configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(reportStyle)));
                 }
             }
         }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +42,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
     /**
      * The list of builders that will build the enclosed matchers.
      */
-    protected final List<IHeaderMatcher.Builder> children = new ArrayList<IHeaderMatcher.Builder>();
+    protected final List<IHeaderMatcher.Builder> children = new ArrayList<>();
 
     protected ChildContainerBuilder() {
     }
@@ -55,7 +56,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
     public AbstractBuilder setResource(String resourceName) {
           URL url = this.getClass().getResource(resourceName);
             try (final InputStream in = url.openStream()) {
-                BufferedReader buffer = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+                BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
                 String txt;
                 while (null != (txt = buffer.readLine())) {
                     txt = txt.trim();

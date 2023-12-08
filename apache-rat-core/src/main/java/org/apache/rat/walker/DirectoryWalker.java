@@ -37,9 +37,9 @@ import java.util.regex.Pattern;
  */
 public class DirectoryWalker extends Walker implements IReportable {
 
-    protected static final FileNameComparator COMPARATOR = new FileNameComparator();
+    private static final FileNameComparator COMPARATOR = new FileNameComparator();
 
-    private IOFileFilter directoryFilter;
+    private final IOFileFilter directoryFilter;
 
     /**
      * Constructs a walker.

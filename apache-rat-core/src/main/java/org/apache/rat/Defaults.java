@@ -55,7 +55,7 @@ public class Defaults {
      */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
-    private LicenseSetFactory setFactory;
+    private final LicenseSetFactory setFactory;
     
     /**
      * Initialize the system configuration reader..
@@ -90,7 +90,7 @@ public class Defaults {
 
         SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
 
-        SortedSet<String> approvedLicenseIds = new TreeSet<String>();
+        SortedSet<String> approvedLicenseIds = new TreeSet<>();
 
         for (URL url : urls) {
             Format fmt = Format.fromURL(url);
@@ -147,13 +147,7 @@ public class Defaults {
      * The Defaults builder.
      */
     public static class Builder {
-        private Set<URL> fileNames = new TreeSet<>(new Comparator<URL>() {
-
-            @Override
-            public int compare(URL url1, URL url2) {
-                return url1.toString().compareTo(url2.toString());
-            }
-        });
+        private final Set<URL> fileNames = new TreeSet<>(Comparator.comparing(URL::toString));
 
         private Builder() {
             fileNames.add(DEFAULT_CONFIG_URL);

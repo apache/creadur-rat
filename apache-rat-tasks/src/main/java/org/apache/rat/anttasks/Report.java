@@ -65,10 +65,10 @@ import org.apache.tools.ant.types.resources.Union;
  */
 public class Report extends Task {
 
-    private Defaults.Builder defaultsBuilder;
+    private final Defaults.Builder defaultsBuilder;
     private final ReportConfiguration configuration;
-    private List<License> licenses = new ArrayList<>();
-    private List<Family> families = new ArrayList<>();
+    private final List<License> licenses = new ArrayList<>();
+    private final List<Family> families = new ArrayList<>();
     /**
      * will hold any nested resource collection
      */
@@ -123,7 +123,7 @@ public class Report extends Task {
      * @param styleSheet style sheet to use in this report.
      */
     public void addStyleSheet(Resource styleSheet) {
-        configuration.setStyleSheet(() -> styleSheet.getInputStream());
+        configuration.setStyleSheet(styleSheet::getInputStream);
         configuration.setStyleReport(true);
     }
 

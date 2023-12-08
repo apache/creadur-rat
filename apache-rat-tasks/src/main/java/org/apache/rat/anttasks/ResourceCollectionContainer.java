@@ -57,7 +57,7 @@ class ResourceCollectionContainer implements IReportable {
         }
     }
 
-    private class ResourceDocument implements Document {
+    private static class ResourceDocument implements Document {
 
         private Resource resource;
         private final MetaData metaData = new MetaData();

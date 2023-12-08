@@ -22,7 +22,7 @@ import org.apache.rat.license.ILicenseFamily;
 
 public class Family {
 
-    private ILicenseFamily.Builder builder = ILicenseFamily.builder();
+    private final ILicenseFamily.Builder builder = ILicenseFamily.builder();
 
     public ILicenseFamily build() {
         return builder.build();

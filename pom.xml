@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>29</version>
+    <version>31</version>
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
@@ -52,12 +52,13 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenMinVersion>3.2.5</mavenMinVersion>
+    <mavenVersion>3.9.6</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
     <!-- maven plugin versions -->
-    <mavenPluginPluginVersion>3.9.0</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.10.2</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
-    <mavenJavadocPluginVersion>3.5.0</mavenJavadocPluginVersion>
+    <mavenJavadocPluginVersion>3.6.3</mavenJavadocPluginVersion>
     <mavenPmdPluginVersion>3.21.2</mavenPmdPluginVersion>
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
     <previousRatVersion>0.16</previousRatVersion>
@@ -236,7 +237,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.1</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -261,7 +262,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.4.3</version>
+        <version>3.5.0</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -380,7 +381,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.0.1</version>
           <configuration>
             <!-- Only prompt once for the release version -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -395,7 +396,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.2</version>
           <configuration>
             <forkCount>1</forkCount>
             <argLine>-Dfile.encoding=ISO-8859-1</argLine>
@@ -452,7 +453,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.1</version>
         <executions>
           <execution>
             <!-- This checks the bytecode version of the dependencies transitively -->
@@ -466,7 +467,7 @@ agnostic home for software distribution comprehension and audit tools.
                   <maxJdkVersion>${javaVersion}</maxJdkVersion>
                 </enforceBytecodeVersion>
                 <requireMavenVersion>
-                  <version>3.0.5</version>
+                  <version>${mavenMinVersion}</version>
                 </requireMavenVersion>
               </rules>
               <fail>true</fail>

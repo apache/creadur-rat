@@ -1,11 +1,11 @@
 package org.apache.rat.mp;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -62,7 +62,7 @@ class FilesReportable implements IReportable {
         }
     }
 
-    private class FileDocument implements Document {
+    private static class FileDocument implements Document {
         private File file;
         private final MetaData metaData = new MetaData();
 
@@ -77,7 +77,7 @@ class FilesReportable implements IReportable {
 
         @Override
         public Reader reader() throws IOException {
-            final InputStream in = new FileInputStream(file);
+            final InputStream in = Files.newInputStream(file.toPath());
             return new InputStreamReader(in);
         }
 
@@ -93,7 +93,7 @@ class FilesReportable implements IReportable {
 
         @Override
         public InputStream inputStream() throws IOException {
-            return new FileInputStream(file);
+            return Files.newInputStream(file.toPath());
         }
 
         @Override

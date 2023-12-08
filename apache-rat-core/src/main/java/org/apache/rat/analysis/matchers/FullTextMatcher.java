@@ -36,11 +36,11 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
     // Number of match characters assumed to be present on first line
     private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
 
-    private String fullText;
+    private final String fullText;
 
-    private String firstLine;
+    private final String firstLine;
 
-    private boolean seenFirstLine = false;
+    private boolean seenFirstLine;
 
     private final StringBuilder buffer = new StringBuilder();
 
@@ -76,7 +76,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
      * @param text The text to remove extra chars from.
      * @return the pruned text.
      */
-    public static final String prune(String text) {
+    public static String prune(String text) {
         final int length = text.length();
         final StringBuilder buffer = new StringBuilder(length);
         for (int i = 0; i < length; i++) {

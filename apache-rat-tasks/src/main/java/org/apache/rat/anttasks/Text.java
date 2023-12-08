@@ -23,7 +23,7 @@ import org.apache.rat.configuration.builders.TextBuilder;
 
 public class Text implements IHeaderMatcher.Builder {
     
-    private TextBuilder builder = new TextBuilder();
+    private final TextBuilder builder = new TextBuilder();
     
     public void addText(String text) {
         builder.setText(text);
