@@ -392,7 +392,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 }
                 includeList.addAll(getPatternsFromFile(f, charset));
             }
-            ds.setIncludes(includeList.toArray(new String[0]));
+            ds.setIncludes(includeList.toArray(new String[includeList.size()]));
         }
     }
 
@@ -501,7 +501,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             Collections.addAll(globExcludes, excludes);
         }
         if (!globExcludes.isEmpty()) {
-            final String[] allExcludes = globExcludes.toArray(new String[0]);
+            final String[] allExcludes = globExcludes.toArray(new String[globExcludes.size()]);
             ds.setExcludes(allExcludes);
         }
     }
