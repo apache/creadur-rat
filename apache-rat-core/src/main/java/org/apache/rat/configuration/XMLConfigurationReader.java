@@ -307,9 +307,9 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     public SortedSet<ILicenseFamily> readFamilies() {
         if (licenseFamilies.isEmpty()) {
             nodeListConsumer(document.getElementsByTagName(FAMILIES),
-                    x -> nodeListConsumer(x.getChildNodes(), y -> parseFamily(y)));
+                    x -> nodeListConsumer(x.getChildNodes(), this::parseFamily));
             nodeListConsumer(document.getElementsByTagName(APPROVED),
-                    x -> nodeListConsumer(x.getChildNodes(), y -> parseApproved(y)));
+                    x -> nodeListConsumer(x.getChildNodes(), this::parseApproved));
         }
         return Collections.unmodifiableSortedSet(licenseFamilies);
     }
@@ -373,7 +373,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     @Override
     public void readMatcherBuilders() {
-        nodeListConsumer(document.getElementsByTagName(MATCHER), x -> parseMatcherBuilder(x));
+        nodeListConsumer(document.getElementsByTagName(MATCHER), this::parseMatcherBuilder);
     }
 
     @Override
@@ -384,7 +384,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     /**
      * An abstract builder that delegates to another abstract builder.
      */
-    abstract class DelegatingBuilder extends AbstractBuilder {
+    abstract static class DelegatingBuilder extends AbstractBuilder {
         protected final AbstractBuilder delegate;
 
         DelegatingBuilder(AbstractBuilder delegate) {

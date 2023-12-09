@@ -81,7 +81,7 @@ public class LicenseFamilySetFactory {
         SortedSet<String> result = new TreeSet<>();
         switch (filter) {
         case all:
-            families.stream().map(x -> x.getFamilyCategory())
+            families.stream().map(ILicenseFamily::getFamilyCategory)
                     .forEach(result::add);
             break;
         case approved:

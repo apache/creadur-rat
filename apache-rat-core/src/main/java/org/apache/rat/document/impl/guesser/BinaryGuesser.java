@@ -26,11 +26,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CoderResult;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.UnsupportedCharsetException;
+import java.nio.charset.*;
 import java.util.Locale;
 
 /**
@@ -41,10 +37,10 @@ public class BinaryGuesser {
     private static final String DOT = ".";
 
     static final String FILE_ENCODING = "file.encoding";
-    private static Charset CHARSET_FROM_FILE_ENCODING_OR_UTF8 = getFileEncodingOrUTF8AsFallback();
+    private static final Charset CHARSET_FROM_FILE_ENCODING_OR_UTF8 = getFileEncodingOrUTF8AsFallback();
 
     private static boolean isBinaryDocument(Document document) {
-        boolean result = false;
+        boolean result;
         InputStream stream = null;
         try {
             stream = document.inputStream();
@@ -141,7 +137,7 @@ public class BinaryGuesser {
         try {
             return Charset.forName(System.getProperty(FILE_ENCODING));
         } catch (UnsupportedCharsetException e) {
-            return Charset.forName("UTF-8");
+            return StandardCharsets.UTF_8;
         }
     }
 
@@ -149,7 +145,7 @@ public class BinaryGuesser {
      * @param name current file name.
      * @return whether given name is binary.
      */
-    public static final boolean isBinaryData(final String name) {
+    public static boolean isBinaryData(final String name) {
         return extensionMatches(name, DATA_EXTENSIONS);
     }
 
@@ -157,7 +153,7 @@ public class BinaryGuesser {
      * @param name current file name.
      * @return Is a file by that name a known non-binary file?
      */
-    public static final boolean isNonBinary(final String name) {
+    public static boolean isNonBinary(final String name) {
         return name != null && extensionMatches(name.toUpperCase(Locale.US), BinaryGuesser.NON_BINARY_EXTENSIONS);
     }
 
@@ -165,7 +161,7 @@ public class BinaryGuesser {
      * @param name current file name.
      * @return Is a file by that name an executable/binary file?
      */
-    public static final boolean isExecutable(final String name) {
+    public static boolean isExecutable(final String name) {
         return name.equals(BinaryGuesser.JAVA) || extensionMatches(name, EXE_EXTENSIONS)
                 || containsExtension(name, EXE_EXTENSIONS);
     }
@@ -194,15 +190,15 @@ public class BinaryGuesser {
         return BinaryGuesser.extensionMatches(name, BYTECODE_EXTENSIONS);
     }
 
-    public static final boolean isImage(final String name) {
+    public static boolean isImage(final String name) {
         return BinaryGuesser.extensionMatches(name, IMAGE_EXTENSIONS);
     }
 
-    public static final boolean isKeystore(final String name) {
+    public static boolean isKeystore(final String name) {
         return BinaryGuesser.extensionMatches(name, KEYSTORE_EXTENSIONS);
     }
 
-    public static final boolean isAudio(final String name) {
+    public static boolean isAudio(final String name) {
         return BinaryGuesser.extensionMatches( name, AUDIO_EXTENSIONS );
     }
 
@@ -210,7 +206,7 @@ public class BinaryGuesser {
      * @param name file name.
      * @return Is a file by that name a known binary file?
      */
-    public static final boolean isBinary(final String name) {
+    public static boolean isBinary(final String name) {
         if (name == null) {
             return false;
         }
@@ -266,7 +262,7 @@ public class BinaryGuesser {
     };
     
     /**
-     * Based on https://www.apache.org/dev/svn-eol-style.txt
+     * Based on <a href="https://www.apache.org/dev/svn-eol-style.txt">https://www.apache.org/dev/svn-eol-style.txt</a>
      */
     private static final String[] NON_BINARY_EXTENSIONS = {
             "AART",
@@ -363,7 +359,7 @@ public class BinaryGuesser {
     public static final int NON_ASCII_THRESHOLD = 256;
     public static final int ASCII_CHAR_THRESHOLD = 8;
 
-    public static final boolean isBinary(final Document document) {
+    public static boolean isBinary(final Document document) {
         // TODO: reimplement the binary test algorithm?
         // TODO: more efficient to move into standard analysis
         // TODO: then use binary as default

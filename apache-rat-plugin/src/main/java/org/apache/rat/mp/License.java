@@ -27,7 +27,7 @@ import org.apache.rat.license.ILicenseFamily;
 
 public class License extends EnclosingMatcher {
 
-    private ILicense.Builder builder = ILicense.builder();
+    private final ILicense.Builder builder = ILicense.builder();
 
     @Parameter(required = false)
     private String notes;

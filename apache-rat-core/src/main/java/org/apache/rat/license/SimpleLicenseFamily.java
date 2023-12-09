@@ -22,8 +22,8 @@ package org.apache.rat.license;
  * An implementation of the ILicenseFamily.
  */
 class SimpleLicenseFamily implements ILicenseFamily {
-    private String familyName;
-    private String familyCategory;
+    private final String familyName;
+    private final String familyCategory;
 
     SimpleLicenseFamily(String familyId, String familyName) {
         this.familyCategory = ILicenseFamily.makeCategory(familyId);

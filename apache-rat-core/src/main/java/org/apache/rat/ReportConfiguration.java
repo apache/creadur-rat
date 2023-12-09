@@ -29,7 +29,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -38,7 +38,6 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.config.AddLicenseHeaders;
@@ -56,10 +55,10 @@ import org.apache.rat.walker.NameBasedHiddenFileFilter;
  * configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration {
-    private SortedSet<ILicenseFamily> families = LicenseFamilySetFactory.emptyLicenseFamilySet();
-    private SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
-    private SortedSet<String> approvedLicenseCategories = new TreeSet<>();
-    private SortedSet<String> removedLicenseCategories = new TreeSet<>();
+    private final SortedSet<ILicenseFamily> families = LicenseFamilySetFactory.emptyLicenseFamilySet();
+    private final SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
+    private final SortedSet<String> approvedLicenseCategories = new TreeSet<>();
+    private final SortedSet<String> removedLicenseCategories = new TreeSet<>();
     private boolean addingLicenses;
     private boolean addingLicensesForced;
     private String copyrightMessage;
@@ -178,7 +177,7 @@ public class ReportConfiguration {
      */
     public void setStyleSheet(URL styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
-        setStyleSheet(() -> styleSheet.openStream());
+        setStyleSheet(styleSheet::openStream);
     }
     
     /**
@@ -236,7 +235,7 @@ public class ReportConfiguration {
      * @see #getOutput()
      */
     public IOSupplier<PrintWriter> getWriter() {
-        return () -> new PrintWriter(new OutputStreamWriter(getOutput().get(), Charset.forName("UTF-8")));
+        return () -> new PrintWriter(new OutputStreamWriter(getOutput().get(), StandardCharsets.UTF_8));
     }
 
     /**
@@ -342,7 +341,7 @@ public class ReportConfiguration {
      * @param approvedLicenseCategories set of approved license categories.
      */
     public void addApprovedLicenseCategories(Collection<String> approvedLicenseCategories) {
-        approvedLicenseCategories.stream().forEach(this::addApprovedLicenseCategory);
+        approvedLicenseCategories.forEach(this::addApprovedLicenseCategory);
     }
 
     /**
@@ -363,7 +362,7 @@ public class ReportConfiguration {
      * @param familyCategory the family category to remove.
      */
     public void removeApprovedLicenseCategories(Collection<String> familyCategory) {
-        familyCategory.stream().forEach(this::removeApprovedLicenseCategory);
+        familyCategory.forEach(this::removeApprovedLicenseCategory);
     }
 
     /**
@@ -507,10 +506,9 @@ public class ReportConfiguration {
      * A wrapper around an output stream that does not close the output stream.
      */
     public static class NoCloseOutputStream extends OutputStream {
-        private OutputStream delegate;
+        private final OutputStream delegate;
 
         public NoCloseOutputStream(OutputStream delegate) {
-            super();
             this.delegate = delegate;
         }
 

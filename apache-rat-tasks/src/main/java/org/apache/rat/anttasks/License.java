@@ -27,7 +27,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 
 public class License {
 
-    private ILicense.Builder builder = ILicense.builder();
+    private final ILicense.Builder builder = ILicense.builder();
     
     ILicense.Builder asBuilder() {
         return builder;

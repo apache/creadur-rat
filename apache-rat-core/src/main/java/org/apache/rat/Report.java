@@ -19,12 +19,13 @@
 package org.apache.rat;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -128,10 +129,10 @@ public class Report {
      * @param args the arguments.
      * @throws Exception on error.
      */
-    public static final void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Options opts = buildOptions();
 
-        CommandLine cl = null;
+        CommandLine cl;
         try {
             cl = new DefaultParser().parse(opts, args);
         } catch (ParseException e) {
@@ -151,7 +152,7 @@ public class Report {
             printUsage(opts);
         } else {
             ReportConfiguration configuration = createConfiguration(args[0],cl);
-            configuration.validate(s -> System.err.println(s));
+            configuration.validate(System.err::println);
 
             if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
                 listLicenseFamilies(configuration.getLicenseFamilies(LicenseFilter.all), System.out);
@@ -189,7 +190,7 @@ public class Report {
             String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
             if (excludeFileName != null) {
                 final FilenameFilter filter = parseExclusions(
-                        FileUtils.readLines(new File(excludeFileName), Charset.forName("UTF-8")));
+                        FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8));
                 configuration.setInputFileFilter(filter);
             }
         }
@@ -204,7 +205,7 @@ public class Report {
                     System.err.println("please specify a single stylesheet");
                     System.exit(1);
                 }
-                configuration.setStyleSheet(() -> new FileInputStream(style[0]));
+                configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(style[0])));
             }
         }
 
@@ -231,7 +232,7 @@ public class Report {
 
     private static void listLicenses(SortedSet<ILicense> licenses, PrintStream out) {
         out.println("Licenses:");
-        licenses.stream().forEach(lic -> out.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
+        licenses.forEach(lic -> out.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
                 lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
         out.println();
     }

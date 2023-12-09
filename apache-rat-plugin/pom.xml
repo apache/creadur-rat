@@ -30,7 +30,7 @@
                 to audit the source to be distributed.</description>
   <inceptionYear>2007</inceptionYear>
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <maven>${mavenMinVersion}</maven>
   </prerequisites>
   <properties>
     <currentVersion>${project.version}</currentVersion>

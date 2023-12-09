@@ -21,11 +21,11 @@ package org.apache.rat.document;
 import org.apache.commons.collections4.Transformer;
 import org.apache.rat.api.Document;
 
-public class ToNameTransformer implements Transformer {
+public class ToNameTransformer implements Transformer<Object, Object> {
 
-    private static final Transformer TO_NAME_TRANSFORMER = new ToNameTransformer();
+    private static final Transformer<Object, Object> TO_NAME_TRANSFORMER = new ToNameTransformer();
     
-    public static final Transformer toNameTransformer() {
+    public static Transformer<Object, Object> toNameTransformer() {
         return TO_NAME_TRANSFORMER;
     }
     

@@ -40,8 +40,8 @@ public class DefaultAnalyserFactory {
      * @param licenses The licenses to use in  the Analyser.
      * @return A document analyser that uses the provides licenses.
      */
-    public static final IDocumentAnalyser createDefaultAnalyser(Collection<ILicense> licenses) {
-        if (licenses.size() ==0) {
+    public static IDocumentAnalyser createDefaultAnalyser(Collection<ILicense> licenses) {
+        if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
         return new DefaultAnalyser(new LicenseCollection(licenses));

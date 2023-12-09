@@ -23,7 +23,7 @@ import org.apache.rat.configuration.builders.CopyrightBuilder;
 
 public class Copyright implements IHeaderMatcher.Builder {
 
-    private CopyrightBuilder builder = new CopyrightBuilder();
+    private final CopyrightBuilder builder = new CopyrightBuilder();
     
     public void setStart(String start) {
         builder.setStart(start);

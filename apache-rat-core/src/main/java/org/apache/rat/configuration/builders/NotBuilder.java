@@ -37,6 +37,6 @@ public class NotBuilder extends ChildContainerBuilder {
     
     @Override
     public String toString() {
-        return String.format( "NotBuilder: %s", children.size()>0 ? children.get(0) : null );
+        return String.format( "NotBuilder: %s", !children.isEmpty() ? children.get(0) : null );
     }
 }

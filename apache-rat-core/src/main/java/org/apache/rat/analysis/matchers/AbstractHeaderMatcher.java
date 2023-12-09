@@ -28,7 +28,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
  */
 public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
 
-    private String id;
+    private final String id;
 
     /**
      * Constructs the IHeaderMatcher with an id value.  If {@code id} is null then a unique random id is created.

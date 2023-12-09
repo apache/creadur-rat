@@ -52,7 +52,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
      * @return An ILicense.Builder instance.
      */
-    public static ILicense.Builder builder() {
+    static ILicense.Builder builder() {
         return new Builder();
     }
 
@@ -60,7 +60,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
      * @return The comparator for used to sort Licenses. 
      */
     static Comparator<ILicense> getComparator() {
-        return (x, y) ->  x.getId().compareTo( y.getId() );
+        return Comparator.comparing(IHeaderMatcher::getId);
     }
 
     /**

@@ -115,9 +115,7 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
             }
             if (ownerDatePattern != null) {
                 matcher = ownerDatePattern.matcher(buffer);
-                if (matcher.find() && matcher.start() == 0) {
-                    return true;
-                }
+                return matcher.find() && matcher.start() == 0;
             }
         }
         return false;

@@ -77,7 +77,7 @@ public abstract class AbstractLicenseAppender {
     /**
      * the line separator for this OS
      */
-    private static final String LINE_SEP = System.getProperty("line.separator");
+    private static final String LINE_SEP = System.lineSeparator();
 
     private static final int[] FAMILY_C = new int[]{
             TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
@@ -299,7 +299,7 @@ public abstract class AbstractLicenseAppender {
                     doFirstLine(document, writer, line, "@echo");
                 } else if (first && expectsMSVSSF) {
                     written = true;
-                    if ("".equals(line)) {
+                    if (line.isEmpty()) {
                         line = passThroughReadNext(writer, line, br);
                     }
                     if (line.startsWith("Microsoft Visual Studio Solution"

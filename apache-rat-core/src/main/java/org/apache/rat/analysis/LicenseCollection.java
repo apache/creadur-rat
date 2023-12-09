@@ -35,7 +35,7 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
 
     private static final ILicenseFamily DEFAULT = ILicenseFamily.builder().setLicenseFamilyCategory("Dummy")
             .setLicenseFamilyName("HeaderMatcherCollection default license family").build();
-    private Collection<ILicense> enclosed;
+    private final Collection<ILicense> enclosed;
     private ILicense matchingLicense;
     private State lastState;
 
@@ -57,7 +57,7 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
 
     @Override
     public void reset() {
-        enclosed.stream().forEach(ILicense::reset);
+        enclosed.forEach(ILicense::reset);
         this.lastState = State.i;
         this.matchingLicense = null;
     }

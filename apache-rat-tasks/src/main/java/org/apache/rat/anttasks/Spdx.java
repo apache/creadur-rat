@@ -23,7 +23,7 @@ import org.apache.rat.configuration.builders.SpdxBuilder;
 
 public class Spdx implements IHeaderMatcher.Builder  {
     
-    private SpdxBuilder builder = new SpdxBuilder();
+    private final SpdxBuilder builder = new SpdxBuilder();
 
     public void setName(String spdxId) {
         builder.setName(spdxId);

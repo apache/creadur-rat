@@ -23,7 +23,7 @@ import org.apache.rat.configuration.builders.RegexBuilder;
 
 public class Regex implements IHeaderMatcher.Builder {
 
-    private RegexBuilder builder = new RegexBuilder();
+    private final RegexBuilder builder = new RegexBuilder();
 
     public void setRegex(String pattern) {
         builder.setExpr(pattern);

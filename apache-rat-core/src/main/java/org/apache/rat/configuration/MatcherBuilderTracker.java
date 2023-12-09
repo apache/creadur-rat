@@ -65,9 +65,9 @@ public class MatcherBuilderTracker {
         Class<? extends AbstractBuilder> clazz = instance().matcherBuilders.get(name);
         if (clazz == null) {
             StringBuilder sb = new StringBuilder("\nValid builders\n");
-            instance().matcherBuilders.keySet().stream().forEach(x -> sb.append(x).append("\n"));
+            instance().matcherBuilders.keySet().forEach(x -> sb.append(x).append("\n"));
             sb.append("ERROR MSG\n");
-            throw new ConfigurationException(sb.append("No matcher builder named " + name).toString());
+            throw new ConfigurationException(sb.append("No matcher builder named ").append(name).toString());
         }
         try {
             return clazz.getConstructor().newInstance();
