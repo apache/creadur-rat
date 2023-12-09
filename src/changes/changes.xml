@@ -63,7 +63,7 @@ The <action> type attribute can be add,update,fix,remove.
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
         Update to ASF parent pom 31 and update multiple maven plugin versions as well (surefire, release, project-info, enforcer, jxr).
       </action>
-      <action issue="RAT-338" type="add" dev="pottlinger" due-to="Tamas Cservenak">
+      <action issue="RAT-338" type="add" dev="pottlinger" due-to="Tamás Cservenák">
         Update minimal build Maven version to 3.2.5 and maven dependencies to 3.9.6. Remove pre-JDK8 code constructs and minor refactorings.
       </action>
       <action issue="RAT-335" type="add" dev="pottlinger" due-to="Niels Basjes">
