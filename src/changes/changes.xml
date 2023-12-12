@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.16-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-326" type="fix" dev="pottlinger">
+        Fix existing javadoc build errors and add javadoc generation to GithubActions to not introduce build errors via merge requests.
+      </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
         Update to ASF parent pom 31 and update multiple maven plugin versions as well (surefire, release, project-info, enforcer, jxr).
       </action>
