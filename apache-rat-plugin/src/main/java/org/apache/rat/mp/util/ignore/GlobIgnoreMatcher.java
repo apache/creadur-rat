@@ -99,7 +99,7 @@ public class GlobIgnoreMatcher implements IgnoreMatcher {
     /**
      * Determines whether the given line is a comment or not based on scanning
      * for prefixes
-     * {@see COMMENT_PREFIXES}.
+     * @see #COMMENT_PREFIXES
      *
      * @param line line to verify.
      * @return <code>true</code> if the given line is a commented out line.
