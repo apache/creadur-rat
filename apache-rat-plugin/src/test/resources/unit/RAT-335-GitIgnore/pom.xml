@@ -17,11 +17,9 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.apache.rat.test</groupId>
   <artifactId>RAT335</artifactId>
   <version>1.0</version>
-
   <build>
     <plugins>
       <plugin>
@@ -29,7 +27,6 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-
           <!-- Minimize the number of active rules to keep the test minimal -->
           <excludes>
             <exclude>**/.gitignore</exclude>
@@ -38,7 +35,6 @@
           <useMavenDefaultExcludes>false</useMavenDefaultExcludes>
           <useEclipseDefaultExcludes>false</useEclipseDefaultExcludes>
           <useIdeaDefaultExcludes>false</useIdeaDefaultExcludes>
-
           <parseSCMIgnoresAsExcludes>true</parseSCMIgnoresAsExcludes>
         </configuration>
       </plugin>
