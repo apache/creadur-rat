@@ -57,7 +57,7 @@ The <action> type attribute can be add,update,fix,remove.
       </action>
     </release>
     -->
-    <release version="0.16" date="2023-12-27" description=
+    <release version="0.16" date="2023-12-28" description=
 "Apart from dependency updates and multiple bugfixes,
 this release brings the ability to use SPDX license identifiers and enhances the .gitignore-exclusion filterung during RAT runs.
 
