@@ -366,8 +366,6 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>apache-rat-plugin/src/test/resources/**</exclude>
               <exclude>apache-rat-plugin/src/it/**</exclude>
               <exclude>apache-rat-tasks/src/test/resources/**</exclude>
-              <!-- RAT-314: Can be removed after 0.16 is used for scanning -->
-              <exclude>**/.mvn/**</exclude>
               <exclude>**/iso-8859-1.html</exclude>
               <exclude>**/velocity.log</exclude>
             </excludes>
@@ -750,11 +748,11 @@ agnostic home for software distribution comprehension and audit tools.
       </build>
     </profile>
   </profiles>
-  <!-- in order to test new releases this reference can be activated locally-->
+  <!-- in order to test new releases this reference can be activated locally
   <pluginRepositories>
     <pluginRepository>
       <id>staged-releases-rat-016</id>
       <url>https://repository.apache.org/content/repositories/orgapachecreadur-1010/</url>
     </pluginRepository>
-  </pluginRepositories>
+  </pluginRepositories-->
 </project>
