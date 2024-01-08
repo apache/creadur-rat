@@ -354,7 +354,7 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <!-- Do not use property values here as this causes problems during release -->
-          <version>0.15</version>
+          <version>0.16</version>
           <configuration>
             <excludes>
               <exclude>.asf.yaml</exclude>
@@ -416,7 +416,7 @@ agnostic home for software distribution comprehension and audit tools.
                     <artifactId>
         							apache-rat-plugin
         						</artifactId>
-                    <versionRange>[0.15,)</versionRange>
+                    <versionRange>[0.16,)</versionRange>
                     <goals>
                       <goal>check</goal>
                     </goals>
@@ -525,7 +525,6 @@ agnostic home for software distribution comprehension and audit tools.
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh</artifactId>
-        <!-- Last version that is compatible with Maven 2 -->
         <version>3.5.3</version>
       </extension>
     </extensions>
@@ -754,8 +753,8 @@ agnostic home for software distribution comprehension and audit tools.
   <!-- in order to test new releases this reference can be activated locally-->
   <pluginRepositories>
     <pluginRepository>
-      <id>staged-releases-rat-015</id>
-      <url>https://repository.apache.org/content/repositories/orgapachecreadur-1008/</url>
+      <id>staged-releases-rat-016</id>
+      <url>https://repository.apache.org/content/repositories/orgapachecreadur-1010/</url>
     </pluginRepository>
   </pluginRepositories>
 </project>
