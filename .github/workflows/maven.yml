@@ -58,13 +58,13 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
-        run: mvn -e -B -V -ntp clean install
+        run: ./mvnw -e -B -V -ntp clean install
         
       - name: Build site
-        run: mvn -e -B -V -ntp site:site
+        run: ./mvnw -e -B -V -ntp site:site
 
       - name: Generate javadoc
-        run: mvn -e -B -V -ntp javadoc:javadoc 
+        run: ./mvnw -e -B -V -ntp javadoc:javadoc 
 
 # as of 20220505:  Invalid workflow file
 # The workflow is not valid. .github/workflows/maven.yml (Line: 55, Col: 1): Unexpected value 'notifications'
