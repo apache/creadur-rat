@@ -29,52 +29,38 @@
         <configuration>
 						<addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
 						<licenses>
-							<license><family>MIT</family> <!-- implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense" -->
-								<!-- <licenseFamilyCategory>MIT</licenseFamilyCategory>
-								<licenseFamilyName>MIT</licenseFamilyName> -->
+							<license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
+							<licenseFamilyCategory>MIT</licenseFamilyCategory>
+								<licenseFamilyName>MIT</licenseFamilyName> 
 								<notes></notes>
-								<!-- <patterns>
+								<patterns>
 									<pattern>Licensed MIT</pattern>
 									<pattern>Licensed under MIT</pattern>
 									<pattern>Licensed under the MIT license</pattern>
 									<pattern>MIT/GPL2 Licensed</pattern>
 									<pattern>licensed under the MIT and GPL</pattern>
 									<pattern>MIT license</pattern> 
-								</patterns> -->
-								<any>
-									<text>Licensed MIT</text>
-									<text>Licensed under MIT</text>
-									<text>Licensed under the MIT license</text>
-									<text>MIT/GPL2 Licensed</text>
-									<text>licensed under the MIT and GPL</text>
-									<text>MIT license</text>
-								</any>
+								</patterns> 
+
 							</license>
-							<license><family>BSD</family><!-- implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">--> 
-								<!-- <licenseFamilyCategory>BSD</licenseFamilyCategory>
-								<licenseFamilyName>BSD</licenseFamilyName> -->
+							<license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
+								<licenseFamilyCategory>BSD</licenseFamilyCategory>
+								<licenseFamilyName>BSD</licenseFamilyName>
 								<notes></notes>
-<!--								<patterns>-->
-<!--									<pattern>BSD-style license</pattern>-->
-<!--								</patterns>-->
-<text>BSD-style license</text>
+								<patterns>
+									<pattern>BSD-style license</pattern>
+								</patterns>
 							</license>
-							<license><family>CC BY</family> <!-- implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense"> -->
-								<!-- <licenseFamilyCategory>Creative Commons Attribution</licenseFamilyCategory> -->
-								<!-- <licenseFamilyName>CC BY</licenseFamilyName> -->
+							<license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense"> 
+								 <licenseFamilyCategory>CC BY</licenseFamilyCategory> 
+								 <licenseFamilyName>Creative Commons Attribution</licenseFamilyName> 
 								<notes></notes>
-								<!-- <patterns>
+								 <patterns>
 									<pattern>creativecommons.org/licenses/by/4.0</pattern>
-								</patterns> -->
-								<text>creativecommons.org/licenses/by/4.0</text>
+								</patterns> 
 							</license>
 						</licenses>
-						<families>
-								<family><id>MIT</id><name>MIT</name></family>
-								<family><id>BSD</id><name>BSD</name></family>
-								<family><id>CC BY</id><name>CC BY</name></family>
-						</families>
-						<!-- <licenseFamilies> 
+						 <licenseFamilies> 
 							<licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
 								<familyName>MIT</familyName>
 							</licenseFamily>
@@ -84,7 +70,7 @@
 							<licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
 								<familyName>CC BY</familyName>
 							</licenseFamily>
-						</licenseFamilies> --> 
+						</licenseFamilies>  
 						<excludes>
 							<exclude>**/*.mp3</exclude>
 							<exclude>**/localhost.jks</exclude>
@@ -96,7 +82,6 @@
 							<exclude>**/.settings/**</exclude>
 							<exclude>.gitattributes</exclude>
 						</excludes>
-
         </configuration>
       </plugin>
     </plugins>

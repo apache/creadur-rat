@@ -23,6 +23,7 @@ import static org.apache.rat.api.domain.LicenseFamilyBuilder.aLicenseFamily;
 /**
  * Enumerates standard license families known to Rat.
  */
+@Deprecated
 public enum RatLicenseFamily {
 
 	/**

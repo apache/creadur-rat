@@ -56,6 +56,23 @@ public class ILicenseFamilyBuilder implements Builder {
         if (StringUtils.isBlank(licenseFamilyName)) {
             throw new ConfigurationException("LicenseFamily Name must be specified");
         }
-        return new SimpleLicenseFamily(licenseFamilyCategory, licenseFamilyName);
+        return new ILicenseFamily() { 
+            private final String cat = ILicenseFamily.makeCategory(licenseFamilyCategory);
+            private final String name = licenseFamilyName;
+            @Override
+            public String toString() {
+                return String.format("%s %s", getFamilyCategory(), getFamilyName());
+            }
+
+            @Override
+            public final String getFamilyName() {
+                return name;
+            }
+
+            @Override
+            public String getFamilyCategory() {
+                return cat;
+            }
+        };
     }
 }

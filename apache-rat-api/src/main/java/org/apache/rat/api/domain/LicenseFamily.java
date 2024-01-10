@@ -27,6 +27,7 @@ package org.apache.rat.api.domain;
  * &lt;ORGANIZATION&gt; and &lt;YEAR&gt; parameters.
  * 
  */
+@Deprecated
 public final class LicenseFamily {
 
     /**
