@@ -24,7 +24,7 @@ Custom License Matchers
   In such cases, you may use a custom license matcher.
 
   The simplest way to create a license check is to create an XML file describing
-  the new license and add it to the processing with the <<additionalLicenseFiles>
+  the new license and add it to the processing with the additionalLicenseFiles
   option.  
   
   The second option is to define the custom license directly in the POM.
