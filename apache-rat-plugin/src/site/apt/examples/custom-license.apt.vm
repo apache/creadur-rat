@@ -25,11 +25,12 @@ Custom License Matchers
 
   The simplest way to create a license check is to create an XML file describing
   the new license and add it to the processing with the <<additionalLicenseFiles>
-  option.  Create the file as described  
+  option.  
   
-  A custom license matcher is an implementation of
-  <<<org.apache.rat.analysis.IHeaderMatcher>>>. Suggest that your
-  source files must contain a header like the following:
+  The second option is to define the custom license directly in the POM.
+  Unlike earlier version no custom implementations are required to define
+  custom licenses.
+ 
 
 ------------------------------------------------------------------
   /**
@@ -53,15 +54,18 @@ Custom License Matchers
         <version>${currentVersion}</version>
         <configuration>
           <licenses>
-            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
-              <licenseFamilyCategory>YASL1</licenseFamilyCategory>
-              <licenseFamilyName>Yet Another Software License (YASL) 1.0</licenseFamilyName>
+            <license>
+              <family>YASL1</family>
               <notes></notes>
-              <patterns>
-                <pattern>Yet Another Software License, 1.0</pattern>
-              </patterns>
+              <text>Yet Another Software License, 1.0</text>
             </license>
           </licenses>
+          <families>
+             <family>
+               <id>YASL1</id>
+               <name>Yet Another Software License</name>
+             </family>
+          </families>
         </configuration>
       </plugin>
       ...
@@ -69,33 +73,18 @@ Custom License Matchers
   </build>
 ------------------------------------------------------------------
 
-  The following terms are used in the example:
+  This is very similar to the XML format for defining the configuration.
 
-*-----------------------+-----------+
-| licenseFamilyCategory | The license family category is a very short string (exactly 5 characters, preferrably no blanks),
-|                       | which identifies the license. For example, this could be <<<AL20>>> to identify the
-|                       |  Apache License, 2.0.
-*-----------------------+-----------+
-| licenseFamilyName     | The license family name is a longer string, which gives the licenses full name. For example,
-|                       | this could be <<<Apache License, 2.0>>>.
-*-----------------------+-----------+
-| notes                 | You might specify additional notes here, like "Dual licensed GPL/MPL".
-*-----------------------+-----------+
-| patterns              | Specifies a set of patterns being searched. The source file is assumed to contain the
-|                       | license header, if at least one of these patterns is found.
-*-----------------------+-----------+
 
 Approved License Families
 
-  Detecting the license is not enough in many cases as the "new"
-  license may not be considered approved by Rat.  In order to make a
-  license approved you provide a custom implementation of
-  <<<org.apache.rat.license.ILicenseFamily>>>.  Usually all you need
-  to provide the name of the license, in which case the built-in
-  <<<SimpleLicenseFamily>>> will do.
+  By default all POM defined licenses are considered approved, this is a 
+  change from pre 0.16 versons.  If there are families that are defined in
+  the pom but that should not be considered approved then a list of approved
+  license families must be provided.
 
-  To continue the example, in order to make the YASL1 license approved
-  you'd use
+  To continue the example, to be explicit that the YASL1 license is approved
+  add an approvedLicenses section listing the IDs for the approved licenses.
 
 ------------------------------------------------------------------
   <build>
@@ -107,20 +96,21 @@ Approved License Families
         <version>${currentVersion}</version>
         <configuration>
           <licenses>
-            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
-              <licenseFamilyCategory>YASL1</licenseFamilyCategory>
-              <licenseFamilyName>Yet Another Software License (YASL) 1.0</licenseFamilyName>
+            <license>
+              <family>YASL1</family>
               <notes></notes>
-              <patterns>
-                <pattern>Yet Another Software License, 1.0</pattern>
-              </patterns>
+              <text>Yet Another Software License, 1.0</text>
             </license>
           </licenses>
-          <licenseFamilies>
-            <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
-              <familyName>Yet Another Software License (YASL) 1.0</familyName>
-            </licenseFamily>
-          </licenseFamilies>
+          <families>
+             <family>
+               <id>YASL1</id>
+               <name>Yet Another Software License</name>
+             </family>
+          </families>
+          <approvedLicenses>
+            <id>YASL1</id>
+          </approvedLicenses>
         </configuration>
       </plugin>
       ...
@@ -128,10 +118,5 @@ Approved License Families
   </build>
 ------------------------------------------------------------------
 
-  The following terms are used in the example:
 
-*-----------------------+-----------+
-| familyName            | The name of the license family name that is approved.
-|                       | This should match <<<licenseFamilyName>>> of your <<<licenseMatcher>>>
-*-----------------------+-----------+
 

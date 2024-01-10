@@ -203,7 +203,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final File ratTxtFile = getRatTxtFile(mojo);
         // POM reports as BSD because it has the BSD string in and that gets found before AL match
         final String[] expected = { " BSD +\\Q" + getDir(mojo) + "pom.xml\\E", "Notes: 0", "Binaries: 0", "Archives: 0",
-                "Standards: 2$", "Apache Licensed: 0$", "Generated Documents: 0", "^0 Unknown Licenses" };
+                "Standards: 1$", "Apache Licensed: 0$", "Generated Documents: 0", "^0 Unknown Licenses" };
 
         ReportConfiguration config = mojo.getConfiguration();
         // validate configuration
@@ -216,7 +216,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         assertThat(config.getDirectoryFilter()).isNotNull().withFailMessage("Directory filter should not be null");
         assertThat(config.getDirectoryFilter()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
         
-        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 2);
+        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "BSD", "CC BY");
         ReportConfigurationTest.validateDefaultLicenses(config, "BSD", "CC BY");
 

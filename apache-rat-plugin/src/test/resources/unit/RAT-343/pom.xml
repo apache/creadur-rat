@@ -71,6 +71,9 @@
 								<familyName>CC BY</familyName>
 							</licenseFamily>
 						</licenseFamilies>  
+						<approvedLicenses>
+							<id>BSD</id>
+						</approvedLicenses>
 						<excludes>
 							<exclude>**/*.mp3</exclude>
 							<exclude>**/localhost.jks</exclude>

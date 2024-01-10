@@ -92,6 +92,7 @@
               <exclude>src/test/resources/unit/RAT-335-GitIgnore/*</exclude>
               <exclude>src/test/resources/unit/RAT-335-GitIgnore/**/*</exclude>
               <exclude>**/*.iml</exclude>
+              <exclude>src/test/resources/unit/RAT-343/*</exclude>
               <!-- RAT-171: needs to be added since SCM ignores are only parsed in project root -->
               <exclude>**/.bzrignore</exclude>
             </excludes>
