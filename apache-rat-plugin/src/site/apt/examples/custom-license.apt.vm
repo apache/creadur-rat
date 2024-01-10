@@ -23,6 +23,10 @@ Custom License Matchers
   some typical licenses. However, they will not always be sufficient.
   In such cases, you may use a custom license matcher.
 
+  The simplest way to create a license check is to create an XML file describing
+  the new license and add it to the processing with the <<additionalLicenseFiles>
+  option.  Create the file as described  
+  
   A custom license matcher is an implementation of
   <<<org.apache.rat.analysis.IHeaderMatcher>>>. Suggest that your
   source files must contain a header like the following:

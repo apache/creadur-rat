@@ -190,6 +190,25 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
     }
+    
+    /**
+     * Runs a check, which should expose no problems.
+     *
+     * @throws Exception The test failed.
+     */
+    public void testIt6() throws Exception {
+
+        final RatCheckMojo mojo = newRatCheckMojo("it6");
+        final File ratTxtFile = getRatTxtFile(mojo);
+        final String[] expected = { " AL +\\Q" + getDir(mojo) + "pom.xml\\E", "Notes: 0", "Binaries: 0", "Archives: 0",
+                "Standards: 1$", "Apache Licensed: 1$", "Generated Documents: 0", "^0 Unknown Licenses" };
+
+        ReportConfiguration config = mojo.getConfiguration();
+        ReportConfigurationTest.validateDefault(config);
+
+        mojo.execute();
+        ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+    }
 
     /**
      * Tests verifying gitignore parsing

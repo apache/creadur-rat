@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
@@ -51,6 +52,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.analysis.license.DeprecatedConfig;
 import org.apache.rat.config.SourceCodeManagementSystems;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
@@ -106,6 +108,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     @Parameter(property = "rat.approvedFile")
     private String approvedLicenseFile;
 
+    @Parameter
+    private DeprecatedConfig[] deprecatedConfigs;
+    
     @Parameter
     private License[] licenses;
     
@@ -252,9 +257,32 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         return result;
     }
 
+    @Deprecated // remove this for version 1.0
+    private void reportDeprecatedProcessing()
+    {
+        if (deprecatedConfigs != null) {
+            Log log = getLog();
+            log.warn("Configuration uses deprecated configuration.  Please upgrade to v0.16 configuration options");
+        }
+    }
+    @Deprecated // remove this for version 1.0
+    private void processDeprecatedFamilies(Consumer<ILicenseFamily> consumer) {
+        if (deprecatedConfigs != null) {
+            Arrays.stream(deprecatedConfigs).map(DeprecatedConfig::getLicenseFamily).filter(Objects::nonNull).forEach(consumer);
+        }
+    }
+    
+    @Deprecated // remove this for version 1.0
+    private void processDeprecatedLicenses(SortedSet<ILicenseFamily> families, Consumer<ILicense> consumer) {
+        if (deprecatedConfigs != null) {
+            Arrays.stream(deprecatedConfigs).map(DeprecatedConfig::getLicense).filter(Objects::nonNull)
+            .map(x -> x.build(families)).forEach(consumer);
+        }
+    }
+    
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
-        
         ReportConfiguration config = new ReportConfiguration();
+        reportDeprecatedProcessing();
         if (addDefaultLicenses) {
             config.setFrom(getDefaultsBuilder().build());
         }
@@ -288,6 +316,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     };
 
             Consumer<ILicenseFamily> process = logger.andThen(config::addFamily);
+            processDeprecatedFamilies(process);
             Arrays.stream(families).map(Family::build).forEach(process);
         }
 
@@ -310,6 +339,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
             Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
             SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.all);
+            processDeprecatedLicenses(families, process);
             Arrays.stream(licenses).map(x -> x.build(families)).forEach(process);
         }
 
