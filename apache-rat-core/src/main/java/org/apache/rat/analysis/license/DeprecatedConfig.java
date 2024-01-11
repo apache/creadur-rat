@@ -15,39 +15,17 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */
-package org.apache.rat.license;
+ */ 
+package org.apache.rat.analysis.license;
+
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 
 /**
- * An implementation of the ILicenseFamily.
+ * A temoprary interface for deprecated configuration options.
  */
 @Deprecated // remove in v1.0
-public class SimpleLicenseFamily  {
-    private String familyName;
-    private String familyCategory;
-
-    public SimpleLicenseFamily() {}
-
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
-    
-    public void setFamilyCategory(String familyCategory) {
-        this.familyCategory = familyCategory;
-    }
-    
-    @Override
-    public String toString() {
-        return String.format("%s %s", getFamilyCategory(), getFamilyName());
-    }
-
-
-    public final String getFamilyName() {
-        return familyName;
-    }
-
-
-    public String getFamilyCategory() {
-        return familyCategory;
-    }
+public interface DeprecatedConfig {
+    ILicense.Builder getLicense();
+    ILicenseFamily getLicenseFamily();
 }

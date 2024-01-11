@@ -22,6 +22,7 @@ import static org.apache.rat.mp.RatTestHelpers.getSourceDirectory;
 import static org.apache.rat.mp.RatTestHelpers.newArtifactFactory;
 import static org.apache.rat.mp.RatTestHelpers.newArtifactRepository;
 import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,6 +37,7 @@ import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TextUtils;
+import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
  * Test case for the {@link RatCheckMojo} and {@link RatReportMojo}.
@@ -188,6 +190,37 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         assertNull("Should not have inputFileFilter", config.getInputFileFilter());
         mojo.execute();
 
+        ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+    }
+    
+    /**
+     * Runs a check, which should expose no problems.
+     *
+     * @throws Exception The test failed.
+     */
+    public void testRAT_343() throws Exception {
+        final RatCheckMojo mojo = newRatCheckMojo("RAT-343");
+        final File ratTxtFile = getRatTxtFile(mojo);
+        // POM reports as BSD because it has the BSD string in and that gets found before AL match
+        final String[] expected = { " BSD +\\Q" + getDir(mojo) + "pom.xml\\E", "Notes: 0", "Binaries: 0", "Archives: 0",
+                "Standards: 1$", "Apache Licensed: 0$", "Generated Documents: 0", "^0 Unknown Licenses" };
+
+        ReportConfiguration config = mojo.getConfiguration();
+        // validate configuration
+        assertThat(config.isAddingLicenses()).isFalse();
+        assertThat(config.isAddingLicensesForced()).isFalse();
+        assertThat(config.getCopyrightMessage()).isNull();
+        assertThat(config.getInputFileFilter()).isNull();
+        assertThat(config.isStyleReport()).isTrue();
+        assertThat(config.getStyleSheet()).isNotNull().withFailMessage("Stylesheet should not be null");
+        assertThat(config.getDirectoryFilter()).isNotNull().withFailMessage("Directory filter should not be null");
+        assertThat(config.getDirectoryFilter()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+        
+        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
+        ReportConfigurationTest.validateDefaultLicenseFamilies(config, "BSD", "CC BY");
+        ReportConfigurationTest.validateDefaultLicenses(config, "BSD", "CC BY");
+
+        mojo.execute();
         ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
     }
 

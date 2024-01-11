@@ -39,8 +39,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -51,6 +54,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.analysis.license.DeprecatedConfig;
 import org.apache.rat.config.SourceCodeManagementSystems;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
@@ -58,6 +62,7 @@ import org.apache.rat.configuration.MatcherReader;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.license.SimpleLicenseFamily;
 import org.apache.rat.mp.util.ScmIgnoreParser;
 import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoreMatcher;
@@ -105,9 +110,23 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
     @Parameter(property = "rat.approvedFile")
     private String approvedLicenseFile;
-
+    
+    /**
+     * Specifies the license families to accept.
+     *
+     * @since 0.8
+     * @deprecated
+     */
+    @Deprecated // remove in v1.0
     @Parameter
-    private License[] licenses;
+    private SimpleLicenseFamily[] licenseFamilies;
+    
+    /**
+     * This is an object to accept both License of DeprecatedConfig objects.
+     */
+    @Deprecated // convert this to an org.apache.rat.mp.License object in v1.0
+    @Parameter
+    private Object[] licenses;
     
     @Parameter
     private Family[] families;
@@ -251,10 +270,52 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         }
         return result;
     }
+    
+    @Deprecated // remove this for version 1.0
+    private Stream<License> getLicenses() {
+        if (licenses == null) {
+            return Stream.empty();
+        }
+        return Arrays.stream(licenses).filter( s -> {return s instanceof License;}).map(License.class::cast);
+    }
 
+    @Deprecated // remove this for version 1.0
+    private Stream<DeprecatedConfig> getDeprecatedConfigs() {
+        if (licenses == null) {
+            return Stream.empty();
+        }
+        return Arrays.stream(licenses).filter( s -> {return s instanceof DeprecatedConfig;}).map(DeprecatedConfig.class::cast);
+    }
+    
+    @Deprecated // remove this for version 1.0
+    private void reportDeprecatedProcessing()
+    {
+        if (getDeprecatedConfigs().findAny().isPresent()) {
+            Log log = getLog();
+            log.warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
+        }
+    }
+    
+    @Deprecated // remove this for version 1.0
+    private void processLicenseFamilies(ReportConfiguration config) {
+        List<ILicenseFamily> families = getDeprecatedConfigs().map(DeprecatedConfig::getLicenseFamily).filter(Objects::nonNull).collect(Collectors.toList());
+        if (licenseFamilies != null) {
+            for (SimpleLicenseFamily slf : licenseFamilies) {
+                if (StringUtils.isBlank(slf.getFamilyCategory())) {
+                    families.stream().filter( f -> f.getFamilyName().equalsIgnoreCase(slf.getFamilyName())).findFirst()
+                    .ifPresent(config::addApprovedLicenseCategory);
+                } else {
+                    config.addApprovedLicenseCategory(ILicenseFamily.builder().setLicenseFamilyCategory(slf.getFamilyCategory())
+                    .setLicenseFamilyName(StringUtils.defaultIfBlank(slf.getFamilyName(), slf.getFamilyCategory()))
+                    .build());
+                }
+            }
+        }
+    }
+    
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
-        
         ReportConfiguration config = new ReportConfiguration();
+        reportDeprecatedProcessing();
         if (addDefaultLicenses) {
             config.setFrom(getDefaultsBuilder().build());
         }
@@ -278,7 +339,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 }
             }
         }
-        if (families != null) {
+        if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
             Log log = getLog();
             if (log.isDebugEnabled()) {
                 log.debug(String.format("%s license families loaded from pom", families.length));
@@ -288,13 +349,18 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     };
 
             Consumer<ILicenseFamily> process = logger.andThen(config::addFamily);
-            Arrays.stream(families).map(Family::build).forEach(process);
+            getDeprecatedConfigs().map(DeprecatedConfig::getLicenseFamily).filter(Objects::nonNull).forEach(process);
+            if (families != null)  { // TODO remove if check in v1.0
+                Arrays.stream(families).map(Family::build).forEach(process);
+            }
         }
 
+        processLicenseFamilies(config);
+        
         if (approvedLicenses != null && approvedLicenses.length > 0) {
             Arrays.stream(approvedLicenses).forEach(config::addApprovedLicenseCategory);
         }
-        
+
         if (licenses != null) {
             Log log = getLog();
             if (log.isDebugEnabled()) {
@@ -310,7 +376,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
 
             Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
             SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.all);
-            Arrays.stream(licenses).map(x -> x.build(families)).forEach(process);
+            getDeprecatedConfigs().map(DeprecatedConfig::getLicense).filter(Objects::nonNull)
+            .map(x -> x.build(families)).forEach(process);
+            getLicenses().map(x -> x.build(families)).forEach(process);
         }
 
         config.setReportable(getReportable());

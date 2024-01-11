@@ -21,6 +21,7 @@ package org.apache.rat.api.domain;
 /**
  * Builds {@link LicenseFamily} instances.
  */
+@Deprecated
 public final class LicenseFamilyBuilder {
 
     /**
