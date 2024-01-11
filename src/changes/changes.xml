@@ -58,7 +58,7 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.18.
+        TODO: collect all dependabot updates for release 0.17.
       </action>
     </release>
     -->
@@ -70,7 +70,7 @@ The <action> type attribute can be add,update,fix,remove.
         Reimplement old configuration elements for custom licenses in Maven plugin configurations (and updates to the webpage).
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.17.
+        TODO: collect all dependabot updates for release 0.16.1
       </action>
     </release>
     <release version="0.16" date="2023-12-28" description=
