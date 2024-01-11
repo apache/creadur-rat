@@ -63,6 +63,7 @@
           <artifactId>maven-plugin-plugin</artifactId>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+            <goalPrefix>apache-rat</goalPrefix>
           </configuration>
           <executions>
             <execution>
