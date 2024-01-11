@@ -56,8 +56,13 @@ The <action> type attribute can be add,update,fix,remove.
         TODO: collect all dependabot updates for release 0.18.
       </action>
     </release>
-    -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+        TODO: collect all dependabot updates for release 0.18.
+      </action>
+    </release>
+    -->
+    <release version="0.16.1-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-342" type="add" dev="pottlinger">
         Use Maven wrapper (with version 3.9.6) for reproducable local builds and on ASF Jenkins and Github Actions.
       </action>
