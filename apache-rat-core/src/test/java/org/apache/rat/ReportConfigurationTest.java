@@ -19,6 +19,9 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +46,7 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.configuration.ConfigurationReaderTest;
 import org.apache.rat.license.ILicense;
@@ -50,19 +54,22 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.testhelpers.TestingLicense;
-import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class ReportConfigurationTest {
 
     private ReportConfiguration underTest;
+    private LoggingCapture log;
 
     @Before
     public void setup() {
-        underTest = new ReportConfiguration((Log)DefaultLog.INSTANCE);
+        log = new LoggingCapture();
+        underTest = new ReportConfiguration(log);
     }
 
     @Test
@@ -359,7 +366,7 @@ public class ReportConfigurationTest {
     
     @Test
     public void testSetOut() throws IOException {
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        ReportConfiguration config = new ReportConfiguration(log);
         OutputStreamIntercepter osi = new OutputStreamIntercepter();
         config.setOut(() -> osi);
         assertThat(osi.closeCount).isEqualTo(0);
@@ -371,6 +378,79 @@ public class ReportConfigurationTest {
             assertThat(osi.closeCount).isEqualTo(1);
         }
         assertThat(osi.closeCount).isEqualTo(2);
+    }
+    
+    @Test
+    public void testDuplicateFamilyWarns() {
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
+        assertFalse(log.captured.toString().contains("CAT"));
+        
+        // verify second setting changes logs issue
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("CAT"));
+        
+        // verify name not changed
+        assertEquals("name", underTest.getLicenseFamilies(LicenseFilter.all).stream()
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
+    }
+    
+    @Test
+    public void testSettingDuplicateFamilyLogLevelWorks() {
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
+        assertFalse(log.captured.toString().contains("CAT"));
+        
+        // verify second setting changes logs level
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("WARN"));
+        
+        
+        log.clear();
+        underTest.logFamilyCollisions(Level.ERROR);
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("ERROR"));
+        
+    }
+    
+    @Test
+    public void testDuplicateLicenseWarns() {
+        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
+        IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
+        when(matcher.getId()).thenReturn("Macher ID");
+        underTest.addFamily(family);
+        underTest.addLicense(ILicense.builder().setId("ID").setName("license name").setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
+        assertFalse(log.captured.toString().contains("ID"));
+        
+        // verify second setting changes logs issue
+        underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
+        assertTrue(log.captured.toString().contains("ID"));        
+        // verify name not changed
+        assertEquals("license name", underTest.getLicenses(LicenseFilter.all).stream()
+                .filter(s -> s.getLicenseFamily().getFamilyCategory().equals("CAT  ")).map(s -> s.getName()).findFirst().get());
+    }
+    
+    @Test
+    public void testSettingDuplicateLicenseLogLevelWorks() {
+        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
+        IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
+        when(matcher.getId()).thenReturn("Macher ID");
+        underTest.addFamily(family);
+        underTest.addLicense(ILicense.builder().setId("ID").setName("license name").setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
+        
+        // verify second setting changes logs issue
+        underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
+        assertTrue(log.captured.toString().contains("WARN"));
+        
+        log.clear();
+        underTest.logLicenseCollisions(Level.ERROR);
+        
+        // verify second setting changes logs issue
+        underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
+        assertTrue(log.captured.toString().contains("ERROR"));
     }
     
     /**
@@ -439,6 +519,21 @@ public class ReportConfigurationTest {
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);
         validateDefaultLicenses(config);
+    }
+    
+    private class LoggingCapture implements Log {
+
+        StringBuilder captured = new StringBuilder();
+        
+        public void clear() {
+            captured = new StringBuilder();
+        }
+        
+        @Override
+        public void log(Level level, String msg) {
+            captured.append( String.format("%s: %s%n", level, msg));
+        }
+        
     }
     
     static class OutputStreamIntercepter extends OutputStream {

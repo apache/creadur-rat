@@ -72,8 +72,10 @@ public class ReportConfiguration {
     private IOFileFilter directoryFilter;
 
     public ReportConfiguration(Log log) {
-        families = new ReportingSet<>(LicenseFamilySetFactory.emptyLicenseFamilySet()).setLog(log);
-        licenses = new ReportingSet<>(LicenseSetFactory.emptyLicenseSet()).setLog(log);
+        families = new ReportingSet<>(LicenseFamilySetFactory.emptyLicenseFamilySet()).setLog(log)
+                .setMsgFormat( s -> String.format("LicenseFamily category: %s",  s.getFamilyCategory()));
+        licenses = new ReportingSet<>(LicenseSetFactory.emptyLicenseSet()).setLog(log)
+                .setMsgFormat( s -> String.format( "License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
         approvedLicenseCategories = new TreeSet<>();
         removedLicenseCategories = new TreeSet<>();
         directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
@@ -275,7 +277,7 @@ public class ReportConfiguration {
     public void addLicense(ILicense license) {
         if (license != null) {
             this.licenses.add(license);
-            this.families.add(license.getLicenseFamily());
+            this.families.addIfNotPresent(license.getLicenseFamily());
         }
     }
 

@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.cli.CommandLine;
@@ -47,8 +46,6 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.AddLicenseHeaders;
-import org.apache.rat.license.ILicense;
-import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
@@ -263,7 +260,7 @@ public class Report {
                 // wildcards to give users more choices to configure exclusions
                 orFilter.addFileFilter(new RegexFileFilter(exclusion));
                 orFilter.addFileFilter(new NameFileFilter(exclusion));
-                orFilter.addFileFilter(new WildcardFileFilter(exclusion));
+                orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
             } catch (PatternSyntaxException e) {
                 System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
             }

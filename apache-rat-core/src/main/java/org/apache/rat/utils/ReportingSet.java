@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ */
 package org.apache.rat.utils;
 
 import java.util.Collection;
@@ -7,6 +25,7 @@ import java.util.SortedSet;
 import java.util.Spliterator;
 import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -19,6 +38,7 @@ public class ReportingSet<T> implements SortedSet<T> {
     private boolean failOnDuplicate = false;
     private Log.Level duplicateLogLevel = Log.Level.WARN;
     private Log log = DefaultLog.INSTANCE;
+    private Function<T,String> duplicateFmt = (t) -> String.format("Duplicate %s (%s) detected %s", t.getClass(), t);
 
     /**
      * Constructor.
@@ -37,6 +57,15 @@ public class ReportingSet<T> implements SortedSet<T> {
         this.delegate = delegate;
     }
 
+    /**
+     * Set the message format used to format display.
+     * @param msgFormat a format string taking the Class name and string representation of the 
+     * @return
+     */
+    public ReportingSet<T> setMsgFormat(Function<T,String> msgFmt) {
+        duplicateFmt = msgFmt;
+        return this;
+    }
     /**
      * If set true attempts to duplicate will throw an IllegalArgumentException.
      * The default state is false;.
@@ -75,12 +104,33 @@ public class ReportingSet<T> implements SortedSet<T> {
         return result.setFailOnDuplicate(this.failOnDuplicate).setLog(this.log).setLogLevel(this.duplicateLogLevel);
     }
 
+    /**
+     * Adds the item if it is not present.  Does not report collisions.
+     * @param e the item to add.
+     * @return true if the item was added, false otherwise.
+     */
+    public boolean addIfNotPresent(T e) {
+        return add(false, e);
+    }
+    
     @Override
     public boolean add(T e) {
+        return add(true, e);
+    }
+    
+    /**
+     * Attempts to add an item.  Report failures if reportDup is true.
+     * @param reportDup the reporting flag.
+     * @param e the item to add
+     * @return true if the item was added.
+     */
+    private boolean add(boolean reportDup, T e) {
         if (delegate.contains(e)) {
-            String msg = String.format("Duplicate %s detected %s", e,
-                    failOnDuplicate ? "" : " - duplicate ignored");
-            log.log(duplicateLogLevel, msg);
+            String msg = String.format("%s",ReportingSet.this.duplicateFmt.apply(e));
+            if (reportDup) {
+                msg +=  failOnDuplicate ? "" : " - duplicate ignored";
+                log.log(duplicateLogLevel, msg);
+            } 
             if (failOnDuplicate) {
                 throw new IllegalArgumentException(msg);
             }
