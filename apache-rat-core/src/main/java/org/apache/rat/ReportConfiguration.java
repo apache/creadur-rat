@@ -47,6 +47,8 @@ import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.utils.Log;
+import org.apache.rat.utils.ReportingSet;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
@@ -55,20 +57,44 @@ import org.apache.rat.walker.NameBasedHiddenFileFilter;
  * configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration {
-    private final SortedSet<ILicenseFamily> families = LicenseFamilySetFactory.emptyLicenseFamilySet();
-    private final SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
-    private final SortedSet<String> approvedLicenseCategories = new TreeSet<>();
-    private final SortedSet<String> removedLicenseCategories = new TreeSet<>();
+    private final ReportingSet<ILicenseFamily> families;
+    private final ReportingSet<ILicense> licenses;
+    private final SortedSet<String> approvedLicenseCategories;
+    private final SortedSet<String> removedLicenseCategories;
     private boolean addingLicenses;
     private boolean addingLicensesForced;
     private String copyrightMessage;
-    private IOSupplier<OutputStream> out = null;
-    private boolean styleReport = true;
-    private IOSupplier<InputStream> styleSheet = null;
-    private IReportable reportable = null;
-    private FilenameFilter inputFileFilter = null;
-    private IOFileFilter directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
+    private IOSupplier<OutputStream> out;
+    private boolean styleReport;
+    private IOSupplier<InputStream> styleSheet;
+    private IReportable reportable;
+    private FilenameFilter inputFileFilter;
+    private IOFileFilter directoryFilter;
 
+    public ReportConfiguration(Log log) {
+        families = new ReportingSet<>(LicenseFamilySetFactory.emptyLicenseFamilySet()).setLog(log);
+        licenses = new ReportingSet<>(LicenseSetFactory.emptyLicenseSet()).setLog(log);
+        approvedLicenseCategories = new TreeSet<>();
+        removedLicenseCategories = new TreeSet<>();
+        directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
+    }
+    
+    public void logFamilyCollisions(Log.Level level) {
+        families.setLogLevel(level);
+    }
+    
+    public void failFamilyCollisions(boolean state) {
+        families.setFailOnDuplicate(state);
+    }
+
+    public void logLicenseCollisions(Log.Level level) {
+        licenses.setLogLevel(level);
+    }
+    
+    public void failLicenseCollisions(boolean state) {
+        licenses.setFailOnDuplicate(state);
+    }
+    
     /**
      * @return The filename filter for the potential input files.
      */
@@ -114,16 +140,18 @@ public class ReportConfiguration {
     }
 
     /**
-     * @return the Supplier of the InputStream that is the XSLT style sheet to style the report with.
+     * @return the Supplier of the InputStream that is the XSLT style sheet to style
+     * the report with.
      */
     public IOSupplier<InputStream> getStyleSheet() {
         return styleSheet;
     }
 
     /**
-     * Sets the style sheet for custom processing.
-     * The IOSupplier may be called multiple times, so the input stream must be 
-     * able to be opened and closed multiple times.
+     * Sets the style sheet for custom processing. The IOSupplier may be called
+     * multiple times, so the input stream must be able to be opened and closed
+     * multiple times.
+     * 
      * @param styleSheet the XSLT style sheet to style the report with.
      */
     public void setStyleSheet(IOSupplier<InputStream> styleSheet) {
@@ -155,9 +183,9 @@ public class ReportConfiguration {
     }
 
     /**
-     * Sets the style sheet for custom processing.
-     * The stylesheet may be opened multiple times so the URI must be capable of being opened
-     * multiple times.
+     * Sets the style sheet for custom processing. The stylesheet may be opened
+     * multiple times so the URI must be capable of being opened multiple times.
+     * 
      * @param styleSheet the URI of the XSLT style sheet to style the report with.
      */
     public void setStyleSheet(URI styleSheet) {
@@ -165,21 +193,21 @@ public class ReportConfiguration {
         try {
             setStyleSheet(styleSheet.toURL());
         } catch (MalformedURLException e) {
-            throw new ConfigurationException( "Unable to process stylesheet", e);
+            throw new ConfigurationException("Unable to process stylesheet", e);
         }
     }
 
     /**
-     * Sets the style sheet for custom processing.
-     * The stylesheet may be opened multiple times so the URL must be capable of being opened
-     * multiple times.
+     * Sets the style sheet for custom processing. The stylesheet may be opened
+     * multiple times so the URL must be capable of being opened multiple times.
+     * 
      * @param styleSheet the URL of the XSLT style sheet to style the report with.
      */
     public void setStyleSheet(URL styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
         setStyleSheet(styleSheet::openStream);
     }
-    
+
     /**
      * @return {@code true} if the XML report should be styled.
      */
@@ -312,9 +340,9 @@ public class ReportConfiguration {
         this.families.addAll(families);
     }
 
-    public SortedSet<ILicenseFamily> getFamilies() {
-        return Collections.unmodifiableSortedSet(families);
-    }
+//    public SortedSet<ILicenseFamily> getFamilies() {
+//        return Collections.unmodifiableSortedSet(families);
+//    }
 
     /**
      * Adds an ILicenseFamily to the list of approved licenses.

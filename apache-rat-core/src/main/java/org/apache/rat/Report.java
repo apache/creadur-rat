@@ -51,6 +51,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
@@ -103,29 +104,35 @@ public class Report {
     /**
      * List the licenses that were used for the run.
      */
-    private static final String LIST_LICENSES = "list-licenses";
+    private static final String LIST_LICENSES_ALL = "list-licenses-all";
+
+    /**
+     * List the licenses that were used for the run.
+     */
+    private static final String LIST_LICENSES_APPROVED = "list-licenses-approved";
+
+    /**
+     * List the all families for the run.
+     */
+    private static final String LIST_FAMILIES_ALL = "list-families-all";
+
     /**
      * List the approved families for the run.
      */
-    private static final String LIST_LICENSE_FAMILIES = "list-approved-families";
+    private static final String LIST_FAMILIES_APPROVED = "list-families-approved";
 
     /**
      * Set unstyled XML output
      */
     private static final String XML = "x";
 
-    /*
-     * Format used for listing license families
-     */
-    private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s\n";
+    private static OptionGroup LIST_LICENSES;
+    private static OptionGroup LIST_FAMILIES;
 
     /**
-     * Format used for listing licenses.
-     */
-    private static final String LICENSE_FORMAT = "%s:\t%s\n\t\t%s\n";
-
-    /**
-     * Processes the command line and builds a configuration and executes the report.
+     * Processes the command line and builds a configuration and executes the
+     * report.
+     * 
      * @param args the arguments.
      * @throws Exception on error.
      */
@@ -151,21 +158,31 @@ public class Report {
         if (args == null || args.length != 1) {
             printUsage(opts);
         } else {
-            ReportConfiguration configuration = createConfiguration(args[0],cl);
+            ReportConfiguration configuration = createConfiguration(args[0], cl);
             configuration.validate(System.err::println);
 
-            if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
-                listLicenseFamilies(configuration.getLicenseFamilies(LicenseFilter.all), System.out);
+            if (LIST_FAMILIES.getSelected() != null || LIST_LICENSES.getSelected() != null) {
+
+                if (cl.hasOption(LIST_FAMILIES_ALL)) {
+                    Reporter.listLicenseFamilies(configuration, LicenseFilter.all);
+                }
+                if (cl.hasOption(LIST_FAMILIES_APPROVED)) {
+                    Reporter.listLicenseFamilies(configuration, LicenseFilter.approved);
+                }
+                if (cl.hasOption(LIST_LICENSES_ALL)) {
+                    Reporter.listLicenses(configuration, LicenseFilter.all);
+                }
+                if (cl.hasOption(LIST_LICENSES_APPROVED)) {
+                    Reporter.listLicenses(configuration, LicenseFilter.approved);
+                }
+            } else {
+                Reporter.report(configuration);
             }
-            if (cl.hasOption(LIST_LICENSES)) {
-                listLicenses(configuration.getLicenses(LicenseFilter.all), System.out);
-            }
-            Reporter.report(configuration);
         }
     }
 
     static ReportConfiguration createConfiguration(String baseDirectory, CommandLine cl) throws IOException {
-        final ReportConfiguration configuration = new ReportConfiguration();
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
 
         if (cl.hasOption('o')) {
             configuration.setOut(new File(cl.getOptionValue('o')));
@@ -223,20 +240,7 @@ public class Report {
         configuration.setReportable(getDirectory(baseDirectory, configuration));
         return configuration;
     }
-
-    private static void listLicenseFamilies(SortedSet<ILicenseFamily> families, PrintStream out) {
-        out.println("Families:");
-        families.forEach(x -> out.format(LICENSE_FAMILY_FORMAT, x.getFamilyCategory(), x.getFamilyName()));
-        out.println();
-    }
-
-    private static void listLicenses(SortedSet<ILicense> licenses, PrintStream out) {
-        out.println("Licenses:");
-        licenses.forEach(lic -> out.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
-                lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
-        out.println();
-    }
-
+    
     /**
      * Creates a filename filter from patterns to exclude.
      * 
@@ -269,12 +273,24 @@ public class Report {
     }
 
     static Options buildOptions() {
+        LIST_FAMILIES = new OptionGroup()
+                .addOption(
+                        Option.builder().longOpt(LIST_FAMILIES_ALL).desc("List all defined license families").build())
+                .addOption(Option.builder().longOpt(LIST_FAMILIES_APPROVED)
+                        .desc("List approved defined license families").build());
+
+        LIST_LICENSES = new OptionGroup()
+                .addOption(Option.builder().longOpt(LIST_LICENSES_ALL).desc("List all active licenses").build())
+                .addOption(
+                        Option.builder().longOpt(LIST_LICENSES_APPROVED).desc("List approved active licenses").build());
+
         Options opts = new Options();
 
         Option help = new Option(HELP, "help", false, "Print help for the RAT command line interface and exit");
         opts.addOption(help);
 
-        Option out = new Option("o", "out", true, "Define the output file where to write report (default is System.out)");
+        Option out = new Option("o", "out", true,
+                "Define the output file where to write report (default is System.out)");
         opts.addOption(out);
 
         String defaultHandlingText = " By default all approved default licenses are used";
@@ -282,8 +298,9 @@ public class Report {
         opts.addOption(noDefaults);
 
         opts.addOption(null, LICENSES, true, "File names or URLs for license definitions");
-        opts.addOption(null, LIST_LICENSES, false, "List all active licenses");
-        opts.addOption(null, LIST_LICENSE_FAMILIES, false, "List all defined license families");
+        opts.addOptionGroup(LIST_LICENSES);
+
+        opts.addOptionGroup(LIST_FAMILIES);
         opts.addOption(null, SCAN_HIDDEN_DIRECTORIES, false, "Scan hidden directories");
 
         OptionGroup addLicenseGroup = new OptionGroup();
@@ -291,7 +308,8 @@ public class Report {
                 + "By default new files will be created with the license header, "
                 + "to force the modification of existing files use the --force option.";
 
-        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards compatibility
+        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
+        // compatibility
         Option addLicence = new Option(ADD_OLD, "addLicence", false, addLicenseDesc);
         addLicenseGroup.addOption(addLicence);
         Option addLicense = new Option(ADD, "addLicense", false, addLicenseDesc);

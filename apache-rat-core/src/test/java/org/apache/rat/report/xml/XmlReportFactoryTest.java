@@ -44,6 +44,7 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,7 +80,7 @@ public class XmlReportFactoryTest {
 
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY, HiddenFileFilter.HIDDEN);
         final ClaimStatistic statistic = new ClaimStatistic();
-        final ReportConfiguration configuration = new ReportConfiguration();
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         configuration.addLicense(testingLicense);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
@@ -109,7 +110,7 @@ public class XmlReportFactoryTest {
         when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         final ClaimStatistic statistic = new ClaimStatistic();
-        final ReportConfiguration configuration = new ReportConfiguration();
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         // configuration.addLicense(mockLicense);
         try {
             XmlReportFactory.createStandardReport(writer, statistic, configuration);

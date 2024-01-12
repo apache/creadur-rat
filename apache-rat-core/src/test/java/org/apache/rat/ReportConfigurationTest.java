@@ -50,6 +50,8 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +62,7 @@ public class ReportConfigurationTest {
 
     @Before
     public void setup() {
-        underTest = new ReportConfiguration();
+        underTest = new ReportConfiguration((Log)DefaultLog.INSTANCE);
     }
 
     @Test
@@ -357,7 +359,7 @@ public class ReportConfigurationTest {
     
     @Test
     public void testSetOut() throws IOException {
-        ReportConfiguration config = new ReportConfiguration();
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
         OutputStreamIntercepter osi = new OutputStreamIntercepter();
         config.setOut(() -> osi);
         assertThat(osi.closeCount).isEqualTo(0);
@@ -396,11 +398,11 @@ public class ReportConfigurationTest {
      * @param config the configuration to test.
      */
     public static void validateDefaultLicenseFamilies(ReportConfiguration config, String...additionalIds) {
-        assertThat(config.getFamilies()).hasSize(ConfigurationReaderTest.EXPECTED_IDS.length + additionalIds.length);
+        assertThat(config.getLicenseFamilies(LicenseFilter.all)).hasSize(ConfigurationReaderTest.EXPECTED_IDS.length + additionalIds.length);
         List<String> expected = new ArrayList<>();
         expected.addAll(Arrays.asList(ConfigurationReaderTest.EXPECTED_IDS));
         expected.addAll(Arrays.asList(additionalIds));
-        for (ILicenseFamily family : config.getFamilies()) {
+        for (ILicenseFamily family : config.getLicenseFamilies(LicenseFilter.all)) {
             assertThat(expected).contains(family.getFamilyCategory().trim());
         }
     }

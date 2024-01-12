@@ -20,6 +20,7 @@ package org.apache.rat.anttasks;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.utils.Log;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -75,7 +77,7 @@ public class Report extends Task {
     private Union nestedResources;
 
     public Report() {
-        configuration = new ReportConfiguration();
+        configuration = new ReportConfiguration(new Logger());
         configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
         defaultsBuilder = Defaults.builder();
     }
@@ -289,5 +291,34 @@ public class Report extends Task {
         public LicenseSetFactory.LicenseFilter internalFilter() {
             return LicenseSetFactory.LicenseFilter.valueOf(getValue());
         }
+    }
+    
+    private class Logger implements Log {
+
+        private void write(int level, String msg) {
+            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level)))
+            {
+               pw.write(msg);
+            }
+        }
+
+        @Override
+        public void log(Level level, String msg) {
+            switch (level) {
+            case DEBUG:
+                write(Project.MSG_DEBUG, msg);
+                break;
+            case INFO:
+                write(Project.MSG_INFO, msg);
+                break;
+            case WARN:
+                write(Project.MSG_WARN, msg);
+                break;
+            case ERROR:
+                write(Project.MSG_ERR, msg);
+                break;
+            }
+        }
+        
     }
 }

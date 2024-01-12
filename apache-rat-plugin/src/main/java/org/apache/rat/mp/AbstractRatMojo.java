@@ -313,8 +313,31 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         }
     }
     
+    private org.apache.rat.utils.Log makeLog() {
+        return new org.apache.rat.utils.Log() {
+            Log log = getLog();
+            @Override
+            public void log(Level level, String msg) {
+                switch (level)
+                {
+                case DEBUG:
+                    log.debug(msg);
+                    break;
+                case INFO:
+                    log.info(msg);;
+                    break;
+                case WARN:
+                    log.warn(msg);
+                    break;
+                case ERROR:
+                    log.error(msg);
+                    break;
+            }
+            }};
+    }
+    
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
-        ReportConfiguration config = new ReportConfiguration();
+        ReportConfiguration config = new ReportConfiguration(makeLog());
         reportDeprecatedProcessing();
         if (addDefaultLicenses) {
             config.setFrom(getDefaultsBuilder().build());
