@@ -57,4 +57,9 @@ public class License extends EnclosingMatcher {
                 .setName(name).setNotes(notes).build(context);
     }
 
+    @Override
+    public String toString() {
+        return '{' + family + ':' + id + ':' + name + '}';
+    }
+
 }
