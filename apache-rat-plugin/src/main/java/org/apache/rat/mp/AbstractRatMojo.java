@@ -318,6 +318,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         reportDeprecatedProcessing();
         if (addDefaultLicenses) {
             config.setFrom(getDefaultsBuilder().build());
+        } else {
+            config.setStyleSheet(Defaults.getPlainStyleSheet());
         }
         if (additionalLicenseFiles != null) {
             for (String licenseFile : additionalLicenseFiles) {
