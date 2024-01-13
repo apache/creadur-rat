@@ -38,4 +38,8 @@ public class Family {
         return builder.setLicenseFamilyCategory(id).setLicenseFamilyName(name).build();
     }
 
+    @Override
+    public String toString() {
+        return '{' + id + ':' + name + '}';
+    }
 }
