@@ -60,9 +60,9 @@ public class ReportingSet<T> implements SortedSet<T> {
     }
 
     /**
-     * Set the message format used to format display.
-     * @param msgFormat a format string taking the Class name and string representation of the 
-     * @return
+     * Sets the function to generate the log message.
+     * @param msgFmt A function to return the string to be displayed when a collision occurs.
+     * @return This for chaining.
      */
     public ReportingSet<T> setMsgFormat(Function<T,String> msgFmt) {
         duplicateFmt = msgFmt;
