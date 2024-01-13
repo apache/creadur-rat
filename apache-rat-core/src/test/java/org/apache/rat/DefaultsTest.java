@@ -18,8 +18,10 @@
  */
 package org.apache.rat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -27,7 +29,8 @@ import java.util.TreeSet;
 
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 public class DefaultsTest {
     private static final String[] FAMILIES = { "BSD-3", "GEN  ", "AL   ", "OASIS", "W3CD ", "W3C  ", "GPL1 ",

@@ -18,18 +18,18 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.State;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SPDXMatcherTest {
 
     IHeaderMatcher target = SPDXMatcherFactory.INSTANCE.create("hello");
 
-    @Before
+    @BeforeEach
     public void setup() {
         target.reset();
     }

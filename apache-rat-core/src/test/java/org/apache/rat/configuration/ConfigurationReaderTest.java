@@ -16,9 +16,9 @@
  */
 package org.apache.rat.configuration;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import org.apache.rat.configuration.builders.NotBuilder;
 import org.apache.rat.configuration.builders.RegexBuilder;
 import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConfigurationReaderTest {
 
@@ -79,7 +79,7 @@ public class ConfigurationReaderTest {
     private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {
         AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(name);
         assertNotNull(builder);
-        assertTrue(name + " is not an instanceof " + clazz.getName(), clazz.isAssignableFrom(builder.getClass()));
+        assertTrue(clazz.isAssignableFrom(builder.getClass()),()->name + " is not an instanceof " + clazz.getName() );
     }
 
     @Test

@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -49,6 +50,7 @@ import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
@@ -101,30 +103,19 @@ public class Report {
     /**
      * List the licenses that were used for the run.
      */
-    private static final String LIST_LICENSES_ALL = "list-licenses-all";
-
-    /**
-     * List the licenses that were used for the run.
-     */
-    private static final String LIST_LICENSES_APPROVED = "list-licenses-approved";
+    private static final String LIST_LICENSES = "list-licenses";
 
     /**
      * List the all families for the run.
      */
-    private static final String LIST_FAMILIES_ALL = "list-families-all";
+    private static final String LIST_FAMILIES = "list-families";
 
-    /**
-     * List the approved families for the run.
-     */
-    private static final String LIST_FAMILIES_APPROVED = "list-families-approved";
 
     /**
      * Set unstyled XML output
      */
     private static final String XML = "x";
 
-    private static OptionGroup LIST_LICENSES;
-    private static OptionGroup LIST_FAMILIES;
 
     /**
      * Processes the command line and builds a configuration and executes the
@@ -158,21 +149,24 @@ public class Report {
             ReportConfiguration configuration = createConfiguration(args[0], cl);
             configuration.validate(System.err::println);
 
-            if (LIST_FAMILIES.getSelected() != null || LIST_LICENSES.getSelected() != null) {
-
-                if (cl.hasOption(LIST_FAMILIES_ALL)) {
-                    Reporter.listLicenseFamilies(configuration, LicenseFilter.all);
+            boolean dryRun = false;
+            
+            if (cl.hasOption(LIST_FAMILIES)) {
+                LicenseFilter f = LicenseFilter.fromText(cl.getOptionValue(LIST_FAMILIES));
+                if (f != LicenseFilter.none) {                        
+                    dryRun = true;
+                    Reporter.listLicenseFamilies(configuration, f);
                 }
-                if (cl.hasOption(LIST_FAMILIES_APPROVED)) {
-                    Reporter.listLicenseFamilies(configuration, LicenseFilter.approved);
+            }
+            if (cl.hasOption(LIST_LICENSES)) {
+                LicenseFilter f = LicenseFilter.fromText(cl.getOptionValue(LIST_LICENSES));
+                if (f != LicenseFilter.none) {                        
+                    dryRun = true;
+                    Reporter.listLicenses(configuration, f);
                 }
-                if (cl.hasOption(LIST_LICENSES_ALL)) {
-                    Reporter.listLicenses(configuration, LicenseFilter.all);
-                }
-                if (cl.hasOption(LIST_LICENSES_APPROVED)) {
-                    Reporter.listLicenses(configuration, LicenseFilter.approved);
-                }
-            } else {
+            }
+            
+            if (!dryRun) {
                 Reporter.report(configuration);
             }
         }
@@ -270,21 +264,22 @@ public class Report {
     }
 
     static Options buildOptions() {
-        LIST_FAMILIES = new OptionGroup()
-                .addOption(
-                        Option.builder().longOpt(LIST_FAMILIES_ALL).desc("List all defined license families").build())
-                .addOption(Option.builder().longOpt(LIST_FAMILIES_APPROVED)
-                        .desc("List approved defined license families").build());
+        String licFilterValues = String.join(", ", 
+                Arrays.stream(LicenseFilter.values()).map(LicenseFilter::name).collect(Collectors.toList()));
 
-        LIST_LICENSES = new OptionGroup()
-                .addOption(Option.builder().longOpt(LIST_LICENSES_ALL).desc("List all active licenses").build())
-                .addOption(
-                        Option.builder().longOpt(LIST_LICENSES_APPROVED).desc("List approved active licenses").build());
+        Options opts = new Options()
+        
+        .addOption(
+                Option.builder().hasArg(true).longOpt(LIST_FAMILIES)
+                .desc("List the defined license families Valid options are: "+licFilterValues+". Default=none")
+                .build())
+        .addOption(
+                Option.builder().hasArg(true).longOpt(LIST_LICENSES)
+                .desc("List the defined licenses Valid options are: "+licFilterValues+". Default=none")
+                .build())
 
-        Options opts = new Options();
-
-        Option help = new Option(HELP, "help", false, "Print help for the RAT command line interface and exit");
-        opts.addOption(help);
+        .addOption(new Option(HELP, "help", false, "Print help for the RAT command line interface and exit"));
+        
 
         Option out = new Option("o", "out", true,
                 "Define the output file where to write report (default is System.out)");
@@ -295,9 +290,6 @@ public class Report {
         opts.addOption(noDefaults);
 
         opts.addOption(null, LICENSES, true, "File names or URLs for license definitions");
-        opts.addOptionGroup(LIST_LICENSES);
-
-        opts.addOptionGroup(LIST_FAMILIES);
         opts.addOption(null, SCAN_HIDDEN_DIRECTORIES, false, "Scan hidden directories");
 
         OptionGroup addLicenseGroup = new OptionGroup();
@@ -380,10 +372,9 @@ public class Report {
     private static IReportable getDirectory(String baseDirectory, ReportConfiguration config) {
         try (PrintStream out = new PrintStream(config.getOutput().get())) {
             File base = new File(baseDirectory);
+            
             if (!base.exists()) {
-                out.print("ERROR: ");
-                out.print(baseDirectory);
-                out.print(" does not exist.\n");
+                config.getLog().log(Level.ERROR, "Directory '"+baseDirectory+"' does not exist");
                 return null;
             }
 
@@ -394,9 +385,7 @@ public class Report {
             try {
                 return new ArchiveWalker(base, config.getInputFileFilter());
             } catch (IOException ex) {
-                out.print("ERROR: ");
-                out.print(baseDirectory);
-                out.print(" is not valid gzip data.\n");
+                config.getLog().log(Level.ERROR, "file '"+baseDirectory+"' is not valid gzip data.");
                 return null;
             }
         } catch (IOException e) {

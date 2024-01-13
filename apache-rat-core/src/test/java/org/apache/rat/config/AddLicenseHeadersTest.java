@@ -17,15 +17,15 @@ package org.apache.rat.config;
  * specific language governing permissions and limitations
  * under the License.
  */
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AddLicenseHeadersTest {
     @Test
     public void verifyHelpOptions() {
         String allOptions = AddLicenseHeaders.getValuesForHelp();
-        assertFalse(allOptions, allOptions.isEmpty());
-        assertFalse(allOptions, allOptions.endsWith("|"));
+        assertFalse(allOptions.isEmpty(), allOptions);
+        assertFalse(allOptions.endsWith("|"),allOptions);
     }
 }

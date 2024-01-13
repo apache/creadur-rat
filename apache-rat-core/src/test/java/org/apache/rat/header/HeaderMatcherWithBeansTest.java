@@ -19,14 +19,15 @@
  */ 
 package org.apache.rat.header;
 
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HeaderMatcherWithBeansTest {
 
@@ -34,7 +35,7 @@ public class HeaderMatcherWithBeansTest {
     private SimpleCharFilter filter;
     private HeaderBean[] beans;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         HeaderBean[] beans = {
                 new HeaderBean(),
@@ -53,15 +54,15 @@ public class HeaderMatcherWithBeansTest {
         beans[2].setMatch(false);
         StringReader reader = new StringReader("Whatever");
         matcher.read(reader);   
-        assertFalse("State preserved", beans[0].isMatch());
-        assertTrue("State preserved", beans[1].isMatch());
-        assertFalse("State preserved", beans[2].isMatch());
+        assertFalse(beans[0].isMatch(),"State preserved");
+        assertTrue( beans[1].isMatch(),"State preserved");
+        assertFalse(beans[2].isMatch(), "State preserved");
         beans[0].setMatch(true);
         beans[1].setMatch(false);
         beans[2].setMatch(true);
-        assertTrue("State preserved", beans[0].isMatch());
-        assertFalse("State preserved", beans[1].isMatch());
-        assertTrue("State preserved", beans[2].isMatch());
+        assertTrue(beans[0].isMatch(), "State preserved");
+        assertFalse(beans[1].isMatch(), "State preserved");
+        assertTrue(beans[2].isMatch(), "State preserved");
     }
 
     @Test
@@ -71,8 +72,8 @@ public class HeaderMatcherWithBeansTest {
         beans[2].setHeaderPattern(Pattern.compile("What"));
         StringReader reader = new StringReader("Whatever");
         matcher.read(reader);   
-        assertTrue("Match header pattern", beans[0].isMatch());
-        assertTrue("Match header pattern", beans[1].isMatch());
-        assertFalse("Match header pattern", beans[2].isMatch());
+        assertTrue(beans[0].isMatch(), "Match header pattern");
+        assertTrue(beans[1].isMatch(), "Match header pattern");
+        assertFalse(beans[2].isMatch(), "Match header pattern");
     }
 }

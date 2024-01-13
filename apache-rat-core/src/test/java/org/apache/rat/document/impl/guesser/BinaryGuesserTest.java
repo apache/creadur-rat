@@ -22,16 +22,16 @@ import org.apache.commons.io.IOUtils;
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.test.utils.Resources;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BinaryGuesserTest {
 
@@ -63,7 +63,7 @@ public class BinaryGuesserTest {
     @Test
     public void testMatches() {
         for (String name : BINARY_FILES) {
-            assertTrue("'" + name + "' should be detected as a binary", BinaryGuesser.isBinary(new MockDocument(name)));
+            assertTrue(BinaryGuesser.isBinary(new MockDocument(name)), ()->"'" + name + "' should be detected as a binary");
         }
 
     }
@@ -71,7 +71,7 @@ public class BinaryGuesserTest {
     @Test
     public void testIsBinary() {
         for (String name : BINARY_FILES) {
-            assertTrue("'" + name + "' should be detected as a binary", BinaryGuesser.isBinary(name));
+            assertTrue(BinaryGuesser.isBinary(name), ()->"'" + name + "' should be detected as a binary");
         }
     }
 
@@ -106,7 +106,7 @@ public class BinaryGuesserTest {
                 throw e; // could not open the second file
             }
             r = null;
-            assertTrue("Expected binary for " + doc.getName(), BinaryGuesser.isBinary(doc));
+            assertTrue(BinaryGuesser.isBinary(doc), "Expected binary for " + doc.getName());
         } finally {
             IOUtils.closeQuietly(r);
         }

@@ -18,6 +18,11 @@
  */
 package org.apache.rat.analysis.license;
 
+import java.util.stream.Stream;
+
+import org.apache.rat.license.ILicenseFamily;
+import org.junit.jupiter.params.provider.Arguments;
+
 /**
  * Apache Software License detection tests.
  *
@@ -59,8 +64,8 @@ public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
     };
 
-    public ApacheSoftwareLicenseTest() {
-        super(id, id, name, null, targets);
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of(Arguments.of(id, id, name, null, targets));
     }
 
 //

@@ -35,11 +35,13 @@ import java.util.stream.Stream;
  */
 public class ReportingSet<T> implements SortedSet<T> {
     private final SortedSet<T> delegate;
-    private boolean failOnDuplicate = false;
+    private Options duplicateOption = Options.IGNORE;
     private Log.Level duplicateLogLevel = Log.Level.WARN;
     private Log log = DefaultLog.INSTANCE;
     private Function<T,String> duplicateFmt = (t) -> String.format("Duplicate %s (%s) detected %s", t.getClass(), t);
 
+    public enum Options { OVERWRITE, IGNORE, FAIL }
+    
     /**
      * Constructor.
      * Creates a TreeSet of type T.
@@ -72,8 +74,8 @@ public class ReportingSet<T> implements SortedSet<T> {
      * @param state the state to set.
      * @return this for chaining.
      */
-    public ReportingSet<T> setFailOnDuplicate(boolean state) {
-        this.failOnDuplicate = state;
+    public ReportingSet<T> setDuplicateOption(Options state) {
+        this.duplicateOption = state;
         return this;
     }
 
@@ -101,7 +103,7 @@ public class ReportingSet<T> implements SortedSet<T> {
 
     private ReportingSet<T> sameConfig(SortedSet<T> delegate) {
         ReportingSet<T> result = delegate instanceof ReportingSet ? (ReportingSet<T>) delegate : new ReportingSet<>(delegate);
-        return result.setFailOnDuplicate(this.failOnDuplicate).setLog(this.log).setLogLevel(this.duplicateLogLevel);
+        return result.setDuplicateOption(this.duplicateOption).setLog(this.log).setLogLevel(this.duplicateLogLevel);
     }
 
     /**
@@ -128,13 +130,18 @@ public class ReportingSet<T> implements SortedSet<T> {
         if (delegate.contains(e)) {
             String msg = String.format("%s",ReportingSet.this.duplicateFmt.apply(e));
             if (reportDup) {
-                msg +=  failOnDuplicate ? "" : " - duplicate ignored";
+                msg =  String.format( "%s (action: %s)", msg, duplicateOption);
                 log.log(duplicateLogLevel, msg);
-            } 
-            if (failOnDuplicate) {
-                throw new IllegalArgumentException(msg);
             }
-            return false;
+            switch (duplicateOption) {
+            case FAIL:
+                throw new IllegalArgumentException(msg);
+            case IGNORE:
+                return false;
+            case OVERWRITE:
+                delegate.remove(e);
+                return delegate.add(e);
+            }
         }
         return delegate.add(e);
     }
@@ -148,6 +155,15 @@ public class ReportingSet<T> implements SortedSet<T> {
         return updated;
     }
 
+ 
+    public boolean addAllIfNotPresent(Collection<? extends T> c) {
+        boolean updated = false;
+        for (T e : c) {
+            updated |= addIfNotPresent(e);
+        }
+        return updated;
+    }
+    
     @Override
     public void clear() {
         delegate.clear();

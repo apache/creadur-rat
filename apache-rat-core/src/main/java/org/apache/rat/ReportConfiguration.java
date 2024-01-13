@@ -70,31 +70,63 @@ public class ReportConfiguration {
     private IReportable reportable;
     private FilenameFilter inputFileFilter;
     private IOFileFilter directoryFilter;
+    private Log log;
 
+   
+    /**
+     * Constructor
+     * @param log The Log implementation that messages will be written to.
+     */
     public ReportConfiguration(Log log) {
+        this.log = log;
         families = new ReportingSet<>(LicenseFamilySetFactory.emptyLicenseFamilySet()).setLog(log)
-                .setMsgFormat( s -> String.format("LicenseFamily category: %s",  s.getFamilyCategory()));
+                .setMsgFormat( s -> String.format("Duplicate LicenseFamily category: %s",  s.getFamilyCategory()));
         licenses = new ReportingSet<>(LicenseSetFactory.emptyLicenseSet()).setLog(log)
-                .setMsgFormat( s -> String.format( "License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
+                .setMsgFormat( s -> String.format( "Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
         approvedLicenseCategories = new TreeSet<>();
         removedLicenseCategories = new TreeSet<>();
         directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
+        styleReport = true;
     }
     
+    /**
+     * Retrieves the Log that was provided in the constructor.
+     * @return the Log for the system.
+     */
+    public Log getLog() {
+        return log;
+    }
+    /**
+     * Set the log level for reporting collisions in the set of license families.
+     * <p>NOTE: should be set before licenses or license families are added.</p>
+     * @param level The log level to use.
+     */
     public void logFamilyCollisions(Log.Level level) {
         families.setLogLevel(level);
     }
     
-    public void failFamilyCollisions(boolean state) {
-        families.setFailOnDuplicate(state);
+    /**
+     * Sets the reporting option for duplicate license families.
+     * @param state The ReportingSet.Option to use for reporting.
+     */
+    public void familyDuplicateOption(ReportingSet.Options state) {
+        families.setDuplicateOption(state);
     }
 
+    /**
+     * Sets the log level for reporting license collisions.
+     * @param level The log level.
+     */
     public void logLicenseCollisions(Log.Level level) {
         licenses.setLogLevel(level);
     }
     
-    public void failLicenseCollisions(boolean state) {
-        licenses.setFailOnDuplicate(state);
+    /**
+     * Sets the reporting option for duplicate licenses.
+     * @param state the ReportingSt.Option to use for reporting.
+     */
+    public void licenseDuplicateOption(ReportingSet.Options state) {
+        licenses.setDuplicateOption(state);
     }
     
     /**
@@ -168,7 +200,7 @@ public class ReportConfiguration {
      * @param defaults The defaults to set.
      */
     public void setFrom(Defaults defaults) {
-        addLicenses(defaults.getLicenses(LicenseFilter.all));
+        addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.all));
         addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.approved));
         if (isStyleReport() && getStyleSheet() == null) {
             setStyleSheet(Defaults.getPlainStyleSheet());
@@ -308,6 +340,17 @@ public class ReportConfiguration {
     }
 
     /**
+     * Adds multiple licenses to the list of licenses. Does not add the licenses to
+     * the list of approved licenses.
+     *
+     * @param licenses The licenses to add.
+     */
+    public void addLicensesIfNotPresent(Collection<ILicense> licenses) {
+        this.licenses.addAllIfNotPresent(licenses);
+        licenses.stream().map(ILicense::getLicenseFamily).forEach(families::addIfNotPresent);
+    }
+    
+    /**
      * Adds a license family to the list of families. Does not add the family to the
      * list of approved licenses.
      * 
@@ -341,10 +384,6 @@ public class ReportConfiguration {
     public void addFamilies(Collection<ILicenseFamily> families) {
         this.families.addAll(families);
     }
-
-//    public SortedSet<ILicenseFamily> getFamilies() {
-//        return Collections.unmodifiableSortedSet(families);
-//    }
 
     /**
      * Adds an ILicenseFamily to the list of approved licenses.

@@ -18,11 +18,11 @@
  */
 package org.apache.rat.annotation;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.rat.test.utils.Resources;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,13 +30,24 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Files;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestLicenseAppender {
-    @ClassRule
-    public static final TemporaryFolder baseTempFolder = new TemporaryFolder();
+    
+    private static File baseTempFolder;
+    
+    @BeforeAll
+    public static void setup() throws IOException {
+        baseTempFolder = Files.createTempDirectory("tla").toFile();
+    }
+    
+    @AfterAll
+    public static void teardown() throws IOException {
+        FileUtils.deleteDirectory(baseTempFolder);
+    }
 
     private static final String FIRST_LICENSE_LINE = " Licensed to the Apache Software Foundation (ASF) under one";
 
@@ -50,26 +61,16 @@ public class TestLicenseAppender {
 
     private static String getTemporaryFileWithName(String fileName) throws IOException {
         if (fileName != null) {
-            return baseTempFolder.newFile(fileName).getAbsolutePath();
-        } else {
-            return baseTempFolder.newFile().getAbsolutePath();
+            return new File(baseTempFolder,fileName).getAbsolutePath();
         }
+        return File.createTempFile("tla", null, baseTempFolder).getAbsolutePath();
     }
 
     private static void createTestFile(String fileName,
                                        FileCreator creator)
             throws IOException {
-        FileWriter w = null;
-        try {
-            creator.createFile(w = new FileWriter(fileName));
-        } finally {
-            IOUtils.closeQuietly(w);
-        }
-    }
-
-    private static void tryToDelete(File f) {
-        if (f != null && f.exists() && !f.delete()) {
-            f.deleteOnExit();
+        try (FileWriter w = new FileWriter(fileName)) {
+            creator.createFile(w);
         }
     }
 
@@ -78,59 +79,26 @@ public class TestLicenseAppender {
                                            NewFileReader reader)
             throws IOException {
         String name = getTemporaryFileWithName(relativeName);
-        try {
+  
             createTestFile(name, creator);
 
             ApacheV2LicenseAppender appender =
                     new ApacheV2LicenseAppender();
             appender.append(new File(name));
 
-            BufferedReader r = null;
-            try {
-                r = new BufferedReader(new FileReader(name + ".new"));
+            try (BufferedReader r = new BufferedReader(new FileReader(name + ".new"))){
                 reader.readFile(r);
-            } finally {
-                IOUtils.closeQuietly(r);
             }
-        } finally {
-            tryToDelete(new File(name));
-            tryToDelete(new File(name + ".new"));
-        }
+          FileUtils.delete( new File(name+".new"));
+          FileUtils.delete( new File(name));
     }
 
-    private static NewFileReader checkLines(final String firstLine,
-                                            final String secondLine) {
+    private static NewFileReader checkLines(final String ... lines) {
         return new NewFileReader() {
             public void readFile(BufferedReader r) throws IOException {
-                String line = r.readLine();
-                assertEquals("First line is incorrect",
-                        firstLine, line);
-                if (secondLine != null) {
-                    line = r.readLine();
-                    assertEquals("Second line is incorrect",
-                            secondLine, line);
-                }
-            }
-        };
-    }
-
-    private static NewFileReader checkLines(final String firstLine,
-                                            final String secondLine,
-                                            final String thirdLine) {
-        return new NewFileReader() {
-            public void readFile(BufferedReader r) throws IOException {
-                String line = r.readLine();
-                assertEquals("First line is incorrect",
-                        firstLine, line);
-                if (secondLine != null) {
-                    line = r.readLine();
-                    assertEquals("Second line is incorrect",
-                            secondLine, line);
-                }
-                if (thirdLine != null) {
-                    line = r.readLine();
-                    assertEquals("Third line is incorrect",
-                            thirdLine, line);
+                for (int i=0; i<lines.length; i++) {
+                    String line = r.readLine();
+                    assertEquals(lines[i], line, String.format("Line %s is incorrect",i));
                 }
             }
         };
@@ -154,8 +122,7 @@ public class TestLicenseAppender {
 
         File newFile = new File(filename + ".new");
         newFile.deleteOnExit();
-        assertFalse("No new file should have been written",
-                newFile.exists());
+        assertFalse(newFile.exists(), "No new file should have been written");
     }
 
     @Test
@@ -187,7 +154,7 @@ public class TestLicenseAppender {
                         writer.write("}\n");
                     }
                 },
-                checkLines(commentLine, null));
+                checkLines(commentLine));
     }
 
     @Test
@@ -238,7 +205,7 @@ public class TestLicenseAppender {
                         writer.write("</html>\n");
                     }
                 },
-                checkLines(commentLine, null));
+                checkLines(commentLine));
     }
 
     @Test
@@ -254,7 +221,7 @@ public class TestLicenseAppender {
                         writer.write("}\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -270,7 +237,7 @@ public class TestLicenseAppender {
                         writer.write("}\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -286,7 +253,7 @@ public class TestLicenseAppender {
                         writer.write(" of any importance\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -302,7 +269,7 @@ public class TestLicenseAppender {
                         writer.write("cool = true\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -324,16 +291,16 @@ public class TestLicenseAppender {
                     public void readFile(BufferedReader reader)
                             throws IOException {
                         String line = reader.readLine();
-                        assertEquals("First line is incorrect",
-                                newFirstLine, line);
+                        assertEquals(
+                                newFirstLine, line, "First line is incorrect");
                         while ((line = reader.readLine()) != null) {
                             if (line.length() == 0) {
                                 line = reader.readLine();
                                 break;
                             }
                         }
-                        assertEquals("Package line is incorrect",
-                                firstLine, line);
+                        assertEquals(
+                                firstLine, line, "Package line is incorrect");
                     }
                 });
     }
@@ -351,7 +318,7 @@ public class TestLicenseAppender {
                         writer.write("end\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -383,7 +350,7 @@ public class TestLicenseAppender {
                         writer.write("print \"Hello world\"\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -431,7 +398,7 @@ public class TestLicenseAppender {
                         writer.write("puts \"Hello world\"\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -482,7 +449,7 @@ public class TestLicenseAppender {
                         writer.write("}\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -498,7 +465,7 @@ public class TestLicenseAppender {
                         writer.write("    }\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -515,7 +482,7 @@ public class TestLicenseAppender {
                         writer.write("}\n");
                     }
                 },
-                checkLines(firstLine, null));
+                checkLines(firstLine));
     }
 
     @Test
@@ -542,28 +509,21 @@ public class TestLicenseAppender {
     @Test
     public void fileWithBOM() throws IOException {
         File f = Resources.getResourceFile("violations/FilterTest.cs");
-        try {
-            ApacheV2LicenseAppender appender =
-                    new ApacheV2LicenseAppender();
-            appender.append(f);
+       
+        ApacheV2LicenseAppender appender =
+                new ApacheV2LicenseAppender();
+        appender.append(f);
 
-            BufferedReader r = null;
-            try {
-                r = new BufferedReader(new FileReader(f.getAbsolutePath()
-                        + ".new"));
-                assertEquals("/*", r.readLine());
-                String line = null;
-                while ((line = r.readLine()) != null) {
-                    if (line.trim().length() == 0) {
-                        break;
-                    }
+        try (BufferedReader r =  new BufferedReader(new FileReader(f.getAbsolutePath()
+                    + ".new"))) {
+            assertEquals("/*", r.readLine());
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                if (line.trim().length() == 0) {
+                    break;
                 }
-                assertEquals("#if NET_2_0", r.readLine());
-            } finally {
-                IOUtils.closeQuietly(r);
             }
-        } finally {
-            tryToDelete(new File(f.getAbsolutePath() + ".new"));
+            assertEquals("#if NET_2_0", r.readLine());
         }
     }
 
@@ -610,19 +570,8 @@ public class TestLicenseAppender {
                         writer.write("EndProject\n");
                     }
                 },
-                new NewFileReader() {
-                    public void readFile(BufferedReader r) throws IOException {
-                        String line = r.readLine();
-                        assertEquals("First line is incorrect",
-                                firstLine, line);
-                        line = r.readLine();
-                        assertEquals("Second line is incorrect",
-                                secondLine, line);
-                        line = r.readLine();
-                        assertEquals("Third line is incorrect",
-                                thirdLine, line);
-                    }
-                });
+                checkLines(firstLine, secondLine, thirdLine)
+                );
     }
 
     @Test
@@ -663,19 +612,8 @@ public class TestLicenseAppender {
                         writer.write("EndGlobal \n");
                     }
                 },
-                new NewFileReader() {
-                    public void readFile(BufferedReader r) throws IOException {
-                        String line = r.readLine();
-                        assertEquals("First line is incorrect",
-                                firstLine, line);
-                        line = r.readLine();
-                        assertEquals("Second line is incorrect",
-                                secondLine, line);
-                        line = r.readLine();
-                        assertEquals("Third line is incorrect",
-                                thirdLine, line);
-                    }
-                });
+                checkLines(firstLine, secondLine, thirdLine)
+                );
     }
 
     @Test
@@ -718,22 +656,8 @@ public class TestLicenseAppender {
                         writer.write("EndGlobal \n");
                     }
                 },
-                new NewFileReader() {
-                    public void readFile(BufferedReader r) throws IOException {
-                        String line = r.readLine();
-                        assertEquals("First line is incorrect",
-                                firstLine, line);
-                        line = r.readLine();
-                        assertEquals("Second line is incorrect",
-                                secondLine, line);
-                        line = r.readLine();
-                        assertEquals("Third line is incorrect",
-                                thirdLine, line);
-                        line = r.readLine();
-                        assertEquals("Forth line is incorrect",
-                                forthLine, line);
-                    }
-                });
+                checkLines(firstLine, secondLine, thirdLine, forthLine)
+               );
     }
     
     @Test
@@ -753,8 +677,8 @@ public class TestLicenseAppender {
                 new NewFileReader() {
                     public void readFile(BufferedReader r) throws IOException {
                         String line = r.readLine();
-                        assertEquals("First line is incorrect",
-                                "<!--", line);
+                        assertEquals(
+                                "<!--", line, "First line is incorrect");
                         line = r.readLine();
                     }
                 });

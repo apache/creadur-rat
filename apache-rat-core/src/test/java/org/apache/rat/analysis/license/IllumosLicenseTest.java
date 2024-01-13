@@ -18,6 +18,10 @@
  */
 package org.apache.rat.analysis.license;
 
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.provider.Arguments;
+
 public class IllumosLicenseTest extends AbstractLicenseTest {
     private static String id = "ILLUMOS";
     private static String note = "Modified CDDL1 license";
@@ -26,8 +30,7 @@ public class IllumosLicenseTest extends AbstractLicenseTest {
                     + "Common Development and Distribution License (the \"License\") "
                     + "You may not use this file except in compliance with the License. " } };
 
-    public IllumosLicenseTest() {
-        super(id, CDDL1LicenseTest.id, CDDL1LicenseTest.name, note, targets);
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of(Arguments.of(id, CDDL1LicenseTest.id, CDDL1LicenseTest.name, note, targets));
     }
-
 }

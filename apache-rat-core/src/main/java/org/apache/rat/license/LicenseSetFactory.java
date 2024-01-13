@@ -36,7 +36,11 @@ public class LicenseSetFactory {
         /** Only approved licenses are returned */
         approved,
         /** No licenses are returned */
-        none
+        none;
+        
+        static public LicenseFilter fromText(String s) {
+            return LicenseFilter.valueOf(s.toLowerCase());
+        }
     }
 
     private final SortedSet<ILicense> licenses;

@@ -26,7 +26,7 @@ public interface Log {
     /**
      * The log levels supported by logging.
      */
-    public enum Level {DEBUG, INFO, WARN, ERROR };
+    public enum Level {OFF, DEBUG, INFO, WARN, ERROR };
 
     /**
      * Writes a message at a specific log level.

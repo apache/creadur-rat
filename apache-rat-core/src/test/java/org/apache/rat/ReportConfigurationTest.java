@@ -19,9 +19,10 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.function.Function;
 
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -56,9 +58,10 @@ import org.apache.rat.report.IReportable;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.utils.Log;
 import org.apache.rat.utils.Log.Level;
+import org.apache.rat.utils.ReportingSet.Options;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class ReportConfigurationTest {
@@ -66,7 +69,7 @@ public class ReportConfigurationTest {
     private ReportConfiguration underTest;
     private LoggingCapture log;
 
-    @Before
+    @BeforeEach
     public void setup() {
         log = new LoggingCapture();
         underTest = new ReportConfiguration(log);
@@ -381,57 +384,56 @@ public class ReportConfigurationTest {
     }
     
     @Test
-    public void testDuplicateFamilyWarns() {
+    public void logFamilyCollisionTest() {
+        // setup
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
+        assertFalse(log.captured.toString().contains("CAT"));
+       
+        // verify default collision logs WARNING
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("WARN"), ()->"default value not WARN");
+        assertTrue(log.captured.toString().contains("CAT"), ()->"'CAT' not found");
+        
+        // verify level setting works.
+        for (Level l : Level.values()) {
+        log.clear();
+        underTest.logFamilyCollisions(l);
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("CAT"), ()->"'CAT' not found");
+        assertTrue(log.captured.toString().contains(l.name()), ()->"logging not set to "+l);
+        }
+
+    }
+    
+    @Test
+    public void familyDuplicateOptionsTest() {
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
         assertFalse(log.captured.toString().contains("CAT"));
         
-        // verify second setting changes logs issue
+        // verify default second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
         assertTrue(log.captured.toString().contains("CAT"));
-        
-        // verify name not changed
         assertEquals("name", underTest.getLicenseFamilies(LicenseFilter.all).stream()
                 .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
-    }
-    
-    @Test
-    public void testSettingDuplicateFamilyLogLevelWorks() {
-        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
-        assertFalse(log.captured.toString().contains("CAT"));
         
-        // verify second setting changes logs level
+        underTest.familyDuplicateOption(Options.OVERWRITE);
+        // verify second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.captured.toString().contains("WARN"));
-        
-        
-        log.clear();
-        underTest.logFamilyCollisions(Level.ERROR);
-        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.captured.toString().contains("ERROR"));
-        
+        assertTrue(log.captured.toString().contains("CAT"));
+        assertEquals("name2", underTest.getLicenseFamilies(LicenseFilter.all).stream()
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
+
+        // verify fail throws exception
+        underTest.familyDuplicateOption(Options.FAIL);
+        assertThrows( IllegalArgumentException.class, ()->underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2")));
+  
+        underTest.familyDuplicateOption(Options.IGNORE);
     }
     
-    @Test
-    public void testDuplicateLicenseWarns() {
-        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
-        IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
-        when(matcher.getId()).thenReturn("Macher ID");
-        underTest.addFamily(family);
-        underTest.addLicense(ILicense.builder().setId("ID").setName("license name").setLicenseFamilyCategory(family.getFamilyCategory())
-                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
-        assertFalse(log.captured.toString().contains("ID"));
-        
-        // verify second setting changes logs issue
-        underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setLicenseFamilyCategory(family.getFamilyCategory())
-                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
-        assertTrue(log.captured.toString().contains("ID"));        
-        // verify name not changed
-        assertEquals("license name", underTest.getLicenses(LicenseFilter.all).stream()
-                .filter(s -> s.getLicenseFamily().getFamilyCategory().equals("CAT  ")).map(s -> s.getName()).findFirst().get());
-    }
     
     @Test
-    public void testSettingDuplicateLicenseLogLevelWorks() {
+    public void logLicenseCollisionTest() {
+        // setup
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
         IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
         when(matcher.getId()).thenReturn("Macher ID");
@@ -439,7 +441,7 @@ public class ReportConfigurationTest {
         underTest.addLicense(ILicense.builder().setId("ID").setName("license name").setLicenseFamilyCategory(family.getFamilyCategory())
                 .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
         
-        // verify second setting changes logs issue
+        // verify default collistion logs WARN
         underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setLicenseFamilyCategory(family.getFamilyCategory())
                 .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
         assertTrue(log.captured.toString().contains("WARN"));
@@ -451,6 +453,37 @@ public class ReportConfigurationTest {
         underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setLicenseFamilyCategory(family.getFamilyCategory())
                 .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
         assertTrue(log.captured.toString().contains("ERROR"));
+
+    }
+    
+    @Test
+    public void licenseDuplicateOptionsTest() {
+        // setup
+        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
+        IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
+        when(matcher.getId()).thenReturn("Macher ID");
+        underTest.addFamily(family);
+        Function<String,ILicense> makeLicense = s -> ILicense.builder().setId("ID").setName(s).setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all));
+                
+        underTest.addLicense(makeLicense.apply("license name"));
+        
+        // verify default second setting ignores change
+        underTest.addLicense(makeLicense.apply("license name2"));
+        assertTrue(log.captured.toString().contains("WARN"));
+        assertEquals("license name",
+                underTest.getLicenses(LicenseFilter.all).stream().map(ILicense::getName).findFirst().get());
+        
+        underTest.licenseDuplicateOption(Options.OVERWRITE);
+        underTest.addLicense(makeLicense.apply("license name2"));
+        assertEquals("license name2",
+                underTest.getLicenses(LicenseFilter.all).stream().map(ILicense::getName).findFirst().get());
+        
+         
+        // verify fail throws exception
+        underTest.licenseDuplicateOption(Options.FAIL);
+        assertThrows( IllegalArgumentException.class, ()-> underTest.addLicense(makeLicense.apply("another name")));
+
     }
     
     /**

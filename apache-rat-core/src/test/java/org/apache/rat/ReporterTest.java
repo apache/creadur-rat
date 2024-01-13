@@ -18,8 +18,8 @@
  */
 package org.apache.rat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +35,7 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -99,7 +99,7 @@ public class ReporterTest {
 
         String document = out.toString();
         // System.out.println(document);
-        assertTrue("'Generated at' is present in " + document, document.startsWith(HEADER));
+        assertTrue(document.startsWith(HEADER), "'Generated at' is present in " + document );
 
         // final int generatedAtLineEnd = document.indexOf(NL, HEADER.length());
         find("^Notes: 2$", document);
@@ -130,7 +130,7 @@ public class ReporterTest {
     }
 
     private void find(String pattern, String document) {
-        assertTrue(String.format("Could not find '%s'", pattern),
-                Pattern.compile(pattern, Pattern.MULTILINE).matcher(document).find());
+        assertTrue(
+                Pattern.compile(pattern, Pattern.MULTILINE).matcher(document).find(), () ->String.format("Could not find '%s'", pattern));
     }
 }

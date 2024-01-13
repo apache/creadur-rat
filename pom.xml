@@ -63,6 +63,8 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
     <previousRatVersion>0.16.1</previousRatVersion>
     <currentSnapshotRatVersion>0.17-SNAPSHOT</currentSnapshotRatVersion>
+    <junit.version>5.10.0</junit.version>
+    <junit.platform.version>1.8.1</junit.platform.version>
   </properties>
   <distributionManagement>
     <site>
@@ -118,9 +120,39 @@ agnostic home for software distribution comprehension and audit tools.
         <version>1.25.0</version>
       </dependency>
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.13.2</version>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-migrationsupport</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-engine</artifactId>
+          <version>${junit.version}</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-runner</artifactId>
+        <version>${junit.platform.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -412,8 +444,8 @@ agnostic home for software distribution comprehension and audit tools.
                   <pluginExecutionFilter>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>
-        							apache-rat-plugin
-        						</artifactId>
+                      apache-rat-plugin
+                    </artifactId>
                     <versionRange>[0.16,)</versionRange>
                     <goals>
                       <goal>check</goal>

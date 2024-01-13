@@ -18,8 +18,8 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,14 +27,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.rat.analysis.IHeaderMatcher.State;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class CopyrightMatcherTest {
     private final static int NAME = 0;
     private final static int TEXT = 1;
@@ -53,91 +53,99 @@ public class CopyrightMatcherTest {
 
     private static final int TOTAL_TESTS = prefix.length * 9;
 
-    static Object[] startStopOwner = { "start-stop-owner", "1990", "1991", "an owner",
-            new String[][] { DO, OD, DOS, ODS }, new String[][] { D, S, O, OS, SO } };
-    static Object[] startOwner = { "start-owner", "1990", null, "an owner", new String[][] { OS, SO, OD, ODS },
-            new String[][] { D, DO, DOS, S, O } };
-    static Object[] start = { "start", "1990", null, null, new String[][] { D, DO, DOS, S, SO },
-            new String[][] { OD, ODS, O, OS } };
-    static Object[] owner = { "owner", null, null, "an owner", new String[][] { O, OD, ODS, OS },
-            new String[][] { DO, DOS, S, D, SO } };
-    static Object[] nada = { "nada", null, null, null, new String[][] { D, DO, DOS, S, SO },
-            new String[][] { OD, ODS, O, OS } };
+    static Arguments startStopOwner = Arguments.of("start-stop-owner", "1990", "1991", "an owner",
+            expandResults( DO, OD, DOS, ODS) , expandResults( D, S, O, OS, SO ));
+    static Arguments startOwner = Arguments.of( "start-owner", "1990", null, "an owner", 
+            expandResults( OS, SO, OD, ODS ), expandResults( D, DO, DOS, S, O ) );
+    static Arguments start = Arguments.of("start", "1990", null, null, expandResults(D, DO, DOS, S, SO ),
+            expandResults(OD, ODS, O, OS ) );
+    static Arguments owner = Arguments.of("owner", null, null, "an owner", expandResults( O, OD, ODS, OS ),
+expandResults( DO, DOS, S, D, SO ) );
+    static Arguments nada = Arguments.of("nada", null, null, null, expandResults( D, DO, DOS, S, SO ),
+            expandResults( OD, ODS, O, OS ) );
 
-    private final CopyrightMatcher matcher;
-    private final String[][] pass;
-    private final String[][] fail;
-    private final String testName;
-
-    @Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(expandResults(startStopOwner), expandResults(startOwner), expandResults(start),
-                expandResults(owner), expandResults(nada));
+    
+    
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of( startStopOwner, startOwner, start, owner, nada);
     }
 
-    private static Object[] expandResults(Object[] source) {
-        Object[] result = new Object[6];
-        result[0] = source[0];
-        result[1] = source[1];
-        result[2] = source[2];
-        result[3] = source[3];
-
+    private static String[][] expandResults( String[]...args) {
         List<String[]> arry = new ArrayList<>();
         for (String pfx : prefix) {
-            Arrays.stream((String[][]) source[4]).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] })
-                    .forEach(arry::add);
+          Arrays.stream(args).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] })
+                  .forEach(arry::add);
         }
-        result[4] = arry.toArray(new String[arry.size()][2]);
-        arry.clear();
-
-        for (String pfx : prefix) {
-            Arrays.stream((String[][]) source[5]).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] })
-                    .forEach(arry::add);
-        }
-        result[5] = arry.toArray(new String[arry.size()][2]);
-        return result;
+        return arry.toArray(new String[arry.size()][2]);
     }
 
+            
+//    private static Arguments expandResults(String name, String startDate, String endDate, String owner,
+//            String[][] passAry, String[][] failAry) {
+//
+//        List<String[]> arry = new ArrayList<>();
+//        for (String pfx : prefix) {
+//            Arrays.stream(passAry).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] })
+//                    .forEach(arry::add);
+//        }
+//        String[][] pass = arry.toArray(new String[arry.size()][2]);
+//        arry.clear();
+//
+//        for (String pfx : prefix) {
+//            Arrays.stream((String[][]) failAry).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] })
+//                    .forEach(arry::add);
+//        }
+//        String[][] fail = arry.toArray(new String[arry.size()][2]);
+//
+//        return Arguments.of(name, startDate, endDate, owner, pass, fail);
+//    }
+
     private static void verify(String testName, String[][] pass, String[][] fail) {
-        assertEquals("Wrong number of pass/fail tests", TOTAL_TESTS, pass.length + fail.length);
+        assertEquals(TOTAL_TESTS, pass.length + fail.length, "Wrong number of pass/fail tests");
         Set<String> passSet = new HashSet<String>();
         Arrays.stream(pass).forEach(s -> passSet.add(s[0]));
         Set<String> failSet = new HashSet<String>();
         Arrays.stream(fail).forEach(s -> failSet.add(s[0]));
         for (String s : passSet) {
-            assertFalse(String.format("%s is in both pass and fail sets for %s", s, testName), failSet.contains(s));
+            assertFalse(failSet.contains(s), ()->String.format("%s is in both pass and fail sets for %s", s, testName));
         }
     }
 
-    public CopyrightMatcherTest(String testName, String start, String stop, String owner, String[][] pass,
+//    public CopyrightMatcherTest(String testName, String start, String stop, String owner, String[][] pass,
+//            String[][] fail) {
+//        verify(testName, pass, fail);
+//        matcher = new CopyrightMatcher(start, stop, owner);
+//        this.pass = pass;
+//        this.fail = fail;
+//        this.testName = testName;
+//    }
+
+    @ParameterizedTest
+    @MethodSource("parameterProvider")
+    public void testPass(String testName, String start, String stop, String owner, String[][] pass,
             String[][] fail) {
         verify(testName, pass, fail);
-        matcher = new CopyrightMatcher(start, stop, owner);
-        this.pass = pass;
-        this.fail = fail;
-        this.testName = testName;
-    }
-
-    @Test
-    public void testPass() {
+        CopyrightMatcher matcher = new CopyrightMatcher(start, stop, owner);
         for (String[] target : pass) {
-            String errMsg = String.format("%s:%s failed", testName, target[NAME]);
-            assertEquals(errMsg, State.i, matcher.currentState());
-            assertEquals(errMsg, State.t, matcher.matches(target[TEXT]));
+            assertEquals(State.i, matcher.currentState(), ()->String.format("%s:%s failed", testName, target[NAME]));
+            assertEquals(State.t, matcher.matches(target[TEXT]), ()->String.format("%s:%s failed", testName, target[NAME]));
             matcher.reset();
-            assertEquals(errMsg, State.i, matcher.currentState());
+            assertEquals(State.i, matcher.currentState(),()->String.format("%s:%s failed", testName, target[NAME]));
         }
     }
 
-    @Test
-    public void testFail() {
+    @ParameterizedTest
+    @MethodSource("parameterProvider")
+    public void testFail(String testName, String start, String stop, String owner, String[][] pass,
+            String[][] fail) {
+        verify(testName, pass, fail);
+        CopyrightMatcher matcher = new CopyrightMatcher(start, stop, owner);
         for (String[] target : fail) {
-            String errMsg = String.format("%s:%s passed", testName, target[NAME]);
-            assertEquals(errMsg, State.i, matcher.currentState());
-            assertEquals(errMsg, State.i, matcher.matches(target[TEXT]));
-            assertEquals(errMsg, State.f, matcher.finalizeState());
+            assertEquals( State.i, matcher.currentState(), ()->String.format("%s:%s passed", testName, target[NAME]));
+            assertEquals( State.i, matcher.matches(target[TEXT]), ()->String.format("%s:%s passed", testName, target[NAME]));
+            assertEquals( State.f, matcher.finalizeState(), ()->String.format("%s:%s passed", testName, target[NAME]));
             matcher.reset();
-            assertEquals(errMsg, State.i, matcher.currentState());
+            assertEquals( State.i, matcher.currentState(), ()->String.format("%s:%s passed", testName, target[NAME]));
         }
     }
 }
