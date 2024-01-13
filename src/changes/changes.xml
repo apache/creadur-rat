@@ -84,6 +84,9 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       <action issue="RAT-348" type="add" dev="pottlinger" due-to="Niels Basjes">
         Update gitignore-reader library to 1.3.0 to get latest changes in gitignore parsing.
       </action>
+      <action issue="RAT-349" type="fix" dev="pottlinger" due-to="Niels Basjes">
+        Fix NPE by falling back to default stylesheet if none was configured before.
+      </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.16.1
       </action>
