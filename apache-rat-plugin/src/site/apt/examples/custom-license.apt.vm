@@ -116,3 +116,16 @@ Approved License Families
     </plugins>
   </build>
 ------------------------------------------------------------------
+
+Overview of configuration options
+
+  When defining custom licenses, remember the following architecture constraints:
+
+  * Each license is associated with a family.  Multiple licenses can be associated with a family.
+
+  * Each license may have a notes element.
+
+  * Each license has one matcher.
+
+
+https://maven.apache.org/doxia/references/apt-format.html
