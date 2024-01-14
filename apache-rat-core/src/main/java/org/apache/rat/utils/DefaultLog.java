@@ -42,6 +42,10 @@ public class DefaultLog implements Log {
         case ERROR:
             System.err.format("%s: %s%n", level, msg);
             break;
+		case OFF:
+			break;
+		default:
+			break;
         }
     }
 }
