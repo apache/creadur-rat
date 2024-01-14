@@ -29,7 +29,7 @@ public interface Document {
     String getName();
     
     /**
-     * Reads the content of this document.
+     * Reads the contents of this document.
      * @return <code>Reader</code> not null
      * @throws IOException if this document cannot be read
      * @throws CompositeDocumentException if this document can only be read as

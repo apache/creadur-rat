@@ -35,6 +35,11 @@ public interface RatReport {
      */
     void startReport() throws RatException;
     
+    /**
+     * Performs the actual reporting on the given document.
+     * @param document write any reporting results into this document upon analysis.
+     * @throws RatException on error.
+     */
     void report(Document document) throws RatException;
     
     /**
