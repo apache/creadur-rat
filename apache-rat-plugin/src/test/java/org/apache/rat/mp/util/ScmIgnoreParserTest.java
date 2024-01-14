@@ -16,14 +16,11 @@ package org.apache.rat.mp.util;
  * limitations under the License.
  */
 
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.shared.utils.io.FileUtils;
-import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.apache.rat.mp.util.ScmIgnoreParser.getExclusionsFromSCM;
+import static org.apache.rat.mp.util.ignore.GlobIgnoreMatcher.isComment;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,13 +29,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-import static org.apache.rat.mp.util.ScmIgnoreParser.getExclusionsFromSCM;
-import static org.apache.rat.mp.util.ignore.GlobIgnoreMatcher.isComment;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class ScmIgnoreParserTest {
      

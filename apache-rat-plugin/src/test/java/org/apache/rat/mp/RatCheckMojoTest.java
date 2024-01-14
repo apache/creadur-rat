@@ -25,9 +25,6 @@ import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.ReportConfiguration;

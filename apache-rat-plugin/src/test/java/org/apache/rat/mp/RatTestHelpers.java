@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -58,15 +60,7 @@ public final class RatTestHelpers {
                 throw new IOException("Unable to delete file: " + pDir);
             }
         } else if (pDir.isDirectory()) {
-            final File[] files = pDir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    remove(file);
-                }
-            }
-            if (!pDir.delete()) {
-                throw new IOException("Unable to delete directory: " + pDir);
-            }
+        	FileUtils.deleteDirectory(pDir);
         } else if (pDir.exists()) {
             throw new IOException("Unable to delete unknown object " + pDir);
         }

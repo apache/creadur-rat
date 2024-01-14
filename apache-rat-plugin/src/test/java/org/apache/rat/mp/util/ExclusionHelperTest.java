@@ -1,5 +1,18 @@
 package org.apache.rat.mp.util;
 
+import static org.apache.rat.mp.util.ExclusionHelper.ECLIPSE_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.IDEA_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.MAVEN_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -20,21 +33,7 @@ package org.apache.rat.mp.util;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.config.SourceCodeManagementSystems;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.apache.rat.mp.util.ExclusionHelper.ECLIPSE_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.util.ExclusionHelper.IDEA_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.util.ExclusionHelper.MAVEN_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ExclusionHelperTest {
