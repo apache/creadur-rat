@@ -20,7 +20,6 @@ package org.apache.rat.analysis.license;
 
 import java.util.stream.Stream;
 
-import org.apache.rat.license.ILicenseFamily;
 import org.junit.jupiter.params.provider.Arguments;
 
 /**
