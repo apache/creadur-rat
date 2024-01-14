@@ -33,11 +33,15 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 public class ScmIgnoreParserTest {
      
-    private Log log = Mockito.mock(Log.class);
+	@TempDir
+	private File tempDir;
+	
+	private Log log = Mockito.mock(Log.class);
 
     private static final String IGNORE_EXAMPLE = "**/*.java\r\n## Justus commentos\r\nignoredDirectory";
 
@@ -79,19 +83,14 @@ public class ScmIgnoreParserTest {
 
     @Test
     public void parseFromEmptyIgnoreFile() throws IOException {
-        File ignore = null;
-        try {
-            ignore = Files.createTempFile("sip", null).toFile();
-            assertTrue(ignore.exists());
-            writeToFile(IGNORE_EXAMPLE, ignore);
-        
-            final List<String> excludes = getExcludesFromFile(log, ignore);
-            assertFalse(excludes.isEmpty());
-            assertEquals(2, excludes.size());
-        } finally {
-            ignore.delete();
-        }
+    	File ignore  = Files.createTempFile(tempDir.getName(), "sip").toFile();
 
+    	assertTrue(ignore.exists());
+    	writeToFile(IGNORE_EXAMPLE, ignore);
+
+    	final List<String> excludes = getExcludesFromFile(log, ignore);
+    	assertFalse(excludes.isEmpty());
+    	assertEquals(2, excludes.size());
     }
 
     private static void writeToFile(String contents, File file) throws IOException {
