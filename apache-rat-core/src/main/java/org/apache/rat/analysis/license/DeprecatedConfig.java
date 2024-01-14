@@ -26,10 +26,12 @@ import org.apache.rat.license.ILicenseFamily;
  */
 @Deprecated // remove in v1.0
 public interface DeprecatedConfig {
-	
-	/**
+    /**
 	 * @return the license definition.
 	 */
     ILicense.Builder getLicense();
+    /**
+     * @return the license family definition.
+     */
     ILicenseFamily getLicenseFamily();
 }
