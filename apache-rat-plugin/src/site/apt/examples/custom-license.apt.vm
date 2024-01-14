@@ -31,6 +31,8 @@ Custom License Matchers
   Unlike earlier version (before 0.16) no custom implementations are required to define
   custom licenses.
 
+  There is a file that defines all of the standard licenses: {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}
+
 ------------------------------------------------------------------
   /**
    * Yet Another Software License, 1.0
@@ -126,5 +128,31 @@ Overview of configuration options
   * Each license may have a notes element.
 
   * Each license has one matcher.
+
+* Matcher details
+
+    <<all>> - A collection of matchers in which all enclosed matchers have to be true for the matcher to report true.
+
+    <<any>> - A collection of matchers that will report true if any enclosed matcher is true.
+
+    <<copyright>> - A matcher that matches Copyright text.
+    This uses regular expressions and so should only be used when looking for copyrights with specific patterns that are not caught by a standard text matcher.
+    This matcher will match <<<"(C)">>>, <<<"copyright">>>, or <<<"©">>>. (text is not case sensitive).
+    It will also match things like <<<Copyright (c) joe 1995>>> as well as <<<Copyright (C) 1995 joe>>>.
+    Copyright has 3 child elements:
+
+      * <<start>> - the starting date of the copyright or the only date.
+
+      * <<end>> - the ending date of the copyright.  Only valid if the starting date is provided.
+
+      * <<owner>> - the copyright owner.
+
+    <<not>> - A matcher that wraps one matcher and negates its value.  Not matchers require that the entire header be read before it can report true or false.  This may significantly slow processing.
+
+    <<regex>> - A matcher that matches a regex string.
+
+    <<spdx>> - A matcher that matches SPDX tags.  SPDX tags have the form: <<<SPDX-License-Identifier: short-name>>>, where short-name matches the regex pattern <<<"[A-Za-z0-9\.\-]+".>>>  spdx takes the short name as an argument.
+
+  If you define families and do not define <<<approvedFamilies>>> in your pom all the families are assumed to be approved.
 
 ~~ https://maven.apache.org/doxia/references/apt-format.html
