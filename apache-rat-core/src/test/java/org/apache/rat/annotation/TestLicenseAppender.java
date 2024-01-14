@@ -18,12 +18,8 @@
  */
 package org.apache.rat.annotation;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.rat.test.utils.Resources;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,10 +27,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.apache.commons.io.FileUtils;
+import org.apache.rat.test.utils.Resources;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class TestLicenseAppender {
     

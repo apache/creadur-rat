@@ -18,7 +18,8 @@
  */
 package org.apache.rat;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -370,17 +371,18 @@ public class ReportConfigurationTest {
     @Test
     public void testSetOut() throws IOException {
         ReportConfiguration config = new ReportConfiguration(log);
-        OutputStreamIntercepter osi = new OutputStreamIntercepter();
-        config.setOut(() -> osi);
-        assertThat(osi.closeCount).isEqualTo(0);
-        try (OutputStream os = config.getOutput().get()) {
-            assertThat(osi.closeCount).isEqualTo(0);
-        }
-        assertThat(osi.closeCount).isEqualTo(1);
-        try (OutputStream os = config.getOutput().get()) {
-            assertThat(osi.closeCount).isEqualTo(1);
-        }
-        assertThat(osi.closeCount).isEqualTo(2);
+        try (OutputStreamIntercepter osi = new OutputStreamIntercepter()) {
+			config.setOut(() -> osi);
+			assertThat(osi.closeCount).isEqualTo(0);
+			try (OutputStream os = config.getOutput().get()) {
+			    assertThat(osi.closeCount).isEqualTo(0);
+			}
+			assertThat(osi.closeCount).isEqualTo(1);
+			try (OutputStream os = config.getOutput().get()) {
+			    assertThat(osi.closeCount).isEqualTo(1);
+			}
+			assertThat(osi.closeCount).isEqualTo(2);
+		}
     }
     
     @Test
