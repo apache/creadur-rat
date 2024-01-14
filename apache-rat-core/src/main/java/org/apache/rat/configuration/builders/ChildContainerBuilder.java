@@ -44,14 +44,17 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
      */
     protected final List<IHeaderMatcher.Builder> children = new ArrayList<>();
 
+    /**
+     * Empty default constructor.
+     */
     protected ChildContainerBuilder() {
     }
 
     /**
-     * Reads a text file. Each line becomes a text matcher in the resulting List.
+     * Reads a text file. Each line becomes a text matcher in the resulting list.
      * 
      * @param resourceName the name of the resource to read.
-     * @return a List of Matchers, one for each non empty line in the input file.
+     * @return a List of Matchers, one for each non-empty line in the input file.
      */
     public AbstractBuilder setResource(String resourceName) {
           URL url = this.getClass().getResource(resourceName);
