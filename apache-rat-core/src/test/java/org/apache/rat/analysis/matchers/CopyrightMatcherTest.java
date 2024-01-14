@@ -79,27 +79,6 @@ expandResults( DO, DOS, S, D, SO ) );
         return arry.toArray(new String[arry.size()][2]);
     }
 
-            
-//    private static Arguments expandResults(String name, String startDate, String endDate, String owner,
-//            String[][] passAry, String[][] failAry) {
-//
-//        List<String[]> arry = new ArrayList<>();
-//        for (String pfx : prefix) {
-//            Arrays.stream(passAry).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] })
-//                    .forEach(arry::add);
-//        }
-//        String[][] pass = arry.toArray(new String[arry.size()][2]);
-//        arry.clear();
-//
-//        for (String pfx : prefix) {
-//            Arrays.stream((String[][]) failAry).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] })
-//                    .forEach(arry::add);
-//        }
-//        String[][] fail = arry.toArray(new String[arry.size()][2]);
-//
-//        return Arguments.of(name, startDate, endDate, owner, pass, fail);
-//    }
-
     private static void verify(String testName, String[][] pass, String[][] fail) {
         assertEquals(TOTAL_TESTS, pass.length + fail.length, "Wrong number of pass/fail tests");
         Set<String> passSet = new HashSet<String>();
@@ -110,15 +89,6 @@ expandResults( DO, DOS, S, D, SO ) );
             assertFalse(failSet.contains(s), ()->String.format("%s is in both pass and fail sets for %s", s, testName));
         }
     }
-
-//    public CopyrightMatcherTest(String testName, String start, String stop, String owner, String[][] pass,
-//            String[][] fail) {
-//        verify(testName, pass, fail);
-//        matcher = new CopyrightMatcher(start, stop, owner);
-//        this.pass = pass;
-//        this.fail = fail;
-//        this.testName = testName;
-//    }
 
     @ParameterizedTest
     @MethodSource("parameterProvider")
