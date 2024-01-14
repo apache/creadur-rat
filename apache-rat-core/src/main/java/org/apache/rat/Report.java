@@ -29,8 +29,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -47,10 +47,10 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.AddLicenseHeaders;
-import org.apache.rat.license.ILicense;
-import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
@@ -104,28 +104,23 @@ public class Report {
      * List the licenses that were used for the run.
      */
     private static final String LIST_LICENSES = "list-licenses";
+
     /**
-     * List the approved families for the run.
+     * List the all families for the run.
      */
-    private static final String LIST_LICENSE_FAMILIES = "list-approved-families";
+    private static final String LIST_FAMILIES = "list-families";
+
 
     /**
      * Set unstyled XML output
      */
     private static final String XML = "x";
 
-    /*
-     * Format used for listing license families
-     */
-    private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s\n";
 
     /**
-     * Format used for listing licenses.
-     */
-    private static final String LICENSE_FORMAT = "%s:\t%s\n\t\t%s\n";
-
-    /**
-     * Processes the command line and builds a configuration and executes the report.
+     * Processes the command line and builds a configuration and executes the
+     * report.
+     * 
      * @param args the arguments.
      * @throws Exception on error.
      */
@@ -151,21 +146,34 @@ public class Report {
         if (args == null || args.length != 1) {
             printUsage(opts);
         } else {
-            ReportConfiguration configuration = createConfiguration(args[0],cl);
+            ReportConfiguration configuration = createConfiguration(args[0], cl);
             configuration.validate(System.err::println);
 
-            if (cl.hasOption(LIST_LICENSE_FAMILIES)) {
-                listLicenseFamilies(configuration.getLicenseFamilies(LicenseFilter.all), System.out);
+            boolean dryRun = false;
+            
+            if (cl.hasOption(LIST_FAMILIES)) {
+                LicenseFilter f = LicenseFilter.fromText(cl.getOptionValue(LIST_FAMILIES));
+                if (f != LicenseFilter.none) {                        
+                    dryRun = true;
+                    Reporter.listLicenseFamilies(configuration, f);
+                }
             }
             if (cl.hasOption(LIST_LICENSES)) {
-                listLicenses(configuration.getLicenses(LicenseFilter.all), System.out);
+                LicenseFilter f = LicenseFilter.fromText(cl.getOptionValue(LIST_LICENSES));
+                if (f != LicenseFilter.none) {                        
+                    dryRun = true;
+                    Reporter.listLicenses(configuration, f);
+                }
             }
-            Reporter.report(configuration);
+            
+            if (!dryRun) {
+                Reporter.report(configuration);
+            }
         }
     }
 
     static ReportConfiguration createConfiguration(String baseDirectory, CommandLine cl) throws IOException {
-        final ReportConfiguration configuration = new ReportConfiguration();
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
 
         if (cl.hasOption('o')) {
             configuration.setOut(new File(cl.getOptionValue('o')));
@@ -202,7 +210,7 @@ public class Report {
             if (cl.hasOption(STYLESHEET_CLI)) {
                 String[] style = cl.getOptionValues(STYLESHEET_CLI);
                 if (style.length != 1) {
-                    System.err.println("please specify a single stylesheet");
+                    System.err.println("Please specify a single stylesheet");
                     System.exit(1);
                 }
                 configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(style[0])));
@@ -223,20 +231,7 @@ public class Report {
         configuration.setReportable(getDirectory(baseDirectory, configuration));
         return configuration;
     }
-
-    private static void listLicenseFamilies(SortedSet<ILicenseFamily> families, PrintStream out) {
-        out.println("Families:");
-        families.forEach(x -> out.format(LICENSE_FAMILY_FORMAT, x.getFamilyCategory(), x.getFamilyName()));
-        out.println();
-    }
-
-    private static void listLicenses(SortedSet<ILicense> licenses, PrintStream out) {
-        out.println("Licenses:");
-        licenses.forEach(lic -> out.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
-                lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
-        out.println();
-    }
-
+    
     /**
      * Creates a filename filter from patterns to exclude.
      * 
@@ -259,7 +254,7 @@ public class Report {
                 // wildcards to give users more choices to configure exclusions
                 orFilter.addFileFilter(new RegexFileFilter(exclusion));
                 orFilter.addFileFilter(new NameFileFilter(exclusion));
-                orFilter.addFileFilter(new WildcardFileFilter(exclusion));
+                orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
             } catch (PatternSyntaxException e) {
                 System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
             }
@@ -269,12 +264,25 @@ public class Report {
     }
 
     static Options buildOptions() {
-        Options opts = new Options();
+        String licFilterValues = String.join(", ", 
+                Arrays.stream(LicenseFilter.values()).map(LicenseFilter::name).collect(Collectors.toList()));
 
-        Option help = new Option(HELP, "help", false, "Print help for the RAT command line interface and exit");
-        opts.addOption(help);
+        Options opts = new Options()
+        
+        .addOption(
+                Option.builder().hasArg(true).longOpt(LIST_FAMILIES)
+                .desc("List the defined license families (default is none). Valid options are: "+licFilterValues+".")
+                .build())
+        .addOption(
+                Option.builder().hasArg(true).longOpt(LIST_LICENSES)
+                .desc("List the defined licenses (default is none). Valid options are: "+licFilterValues+".")
+                .build())
 
-        Option out = new Option("o", "out", true, "Define the output file where to write report (default is System.out)");
+        .addOption(new Option(HELP, "help", false, "Print help for the RAT command line interface and exit."));
+        
+
+        Option out = new Option("o", "out", true,
+                "Define the output file where to write a report to (default is System.out).");
         opts.addOption(out);
 
         String defaultHandlingText = " By default all approved default licenses are used";
@@ -282,8 +290,6 @@ public class Report {
         opts.addOption(noDefaults);
 
         opts.addOption(null, LICENSES, true, "File names or URLs for license definitions");
-        opts.addOption(null, LIST_LICENSES, false, "List all active licenses");
-        opts.addOption(null, LIST_LICENSE_FAMILIES, false, "List all defined license families");
         opts.addOption(null, SCAN_HIDDEN_DIRECTORIES, false, "Scan hidden directories");
 
         OptionGroup addLicenseGroup = new OptionGroup();
@@ -291,7 +297,8 @@ public class Report {
                 + "By default new files will be created with the license header, "
                 + "to force the modification of existing files use the --force option.";
 
-        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards compatibility
+        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
+        // compatibility
         Option addLicence = new Option(ADD_OLD, "addLicence", false, addLicenseDesc);
         addLicenseGroup.addOption(addLicence);
         Option addLicense = new Option(ADD, "addLicense", false, addLicenseDesc);
@@ -299,7 +306,7 @@ public class Report {
         opts.addOptionGroup(addLicenseGroup);
 
         Option write = new Option(FORCE, "force", false,
-                "Forces any changes in files to be written directly to the source files (i.e. new files are not created)");
+                "Forces any changes in files to be written directly to the source files (i.e. new files are not created).");
         opts.addOption(write);
 
         Option copyright = new Option(COPYRIGHT, "copyright", true,
@@ -365,10 +372,9 @@ public class Report {
     private static IReportable getDirectory(String baseDirectory, ReportConfiguration config) {
         try (PrintStream out = new PrintStream(config.getOutput().get())) {
             File base = new File(baseDirectory);
+            
             if (!base.exists()) {
-                out.print("ERROR: ");
-                out.print(baseDirectory);
-                out.print(" does not exist.\n");
+                config.getLog().log(Level.ERROR, "Directory '"+baseDirectory+"' does not exist");
                 return null;
             }
 
@@ -379,9 +385,7 @@ public class Report {
             try {
                 return new ArchiveWalker(base, config.getInputFileFilter());
             } catch (IOException ex) {
-                out.print("ERROR: ");
-                out.print(baseDirectory);
-                out.print(" is not valid gzip data.\n");
+                config.getLog().log(Level.ERROR, "file '"+baseDirectory+"' is not valid gzip data.");
                 return null;
             }
         } catch (IOException e) {

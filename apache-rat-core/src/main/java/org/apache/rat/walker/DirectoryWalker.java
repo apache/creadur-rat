@@ -19,18 +19,17 @@
 
 package org.apache.rat.walker;
 
-import org.apache.commons.io.filefilter.HiddenFileFilter;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.regex.Pattern;
+
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
-import java.util.regex.Pattern;
 
 /**
  * Walks directories.

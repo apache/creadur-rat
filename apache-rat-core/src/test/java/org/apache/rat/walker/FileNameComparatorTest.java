@@ -19,12 +19,12 @@
 package org.apache.rat.walker;
 
 import org.apache.rat.test.utils.Resources;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileNameComparatorTest {
 
@@ -33,6 +33,6 @@ public class FileNameComparatorTest {
         FileNameComparator comparator = new FileNameComparator();
         assertNotNull(comparator);
         final int compare = comparator.compare(Resources.getResourceFile("elements/LICENSE"), Resources.getResourceFile("elements/NOTICE"));
-        assertTrue("LICENSE is before NOTICE", compare < 0);
+        assertTrue(compare < 0, "LICENSE is before NOTICE");
     }
 }

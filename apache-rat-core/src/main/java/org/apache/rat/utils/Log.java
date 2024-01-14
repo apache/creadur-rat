@@ -16,21 +16,42 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.license;
+package org.apache.rat.utils;
 
-import java.util.stream.Stream;
+/**
+ * The definition of logging for the core.  UIs are expected to provide an implementation of 
+ * Log to log data to the appropriate system within the UI.
+ */
+public interface Log {
+    /**
+     * The log levels supported by logging.
+     */
+    public enum Level {
+    	/**
+    	 * Log nothing.
+    	 */
+    	OFF, 
+    	/**
+    	 * Log debug only.
+    	 */
+    	DEBUG, 
+    	/**
+    	 * Log info only.
+    	 */
+    	INFO, 
+    	/**
+    	 * Log warn only.
+    	 */
+    	WARN, 
+    	/**
+    	 * Log error only.
+    	 */
+    	ERROR };
 
-import org.junit.jupiter.params.provider.Arguments;
-
-public class IllumosLicenseTest extends AbstractLicenseTest {
-    private static String id = "ILLUMOS";
-    private static String note = "Modified CDDL1 license";
-    private static String[][] targets = { { "illumos",
-            "The contents of this file are subject to the terms of the "
-                    + "Common Development and Distribution License (the \"License\") "
-                    + "You may not use this file except in compliance with the License. " } };
-
-    public static Stream<Arguments> parameterProvider() {
-        return Stream.of(Arguments.of(id, CDDL1LicenseTest.id, CDDL1LicenseTest.name, note, targets));
-    }
+    /**
+     * Writes a message at a specific log level.
+     * @param level The log level to write at.
+     * @param message the Message to write.
+     */
+    void log(Level level, String message);
 }

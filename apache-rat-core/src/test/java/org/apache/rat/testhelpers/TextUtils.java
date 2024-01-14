@@ -18,21 +18,23 @@
  */
 package org.apache.rat.testhelpers;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
 
 public class TextUtils {
     public static final String[] EMPTY = {};
     
     public static void assertPatternInOutput(String pPattern, String out) {
-        Assert.assertTrue("Output does not match string: " + pPattern+"\n"+out,
-                isMatching(pPattern, out));
+        assertTrue(
+                isMatching(pPattern, out), ()->"Output does not match string: " + pPattern+"\n"+out);
     }
     
     public static void assertPatternNotInOutput(String pPattern, String out) {
-        Assert.assertFalse("Output matches the pattern: " + pPattern+"\n"+out,
-                isMatching(pPattern, out));
+        assertFalse(
+                isMatching(pPattern, out), ()->"Output matches the pattern: " + pPattern+"\n"+out);
     }
 
    public static boolean isMatching(final String pPattern, final String pValue) {

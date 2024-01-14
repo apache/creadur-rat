@@ -19,8 +19,8 @@
 
 package org.apache.rat.analysis;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.StringReader;
 
@@ -28,7 +28,8 @@ import org.apache.rat.api.Document;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingLocation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 public class HeaderCheckWorkerTest {
 

@@ -18,6 +18,10 @@
  */
 package org.apache.rat.analysis.license;
 
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.provider.Arguments;
+
 public class CDDL1LicenseTest extends AbstractLicenseTest {
     public static final String id = "CDDL1";
     public static final String name = "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0";
@@ -38,8 +42,8 @@ public class CDDL1LicenseTest extends AbstractLicenseTest {
             { "spdx-tab", "SPDX-License-Identifier:\tCDDL-1.0" },
             { "spdx-space", "SPDX-License-Identifier: CDDL-1.0" } };
 
-    public CDDL1LicenseTest() {
-        super(id, id, name, null, targets);
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of(Arguments.of( id, id, name, null, targets));
     }
 
 }

@@ -1,5 +1,18 @@
 package org.apache.rat.mp.util;
 
+import static org.apache.rat.mp.util.ExclusionHelper.ECLIPSE_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.IDEA_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.MAVEN_DEFAULT_EXCLUDES;
+import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
+import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -19,38 +32,23 @@ package org.apache.rat.mp.util;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.config.SourceCodeManagementSystems;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.apache.rat.mp.util.ExclusionHelper.ECLIPSE_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.util.ExclusionHelper.IDEA_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.util.ExclusionHelper.MAVEN_DEFAULT_EXCLUDES;
-import static org.apache.rat.mp.util.ExclusionHelper.addEclipseDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addIdeaDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addMavenDefaults;
-import static org.apache.rat.mp.util.ExclusionHelper.addPlexusAndScmDefaults;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-@RunWith(MockitoJUnitRunner.class)
 public class ExclusionHelperTest {
 
-    @Mock
-    private Log log;
+    
+    private Log log = Mockito.mock(Log.class);
 
     @Test
     public void testNumberOfExclusions() {
-        assertEquals("Did you change the number of eclipse excludes?", 5,
-                ECLIPSE_DEFAULT_EXCLUDES.size());
-        assertEquals("Did you change the number of idea excludes?", 4,
-                IDEA_DEFAULT_EXCLUDES.size());
-        assertEquals("Did you change the number of mvn excludes?", 8,
-                MAVEN_DEFAULT_EXCLUDES.size());
+        assertEquals(5,
+                ECLIPSE_DEFAULT_EXCLUDES.size(),"Did you change the number of eclipse excludes?");
+        assertEquals(4,
+                IDEA_DEFAULT_EXCLUDES.size(), "Did you change the number of idea excludes?");
+        assertEquals(8,
+                MAVEN_DEFAULT_EXCLUDES.size(), "Did you change the number of mvn excludes?");
     }
 
     @Test
@@ -95,14 +93,15 @@ public class ExclusionHelperTest {
         assertTrue(exclusion.isEmpty());
         exclusion.addAll(addPlexusAndScmDefaults(log, true));
         assertEquals(
-                "Did you upgrade plexus to get more default excludes?",//
                 expectedSizeMergedFromPlexusDefaultsAndScm,//
-                exclusion.size());
+                exclusion.size(), //
+                "Did you upgrade plexus to get more default excludes?");
         exclusion.addAll(addPlexusAndScmDefaults(log, true));
         assertEquals(
-                "Did you upgrade plexus to get more default excludes?",//
                 expectedSizeMergedFromPlexusDefaultsAndScm,//
-                exclusion.size());
+                exclusion.size(), //
+                "Did you upgrade plexus to get more default excludes?"
+                );
     }
 
 }

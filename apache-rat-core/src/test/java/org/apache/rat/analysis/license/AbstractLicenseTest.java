@@ -18,18 +18,16 @@
  */
 package org.apache.rat.analysis.license;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
@@ -41,8 +39,10 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 
 /**
  * Test to see if short form license information will be recognized correctly.
@@ -55,21 +55,12 @@ abstract public class AbstractLicenseTest {
     private Defaults defaults;
     protected MetaData data;
 
-    private final String id;
-    private final String family;
-    private final String name;
-    private final String notes;
-    private final String[][] targets;
-
-    protected AbstractLicenseTest(String id, String family, String name, String notes, String[][] targets) {
-        this.id = id;
-        this.family = ILicenseFamily.makeCategory(family);
-        this.name = name;
-        this.notes = notes;
-        this.targets = targets;
+    
+    protected AbstractLicenseTest() {
     }
+    
 
-    @Before
+    @BeforeEach
     public void setup() {
         data = new MetaData();
         defaults = Defaults.builder().build();
@@ -85,30 +76,31 @@ abstract public class AbstractLicenseTest {
         return result;
     }
 
-    @Test
-    public void testMatchProcessing() throws IOException {
+    @ParameterizedTest
+    @MethodSource("parameterProvider")
+    public void testMatchProcessing(String id, String familyPattern, String name, String notes, String[][] targets) throws IOException {
         ILicense license = extractCategory(id);
+        String family = ILicenseFamily.makeCategory(familyPattern);
             try {
                 for (String[] target : targets) {
                     if (processText(license, target[TEXT])) {
                         data.reportOnLicense(license);
-                        assertNotNull("No URL HEADER CATEGORY", data.get(MetaData.RAT_URL_HEADER_CATEGORY));
-                        assertEquals(license.toString(), family,
-                                data.get(MetaData.RAT_URL_HEADER_CATEGORY).getValue());
-                        assertNotNull("No URL LICENSE FAMILY CATEGORY",
-                                data.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY));
-                        assertEquals(license.toString(), family,
-                                data.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY).getValue());
+                        assertNotNull(data.get(MetaData.RAT_URL_HEADER_CATEGORY),"No URL HEADER CATEGORY");
+                        assertEquals(family,
+                                data.get(MetaData.RAT_URL_HEADER_CATEGORY).getValue(), license.toString());
+                        assertNotNull(data.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY), "No URL LICENSE FAMILY CATEGORY");
+                        assertEquals(family,
+                                data.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY).getValue(), license.toString());
                         if (StringUtils.isNotBlank(notes)) {
-                            assertNotNull("No URL HEADER SAMPLE", data.get(MetaData.RAT_URL_HEADER_SAMPLE));
-                            assertEquals(license.toString(), FullTextMatcher.prune(notes),
-                                    FullTextMatcher.prune(data.get(MetaData.RAT_URL_HEADER_SAMPLE).getValue()));
+                            assertNotNull(data.get(MetaData.RAT_URL_HEADER_SAMPLE), "No URL HEADER SAMPLE");
+                            assertEquals(FullTextMatcher.prune(notes),
+                                    FullTextMatcher.prune(data.get(MetaData.RAT_URL_HEADER_SAMPLE).getValue()), license.toString());
                         } else {
-                            assertNull("URL HEADER SAMPLE was not null", data.get(MetaData.RAT_URL_HEADER_SAMPLE));
+                            assertNull(data.get(MetaData.RAT_URL_HEADER_SAMPLE), "URL HEADER SAMPLE was not null");
                         }
-                        assertNotNull("No URL LICENSE FAMILY NAME", data.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME));
-                        assertEquals(license.toString(), name,
-                                data.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME).getValue());
+                        assertNotNull(data.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME), "No URL LICENSE FAMILY NAME");
+                        assertEquals(name,
+                                data.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME).getValue(), license.toString());
                         data.clear();
                     } else {
                         fail(license + " was not matched by " + target[NAME]);
@@ -133,8 +125,9 @@ abstract public class AbstractLicenseTest {
         }
     }
 
-    @Test
-    public void testEmbeddedStrings() throws IOException {
+    @ParameterizedTest
+    @MethodSource("parameterProvider")
+    public void testEmbeddedStrings(String id, String family, String name, String notes, String[][] targets) throws IOException {
         String formats[] = { "%s", "now is not the time %s for copyright", "#%s", "##%s", "## %s", "##%s##", "## %s ##",
                 "/*%s*/", "/* %s */" };
 
@@ -144,8 +137,8 @@ abstract public class AbstractLicenseTest {
                     for (String fmt : formats) {
                         boolean found = processText(license, String.format(fmt, target[TEXT]));
                         license.reset();
-                        assertTrue(String.format("%s %s did not match pattern '%s' for target string %s", id,
-                                name, fmt, target[NAME]), found);
+                        assertTrue(found, ()->String.format("%s %s did not match pattern '%s' for target string %s", id,
+                                name, fmt, target[NAME]));
                     }
                 }
             } finally {

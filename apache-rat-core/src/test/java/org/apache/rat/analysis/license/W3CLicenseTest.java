@@ -18,35 +18,27 @@
  */
 package org.apache.rat.analysis.license;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.provider.Arguments;
 
-@RunWith(Parameterized.class)
+
 public class W3CLicenseTest extends AbstractLicenseTest {
 
     private static String W3C_note = "Note that W3C requires a NOTICE.\n" + "All modifications require notes.\n"
             + "See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.";
-    private static Object[] W3C = { "W3C", "W3C Software Copyright", W3C_note,
+    private static Arguments W3C = Arguments.of( "W3C", "W3C", "W3C Software Copyright", W3C_note,
             new String[][] { { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231" },
                     { "spdx-tab", "SPDX-License-Identifier:\tW3C" },
-                    { "spdx-space", "SPDX-License-Identifier: W3C" }, } };
+                    { "spdx-space", "SPDX-License-Identifier: W3C" }, } );
 
     private static String W3CD_note = "Note that W3CD does not allow modifications.\n"
             + "See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.";
-    private static Object[] W3CD = { "W3CD", "W3C Document Copyright", W3CD_note, new String[][] {
-            { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231" }, } };
+    private static Arguments W3CD = Arguments.of("W3CD", "W3CD","W3C Document Copyright", W3CD_note, new String[][] {
+            { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231" }, } );
 
-    @Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(W3C, W3CD);
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of(W3C, W3CD);
     }
-
-    public W3CLicenseTest(String id, String name, String note, String[][] targets) {
-        super(id, id, name, note, targets);
-    }
-
+    
 }

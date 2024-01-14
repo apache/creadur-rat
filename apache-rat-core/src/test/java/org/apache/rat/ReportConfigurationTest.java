@@ -18,7 +18,12 @@
  */
 package org.apache.rat;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,12 +42,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.function.Function;
 
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.configuration.ConfigurationReaderTest;
 import org.apache.rat.license.ILicense;
@@ -50,17 +57,23 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
+import org.apache.rat.utils.ReportingSet.Options;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class ReportConfigurationTest {
 
     private ReportConfiguration underTest;
+    private LoggingCapture log;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        underTest = new ReportConfiguration();
+        log = new LoggingCapture();
+        underTest = new ReportConfiguration(log);
     }
 
     @Test
@@ -357,18 +370,122 @@ public class ReportConfigurationTest {
     
     @Test
     public void testSetOut() throws IOException {
-        ReportConfiguration config = new ReportConfiguration();
-        OutputStreamIntercepter osi = new OutputStreamIntercepter();
-        config.setOut(() -> osi);
-        assertThat(osi.closeCount).isEqualTo(0);
-        try (OutputStream os = config.getOutput().get()) {
-            assertThat(osi.closeCount).isEqualTo(0);
+        ReportConfiguration config = new ReportConfiguration(log);
+        try (OutputStreamIntercepter osi = new OutputStreamIntercepter()) {
+			config.setOut(() -> osi);
+			assertThat(osi.closeCount).isEqualTo(0);
+			try (OutputStream os = config.getOutput().get()) {
+			    assertThat(osi.closeCount).isEqualTo(0);
+			}
+			assertThat(osi.closeCount).isEqualTo(1);
+			try (OutputStream os = config.getOutput().get()) {
+			    assertThat(osi.closeCount).isEqualTo(1);
+			}
+			assertThat(osi.closeCount).isEqualTo(2);
+		}
+    }
+    
+    @Test
+    public void logFamilyCollisionTest() {
+        // setup
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
+        assertFalse(log.captured.toString().contains("CAT"));
+       
+        // verify default collision logs WARNING
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("WARN"), ()->"default value not WARN");
+        assertTrue(log.captured.toString().contains("CAT"), ()->"'CAT' not found");
+        
+        // verify level setting works.
+        for (Level l : Level.values()) {
+        log.clear();
+        underTest.logFamilyCollisions(l);
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("CAT"), ()->"'CAT' not found");
+        assertTrue(log.captured.toString().contains(l.name()), ()->"logging not set to "+l);
         }
-        assertThat(osi.closeCount).isEqualTo(1);
-        try (OutputStream os = config.getOutput().get()) {
-            assertThat(osi.closeCount).isEqualTo(1);
-        }
-        assertThat(osi.closeCount).isEqualTo(2);
+
+    }
+    
+    @Test
+    public void familyDuplicateOptionsTest() {
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
+        assertFalse(log.captured.toString().contains("CAT"));
+        
+        // verify default second setting ignores change
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("CAT"));
+        assertEquals("name", underTest.getLicenseFamilies(LicenseFilter.all).stream()
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
+        
+        underTest.familyDuplicateOption(Options.OVERWRITE);
+        // verify second setting ignores change
+        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+        assertTrue(log.captured.toString().contains("CAT"));
+        assertEquals("name2", underTest.getLicenseFamilies(LicenseFilter.all).stream()
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
+
+        // verify fail throws exception
+        underTest.familyDuplicateOption(Options.FAIL);
+        assertThrows( IllegalArgumentException.class, ()->underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2")));
+  
+        underTest.familyDuplicateOption(Options.IGNORE);
+    }
+    
+    
+    @Test
+    public void logLicenseCollisionTest() {
+        // setup
+        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
+        IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
+        when(matcher.getId()).thenReturn("Macher ID");
+        underTest.addFamily(family);
+        underTest.addLicense(ILicense.builder().setId("ID").setName("license name").setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
+        
+        // verify default collistion logs WARN
+        underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
+        assertTrue(log.captured.toString().contains("WARN"));
+        
+        log.clear();
+        underTest.logLicenseCollisions(Level.ERROR);
+        
+        // verify second setting changes logs issue
+        underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all)));
+        assertTrue(log.captured.toString().contains("ERROR"));
+
+    }
+    
+    @Test
+    public void licenseDuplicateOptionsTest() {
+        // setup
+        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
+        IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
+        when(matcher.getId()).thenReturn("Macher ID");
+        underTest.addFamily(family);
+        Function<String,ILicense> makeLicense = s -> ILicense.builder().setId("ID").setName(s).setLicenseFamilyCategory(family.getFamilyCategory())
+                .setMatcher( matcher ).build(underTest.getLicenseFamilies(LicenseFilter.all));
+                
+        underTest.addLicense(makeLicense.apply("license name"));
+        
+        // verify default second setting ignores change
+        underTest.addLicense(makeLicense.apply("license name2"));
+        assertTrue(log.captured.toString().contains("WARN"));
+        assertEquals("license name",
+                underTest.getLicenses(LicenseFilter.all).stream().map(ILicense::getName).findFirst().get());
+        
+        underTest.licenseDuplicateOption(Options.OVERWRITE);
+        underTest.addLicense(makeLicense.apply("license name2"));
+        assertEquals("license name2",
+                underTest.getLicenses(LicenseFilter.all).stream().map(ILicense::getName).findFirst().get());
+        
+         
+        // verify fail throws exception
+        underTest.licenseDuplicateOption(Options.FAIL);
+        assertThrows( IllegalArgumentException.class, ()-> underTest.addLicense(makeLicense.apply("another name")));
+
     }
     
     /**
@@ -396,11 +513,11 @@ public class ReportConfigurationTest {
      * @param config the configuration to test.
      */
     public static void validateDefaultLicenseFamilies(ReportConfiguration config, String...additionalIds) {
-        assertThat(config.getFamilies()).hasSize(ConfigurationReaderTest.EXPECTED_IDS.length + additionalIds.length);
+        assertThat(config.getLicenseFamilies(LicenseFilter.all)).hasSize(ConfigurationReaderTest.EXPECTED_IDS.length + additionalIds.length);
         List<String> expected = new ArrayList<>();
         expected.addAll(Arrays.asList(ConfigurationReaderTest.EXPECTED_IDS));
         expected.addAll(Arrays.asList(additionalIds));
-        for (ILicenseFamily family : config.getFamilies()) {
+        for (ILicenseFamily family : config.getLicenseFamilies(LicenseFilter.all)) {
             assertThat(expected).contains(family.getFamilyCategory().trim());
         }
     }
@@ -437,6 +554,21 @@ public class ReportConfigurationTest {
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);
         validateDefaultLicenses(config);
+    }
+    
+    private class LoggingCapture implements Log {
+
+        StringBuilder captured = new StringBuilder();
+        
+        public void clear() {
+            captured = new StringBuilder();
+        }
+        
+        @Override
+        public void log(Level level, String msg) {
+            captured.append( String.format("%s: %s%n", level, msg));
+        }
+        
     }
     
     static class OutputStreamIntercepter extends OutputStream {

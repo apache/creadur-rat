@@ -18,6 +18,10 @@
  */
 package org.apache.rat.analysis.license;
 
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.provider.Arguments;
+
 public class OASISLicenseTest extends AbstractLicenseTest {
 
     private static String id = "OASIS";
@@ -29,8 +33,8 @@ public class OASISLicenseTest extends AbstractLicenseTest {
                     + "in its implementation may be prepared copied published and distributed"
                     + "\\nCopyright OASIS Open, 1999" }, };
 
-    public OASISLicenseTest() {
-        super(id, id, name, notes, targets);
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of(Arguments.of(id, id, name, notes, targets));
     }
     /*
     @Test(timeout = 2000) // may need to be adjusted if many more files are added

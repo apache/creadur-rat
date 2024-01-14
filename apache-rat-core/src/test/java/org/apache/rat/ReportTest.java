@@ -18,7 +18,10 @@
  */
 package org.apache.rat;
 
-import static org.junit.Assert.assertNotNull;
+
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -31,8 +34,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ReportTest {
     @Test
@@ -56,11 +58,11 @@ public class ReportTest {
         ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
         Reporter.report(config);
         File output = new File("target/test");
-        Assert.assertTrue(output.exists());
+        assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
-        Assert.assertTrue(content.contains("2 Unknown Licenses"));
-        Assert.assertTrue(content.contains("target/test-classes/elements/Source.java"));
-        Assert.assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
+        assertTrue(content.contains("2 Unknown Licenses"));
+        assertTrue(content.contains("target/test-classes/elements/Source.java"));
+        assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
     }
 
     @Test
@@ -71,11 +73,11 @@ public class ReportTest {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{});
         ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
         Reporter.report(config);
-        Assert.assertTrue(output.exists());
+        assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
-        Assert.assertTrue(content.contains("2 Unknown Licenses"));
-        Assert.assertTrue(content.contains("target/test-classes/elements/Source.java"));
-        Assert.assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
+        assertTrue(content.contains("2 Unknown Licenses"));
+        assertTrue(content.contains("target/test-classes/elements/Source.java"));
+        assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
         System.setOut(origin);
     }
 

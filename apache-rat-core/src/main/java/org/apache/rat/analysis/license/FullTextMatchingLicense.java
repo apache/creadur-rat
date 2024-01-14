@@ -18,16 +18,6 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import java.util.Arrays;
-import java.util.Locale;
-
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.analysis.matchers.FullTextMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData.Datum;
-import org.apache.rat.configuration.builders.AbstractBuilder;
-import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
 import org.apache.rat.license.ILicense;
 

@@ -16,21 +16,36 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.analysis.license;
+package org.apache.rat.utils;
 
-import java.util.stream.Stream;
+/**
+ * A default implementation of Log that writes to System.out and System.err
+ */
+public class DefaultLog implements Log {
 
-import org.junit.jupiter.params.provider.Arguments;
+    /**
+     * The instance of the default log.
+     */
+    public static final DefaultLog INSTANCE = new DefaultLog();
 
-public class IllumosLicenseTest extends AbstractLicenseTest {
-    private static String id = "ILLUMOS";
-    private static String note = "Modified CDDL1 license";
-    private static String[][] targets = { { "illumos",
-            "The contents of this file are subject to the terms of the "
-                    + "Common Development and Distribution License (the \"License\") "
-                    + "You may not use this file except in compliance with the License. " } };
+    private DefaultLog() {
+    }
 
-    public static Stream<Arguments> parameterProvider() {
-        return Stream.of(Arguments.of(id, CDDL1LicenseTest.id, CDDL1LicenseTest.name, note, targets));
+    @Override
+    public void log(Level level, String msg) {
+        switch (level) {
+        case DEBUG:
+        case INFO:
+        case WARN:
+            System.out.format("%s: %s%n", level, msg);
+            break;
+        case ERROR:
+            System.err.format("%s: %s%n", level, msg);
+            break;
+		case OFF:
+			break;
+		default:
+			break;
+        }
     }
 }

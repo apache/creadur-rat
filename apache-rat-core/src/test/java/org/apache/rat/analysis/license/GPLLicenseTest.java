@@ -18,28 +18,26 @@
  */
 package org.apache.rat.analysis.license;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Tests GPL license occurrences within comments and other characters. Works for
  * GPL1 to GPL3.
  */
-@RunWith(Parameterized.class)
+
 public class GPLLicenseTest extends AbstractLicenseTest {
 
-    private static Object[] GPL1 = { "GPL1", "GNU General Public License, version 1", new String[][] {
+    private static Arguments GPL1 = Arguments.of( "GPL1", "GPL1", "GNU General Public License, version 1", null, 
+            new String[][] {
             { "fulltext", "This program is free software; you can redistribute it and/or modify\n "
                     + "it under the terms of the GNU General Public License as published by\n "
                     + "the Free Software Foundation; either version 1, or (at your option)\n " + "any later version." },
             { "spdx-tab", "SPDX-License-Identifier:\tGPL-1.0-only" },
-            { "spdx-space", "SPDX-License-Identifier: GPL-1.0-only" }, } };
+            { "spdx-space", "SPDX-License-Identifier: GPL-1.0-only" }, } );
 
-    private static Object[] GPL2 = { "GPL2", "GNU General Public License, version 2",
+    private static Arguments GPL2 = Arguments.of( "GPL2", "GPL2", "GNU General Public License, version 2", null,
             new String[][] {
                     { "fulltext",
                             "This program is free software; you can redistribute it and/or\n"
@@ -47,9 +45,9 @@ public class GPLLicenseTest extends AbstractLicenseTest {
                                     + "as published by the Free Software Foundation; either version 2\n"
                                     + "of the License, or (at your option) any later version." },
                     { "spdx-tab", "SPDX-License-Identifier:\tGPL-2.0-only" },
-                    { "spdx-space", "SPDX-License-Identifier: GPL-2.0-only" }, } };
+                    { "spdx-space", "SPDX-License-Identifier: GPL-2.0-only" }, } );
 
-    private static Object[] GPL3 = { "GPL3", "GNU General Public License, version 3",
+    private static Arguments GPL3 = Arguments.of( "GPL3", "GPL3", "GNU General Public License, version 3", null,
             new String[][] {
                     { "fulltext",
                             "This program is free software: you can redistribute it and/or modify\n"
@@ -57,14 +55,10 @@ public class GPLLicenseTest extends AbstractLicenseTest {
                                     + "    the Free Software Foundation, either version 3 of the License, or\n"
                                     + "    (at your option) any later version." },
                     { "spdx-tab", "SPDX-License-Identifier:\tGPL-3.0-only" },
-                    { "spdx-space", "SPDX-License-Identifier: GPL-3.0-only" }, } };
+                    { "spdx-space", "SPDX-License-Identifier: GPL-3.0-only" }, } );
 
-    @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(GPL1, GPL2, GPL3);
-    }
 
-    public GPLLicenseTest(String id, String name, String[][] targets) {
-        super(id, id, name, null, targets);
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of(GPL1, GPL2, GPL3);
     }
 }

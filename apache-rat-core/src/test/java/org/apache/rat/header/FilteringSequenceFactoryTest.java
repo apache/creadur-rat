@@ -18,13 +18,13 @@
  */ 
 package org.apache.rat.header;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FilteringSequenceFactoryTest {
 
@@ -32,7 +32,7 @@ public class FilteringSequenceFactoryTest {
     private FilteringSequenceFactory factory;
     private SimpleCharFilter filter;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         capacity = 50;
         filter = new SimpleCharFilter();
@@ -46,12 +46,12 @@ public class FilteringSequenceFactoryTest {
         CharSequence result = factory.filter(reader);
         assertNotNull(result);
         String output = result.toString();
-        assertEquals("No filtering so input equals output.", INPUT, output);
+        assertEquals(INPUT, output, "No filtering so input equals output.");
         reader = new StringReader(INPUT);
         result = factory.filter(reader);
         assertNotNull(result);
         output = result.toString();
-        assertEquals("No filtering so input equals output. Independent of previous input", INPUT, output);
+        assertEquals(INPUT, output, "No filtering so input equals output. Independent of previous input");
     }
 
     @Test
@@ -61,12 +61,12 @@ public class FilteringSequenceFactoryTest {
         CharSequence result = factory.filter(reader);
         assertNotNull(result);
         String output = result.toString();
-        assertEquals("No filtering so input equals output.", INPUT, output);
+        assertEquals(INPUT, output, "No filtering so input equals output.");
         filter.filterOut = true;
         reader = new StringReader(INPUT);
         result = factory.filter(reader);
         assertNotNull(result);
-        assertEquals("All filtered output is empty. Independent of previous input", 0, result.length());
+        assertEquals( 0, result.length(), "All filtered output is empty. Independent of previous input");
     }
     
     @Test
@@ -76,6 +76,6 @@ public class FilteringSequenceFactoryTest {
         CharSequence result = factory.filter(reader);
         assertNotNull(result);
         String output = result.toString();
-        assertEquals("No filtering so input equals output.", INPUT.substring(0, capacity), output);
+        assertEquals(INPUT.substring(0, capacity), output, "No filtering so input equals output.");
     }
 }

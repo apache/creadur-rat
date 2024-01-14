@@ -18,9 +18,10 @@
  */
 package org.apache.rat.report.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,9 +45,10 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class XmlReportFactoryTest {
 
@@ -57,7 +59,7 @@ public class XmlReportFactoryTest {
     private StringWriter out;
     private IXmlWriter writer;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         out = new StringWriter();
         writer = new XmlWriter(out);
@@ -79,7 +81,7 @@ public class XmlReportFactoryTest {
 
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY, HiddenFileFilter.HIDDEN);
         final ClaimStatistic statistic = new ClaimStatistic();
-        final ReportConfiguration configuration = new ReportConfiguration();
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         configuration.addLicense(testingLicense);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
@@ -87,18 +89,18 @@ public class XmlReportFactoryTest {
         report.endReport();
         writer.closeDocument();
         final String output = out.toString();
-        assertTrue("Preamble and document element are OK",
-                output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="));
+        assertTrue(
+                output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="), "Preamble and document element are OK");
 
-        assertTrue("Is well formed", XmlUtils.isWellFormedXml(output));
-        assertEquals("Binary files", Integer.valueOf(2),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY));
-        assertEquals("Notice files", Integer.valueOf(2),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE));
-        assertEquals("Standard files", Integer.valueOf(6),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD));
-        assertEquals("Archives", Integer.valueOf(1),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE));
+        assertTrue( XmlUtils.isWellFormedXml(output), "Is well formed");
+        assertEquals(Integer.valueOf(2),
+                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY), "Binary files");
+        assertEquals(Integer.valueOf(2),
+                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE), "Notice files");
+        assertEquals(Integer.valueOf(6),
+                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD), "Standard files");
+        assertEquals(Integer.valueOf(1),
+                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE), "Archives");
     }
 
     @Test
@@ -109,7 +111,7 @@ public class XmlReportFactoryTest {
         when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         final ClaimStatistic statistic = new ClaimStatistic();
-        final ReportConfiguration configuration = new ReportConfiguration();
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         // configuration.addLicense(mockLicense);
         try {
             XmlReportFactory.createStandardReport(writer, statistic, configuration);

@@ -20,7 +20,6 @@
 package org.apache.rat.walker;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -64,7 +63,7 @@ public class ArchiveWalker extends Walker implements IReportable {
     public void run(final RatReport report) throws RatException {
 
         try {
-            ArchiveInputStream input;
+            ArchiveInputStream<? extends ArchiveEntry> input;
 
             /* I am really sad that classes aren't first-class objects in
                Java :'( */

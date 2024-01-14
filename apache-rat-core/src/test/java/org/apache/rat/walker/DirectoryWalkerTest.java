@@ -18,35 +18,28 @@
  */
 package org.apache.rat.walker;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.lang3.SystemUtils;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
-import org.apache.rat.report.RatReport;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.DosFileAttributeView;
-import java.nio.file.attribute.DosFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
+import org.apache.rat.report.RatReport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 public class DirectoryWalkerTest {
-
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
+    
+    @TempDir
+	private File toWalk;
+    
     @Test
     public void walk() throws IOException, RatException {
-        File toWalk = folder.newFolder("test");
         File regular = new File(toWalk, "regular");
         regular.mkdir();
         File regularFile = new File(regular, "test");
@@ -68,13 +61,13 @@ public class DirectoryWalkerTest {
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
 
-        Assert.assertEquals(1, scanned.size());
+        assertEquals(1, scanned.size());
 
         walker = new DirectoryWalker(toWalk, FalseFileFilter.FALSE);
         scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
 
-        Assert.assertEquals(2, scanned.size());
+        assertEquals(2, scanned.size());
     }
 
     class TestRatReport implements RatReport {

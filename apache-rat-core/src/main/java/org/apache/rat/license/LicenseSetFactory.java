@@ -36,7 +36,16 @@ public class LicenseSetFactory {
         /** Only approved licenses are returned */
         approved,
         /** No licenses are returned */
-        none
+        none;
+        
+    	/**
+    	 * Converts from a String to an enum value. 
+    	 * @param s String representation.
+    	 * @return given licenseFilter for the given String representation.
+    	 */
+        static public LicenseFilter fromText(String s) {
+            return LicenseFilter.valueOf(s.toLowerCase());
+        }
     }
 
     private final SortedSet<ILicense> licenses;
@@ -113,7 +122,7 @@ public class LicenseSetFactory {
     }
     
     /**
-     * Gets the categories fof LicenseFamily objects based on the filter.
+     * Gets the categories of LicenseFamily objects based on the filter.
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicenseFamily categories.
      */

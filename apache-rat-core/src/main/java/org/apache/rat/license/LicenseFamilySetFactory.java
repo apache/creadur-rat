@@ -25,7 +25,7 @@ import java.util.TreeSet;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 
 /**
- * Class to take a set of ILicenses and collecton of approved license categories and extract Subsets.
+ * Class to take a set of ILicenses and collection of approved license categories and extract Subsets.
  */
 public class LicenseFamilySetFactory {
 
@@ -73,7 +73,7 @@ public class LicenseFamilySetFactory {
     
     
     /**
-     * Gets the categories fof LicenseFamily objects based on the filter.
+     * Gets the categories of LicenseFamily objects based on the filter.
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicenseFamily categories.
      */
@@ -97,9 +97,9 @@ public class LicenseFamilySetFactory {
     
     /**
      * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
-     * @param target The instance to serch  for.
+     * @param target The instance to search for.
      * @param licenseFamilies the license families to search
-     * @return
+     * @return the matching instance of the target given.
      */
     public static ILicenseFamily search(String target, SortedSet<ILicenseFamily> licenseFamilies) {
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory(target).setLicenseFamilyName("Searching family")
@@ -109,9 +109,9 @@ public class LicenseFamilySetFactory {
 
     /**
      * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
-     * @param target The instance to serch  for.
+     * @param target The instance to search for.
      * @param licenseFamilies the license families to search
-     * @return
+     * @return the matching instance of the target given.
      */
     public static ILicenseFamily search(ILicenseFamily target, SortedSet<ILicenseFamily> licenseFamilies) {
         SortedSet<ILicenseFamily> part = licenseFamilies.tailSet(target);

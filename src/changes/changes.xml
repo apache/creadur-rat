@@ -87,6 +87,15 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       <action issue="RAT-349" type="fix" dev="pottlinger" due-to="Niels Basjes">
         Fix NPE by falling back to default stylesheet if none was configured before.
       </action>
+      <action issue="RAT-346" type="add" dev="pottlinger" due-to="Claude Warren">
+        Issue a warning if a user defined License family has the same name as an existing one.
+      </action>
+      <action issue="RAT-346" type="add" dev="pottlinger" due-to="Claude Warren">
+        Migrate to JUnit5 and fix minor issues in tests and javadoc.
+      </action>
+      <action issue="RAT-346" type="remove" dev="pottlinger" due-to="Claude Warren">
+        Remove apache-rat-api module that contains misleading license-related classes.
+      </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.16.1
       </action>

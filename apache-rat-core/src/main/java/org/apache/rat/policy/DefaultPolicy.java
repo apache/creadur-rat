@@ -45,7 +45,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
 
     /**
      * adds an ILicenseFamily to the list of approved licenses.
-     * @param approvedLicense
+     * @param approvedLicense license to be approved.
      */
     public void add(ILicenseFamily approvedLicense) {
         this.approvedLicenseFamilies.add(approvedLicense);
@@ -78,8 +78,8 @@ public class DefaultPolicy implements IDocumentAnalyser {
     }
 
     /**
-     * Gets and unmodifiable reference to the SortedSet of approved licenses that this policy is holding.
-     * @return
+     * Gets an unmodifiable reference to the SortedSet of approved licenses that this policy is holding.
+     * @return sorted set of license family definitions.
      */
     public SortedSet<ILicenseFamily> getApprovedLicenseNames() {
         return Collections.unmodifiableSortedSet(approvedLicenseFamilies);

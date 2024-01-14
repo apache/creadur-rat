@@ -18,7 +18,7 @@
  */
 package org.apache.rat.testhelpers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -116,7 +116,7 @@ public final class XmlUtils {
 
     public static Node getNode(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         NodeList nodeList = (NodeList) xPath.compile(xpath).evaluate(source, XPathConstants.NODESET);
-        assertEquals("Could not find " + xpath, 1, nodeList.getLength());
+        assertEquals(1, nodeList.getLength(), "Could not find " + xpath);
         return nodeList.item(0);
     }
 

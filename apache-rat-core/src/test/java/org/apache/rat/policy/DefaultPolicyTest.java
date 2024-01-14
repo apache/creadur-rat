@@ -18,9 +18,9 @@
  */
 package org.apache.rat.policy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Collections;
 import java.util.SortedSet;
@@ -34,8 +34,8 @@ import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingLocation;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the Default policy imlementatin.
@@ -65,7 +65,7 @@ public class DefaultPolicyTest {
     private Defaults defaults;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         defaults = Defaults.builder().build();
         policy = new DefaultPolicy(defaults.getLicenseFamilies(LicenseFilter.approved));
@@ -94,7 +94,7 @@ public class DefaultPolicyTest {
     @Test
     public void testApprovedLicenses() {
         
-        assertEquals("Approved license count mismatch", NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, APPROVED_FAMILIES.length);
+        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, APPROVED_FAMILIES.length, "Approved license count mismatch");
         for (ILicenseFamily family : APPROVED_FAMILIES) {
             setMetadata(family);
             policy.analyse(document);
@@ -109,7 +109,7 @@ public class DefaultPolicyTest {
         unapproved.addAll(all);
         unapproved.removeAll(defaults.getLicenseFamilies(LicenseFilter.approved));
 
-        assertEquals("Unapproved license count mismatch", all.size()-NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, unapproved.size());
+        assertEquals(all.size()-NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, unapproved.size(), "Unapproved license count mismatch");
         for (ILicenseFamily family : unapproved) {
             setMetadata(family);
             policy.analyse(document);
@@ -133,8 +133,7 @@ public class DefaultPolicyTest {
         assertApproval(false);
 
         policy.add(testingFamily);
-        assertNotNull("Did not properly add ILicenseFamily",
-                LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
+        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()), "Did not properly add ILicenseFamily");
         policy.analyse(document);
         assertApproval(true);
     }
@@ -150,8 +149,7 @@ public class DefaultPolicyTest {
 
         policy.add(testingFamily);
         assertEquals(1, policy.getApprovedLicenseNames().size());
-        assertNotNull("Did not properly add ILicenseFamily",
-                LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()));
+        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()), "Did not properly add ILicenseFamily");
         policy.analyse(document);
         assertApproval(true);
     }
@@ -168,7 +166,7 @@ public class DefaultPolicyTest {
             document = new TestingLocation("subject");
             document.getMetaData().set(d);
             policy.analyse(document);
-            assertNull( "failed on "+d.getValue(), document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE) );
+            assertNull( document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE), "failed on "+d.getValue());
         }
     }
 

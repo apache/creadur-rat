@@ -18,23 +18,23 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.testhelpers.TestingMatcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NotMatcherTest {
 
     private void assertValues(IHeaderMatcher target, State hello, State world, State finalize) {
         assertEquals(State.i, target.currentState());
-        assertEquals("hello match", hello, target.matches("hello"));
-        assertEquals("hello current", hello, target.currentState());
-        assertEquals("world match", world, target.matches("world"));
-        assertEquals("world current", world, target.currentState());
-        assertEquals("finalize", finalize, target.finalizeState());
-        assertEquals("finalize current", finalize, target.currentState());
+        assertEquals( hello, target.matches("hello"), "hello match");
+        assertEquals( hello, target.currentState(), "hello current");
+        assertEquals(world, target.matches("world"), "world match");
+        assertEquals( world, target.currentState(), "world current");
+        assertEquals(finalize, target.finalizeState(), "finalize match");
+        assertEquals(finalize, target.currentState(), "finalize current");
     }
 
     @Test

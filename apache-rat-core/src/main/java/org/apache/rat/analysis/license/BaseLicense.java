@@ -18,8 +18,6 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicenseFamily;
 
 @Deprecated // remove in v1.0
