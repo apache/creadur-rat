@@ -111,7 +111,7 @@ public class Defaults {
     }
 
     /**
-     * Gets a supplier for the "plain" text styleseet.
+     * Gets a supplier for the "plain" text stylesheet.
      * @return an IOSupplier for the plain text stylesheet.
      */
     public static IOSupplier<InputStream> getPlainStyleSheet() {

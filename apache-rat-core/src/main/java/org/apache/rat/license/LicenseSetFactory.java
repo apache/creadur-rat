@@ -117,7 +117,7 @@ public class LicenseSetFactory {
     }
     
     /**
-     * Gets the categories fof LicenseFamily objects based on the filter.
+     * Gets the categories of LicenseFamily objects based on the filter.
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicenseFamily categories.
      */
