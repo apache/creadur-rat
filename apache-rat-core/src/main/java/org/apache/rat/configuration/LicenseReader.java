@@ -45,7 +45,7 @@ public interface LicenseReader {
     /**
      * Reads the configuration and extracts instances of ILicenseFamily.
      * 
-     * @return A collection of ILicensFamily.
+     * @return A collection of ILicenseFamily.
      */
     SortedSet<ILicenseFamily> readFamilies();
 
@@ -53,7 +53,7 @@ public interface LicenseReader {
      * Reads the configuration and extracts the list of approved licenses.
      * 
      * @return The list of approved licenses specified in the configuration or an
-     * empty list if non specified.
+     * empty list if none specified.
      */
     SortedSet<String> approvedLicenseId();
 }

@@ -32,7 +32,7 @@ public interface MatcherReader {
     void addMatchers(URL url);
 
     /**
-     * Reads the configuration and MatcherBuilder classes and adds them to Readers..
+     * Reads the configuration and MatcherBuilder classes and adds them to Readers.
      */
     void readMatcherBuilders();
 }
