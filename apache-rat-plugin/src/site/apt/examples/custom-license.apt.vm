@@ -4,9 +4,9 @@
 ~~   The ASF licenses this file to You under the Apache License, Version 2.0
 ~~   (the "License"); you may not use this file except in compliance with
 ~~   the License.  You may obtain a copy of the License at
-~~  
+~~
 ~~        http://www.apache.org/licenses/LICENSE-2.0
-~~  
+~~
 ~~   Unless required by applicable law or agreed to in writing, software
 ~~   distributed under the License is distributed on an "AS IS" BASIS,
 ~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,17 +20,16 @@
 Custom License Matchers
 
   Rat comes with a set of predefined license matchers, that can be used
-  some typical licenses. However, they will not always be sufficient.
-  In such cases, you may use a custom license matcher.
+  on typical licenses. However, they will not always be sufficient.
+  In such cases, you may configure a custom license matcher.
 
   The simplest way to create a license check is to create an XML file describing
   the new license and add it to the processing with the additionalLicenseFiles
-  option.  
-  
+  option.
+
   The second option is to define the custom license directly in the POM.
-  Unlike earlier version no custom implementations are required to define
+  Unlike earlier version (before 0.16) no custom implementations are required to define
   custom licenses.
- 
 
 ------------------------------------------------------------------
   /**
@@ -78,7 +77,7 @@ Custom License Matchers
 
 Approved License Families
 
-  By default all POM defined licenses are considered approved, this is a 
+  By default all POM defined licenses are considered approved, this is a
   change from pre 0.16 versons.  If there are families that are defined in
   the pom but that should not be considered approved then a list of approved
   license families must be provided.
@@ -117,6 +116,3 @@ Approved License Families
     </plugins>
   </build>
 ------------------------------------------------------------------
-
-
-
