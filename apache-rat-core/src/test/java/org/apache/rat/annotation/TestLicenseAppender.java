@@ -23,6 +23,7 @@ import org.apache.rat.test.utils.Resources;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,17 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestLicenseAppender {
     
-    private static File baseTempFolder;
-    
-    @BeforeAll
-    public static void setup() throws IOException {
-        baseTempFolder = Files.createTempDirectory("tla").toFile();
-    }
-    
-    @AfterAll
-    public static void teardown() throws IOException {
-        FileUtils.deleteDirectory(baseTempFolder);
-    }
+	@TempDir
+    private File baseTempFolder;
+  
 
     private static final String FIRST_LICENSE_LINE = " Licensed to the Apache Software Foundation (ASF) under one";
 
@@ -59,7 +52,7 @@ public class TestLicenseAppender {
         void readFile(BufferedReader r) throws IOException;
     }
 
-    private static String getTemporaryFileWithName(String fileName) throws IOException {
+    private String getTemporaryFileWithName(String fileName) throws IOException {
         if (fileName != null) {
             return new File(baseTempFolder,fileName).getAbsolutePath();
         }
@@ -74,7 +67,7 @@ public class TestLicenseAppender {
         }
     }
 
-    private static void commonTestTemplate(String relativeName,
+    private void commonTestTemplate(String relativeName,
                                            FileCreator creator,
                                            NewFileReader reader)
             throws IOException {
