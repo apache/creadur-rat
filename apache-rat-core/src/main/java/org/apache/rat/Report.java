@@ -210,7 +210,7 @@ public class Report {
             if (cl.hasOption(STYLESHEET_CLI)) {
                 String[] style = cl.getOptionValues(STYLESHEET_CLI);
                 if (style.length != 1) {
-                    System.err.println("please specify a single stylesheet");
+                    System.err.println("Please specify a single stylesheet");
                     System.exit(1);
                 }
                 configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(style[0])));
@@ -271,18 +271,18 @@ public class Report {
         
         .addOption(
                 Option.builder().hasArg(true).longOpt(LIST_FAMILIES)
-                .desc("List the defined license families Valid options are: "+licFilterValues+". Default=none")
+                .desc("List the defined license families (default is none). Valid options are: "+licFilterValues+".")
                 .build())
         .addOption(
                 Option.builder().hasArg(true).longOpt(LIST_LICENSES)
-                .desc("List the defined licenses Valid options are: "+licFilterValues+". Default=none")
+                .desc("List the defined licenses (default is none). Valid options are: "+licFilterValues+".")
                 .build())
 
-        .addOption(new Option(HELP, "help", false, "Print help for the RAT command line interface and exit"));
+        .addOption(new Option(HELP, "help", false, "Print help for the RAT command line interface and exit."));
         
 
         Option out = new Option("o", "out", true,
-                "Define the output file where to write report (default is System.out)");
+                "Define the output file where to write a report to (default is System.out).");
         opts.addOption(out);
 
         String defaultHandlingText = " By default all approved default licenses are used";
@@ -306,7 +306,7 @@ public class Report {
         opts.addOptionGroup(addLicenseGroup);
 
         Option write = new Option(FORCE, "force", false,
-                "Forces any changes in files to be written directly to the source files (i.e. new files are not created)");
+                "Forces any changes in files to be written directly to the source files (i.e. new files are not created).");
         opts.addOption(write);
 
         Option copyright = new Option(COPYRIGHT, "copyright", true,
