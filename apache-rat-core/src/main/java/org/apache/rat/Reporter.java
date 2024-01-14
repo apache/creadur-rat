@@ -20,17 +20,12 @@ package org.apache.rat;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.SortedSet;
 
 import org.apache.rat.api.RatException;
-import org.apache.rat.license.ILicense;
-import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;

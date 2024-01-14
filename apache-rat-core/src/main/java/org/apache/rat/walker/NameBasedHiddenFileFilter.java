@@ -59,7 +59,8 @@ import java.io.Serializable;
  */
 public class NameBasedHiddenFileFilter extends AbstractFileFilter implements Serializable {
 
-    /**
+    private static final long serialVersionUID = -5951069871734926741L;
+	/**
      * Singleton instance of <i>hidden</i> filter.
      */
     public static final IOFileFilter HIDDEN = new NameBasedHiddenFileFilter();
