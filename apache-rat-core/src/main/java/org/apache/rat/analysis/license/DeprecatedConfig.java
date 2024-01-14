@@ -22,10 +22,14 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
 /**
- * A temoprary interface for deprecated configuration options.
+ * A temporary interface for deprecated configuration options.
  */
 @Deprecated // remove in v1.0
 public interface DeprecatedConfig {
+	
+	/**
+	 * @return the license definition.
+	 */
     ILicense.Builder getLicense();
     ILicenseFamily getLicenseFamily();
 }
