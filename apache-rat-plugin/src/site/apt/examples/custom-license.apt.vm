@@ -127,5 +127,4 @@ Overview of configuration options
 
   * Each license has one matcher.
 
-
-https://maven.apache.org/doxia/references/apt-format.html
+~~ https://maven.apache.org/doxia/references/apt-format.html
