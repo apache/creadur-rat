@@ -26,7 +26,10 @@ import org.apache.rat.document.CompositeDocumentException;
 
 public interface Document {
 
-    String getName();
+    /**
+     * @return the name of the current document.
+     */
+	String getName();
     
     /**
      * Reads the contents of this document.
