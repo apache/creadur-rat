@@ -38,6 +38,11 @@ public class LicenseSetFactory {
         /** No licenses are returned */
         none;
         
+    	/**
+    	 * Converts from a String to an enum value. 
+    	 * @param s String representation.
+    	 * @return given licenseFilter for the given String representation.
+    	 */
         static public LicenseFilter fromText(String s) {
             return LicenseFilter.valueOf(s.toLowerCase());
         }

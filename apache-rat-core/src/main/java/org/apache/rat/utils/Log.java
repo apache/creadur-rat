@@ -26,12 +26,32 @@ public interface Log {
     /**
      * The log levels supported by logging.
      */
-    public enum Level {OFF, DEBUG, INFO, WARN, ERROR };
+    public enum Level {
+    	/**
+    	 * Log nothing.
+    	 */
+    	OFF, 
+    	/**
+    	 * Log debug only.
+    	 */
+    	DEBUG, 
+    	/**
+    	 * Log info only.
+    	 */
+    	INFO, 
+    	/**
+    	 * Log warn only.
+    	 */
+    	WARN, 
+    	/**
+    	 * Log error only.
+    	 */
+    	ERROR };
 
     /**
      * Writes a message at a specific log level.
      * @param level The log level to write at.
-     * @param msg the Message to write.
+     * @param message the Message to write.
      */
-    void log(Level level, String msg);
+    void log(Level level, String message);
 }

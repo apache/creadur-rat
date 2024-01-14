@@ -34,7 +34,7 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 /**
- * Class the executes the report as defined in a ReportConfiguration.
+ * Class that executes the report as defined in a ReportConfiguration.
  */
 public class Reporter {
 
