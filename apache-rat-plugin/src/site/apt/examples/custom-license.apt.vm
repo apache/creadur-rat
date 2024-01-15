@@ -207,7 +207,7 @@ Overview of configuration options
 ------------------------------------------------------------------
 <all>
     <any> <!-- any of the enclosed matchers will cause a match. -->
-        <all>  <!-- must have both 'This text is required and a copyright statement -->
+        <all>  <!-- must have both 'This text is required' and a copyright statement -->
            <text>This text is required</text>
            <copyright />
         </all>
@@ -216,21 +216,15 @@ Overview of configuration options
         </copyright>
         <!-- accept any file with "Hello World" -->
         <regex>[H|h]ello\s[W|w]orld</regex>
-        <!-- accept any file with Apache 2 SPDX tag -->
+        <!-- accept any file with 'SPDX-License-Identifier: Apache-2.0' -->
         <spdx>Apache-2.0</spdx>
     </any>
-    <!-- make sure the text we don't want is not present -->
+    <!-- make sure the text 'This text must not be present' is not present -->
     <not>
        <text>This text must not be present</text>
     </not>
 </all>
 ------------------------------------------------------------------
-
-
-  If you define families and do not define <<<approvedFamilies>>> in your pom all the families are assumed to be approved.  If you want to exclude some familes 
-  that are defined in the POM you must list the approved ones in an <<<approvedFamilies>>> as shown below. 
-  
-
 
 
 ~~ https://maven.apache.org/doxia/references/apt-format.html
