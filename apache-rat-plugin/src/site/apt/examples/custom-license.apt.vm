@@ -82,11 +82,11 @@ Custom License Matchers
 Approved License Families
 
   By default all POM defined licenses are considered approved, this is a
-  change from pre 0.16 versons.  If there are families that are defined in
+  change from pre 0.16 versions.  If there are families that are defined in
   the pom but that should not be considered approved then a list of approved
   license families must be provided.
 
-  In the following exmaple, we define YASL1 and BAD1 and then indicate that
+  In the following example, we define YASL1 and BAD1 and then indicate that
   BAD1 is bad by specifying that YASL1 is good.
 
 ------------------------------------------------------------------
