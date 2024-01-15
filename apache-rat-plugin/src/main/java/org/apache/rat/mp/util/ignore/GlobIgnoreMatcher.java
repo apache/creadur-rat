@@ -19,7 +19,6 @@ package org.apache.rat.mp.util.ignore;
  * under the License.
  */
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.BufferedReader;
@@ -77,9 +76,8 @@ public class GlobIgnoreMatcher implements IgnoreMatcher {
     public void loadFile(final Log log, final File scmIgnore) {
         if (scmIgnore != null && scmIgnore.exists() && scmIgnore.isFile()) {
             log.debug("Parsing exclusions from " + scmIgnore);
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(scmIgnore));
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(scmIgnore))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (!isComment(line)) {
@@ -90,8 +88,6 @@ public class GlobIgnoreMatcher implements IgnoreMatcher {
             } catch (final IOException e) {
                 log.warn("Cannot parse " + scmIgnore + " for exclusions. Will skip this file.");
                 log.debug("Skip parsing " + scmIgnore + " due to " + e.getMessage());
-            } finally {
-                IOUtils.closeQuietly(reader);
             }
         }
     }
