@@ -96,7 +96,7 @@ public class SPDXMatcherFactory {
         // if the line has not been seen yet see if we can extract the SPDX id from the line.
         // if so then see if that name has been registered.  If so then we have a match and set 
         // lastMatch.
-        if (lastLine == null || !lastLine.equals(line)) {
+        if ((lastLine == null || !lastLine.equals(line)) && line.contains("SPDX-License-Identifier")) {
             Matcher matcher = groupSelector.matcher(line);
             if (matcher.find()) {
                 lastMatch = matchers.get(matcher.group(1));
