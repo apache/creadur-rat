@@ -84,7 +84,7 @@ Approved License Families
   the pom but that should not be considered approved then a list of approved
   license families must be provided.
 
-  In the following exmaple, we define YASL1 and BAD1 and then indicate that 
+  In the following exmaple, we define YASL1 and BAD1 and then indicate that
   BAD1 is bad by specifying that YASL1 is good.
 
 ------------------------------------------------------------------
@@ -136,26 +136,27 @@ Overview of configuration options
 * Matcher details
 
     <<all>> - A collection of matchers in which all enclosed matchers have to be true for the matcher to report true.
+
 ------------------------------------------------------------------
 <all>
    <text>This text is required</text>
    <text>as is this text, both have to trigger before 'all' will be true</text>
 </all>
-------------------------------------------------------------------    
+------------------------------------------------------------------
 
     <<any>> - A collection of matchers that will report true if any enclosed matcher is true.
+
 ------------------------------------------------------------------
 <any>
    <text>This text will trigger a match all by itself</text>
    <text>So will this text.</text>
 </any>
-------------------------------------------------------------------    
-    
+------------------------------------------------------------------
 
     <<copyright>> - A matcher that matches Copyright text.
     This uses regular expressions and so should only be used when looking for copyrights with specific patterns that are not caught by a standard text matcher.
     This matcher will match <<<"(C)">>>, <<<"copyright">>>, or <<<"©">>>. (text is not case sensitive).
-    It will also match things like <<<Copyright (c) joe 1995>>> as well as <<<Copyright (C) 1995 joe>>> and <<<Copyright (C) joe 1995e>>>.
+    It will also match things like <<<Copyright (c) joe 1995>>> as well as <<<Copyright (C) 1995 joe>>> and <<<Copyright (C) joe 1995>>>.
     Copyright has 3 child elements:
 
       * <<start>> - the starting date of the copyright or the only date.
@@ -163,7 +164,9 @@ Overview of configuration options
       * <<end>> - the ending date of the copyright.  Only valid if the starting date is provided.
 
       * <<owner>> - the copyright owner.
+
 ------------------------------------------------------------------
+
 <copyright> <!-- this will match (c) 1995-1996 joe, or (c) joe 1995-1996 -->
    <start>1995</text>
    <end>1996</end>
@@ -182,31 +185,35 @@ Overview of configuration options
 <copyright> <!-- this will match (c) nnnn, where nnnn is a 4 digit year -->
 </copyright>
 
-------------------------------------------------------------------          
+------------------------------------------------------------------
 
     <<not>> - A matcher that wraps one matcher and negates its value.  Not matchers require that the entire header be read before it can report true or false.  This may significantly slow processing.
+
 ------------------------------------------------------------------
 <not>
    <text>This text must not be present</text>
 </not>
-------------------------------------------------------------------    
+------------------------------------------------------------------
+
     <<regex>> - A matcher that matches a regex string.
+
 ------------------------------------------------------------------
 <regex>[H|h]ello\s[W|w]orld</regex>
-------------------------------------------------------------------    
-    
+------------------------------------------------------------------
+
 
     <<spdx>> - A matcher that matches SPDX tags.  SPDX tags have the form: <<<SPDX-License-Identifier: short-name>>>, where short-name matches the regex pattern <<<"[A-Za-z0-9\.\-]+".>>>  spdx takes the short name as an argument.
+
 ------------------------------------------------------------------
 <spdx>Apache-2.0</spdx>
-------------------------------------------------------------------    
+------------------------------------------------------------------
 
 
 ** Combining the examples together
 
 ------------------------------------------------------------------
 <all>
-    <any> <!-- any of the enclosed matchers will cause a match. -->
+    <any> <!-- HINT: any of the enclosed matchers will cause a match -->
         <all>  <!-- must have both 'This text is required' and a copyright statement -->
            <text>This text is required</text>
            <copyright />
@@ -225,6 +232,5 @@ Overview of configuration options
     </not>
 </all>
 ------------------------------------------------------------------
-
 
 ~~ https://maven.apache.org/doxia/references/apt-format.html
