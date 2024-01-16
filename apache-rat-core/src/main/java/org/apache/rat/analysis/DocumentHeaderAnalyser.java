@@ -55,7 +55,7 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
     @Override
     public void analyse(Document document) throws RatDocumentAnalysisException {
         try (Reader reader = document.reader()) {
-            log.info(format("Processing: %s", document));
+            log.debug(format("Processing: %s", document));
             HeaderCheckWorker worker = new HeaderCheckWorker(reader, license, document);
             worker.read();
         } catch (IOException e) {
