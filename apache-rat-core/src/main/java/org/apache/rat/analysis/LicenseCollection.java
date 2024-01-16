@@ -19,6 +19,7 @@
 package org.apache.rat.analysis;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
 import org.apache.rat.license.ILicense;
@@ -45,7 +46,7 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
      */
     public LicenseCollection(Collection<ILicense> enclosed) {
         super(enclosed);
-        this.enclosed = enclosed;
+        this.enclosed = Collections.unmodifiableCollection(enclosed);
         this.matchingLicense = null;
         this.lastState = State.i;
     }

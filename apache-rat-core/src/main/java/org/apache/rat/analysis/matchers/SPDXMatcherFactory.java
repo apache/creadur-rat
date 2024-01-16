@@ -127,5 +127,12 @@ public class SPDXMatcherFactory {
         protected boolean doMatch(String line) {
             return SPDXMatcherFactory.this.check(line, this);
         }
+        
+        @Override
+        public void reset() {
+            super.reset();
+            SPDXMatcherFactory.this.lastMatch = null;
+            
+        }
     }
 }

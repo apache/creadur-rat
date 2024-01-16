@@ -34,6 +34,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +58,7 @@ public class AnalyserFactoryTest {
         out = new StringWriter();
         final XmlWriter writer = new XmlWriter(out);
         reporter = new SimpleXmlClaimReporter(writer);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(Arrays.asList(MATCHES_NOTHING_MATCHER));
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE, Arrays.asList(MATCHES_NOTHING_MATCHER));
     }
 
     @Test

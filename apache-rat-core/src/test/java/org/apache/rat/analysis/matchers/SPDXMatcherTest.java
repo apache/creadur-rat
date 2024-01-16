@@ -72,4 +72,15 @@ public class SPDXMatcherTest {
         target.reset();
         assertEquals(State.i, target.currentState());
     }
+    
+    @Test
+    public void testResetClearsLastMatch() {
+        
+        assertEquals(State.i, target.currentState());
+        assertEquals(State.t, target.matches("SPDX-License-Identifier: hello"));
+        assertEquals(State.t, target.currentState());
+        target.reset();
+        assertEquals(State.i, target.currentState());
+        assertEquals(State.i, target.matches("Something weird"));;
+    }
 }

@@ -27,25 +27,32 @@ public class DefaultLog implements Log {
      * The instance of the default log.
      */
     public static final DefaultLog INSTANCE = new DefaultLog();
+    
+    private Level level;
 
     private DefaultLog() {
+        level = Level.INFO;
     }
 
+    public void setLevel(Level level) {
+        this.level = level;
+    }
     @Override
     public void log(Level level, String msg) {
-        switch (level) {
-        case DEBUG:
-        case INFO:
-        case WARN:
-            System.out.format("%s: %s%n", level, msg);
-            break;
-        case ERROR:
-            System.err.format("%s: %s%n", level, msg);
-            break;
-		case OFF:
-			break;
-		default:
-			break;
-        }
+        if (this.level.ordinal() <= level.ordinal())
+            switch (level) {
+            case DEBUG:
+            case INFO:
+            case WARN:
+                System.out.format("%s: %s%n", level, msg);
+                break;
+            case ERROR:
+                System.err.format("%s: %s%n", level, msg);
+                break;
+            case OFF:
+                break;
+            default:
+                break;
+            }
     }
 }

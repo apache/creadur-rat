@@ -29,6 +29,8 @@ import org.apache.rat.document.impl.guesser.ArchiveGuesser;
 import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
 
 /**
  * Creates default analysers.
@@ -40,11 +42,13 @@ public class DefaultAnalyserFactory {
      * @param licenses The licenses to use in  the Analyser.
      * @return A document analyser that uses the provides licenses.
      */
-    public static IDocumentAnalyser createDefaultAnalyser(Collection<ILicense> licenses) {
+    public static IDocumentAnalyser createDefaultAnalyser(Log log, Collection<ILicense> licenses) {
         if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
-        return new DefaultAnalyser(new LicenseCollection(licenses));
+        log.debug("Licenses in Test");
+        licenses.forEach(log::debug);
+        return new DefaultAnalyser(log, new LicenseCollection(licenses));
     }
 
     /**
@@ -56,13 +60,16 @@ public class DefaultAnalyserFactory {
          * The license to analyze
          */
         private final ILicense license;
+        /** The log to use */
+        private final Log log;
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
          * @param license The license to analyse
          */
-        public DefaultAnalyser(final ILicense license) {
+        public DefaultAnalyser(final Log log, final ILicense license) {
             this.license = license;
+            this.log = log;
         }
 
         @Override
@@ -76,7 +83,7 @@ public class DefaultAnalyserFactory {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
             } else {
                 documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(license);
+                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(log, license);
                 headerAnalyser.analyse(document);
             }
             document.getMetaData().set(documentCategory);

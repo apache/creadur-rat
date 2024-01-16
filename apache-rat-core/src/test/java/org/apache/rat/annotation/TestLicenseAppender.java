@@ -30,6 +30,7 @@ import java.io.Writer;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -73,7 +74,7 @@ public class TestLicenseAppender {
             createTestFile(name, creator);
 
             ApacheV2LicenseAppender appender =
-                    new ApacheV2LicenseAppender();
+                    new ApacheV2LicenseAppender(DefaultLog.INSTANCE);
             appender.append(new File(name));
 
             try (BufferedReader r = new BufferedReader(new FileReader(name + ".new"))){
@@ -107,7 +108,7 @@ public class TestLicenseAppender {
         File file = new File(filename);
         file.deleteOnExit();
         ApacheV2LicenseAppender appender =
-                new ApacheV2LicenseAppender();
+                new ApacheV2LicenseAppender(DefaultLog.INSTANCE);
         appender.append(file);
 
         File newFile = new File(filename + ".new");
@@ -501,7 +502,7 @@ public class TestLicenseAppender {
         File f = Resources.getResourceFile("violations/FilterTest.cs");
        
         ApacheV2LicenseAppender appender =
-                new ApacheV2LicenseAppender();
+                new ApacheV2LicenseAppender(DefaultLog.INSTANCE);
         appender.append(f);
 
         try (BufferedReader r =  new BufferedReader(new FileReader(f.getAbsolutePath()

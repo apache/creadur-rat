@@ -25,6 +25,9 @@ import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.utils.Log;
+
+import static java.lang.String.format;
 
 /**
  * A Document analyzer that analyses document headers for a license.
@@ -35,21 +38,24 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
      * The license to analyse
      */
     private final ILicense license;
+    /** the logger to use */
+    private final Log log;
 
     /**
      * Constructs the HeaderAnalyser for the specific license.
      * 
      * @param license The license to analyse
      */
-    public DocumentHeaderAnalyser(final ILicense license) {
+    public DocumentHeaderAnalyser(final Log log, final ILicense license) {
         super();
         this.license = license;
+        this.log = log;
     }
 
     @Override
     public void analyse(Document document) throws RatDocumentAnalysisException {
         try (Reader reader = document.reader()) {
-            // TODO: worker function should be moved into this class
+            log.info(format("Processing: %s", document));
             HeaderCheckWorker worker = new HeaderCheckWorker(reader, license, document);
             worker.read();
         } catch (IOException e) {
