@@ -96,6 +96,12 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       <action issue="RAT-346" type="remove" dev="pottlinger" due-to="Claude Warren">
         Remove apache-rat-api module that contains misleading license-related classes.
       </action>
+      <action issue="RAT-325" type="fix" dev="pottlinger" due-to="Claude Warren">
+        To improve the performance during SPDX processing a check to skip expensive regex operations was added.
+      </action>
+      <action issue="RAT-325" type="fix" dev="pottlinger" due-to="Claude Warren">
+        Internal logging feature enabled for license matching tests to avoid random test failures when manipulating System.out in test runs.
+      </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.16.1
       </action>
