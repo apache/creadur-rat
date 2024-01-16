@@ -263,7 +263,7 @@ public class ReportConfiguration {
      * closed consider wrapping it in a {@code NoCloseOutputStream}
      * 
      * @param out The OutputStream supplier that provides the output stream to write
-     * the report to. (may be null)
+     * the report to. A null value will use System.out.
      * @see NoCloseOutputStream
      */
     public void setOut(IOSupplier<OutputStream> out) {

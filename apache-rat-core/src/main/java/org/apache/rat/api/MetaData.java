@@ -205,6 +205,7 @@ public class MetaData {
      * @param license the license to add metadata for.
      */
     public void reportOnLicense(ILicense license) {
+        
         if (StringUtils.isNotBlank(license.getNotes())) {
             set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, license.getNotes()));
         }

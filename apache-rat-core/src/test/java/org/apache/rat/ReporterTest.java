@@ -35,6 +35,7 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -57,6 +58,7 @@ public class ReporterTest {
         configuration.setOut(() -> out);
         Reporter.report(configuration);
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
+        
         XPath xPath = XPathFactory.newInstance().newXPath();
 
         XmlUtils.getNode(doc, xPath, "/rat-report[@timestamp]");
@@ -76,6 +78,7 @@ public class ReporterTest {
 
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
         assertEquals(12, nodeList.getLength());
+
     }
 
     private static final String NL = System.getProperty("line.separator");
@@ -97,8 +100,9 @@ public class ReporterTest {
         configuration.setOut(() -> out);
         Reporter.report(configuration);
 
+        out.flush();
         String document = out.toString();
-        // System.out.println(document);
+
         assertTrue(document.startsWith(HEADER), "'Generated at' is present in " + document );
 
         // final int generatedAtLineEnd = document.indexOf(NL, HEADER.length());

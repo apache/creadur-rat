@@ -24,6 +24,7 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 import java.io.IOException;
 import java.util.Calendar;

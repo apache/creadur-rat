@@ -126,13 +126,12 @@ public class Report {
      */
     public static void main(String[] args) throws Exception {
         Options opts = buildOptions();
-
         CommandLine cl;
         try {
             cl = new DefaultParser().parse(opts, args);
         } catch (ParseException e) {
-            System.err.println(e.getMessage());
-            System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
+            DefaultLog.INSTANCE.error(e.getMessage());
+            DefaultLog.INSTANCE.error("Please use the \"--help\" option to see a list of valid commands and options");
             System.exit(1);
             return; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
                     // for "cl"
@@ -147,7 +146,7 @@ public class Report {
             printUsage(opts);
         } else {
             ReportConfiguration configuration = createConfiguration(args[0], cl);
-            configuration.validate(System.err::println);
+            configuration.validate(DefaultLog.INSTANCE::error);
 
             boolean dryRun = false;
             
@@ -210,7 +209,7 @@ public class Report {
             if (cl.hasOption(STYLESHEET_CLI)) {
                 String[] style = cl.getOptionValues(STYLESHEET_CLI);
                 if (style.length != 1) {
-                    System.err.println("Please specify a single stylesheet");
+                    DefaultLog.INSTANCE.error("Please specify a single stylesheet");
                     System.exit(1);
                 }
                 configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(style[0])));
@@ -256,10 +255,10 @@ public class Report {
                 orFilter.addFileFilter(new NameFileFilter(exclusion));
                 orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
             } catch (PatternSyntaxException e) {
-                System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
+                DefaultLog.INSTANCE.error("Will skip given exclusion '" + exclude + "' due to " + e);
             }
         }
-        System.err.println("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
+        DefaultLog.INSTANCE.error("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
         return new NotFileFilter(orFilter);
     }
 

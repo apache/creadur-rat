@@ -19,6 +19,7 @@
 package org.apache.rat.annotation;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.utils.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -196,9 +197,16 @@ public abstract class AbstractLicenseAppender {
     }
 
     private boolean isForced;
+    /** The log to use */
+    private final Log log;
 
-    public AbstractLicenseAppender() {
+    /**
+     * Constructor
+     * @param log The log to use.
+     */
+    public AbstractLicenseAppender(final Log log) {
         super();
+        this.log = log;
     }
 
     /**
@@ -247,11 +255,11 @@ public abstract class AbstractLicenseAppender {
         if (isForced) {
             boolean deleted = document.delete();
             if (!deleted) {
-                System.err.println("Could not delete original file to prepare renaming.");
+                log.error("Could not delete original file to prepare renaming.");
             }
             boolean renamed = newDocument.renameTo(document.getAbsoluteFile());
             if (!renamed) {
-                System.err.println("Failed to rename new file, original file remains unchanged.");
+                log.error("Failed to rename new file, original file remains unchanged.");
             }
         }
     }

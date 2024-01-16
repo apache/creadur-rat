@@ -20,6 +20,8 @@ package org.apache.rat.annotation;
 
 import java.io.File;
 
+import org.apache.rat.utils.Log;
+
 
 /**
  * Add an Apache License V2 license header to a
@@ -35,8 +37,8 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
     /**
      * Create a license appender with the standard ASF license header.
      */
-    public ApacheV2LicenseAppender() {
-        super();
+    public ApacheV2LicenseAppender(final Log log) {
+        super(log);
     }
 
     /**
@@ -45,8 +47,8 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
      *
      * @param copyright copyright line.
      */
-    public ApacheV2LicenseAppender(String copyright) {
-        super();
+    public ApacheV2LicenseAppender(final Log log, String copyright) {
+        super(log);
         this.copyright = copyright;
     }
 

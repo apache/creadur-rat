@@ -106,16 +106,19 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     @Override
     protected boolean doMatch(String line) {
-        Matcher matcher = COPYRIGHT_PATTERN.matcher(line);
-        if (matcher.find()) {
-            String buffer = line.substring(matcher.end());
-            matcher = dateOwnerPattern.matcher(buffer);
-            if (matcher.find() && matcher.start() == 0) {
-                return true;
-            }
-            if (ownerDatePattern != null) {
-                matcher = ownerDatePattern.matcher(buffer);
-                return matcher.find() && matcher.start() == 0;
+        String lowerLine = line.toLowerCase();
+        if (lowerLine.contains("copyright") || lowerLine.contains("(c)") || line.contains("©")) {
+            Matcher matcher = COPYRIGHT_PATTERN.matcher(line);
+            if (matcher.find()) {
+                String buffer = line.substring(matcher.end());
+                matcher = dateOwnerPattern.matcher(buffer);
+                if (matcher.find() && matcher.start() == 0) {
+                    return true;
+                }
+                if (ownerDatePattern != null) {
+                    matcher = ownerDatePattern.matcher(buffer);
+                    return matcher.find() && matcher.start() == 0;
+                }
             }
         }
         return false;

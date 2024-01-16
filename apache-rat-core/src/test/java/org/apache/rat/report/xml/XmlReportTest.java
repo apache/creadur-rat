@@ -50,6 +50,7 @@ import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,7 +77,7 @@ public class XmlReportTest {
         final IHeaderMatcher qosMatcher = new CopyrightMatcher("2004", "2011", "QOS.ch");
         final ILicense qosLic = new TestingLicense("QOS", qosMatcher);
 
-        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(Arrays.asList(asfLic, qosLic));
+        IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE,Arrays.asList(asfLic, qosLic));
         final List<AbstractReport> reporters = new ArrayList<>();
         reporters.add(reporter);
         report = new ClaimReporterMultiplexer(analyser, reporters);

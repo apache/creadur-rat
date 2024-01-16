@@ -74,8 +74,6 @@ public class XmlReportFactoryTest {
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
 
-        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("TEST")
-                .setLicenseFamilyName("Testing family").build();
         
         final TestingLicense testingLicense = new TestingLicense(new TestingMatcher(true), family);
 

@@ -27,10 +27,7 @@ public interface Log {
      * The log levels supported by logging.
      */
     public enum Level {
-    	/**
-    	 * Log nothing.
-    	 */
-    	OFF, 
+        // these must be listed in order of decreasing noisiness.
     	/**
     	 * Log debug only.
     	 */
@@ -46,7 +43,11 @@ public interface Log {
     	/**
     	 * Log error only.
     	 */
-    	ERROR };
+    	ERROR,
+        /**
+         * Log nothing.
+         */
+        OFF};
 
     /**
      * Writes a message at a specific log level.
@@ -54,4 +55,24 @@ public interface Log {
      * @param message the Message to write.
      */
     void log(Level level, String message);
+    
+    default void log(Level level, Object message) {
+        log(level, message == null ? "NULL" : message.toString());
+    }
+    
+    default void debug(Object message) {
+        log(Level.DEBUG, message);
+    }
+
+    default void info(Object message) {
+        log(Level.INFO, message);
+    }
+    
+    default void warn(Object message) {
+        log(Level.WARN, message);
+    }
+    
+    default void error(Object message) {
+        log(Level.ERROR, message);
+    }
 }

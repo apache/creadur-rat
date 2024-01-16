@@ -34,6 +34,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class ReportTest {
@@ -67,18 +68,22 @@ public class ReportTest {
 
     @Test
     public void testDefaultOutput() throws Exception {
+        
         PrintStream origin = System.out;
-        File output = new File("target/sysout");
-        System.setOut(new PrintStream(output));
-        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{});
-        ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
-        Reporter.report(config);
-        assertTrue(output.exists());
-        String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
-        assertTrue(content.contains("2 Unknown Licenses"));
-        assertTrue(content.contains("target/test-classes/elements/Source.java"));
-        assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
-        System.setOut(origin);
+        try {
+            File output = new File("target/sysout");
+            System.setOut(new PrintStream(output));
+            CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{});
+            ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
+            Reporter.report(config);
+            assertTrue(output.exists());
+            String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
+            assertTrue(content.contains("2 Unknown Licenses"));
+            assertTrue(content.contains("target/test-classes/elements/Source.java"));
+            assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
+        } finally {
+            System.setOut(origin);
+        }
     }
 
 }

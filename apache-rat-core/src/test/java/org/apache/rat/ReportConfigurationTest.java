@@ -541,7 +541,6 @@ public class ReportConfigurationTest {
      * @param config The configuration to test.
      */
     public static void validateDefault(ReportConfiguration config) {
-        //config.validate( System.err::println );
         assertThat(config.isAddingLicenses()).isFalse();
         assertThat(config.isAddingLicensesForced()).isFalse();
         assertThat(config.getCopyrightMessage()).isNull();
