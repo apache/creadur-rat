@@ -4,9 +4,9 @@
 ~~   The ASF licenses this file to You under the Apache License, Version 2.0
 ~~   (the "License"); you may not use this file except in compliance with
 ~~   the License.  You may obtain a copy of the License at
-~~  
+~~
 ~~        http://www.apache.org/licenses/LICENSE-2.0
-~~  
+~~
 ~~   Unless required by applicable law or agreed to in writing, software
 ~~   distributed under the License is distributed on an "AS IS" BASIS,
 ~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,17 +20,20 @@
 Custom License Matchers
 
   Rat comes with a set of predefined license matchers, that can be used
-  some typical licenses. However, they will not always be sufficient.
-  In such cases, you may use a custom license matcher.
+  on typical licenses. However, they will not always be sufficient.
+  In such cases, you may configure a custom license matcher.
 
   The simplest way to create a license check is to create an XML file describing
   the new license and add it to the processing with the additionalLicenseFiles
-  option.  
-  
+  option.
+
   The second option is to define the custom license directly in the POM.
-  Unlike earlier version no custom implementations are required to define
+  Unlike earlier version (before 0.16) no custom implementations are required to define
   custom licenses.
- 
+
+  There is a file that defines all of the standard licenses: {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}
+
+  Please be aware that custom licenses need to have <<unique names>>, otherwise a warning is issued and your custom definitions are ignored in favour of the standard license definitions.
 
 ------------------------------------------------------------------
   /**
@@ -78,13 +81,13 @@ Custom License Matchers
 
 Approved License Families
 
-  By default all POM defined licenses are considered approved, this is a 
-  change from pre 0.16 versons.  If there are families that are defined in
+  By default all POM defined licenses are considered approved, this is a
+  change from pre 0.16 versions.  If there are families that are defined in
   the pom but that should not be considered approved then a list of approved
   license families must be provided.
 
-  To continue the example, to be explicit that the YASL1 license is approved
-  add an approvedLicenses section listing the IDs for the approved licenses.
+  In the following example, we define YASL1 and BAD1 and then indicate that
+  BAD1 is bad by specifying that YASL1 is good.
 
 ------------------------------------------------------------------
   <build>
@@ -107,6 +110,10 @@ Approved License Families
                <id>YASL1</id>
                <name>Yet Another Software License</name>
              </family>
+             <family>
+               <id>BAD1</id>
+               <name>A Bad Sofware License</name>
+             </family>
           </families>
           <approvedLicenses>
             <id>YASL1</id>
@@ -118,5 +125,114 @@ Approved License Families
   </build>
 ------------------------------------------------------------------
 
+Overview of configuration options
+
+  When defining custom licenses, remember the following architecture constraints:
+
+  * Each license is associated with a family.  Multiple licenses can be associated with a family.
+
+  * Each license may have a notes element.
+
+  * Each license has one matcher.
+
+* Matcher details
+
+    <<all>> - A collection of matchers in which all enclosed matchers have to be true for the matcher to report true.
+
+------------------------------------------------------------------
+<all>
+   <text>This text is required</text>
+   <text>as is this text, both have to trigger before 'all' will be true</text>
+</all>
+------------------------------------------------------------------
+
+    <<any>> - A collection of matchers that will report true if any enclosed matcher is true.
+
+------------------------------------------------------------------
+<any>
+   <text>This text will trigger a match all by itself</text>
+   <text>So will this text.</text>
+</any>
+------------------------------------------------------------------
+
+    <<copyright>> - A matcher that matches Copyright text.
+    This uses regular expressions and so should only be used when looking for copyrights with specific patterns that are not caught by a standard text matcher.
+    This matcher will match <<<"(C)">>>, <<<"copyright">>>, or <<<"©">>>. (text is not case sensitive).
+    It will also match things like <<<Copyright (c) joe 1995>>> as well as <<<Copyright (C) 1995 joe>>> and <<<Copyright (C) joe 1995>>>.
+    Copyright has 3 child elements:
+
+      * <<start>> - the starting date of the copyright or the only date.
+
+      * <<end>> - the ending date of the copyright.  Only valid if the starting date is provided.
+
+      * <<owner>> - the copyright owner.
+
+------------------------------------------------------------------
+
+<copyright> <!-- this will match (c) 1995-1996 joe, or (c) joe 1995-1996 -->
+   <start>1995</text>
+   <end>1996</end>
+   <owner>joe</owner>
+</copyright>
+
+<copyright> <!-- this will match (c) 1995 joe, or (c) joe 1995 -->
+   <start>1995</text>
+   <owner>joe</owner>
+</copyright>
+
+<copyright> <!-- this will match (c) nnnn joe, or (c) joe nnnn, where nnnn is a 4 digit year -->
+   <owner>joe</owner>
+</copyright>
+
+<copyright> <!-- this will match (c) nnnn, where nnnn is a 4 digit year -->
+</copyright>
+
+------------------------------------------------------------------
+
+    <<not>> - A matcher that wraps one matcher and negates its value.  Not matchers require that the entire header be read before it can report true or false.  This may significantly slow processing.
+
+------------------------------------------------------------------
+<not>
+   <text>This text must not be present</text>
+</not>
+------------------------------------------------------------------
+
+    <<regex>> - A matcher that matches a regex string.
+
+------------------------------------------------------------------
+<regex>[H|h]ello\s[W|w]orld</regex>
+------------------------------------------------------------------
 
 
+    <<spdx>> - A matcher that matches SPDX tags.  SPDX tags have the form: <<<SPDX-License-Identifier: short-name>>>, where short-name matches the regex pattern <<<"[A-Za-z0-9\.\-]+".>>>  spdx takes the short name as an argument.
+
+------------------------------------------------------------------
+<spdx>Apache-2.0</spdx>
+------------------------------------------------------------------
+
+
+** Combining the examples together
+
+------------------------------------------------------------------
+<all>
+    <any> <!-- HINT: any of the enclosed matchers will cause a match -->
+        <all>  <!-- must have both 'This text is required' and a copyright statement -->
+           <text>This text is required</text>
+           <copyright />
+        </all>
+        <copyright> <!-- accept any file that has a copyright by joe -->
+           <owner>joe</owner>
+        </copyright>
+        <!-- accept any file with "Hello World" -->
+        <regex>[H|h]ello\s[W|w]orld</regex>
+        <!-- accept any file with 'SPDX-License-Identifier: Apache-2.0' -->
+        <spdx>Apache-2.0</spdx>
+    </any>
+    <!-- make sure the text 'This text must not be present' is not present -->
+    <not>
+       <text>This text must not be present</text>
+    </not>
+</all>
+------------------------------------------------------------------
+
+~~ https://maven.apache.org/doxia/references/apt-format.html
