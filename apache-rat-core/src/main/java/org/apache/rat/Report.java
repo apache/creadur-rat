@@ -339,7 +339,7 @@ public class Report {
         opts.addOption(dir);
 
         opts.addOption( Option.builder().argName("level").longOpt(LOG_LEVEL)
-                .hasArgs().desc("sets the log level.  Valid options are: DEBUG, INFO, WARN, ERROR, NONE")
+                .hasArgs().desc("sets the log level.  Valid options are: DEBUG, INFO, WARN, ERROR, OFF")
                 .build() );
         
         OptionGroup outputType = new OptionGroup();
