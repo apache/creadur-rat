@@ -50,6 +50,7 @@ import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
@@ -110,6 +111,7 @@ public class Report {
      */
     private static final String LIST_FAMILIES = "list-families";
 
+    private static final String LOG_LEVEL = "log-level";
 
     /**
      * Set unstyled XML output
@@ -137,6 +139,15 @@ public class Report {
                     // for "cl"
         }
 
+        if (cl.hasOption(LOG_LEVEL)) {
+            try {
+                Log.Level level = Log.Level.valueOf(cl.getOptionValue(LOG_LEVEL).toUpperCase());
+                DefaultLog.INSTANCE.setLevel(level);
+            } catch (IllegalArgumentException e) {
+                DefaultLog.INSTANCE.warn(String.format("Invalied Log Level (%s) specified.", cl.getOptionValue(LOG_LEVEL)));
+                DefaultLog.INSTANCE.warn(String.format("Log level set at: %s", DefaultLog.INSTANCE.getLevel()));
+            }
+        }
         if (cl.hasOption(HELP)) {
             printUsage(opts);
         }
@@ -327,6 +338,10 @@ public class Report {
         Option dir = new Option("d", "dir", false, "Used to indicate source when using --exclude");
         opts.addOption(dir);
 
+        opts.addOption( Option.builder().argName("level").longOpt(LOG_LEVEL)
+                .hasArgs().desc("sets the log level.  Valid options are: DEBUG, INFO, WARN, ERROR, NONE")
+                .build() );
+        
         OptionGroup outputType = new OptionGroup();
 
         Option xml = new Option(XML, "xml", false, "Output the report in raw XML format.  Not compatible with -s");
@@ -336,6 +351,8 @@ public class Report {
                 "XSLT stylesheet to use when creating the" + " report.  Not compatible with -x");
         outputType.addOption(xslt);
         opts.addOptionGroup(outputType);
+        
+        
 
         return opts;
     }

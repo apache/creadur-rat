@@ -37,6 +37,11 @@ public class DefaultLog implements Log {
     public void setLevel(Level level) {
         this.level = level;
     }
+    
+    public Level getLevel() {
+        return level;
+    }
+    
     @Override
     public void log(Level level, String msg) {
         if (this.level.ordinal() <= level.ordinal())
