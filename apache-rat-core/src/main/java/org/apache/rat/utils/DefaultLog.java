@@ -31,7 +31,7 @@ public class DefaultLog implements Log {
     private Level level;
 
     private DefaultLog() {
-        level = Level.INFO;
+        level = Level.WARN;
     }
 
     public void setLevel(Level level) {
