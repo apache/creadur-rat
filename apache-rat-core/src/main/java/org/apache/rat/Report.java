@@ -144,7 +144,7 @@ public class Report {
                 Log.Level level = Log.Level.valueOf(cl.getOptionValue(LOG_LEVEL).toUpperCase());
                 DefaultLog.INSTANCE.setLevel(level);
             } catch (IllegalArgumentException e) {
-                DefaultLog.INSTANCE.warn(String.format("Invalied Log Level (%s) specified.", cl.getOptionValue(LOG_LEVEL)));
+                DefaultLog.INSTANCE.warn(String.format("Invalid Log Level (%s) specified.", cl.getOptionValue(LOG_LEVEL)));
                 DefaultLog.INSTANCE.warn(String.format("Log level set at: %s", DefaultLog.INSTANCE.getLevel()));
             }
         }
