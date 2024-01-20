@@ -43,7 +43,7 @@ Apache Rat
 
  Rat arises from the Apache style, but is used more widely.
  If your release style isn't supported,
- {{{./mail-lists.html}talk to us}}.
+ {{{./mailing-lists.html}talk to us}}.
 
 ** How Do I Use Rat?
 
@@ -57,11 +57,11 @@ Apache Rat
 
  Rat is extensible. If your build tool isn't supported, please contribute a
  {{{./issue-management.html}patch}} or
- {{{./mail-lists.html}talk to us}}.
+ {{{./mailing-lists.html}talk to us}}.
 
  Rat aspires to be self documenting. Please contribute a
  {{{./issue-management.html}patch}} or
- {{{./mail-lists.html}talk to us}}
+ {{{./mailing-lists.html}talk to us}}
  whenever Rat falls short.
 
 ** Who Develops Rat?
@@ -77,7 +77,7 @@ Apache Rat
   {{{https://wiki.c2.com/?TestDrivenDevelopment}demonstrate}} a
   {{{./issue-management.html}bug}}, or
   just
-  {{{./mail-lists.html}talk to us}}.
+  {{{./mailing-lists.html}talk to us}}.
   All welcome :-)
 
 * Quick Start: Running Rat

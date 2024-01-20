@@ -67,4 +67,4 @@ git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 mvn install
 +------------------------------------------+
 
- Subscribe to our {{{./mail-lists.html}mailing lists}} for a warm welcome one and all.
+ Subscribe to our {{{./mailing-lists.html}mailing lists}} for a warm welcome one and all.
