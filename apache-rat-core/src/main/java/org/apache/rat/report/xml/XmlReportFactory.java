@@ -66,6 +66,6 @@ public class XmlReportFactory {
 
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);
-        return new ClaimReporterMultiplexer(analysisMultiplexer, reporters);
+        return new ClaimReporterMultiplexer(writer, analysisMultiplexer, reporters);
     }
 }
