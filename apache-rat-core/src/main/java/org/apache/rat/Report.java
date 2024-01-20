@@ -115,7 +115,7 @@ public class Report {
     private static final String LIST_FAMILIES = "list-families";
 
     private static final String LOG_LEVEL = "log-level";
-
+    private static final String DRY_RUN = "dry-run";
     /**
      * Set unstyled XML output
      */
@@ -188,6 +188,15 @@ public class Report {
     static ReportConfiguration createConfiguration(String baseDirectory, CommandLine cl) throws IOException {
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
 
+        configuration.setDryRun(cl.hasOption(DRY_RUN));
+        if (cl.hasOption(LIST_FAMILIES)) {
+           configuration.listFamilies( LicenseFilter.valueOf(cl.getOptionValue(LIST_FAMILIES).toLowerCase()));
+        }
+        
+        if (cl.hasOption(LIST_LICENSES)) {
+            configuration.listFamilies( LicenseFilter.valueOf(cl.getOptionValue(LIST_LICENSES).toLowerCase()));
+        }
+        
         if (cl.hasOption('o')) {
             configuration.setOut(new File(cl.getOptionValue('o')));
         }
@@ -289,7 +298,9 @@ public class Report {
                 Arrays.stream(LicenseFilter.values()).map(LicenseFilter::name).collect(Collectors.toList()));
 
         Options opts = new Options()
-        
+        .addOption(Option.builder().longOpt(DRY_RUN)
+                .desc("If set do not update the files but generate the reports.")
+                .build())
         .addOption(
                 Option.builder().hasArg(true).longOpt(LIST_FAMILIES)
                 .desc("List the defined license families (default is none). Valid options are: "+licFilterValues+".")
@@ -300,7 +311,6 @@ public class Report {
                 .build())
 
         .addOption(new Option(HELP, "help", false, "Print help for the RAT command line interface and exit."));
-        
 
         Option out = new Option("o", "out", true,
                 "Define the output file where to write a report to (default is System.out).");
