@@ -56,11 +56,11 @@ Apache Rat
    * the command line.
 
  Rat is extensible. If your build tool isn't supported, please contribute a
- {{{./issue-tracking.html}patch}} or
+ {{{./issue-management.html}patch}} or
  {{{./mail-lists.html}talk to us}}.
 
  Rat aspires to be self documenting. Please contribute a
- {{{./issue-tracking.html}patch}} or
+ {{{./issue-management.html}patch}} or
  {{{./mail-lists.html}talk to us}}
  whenever Rat falls short.
 
@@ -73,9 +73,9 @@ Apache Rat
   {{{https://www.apache.org/foundation/how-it-works.html} Apache way}}.
 
   Please feel free to contribute a
-  {{{./issue-tracking.html}patch}},
-  {{{http://c2.com/cgi/wiki?TestDrivenDevelopment}demonstrate}} a
-  {{{./issue-tracking.html}bug}}, or
+  {{{./issue-management.html}patch}},
+  {{{https://wiki.c2.com/?TestDrivenDevelopment}demonstrate}} a
+  {{{./issue-management.html}bug}}, or
   just
   {{{./mail-lists.html}talk to us}}.
   All welcome :-)
@@ -128,9 +128,8 @@ git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 
  Quick start
 
- If you want to build RAT just launch 'mvn' inside the root folder. It will automatically perform a 
+ If you want to build RAT just launch 'mvn' or './mvnw' inside the root folder. It will automatically perform a
 
 +------------------------------------------+
 mvn clean install
 +------------------------------------------+
-
