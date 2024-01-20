@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.util.Calendar;
 
 public class SimpleXmlClaimReporter extends AbstractReport {
-    private static final String RAT_REPORT = "rat-report";
-    private static final String TIMESTAMP = "timestamp";
     private static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
     private static final String LICENSE_FAMILY_PREDICATE = "license-family";
     private static final String HEADER_SAMPLE_PREDICATE = "header-sample";
@@ -127,22 +125,9 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 
     @Override
     public void startReport() throws RatException {
-        try {
-            writer.openElement(RAT_REPORT)
-                .attribute(TIMESTAMP,
-                           DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT
-                           .format(Calendar.getInstance()));
-        } catch (IOException e) {
-            throw new RatException("Cannot open start element", e);
-        }
     }
 
     @Override
     public void endReport() throws RatException {
-        try {
-            writer.closeDocument();
-        } catch (IOException e) {
-            throw new RatException("Cannot close last element", e);
-        }
     }
 }
