@@ -55,7 +55,7 @@ public class XmlReportFactory {
         if (statistic != null) {
             reporters.add(new ClaimAggregator(statistic));
         }
-        if (configuration.isAddingLicenses()) {
+        if (configuration.isAddingLicenses() && !configuration.isDryRun()) {
             reporters.add(new LicenseAddingReport(configuration.getLog(), configuration.getCopyrightMessage(), configuration.isAddingLicensesForced()));
         }
         reporters.add(new SimpleXmlClaimReporter(writer));

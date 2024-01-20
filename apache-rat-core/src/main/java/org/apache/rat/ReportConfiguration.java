@@ -71,6 +71,9 @@ public class ReportConfiguration {
     private FilenameFilter inputFileFilter;
     private IOFileFilter directoryFilter;
     private Log log;
+    private LicenseFilter listFamilies;
+    private LicenseFilter listLicenses;
+    private boolean dryRun;
 
    
     /**
@@ -87,6 +90,9 @@ public class ReportConfiguration {
         removedLicenseCategories = new TreeSet<>();
         directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
         styleReport = true;
+        listFamilies = LicenseFilter.none;
+        listLicenses = LicenseFilter.none;
+        dryRun = false;
     }
     
     /**
@@ -127,6 +133,38 @@ public class ReportConfiguration {
      */
     public void licenseDuplicateOption(ReportingSet.Options state) {
         licenses.setDuplicateOption(state);
+    }
+    
+    /**
+     * Set the level of license families that should be output in the XML document.
+     * @param filter the license families to list.
+     */
+    public void listFamilies(LicenseFilter filter) {
+        listFamilies = filter;
+    }
+    
+    /**
+     * Set the level of licenses that should be output in the XML document.
+     * @param filter the licenses to list.
+     */
+    public void listLicenses(LicenseFilter filter) {
+        listLicenses = filter;
+    }
+    
+    /**
+     * Sets the dry run flag.
+     * @param state the state for the dry run flag.
+     */
+    public void setDryRun(boolean state) {
+        dryRun = state;
+    }
+    
+    /**
+     * Returns the state of the dry run flag.
+     * @return the stae of the dry run flag.
+     */
+    public boolean isDryRun() {
+        return dryRun;
     }
     
     /**
