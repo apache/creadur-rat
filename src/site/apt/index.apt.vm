@@ -120,7 +120,7 @@ java -jar apache-rat-${project.version}.jar --help
 git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 +------------------------------------------+
 
- Read more {{{./source-repository.html}here}}.
+ Read more {{{./scm.html}here}}.
 
 * Building Rat
 
