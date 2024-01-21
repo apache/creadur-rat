@@ -158,27 +158,7 @@ public class Report {
         } else {
             ReportConfiguration configuration = createConfiguration(args[0], cl);
             configuration.validate(DefaultLog.INSTANCE::error);
-
-//            boolean dryRun = false;
-//            
-//            if (cl.hasOption(LIST_FAMILIES)) {
-//                LicenseFilter f = LicenseFilter.fromText(cl.getOptionValue(LIST_FAMILIES));
-//                if (f != LicenseFilter.none) {                        
-//                    dryRun = true;
-//                    Reporter.listLicenseFamilies(configuration, f);
-//                }
-//            }
-//            if (cl.hasOption(LIST_LICENSES)) {
-//                LicenseFilter f = LicenseFilter.fromText(cl.getOptionValue(LIST_LICENSES));
-//                if (f != LicenseFilter.none) {                        
-//                    dryRun = true;
-//                    Reporter.listLicenses(configuration, f);
-//                }
-//            }
-//            
-//            if (!dryRun) {
-                Reporter.report(configuration);
-//            }
+            Reporter.report(configuration);
         }
     }
 
