@@ -19,7 +19,6 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,12 +30,11 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.inspector.AbstractInspector;
 import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
 
 /**
- * Defines a factory to produce matchers for an SPDX tag. SPDX tag is of the format
- * {@code SPDX-License-Identifier: short-name} where {@code short-name} matches
- * the regex pattern [A-Za-z0-9\.\-]+
+ * Defines a factory to produce matchers for an SPDX tag. SPDX tag is of the
+ * format {@code SPDX-License-Identifier: short-name} where {@code short-name}
+ * matches the regex pattern [A-Za-z0-9\.\-]+
  * <p>
  * SPDX identifiers are specified by the Software Package Data Exchange(R) also
  * known as SPDX(R) project from the Linux foundation.
@@ -57,7 +55,8 @@ public class SPDXMatcherFactory {
     public static final SPDXMatcherFactory INSTANCE = new SPDXMatcherFactory();
 
     /**
-     * The regular expression to locate the SPDX license identifier in the text stream
+     * The regular expression to locate the SPDX license identifier in the text
+     * stream
      */
     private static Pattern groupSelector = Pattern.compile(".*SPDX-License-Identifier:\\s([A-Za-z0-9\\.\\-]+)");
 
@@ -76,6 +75,7 @@ public class SPDXMatcherFactory {
 
     /**
      * Creates the spdx matcher.
+     * 
      * @param spdxId the spdx name to match.
      * @return a spdx matcher.
      */
@@ -93,13 +93,16 @@ public class SPDXMatcherFactory {
 
     /**
      * Each matcher calls this method to present the line it is working on.
+     * 
      * @param line The line the caller is looking at.
      * @param caller the Match that is calling this method.
      * @return true if the caller matches the text.
      */
     private boolean check(String line, Match caller) {
-        // if the line has not been seen yet see if we can extract the SPDX id from the line.
-        // if so then see if that name has been registered.  If so then we have a match and set 
+        // if the line has not been seen yet see if we can extract the SPDX id from the
+        // line.
+        // if so then see if that name has been registered. If so then we have a match
+        // and set
         // lastMatch.
         if ((lastLine == null || !lastLine.equals(line)) && line.contains("SPDX-License-Identifier")) {
             Matcher matcher = groupSelector.matcher(line);
@@ -116,6 +119,7 @@ public class SPDXMatcherFactory {
     public class Match extends AbstractSimpleMatcher {
 
         String spdxId;
+
         /**
          * Constructor.
          * 
@@ -132,14 +136,14 @@ public class SPDXMatcherFactory {
         protected boolean doMatch(String line) {
             return SPDXMatcherFactory.this.check(line, this);
         }
-        
+
         @Override
         public void reset() {
             super.reset();
             SPDXMatcherFactory.this.lastMatch = null;
-            
+
         }
-        
+
         @Override
         public Inspector getInspector() {
             return AbstractInspector.matcher("spdx", getId(), Arrays.asList(AbstractInspector.text(spdxId)));

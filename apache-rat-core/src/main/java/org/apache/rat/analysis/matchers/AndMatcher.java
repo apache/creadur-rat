@@ -24,16 +24,18 @@ import java.util.stream.Collectors;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.inspector.AbstractInspector;
 import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
 
 /**
- * A matcher that performs a logical {@code AND} across all the contained matchers.
+ * A matcher that performs a logical {@code AND} across all the contained
+ * matchers.
  */
 public class AndMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the AndMatcher with the specified id and enclosed collection.
-     * @param id the to use.  If null or an empty string a unique random id will be created.
+     * 
+     * @param id the to use. If null or an empty string a unique random id will be
+     * created.
      * @param enclosed the enclosed collection.
      */
     public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
@@ -41,7 +43,9 @@ public class AndMatcher extends AbstractMatcherContainer {
     }
 
     /**
-     * Constructs the AndMatcher with the a unique random id and the enclosed collection.
+     * Constructs the AndMatcher with the a unique random id and the enclosed
+     * collection.
+     * 
      * @param enclosed the enclosed collection.
      */
     public AndMatcher(Collection<? extends IHeaderMatcher> enclosed) {
@@ -77,9 +81,10 @@ public class AndMatcher extends AbstractMatcherContainer {
         enclosed.forEach(IHeaderMatcher::finalizeState);
         return currentState();
     }
-    
+
     @Override
     public Inspector getInspector() {
-        return AbstractInspector.matcher("all", getId(), enclosed.stream().map(IHeaderMatcher::getInspector).collect(Collectors.toList()));
+        return AbstractInspector.matcher("all", getId(),
+                enclosed.stream().map(IHeaderMatcher::getInspector).collect(Collectors.toList()));
     }
 }

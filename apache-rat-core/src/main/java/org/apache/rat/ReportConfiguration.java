@@ -156,7 +156,7 @@ public class ReportConfiguration {
     }
     
     public LicenseFilter listLicenses() {
-        return listFamilies;
+        return listLicenses;
     }
     
     /**

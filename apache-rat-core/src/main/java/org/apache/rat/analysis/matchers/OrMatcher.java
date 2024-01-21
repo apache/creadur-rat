@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.inspector.AbstractInspector;
 import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
 
 /**
- * A matcher that performs a logical {@code OR} across all the contained matchers.
+ * A matcher that performs a logical {@code OR} across all the contained
+ * matchers.
  */
 public class OrMatcher extends AbstractMatcherContainer {
 
@@ -35,6 +35,7 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the matcher from the enclosed matchers.
+     * 
      * @param enclosed the enclosed matchers.
      */
     public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
@@ -43,6 +44,7 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the matcher with the specified id from the enclosed matchers.
+     * 
      * @param id the id to use.
      * @param enclosed the enclosed matchers.
      */
@@ -96,10 +98,10 @@ public class OrMatcher extends AbstractMatcherContainer {
         super.reset();
         lastState = State.i;
     }
-    
-    
+
     @Override
     public Inspector getInspector() {
-        return AbstractInspector.matcher( "or", getId(), enclosed.stream().map(IHeaderMatcher::getInspector).collect(Collectors.toList()));
+        return AbstractInspector.matcher("or", getId(),
+                enclosed.stream().map(IHeaderMatcher::getInspector).collect(Collectors.toList()));
     }
 }

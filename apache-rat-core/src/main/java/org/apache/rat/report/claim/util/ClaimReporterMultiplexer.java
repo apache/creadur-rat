@@ -47,6 +47,7 @@ public class ClaimReporterMultiplexer implements RatReport {
         this.dryRun = dryRun;
     }
 
+    @Override
     public void report(Document document) throws RatException {
         if (!dryRun) {
             if (analyser != null) {
@@ -62,6 +63,7 @@ public class ClaimReporterMultiplexer implements RatReport {
         }
     }
 
+    @Override
     public void startReport() throws RatException {
         try {
             writer.openElement(RAT_REPORT)
@@ -76,6 +78,7 @@ public class ClaimReporterMultiplexer implements RatReport {
         } 
     }
 
+    @Override
     public void endReport() throws RatException {
         for (RatReport report : reporters) {
             report.endReport();

@@ -19,17 +19,13 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.inspector.AbstractInspector;
 import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
@@ -46,14 +42,15 @@ import org.apache.rat.inspector.Inspector.Type;
  * <li>copyright 2012 foobar</li>
  * </ul>
  * <p>
- * Note also that the copyright owner is appended to the regex pattern and so can
- * support additional regex but also requires escaping where needed,<br>
- * e.g. use &quot;FooBar \\(www\\.foobar\\.com\\)&quot; or 
- * &quot;FooBar \\Q(www.foobar.com)\\E&quot; to match &quot;FooBar
- * (www.foobar.com)&quot;
+ * Note also that the copyright owner is appended to the regex pattern and so
+ * can support additional regex but also requires escaping where needed,<br>
+ * e.g. use &quot;FooBar \\(www\\.foobar\\.com\\)&quot; or &quot;FooBar
+ * \\Q(www.foobar.com)\\E&quot; to match &quot;FooBar (www.foobar.com)&quot;
  * </p>
- * <p>The matcher also accepts "(C)", "(c)", and "©" in place of (or in addition to) the "Copyright" or "copyright" 
- * keyword</p>
+ * <p>
+ * The matcher also accepts "(C)", "(c)", and "©" in place of (or in addition
+ * to) the "Copyright" or "copyright" keyword
+ * </p>
  */
 public class CopyrightMatcher extends AbstractSimpleMatcher {
 
@@ -70,9 +67,12 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     private final String owner;
 
     /**
-     * Constructs the CopyrightMatcher with the specified start, stop and owner strings and a unique random id..
+     * Constructs the CopyrightMatcher with the specified start, stop and owner
+     * strings and a unique random id..
+     * 
      * @param start the start date for the copyright may be null.
-     * @param stop the stop date for the copyright, may be null.  May not be specified if start is not specified.
+     * @param stop the stop date for the copyright, may be null. May not be
+     * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
      */
     public CopyrightMatcher(String start, String stop, String owner) {
@@ -80,10 +80,13 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     }
 
     /**
-     * Constructs the CopyrightMatcher with the specified start, stop and owner strings.
+     * Constructs the CopyrightMatcher with the specified start, stop and owner
+     * strings.
+     * 
      * @param id the id for the matcher.
      * @param start the start date for the copyright may be null.
-     * @param stop the stop date for the copyright, may be null.  May not be specified if start is not specified.
+     * @param stop the stop date for the copyright, may be null. May not be
+     * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
      */
     public CopyrightMatcher(String id, String start, String stop, String owner) {
@@ -137,20 +140,20 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
         return false;
     }
-    
+
     @Override
     public Inspector getInspector() {
-           
+
         List<Inspector> inspectors = new ArrayList<>();
         if (start != null) {
             inspectors.add(AbstractInspector.parameter("start", start));
         }
         if (stop != null) {
-            inspectors.add(AbstractInspector.parameter("stop",stop));
+            inspectors.add(AbstractInspector.parameter("stop", stop));
         }
         if (owner != null) {
             inspectors.add(AbstractInspector.parameter("owner", owner));
         }
-        return AbstractInspector.matcher("copyright", getId(), inspectors );
+        return AbstractInspector.matcher("copyright", getId(), inspectors);
     }
 }
