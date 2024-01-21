@@ -59,22 +59,43 @@ public interface Log {
      */
     void log(Level level, String message);
     
+    /**
+     * Write a log message at the specified level.
+     * @param level the level to write the message at.
+     * @param message the mesage to write.
+     */
     default void log(Level level, Object message) {
         log(level, message == null ? "NULL" : message.toString());
     }
     
+    /**
+     * Write a message at DEBUG level.
+     * @param message the message to write.
+     */
     default void debug(Object message) {
         log(Level.DEBUG, message);
     }
 
+    /**
+     * Write a message at INFO level.
+     * @param message the message to write.
+     */
     default void info(Object message) {
         log(Level.INFO, message);
     }
     
+    /**
+     * Write a message at WARN level.
+     * @param message the message to write.
+     */
     default void warn(Object message) {
         log(Level.WARN, message);
     }
     
+    /**
+     * Write a message at ERROR level.
+     * @param message the message to write.
+     */
     default void error(Object message) {
         log(Level.ERROR, message);
     }
