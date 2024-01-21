@@ -18,10 +18,18 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
+import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
@@ -57,6 +65,9 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
+    private final String start;
+    private final String stop;
+    private final String owner;
 
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner strings and a unique random id..
@@ -77,6 +88,9 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
      */
     public CopyrightMatcher(String id, String start, String stop, String owner) {
         super(id);
+        this.start = start;
+        this.stop = stop;
+        this.owner = owner;
         String dateDefn = "";
         if (StringUtils.isNotEmpty(start)) {
             if (StringUtils.isNotEmpty(stop)) {
@@ -122,5 +136,21 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
             }
         }
         return false;
+    }
+    
+    @Override
+    public Inspector getInspector() {
+           
+        List<Inspector> inspectors = new ArrayList<>();
+        if (start != null) {
+            inspectors.add(AbstractInspector.parameter("start", start));
+        }
+        if (stop != null) {
+            inspectors.add(AbstractInspector.parameter("stop",stop));
+        }
+        if (owner != null) {
+            inspectors.add(AbstractInspector.parameter("owner", owner));
+        }
+        return AbstractInspector.matcher("copyright", getId(), inspectors );
     }
 }

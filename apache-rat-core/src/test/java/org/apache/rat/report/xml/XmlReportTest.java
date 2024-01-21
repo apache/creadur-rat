@@ -80,7 +80,7 @@ public class XmlReportTest {
         IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE,Arrays.asList(asfLic, qosLic));
         final List<AbstractReport> reporters = new ArrayList<>();
         reporters.add(reporter);
-        report = new ClaimReporterMultiplexer(analyser, reporters);
+        report = new ClaimReporterMultiplexer(false, writer, analyser, reporters);
     }
 
     private void report(DirectoryWalker directory) throws Exception {

@@ -18,6 +18,8 @@
  */ 
 package org.apache.rat.report;
 
+import java.io.IOException;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 
@@ -28,6 +30,7 @@ import org.apache.rat.api.RatException;
 public abstract class AbstractReport implements RatReport {
     /**
      * Empty default implementation.
+     * @throws IOException 
      */
     public void startReport() throws RatException {
         // Does nothing

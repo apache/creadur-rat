@@ -18,6 +18,8 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +29,9 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
+import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * Defines a factory to produce matchers for an SPDX tag. SPDX tag is of the format
@@ -133,6 +138,11 @@ public class SPDXMatcherFactory {
             super.reset();
             SPDXMatcherFactory.this.lastMatch = null;
             
+        }
+        
+        @Override
+        public Inspector getInspector() {
+            return AbstractInspector.matcher("spdx", getId(), Arrays.asList(AbstractInspector.text(spdxId)));
         }
     }
 }

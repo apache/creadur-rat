@@ -18,7 +18,15 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
+import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * A simple regular expression matching IHeaderMatcher
@@ -47,5 +55,10 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     @Override
     public boolean doMatch(String line) {
         return pattern.matcher(line).find();
+    }
+    
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.matcher("regex", getId(), Arrays.asList(AbstractInspector.text(pattern.toString())));
     }
 }

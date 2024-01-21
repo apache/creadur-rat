@@ -37,25 +37,29 @@ public class ClaimReporterMultiplexer implements RatReport {
     
     private final IDocumentAnalyser analyser;
     private final List<? extends RatReport> reporters;
-    final IXmlWriter writer;
+    private final IXmlWriter writer;
+    private final boolean dryRun; 
 
-    public ClaimReporterMultiplexer(final IXmlWriter writer, final IDocumentAnalyser pAnalyser, final List<? extends RatReport> reporters) {
+    public ClaimReporterMultiplexer(final boolean dryRun, final IXmlWriter writer, final IDocumentAnalyser pAnalyser, final List<? extends RatReport> reporters) {
         analyser = pAnalyser;
         this.reporters = reporters;
         this.writer = writer;
+        this.dryRun = dryRun;
     }
 
     public void report(Document document) throws RatException {
-        if (analyser != null) {
-            try {
-                analyser.analyse(document);
-            } catch (RatDocumentAnalysisException e) {
-                throw new RatException(e.getMessage(), e);
+        if (!dryRun) {
+            if (analyser != null) {
+                try {
+                    analyser.analyse(document);
+                } catch (RatDocumentAnalysisException e) {
+                    throw new RatException(e.getMessage(), e);
+                }
             }
+            for (RatReport report : reporters) {
+                report.report(document);
+            } 
         }
-        for (RatReport report : reporters) {
-            report.report(document);
-        } 
     }
 
     public void startReport() throws RatException {

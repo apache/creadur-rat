@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
+
 /**
  * Class to take a set of ILicenses and collection of approved license categories and extract Subsets.
  */
@@ -205,6 +208,10 @@ public class LicenseSetFactory {
                 return State.f;
             }
     
+            @Override
+            public Inspector getInspector() {
+                return AbstractInspector.license(this, null);
+            }
         };
         return search(target, licenses);
     }
