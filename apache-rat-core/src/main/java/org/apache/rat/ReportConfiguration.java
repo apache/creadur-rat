@@ -364,6 +364,7 @@ public class ReportConfiguration {
      * of approved licenses.
      * 
      * @param builder The license builder to build and add to the list of licenses.
+     * @return The ILicense implementation that was added.
      */
     public ILicense addLicense(ILicense.Builder builder) {
         if (builder != null) {

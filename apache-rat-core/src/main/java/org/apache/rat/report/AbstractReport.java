@@ -39,7 +39,7 @@ public abstract class AbstractReport implements RatReport {
      * Empty default implementation.
      * 
      * @param document the actual document
-     * @Throws RatException on error.
+     * @throws RatException on error.
      */
     @Override
     public void report(Document document) throws RatException {
@@ -49,7 +49,7 @@ public abstract class AbstractReport implements RatReport {
     /**
      * Empty default implementation.
      * 
-     * @Throws RatException on error.
+     * @throws RatException on error.
      */
     @Override
     public void endReport() throws RatException {

@@ -93,6 +93,7 @@ public interface IHeaderMatcher {
     /**
      * Gets the final state for this matcher. This is called after the EOF on the
      * input. At this point there should be no matchers in an {@code State.i} state.
+     * @return the finalized state.
      */
     State finalizeState();
 
@@ -104,7 +105,10 @@ public interface IHeaderMatcher {
      */
     State currentState();
     
-    
+    /**
+     * Gets the Inspector for this matcher.
+     * @return The inspector for this matcher.
+     */
     Inspector getInspector();
 
     /**

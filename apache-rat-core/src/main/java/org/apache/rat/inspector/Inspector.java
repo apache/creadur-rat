@@ -34,7 +34,7 @@ public interface Inspector {
     
     /** 
      * Gets the common name for the matcher. (e.g. 'text', 'spdx', etc.)
-     * @return
+     * @return The common name for the item being inspected.
      */
     String getCommonName();
     
