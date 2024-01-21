@@ -33,7 +33,6 @@ import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class SimpleXmlClaimReporter extends AbstractReport {
-<<<<<<< HEAD
     private static final String RAT_REPORT = "rat-report";
     private static final String TIMESTAMP = "timestamp";
     private static final String RESOURCE = "resource";
@@ -45,14 +44,6 @@ public class SimpleXmlClaimReporter extends AbstractReport {
     private static final String TYPE = "type";
     private static final String ID = "id";
     
-=======
-    private static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
-    private static final String LICENSE_FAMILY_PREDICATE = "license-family";
-    private static final String HEADER_SAMPLE_PREDICATE = "header-sample";
-    private static final String HEADER_TYPE_PREDICATE = "header-type";
-    private static final String FILE_TYPE_PREDICATE = "type";
-
->>>>>>> 3dc8c4e6 (first attempt)
     private final IXmlWriter writer;
     private static final String NAME = "name";
 
@@ -99,15 +90,12 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 
     @Override
     public void startReport() throws RatException {
-<<<<<<< HEAD
         try {
             writer.openElement(RAT_REPORT).attribute(TIMESTAMP,
                     DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
         } catch (IOException e) {
             throw new RatException("Cannot open start element", e);
         }
-=======
->>>>>>> 3dc8c4e6 (first attempt)
     }
 
     @Override

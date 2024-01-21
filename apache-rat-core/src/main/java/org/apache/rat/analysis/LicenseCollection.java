@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -95,4 +97,11 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
     public String getName() {
         return getLicenseFamily().getFamilyName();
     }
+
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.license(this, matchingLicense == null ? null : matchingLicense.getInspector());
+    }
+    
+    
 }

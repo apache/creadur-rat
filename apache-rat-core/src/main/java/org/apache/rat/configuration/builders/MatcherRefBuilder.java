@@ -18,6 +18,8 @@
  */
 package org.apache.rat.configuration.builders;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -34,6 +36,7 @@ import org.apache.rat.analysis.IHeaders;
 public class MatcherRefBuilder extends AbstractBuilder {
     private String referenceId;
     private Map<String, IHeaderMatcher> matchers;
+    public static final String ATT_REF_ID = "refId";
 
     /**
      * Constructs the MatcherReferenceBuilder using the provided reference id.
@@ -110,5 +113,4 @@ public class MatcherRefBuilder extends AbstractBuilder {
             return wrapped.matches(headers);
         }
     }
-
 }

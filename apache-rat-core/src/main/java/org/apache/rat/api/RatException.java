@@ -19,6 +19,10 @@
 package org.apache.rat.api;
 
 public class RatException extends Exception {
+    
+    public static RatException asRatException(Exception e) {
+        return e instanceof RatException ? (RatException) e : new RatException(e);
+    }
 
     private static final long serialVersionUID = 4940711222435919034L;
 
