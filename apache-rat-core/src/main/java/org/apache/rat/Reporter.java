@@ -95,34 +95,4 @@ public class Reporter {
             throw new IOException(e);
         }
     }
-
-//    /**
-//     * lists the license families information on the configured output stream.
-//     * @param configuration The configuration for the system
-//     * @throws IOException if PrintWriter can not be retrieved from configuration.
-//     */
-//    public static void listLicenseFamilies(ReportConfiguration configuration, LicenseFilter filter) throws IOException {
-//        try (PrintWriter pw = configuration.getWriter().get()) {
-//            pw.format("Families (%s):%n", filter);
-//            configuration.getLicenseFamilies(filter)
-//                    .forEach(x -> pw.format(LICENSE_FAMILY_FORMAT, x.getFamilyCategory(), x.getFamilyName()));
-//            pw.println();
-//        }
-//    }
-//
-//    /**
-//     * lists the licenses on the configured output stream.
-//     * @param configuration The configuration for the system
-//     * @throws IOException if PrintWriter can not be retrieved from configuration.
-//     */
-//    public static void listLicenses(ReportConfiguration configuration, LicenseFilter filter) throws IOException {
-//        try (PrintWriter pw = configuration.getWriter().get()) {
-//            pw.format("Licenses (%s):%n", filter);
-//            configuration.getLicenses(filter)
-//                    .forEach(lic -> pw.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
-//                            lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
-//            pw.println();
-//        }
-//    }
-
 }
