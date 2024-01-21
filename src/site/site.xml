@@ -89,7 +89,6 @@
       <item name="ASF Committers' FAQ" href='https://www.apache.org/dev/committers.html'/>
       <item name='New Committers Guide' href='https://www.apache.org/dev/new-committers-guide.html'/>
       <item name="Howto publish this site" href="site-publish.html"/>
-      <item name='Plant Apache' href='https://planet.apache.org/committers/'/>
       <item name='Community' href='https://community.apache.org/'/>
       <item name='Legal' href='https://www.apache.org/legal/'/>
       <item name='Branding' href='https://www.apache.org/foundation/marks/'/>
@@ -99,7 +98,7 @@
     <menu ref="modules"/>
     <menu ref="reports"/>
 
-    <footer>Copyright &amp;copy; 2016-2022 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
+    <footer>Copyright &amp;copy; 2016-2024 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
       Apache Creadur, Creadur, Apache Rat, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks
       of The Apache Software Foundation.
       Oracle and Java are registered trademarks of Oracle and/or its affiliates.

@@ -1,5 +1,12 @@
 package org.apache.rat.mp;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.file.Files;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -26,41 +33,27 @@ import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
-
 /**
  * Implementation of IReportable that traverses over a set of files.
  */
-class FilesReportable implements IReportable
-{
+class FilesReportable implements IReportable {
     private final File basedir;
 
     private final String[] files;
 
-    FilesReportable( File basedir, String[] files )
-            throws IOException
-    {
-        final File currentDir = new File( System.getProperty( "user.dir" ) ).getCanonicalFile();
+    FilesReportable(File basedir, String[] files) throws IOException {
+        final File currentDir = new File(System.getProperty("user.dir")).getCanonicalFile();
         final File f = basedir.getCanonicalFile();
-        if ( currentDir.equals( f ) )
-        {
+        if (currentDir.equals(f)) {
             this.basedir = null;
-        }
-        else
-        {
+        } else {
             this.basedir = basedir;
         }
         this.files = files;
     }
 
-    public void run( RatReport report ) throws RatException
-    {
+    @Override
+    public void run(RatReport report) throws RatException {
         FileDocument document = new FileDocument();
         for (String file : files) {
             document.setFile(new File(basedir, file));
@@ -69,39 +62,40 @@ class FilesReportable implements IReportable
         }
     }
 
-    private class FileDocument implements Document
-    {
+    private static class FileDocument implements Document {
         private File file;
         private final MetaData metaData = new MetaData();
-        
-        void setFile( File file )
-        {
+
+        void setFile(File file) {
             this.file = file;
         }
 
+        @Override
         public boolean isComposite() {
             return DocumentImplUtils.isZip(file);
         }
 
-        public Reader reader() throws IOException
-        {
-            final InputStream in = new FileInputStream( file );
-            return new InputStreamReader( in );
+        @Override
+        public Reader reader() throws IOException {
+            final InputStream in = Files.newInputStream(file.toPath());
+            return new InputStreamReader(in);
         }
 
-        public String getName()
-        {
-            return DocumentImplUtils.toName( file );
+        @Override
+        public String getName() {
+            return DocumentImplUtils.toName(file);
         }
 
+        @Override
         public MetaData getMetaData() {
             return metaData;
         }
-        
+
+        @Override
         public InputStream inputStream() throws IOException {
-            return new FileInputStream(file);
+            return Files.newInputStream(file.toPath());
         }
-        
+
         @Override
         public String toString() {
             return "File:" + file.getAbsolutePath();

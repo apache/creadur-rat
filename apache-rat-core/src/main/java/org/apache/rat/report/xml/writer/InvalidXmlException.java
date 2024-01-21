@@ -21,15 +21,18 @@ package org.apache.rat.report.xml.writer;
 import java.io.IOException;
 
 /**
- * Indicates that the requested document would not be well formed.
- *
+ * Indicates that the requested document is not well formed.
  */
 public class InvalidXmlException extends IOException {
 
     private static final long serialVersionUID = 1L;
 
-    public InvalidXmlException(String s) {
-        super(s);
+    /**
+     * Instantiate exception with given message.
+     * @param message more context when this exception happens.  
+     */
+    public InvalidXmlException(String message) {
+        super(message);
     }
 
 }

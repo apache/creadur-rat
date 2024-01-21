@@ -19,45 +19,60 @@
 
 package org.apache.rat.walker;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
-import java.util.regex.Pattern;
-
 /**
  * Walks directories.
  */
 public class DirectoryWalker extends Walker implements IReportable {
 
-    protected static final FileNameComparator COMPARATOR = new FileNameComparator();
+    private static final FileNameComparator COMPARATOR = new FileNameComparator();
 
-    public DirectoryWalker(File file) {
-        this(file, (FilenameFilter) null);
+    private final IOFileFilter directoryFilter;
+
+    /**
+     * Constructs a walker.
+     *
+     * @param file the directory to walk.
+     * @param directoryFilter directory filter to eventually exclude some directories/files from the scan.
+     */
+    public DirectoryWalker(File file, IOFileFilter directoryFilter) {
+        this(file, (FilenameFilter) null, directoryFilter);
     }
 
     /**
      * Constructs a walker.
      *
-     * @param file   not null
+     * @param file the directory to walk (not null).
      * @param filter filters input files (optional),
      *               or null when no filtering should be performed
+     * @param directoryFilter filters directories (optional), or null when no filtering should be performed.
      */
-    public DirectoryWalker(File file, final FilenameFilter filter) {
+    public DirectoryWalker(File file, final FilenameFilter filter, IOFileFilter directoryFilter) {
         super(file.getPath(), file, filter);
+        this.directoryFilter = directoryFilter;
     }
 
-    public DirectoryWalker(File file, final Pattern ignoreNameRegex) {
+    /**
+     * Constructs a walker.
+     *
+     * @param file the directory to walk (not null).
+     * @param ignoreNameRegex ignore directories/files with name matching the regex.
+     * @param directoryFilter filters directories (optional), or null when no filtering should be performed.
+     */
+    public DirectoryWalker(File file, final Pattern ignoreNameRegex, IOFileFilter directoryFilter) {
         super(file.getPath(), file, regexFilter(ignoreNameRegex));
-    }
-
-    public boolean isRestricted() {
-        return false;
+        this.directoryFilter = directoryFilter;
     }
 
     /**
@@ -68,7 +83,11 @@ public class DirectoryWalker extends Walker implements IReportable {
      * @throws RatException
      */
     private void processDirectory(RatReport report, final File file) throws RatException {
-        if (!isRestricted(file)) {
+        if (directoryFilter != null) {
+            if (!directoryFilter.accept(file)) {
+                process(report, file);
+            }
+        } else {
             process(report, file);
         }
     }

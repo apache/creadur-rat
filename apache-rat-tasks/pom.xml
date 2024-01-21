@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.rat</groupId>
     <artifactId>apache-rat-project</artifactId>
-    <version>0.16-SNAPSHOT</version>
+    <version>0.16.1-SNAPSHOT</version>
   </parent>
   <artifactId>apache-rat-tasks</artifactId>
   <packaging>jar</packaging>
@@ -29,11 +29,24 @@
  A plugin for Apache Ant that runs Apache Rat
    to audit the source to be distributed.
   </description>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-core</artifactId>
+      <version>${project.parent.version}</version>
+      <type>test-jar</type>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
@@ -44,15 +57,18 @@
       <artifactId>ant-antunit</artifactId>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant-testutil</artifactId>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
@@ -101,18 +117,18 @@
             <configuration>
               <target>
                 <ant antfile="src/test/resources/antunit/report-bad-configurations.xml" inheritAll="false" inheritRefs="false">
-                  <property name="jar.name" location="${project.build.outputDirectory}" />
-                  <property name="base.dir" location="${basedir}" />
-                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar" />
-                  <property name="test.skipped" value="${maven.test.skip}" />
-                  <property name="test.classpath" refid="maven.test.classpath" />
+                  <property name="jar.name" location="${project.build.outputDirectory}"/>
+                  <property name="base.dir" location="${basedir}"/>
+                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar"/>
+                  <property name="test.skipped" value="${maven.test.skip}"/>
+                  <property name="test.classpath" refid="maven.test.classpath"/>
                 </ant>
                 <ant antfile="src/test/resources/antunit/report-normal-operation.xml" inheritAll="false" inheritRefs="false">
-                  <property name="jar.name" location="${project.build.outputDirectory}" />
-                  <property name="base.dir" location="${basedir}" />
-                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar" />
-                  <property name="test.skipped" value="${maven.test.skip}" />
-                  <property name="test.classpath" refid="maven.test.classpath" />
+                  <property name="jar.name" location="${project.build.outputDirectory}"/>
+                  <property name="base.dir" location="${basedir}"/>
+                  <property name="antunit.jar.name" location="${project.build.directory}/dependencies/ant-antunit.jar"/>
+                  <property name="test.skipped" value="${maven.test.skip}"/>
+                  <property name="test.classpath" refid="maven.test.classpath"/>
                 </ant>
               </target>
             </configuration>
@@ -120,7 +136,6 @@
         </executions>
       </plugin>
     </plugins>
-    
     <pluginManagement>
       <plugins>
         <plugin>
@@ -151,19 +166,11 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <forkCount>1</forkCount>
-            <argLine>-Dfile.encoding=ISO-8859-1</argLine>
           </configuration>
         </plugin>
       </plugins>

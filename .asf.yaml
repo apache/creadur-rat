@@ -1,0 +1,11 @@
+github:
+  description: "Apache Creadur RAT - Release Audit Tool"
+  homepage: https://creadur.apache.org/
+  labels:
+    - maven
+    - java
+    - cli
+    - licensechecker 
+    - apache
+    - creadur
+    - rat

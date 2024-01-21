@@ -19,24 +19,24 @@ package org.apache.rat.config;
  * under the License.
  */
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReportFormatTest {
     @Test
     public void isANullSafe() {
         for (String optionType : Arrays.asList(null, "")) {
-            assertFalse("Must not equal PLAIN, was " + optionType, ReportFormat.PLAIN.is(optionType));
+            assertFalse(ReportFormat.PLAIN.is(optionType), ()->"Must not equal PLAIN, was " + optionType);
         }
     }
     @Test
     public void isAConfigurationOption() {
         for (String optionType : Arrays.asList("PLAIN", "pLain", "plain", ReportFormat.PLAIN.name())) {
-            assertTrue("Must equal PLAIN, was " + optionType, ReportFormat.PLAIN.is(optionType));
+            assertTrue(ReportFormat.PLAIN.is(optionType), ()->"Must equal PLAIN, was " + optionType);
         }
         assertFalse(ReportFormat.PLAIN.is(ReportFormat.XML.name()));
     }

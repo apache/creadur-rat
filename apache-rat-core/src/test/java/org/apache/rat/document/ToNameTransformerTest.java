@@ -15,30 +15,31 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import org.apache.rat.testhelpers.TestingLocation;
+import org.junit.jupiter.api.Test;
 
 public class ToNameTransformerTest {
 
     private final ToNameTransformer transformer = new ToNameTransformer();
-    
+
     @Test
     public void transformLocation() {
-        MockLocation location = new MockLocation();
+        TestingLocation location = new TestingLocation();
         Object result = transformer.transform(location);
-        assertNotNull("Transform into name", result);
-        assertEquals("Transform into name", location.name, result);
+        assertNotNull(result, "Transform into name");
+        assertEquals(location.name, result, "Transform into name");
     }
 
     @Test
     public void transformNull() {
         Object result = transformer.transform(null);
-        assertNull("Null transforms to null", result);
+        assertNull(result, "Null transforms to null");
     }
 }

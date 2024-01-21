@@ -24,8 +24,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.license.ILicense;
+
 /**
- * Data about the subject.
+ * Data about the document under test..
  */
 public class MetaData {
 
@@ -54,73 +57,119 @@ public class MetaData {
     // Shortcuts used in report output, must be exactly 5 characters
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN = "GEN  ";
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN = "?????";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL = "AL   ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_OASIS = "OASIS";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3CD = "W3CD ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C = "W3C  ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO = "DOJO ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF = "TMF  ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1 ="GPL1 ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2 ="GPL2 ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL3 = "GPL3 ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_MIT = "MIT  ";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_CATEGORY_VALUE_CDDL1 = "CDDL1";
 
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GEN = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN);
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_UNKNOWN = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_ASL = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_ASL);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_OASIS = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_OASIS);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3CD = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3CD);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_W3C = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_W3C);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_DOJO = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_DOJO);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_TMF = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY, RAT_LICENSE_FAMILY_CATEGORY_VALUE_TMF);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL1 = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY,RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL2 = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY,RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_GPL3 = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY,RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL3);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_MIT = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY,RAT_LICENSE_FAMILY_CATEGORY_VALUE_MIT);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_CATEGORY_DATUM_CDLL1 = new Datum(RAT_URL_LICENSE_FAMILY_CATEGORY,RAT_LICENSE_FAMILY_CATEGORY_VALUE_CDDL1);
 
     // License Family Standard Names
     public static final String RAT_URL_LICENSE_FAMILY_NAME= RAT_BASE_URL + "#LicenseFamilyName";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT = "W3C Software Copyright";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT = "W3C Document Copyright";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE = "OASIS Open License";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE = "Modified BSD License";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0 = "Apache License Version 2.0";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_1 =
             "GNU General Public License, version 1";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_2 =
             "GNU General Public License, version 2";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_3 =
             "GNU General Public License, version 3";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_MIT =
             "The MIT License";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1 =
             "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0";
+    @Deprecated
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1 = "Academic Free License, Version 2.1";
+
     public static final String RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN = "?????";
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_SOFTWARE_COPYRIGHT 
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_W3C_DOCUMENT_COPYRIGHT 
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_OASIS_OPEN_LICENSE 
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_MODIFIED_BSD_LICENSE 
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_APACHE_LICENSE_VERSION_2_0
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0);
+    @Deprecated
     public static final Datum
-            RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_1 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL1);
+            RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_1 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_1);
+    @Deprecated
     public static final Datum
-            RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_CATEGORY_VALUE_GPL2);
+            RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_2 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_2);
+    @Deprecated
     public static final Datum
             RAT_LICENSE_FAMILY_NAME_DATUM_GPL_VERSION_3 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_3);
+    @Deprecated
     public static final Datum
             RAT_LICENSE_FAMILY_NAME_DATUM_MIT = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_MIT);
+    @Deprecated
     public static final Datum
             RAT_LICENSE_FAMILY_NAME_DATUM_CDDL1 = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1);
+    @Deprecated
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_ACADEMIC_FREE_LICENSE_VERSION_2_1
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1);
+
     public static final Datum RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN
         = new Datum(RAT_URL_LICENSE_FAMILY_NAME, RAT_LICENSE_FAMILY_NAME_VALUE_UNKNOWN); 
     
@@ -131,41 +180,40 @@ public class MetaData {
     public static final String RAT_URL_APPROVED_LICENSE = RAT_BASE_URL + "#ApprovedLicense";
     public static final String RAT_APPROVED_LICENSE_VALUE_TRUE = Boolean.TRUE.toString();
     public static final String RAT_APPROVED_LICENSE_VALUE_FALSE = Boolean.FALSE.toString();
-    public static final Datum RAT_APPROVED_LICENSE_DATIM_TRUE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_TRUE);
-    public static final Datum RAT_APPROVED_LICENSE_DATIM_FALSE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_FALSE);
-    
-    private ContentType contentType;
+    public static final Datum RAT_APPROVED_LICENSE_DATUM_TRUE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_TRUE);
+    public static final Datum RAT_APPROVED_LICENSE_DATUM_FALSE = new Datum(RAT_URL_APPROVED_LICENSE, RAT_APPROVED_LICENSE_VALUE_FALSE);
+    @Deprecated
+    public static final Datum RAT_APPROVED_LICENSE_DATIM_TRUE = RAT_APPROVED_LICENSE_DATUM_TRUE;
+    @Deprecated
+    public static final Datum RAT_APPROVED_LICENSE_DATIM_FALSE = RAT_APPROVED_LICENSE_DATUM_FALSE;
+
     /** 
      * Only likely to be a small quantity of data 
      * so trade some performance for simplicity.
      */
     private final List<Datum> data;
 
+    /**
+     * Create metadata without a content type.
+     */
     public MetaData() {
-        this(null);
-    }
-    
-    public MetaData(final ContentType contentType) {
-        this.contentType = contentType;
         this.data = new ArrayList<>(16);
     }
     
     /**
-     * Gets the content type for the subject.
-     * @return or null when the type is unknown
+     * Add the license information to the metadata.
+     * @param license the license to add metadata for.
      */
-    public ContentType getContentType() {
-        return contentType;
+    public void reportOnLicense(ILicense license) {
+        
+        if (StringUtils.isNotBlank(license.getNotes())) {
+            set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, license.getNotes()));
+        }
+        set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, license.getLicenseFamily().getFamilyCategory()));
+        set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, license.getLicenseFamily().getFamilyCategory()));
+        set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, license.getLicenseFamily().getFamilyName()));
     }
-    
-    /**
-     * Sets the content type for this subject.
-     * @param contentType <code>ContentType</code>,
-     * or null when the content type is unknown
-     */
-    public void setContentType(final ContentType contentType) {
-        this.contentType = contentType;
-    }
+
     
     /**
      * Gets all data.
@@ -252,7 +300,6 @@ public class MetaData {
      */
     public void clear() {
         data.clear();
-        this.contentType = null;
     }
     
     /**

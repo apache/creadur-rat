@@ -49,7 +49,7 @@ Apache Rat
 
  Apache Rat ${project.version} ships with tooling for
 
-   * {{{https://ant.apache.org/} Apache Ant}},
+   * {{{https://ant.apache.org/}Apache Ant}},
 
    * {{{https://maven.apache.org}Apache Maven}} and
 

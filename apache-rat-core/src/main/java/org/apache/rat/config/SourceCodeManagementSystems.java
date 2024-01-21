@@ -74,7 +74,7 @@ public enum SourceCodeManagementSystems {
     }
 
     public boolean hasIgnoreFile() {
-        return ignoreFile != null && ignoreFile.length() != 0;
+        return ignoreFile != null && !ignoreFile.isEmpty();
     }
 
     /**

@@ -18,30 +18,15 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
+import org.apache.rat.license.ILicenseFamily;
 
-public class BaseLicense {
+@Deprecated // remove in v1.0
+public abstract class BaseLicense implements DeprecatedConfig {
     private String licenseFamilyCategory;
     private String licenseFamilyName;
     private String notes;
 
     public BaseLicense() {
-    }
-
-    public BaseLicense(final MetaData.Datum licenseFamilyCategory, final MetaData.Datum licenseFamilyName, final String notes)
-    {
-        if (!MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY.equals(licenseFamilyCategory.getName())) {
-            throw new IllegalStateException("Expected " + MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY
-                    + ", got " + licenseFamilyCategory.getName());
-        }
-        setLicenseFamilyCategory(licenseFamilyCategory.getValue());
-        if (!MetaData.RAT_URL_LICENSE_FAMILY_NAME.equals(licenseFamilyName.getName())) {
-            throw new IllegalStateException("Expected " + MetaData.RAT_URL_LICENSE_FAMILY_NAME
-                    + ", got " + licenseFamilyName.getName());
-        }
-        setLicenseFamilyName(licenseFamilyName.getValue());
-        setNotes(notes);
     }
 
     public String getLicenseFamilyCategory() {
@@ -67,26 +52,12 @@ public class BaseLicense {
     public void setNotes(String pNotes) {
         notes = pNotes;
     }
-
-    public final void reportOnLicense(Document subject) {
-        final MetaData metaData = subject.getMetaData();
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-        final String licFamilyCategory = getLicenseFamilyCategory();
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, licFamilyCategory));
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, licFamilyCategory));
-        metaData.set(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, getLicenseFamilyName()));
+    
+    @Override
+    final public ILicenseFamily getLicenseFamily() {
+        return ILicenseFamily.builder()
+        .setLicenseFamilyCategory(licenseFamilyCategory)
+        .setLicenseFamilyName(licenseFamilyName)
+        .build();
     }
-
-    protected static final String prune(String text) {
-        final int length = text.length();
-        final StringBuilder buffer = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            char at = text.charAt(i);
-            if (Character.isLetterOrDigit(at)) {
-                buffer.append(at);
-            }
-        }
-        return buffer.toString();
-    }
-
 }

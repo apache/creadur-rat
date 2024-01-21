@@ -19,6 +19,7 @@
 package org.apache.rat.annotation;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.utils.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -68,12 +69,16 @@ public abstract class AbstractLicenseAppender {
     private static final int TYPE_JSP = 24;
     private static final int TYPE_FML = 25;
     private static final int TYPE_GO = 26;
-    private static final int TYPE_PM = 27;    
+    private static final int TYPE_PM = 27;
+    private static final int TYPE_MD = 28;
+    private static final int TYPE_YAML = 29;
+    
+    
 
     /**
      * the line separator for this OS
      */
-    private static final String LINE_SEP = System.getProperty("line.separator");
+    private static final String LINE_SEP = System.lineSeparator();
 
     private static final int[] FAMILY_C = new int[]{
             TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
@@ -81,11 +86,11 @@ public abstract class AbstractLicenseAppender {
             TYPE_BEANSHELL, TYPE_GO,
     };
     private static final int[] FAMILY_SGML = new int[]{
-            TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML,
+            TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML, TYPE_MD,
     };
     private static final int[] FAMILY_SH = new int[]{
             TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
-            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION, TYPE_PM,
+            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION, TYPE_PM, TYPE_YAML,
     };
     private static final int[] FAMILY_BAT = new int[]{
             TYPE_BAT,
@@ -160,6 +165,7 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("java", TYPE_JAVA);
         EXT2TYPE.put("js", TYPE_JAVASCRIPT);
         EXT2TYPE.put("jsp", TYPE_JSP);
+        EXT2TYPE.put("md", TYPE_MD);
         EXT2TYPE.put("ndoc", TYPE_XML);
         EXT2TYPE.put("nunit", TYPE_XML);
         EXT2TYPE.put("php", TYPE_PHP);
@@ -186,12 +192,21 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("xml", TYPE_XML);
         EXT2TYPE.put("xproj", TYPE_XML);
         EXT2TYPE.put("xsl", TYPE_XML);
+        EXT2TYPE.put("yaml", TYPE_YAML);
+        EXT2TYPE.put("yml", TYPE_YAML);
     }
 
     private boolean isForced;
+    /** The log to use */
+    private final Log log;
 
-    public AbstractLicenseAppender() {
+    /**
+     * Constructor
+     * @param log The log to use.
+     */
+    public AbstractLicenseAppender(final Log log) {
         super();
+        this.log = log;
     }
 
     /**
@@ -240,11 +255,11 @@ public abstract class AbstractLicenseAppender {
         if (isForced) {
             boolean deleted = document.delete();
             if (!deleted) {
-                System.err.println("Could not delete original file to prepare renaming.");
+                log.error("Could not delete original file to prepare renaming.");
             }
             boolean renamed = newDocument.renameTo(document.getAbsoluteFile());
             if (!renamed) {
-                System.err.println("Failed to rename new file, original file remains unchanged.");
+                log.error("Failed to rename new file, original file remains unchanged.");
             }
         }
     }
@@ -292,7 +307,7 @@ public abstract class AbstractLicenseAppender {
                     doFirstLine(document, writer, line, "@echo");
                 } else if (first && expectsMSVSSF) {
                     written = true;
-                    if ("".equals(line)) {
+                    if (line.isEmpty()) {
                         line = passThroughReadNext(writer, line, br);
                     }
                     if (line.startsWith("Microsoft Visual Studio Solution"

@@ -18,67 +18,18 @@
  */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.stream.Stream;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.junit.jupiter.params.provider.Arguments;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+public class MITLicenseTest extends AbstractLicenseTest {
+    private static String id = "MIT";
+    private static String name = "The MIT License";
+    private static String[][] targets = { { "fulltext",
+            "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \\\"Software\\\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." },
+            { "spdx-tab", "SPDX-License-Identifier:\tMIT" }, { "spdx-space", "SPDX-License-Identifier: MIT" }, };
 
-public class MITLicenseTest {
-    private Document subject;
-
-    /**
-     * To ease testing provide a map with a given license version and the string to test for.
-     */
-    private static Map<IHeaderMatcher, String> licenseStringMap;
-
-    /**
-     * If you replace this with BeforeClass and make this method static the build fails at line 71.
-     */
-    @Before
-    public void initLicensesUnderTest() {
-        licenseStringMap = new HashMap<>();
-        licenseStringMap.put(new MITLicense(),
-                MITLicense.FIRST_LICENSE_LINE
-                        + "\n" + MITLicense.MIDDLE_LICENSE_LINE
-                        + "\r\n * " + MITLicense.AS_IS_LICENSE_LINE);
-        assertEquals(1, licenseStringMap.entrySet().size());
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of(Arguments.of(id, id, name, null, targets));
     }
-
-
-    @Before
-    public final void initReporter() {
-        this.subject = new MockLocation("subject");
-    }
-
-    @Test
-    public void testNegativeMatches() throws Exception {
-        for (Map.Entry<IHeaderMatcher, String> licenseUnderTest : licenseStringMap.entrySet()) {
-            assertFalse(licenseUnderTest.getKey().match(subject, "'Behold, Telemachus! (nor fear the sight,)"));
-        }
-    }
-
-    @Test
-    public void testPositiveMatchInDocument() throws Exception {
-        for (Map.Entry<IHeaderMatcher, String> licenseUnderTest : licenseStringMap.entrySet()) {
-            assertTrue(licenseUnderTest.getKey().match(subject, "\t" + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, "     " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " * " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " // " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " /* " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " /** " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, "    " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " ## " + licenseUnderTest.getValue()));
-            assertTrue(licenseUnderTest.getKey().match(subject, " ## " + licenseUnderTest.getValue() + " ##"));
-        }
-    }
-
 }

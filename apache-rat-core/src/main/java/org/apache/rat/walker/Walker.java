@@ -36,21 +36,15 @@ public abstract class Walker implements IReportable {
     protected final FilenameFilter filter;
 
     protected static FilenameFilter regexFilter(final Pattern pattern) {
-        return new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                final boolean result;
-                if (pattern == null) {
-                    result = true;
-                } else {
-                    result = !pattern.matcher(name).matches();
-                }
-                return result;
+        return (dir, name) -> {
+            final boolean result;
+            if (pattern == null) {
+                result = true;
+            } else {
+                result = !pattern.matcher(name).matches();
             }
+            return result;
         };
-    }
-
-    protected boolean isRestricted(File file) {
-        return file.getName().startsWith(".");
     }
  
     protected final boolean isNotIgnored(final File file) {

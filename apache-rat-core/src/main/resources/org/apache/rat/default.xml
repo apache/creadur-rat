@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rat-config>
+	<families>
+		<family id="AL" name="Apache License Version 2.0" />
+		<family id="CDDL1"
+			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0" />
+		<family id="GEN" name="Generated Files" />
+		<family id="GPL1" name="GNU General Public License, version 1" />
+		<family id="GPL2" name="GNU General Public License, version 2" />
+		<family id="GPL3" name="GNU General Public License, version 3" />
+		<family id="MIT" name="The MIT License" />
+		<family id="OASIS" name="OASIS Open License" />
+		<family id="W3C" name="W3C Software Copyright" />
+		<family id="W3CD" name="W3C Document Copyright" />
+		<family id='BSD-3' name="BSD 3 clause" />
+	</families>
+	<licenses>
+		<license family="AL">
+			<all>
+				<any id="ALStandard">
+					<text>Licensed under the Apache License, Version 2.0 (the
+						"License")</text>
+					<text>Licensed to the Apache Software Foundation (ASF) under
+						one
+						or more contributor license agreements; and to You under
+						the
+						Apache License, Version 2.0.</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0.html</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0.html</text>
+					<text>http://www.apache.org/licenses/LICENSE-2.0.txt</text>
+					<text>https://www.apache.org/licenses/LICENSE-2.0.txt</text>
+					<spdx name='Apache-2.0' />
+				</any>
+				<not>
+					<copyright />
+				</not>
+			</all>
+		</license>
+
+		<license family="AL" id="ASL" name="Applied Apache License Version 2.0">
+			<all>
+				<matcherRef refId="ALStandard" />
+				<copyright />
+			</all>
+		</license>
+
+		<license family="CDDL1">
+			<any>
+				<text>The contents of this file are subject to the terms of the
+					Common Development and Distribution License("CDDL") (the
+					"License"). You may not use this file except in compliance
+					with the License.</text>
+				<spdx name='CDDL-1.0' />
+			</any>
+		</license>
+
+		<license family="CDDL1" id="ILLUMOS" name="ILLUMOS CDDL1 Derived license"
+			derived_from='CDDL1'>
+			<note>Modified CDDL1 license</note>
+			<any>
+				<text>The contents of this file are subject to the terms of
+					the Common Development and Distribution License (the
+					"License") You may not use this file except in compliance
+					with the License. </text>
+			</any>
+		</license>
+
+		<license family="BSD-3" id="DOJO" name="DOJO License" derived_from="BSD-3">
+			<text>http://dojotoolkit.org/community/licensing.shtml</text>
+		</license>
+
+		<license family="GEN">
+			<note>
+				Files that are autmoatically generated.</note>
+			<any resource="/org/apache/rat/generation-keywords.txt" />
+		</license>
+
+		<license family="GPL1">
+			<any>
+				<text>This program is free software; you can redistribute it
+					and/or modify
+					it under the terms of the GNU
+					General Public License as published by the Free Software
+					Foundation; either version 1, or (at your option) any
+					later
+					version.</text>
+
+				<spdx name='GPL-1.0-only' />
+			</any>
+		</license>
+
+		<license family="GPL2">
+			<any>
+				<text>This program is free software; you can
+					redistribute it and/or modify it under the terms of the
+					GNU
+					General Public License as published by the Free Software
+					Foundation; either version 2 of the License, or (at your
+					option) any later version.</text>
+				<spdx
+					name='GPL-2.0-only' />
+			</any>
+		</license>
+
+		<license family="GPL3">
+			<any>
+				<text>This program is free software: you can
+					redistribute it and/or modify it under the terms of the
+					GNU
+					General Public License as published by the Free Software
+					Foundation, either version 3 of the License, or (at your
+					option) any later version.</text>
+				<spdx
+					name='GPL-3.0-only' />
+			</any>
+		</license>
+
+		<license family="MIT">
+			<any>
+				<text>Permission is hereby granted, free of charge, to
+					any person obtaining a copy of this software and associated
+					documentation files (the \"Software\"), to deal in the
+					Software
+					without restriction, including without limitation the rights
+					to
+					use, copy, modify, merge, publish, distribute, sublicense,
+					and/or sell copies of the Software, and to permit persons to
+					whom the Software is furnished to do so, subject to the
+					following conditions: The above copyright notice and this
+					permission notice shall be included in all copies or
+					substantial
+					portions of the Software. THE SOFTWARE IS PROVIDED "AS IS",
+					WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+					BUT
+					NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+					FOR A
+					PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+					THE
+					AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+					DAMAGES OR
+					OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+					OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+					SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</text>
+				<spdx
+					name='MIT' />
+			</any>
+		</license>
+
+		<license family="OASIS">
+			<note>No modifications allowed</note>
+			<all>
+				<text>This document and translations of it may be
+					copied and furnished to others and derivative works that
+					comment
+					on or otherwise explain it or assist in its implementation
+					may
+					be prepared copied published and distributed</text>
+				<copyright
+					owner="OASIS Open" start="[0-9]{4}" />
+			</all>
+		</license>
+
+		<license family="BSD-3" id="TMF" name="The Telemanagement Forum License"
+			derived_from="BSD-3">
+			<all>
+				<text>TMF854 Version 1.0</text>
+				<copyright
+					owner="TeleManagement Forum" />
+				<matcherRef refId="BSD-3-txt" />
+			</all>
+		</license>
+
+		<license family="W3C">
+			<note>Note that W3C requires a NOTICE.</note>
+			<note>All modifications require notes.</note>
+			<note>
+				See
+				http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.</note>
+			<any>
+				<text>
+					http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</text>
+				<spdx
+					name='W3C' />
+			</any>
+		</license>
+
+		<license family="W3CD">
+			<note>
+				Note that W3CD does not allow modifications.</note>
+			<note>
+				See
+				http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.</note>
+			<text>
+				http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</text>
+		</license>
+
+		<license family='BSD-3'>
+			<any>
+				<all>
+					<copyright />
+					<text id="BSD-3-txt">
+
+						Redistribution and use in source and binary forms, with
+						or without modification, are permitted provided that the
+						following conditions are met:
+
+						1. Redistributions of source code must retain the above
+						copyright notice, this list of conditions and the
+						following disclaimer.
+
+						2. Redistributions in binary form must reproduce the
+						above copyright notice, this list of conditions and the
+						following disclaimer in the documentation and/or other
+						materials provided with the distribution.
+
+						3. Neither the name of the copyright holder nor the
+						names of its contributors may be used to endorse or
+						promote products derived from this software without
+						specific prior written permission.
+
+						THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+						CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED
+						WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+						WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+						PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+						COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+						DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+						CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+						PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+						USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+						CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+						CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+						NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+						USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+						OF SUCH DAMAGE.</text>
+
+				</all>
+				<spdx name='BSD-3-Clause' />
+			</any>
+		</license>
+	</licenses>
+	<approved>
+		<family license_ref='AL' />
+		<family license_ref="BSD-3" />
+		<family license_ref='CDDL1' />
+		<family license_ref='GEN' />
+		<family license_ref='GPL1' />
+		<family license_ref='GPL2' />
+		<family license_ref='GPL3' />
+		<family license_ref='MIT' />
+		<family license_ref='OASIS' />
+		<family license_ref='W3C' />
+		<family license_ref='W3CD' />
+	</approved>
+	<matchers>
+		<matcher class="org.apache.rat.configuration.builders.AllBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.AnyBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.CopyrightBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.MatcherRefBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.NotBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.RegexBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.SpdxBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.TextBuilder" />
+	</matchers>
+</rat-config>

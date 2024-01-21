@@ -22,6 +22,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
@@ -35,24 +36,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates reports.
+ * A factory to create reports from a writer and a configuration.
  *
  */
 public class XmlReportFactory {
-    public static final RatReport createStandardReport(IXmlWriter writer,
-            final ClaimStatistic pStatistic, ReportConfiguration pConfiguration) {
+    /**
+     * Creates a RatReport from the arguments.
+     * The {@code statistic} is used to create a ClaimAggregator.
+     * If the {@code configuration} indicates that licenses should be added a LicenseAddingReport is added.
+     * @param writer The XML writer to send output to.
+     * @param statistic the ClaimStatistics for the report. may be null.
+     * @param configuration The report configuration.
+     * @return a RatReport instance.
+     */
+    public static RatReport createStandardReport(IXmlWriter writer,
+                                                 final ClaimStatistic statistic, ReportConfiguration configuration) {
         final List<RatReport> reporters = new ArrayList<>();
-        if (pStatistic != null) {
-            reporters.add(new ClaimAggregator(pStatistic));
+        if (statistic != null) {
+            reporters.add(new ClaimAggregator(statistic));
         }
-        if (pConfiguration.isAddingLicenses()) {
-            reporters.add(new LicenseAddingReport(pConfiguration.getCopyrightMessage(), pConfiguration.isAddingLicensesForced()));
+        if (configuration.isAddingLicenses()) {
+            reporters.add(new LicenseAddingReport(configuration.getLog(), configuration.getCopyrightMessage(), configuration.isAddingLicensesForced()));
         }
         reporters.add(new SimpleXmlClaimReporter(writer));
 
         final IDocumentAnalyser analyser =
-            DefaultAnalyserFactory.createDefaultAnalyser(pConfiguration.getHeaderMatcher());
-        final DefaultPolicy policy = new DefaultPolicy(pConfiguration.getApprovedLicenseNames(), pConfiguration.isApproveDefaultLicenses());
+            DefaultAnalyserFactory.createDefaultAnalyser(configuration.getLog(), configuration.getLicenses(LicenseFilter.all));
+        final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseFamilies(LicenseFilter.approved));
 
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);

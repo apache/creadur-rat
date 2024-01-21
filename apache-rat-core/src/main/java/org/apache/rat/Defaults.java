@@ -18,91 +18,233 @@
  */
 package org.apache.rat;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.generation.GeneratedLicenseNotRequired;
-import org.apache.rat.analysis.generation.JavaDocLicenseNotRequired;
-import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
-import org.apache.rat.analysis.license.CDDL1License;
-import org.apache.rat.analysis.license.DojoLicenseHeader;
-import org.apache.rat.analysis.license.GPL1License;
-import org.apache.rat.analysis.license.GPL2License;
-import org.apache.rat.analysis.license.GPL3License;
-import org.apache.rat.analysis.license.MITLicense;
-import org.apache.rat.analysis.license.OASISLicense;
-import org.apache.rat.analysis.license.TMF854LicenseHeader;
-import org.apache.rat.analysis.license.W3CDocLicense;
-import org.apache.rat.analysis.license.W3CLicense;
-import org.apache.rat.analysis.util.HeaderMatcherMultiplexer;
-import org.apache.rat.api.MetaData;
-
+import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.configuration.Format;
+import org.apache.rat.configuration.LicenseReader;
+import org.apache.rat.configuration.MatcherReader;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 
 /**
- * Utility class that holds constants shared by the CLI tool and the Ant tasks.
+ * A class that holds the list of licenses and approved licenses from one or more configuration files.
  */
 public class Defaults {
-    /**
-     * no instances
-     */
-    private Defaults() {
-    }
 
     /**
-     * The standard list of licenses to include in the reports.
-     * Needs to match configuration in {@link org.apache.rat.policy.DefaultPolicy}.
+     * The default configuration file from the package.
      */
-    public static final List<IHeaderMatcher> DEFAULT_MATCHERS = Collections.unmodifiableList(
-            Arrays.asList(new ApacheSoftwareLicense20(),
-                    new GPL1License(),
-                    new GPL2License(),
-                    new GPL3License(),
-                    new MITLicense(),
-                    new W3CLicense(),
-                    new W3CDocLicense(),
-                    new OASISLicense(),
-                    new JavaDocLicenseNotRequired(), // does not have a MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_... entry
-                    new GeneratedLicenseNotRequired(), // does not have a MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_... entry
-                    new DojoLicenseHeader(),
-                    new TMF854LicenseHeader(),
-                    new CDDL1License()));
-
-    // all classes in license package implementing ILicenseFamily
-    public static final List<String> DEFAULT_LICENSE_FAMILIES = Collections.unmodifiableList(
-            Arrays.asList(
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_ACADEMIC_FREE_LICENSE_VERSION_2_1, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_APACHE_LICENSE_VERSION_2_0, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_CDDL1, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_1, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_2, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_GPL_VERSION_3, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MIT, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_MODIFIED_BSD_LICENSE, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_OASIS_OPEN_LICENSE, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_DOCUMENT_COPYRIGHT, //
-                    MetaData.RAT_LICENSE_FAMILY_NAME_VALUE_W3C_SOFTWARE_COPYRIGHT
-                    //
-            ));
-
+    private static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.xml");
+    /**
+     * The default XSLT stylesheet to produce a text output file.
+     */
     public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
+    /**
+     * The default XSLT stylesheet to produce a list of unapproved licenses.
+     */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
-    public static InputStream getPlainStyleSheet() {
-        return Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
+    private final LicenseSetFactory setFactory;
+    
+    /**
+     * Initialize the system configuration reader..
+     */
+    public static void init() {
+        Format fmt = Format.fromURL(DEFAULT_CONFIG_URL);
+        MatcherReader mReader = fmt.matcherReader();
+        mReader.addMatchers(DEFAULT_CONFIG_URL);
+        mReader.readMatcherBuilders();
     }
 
-    public static InputStream getUnapprovedLicensesStyleSheet() {
-        return Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
+    /**
+     * Builder constructs instances.
+     */
+    private Defaults(Set<URL> urls) {
+        this.setFactory = Defaults.readConfigFiles(urls);
     }
 
-    public static InputStream getDefaultStyleSheet() {
-        return getPlainStyleSheet();
+    /**
+     * Gets a builder for a Defaults object.
+     * @return the Builder.
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public static IHeaderMatcher createDefaultMatcher() {
-        return new HeaderMatcherMultiplexer(Defaults.DEFAULT_MATCHERS);
+    /**
+     * Reads the configuration files.
+     * @param urls the URLs to read.
+     */
+    private static LicenseSetFactory readConfigFiles(Collection<URL> urls) {
+
+        SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
+
+        SortedSet<String> approvedLicenseIds = new TreeSet<>();
+
+        for (URL url : urls) {
+            Format fmt = Format.fromURL(url);
+            MatcherReader mReader = fmt.matcherReader();
+            if (mReader != null) {
+                mReader.addMatchers(url);
+                mReader.readMatcherBuilders();
+            }
+
+            LicenseReader lReader = fmt.licenseReader();
+            if (lReader != null) {
+                lReader.addLicenses(url);
+                licenses.addAll(lReader.readLicenses());
+                lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
+            }
+        }
+        return new LicenseSetFactory(licenses, approvedLicenseIds);
+    }
+
+    /**
+     * Gets a supplier for the "plain" text stylesheet.
+     * @return an IOSupplier for the plain text stylesheet.
+     */
+    public static IOSupplier<InputStream> getPlainStyleSheet() {
+        return () -> Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
+    }
+
+    /**
+     * Gets a supplier for the unapproved licences list stylesheet
+     * @return an IOSupplier for the unapproved licenses list stylesheet.
+     */
+    public static IOSupplier<InputStream> getUnapprovedLicensesStyleSheet() {
+        return () -> Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
+    }
+
+    /**
+     * Gets the sorted set of approved licenses for a given filter condition.
+     * @param filter define which type of licenses to return.
+     * @return sorted set of licenses.
+     */
+    public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
+        return setFactory.getLicenses(filter);
+    }
+    
+    /**
+     * Gets the sorted set of approved licenses for a given filter condition.
+     * @param filter define which type of licenses to return.
+     * @return sorted set of license families.
+     */
+    public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
+        return setFactory.getLicenseFamilies(filter);
+    }
+
+    /**
+     * Gets the sorted set of approved license ids for a given filter condition.
+     * If no licenses have been explicitly listed as approved, all licenses are assumed to be approved.
+     * @param filter define which type of licenses to return.
+     * @return The sorted set of approved licenseIds.
+     */
+    public SortedSet<String> getLicenseIds(LicenseFilter filter) {
+        return setFactory.getLicenseFamilyIds(filter);
+    }
+    
+    /**
+     * The Defaults builder.
+     */
+    public static class Builder {
+        private final Set<URL> fileNames = new TreeSet<>(Comparator.comparing(URL::toString));
+
+        private Builder() {
+            fileNames.add(DEFAULT_CONFIG_URL);
+        }
+
+        /**
+         * Adds a URL to a configuration file to be read.
+         * 
+         * @param url the URL to add
+         * @return this Builder for chaining
+         */
+        public Builder add(URL url) {
+            fileNames.add(url);
+            return this;
+        }
+
+        /**
+         * Adds the name of a configuration file to be read.
+         * 
+         * @param fileName the name of the file to add.
+         * @return this Builder for chaining
+         * @throws MalformedURLException in case the fileName cannot be found.
+         */
+        public Builder add(String fileName) throws MalformedURLException {
+            return add(new File(fileName));
+        }
+
+        /**
+         * Adds a configuration file to be read.
+         * 
+         * @param file the File to add.
+         * @return this Builder for chaining
+         * @throws MalformedURLException in case the file cannot be found.
+         */
+        public Builder add(File file) throws MalformedURLException {
+            return add(file.toURI().toURL());
+        }
+
+        /**
+         * Removes a file from the list of configuration files to process.
+         * 
+         * @param url the URL of the file to remove.
+         * @return this Builder for chaining
+         */
+        public Builder remove(URL url) {
+            fileNames.remove(url);
+            return this;
+        }
+
+        /**
+         * Removes a file name from the list of configuration files to process.
+         * 
+         * @param fileName the fileName of the file to remove.
+         * @return this Builder for chaining
+         * @throws MalformedURLException in case the fileName cannot be found.
+         */
+        public Builder remove(String fileName) throws MalformedURLException {
+            return remove(new File(fileName));
+        }
+
+        /**
+         * Removes a file from the list of configuration files to process.
+         * 
+         * @param file the File of the file to remove.
+         * @return this Builder for chaining
+         * @throws MalformedURLException in case the file cannot be found.
+         */
+        public Builder remove(File file) throws MalformedURLException {
+            return remove(file.toURI().toURL());
+        }
+
+        /**
+         * Removes the default definitions from the list of files to process.
+         * 
+         * @return this Builder for chaining
+         */
+        public Builder noDefault() {
+            return remove(DEFAULT_CONFIG_URL);
+        }
+
+        /**
+         * Builds the defaults object.
+         * @return the current defaults object.
+         */
+        public Defaults build() {
+            return new Defaults(fileNames);
+        }
     }
 }

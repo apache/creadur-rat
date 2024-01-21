@@ -20,10 +20,10 @@
 package org.apache.rat.walker;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -63,17 +63,17 @@ public class ArchiveWalker extends Walker implements IReportable {
     public void run(final RatReport report) throws RatException {
 
         try {
-            ArchiveInputStream input;
+            ArchiveInputStream<? extends ArchiveEntry> input;
 
             /* I am really sad that classes aren't first-class objects in
                Java :'( */
             try {
-                input = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(file)));
+                input = new TarArchiveInputStream(new GzipCompressorInputStream(Files.newInputStream(file.toPath())));
             } catch (IOException e) {
                 try {
-                    input = new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
+                    input = new TarArchiveInputStream(new BZip2CompressorInputStream(Files.newInputStream(file.toPath())));
                 } catch (IOException e2) {
-                    input = new ZipArchiveInputStream(new FileInputStream(file));
+                    input = new ZipArchiveInputStream(Files.newInputStream(file.toPath()));
                 }
             }
 

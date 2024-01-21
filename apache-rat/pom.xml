@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.rat</groupId>
     <artifactId>apache-rat-project</artifactId>
-    <version>0.16-SNAPSHOT</version>
+    <version>0.16.1-SNAPSHOT</version>
   </parent>
   <artifactId>apache-rat</artifactId>
   <packaging>jar</packaging>
@@ -31,7 +31,6 @@
     provides a JAR file, which is the combination of
     rat-core, rat-tasks, and its dependencies.
   </description>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
@@ -42,7 +41,6 @@
       <artifactId>apache-rat-tasks</artifactId>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
@@ -94,11 +92,11 @@
             <manifestEntries>
               <Main-Class>org.apache.rat.Report</Main-Class>
               <Extension-Name>rat</Extension-Name>
-              <Specification-Title>Apache Rat</Specification-Title>
+              <Specification-Title>Apache Creadur RAT</Specification-Title>
               <Specification-Vendor>apache.org</Specification-Vendor>
               <Specification-Version>${project.version}</Specification-Version>
               <Implementation-Vendor-Id>apache.org</Implementation-Vendor-Id>
-              <Implementation-Title>Apache Rat</Implementation-Title>
+              <Implementation-Title>Apache Creadur RAT</Implementation-Title>
               <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
               <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
@@ -108,10 +106,11 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <version>1.23</version>
         <executions>
           <execution>
             <!-- This sub project has no source code, so we need to skip animal sniffer -->
-            <id>check-java-1.5-compat</id>
+            <id>check-java-1.8-compat</id>
             <configuration>
               <skip>true</skip>
             </configuration>
@@ -119,7 +118,6 @@
         </executions>
       </plugin>
     </plugins>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -151,7 +149,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -161,7 +159,6 @@
       </plugins>
     </pluginManagement>
   </build>
-
   <profiles>
     <profile>
       <id>apache-release</id>
@@ -177,10 +174,11 @@
             <executions>
               <execution>
                 <id>make-assembly</id>
-                  <phase>package</phase> <!-- append to the packaging phase. -->
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
+                <phase>package</phase>
+                <!-- append to the packaging phase. -->
+                <goals>
+                  <goal>single</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>

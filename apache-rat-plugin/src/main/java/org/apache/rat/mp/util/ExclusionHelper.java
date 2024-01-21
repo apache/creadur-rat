@@ -2,12 +2,14 @@ package org.apache.rat.mp.util;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.rat.config.SourceCodeManagementSystems;
-import org.codehaus.plexus.util.DirectoryScanner;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.codehaus.plexus.util.AbstractScanner.DEFAULTEXCLUDES;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -40,10 +42,11 @@ public final class ExclusionHelper {
             .unmodifiableList(Arrays.asList(//
                     "target/**/*", //
                     "cobertura.ser", //
+                    "**/MANIFEST.MF", // a MANIFEST.MF file cannot contain comment lines. In other words: It is not possible, to include a license.
                     "release.properties", //
                     ".repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
                     "build.log", // RAT-160: until now maven-invoker-plugin runs create a build.log that is not part of a release
-                    ".mvn", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
+                    ".mvn/**/*", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
                     "pom.xml.releaseBackup"));
 
     /**
@@ -67,22 +70,22 @@ public final class ExclusionHelper {
                     "*.iws", //
                     ".idea/**/*"));
 
-    public static void addPlexusAndScmDefaults(Log log, final boolean useDefaultExcludes,
-                                               final Set<String> excludeList1) {
+    public static Set<String> addPlexusAndScmDefaults(Log log, final boolean useDefaultExcludes) {
+        Set<String> excludeList = new HashSet<>();
         if (useDefaultExcludes) {
             log.debug("Adding plexus default exclusions...");
-            Collections.addAll(excludeList1, DirectoryScanner.DEFAULTEXCLUDES);
+            Collections.addAll(excludeList, DEFAULTEXCLUDES);
             log.debug("Adding SCM default exclusions...");
-            excludeList1.addAll(//
-                    SourceCodeManagementSystems.getPluginExclusions());
+            excludeList.addAll(SourceCodeManagementSystems.getPluginExclusions());
         } else {
             log.debug("rat.useDefaultExcludes set to false. "
                     + "Plexus and SCM default exclusions will not be added");
         }
+        return excludeList;
     }
 
-    public static void addMavenDefaults(Log log, boolean useMavenDefaultExcludes,
-                                        final Set<String> excludeList) {
+    public static Set<String> addMavenDefaults(Log log, boolean useMavenDefaultExcludes) {
+        Set<String> excludeList = new HashSet<>();
         if (useMavenDefaultExcludes) {
             log.debug("Adding exclusions often needed by Maven projects...");
             excludeList.addAll(MAVEN_DEFAULT_EXCLUDES);
@@ -90,10 +93,11 @@ public final class ExclusionHelper {
             log.debug("rat.useMavenDefaultExcludes set to false. "
                     + "Exclusions often needed by Maven projects will not be added.");
         }
+        return excludeList;
     }
 
-    public static void addEclipseDefaults(Log log, boolean useEclipseDefaultExcludes,
-                                          final Set<String> excludeList) {
+    public static Set<String> addEclipseDefaults(Log log, boolean useEclipseDefaultExcludes) {
+        Set<String> excludeList = new HashSet<>();
         if (useEclipseDefaultExcludes) {
             log.debug("Adding exclusions often needed by projects "
                     + "developed in Eclipse...");
@@ -103,10 +107,11 @@ public final class ExclusionHelper {
                     + "Exclusions often needed by projects developed in "
                     + "Eclipse will not be added.");
         }
+        return excludeList;
     }
 
-    public static void addIdeaDefaults(Log log, boolean useIdeaDefaultExcludes,
-                                       final Set<String> excludeList) {
+    public static Set<String> addIdeaDefaults(Log log, boolean useIdeaDefaultExcludes) {
+        Set<String> excludeList = new HashSet<>();
         if (useIdeaDefaultExcludes) {
             log.debug("Adding exclusions often needed by projects "
                     + "developed in IDEA...");
@@ -116,6 +121,7 @@ public final class ExclusionHelper {
                     + "Exclusions often needed by projects developed in "
                     + "IDEA will not be added.");
         }
+        return excludeList;
     }
 
 }

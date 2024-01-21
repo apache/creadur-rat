@@ -41,6 +41,8 @@ public abstract class AbstractRatAntTaskTest {
     @Before
     public void setUp() {
         buildRule.configureProject(getAntFile().getPath());
+        buildRule.getProject().setProperty("output.dir", tempDir.getAbsolutePath());
+        buildRule.getProject().setProperty("resource.dir", getAntFile().getParent());
     }
 
     protected void assertLogDoesNotMatch(String pPattern) {

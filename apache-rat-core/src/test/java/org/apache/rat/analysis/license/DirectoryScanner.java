@@ -18,46 +18,47 @@
 
 package org.apache.rat.analysis.license;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
+import org.apache.rat.analysis.IHeaderMatcher.State;
+import org.apache.rat.license.ILicense;
 import org.apache.rat.test.utils.Resources;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 
 class DirectoryScanner {
 
     @SuppressWarnings("boxing") // OK in test code
     /**
      * Get list of files in a directory, and scan for license matches
+     * 
      * @param directory the directory containing the files
      * @param matcher the license matcher
      * @param expected the expected result of the each scan
      * @throws Exception
      */
-    public static void testFilesInDir(String directory, IHeaderMatcher matcher, boolean expected) throws Exception {
+    @Test
+    public static void testFilesInDir(String directory, ILicense license, boolean expected) throws Exception {
         final File[] resourceFiles = Resources.getResourceFiles(directory);
         if (resourceFiles.length == 0) {
-            Assert.fail("No files found under "+directory);
+            fail("No files found under " + directory);
         }
-        for(File f : resourceFiles) {
-            final Document subject = new MockLocation(f.toString());
+        for (File f : resourceFiles) {
             BufferedReader br = null;
             try {
                 boolean result = false;
                 br = Resources.getBufferedReader(f);
                 String line;
-                while(!result && (line = br.readLine()) != null) {
-                    result = matcher.match(subject, line);
+                while (!result && (line = br.readLine()) != null) {
+                    result = license.matches(line) == State.t;
                 }
-                assertEquals(f.toString(), expected, result);
+                assertEquals(expected, result, f.toString());
             } finally {
-                matcher.reset();
+                license.reset();
                 IOUtils.closeQuietly(br);
             }
         }

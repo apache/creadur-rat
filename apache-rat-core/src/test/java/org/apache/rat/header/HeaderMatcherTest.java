@@ -18,22 +18,23 @@
  */ 
 package org.apache.rat.header;
 
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HeaderMatcherTest {
 
     private HeaderMatcher matcher;
     private SimpleCharFilter filter;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         filter = new SimpleCharFilter();
         matcher = new HeaderMatcher(filter, 20);
@@ -69,29 +70,29 @@ public class HeaderMatcherTest {
     public void noLines() throws Exception {
         StringReader reader = new StringReader("None");
         matcher.read(reader);
-        assertEquals("No lines read", 0, matcher.lines());
+        assertEquals(0, matcher.lines(), "No lines read");
     }
     
     @Test
     public void lines() throws Exception {
         StringReader reader = new StringReader("One\n");
         matcher.read(reader);
-        assertEquals("One line read", 1, matcher.lines());
+        assertEquals(1, matcher.lines(), "One line read");
         reader = new StringReader("One\nTwo");
         matcher.read(reader);
-        assertEquals("One line read", 1, matcher.lines());
+        assertEquals( 1, matcher.lines(), "One line read");
         reader = new StringReader("One\nTwo\nThree");
         matcher.read(reader);
-        assertEquals("Two lines read", 2, matcher.lines());
+        assertEquals( 2, matcher.lines(), "Two lines read");
         reader = new StringReader("One\nTwo\nThree\n");
         matcher.read(reader);
-        assertEquals("Three lines read", 3, matcher.lines());
+        assertEquals( 3, matcher.lines(), "Three lines read");
     }
     
     @Test
     public void tooManyLines() throws Exception {
         StringReader reader = new StringReader("WhateverWhateverWhateverWhateverWhateverWhateverWhateverWhatever");
         matcher.read(reader);
-        assertEquals("Too many lines read", -1, matcher.lines());
+        assertEquals( -1, matcher.lines(), "Too many lines read");
     }
 }

@@ -21,10 +21,10 @@ package org.apache.rat.document.impl.util;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.MockDocument;
 import org.apache.rat.document.MockDocumentAnalyser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DocumentAnalyserMultiplexerTest {
 
@@ -32,7 +32,7 @@ public class DocumentAnalyserMultiplexerTest {
     private IDocumentAnalyser[] analysers;
     private MockDocument document;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         IDocumentAnalyser[] analysers = {
                 new MockDocumentAnalyser(), 
@@ -48,14 +48,14 @@ public class DocumentAnalyserMultiplexerTest {
     public void testAnalyse() throws Exception {
         multiplexer.analyse(document);
         MockDocumentAnalyser analyser =  (MockDocumentAnalyser) (analysers[0]);
-        assertEquals("Call made to analyser", 1, analyser.matches.size());
-        assertEquals("Call made to analyser", document, analyser.matches.get(0));
+        assertEquals(1, analyser.matches.size(),"Call made to analyser");
+        assertEquals( document, analyser.matches.get(0), "Call made to analyser");
         analyser =  (MockDocumentAnalyser) (analysers[1]);
-        assertEquals("Call made to analyser", 1, analyser.matches.size());
-        assertEquals("Call made to analyser", document, analyser.matches.get(0));
+        assertEquals(1, analyser.matches.size(), "Call made to analyser");
+        assertEquals(document, analyser.matches.get(0), "Call made to analyser");
         analyser =  (MockDocumentAnalyser) (analysers[2]);
-        assertEquals("Call made to analyser", 1, analyser.matches.size());
-        assertEquals("Call made to analyser", document, analyser.matches.get(0));
+        assertEquals( 1, analyser.matches.size());
+        assertEquals( document, analyser.matches.get(0),"Call made to analyser");
     }
 
 }

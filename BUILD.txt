@@ -5,14 +5,17 @@ There is a maven default goal configured that builds and installs a fresh artifa
 or
 Normal development:
 
-    mvn install
+    mvn install OR 
+    ./mvnw install 
 
 Normal development without running tests:
 
-    mvn -Dmaven.test.skip=true install
+    mvn -Dmaven.test.skip=true install OR
+    ./mvnw -Dmaven.test.skip=true install
 
 Build apache release
 
-    mvn clean install -Papache-release
+    mvn clean install -Papache-release OR
+    ./mvnw clean install -Papache-release
 
 RAT uses the previos release version during the build to verify it complies its own rules.

@@ -11,7 +11,6 @@ Requirements
 ------------
 
 The Rat Ant Task Library requires Apache Ant 1.7.1 or higher (it works well with 1.8.x)
-It also requires at least Java 1.5.
 
 Installation
 ------------

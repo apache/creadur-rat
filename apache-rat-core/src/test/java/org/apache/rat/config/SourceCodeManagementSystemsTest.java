@@ -17,17 +17,19 @@ package org.apache.rat.config;
  * specific language governing permissions and limitations
  * under the License.
  */
-import static org.junit.Assert.*;
+
 
 import static org.apache.rat.config.SourceCodeManagementSystems.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SourceCodeManagementSystemsTest {
 
     @Test
     public void testSubversionAndNumberOfSCMSystems() {
-        assertFalse("SVN does not have any external ignore files.", SUBVERSION.hasIgnoreFile());
+        assertFalse(SUBVERSION.hasIgnoreFile(), "SVN does not have any external ignore files.");
         
         int hasIgnore = 0;
         int hasNoIgnore = 0;
@@ -39,9 +41,9 @@ public class SourceCodeManagementSystemsTest {
             }
         }
         
-        assertEquals("Did you change the number of SCMs?", 4, hasIgnore);
-        assertEquals("Did you add a new SCM without ignoreFile?", 1, hasNoIgnore);
-        assertEquals("Amount of SCM has changed.", values().length, hasIgnore+hasNoIgnore);
+        assertEquals(4, hasIgnore, "Did you change the number of SCMs?");
+        assertEquals(1, hasNoIgnore, "Did you add a new SCM without ignoreFile?");
+        assertEquals(values().length, hasIgnore+hasNoIgnore, "Amount of SCM has changed.");
     }
     
     @Test
@@ -49,8 +51,8 @@ public class SourceCodeManagementSystemsTest {
         assertEquals(1, SUBVERSION.getExclusions().size());
         assertEquals(2, GIT.getExclusions().size());
         
-        assertEquals("Did you change the number of SCM systems?", 9, getPluginExclusions().size());
-        assertEquals("Did you change the number of SCM systems?", 5, values().length);
+        assertEquals(9, getPluginExclusions().size(), "Did you change the number of SCM systems?");
+        assertEquals(5, values().length, "Did you change the number of SCM systems?");
     }
 
 }

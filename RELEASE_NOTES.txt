@@ -1,3 +1,57 @@
+Rat 0.16
+========
+Apart from dependency updates and multiple bugfixes, this release brings the ability to use SPDX license identifiers and enhances the .gitignore-exclusion filterung during RAT runs.
+Furthermore new CLI options were added and new file types can be used by default. This release makes RAT a fully Maven3-compatible plugin and removes deprecated Maven2 completely.
+Thanks to all new contributors for improving RAT!
+
+New features:
+o RAT-338:  Update minimal build Maven version to 3.2.5 and maven dependencies to 3.9.6. Remove pre-JDK8 code constructs and minor refactorings. Thanks to Tamás Cservenák.
+o RAT-335:  Enhance .gitignore handling; support multiple .gitignore files and allow a more complete parsing of Git's ignore files. Thanks to Niels Basjes.
+o RAT-322:  Add configuration option to scan hidden directories: --scan-hidden-directories on the command line and scanHiddenDirectories as a Maven plugin parameter. Thanks to Jean-Baptiste Onofré.
+o RAT-320:  Add new command line option -o/--output to write RAT's output to a file. Thanks to Jean-Baptiste Onofré.
+o RAT-329:  Add markdown (MD) and yaml (YML/YAML) as a recognized extension for file and license processing. Thanks to Claude Warren.
+o RAT-316:  Add default exclusion of MANIFEST.MF as it must not contain comment lines to include a license.
+o RAT-321:  Allow text-based XML configuration of RAT. Thanks to Claude Warren.
+
+Fixed Bugs:
+o RAT-326:  Fix existing javadoc build errors and add javadoc generation to existing GithubActions to not introduce build errors via merge requests.
+o RAT-328:  Ensure that System.out does not get closed during report generation and updated javadocs. Thanks to Claude Warren.
+o RAT-311:  Update commons-compress to 1.24.0 in order to circumvent CVE-2023-42503.
+o RAT-251:  Added SPDX processing for default licenses. Thanks to Claude Warren.
+o RAT-315:  Fix warnings when using RAT with newer Maven versions as methods from Maven v2 are deprecated. Minimum version of required Maven changed to 3.2.5. Thanks to Guillaume Nodet.
+o RAT-317:  Change log output level of SCM ignore parser from info to debug in order to produce less log output in RAT runs. Thanks to Gary Gregory.
+o RAT-314:  Add default recursive exclusion for maven-induced build artifacts in folder .mvn. Thanks to François Guillot.
+o RAT-312:  Remove Travis build as it is unreliable. Builds with ASF Jenkins and Github Actions remain as before.
+
+Changes:
+o RAT-311:  Update actions/setup-java from 3.4.1 to 4.0.0. Thanks to dependabot.
+o RAT-311:  Update actions/cache from 3.0.11 to 3.3.2 Thanks to dependabot.
+o RAT-311:  Update actions/checkout from 3 to 4. Thanks to dependabot.
+o RAT-311:  Update mockito-core from 4.7.0 to 4.11.0, newer versions 5.x cannot be applied due to our JDK8-compatibility restriction. Thanks to dependabot.
+o RAT-311:  Update plexus-utils from 3.4.2 to 3.5.1, versions 4.x are for upcoming Maven4 and must not be applied here. Thanks to dependabot.
+o RAT-311:  Update maven-plugin-version from 3.6.4 to 3.8.2. Thanks to dependabot.
+o RAT-311:  Update wagon-ssh from 3.5.2 to 3.5.3. Thanks to dependabot.
+o RAT-311:  Update Ant from 1.10.12 to 1.10.14. Thanks to dependabot.
+o RAT-311:  Update ASF parent pom from 27 to 31 and update multiple maven plugin versions implicitly (surefire, release, project-info, enforcer, jxr). Thanks to dependabot.
+o RAT-311:  Update doxiaVersion from 1.11.1 to 1.12.0. Thanks to dependabot.
+o RAT-311:  Update maven-shared-utils from 3.3.4 to 3.4.2. Thanks to dependabot.
+o RAT-311:  Update org.slf4j:slf4j-simple from 1.7.36 to 2.0.9. Thanks to dependabot.
+o RAT-311:  Update commons-lang3 from 3.5 to 3.14.0. Thanks to dependabot.
+o RAT-311:  Update commons-compress from 1.21 to 1.25. Thanks to dependabot.
+o RAT-311:  Update commons-io from 2.11.0 to 2.15.1. Thanks to dependabot.
+o RAT-311:  Update commons-cli from 1.5.0 to 1.6.0. Thanks to dependabot.
+o RAT-311:  Update maven-pmd-plugin from 3.18.0 to 3.21.2. Thanks to dependabot.
+o RAT-311:  Update maven-dependency-plugin from 3.3.0 to 3.6.1. Thanks to dependabot.
+o RAT-311:  Update maven-compiler-plugin from 3.10.1 to 3.12.1. Thanks to dependabot.
+o RAT-311:  Update maven-javadoc-plugin from 3.4.1 to 3.6.3. Thanks to dependabot.
+o RAT-311:  Update maven-release-plugin from 2.5.3 to 3.0.1. Thanks to dependabot.
+o RAT-311:  Update maven-enforcer-plugin from 3.1.0 to 3.4.1. Thanks to dependabot.
+o RAT-311:  Update extra-enforcer-rules from 1.6.1 to 1.7.0 Thanks to dependabot.
+o RAT-311:  Update maven-release-plugin from 2.5.3 to 3.0.1. Thanks to dependabot.
+o RAT-311:  Update animal-sniffer-maven-plugin from 1.22 to 1.23. Thanks to dependabot.
+o RAT-311:  Update maven-project-info-reports-plugin from 3.4.1 to 3.5.0. Thanks to dependabot.
+o RAT-311:  Update maven-surefire-plugin from 3.2.2 to 3.2.3. Thanks to dependabot.
+
 Rat 0.15
 ========
 This release fixes a warning during site builds and updates various dependencies.
