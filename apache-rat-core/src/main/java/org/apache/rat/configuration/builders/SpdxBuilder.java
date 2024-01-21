@@ -32,8 +32,8 @@ public class SpdxBuilder extends AbstractBuilder {
 
     /**
      * sets the name for the SPDX matcher
-     * @param name
-     * @return
+     * @param name The text that follows the colon ':' in the SPDX tag.
+     * @return this builder for chaining.
      */
     public SpdxBuilder setName(String name) {
         Objects.requireNonNull(name, "name must not be null");
