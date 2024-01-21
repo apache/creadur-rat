@@ -31,12 +31,17 @@ public class DefaultLog implements Log {
     private Level level;
 
     private DefaultLog() {
-        level = Level.INFO;
+        level = Level.WARN;
     }
 
     public void setLevel(Level level) {
         this.level = level;
     }
+    
+    public Level getLevel() {
+        return level;
+    }
+    
     @Override
     public void log(Level level, String msg) {
         if (this.level.ordinal() <= level.ordinal())
