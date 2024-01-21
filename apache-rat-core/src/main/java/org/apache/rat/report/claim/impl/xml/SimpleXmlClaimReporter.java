@@ -15,19 +15,16 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.claim.impl.xml;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
+import java.io.IOException;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
-
-import java.io.IOException;
-import java.util.Calendar;
 
 public class SimpleXmlClaimReporter extends AbstractReport {
     private static final String LICENSE_APPROVAL_PREDICATE = "license-approval";
@@ -44,18 +41,17 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         this.writer = writer;
     }
 
-
     /**
      * Writes a single claim to the XML file.
+     * 
      * @param pPredicate The claims predicate.
      * @param pObject The claims object.
-     * @param pLiteral Whether to write the object as an element (true),
-     *   or an attribute (false).
+     * @param pLiteral Whether to write the object as an element (true), or an
+     * attribute (false).
      * @throws IOException An I/O error occurred while writing the claim.
      * @throws RatException Another error occurred while writing the claim.
      */
-    protected void writeClaim(String pPredicate, String pObject, boolean pLiteral)
-    throws IOException, RatException {
+    protected void writeClaim(String pPredicate, String pObject, boolean pLiteral) throws IOException, RatException {
         if (pLiteral) {
             writer.openElement(pPredicate).content(pObject).closeElement();
         } else {
@@ -74,8 +70,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
             writer.openElement("resource").attribute(NAME, subject.getName());
             writeDocumentClaims(subject);
         } catch (IOException e) {
-            throw new RatException("XML writing failure: " + e.getMessage()
-                    + " subject: " + subject, e);
+            throw new RatException("XML writing failure: " + e.getMessage() + " subject: " + subject, e);
         }
     }
 

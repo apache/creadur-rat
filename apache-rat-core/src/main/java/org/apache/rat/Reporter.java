@@ -26,7 +26,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 import org.apache.rat.api.RatException;
-import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.XmlReportFactory;
@@ -38,16 +37,6 @@ import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
  */
 public class Reporter {
 
-    /*
-     * Format used for listing license families
-     */
-    private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s\n";
-
-    /**
-     * Format used for listing licenses.
-     */
-    private static final String LICENSE_FORMAT = "%s:\t%s\n\t\t%s\n";
-    
     private Reporter() {
         // Do not instantiate
     }
@@ -85,6 +74,7 @@ public class Reporter {
 
     /**
      * Execute the report.
+     * 
      * @param outputWriter the writer to send output to.
      * @param configuration The report configuration.
      * @return the currently collected numerical statistics.
@@ -105,7 +95,7 @@ public class Reporter {
             throw new IOException(e);
         }
     }
-   
+
 //    /**
 //     * lists the license families information on the configured output stream.
 //     * @param configuration The configuration for the system

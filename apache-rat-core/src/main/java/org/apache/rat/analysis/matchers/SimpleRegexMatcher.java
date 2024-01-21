@@ -19,14 +19,10 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.inspector.AbstractInspector;
 import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * A simple regular expression matching IHeaderMatcher
@@ -35,17 +31,23 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     private final Pattern pattern;
 
     /**
-     * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.
-     * @param pattern the pattern to match.  Pattern will only match a single line from the input stream.
+     * Constructs a regex pattern matcher with a unique random id and the specified
+     * Regex pattern.
+     * 
+     * @param pattern the pattern to match. Pattern will only match a single line
+     * from the input stream.
      */
     public SimpleRegexMatcher(Pattern pattern) {
         this(null, pattern);
     }
 
     /**
-     * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.
+     * Constructs a regex pattern matcher with a unique random id and the specified
+     * Regex pattern.
+     * 
      * @param id the id for this matcher
-     * @param pattern the pattern to match.  Pattern will only match a single line from the input stream.
+     * @param pattern the pattern to match. Pattern will only match a single line
+     * from the input stream.
      */
     public SimpleRegexMatcher(String id, Pattern pattern) {
         super(id);
@@ -56,7 +58,7 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     public boolean doMatch(String line) {
         return pattern.matcher(line).find();
     }
-    
+
     @Override
     public Inspector getInspector() {
         return AbstractInspector.matcher("regex", getId(), Arrays.asList(AbstractInspector.text(pattern.toString())));

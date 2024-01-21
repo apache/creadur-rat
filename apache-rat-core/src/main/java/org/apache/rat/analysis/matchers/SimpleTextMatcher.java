@@ -19,12 +19,10 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.inspector.AbstractInspector;
 import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * A simple text matching IHeaderMatcher implementation.
@@ -34,7 +32,9 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
 
     /**
      * Constructs the simple text matcher for the simple string.
-     * @param pattern The pattern to match.  Will only match a single line from the input stream.
+     * 
+     * @param pattern The pattern to match. Will only match a single line from the
+     * input stream.
      */
     public SimpleTextMatcher(String pattern) {
         this(null, pattern);
@@ -42,8 +42,10 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
 
     /**
      * Constructs the simple text matcher for the simple string.
+     * 
      * @param id The id for this matcher.
-     * @param pattern The pattern to match.  Will only match a single line from the input stream.
+     * @param pattern The pattern to match. Will only match a single line from the
+     * input stream.
      */
     public SimpleTextMatcher(String id, String pattern) {
         super(id);
@@ -57,7 +59,7 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
     public boolean doMatch(String line) {
         return line.contains(pattern);
     }
-    
+
     @Override
     public Inspector getInspector() {
         return AbstractInspector.matcher("text", getId(), Arrays.asList(AbstractInspector.text(pattern)));
