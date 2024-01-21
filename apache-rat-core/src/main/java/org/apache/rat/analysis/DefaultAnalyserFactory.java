@@ -37,6 +37,7 @@ public class DefaultAnalyserFactory {
 
     /**
      * Creates a DocumentAnalyser from a collection of ILicenses.
+     * @param log The Log to use for logging.
      * @param licenses The licenses to use in the Analyser.
      * @return A document analyser that uses the provides licenses.
      */
@@ -61,6 +62,7 @@ public class DefaultAnalyserFactory {
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
+         * 
          * @param license The license to analyse
          */
         public DefaultAnalyser(final Log log, final Collection<ILicense> licenses) {
