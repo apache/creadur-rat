@@ -36,6 +36,9 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
  */
 public class MatcherBuilderTracker {
 
+    /**
+     * The instance of the BuildTracker.
+     */
     public static MatcherBuilderTracker INSTANCE;
 
     private final Map<String, Class<? extends AbstractBuilder>> matcherBuilders;
