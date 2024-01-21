@@ -18,6 +18,8 @@ package org.example;
 
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
 
 public class Matcher extends AbstractSimpleMatcher {
     public Matcher() {
@@ -27,6 +29,11 @@ public class Matcher extends AbstractSimpleMatcher {
     @Override
     public boolean matches(IHeaders headers) {
         return true;
+    }
+
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.matcher("MyCustomMatcher", getId(), null);
     }
 
 }
