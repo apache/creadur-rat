@@ -83,21 +83,21 @@ import org.xml.sax.SAXException;
 
 public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
-    private final static String ATT_ID = "id";
-    private final static String ATT_NAME = "name";
+    public final static String ATT_ID = "id";
+    public final static String ATT_NAME = "name";
     private final static String ATT_DERIVED_FROM = "derived_from";
-    private final static String ATT_LICENSE_REF = "license_ref";
-    private final static String ATT_CLASS_NAME = "class";
+    public final static String ATT_LICENSE_REF = "license_ref";
+    public final static String ATT_CLASS_NAME = "class";
 
-    private final static String ROOT = "rat-config";
-    private final static String FAMILIES = "families";
-    private final static String LICENSES = "licenses";
-    private final static String LICENSE = "license";
-    private final static String APPROVED = "approved";
-    private final static String FAMILY = "family";
-    private final static String NOTE = "note";
-    private final static String MATCHERS = "matchers";
-    private final static String MATCHER = "matcher";
+    public final static String ROOT = "rat-config";
+    public final static String FAMILIES = "families";
+    public final static String LICENSES = "licenses";
+    public final static String LICENSE = "license";
+    public final static String APPROVED = "approved";
+    public final static String FAMILY = "family";
+    public final static String NOTE = "note";
+    public final static String MATCHERS = "matchers";
+    public final static String MATCHER = "matcher";
 
     private Document document;
     private final Element rootElement;

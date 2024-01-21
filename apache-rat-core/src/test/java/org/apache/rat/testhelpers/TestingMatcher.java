@@ -22,6 +22,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
 
 /**
  * An Matcher for testing.
@@ -101,4 +103,11 @@ public class TestingMatcher extends AbstractHeaderMatcher {
     public final State currentState() {
         return lastState;
     }
+
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.matcher("TestingMatcher", getId(), null);
+    }
+    
+    
 }

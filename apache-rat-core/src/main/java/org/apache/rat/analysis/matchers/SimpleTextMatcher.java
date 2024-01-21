@@ -18,7 +18,13 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
+import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * A simple text matching IHeaderMatcher implementation.
@@ -50,5 +56,10 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
     @Override
     public boolean doMatch(String line) {
         return line.contains(pattern);
+    }
+    
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.matcher("text", getId(), Arrays.asList(AbstractInspector.text(pattern)));
     }
 }

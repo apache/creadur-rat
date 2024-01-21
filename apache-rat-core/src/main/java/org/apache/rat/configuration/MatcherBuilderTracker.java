@@ -19,6 +19,8 @@
 package org.apache.rat.configuration;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +36,7 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
  */
 public class MatcherBuilderTracker {
 
-    private static MatcherBuilderTracker INSTANCE;
+    public static MatcherBuilderTracker INSTANCE;
 
     private final Map<String, Class<? extends AbstractBuilder>> matcherBuilders;
 
@@ -80,6 +82,11 @@ public class MatcherBuilderTracker {
 
     private MatcherBuilderTracker() {
         matcherBuilders = new HashMap<>();
+    }
+    
+
+    public Collection<Class<? extends AbstractBuilder>> getClasses() {
+        return Collections.unmodifiableCollection(matcherBuilders.values());
     }
 
     private void addBuilderImpl(String className, String name) {

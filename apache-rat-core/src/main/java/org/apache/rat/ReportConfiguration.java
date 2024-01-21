@@ -143,12 +143,20 @@ public class ReportConfiguration {
         listFamilies = filter;
     }
     
+    public LicenseFilter listFamilies() {
+        return listFamilies;
+    }
+    
     /**
      * Set the level of licenses that should be output in the XML document.
      * @param filter the licenses to list.
      */
     public void listLicenses(LicenseFilter filter) {
         listLicenses = filter;
+    }
+    
+    public LicenseFilter listLicenses() {
+        return listFamilies;
     }
     
     /**

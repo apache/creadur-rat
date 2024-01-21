@@ -18,8 +18,18 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
+import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
@@ -43,6 +53,8 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
     private boolean seenFirstLine;
 
     private final StringBuilder buffer = new StringBuilder();
+    
+    private final String rawFullText;
 
     /**
      * Constructs the full text matcher with a unique random id and the specified text to match.
@@ -60,6 +72,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
     public FullTextMatcher(String id, String fullText) {
         super(id);
         Objects.requireNonNull(fullText, "fullText may not be null");
+        rawFullText = fullText;
         int offset = fullText.indexOf('\n');
         if (offset == -1) {
             offset = Math.min(DEFAULT_INITIAL_LINE_LENGTH, fullText.length());
@@ -129,4 +142,8 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
         seenFirstLine = false;
     }
 
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.matcher("text", getId(), Arrays.asList(AbstractInspector.text(rawFullText)));
+    }
 }

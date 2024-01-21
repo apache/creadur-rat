@@ -18,10 +18,15 @@
  */
 package org.apache.rat.license;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
+import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * A simple implementation of ILicense.
@@ -119,5 +124,10 @@ class SimpleLicense implements ILicense {
     @Override
     public String getName() {
         return name;
+    }
+    
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.license(this, this.matcher.getInspector());
     }
 }

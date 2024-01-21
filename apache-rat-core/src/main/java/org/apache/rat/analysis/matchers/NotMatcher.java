@@ -18,9 +18,15 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
+import org.apache.rat.inspector.Inspector.Type;
 /**
  * An IHeaderMatcher that reverses the result of an enclosed matcher.
  */
@@ -75,5 +81,10 @@ public class NotMatcher extends AbstractHeaderMatcher {
         case i:
             return State.i;
         }
+    }
+    
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.matcher("not", getId(),  Arrays.asList(enclosed.getInspector()));
     }
 }

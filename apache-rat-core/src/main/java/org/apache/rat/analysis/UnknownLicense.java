@@ -18,6 +18,8 @@
  */
 package org.apache.rat.analysis;
 
+import org.apache.rat.inspector.AbstractInspector;
+import org.apache.rat.inspector.Inspector;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.ILicenseFamilyBuilder;
@@ -94,4 +96,10 @@ public class UnknownLicense implements ILicense {
     public String derivedFrom() {
         return null;
     }
+
+    @Override
+    public Inspector getInspector() {
+        return AbstractInspector.license(this, null);
+    }
+    
 }

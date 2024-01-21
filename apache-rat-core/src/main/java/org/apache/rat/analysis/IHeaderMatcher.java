@@ -26,6 +26,7 @@ import org.apache.rat.configuration.builders.NotBuilder;
 import org.apache.rat.configuration.builders.RegexBuilder;
 import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
+import org.apache.rat.inspector.Inspector;
 
 /**
  * Performs explicit checks against a line from the header of a file.
@@ -102,6 +103,9 @@ public interface IHeaderMatcher {
      * @return the current state of the matcher.
      */
     State currentState();
+    
+    
+    Inspector getInspector();
 
     /**
      * An IHeaderMatcher builder.
