@@ -460,45 +460,6 @@ agnostic home for software distribution comprehension and audit tools.
       </plugins>
     </pluginManagement>
     <plugins>
-      <!-- RAT-353, RAT-359: font files were generated from https://github.com/marchof/the-missing-javadoc-fonts
-      and are not copied over properly neither with maven-antrun nor with resources-plugin as Javadoc run empties the apidocs directory
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-javadoc-font-resources-to-site</id>
-            <phase>install</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/site/apidocs/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/site/javadocFont</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-javadoc-font-resources-to-staging</id>
-            <phase>install</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/staging/apidocs/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/site/javadocFont</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
