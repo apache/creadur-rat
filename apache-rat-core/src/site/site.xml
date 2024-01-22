@@ -20,7 +20,7 @@
          name="Apache Rat&trade; Core">
   <body>   
     <head>
-      <![CDATA[<link href="https://fonts.googleapis.com/css?family=Mate+SC" type="text/css" rel="stylesheet" />]]>
+      <![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]>
     </head>
    
     <menu ref="parent"/>
