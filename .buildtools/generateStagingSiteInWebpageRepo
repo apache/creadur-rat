@@ -15,3 +15,4 @@
 #
 mvn clean site:site site:stage
 cp -rvf target/staging/* ../creadur-site/rat0161/
+cp -rvf src/site/javadocFont/* ../creadur-site/rat0161/apidocs/
