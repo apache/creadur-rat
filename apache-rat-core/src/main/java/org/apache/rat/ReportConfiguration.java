@@ -273,7 +273,7 @@ public class ReportConfiguration {
 
     /**
      * Sets the OutputStream supplier to use the specified file. The file may be
-     * opened and closed several times. File is deleted first and then may be 
+     * opened and closed several times. File is deleted first and then may be
      * repeatedly opened in append mode.
      * 
      * @see #setOut(IOSupplier)
