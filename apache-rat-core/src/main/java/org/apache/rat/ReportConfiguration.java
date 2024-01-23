@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -272,13 +273,21 @@ public class ReportConfiguration {
 
     /**
      * Sets the OutputStream supplier to use the specified file. The file may be
-     * opened and closed several times. File is opened in append mode.
+     * opened and closed several times. File is deleted first and then may be
+     * repeatedly opened in append mode.
      * 
      * @see #setOut(IOSupplier)
      * @param file The file to create the supplier with.
      */
     public void setOut(File file) {
         Objects.requireNonNull(file, "output file should not be null");
+        if (file.exists()) {
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException e) {
+                log.warn("Unable to delete file:"+file);
+            }
+        }
         setOut(() -> new FileOutputStream(file, true));
     }
 
