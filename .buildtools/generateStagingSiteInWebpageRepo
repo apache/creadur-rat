@@ -13,6 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-mvn clean site:site site:stage
+./mvnw clean site:site site:stage
 cp -rvf target/staging/* ../creadur-site/rat0161/
 cp -rvf src/site/javadocFont/* ../creadur-site/rat0161/apidocs/
