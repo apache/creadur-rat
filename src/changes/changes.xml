@@ -105,6 +105,9 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       <action issue="RAT-325" type="add" dev="pottlinger" due-to="Claude Warren">
         Set log level default for CLI runs to WARN. This applies to test runs as well, as other UIs configure their logging natively.
       </action>
+      <action issue="RAT-344" type="fix" dev="claude">
+        Fix double output by deleting any existing RAT report before writing a fresh file during plugin runs.
+      </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.16.1
       </action>
