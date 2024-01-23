@@ -213,6 +213,8 @@ agnostic home for software distribution comprehension and audit tools.
           <onlyCurrentVersion>${commons.changes.onlyCurrentVersion}</onlyCurrentVersion>
           <maxEntries>${commons.changes.maxEntries}</maxEntries>
           <runOnlyAtExecutionRoot>${commons.changes.runOnlyAtExecutionRoot}</runOnlyAtExecutionRoot>
+          <!-- RAT-353: v3.x of the plugin will use the correct target link as parameter team, while v2.x uses teamlist -->
+          <teamlist>team.html</teamlist>
         </configuration>
         <reportSets>
           <reportSet>
@@ -396,6 +398,8 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>apache-rat-tasks/src/test/resources/**</exclude>
               <exclude>**/iso-8859-1.html</exclude>
               <exclude>**/velocity.log</exclude>
+              <!-- RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we manually add the fonts -->
+              <exclude>**/src/site/javadocFont/**</exclude>
             </excludes>
           </configuration>
         </plugin>

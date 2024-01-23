@@ -34,7 +34,7 @@
 
   <body>
     <head>
-      <![CDATA[<link href="https://fonts.googleapis.com/css?family=Mate+SC" type="text/css" rel="stylesheet" />]]>
+      <![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]>
     </head>
 
     <breadcrumbs>
@@ -62,6 +62,7 @@
       <item name='Apache Whisker' href="https://creadur.apache.org/whisker"/>
       <item name='Security' href='https://www.apache.org/security/'/>
       <item name='License' href='https://www.apache.org/licenses/'/>
+      <item name='Privacy' href='https://privacy.apache.org/policies/privacy-policy-public.html'/>
       <item name='Sponsorship' href='https://www.apache.org/foundation/sponsorship.html'/>
       <item name='Thanks' href='https://www.apache.org/foundation/thanks.html'/>
     </menu>
