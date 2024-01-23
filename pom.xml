@@ -635,6 +635,16 @@ agnostic home for software distribution comprehension and audit tools.
       <name>Philipp Ottlinger</name>
       <email>pottlinger@apache.org</email>
     </developer>
+    <developer>
+      <id>claude</id>
+      <name>Claude Warren</name>
+      <email>claude@apache.org</email>
+    </developer>
+    <developer>
+      <id>jbonofre</id>
+      <name>Jean-Baptiste Onofré</name>
+      <email>jbonofre@apache.org</email>
+    </developer>
   </developers>
   <contributors>
     <contributor>
@@ -668,10 +678,6 @@ agnostic home for software distribution comprehension and audit tools.
     <contributor>
       <name>Paul Merlin</name>
       <email>paulmerlin@apache.org</email>
-    </contributor>
-    <contributor>
-      <name>Claude Warren</name>
-      <email>claude@apache.org</email>
     </contributor>
     <contributor>
       <name>Niels Basjes</name>
