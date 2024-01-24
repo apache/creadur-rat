@@ -1,3 +1,42 @@
+Rat 0.16.1
+==========
+As release 0.16 introduced breaking changes concerning the configurability of the Maven plugin, these configuration options are reintroduced albeit as deprecated elements. You need to adapt your configuration in contrast to pre-0.16 settings: please consult our webpage for more details and examples.
+Apart from dependency updates the release contains new features in .gitignore-parser and reduces log spam of RAT.
+The most important bugfix relates to performance issues (due to expensive regex scanning) in combination with the Copyright-matcher and SPDX-detection.
+All feedback was used to overhaul the homepage to include how to configure custom licenses and matchers.
+We migrated to jUnit5 and removed the 'apache-rat-api' module in this release.
+Thanks for your patience and all the feedback in the making of this release!
+
+New features:
+o RAT-342:  Use Maven wrapper (with version 3.9.6) for reproducable local builds and on ASF Jenkins and Github Actions.
+o RAT-348:  Update gitignore-reader library to 1.3.1 to get latest changes in gitignore parsing. Thanks to Niels Basjes.
+o RAT-346:  Issue a warning if a user defined License family has the same name as an existing one. Thanks to Claude Warren.
+o RAT-346:  Migrate to JUnit5 and fix minor issues in tests and javadoc. Thanks to Claude Warren.
+o RAT-325:  Set log level default for CLI runs to WARN. This applies to test runs as well, as other UIs configure their logging natively. Thanks to Claude Warren.
+o RAT-325:  Add missing dejavu font in Javadoc, generate MOJO metadata in site and fix broken links in webpage.
+
+Fixed Bugs:
+o RAT-343:  Reimplement old configuration elements for custom licenses in Maven plugin configurations (and updates to the webpage). Thanks to Claude Warren.
+o RAT-343:  Add integration test to allow enhanced testing of custom licenses. Thanks to Niels Basjes.
+o RAT-349:  Fix NPE by falling back to default stylesheet if none was configured before. Thanks to Niels Basjes.
+o RAT-325:  To improve the performance during SPDX processing a check to skip expensive regex operations was added. Thanks to Claude Warren.
+o RAT-325:  Internal logging feature enabled for license matching tests to avoid random test failures when manipulating System.out in test runs. Thanks to Claude Warren.
+o RAT-325:  Do not load fonts via Google/remotely, but use files hosted by ASF only and add privacy link to comply with ASF- and data protection/privacy regulations.
+o RAT-344:  Fix double output by deleting any existing RAT report before writing a fresh file during plugin runs.
+
+Changes:
+o RAT-339:  Update mavenPluginPluginVersion from 3.10.2 to 3.11.0 and introduce goalPrefix in plugin configuration. Thanks to dependabot.
+o RAT-339:  Update junit-platform-runner from 1.8.1 to 1.10.1. Thanks to dependabot.
+o RAT-339:  Update junit from 5.10.0 to 5.10.1. Thanks to dependabot.
+o RAT-339:  Update actions/cache from 3.3.2 to 4.0.0. Thanks to dependabot.
+o RAT-339:  Update maven-surefire-plugin from 3.2.3 to 3.2.5. Thanks to dependabot.
+o RAT-339:  Update maven-jxr-plugin from 3.3.1 to 3.3.2. Thanks to dependabot.
+o RAT-339:  Update slf4j-simple from 2.0.9 to 2.0.11. Thanks to dependabot.
+o RAT-339:  Update assertj-core from 3.24.2 to 3.25.1. Thanks to dependabot.
+
+Removed:
+o RAT-346:  Remove apache-rat-api module that contains misleading license-related classes. Thanks to Claude Warren.
+
 Rat 0.16
 ========
 Apart from dependency updates and multiple bugfixes, this release brings the ability to use SPDX license identifiers and enhances the .gitignore-exclusion filterung during RAT runs.
