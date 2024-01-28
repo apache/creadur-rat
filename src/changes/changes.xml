@@ -71,6 +71,11 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       </action>
     </release>
     -->
+    <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+        TODO: collect all dependabot updates for release 0.17.
+      </action>
+    </release>
     <release version="0.16.1" date="2024-01-24" description=
 "As release 0.16 introduced breaking changes concerning the configurability of the Maven plugin, these configuration options are reintroduced albeit as deprecated elements.
 You need to adapt your configuration in contrast to pre-0.16 settings: please consult our webpage for more details and examples.
