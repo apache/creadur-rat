@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# DEVHINT: RAT-302: Do not use modern JDK due to the javadoc problem; JDK8 is okay
+# DEVHINT: RAT-302: Do not use modern JDK due to the javadoc problem; JDK8 and 16 are okay
 ./mvnw clean site:site site:stage
-cp -rvf target/staging/* ../creadur-site/rat0161/
-cp -rvf src/site/javadocFont/* ../creadur-site/rat0161/apidocs/
+cp -rvf target/staging/* ../creadur-site/rat/
+cp -rvf src/site/javadocFont/* ../creadur-site/rat/apidocs/
