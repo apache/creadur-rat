@@ -65,7 +65,7 @@ agnostic home for software distribution comprehension and audit tools.
     <previousRatVersion>0.17</previousRatVersion>
     <currentSnapshotRatVersion>0.18-SNAPSHOT</currentSnapshotRatVersion>
     <!-- END - adapat manually before doing a release -->
-    <junit.version>5.10.1</junit.version>
+    <junit.version>5.10.2</junit.version>
     <junit.platform.version>1.10.2</junit.platform.version>
   </properties>
   <distributionManagement>
