@@ -19,11 +19,8 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
 
 /**
  * A matcher that performs a logical {@code OR} across all the contained
@@ -35,7 +32,7 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the matcher from the enclosed matchers.
-     * 
+     *
      * @param enclosed the enclosed matchers.
      */
     public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
@@ -44,7 +41,7 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the matcher with the specified id from the enclosed matchers.
-     * 
+     *
      * @param id the id to use.
      * @param enclosed the enclosed matchers.
      */
@@ -100,8 +97,8 @@ public class OrMatcher extends AbstractMatcherContainer {
     }
 
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.matcher("or", getId(),
-                enclosed.stream().map(IHeaderMatcher::getInspector).collect(Collectors.toList()));
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "or",
+                "Returns true if one of the enclosed matchers return true.").addChildMatchers(enclosed);
     }
 }

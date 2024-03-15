@@ -18,39 +18,26 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.DescriptionImpl;
 
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
  * allows for one (starting) year or year range, and a configurable copyright
- * owner. <br>
- * <br>
- * The matching is done case insensitive<br>
- * <br>
- * Example supported Copyright header lines, using copyright owner
- * &quot;FooBar&quot;
- * <ul>
- * <li>Copyright 2010 FooBar.</li>
- * <li>Copyright 2010-2012 FooBar.</li>
- * <li>copyright 2012 foobar</li>
- * </ul>
- * <p>
- * Note also that the copyright owner is appended to the regex pattern and so
- * can support additional regex but also requires escaping where needed,<br>
- * e.g. use &quot;FooBar \\(www\\.foobar\\.com\\)&quot; or &quot;FooBar
- * \\Q(www.foobar.com)\\E&quot; to match &quot;FooBar (www.foobar.com)&quot;
- * </p>
- * <p>
- * The matcher also accepts "(C)", "(c)", and "©" in place of (or in addition
- * to) the "Copyright" or "copyright" keyword
- * </p>
+ * owner. <br> <br> The matching is done case insensitive<br> <br> Example
+ * supported Copyright header lines, using copyright owner &quot;FooBar&quot;
+ * <ul> <li>Copyright 2010 FooBar.</li> <li>Copyright 2010-2012 FooBar.</li>
+ * <li>copyright 2012 foobar</li> </ul> <p> Note also that the copyright owner
+ * is appended to the regex pattern and so can support additional regex but also
+ * requires escaping where needed,<br> e.g. use &quot;FooBar
+ * \\(www\\.foobar\\.com\\)&quot; or &quot;FooBar \\Q(www.foobar.com)\\E&quot;
+ * to match &quot;FooBar (www.foobar.com)&quot; </p> <p> The matcher also
+ * accepts "(C)", "(c)", and "©" in place of (or in addition to) the "Copyright"
+ * or "copyright" keyword </p>
  */
 public class CopyrightMatcher extends AbstractSimpleMatcher {
 
@@ -66,10 +53,15 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     private final String stop;
     private final String owner;
 
+    private final Description[] children = {
+            new DescriptionImpl(Type.Parameter, "start", "The initial date of the copyright", this::getStart),
+            new DescriptionImpl(Type.Parameter, "stop", "The last date the copyright we modifed", this::getStop),
+            new DescriptionImpl(Type.Parameter, "owner", "The owner of the copyright", this::getOwner), };
+
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
      * strings and a unique random id..
-     * 
+     *
      * @param start the start date for the copyright may be null.
      * @param stop the stop date for the copyright, may be null. May not be
      * specified if start is not specified.
@@ -82,7 +74,7 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
      * strings.
-     * 
+     *
      * @param id the id for the matcher.
      * @param start the start date for the copyright may be null.
      * @param stop the stop date for the copyright, may be null. May not be
@@ -121,6 +113,18 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
     }
 
+    private String getStart() {
+        return start;
+    }
+
+    private String getStop() {
+        return stop;
+    }
+
+    private String getOwner() {
+        return owner;
+    }
+
     @Override
     protected boolean doMatch(String line) {
         String lowerLine = line.toLowerCase();
@@ -142,18 +146,8 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    public Inspector getInspector() {
-
-        List<Inspector> inspectors = new ArrayList<>();
-        if (start != null) {
-            inspectors.add(AbstractInspector.parameter("start", start));
-        }
-        if (stop != null) {
-            inspectors.add(AbstractInspector.parameter("stop", stop));
-        }
-        if (owner != null) {
-            inspectors.add(AbstractInspector.parameter("owner", owner));
-        }
-        return AbstractInspector.matcher("copyright", getId(), inspectors);
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "copyright", "Matches copyright statements")
+                .addChildren(children);
     }
 }

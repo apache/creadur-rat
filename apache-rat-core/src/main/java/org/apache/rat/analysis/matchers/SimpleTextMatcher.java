@@ -18,11 +18,9 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.DescriptionImpl;
 
 /**
  * A simple text matching IHeaderMatcher implementation.
@@ -30,9 +28,11 @@ import org.apache.rat.inspector.Inspector;
 public class SimpleTextMatcher extends AbstractSimpleMatcher {
     private final String pattern;
 
+    private Description[] children = { new DescriptionImpl(Type.Text, "", "The text to match", this::getSimpleText) };
+
     /**
      * Constructs the simple text matcher for the simple string.
-     * 
+     *
      * @param pattern The pattern to match. Will only match a single line from the
      * input stream.
      */
@@ -42,7 +42,7 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
 
     /**
      * Constructs the simple text matcher for the simple string.
-     * 
+     *
      * @param id The id for this matcher.
      * @param pattern The pattern to match. Will only match a single line from the
      * input stream.
@@ -55,13 +55,17 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
         this.pattern = pattern;
     }
 
+    private String getSimpleText() {
+        return this.pattern;
+    }
+
     @Override
     public boolean doMatch(String line) {
         return line.contains(pattern);
     }
 
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.matcher("text", getId(), Arrays.asList(AbstractInspector.text(pattern)));
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "text", "Matches text statement").addChildren(children);
     }
 }

@@ -18,22 +18,19 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.DescriptionImpl;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
  * it to the full text of a given license (after reducing it to letters and
  * numbers as well).
  *
- * <p>
- * The text comparison is case insensitive but assumes only characters in the
- * US-ASCII charset are being matched.
- * </p>
+ * <p> The text comparison is case insensitive but assumes only characters in
+ * the US-ASCII charset are being matched. </p>
  */
 public class FullTextMatcher extends AbstractSimpleMatcher {
 
@@ -50,10 +47,12 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
 
     private final String rawFullText;
 
+    private Description[] children = { new DescriptionImpl(Type.Text, "", "The text to match", this::getFullText) };
+
     /**
      * Constructs the full text matcher with a unique random id and the specified
      * text to match.
-     * 
+     *
      * @param fullText the text to match
      */
     public FullTextMatcher(String fullText) {
@@ -62,7 +61,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
 
     /**
      * Constructs the full text matcher for the specified text.
-     * 
+     *
      * @param id the id for the matcher
      * @param fullText the text to match
      */
@@ -80,9 +79,13 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
         seenFirstLine = false;
     }
 
+    private String getFullText() {
+        return fullText;
+    }
+
     /**
      * Removes everything except letter or digit from text.
-     * 
+     *
      * @param text The text to remove extra chars from.
      * @return the pruned text.
      */
@@ -140,7 +143,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.matcher("text", getId(), Arrays.asList(AbstractInspector.text(rawFullText)));
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "text", "Matches text statement").addChildren(children);
     }
 }

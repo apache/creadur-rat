@@ -18,7 +18,6 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,17 +27,14 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
+import org.apache.rat.config.parameters.DescriptionImpl;
 
 /**
  * Defines a factory to produce matchers for an SPDX tag. SPDX tag is of the
  * format {@code SPDX-License-Identifier: short-name} where {@code short-name}
- * matches the regex pattern [A-Za-z0-9\.\-]+
- * <p>
- * SPDX identifiers are specified by the Software Package Data Exchange(R) also
- * known as SPDX(R) project from the Linux foundation.
- * </p>
+ * matches the regex pattern [A-Za-z0-9\.\-]+ <p> SPDX identifiers are specified
+ * by the Software Package Data Exchange(R) also known as SPDX(R) project from
+ * the Linux foundation. </p>
  *
  * @see <a href="https://spdx.dev/ids/">List of Ids at spdx.dev</a>
  */
@@ -71,11 +67,11 @@ public class SPDXMatcherFactory {
 
     private SPDXMatcherFactory() {
         lastLine = null;
-    };
+    }
 
     /**
      * Creates the spdx matcher.
-     * 
+     *
      * @param spdxId the spdx name to match.
      * @return a spdx matcher.
      */
@@ -93,7 +89,7 @@ public class SPDXMatcherFactory {
 
     /**
      * Each matcher calls this method to present the line it is working on.
-     * 
+     *
      * @param line The line the caller is looking at.
      * @param caller the Match that is calling this method.
      * @return true if the caller matches the text.
@@ -120,9 +116,11 @@ public class SPDXMatcherFactory {
 
         String spdxId;
 
+        private Description[] children = { new DescriptionImpl(Type.Text, "", "The SPDX ID", () -> spdxId) };
+
         /**
          * Constructor.
-         * 
+         *
          * @param spdxId A regular expression that matches the @{short-name} of the SPDX
          * Identifier.
          */
@@ -145,8 +143,9 @@ public class SPDXMatcherFactory {
         }
 
         @Override
-        public Inspector getInspector() {
-            return AbstractInspector.matcher("spdx", getId(), Arrays.asList(AbstractInspector.text(spdxId)));
+        public Description getDescription() {
+            return new IHeaderMatcher.MatcherDescription(this, "spdx", "Matches SPDX license identifier in the text")
+                    .addChildren(children);
         }
     }
 }

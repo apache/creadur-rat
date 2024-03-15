@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report;
 
 import java.io.IOException;
@@ -28,11 +28,11 @@ import java.util.UUID;
 
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
+import org.apache.rat.config.parameters.Component.Description;
+import org.apache.rat.config.parameters.Component.Type;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.configuration.builders.MatcherRefBuilder;
-import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -71,7 +71,7 @@ public class ConfigurationReport extends AbstractReport {
                 if (!licenses.isEmpty()) {
                     writer.openElement(XMLConfigurationReader.LICENSES);
                     for (ILicense license : licenses) {
-                        writeInspector(license.getInspector());
+                        writeDescription(license.getDescription());
                     }
                     writer.closeElement();// LICENSES
                 }
@@ -111,22 +111,22 @@ public class ConfigurationReport extends AbstractReport {
         }
     }
 
-    private void writeInspectors(Collection<Inspector> inspectors) throws RatException {
-        for (Inspector inspector : inspectors) {
-            writeInspector(inspector);
+    private void writeDescriptions(Collection<Description> descriptions) throws RatException {
+        for (Description description : descriptions) {
+            writeDescription(description);
         }
     }
 
-    private void writeInspector(Inspector inspector) throws RatException {
-        if (inspector == null) {
+    private void writeDescription(Description description) throws RatException {
+        if (description == null) {
             return;
         }
         try {
-            switch (inspector.getType()) {
+            switch (description.getType()) {
             case Matcher:
                 // see if id was registered
-                Optional<Inspector> id = inspector.getChildren().stream().filter(
-                        i -> i.getType() == Type.Parameter && i.getCommonName().equals(XMLConfigurationReader.ATT_ID))
+                Optional<Description> id = description.getChildren().stream().filter(
+                        i -> i.getType() == Type.Parameter && XMLConfigurationReader.ATT_ID.equals(i.getCommonName()))
                         .findFirst();
                 if (id.isPresent()) {
                     String idStr = id.get().getParamValue();
@@ -136,29 +136,29 @@ public class ConfigurationReport extends AbstractReport {
                     }
                     matchers.add(idStr);
                 }
-                writer.openElement(inspector.getCommonName());
-                writeInspectors(inspector.getChildren());
+                writer.openElement(description.getCommonName());
+                writeDescriptions(description.getChildren());
                 writer.closeElement();
                 break;
             case License:
                 writer.openElement(XMLConfigurationReader.LICENSE);
-                writeInspectors(inspector.getChildren());
+                writeDescriptions(description.getChildren());
                 writer.closeElement();
                 break;
             case Parameter:
-                if (inspector.getCommonName().equals("id")) {
+                if ("id".equals(description.getCommonName())) {
                     try {
                         // if a UUID skip it.
-                        UUID.fromString(inspector.getParamValue());
+                        UUID.fromString(description.getParamValue());
                         return;
                     } catch (IllegalArgumentException expected) {
                         // do nothing.
                     }
                 }
-                writer.attribute(inspector.getCommonName(), inspector.getParamValue());
+                writer.attribute(description.getCommonName(), description.getParamValue());
                 break;
             case Text:
-                writer.content(inspector.getParamValue());
+                writer.content(description.getParamValue());
                 break;
             }
         } catch (IOException e) {

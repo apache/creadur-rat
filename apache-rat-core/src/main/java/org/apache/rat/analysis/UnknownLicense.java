@@ -18,35 +18,32 @@
  */
 package org.apache.rat.analysis;
 
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.ILicenseFamilyBuilder;
 
 /**
- * An ILicense implementation that represents an unknown license.
- * <p>
- * The UnknownLicense is used during processing to report that a document license can not be determined.
- * </p>
+ * An ILicense implementation that represents an unknown license. <p> The
+ * UnknownLicense is used during processing to report that a document license
+ * can not be determined. </p>
  */
 public class UnknownLicense implements ILicense {
-    
+
     /**
      * The single instance of this class.
      */
     static final UnknownLicense INSTANCE = new UnknownLicense();
-    
-    private final ILicenseFamily family ;
-    
+
+    private final ILicenseFamily family;
+
     /**
      * Do not allow other constructions.
      */
     private UnknownLicense() {
-        family = new ILicenseFamilyBuilder().setLicenseFamilyCategory("?????")
-                .setLicenseFamilyName("Unknown license").build();
+        family = new ILicenseFamilyBuilder().setLicenseFamilyCategory("?????").setLicenseFamilyName("Unknown license")
+                .build();
     }
-    
+
     @Override
     public String getId() {
         return "?????";
@@ -98,8 +95,8 @@ public class UnknownLicense implements ILicense {
     }
 
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.license(this, null);
+    public Description getDescription() {
+        return new ILicense.ILicenseDescription(this, null);
     }
-    
+
 }

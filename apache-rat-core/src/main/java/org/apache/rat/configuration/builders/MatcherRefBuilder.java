@@ -18,14 +18,17 @@
  */
 package org.apache.rat.configuration.builders;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
+import org.apache.rat.analysis.IHeaderMatcher.MatcherDescription;
+import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.Component.Description;
+import org.apache.rat.license.ILicense;
 
 /**
  * A reference matching Matcher builder.
@@ -127,16 +130,18 @@ public class MatcherRefBuilder extends AbstractBuilder {
             return wrapped.finalizeState();
         }
 
+        
         @Override
-        public Inspector getInspector() {
-            return new AbstractInspector(Type.Matcher, "matcherRef" ) {
+        public Description getDescription() {
+            
+            return new MatcherDescription(this, "MatcherProxy", "A proxy to another Matcher") {
 
                 @Override
-                public Collection<Inspector> getChildren() {
-                    return Arrays.asList(AbstractInspector.parameter("refId", proxyId));
-                }};
+                public String getRefId() {
+                    return proxyId;
+                }
+            };
         }
-       
     }
 
 }

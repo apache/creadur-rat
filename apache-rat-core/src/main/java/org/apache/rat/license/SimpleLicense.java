@@ -18,15 +18,10 @@
  */
 package org.apache.rat.license;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
-import org.apache.rat.inspector.Inspector.Type;
 
 /**
  * A simple implementation of ILicense.
@@ -40,9 +35,10 @@ class SimpleLicense implements ILicense {
     private String name;
     private String id;
 
-    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes, String name, String id) {
+    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes, String name,
+            String id) {
         Objects.requireNonNull(matcher, "Matcher must not be null");
-        Objects.requireNonNull(family, "Family must not be null");  
+        Objects.requireNonNull(family, "Family must not be null");
         this.family = family;
         this.matcher = matcher;
         this.derivedFrom = derivedFrom;
@@ -53,7 +49,7 @@ class SimpleLicense implements ILicense {
 
     @Override
     public String toString() {
-        return String.format( "%s:%s", getId(), getName());
+        return String.format("%s:%s", getId(), getName());
     }
 
     public ILicenseFamily getFamily() {
@@ -90,7 +86,7 @@ class SimpleLicense implements ILicense {
     public State matches(String line) {
         return matcher.matches(line);
     }
-    
+
     @Override
     public State finalizeState() {
         return matcher.finalizeState();
@@ -120,14 +116,14 @@ class SimpleLicense implements ILicense {
     public String derivedFrom() {
         return derivedFrom;
     }
-    
+
     @Override
     public String getName() {
         return name;
     }
-    
+
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.license(this, this.matcher.getInspector());
+    public Description getDescription() {
+        return new ILicense.ILicenseDescription(this, matcher);
     }
 }
