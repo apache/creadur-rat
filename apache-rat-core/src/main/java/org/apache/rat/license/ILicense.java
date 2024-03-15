@@ -75,11 +75,11 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
         private IHeaderMatcher matcher;
 
         Description[] children = {
-                new DescriptionImpl(Type.Parameter, "name", "The name of this license", self::getName),
-                new DescriptionImpl(Type.Parameter, "id", "The id of this license", self::getId),
+                new DescriptionImpl(Type.Parameter, "name", "The name of this license", () -> self.getName()),
+                new DescriptionImpl(Type.Parameter, "id", "The id of this license", () -> self.getId()),
                 new DescriptionImpl(Type.Parameter, "family", "The family this license belongs to",
-                        self.getLicenseFamily()::getFamilyCategory),
-                new DescriptionImpl(Type.Parameter, "notes", "Any notes related to this family", self::getNotes), };
+                        () -> self.getLicenseFamily().getFamilyCategory()),
+                new DescriptionImpl(Type.Parameter, "notes", "Any notes related to this family", () -> self.getNotes()), };
 
         public ILicenseDescription(ILicense license, IHeaderMatcher matcher) {
             super(Type.License, "license", "A license definition", null);

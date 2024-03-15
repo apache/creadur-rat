@@ -68,7 +68,7 @@ public interface IHeaderMatcher extends Component {
         protected Collection<Description> children;
 
         private Description[] baseChildren = {
-                new DescriptionImpl(Type.Parameter, "id", "The id of this matcher instance", self::getId),
+                new DescriptionImpl(Type.Parameter, "id", "The id of this matcher instance", () -> self.getId()),
                 new DescriptionImpl(Type.Parameter, "name", "The name of this matcher instance", () -> name),
                 new DescriptionImpl(Type.Parameter, "refId",
                         "This matcher is a reference to another matcher defined elsewhere", this::getRefId) };

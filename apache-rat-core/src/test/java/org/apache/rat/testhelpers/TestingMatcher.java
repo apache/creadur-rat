@@ -22,7 +22,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.config.parameters.Component.Description;
 
 /**
  * An Matcher for testing.
@@ -80,4 +82,9 @@ public class TestingMatcher extends AbstractHeaderMatcher {
             this.results.add(b);
         }
     }
+
+    @Override
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "TestingMatcher", "Matcher used in testing");
+    } 
 }

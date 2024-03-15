@@ -165,4 +165,9 @@ public class TestingLicense implements ILicense {
         return derivedFrom;
     }
 
+    @Override
+    public Description getDescription() {
+        return new ILicense.ILicenseDescription(this, matcher);
+    }
+
 }
