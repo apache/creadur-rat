@@ -20,6 +20,8 @@ package org.apache.rat.analysis.matchers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.DescriptionImpl;
 
 /**
  * A simple text matching IHeaderMatcher implementation.
@@ -27,8 +29,11 @@ import org.apache.rat.analysis.IHeaders;
 public class SimpleTextMatcher extends AbstractSimpleMatcher {
     private final String pattern;
 
+    private Description[] children = { new DescriptionImpl(Type.Text, "", "The text to match", this::getSimpleText) };
+
     /**
      * Constructs the simple text matcher for the simple string.
+     * 
      * @param pattern The pattern to match.  Will only match a single line from the input stream.
      */
     public SimpleTextMatcher(String pattern) {
@@ -37,6 +42,7 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
 
     /**
      * Constructs the simple text matcher for the simple string.
+     * 
      * @param id The id for this matcher.
      * @param pattern The pattern to match.  Will only match a single line from the input stream.
      */
@@ -48,8 +54,17 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
         this.pattern = pattern;
     }
 
+    private String getSimpleText() {
+        return this.pattern;
+    }
+
     @Override
     public boolean matches(IHeaders headers) {
         return headers.raw().contains(pattern);
+    }
+
+    @Override
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "text", "Matches text statement").addChildren(children);
     }
 }

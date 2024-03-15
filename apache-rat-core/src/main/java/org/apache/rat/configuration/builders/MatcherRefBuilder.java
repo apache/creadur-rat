@@ -18,12 +18,18 @@
  */
 package org.apache.rat.configuration.builders;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.IHeaderMatcher.MatcherDescription;
+import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.Component.Description;
+import org.apache.rat.license.ILicense;
 
 /**
  * A reference matching Matcher builder.
@@ -111,6 +117,18 @@ public class MatcherRefBuilder extends AbstractBuilder {
         public boolean matches(IHeaders headers) {
             checkProxy();
             return wrapped.matches(headers);
+        }
+
+        @Override
+        public Description getDescription() {
+            
+            return new MatcherDescription(this, "MatcherProxy", "A proxy to another Matcher") {
+
+                @Override
+                public String getRefId() {
+                    return proxyId;
+                }
+            };
         }
     }
 }

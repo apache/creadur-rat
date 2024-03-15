@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.DescriptionImpl;
 
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
@@ -58,6 +60,11 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
+
+    private final Description[] children = {
+            new DescriptionImpl(Type.Parameter, "start", "The initial date of the copyright", this::getStart),
+            new DescriptionImpl(Type.Parameter, "stop", "The last date the copyright we modifed", this::getStop),
+            new DescriptionImpl(Type.Parameter, "owner", "The owner of the copyright", this::getOwner), };
 
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner strings and a unique random id..
@@ -105,6 +112,18 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
     }
 
+    private String getStart() {
+        return start;
+    }
+
+    private String getStop() {
+        return stop;
+    }
+
+    private String getOwner() {
+        return owner;
+    }
+
     @Override
     public boolean matches(IHeaders headers) {
         String lowerLine = headers.raw().toLowerCase();
@@ -123,5 +142,12 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
             }
         }
         return false;
+    }
+
+
+    @Override
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "copyright", "Matches copyright statements")
+                .addChildren(children);
     }
 }

@@ -55,4 +55,10 @@ public class AndMatcher extends AbstractMatcherContainer {
         }
         return true;
     }
+    
+    @Override
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "all", "Returns true if all enclosed matchers return true.")
+                .addChildMatchers(enclosed);
+    }
 }

@@ -68,10 +68,11 @@ public class SPDXMatcherFactory {
 
     private SPDXMatcherFactory() {
         lastLine = null;
-    };
+    }
 
     /**
      * Creates the spdx matcher.
+     *
      * @param spdxId the spdx name to match.
      * @return a spdx matcher.
      */
@@ -89,6 +90,7 @@ public class SPDXMatcherFactory {
 
     /**
      * Each matcher calls this method to present the line it is working on.
+     * 
      * @param line The line the caller is looking at.
      * @param caller the Match that is calling this method.
      * @return true if the caller matches the text.
@@ -114,7 +116,7 @@ public class SPDXMatcherFactory {
         String spdxId;
         /**
          * Constructor.
-         * 
+         *
          * @param spdxId A regular expression that matches the @{short-name} of the SPDX
          * Identifier.
          */
@@ -134,6 +136,12 @@ public class SPDXMatcherFactory {
             super.reset();
             SPDXMatcherFactory.this.lastMatch = null;
             
+        }
+
+        @Override
+        public Description getDescription() {
+            return new IHeaderMatcher.MatcherDescription(this, "spdx", "Matches SPDX license identifier in the text")
+                    .addChildren(children);
         }
     }
 }

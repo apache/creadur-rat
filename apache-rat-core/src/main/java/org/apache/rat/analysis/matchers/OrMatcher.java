@@ -30,6 +30,7 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the matcher from the enclosed matchers.
+     * 
      * @param enclosed the enclosed matchers.
      */
     public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
@@ -38,6 +39,7 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the matcher with the specified id from the enclosed matchers.
+     * 
      * @param id the id to use.
      * @param enclosed the enclosed matchers.
      */
@@ -55,4 +57,9 @@ public class OrMatcher extends AbstractMatcherContainer {
         }
         return false;
     }
-}
+
+    @Override
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "or",
+                "Returns true if one of the enclosed matchers return true.").addChildMatchers(enclosed);
+    }}

@@ -31,6 +31,7 @@ public class NotMatcher extends AbstractHeaderMatcher {
 
     /**
      * Create the matcher with the enclosed matcher.
+     * 
      * @param enclosed the enclosed matcher
      */
     public NotMatcher(IHeaderMatcher enclosed) {
@@ -39,6 +40,7 @@ public class NotMatcher extends AbstractHeaderMatcher {
 
     /**
      * Create the matcher with the enclosed matcher and id.
+     * 
      * @param id the id for this matcher.
      * @param enclosed the enclosed matcher
      */
@@ -56,5 +58,11 @@ public class NotMatcher extends AbstractHeaderMatcher {
     @Override
     public void reset() {
         enclosed.reset();
+    }
+
+    @Override
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "not", "negates the enclosed matcher.")
+                .addChildMatchers(Arrays.asList(enclosed));
     }
 }

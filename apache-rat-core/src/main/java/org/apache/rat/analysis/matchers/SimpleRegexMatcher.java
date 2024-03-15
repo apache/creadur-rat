@@ -18,11 +18,10 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.DescriptionImpl;
 
 import org.apache.rat.analysis.IHeaders;
 
@@ -32,10 +31,13 @@ import org.apache.rat.analysis.IHeaders;
 public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     private final Pattern pattern;
 
+    private Description[] children = {
+            new DescriptionImpl(Type.Text, "", "The regex pattern to match", this::getPattern) };
+
     /**
      * Constructs a regex pattern matcher with a unique random id and the specified
      * Regex pattern.
-     * 
+     *
      * @param pattern the pattern to match. Pattern will only match a single line
      * from the input stream.
      */
@@ -46,7 +48,7 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     /**
      * Constructs a regex pattern matcher with a unique random id and the specified
      * Regex pattern.
-     * 
+     *
      * @param id the id for this matcher
      * @param pattern the pattern to match. Pattern will only match a single line
      * from the input stream.
@@ -56,13 +58,18 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
         this.pattern = pattern;
     }
 
+    private String getPattern() {
+        return pattern.pattern();
+    }
+
     @Override
     public boolean matches(IHeaders headers) {
         return pattern.matcher(headers.raw()).find();
     }
 
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.matcher("regex", getId(), Arrays.asList(AbstractInspector.text(pattern.toString())));
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "regex", "Performs a regex match on the text")
+                .addChildren(children);
     }
 }

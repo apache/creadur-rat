@@ -36,9 +36,10 @@ class SimpleLicense implements ILicense {
     private String name;
     private String id;
 
-    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes, String name, String id) {
+    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes, String name,
+            String id) {
         Objects.requireNonNull(matcher, "Matcher must not be null");
-        Objects.requireNonNull(family, "Family must not be null");  
+        Objects.requireNonNull(family, "Family must not be null");
         this.family = family;
         this.matcher = matcher;
         this.derivedFrom = derivedFrom;
@@ -49,7 +50,7 @@ class SimpleLicense implements ILicense {
 
     @Override
     public String toString() {
-        return String.format( "%s:%s", getId(), getName());
+        return String.format("%s:%s", getId(), getName());
     }
 
     public ILicenseFamily getFamily() {
@@ -106,9 +107,14 @@ class SimpleLicense implements ILicense {
     public String derivedFrom() {
         return derivedFrom;
     }
-    
+
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Description getDescription() {
+        return new ILicense.ILicenseDescription(this, matcher);
     }
 }

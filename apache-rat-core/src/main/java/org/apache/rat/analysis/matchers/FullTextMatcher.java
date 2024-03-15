@@ -21,6 +21,8 @@ package org.apache.rat.analysis.matchers;
 import java.util.Locale;
 
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.DescriptionImpl;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
@@ -34,9 +36,12 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
 
     private final String fullText;
 
+    private Description[] children = { new DescriptionImpl(Type.Text, "", "The text to match", this::getFullText) };
+
     /**
      * Constructs the full text matcher with a unique random id and the specified
      * text to match.
+     *
      * @param fullText the text to match
      */
     public FullTextMatcher(String fullText) {
@@ -45,12 +50,17 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
 
     /**
      * Constructs the full text matcher for the specified text.
+     *
      * @param id the id for the matcher
      * @param fullText the text to match
      */
     public FullTextMatcher(String id, String fullText) {
         super(id);
         this.fullText = prune(fullText).toLowerCase(Locale.ENGLISH);
+    }
+
+    private String getFullText() {
+        return fullText;
     }
 
     /**
@@ -77,5 +87,10 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
             return headers.pruned().contains(fullText);
         }
         return false;
+    }
+
+    @Override
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "text", "Matches text statement").addChildren(children);
     }
 }

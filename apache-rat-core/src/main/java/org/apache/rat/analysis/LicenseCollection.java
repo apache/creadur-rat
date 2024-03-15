@@ -20,19 +20,20 @@ package org.apache.rat.analysis;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
+import org.apache.rat.config.parameters.DescriptionImpl;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
 /**
- * A collection of ILicenses that acts as a single License for purposes of Analysis.
- * <p>
- * This class process each license in turn on each {@code matches(String)} call.  When a match is found the 
- * ILicenseFamily for the matching license is captured and used as the family for this license. If no matching 
- * license has been found the default {@code dummy} license category is used.
+ * A collection of ILicenses that acts as a single License for purposes of
+ * Analysis. <p> This class process each license in turn on each
+ * {@code matches(String)} call. When a match is found the ILicenseFamily for
+ * the matching license is captured and used as the family for this license. If
+ * no matching license has been found the default {@code dummy} license category
+ * is used.
  */
 class LicenseCollection extends AbstractMatcherContainer implements ILicense {
 
@@ -43,7 +44,8 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
 
     /**
      * Constructs the LicenseCollection from the provided ILicense collection.
-     * @param enclosed The collection of ILicenses to compose this License implementation from.  May not be null.
+     * @param enclosed The collection of ILicenses to compose this License
+     * implementation from. May not be null.
      */
     public LicenseCollection(Collection<ILicense> enclosed) {
         super(enclosed);
@@ -92,16 +94,23 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
     public String derivedFrom() {
         return matchingLicense == null ? null : matchingLicense.derivedFrom();
     }
-    
+
     @Override
     public String getName() {
         return getLicenseFamily().getFamilyName();
     }
 
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.license(this, matchingLicense == null ? null : matchingLicense.getInspector());
+    public Description getDescription() {
+        if (matchingLicense != null) {
+            return matchingLicense.getDescription();
+        }
+        return new DescriptionImpl(Type.License, "licenseCollection",
+                "A collection of ILicenses that acts as a single License for purposes of Analysis.", null) {
+            @Override
+            public Collection<Description> getChildren() {
+                return enclosed.stream().map(ILicense::getDescription).collect(Collectors.toList());
+            }
+        };
     }
-    
-    
 }

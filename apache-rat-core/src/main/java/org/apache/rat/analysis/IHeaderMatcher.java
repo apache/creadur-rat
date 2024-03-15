@@ -18,6 +18,12 @@
  */
 package org.apache.rat.analysis;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.DescriptionImpl;
 import org.apache.rat.configuration.builders.AllBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
@@ -28,10 +34,11 @@ import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
 
 /**
- * Performs explicit checks against a line from the header of a file.
- * For implementations that need to check multiple lines the implementation must cache the earlier lines.
+ * Performs explicit checks against a line from the header of a file. For
+ * implementations that need to check multiple lines the implementation must
+ * cache the earlier lines.
  */
-public interface IHeaderMatcher {
+public interface IHeaderMatcher extends Component {
     /**
      * Get the identifier for this matcher.
      * <p>All matchers must have unique identifiers</p>
@@ -41,8 +48,8 @@ public interface IHeaderMatcher {
     String getId();
 
     /**
-     * Resets this state {@code State.i}. 
-     * If text is being cached this method should clear that cache.
+     * Resets this state {@code State.i}. If text is being cached this method should
+     * clear that cache.
      */
     void reset();
 
@@ -54,6 +61,44 @@ public interface IHeaderMatcher {
      * @return the new state after the matching was attempted.
      */
     boolean matches(IHeaders headers);
+
+    public class MatcherDescription extends DescriptionImpl {
+        private IHeaderMatcher self;
+        private String name;
+        protected Collection<Description> children;
+
+        private Description[] baseChildren = {
+                new DescriptionImpl(Type.Parameter, "id", "The id of this matcher instance", self::getId),
+                new DescriptionImpl(Type.Parameter, "name", "The name of this matcher instance", () -> name),
+                new DescriptionImpl(Type.Parameter, "refId",
+                        "This matcher is a reference to another matcher defined elsewhere", this::getRefId) };
+
+        public MatcherDescription(IHeaderMatcher matcher, String name, String description) {
+            super(Type.Matcher, name, description, null);
+            self = matcher;
+            children = new ArrayList<>();
+            children.addAll(Arrays.asList(baseChildren));
+        }
+
+        public MatcherDescription addChildMatchers(Collection<IHeaderMatcher> matchers) {
+            matchers.forEach(m -> children.add(m.getDescription()));
+            return this;
+        }
+
+        public MatcherDescription addChildren(Description[] newChildren) {
+            children.addAll(Arrays.asList(newChildren));
+            return this;
+        }
+
+        protected String getRefId() {
+            return null;
+        }
+
+        @Override
+        public Collection<Description> getChildren() {
+            return children;
+        }
+    }
 
     /**
      * An IHeaderMatcher builder.
