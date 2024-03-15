@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -229,8 +232,7 @@ public abstract class AbstractLicenseAppender {
         boolean expectsMSVSSF = expectsMSVisualStudioSolutionFileHeader(type);
 
         File newDocument = new File(document.getAbsolutePath() + ".new");
-        FileWriter writer = new FileWriter(newDocument);
-        try {
+        try (FileWriter writer = new FileWriter(newDocument)){
             if (!attachLicense(writer, document,
                     expectsHashPling, expectsAtEcho, expectsPackage,
                     expectsXMLDecl, expectsPhpPI, expectsMSVSSF)) {
@@ -239,27 +241,28 @@ public abstract class AbstractLicenseAppender {
                 // for Java just place the license at the front, for XML add
                 // an XML decl first - don't know how to handle PHP
                 if (expectsPackage || expectsXMLDecl) {
-                    writer = new FileWriter(newDocument);
-                    if (expectsXMLDecl) {
-                        writer.write("<?xml version='1.0'?>");
-                        writer.write(LINE_SEP);
+                    try (FileWriter writer2  = new FileWriter(newDocument)) {
+                        if (expectsXMLDecl) {
+                            writer2.write("<?xml version='1.0'?>");
+                            writer2.write(LINE_SEP);
+                        }
+                        attachLicense(writer2, document,
+                                false, false, false, false, false, false);
                     }
-                    attachLicense(writer, document,
-                            false, false, false, false, false, false);
                 }
             }
-        } finally {
-            IOUtils.closeQuietly(writer);
-        }
+        } 
 
         if (isForced) {
-            boolean deleted = document.delete();
-            if (!deleted) {
-                log.error("Could not delete original file to prepare renaming.");
-            }
-            boolean renamed = newDocument.renameTo(document.getAbsoluteFile());
-            if (!renamed) {
-                log.error("Failed to rename new file, original file remains unchanged.");
+            Path docPath = document.toPath();
+           boolean isExecutable = Files.isExecutable(docPath);
+            try {
+                Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
+                if (isExecutable && !document.setExecutable(true)) {
+                    log.warn(String.format("Could not set %s as executable.", document));
+                }
+            } catch (IOException e) {
+                log.error(String.format("Failed to rename new file to %s, Original file is unchanged.", document ));
             }
         }
     }
