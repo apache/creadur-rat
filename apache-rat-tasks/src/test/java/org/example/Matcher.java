@@ -16,9 +16,8 @@
  */
 package org.example;
 
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
 
 public class Matcher extends AbstractSimpleMatcher {
     public Matcher() {
@@ -31,8 +30,8 @@ public class Matcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.matcher("MyCustomMatcher", getId(), null);
-    }
+    public Description getDescription() {
+        return new IHeaderMatcher.MatcherDescription(this, "MyCustomMatcher", "Custom matcher example");
+    }  
 
 }

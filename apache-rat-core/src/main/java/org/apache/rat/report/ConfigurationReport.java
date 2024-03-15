@@ -155,7 +155,10 @@ public class ConfigurationReport extends AbstractReport {
                         // do nothing.
                     }
                 }
-                writer.attribute(description.getCommonName(), description.getParamValue());
+                String paramValue = description.getParamValue();
+                if (paramValue != null) {
+                    writer.attribute(description.getCommonName(), paramValue);
+                }
                 break;
             case Text:
                 writer.content(description.getParamValue());

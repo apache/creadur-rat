@@ -20,8 +20,6 @@ package org.apache.rat.testhelpers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -175,10 +173,10 @@ public class TestingLicense implements ILicense {
     public String derivedFrom() {
         return derivedFrom;
     }
-
+ 
     @Override
-    public Inspector getInspector() {
-        return AbstractInspector.license(this, matcher.getInspector());
+    public Description getDescription() {
+        return new ILicense.ILicenseDescription(this, matcher);
     }
 
 }

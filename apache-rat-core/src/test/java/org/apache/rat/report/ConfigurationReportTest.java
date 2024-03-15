@@ -47,6 +47,7 @@ public class ConfigurationReportTest {
        report.endReport();
        writer.closeDocument();
        String result = sw.toString();
+       System.out.println( result );
       // AssertTrue( result.contains( ""));
    }
 }
