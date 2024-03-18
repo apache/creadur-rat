@@ -98,6 +98,7 @@
               <exclude>src/it/CustomLicense/src/**/</exclude>
               <!-- RAT-171: needs to be added since SCM ignores are only parsed in project root -->
               <exclude>**/.bzrignore</exclude>
+              <exclude>src/test/resources/XmlOutputExamples/**/*</exclude>
             </excludes>
           </configuration>
         </plugin>
