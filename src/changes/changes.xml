@@ -72,6 +72,9 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-333" type="fix" dev="claudenw">
+        Fix if --force option is used executable bit is not set properly on newly created/license-augmented file.
+      </action>
       <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.17.
       </action>
