@@ -21,8 +21,10 @@ package org.apache.rat;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -45,6 +47,7 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -223,7 +226,15 @@ public class Report {
                     DefaultLog.INSTANCE.error("Please specify a single stylesheet");
                     System.exit(1);
                 }
-                configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(style[0])));
+                IOSupplier<InputStream> ioSupplier = null;
+
+                URL url = Report.class.getClassLoader().getResource(String.format("org/apache/rat/%s.xsl", style[0]));
+                if (url == null) {
+                    ioSupplier = () -> Files.newInputStream(Paths.get(style[0]));
+                } else {
+                    ioSupplier = () -> url.openStream();
+                }
+                configuration.setStyleSheet(ioSupplier);
             }
         }
 
@@ -348,7 +359,7 @@ public class Report {
         outputType.addOption(xml);
 
         Option xslt = new Option(STYLESHEET_CLI, "stylesheet", true,
-                "XSLT stylesheet to use when creating the" + " report.  Not compatible with -x");
+                "XSLT stylesheet to use when creating the report.  Not compatible with -x.  Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses");
         outputType.addOption(xslt);
         opts.addOptionGroup(outputType);
         
