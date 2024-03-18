@@ -15,40 +15,51 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat;
-
-import org.apache.rat.test.utils.Resources;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.StringReader;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
+import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.TextUtils;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class ReportTransformerTest {
-    
-    private static final String SIMPLE_CONTENT =  
-        "<?xml version='1.0'?>" +
-        "<directory name='sub'>" +
-        "<standard name='Empty.txt'>" +
-        "<license code='?????' name='UNKNOWN' version='' approved='false' generated='false'></license>" +
-        "</standard>" +
-        "<directory name='.svn' restricted='true'/>" +
-        "</directory>";
 
-    @Test
-    public void testTransform() throws Exception {
+    @ParameterizedTest(name = "{index} {0}")
+    @MethodSource("transformers")
+    public void testTransform(String xslt, String[] expected) throws Exception {
+        URL url = this.getClass().getClassLoader().getResource("XmlOutputExamples/elements.xml");
         StringWriter writer = new StringWriter();
-        assertNotNull(writer);
-        StringReader in = new StringReader(SIMPLE_CONTENT);
-        ReportTransformer transformer = new ReportTransformer(writer, 
-                new BufferedReader(new FileReader(Resources.getMainResourceFile("/org/apache/rat/plain-rat.xsl"))),
-                in);
+
+        ReportTransformer transformer = new ReportTransformer(writer,
+                new BufferedReader(new FileReader(Resources.getMainResourceFile("/org/apache/rat/" + xslt))),
+                new InputStreamReader(url.openStream()));
         transformer.transform();
+        String text = writer.getBuffer().toString();
+        for (String pattern : expected) {
+            TextUtils.assertPatternInOutput(pattern, text);
+        }
     }
 
+    public static Stream<Arguments> transformers() {
+        List<Arguments> lst = new ArrayList<>();
+
+        lst.add(Arguments.of("plain-rat.xsl", new String[] { "Notes: 2$", "Binaries: 2$", "Archives: 1$",
+                "Standards: 7$", "Apache Licensed: 4$", "Generated Documents: 0$", "2 Unknown Licenses" }));
+        lst.add(Arguments.of("unapproved-licenses.xsl", new String[] { "Files with unapproved licenses",
+                "src/test/resources/elements/Source.java", "src/test/resources/elements/sub/Empty.txt" }));
+        lst.add(Arguments.of("missing-headers.xsl", new String[] { "Files with missing headers",
+                "src/test/resources/elements/Source.java", "src/test/resources/elements/sub/Empty.txt" }));
+        return lst.stream();
+    }
 }
