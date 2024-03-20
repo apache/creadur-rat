@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
@@ -261,8 +262,8 @@ public abstract class AbstractLicenseAppender {
                 if (isExecutable && !document.setExecutable(true)) {
                     log.warn(String.format("Could not set %s as executable.", document));
                 }
-            } catch (IOException e) {
-                log.error(String.format("Failed to rename new file to %s, Original file is unchanged.", document ));
+            } catch (InvalidPathException | IOException e) {
+                log.error(String.format("Failed to rename new file to %s, Original file is unchanged.", document), e);
             }
         }
     }
