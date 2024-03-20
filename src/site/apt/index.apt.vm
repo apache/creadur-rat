@@ -82,8 +82,6 @@ Apache Rat
 
 * Quick Start: Running Rat
 
-Rat supports three clients: a command line, Maven and Ant.
-
 ** Command Line
 
  Quick start by
@@ -114,15 +112,17 @@ java -jar apache-rat-${project.version}.jar --help
 
  Read more {{{./apache-rat-plugin/index.html} here}}.
  
- ** Styling output
+** Styling output
  
  Rat allows you to style the output as you see fit.  Three stylesheets are included in the rat package.
  
-    plain-rat  The default stylesheet.
-    unapproved-licenses  Lists only the files with unapproved licenses.
-    missing-headers  List only files that are missing headers.
+  * plain-rat  The default stylesheet.
+  
+  * unapproved-licenses  Lists only the files with unapproved licenses.
+  
+  * missing-headers  List only files that are missing headers.
    
-These stylesheets can be specified using options in the command line, Maven or Ant clients.
+ These stylesheets can be specified using options in the command line, Maven or Ant clients.
 
 
 * Checking Out Rat
