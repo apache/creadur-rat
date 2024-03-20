@@ -314,15 +314,13 @@ public class Report {
         opts.addOption(null, SCAN_HIDDEN_DIRECTORIES, false, "Scan hidden directories");
 
         OptionGroup addLicenseGroup = new OptionGroup();
-        String addLicenseDesc = "Add the default license header to any file with an unknown license that is not in the exclusion list. "
-                + "By default new files will be created with the license header, "
-                + "to force the modification of existing files use the --force option.";
-
         // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
         // compatibility
-        Option addLicence = new Option(ADD_OLD, "addLicence", false, addLicenseDesc);
+        Option addLicence = new Option(ADD_OLD, false, "(deprecated) Add the default license header to any file with an unknown license.  Use '-a' or ---addLicense instead.");
         addLicenseGroup.addOption(addLicence);
-        Option addLicense = new Option(ADD, "addLicense", false, addLicenseDesc);
+        Option addLicense = new Option(ADD, "addLicense", false, "Add the default license header to any file with an unknown license that is not in the exclusion list. "
+                + "By default new files will be created with the license header, "
+                + "to force the modification of existing files use the --force option.");
         addLicenseGroup.addOption(addLicense);
         opts.addOptionGroup(addLicenseGroup);
 
