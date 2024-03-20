@@ -29,6 +29,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -678,12 +679,12 @@ public class TestLicenseAppender {
                     }
                 });
     }
-    
+
     @Test
     public void testForced() throws IOException {
         String filename = "tmp.php";
         final String firstLine = "<?php";
-        
+
         FileCreator phpCreator = (writer) -> {
             writer.write(firstLine + "\n");
             writer.write("echo 'Hello World'\n");
@@ -692,25 +693,25 @@ public class TestLicenseAppender {
 
         String name = getTemporaryFileWithName(filename);
         try {
-        createTestFile(name, phpCreator);
+            createTestFile(name, phpCreator);
 
-        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender(DefaultLog.INSTANCE);
-        appender.setForce(true);
-        appender.append(new File(name));
-        
-        assertFalse(new File(name+".new").exists());
-        assertTrue(new File(name).exists());
-        
-        try(FileInputStream inputStream = new FileInputStream(name)) {
-            String everything = IOUtils.toString(inputStream);
-            assertTrue(everything.contains("Licensed to the Apache Software Foundation "));
-        }
+            ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender(DefaultLog.INSTANCE);
+            appender.setForce(true);
+            appender.append(new File(name));
+
+            assertFalse(new File(name + ".new").exists());
+            assertTrue(new File(name).exists());
+
+            try (FileInputStream inputStream = new FileInputStream(name)) {
+                String everything = IOUtils.toString(inputStream, Charset.defaultCharset());
+                assertTrue(everything.contains("Licensed to the Apache Software Foundation "));
+            }
         } finally {
-            new File(name+".new").delete();
-            FileUtils.delete( new File(name));
+            new File(name + ".new").delete();
+            FileUtils.delete(new File(name));
         }
     }
-    
+
     @Test
     public void testExecutePermsPreserved() throws IOException {
         String filename = "tmp.php";
@@ -735,7 +736,7 @@ public class TestLicenseAppender {
             assertTrue(new File(name).exists());
 
             try (FileInputStream inputStream = new FileInputStream(name)) {
-                String everything = IOUtils.toString(inputStream);
+                String everything = IOUtils.toString(inputStream, Charset.defaultCharset());
                 assertTrue(everything.contains("Licensed to the Apache Software Foundation "));
             }
             assertTrue(new File(name).canExecute());
@@ -743,5 +744,5 @@ public class TestLicenseAppender {
             new File(name + ".new").delete();
             FileUtils.delete(new File(name));
         }
-}
+    }
 }

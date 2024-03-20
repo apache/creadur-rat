@@ -254,9 +254,9 @@ public abstract class AbstractLicenseAppender {
         } 
 
         if (isForced) {
-            Path docPath = document.toPath();
-           boolean isExecutable = Files.isExecutable(docPath);
             try {
+                Path docPath = document.toPath();
+                boolean isExecutable = Files.isExecutable(docPath);
                 Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
                 if (isExecutable && !document.setExecutable(true)) {
                     log.warn(String.format("Could not set %s as executable.", document));
