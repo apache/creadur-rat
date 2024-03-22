@@ -56,8 +56,7 @@ public class HeaderCheckWorker {
     /**
      * Read the input and perform the header check.
      *
-     * @throws RatHeaderAnalysisException on IO Exception.
-     * @throws IOException
+     * @throws IOException on input failure
      */
     public static IHeaders readHeader(BufferedReader reader, int numberOfLines) throws IOException {
         final StringBuilder headers = new StringBuilder();
