@@ -81,7 +81,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
 Available options
  -a                             (deprecated) Add the default license
                                 header to any file with an unknown
-                                license.  Use '-a' or ---addLicense
+                                license.  Use '-A' or ---addLicense
                                 instead.
  -A,--addLicense                Add the default license header to any file
                                 with an unknown license that is not in the
