@@ -20,7 +20,6 @@ package org.apache.rat.testhelpers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -37,14 +36,14 @@ public class TestingLicense implements ILicense {
     private String id;
 
     /**
-     * Creates a testing license named "DfltTst" with category of "DfltT" and a default 
-     * TestingMatcher.
+     * Creates a testing license named "DfltTst" with category of "DfltT" and a
+     * default TestingMatcher.
      * @see TestingMatcher
      */
     public TestingLicense() {
         this("DfltTst", new TestingMatcher());
     }
-    
+
     /**
      * Creates a testing license with the specified id and a default TestingMatcher
      * @param id The ID to use.
@@ -63,7 +62,7 @@ public class TestingLicense implements ILicense {
         this(matcher, ILicenseFamily.builder().setLicenseFamilyCategory(id)
                 .setLicenseFamilyName("TestingLicense: " + id).build());
     }
-    
+
     /**
      * Creates a testing license with the specified matcher and family.
      * @param matcher the matcher to use.
@@ -75,14 +74,15 @@ public class TestingLicense implements ILicense {
         this.derivedFrom = null;
         this.notes = null;
     }
-    
+
     /**
-     * Create a testing license for the specified family using a default TestingMatcher
+     * Create a testing license for the specified family using a default
+     * TestingMatcher
      * @param family the family for the license.
      * @see TestingMatcher
      */
     public TestingLicense(ILicenseFamily family) {
-        this(new TestingMatcher(), family );
+        this(new TestingMatcher(), family);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class TestingLicense implements ILicense {
     }
 
     /**
-     * Gets the family from  the license
+     * Gets the family from the license
      * @return the license family.
      */
     public ILicenseFamily getFamily() {
@@ -102,6 +102,7 @@ public class TestingLicense implements ILicense {
      * Gets the matcher from the license
      * @return the matcher.
      */
+    @Override
     public IHeaderMatcher getMatcher() {
         return matcher;
     }
@@ -113,7 +114,7 @@ public class TestingLicense implements ILicense {
     public void setDerivedFrom(String derivedFrom) {
         this.derivedFrom = derivedFrom;
     }
-    
+
     /**
      * Sets the name from value for this license.
      * @param name the name of this license.
@@ -125,6 +126,7 @@ public class TestingLicense implements ILicense {
     public void setId(String id) {
         this.id = id;
     }
+
     @Override
     public String getId() {
         return StringUtils.defaultIfBlank(id, family.getFamilyCategory().trim());
@@ -136,8 +138,18 @@ public class TestingLicense implements ILicense {
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
-        return matcher.matches(headers);
+    public State matches(String line) {
+        return matcher.matches(line);
+    }
+
+    @Override
+    public State finalizeState() {
+        return matcher.finalizeState();
+    }
+
+    @Override
+    public State currentState() {
+        return matcher.currentState();
     }
 
     @Override
@@ -159,15 +171,4 @@ public class TestingLicense implements ILicense {
     public String getName() {
         return StringUtils.defaultIfBlank(name, family.getFamilyName());
     }
-    
-    @Override
-    public String derivedFrom() {
-        return derivedFrom;
-    }
-
-    @Override
-    public Description getDescription() {
-        return new ILicense.ILicenseDescription(this, matcher);
-    }
-
 }

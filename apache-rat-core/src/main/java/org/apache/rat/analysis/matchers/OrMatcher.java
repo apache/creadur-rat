@@ -22,10 +22,14 @@ import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
 
 /**
  * A matcher that performs a logical {@code OR} across all the contained matchers.
  */
+@ConfigComponent(type=Component.Type.Matcher, name="or", desc="Returns true if at least one of the enclosed matchers return true.")
 public class OrMatcher extends AbstractMatcherContainer {
 
     /**

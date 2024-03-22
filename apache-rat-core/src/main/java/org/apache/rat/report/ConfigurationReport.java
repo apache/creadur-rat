@@ -21,18 +21,22 @@ package org.apache.rat.report;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
-import org.apache.rat.config.parameters.Component.Description;
 import org.apache.rat.config.parameters.Component.Type;
+import org.apache.rat.config.parameters.Description;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.configuration.builders.MatcherRefBuilder;
+import org.apache.rat.configuration.builders.MatcherRefBuilder.IHeaderMatcherProxy;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -117,6 +121,13 @@ public class ConfigurationReport extends AbstractReport {
         }
     }
 
+    private void writeChildren(Description description) throws RatException, IOException {
+        writeDescriptions(description.childrenOfType(Type.Parameter));
+        writeDescriptions(description.childrenOfType(Type.Text));
+        writeDescriptions(description.childrenOfType(Type.Matcher));
+        writeDescriptions(description.childrenOfType(Type.License));
+    }
+    
     private void writeDescription(Description description) throws RatException {
         if (description == null) {
             return;
@@ -125,24 +136,25 @@ public class ConfigurationReport extends AbstractReport {
             switch (description.getType()) {
             case Matcher:
                 // see if id was registered
-                Optional<Description> id = description.getChildren().stream().filter(
-                        i -> i.getType() == Type.Parameter && XMLConfigurationReader.ATT_ID.equals(i.getCommonName()))
-                        .findFirst();
+                Optional<Description> id = description.childrenOfType(Type.Parameter).stream().filter(i -> XMLConfigurationReader.ATT_ID.equals(i.getCommonName())).findFirst();
                 if (id.isPresent()) {
                     String idStr = id.get().getParamValue();
                     if (matchers.contains(idStr)) {
-                        writer.openElement("matcherRef").attribute(MatcherRefBuilder.ATT_REF_ID, idStr).closeElement();
-                        return;
+                        description = new MatcherRefBuilder.IHeaderMatcherProxy(id.get().getParamValue(),null).getDescription();
+                    } else {
+                        matchers.add(idStr);
                     }
-                    matchers.add(idStr);
+                }
+                if (StringUtils.isNotBlank(description.getDescription())) {
+                    writer.comment(description.getDescription());
                 }
                 writer.openElement(description.getCommonName());
-                writeDescriptions(description.getChildren());
+                writeChildren(description);
                 writer.closeElement();
                 break;
-            case License:
+            case License:                
                 writer.openElement(XMLConfigurationReader.LICENSE);
-                writeDescriptions(description.getChildren());
+                writeChildren(description);
                 writer.closeElement();
                 break;
             case Parameter:

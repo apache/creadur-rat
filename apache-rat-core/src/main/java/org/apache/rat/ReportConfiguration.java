@@ -84,7 +84,7 @@ public class ReportConfiguration {
     public ReportConfiguration(Log log) {
         this.log = log;
         families = new ReportingSet<>(LicenseFamilySetFactory.emptyLicenseFamilySet()).setLog(log)
-                .setMsgFormat( s -> String.format("Duplicate LicenseFamily category: %s",  s.getFamilyCategory()));
+                .setMsgFormat( s -> String.format("Duplicate LicenseFamily category: %s", s.getFamilyCategory()));
         licenses = new ReportingSet<>(LicenseSetFactory.emptyLicenseSet()).setLog(log)
                 .setMsgFormat( s -> String.format( "Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
         approvedLicenseCategories = new TreeSet<>();

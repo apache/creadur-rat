@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
-import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.Description;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -35,6 +35,7 @@ import org.apache.rat.license.ILicenseFamily;
  * no matching license has been found the default {@code dummy} license category
  * is used.
  */
+
 class LicenseCollection extends AbstractMatcherContainer implements ILicense {
 
     private static final ILicenseFamily DEFAULT = ILicenseFamily.builder().setLicenseFamilyCategory("Dummy")
@@ -89,12 +90,7 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
     public String getNotes() {
         return matchingLicense == null ? null : matchingLicense.getNotes();
     }
-
-    @Override
-    public String derivedFrom() {
-        return matchingLicense == null ? null : matchingLicense.derivedFrom();
-    }
-
+    
     @Override
     public String getName() {
         return getLicenseFamily().getFamilyName();
@@ -105,12 +101,12 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
         if (matchingLicense != null) {
             return matchingLicense.getDescription();
         }
-        return new DescriptionImpl(Type.License, "licenseCollection",
-                "A collection of ILicenses that acts as a single License for purposes of Analysis.", null) {
-            @Override
-            public Collection<Description> getChildren() {
-                return enclosed.stream().map(ILicense::getDescription).collect(Collectors.toList());
-            }
-        };
+        return new Description(Type.License, "licenseCollection",
+                "A collection of ILicenses that acts as a single License for purposes of Analysis.", null, null);
+    }
+
+    @Override
+    public IHeaderMatcher getMatcher() {
+        return matchingLicense;
     }
 }

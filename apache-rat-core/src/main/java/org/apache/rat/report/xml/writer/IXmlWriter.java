@@ -50,6 +50,16 @@ public interface IXmlWriter extends AutoCloseable {
     IXmlWriter openElement(CharSequence elementName) throws IOException;
     
     /**
+     * Writes a comment
+     * 
+     * @param text the comment text
+     * @return this object 
+     * @throws OperationNotAllowedException 
+     * if called after the first element has been closed
+     */
+    IXmlWriter comment(CharSequence text) throws IOException;
+    
+    /**
      * Writes an attribute of an element.
      * Note that this is only allowed directly after {@link #openElement(CharSequence)}
      * or {@link #attribute}.

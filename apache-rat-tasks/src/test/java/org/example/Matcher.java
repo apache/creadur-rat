@@ -18,8 +18,7 @@ package org.example;
 
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
-import org.apache.rat.inspector.AbstractInspector;
-import org.apache.rat.inspector.Inspector;
+import org.apache.rat.config.parameters.Description;
 
 public class Matcher extends AbstractSimpleMatcher {
     public Matcher() {

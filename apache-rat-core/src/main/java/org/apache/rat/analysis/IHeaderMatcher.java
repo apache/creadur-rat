@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
 import org.apache.rat.configuration.builders.AllBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
@@ -45,6 +46,7 @@ public interface IHeaderMatcher extends Component {
      * 
      * @return the Identifier for this matcher.
      */
+    @ConfigComponent(type=Component.Type.Parameter, name="id", desc="The id of this matcher.")
     String getId();
 
     /**
@@ -61,44 +63,6 @@ public interface IHeaderMatcher extends Component {
      * @return the new state after the matching was attempted.
      */
     boolean matches(IHeaders headers);
-
-    public class MatcherDescription extends DescriptionImpl {
-        private IHeaderMatcher self;
-        private String name;
-        protected Collection<Description> children;
-
-        private Description[] baseChildren = {
-                new DescriptionImpl(Type.Parameter, "id", "The id of this matcher instance", () -> self.getId()),
-                new DescriptionImpl(Type.Parameter, "name", "The name of this matcher instance", () -> name),
-                new DescriptionImpl(Type.Parameter, "refId",
-                        "This matcher is a reference to another matcher defined elsewhere", this::getRefId) };
-
-        public MatcherDescription(IHeaderMatcher matcher, String name, String description) {
-            super(Type.Matcher, name, description, null);
-            self = matcher;
-            children = new ArrayList<>();
-            children.addAll(Arrays.asList(baseChildren));
-        }
-
-        public MatcherDescription addChildMatchers(Collection<IHeaderMatcher> matchers) {
-            matchers.forEach(m -> children.add(m.getDescription()));
-            return this;
-        }
-
-        public MatcherDescription addChildren(Description[] newChildren) {
-            children.addAll(Arrays.asList(newChildren));
-            return this;
-        }
-
-        protected String getRefId() {
-            return null;
-        }
-
-        @Override
-        public Collection<Description> getChildren() {
-            return children;
-        }
-    }
 
     /**
      * An IHeaderMatcher builder.

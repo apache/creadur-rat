@@ -18,13 +18,19 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigChildren;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
 import org.apache.rat.analysis.IHeaders;
 /**
  * An IHeaderMatcher that reverses the result of an enclosed matcher.
  */
+@ConfigComponent(type=Component.Type.Matcher, name="not", desc="Negates the enclosed matcher.")
 public class NotMatcher extends AbstractHeaderMatcher {
 
     private final IHeaderMatcher enclosed;
@@ -48,6 +54,11 @@ public class NotMatcher extends AbstractHeaderMatcher {
         super(id);
         Objects.requireNonNull(enclosed, "enclosed matcher may not be null");
         this.enclosed = enclosed;
+    }
+    
+    @ConfigChildren(parameterType=IHeaderMatcher.class)
+    public List<IHeaderMatcher> getEnclosed() {
+        return Arrays.asList(enclosed);
     }
 
     @Override

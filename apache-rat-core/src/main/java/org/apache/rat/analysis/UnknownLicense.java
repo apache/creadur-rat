@@ -18,6 +18,12 @@
  */
 package org.apache.rat.analysis;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.ILicenseFamilyBuilder;
@@ -80,13 +86,7 @@ public class UnknownLicense implements ILicense {
     }
 
     @Override
-    public String derivedFrom() {
+    public IHeaderMatcher getMatcher() {
         return null;
     }
-
-    @Override
-    public Description getDescription() {
-        return new ILicense.ILicenseDescription(this, null);
-    }
-
 }

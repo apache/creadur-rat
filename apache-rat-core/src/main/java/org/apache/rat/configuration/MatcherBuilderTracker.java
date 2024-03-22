@@ -103,7 +103,6 @@ public class MatcherBuilderTracker {
         if (AbstractBuilder.class.isAssignableFrom(clazz)) {
             @SuppressWarnings("unchecked")
             Class<? extends AbstractBuilder> candidate = (Class<? extends AbstractBuilder>) clazz;
-            // String name = attributes.get(AttributeName.name);
             if (StringUtils.isBlank(name)) {
                 name = candidate.getSimpleName();
                 if (!name.endsWith("Builder")) {

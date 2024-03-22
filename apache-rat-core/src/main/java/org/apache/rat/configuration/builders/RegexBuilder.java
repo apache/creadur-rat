@@ -45,7 +45,7 @@ public class RegexBuilder extends AbstractBuilder {
     }
 
     @Override
-    public IHeaderMatcher build() {
+    public SimpleRegexMatcher build() {
         if (null == pattern) {
             throw new ConfigurationException("'regex' type matcher requires an expression");
         }

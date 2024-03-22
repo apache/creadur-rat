@@ -21,8 +21,12 @@ package org.apache.rat.analysis.matchers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigChildren;
+import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * A class that implements IHeaderMatcher as a collection of other
@@ -32,6 +36,10 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
     protected final Collection<IHeaderMatcher> enclosed;
 
+    @ConfigChildren(name="enclosed")
+    public Collection<IHeaderMatcher> getChildren() {
+        return enclosed;
+    }
     /**
      * Constructs the abstract matcher container. If the {@code id} is not set then
      * a unique random identifier is created. The {@code enclosed} collection is

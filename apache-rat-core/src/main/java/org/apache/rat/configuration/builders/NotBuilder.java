@@ -28,7 +28,7 @@ import org.apache.rat.analysis.matchers.NotMatcher;
 public class NotBuilder extends ChildContainerBuilder {
     
     @Override
-    public IHeaderMatcher build() {
+    public NotMatcher build() {
         if (children.size() != 1) {
             throw new ConfigurationException("'not' type matcher requires one and only one enclosed matcher");
         }

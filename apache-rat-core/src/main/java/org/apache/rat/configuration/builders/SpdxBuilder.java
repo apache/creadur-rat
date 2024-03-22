@@ -42,7 +42,7 @@ public class SpdxBuilder extends AbstractBuilder {
     }
 
     @Override
-    public IHeaderMatcher build() {
+    public SPDXMatcherFactory.Match build() {
         return SPDXMatcherFactory.INSTANCE.create(name);
     }
     

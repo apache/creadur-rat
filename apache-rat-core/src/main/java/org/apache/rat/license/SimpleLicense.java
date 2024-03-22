@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.config.parameters.ConfigChildren;
 
 /**
  * A simple implementation of ILicense.
@@ -61,6 +62,8 @@ class SimpleLicense implements ILicense {
         this.family = family;
     }
 
+    @Override
+    @ConfigChildren
     public IHeaderMatcher getMatcher() {
         return matcher;
     }
@@ -104,17 +107,7 @@ class SimpleLicense implements ILicense {
     }
 
     @Override
-    public String derivedFrom() {
-        return derivedFrom;
-    }
-
-    @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public Description getDescription() {
-        return new ILicense.ILicenseDescription(this, matcher);
     }
 }
