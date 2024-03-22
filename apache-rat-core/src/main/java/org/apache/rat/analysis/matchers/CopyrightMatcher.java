@@ -146,11 +146,4 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
         return false;
     }
-//
-//    @Override
-//    public Description getDescription() {
-//        return DescriptionBuilder.build(this);
-////        return new IHeaderMatcher.MatcherDescription(this, "copyright", "Matches copyright statements")
-////                .addChildren(children);
-//    }
 }
