@@ -21,16 +21,16 @@ package org.apache.rat.analysis.matchers;
 import java.util.regex.Pattern;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
 
 /**
  * A simple regular expression matching IHeaderMatcher
  */
+@ConfigComponent(type=Component.Type.Matcher, name="regex", desc="Performs a regex match using the enclosed the text")
 public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     private final Pattern pattern;
-
-    private Description[] children = {
-            new DescriptionImpl(Type.Text, "", "The regex pattern to match", this::getPattern) };
 
     /**
      * Constructs a regex pattern matcher with a unique random id and the specified
@@ -56,6 +56,7 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
         this.pattern = pattern;
     }
 
+    @ConfigComponent(type=Component.Type.Text, name="", desc="")
     private String getPattern() {
         return pattern.pattern();
     }
@@ -63,11 +64,5 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
     @Override
     public boolean doMatch(String line) {
         return pattern.matcher(line).find();
-    }
-
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "regex", "Performs a regex match on the text")
-                .addChildren(children);
     }
 }

@@ -20,15 +20,18 @@ package org.apache.rat.analysis.matchers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigChildren;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.ConfigParameter;
+import org.apache.rat.config.parameters.Description;
 
 /**
  * A simple text matching IHeaderMatcher implementation.
  */
+@ConfigComponent(type=Component.Type.Matcher, name="text", desc="Matches the enclosed the text")
 public class SimpleTextMatcher extends AbstractSimpleMatcher {
-    private final String pattern;
-
-    private Description[] children = { new DescriptionImpl(Type.Text, "", "The text to match", this::getSimpleText) };
+    private final String simpleText;
 
     /**
      * Constructs the simple text matcher for the simple string.
@@ -36,36 +39,33 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
      * @param pattern The pattern to match. Will only match a single line from the
      * input stream.
      */
-    public SimpleTextMatcher(String pattern) {
-        this(null, pattern);
+    public SimpleTextMatcher(String simpleText) {
+        this(null, simpleText);
     }
 
     /**
      * Constructs the simple text matcher for the simple string.
      *
      * @param id The id for this matcher.
-     * @param pattern The pattern to match. Will only match a single line from the
+     * @param simpleText The pattern to match. Will only match a single line from the
      * input stream.
      */
-    public SimpleTextMatcher(String id, String pattern) {
+    public SimpleTextMatcher(String id, String simpleText) {
         super(id);
-        if (StringUtils.isBlank(pattern)) {
-            throw new IllegalArgumentException("Pattern may not be null, empty or blank");
+        if (StringUtils.isBlank(simpleText)) {
+            throw new IllegalArgumentException("Simple text may not be null, empty or blank");
         }
-        this.pattern = pattern;
+        this.simpleText = simpleText;
     }
 
-    private String getSimpleText() {
-        return this.pattern;
+    @ConfigComponent(type=Component.Type.Text, name="", desc="")
+    public String getSimpleText() {
+        return this.simpleText;
     }
 
     @Override
     public boolean doMatch(String line) {
-        return line.contains(pattern);
+        return line.contains(simpleText);
     }
 
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "text", "Matches text statement").addChildren(children);
-    }
 }

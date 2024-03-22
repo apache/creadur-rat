@@ -27,7 +27,9 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
 
 /**
  * Defines a factory to produce matchers for an SPDX tag. SPDX tag is of the
@@ -75,7 +77,7 @@ public class SPDXMatcherFactory {
      * @param spdxId the spdx name to match.
      * @return a spdx matcher.
      */
-    public IHeaderMatcher create(String spdxId) {
+    public Match create(String spdxId) {
         if (StringUtils.isBlank(spdxId)) {
             throw new ConfigurationException("'spdx' type matcher requires a name");
         }
@@ -112,12 +114,17 @@ public class SPDXMatcherFactory {
         return (lastMatch != null) && caller.spdxId.equals(lastMatch.spdxId);
     }
 
+    @ConfigComponent(type=Component.Type.Matcher, name="spdx", desc="Matches SPDX enclosed license identifier.")
     public class Match extends AbstractSimpleMatcher {
 
         String spdxId;
 
-        private Description[] children = { new DescriptionImpl(Type.Text, "", "The SPDX ID", () -> spdxId) };
-
+       
+        @ConfigComponent(type=Component.Type.Text, name="", desc="")
+        public String getSpdx() {
+            return spdxId;
+        }
+        
         /**
          * Constructor.
          *
@@ -139,13 +146,6 @@ public class SPDXMatcherFactory {
         public void reset() {
             super.reset();
             SPDXMatcherFactory.this.lastMatch = null;
-
-        }
-
-        @Override
-        public Description getDescription() {
-            return new IHeaderMatcher.MatcherDescription(this, "spdx", "Matches SPDX license identifier in the text")
-                    .addChildren(children);
         }
     }
 }

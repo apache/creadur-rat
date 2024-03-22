@@ -21,11 +21,15 @@ package org.apache.rat.analysis.matchers;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
 
 /**
  * A matcher that performs a logical {@code OR} across all the contained
  * matchers.
  */
+@ConfigComponent(type=Component.Type.Matcher, name="or", desc="Returns true if at least one of the enclosed matchers return true.")
 public class OrMatcher extends AbstractMatcherContainer {
 
     private State lastState;
@@ -94,11 +98,5 @@ public class OrMatcher extends AbstractMatcherContainer {
     public void reset() {
         super.reset();
         lastState = State.i;
-    }
-
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "or",
-                "Returns true if one of the enclosed matchers return true.").addChildMatchers(enclosed);
     }
 }

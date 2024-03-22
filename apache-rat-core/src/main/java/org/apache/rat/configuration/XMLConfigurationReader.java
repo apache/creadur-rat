@@ -142,7 +142,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     }
 
     /**
-     * Read the urls and create a single document to process.
+     * Read the urls and extract the DOM information to create new objects.
      * 
      * @param urls The URLs to read.
      */

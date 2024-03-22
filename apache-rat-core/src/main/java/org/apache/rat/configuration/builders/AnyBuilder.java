@@ -27,7 +27,7 @@ import org.apache.rat.analysis.matchers.OrMatcher;
 public class AnyBuilder extends ChildContainerBuilder {
 
     @Override
-    public IHeaderMatcher build() {
+    public OrMatcher build() {
         return new OrMatcher(getId(), getChildren());
     }
 }

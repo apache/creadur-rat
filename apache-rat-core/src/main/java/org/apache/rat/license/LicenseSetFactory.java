@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Description;
+
 /**
  * Class to take a set of ILicenses and collection of approved license
  * categories and extract Subsets.
@@ -185,12 +188,7 @@ public class LicenseSetFactory {
             public String getNotes() {
                 return null;
             }
-
-            @Override
-            public String derivedFrom() {
-                return null;
-            }
-
+            
             @Override
             public String getName() {
                 return searchFamily.getFamilyName();
@@ -207,9 +205,10 @@ public class LicenseSetFactory {
             }
 
             @Override
-            public Description getDescription() {
-                return new ILicenseDescription(this, null);
+            public IHeaderMatcher getMatcher() {
+                return null;
             }
+
         };
         return search(target, licenses);
     }

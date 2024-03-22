@@ -27,7 +27,7 @@ import org.apache.rat.analysis.matchers.AndMatcher;
 public class AllBuilder extends ChildContainerBuilder {
 
     @Override
-    public IHeaderMatcher build() {
+    public AndMatcher build() {
         return new AndMatcher(getId(), getChildren());
     }
 }

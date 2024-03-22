@@ -42,7 +42,7 @@ public class TextBuilder extends AbstractBuilder implements TextCaptureBuilder {
     }
 
     @Override
-    public IHeaderMatcher build() {
+    public SimpleTextMatcher build() {
         if (StringUtils.isBlank(text)) {
             throw new ConfigurationException("text value is required");
         }

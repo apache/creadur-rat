@@ -23,7 +23,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
@@ -39,6 +42,7 @@ import org.apache.rat.config.parameters.DescriptionImpl;
  * accepts "(C)", "(c)", and "©" in place of (or in addition to) the "Copyright"
  * or "copyright" keyword </p>
  */
+@ConfigComponent(type=Component.Type.Matcher, name="copyright", desc="Matches copyright statements.")
 public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©";
@@ -52,11 +56,6 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     private final String start;
     private final String stop;
     private final String owner;
-
-    private final Description[] children = {
-            new DescriptionImpl(Type.Parameter, "start", "The initial date of the copyright", this::getStart),
-            new DescriptionImpl(Type.Parameter, "stop", "The last date the copyright we modifed", this::getStop),
-            new DescriptionImpl(Type.Parameter, "owner", "The owner of the copyright", this::getOwner), };
 
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
@@ -113,15 +112,18 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
     }
 
-    private String getStart() {
+    @ConfigComponent(type=Component.Type.Parameter, name="start", desc="The initial date of the copyright")
+    public String getStart() {
         return start;
     }
 
-    private String getStop() {
+    @ConfigComponent(type=Component.Type.Parameter, name="stop", desc="The last date the copyright we modifed")
+    public String getStop() {
         return stop;
     }
 
-    private String getOwner() {
+    @ConfigComponent(type=Component.Type.Parameter, name="owner", desc="The owner of the copyright")
+    public String getOwner() {
         return owner;
     }
 
@@ -144,10 +146,11 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
         return false;
     }
-
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "copyright", "Matches copyright statements")
-                .addChildren(children);
-    }
+//
+//    @Override
+//    public Description getDescription() {
+//        return DescriptionBuilder.build(this);
+////        return new IHeaderMatcher.MatcherDescription(this, "copyright", "Matches copyright statements")
+////                .addChildren(children);
+//    }
 }

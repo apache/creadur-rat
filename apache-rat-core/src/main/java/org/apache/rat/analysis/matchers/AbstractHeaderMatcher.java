@@ -22,6 +22,10 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * An abstract class to simplify IHeaderMatcher creation. This class ensures
@@ -41,6 +45,7 @@ public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
         this.id = StringUtils.isBlank(id) ? UUID.randomUUID().toString() : id;
     }
 
+    @ConfigComponent(type=Component.Type.Parameter, name="id", desc="The id of the matcher.")    
     @Override
     public String getId() {
         return id;
@@ -49,5 +54,10 @@ public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
     @Override
     public String toString() {
         return getId();
+    }
+    
+    @Override
+    public Description getDescription() {
+        return DescriptionBuilder.build(this);
     }
 }

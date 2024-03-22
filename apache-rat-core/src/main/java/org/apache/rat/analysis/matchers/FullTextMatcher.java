@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.Description;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
@@ -32,7 +32,7 @@ import org.apache.rat.config.parameters.DescriptionImpl;
  * <p> The text comparison is case insensitive but assumes only characters in
  * the US-ASCII charset are being matched. </p>
  */
-public class FullTextMatcher extends AbstractSimpleMatcher {
+public class FullTextMatcher extends SimpleTextMatcher {
 
     // Number of match characters assumed to be present on first line
     private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
@@ -45,18 +45,14 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
 
     private final StringBuilder buffer = new StringBuilder();
 
-    private final String rawFullText;
-
-    private Description[] children = { new DescriptionImpl(Type.Text, "", "The text to match", this::getFullText) };
-
     /**
      * Constructs the full text matcher with a unique random id and the specified
      * text to match.
      *
-     * @param fullText the text to match
+     * @param simpleText the text to match
      */
-    public FullTextMatcher(String fullText) {
-        this(null, fullText);
+    public FullTextMatcher(String simpleText) {
+        this(null, simpleText);
     }
 
     /**
@@ -66,9 +62,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
      * @param fullText the text to match
      */
     public FullTextMatcher(String id, String fullText) {
-        super(id);
-        Objects.requireNonNull(fullText, "fullText may not be null");
-        rawFullText = fullText;
+        super(id, fullText);
         int offset = fullText.indexOf('\n');
         if (offset == -1) {
             offset = Math.min(DEFAULT_INITIAL_LINE_LENGTH, fullText.length());
@@ -77,10 +71,6 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
         this.fullText = prune(fullText).toLowerCase(Locale.ENGLISH);
         buffer.setLength(0);
         seenFirstLine = false;
-    }
-
-    private String getFullText() {
-        return fullText;
     }
 
     /**
@@ -140,10 +130,5 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
         super.reset();
         buffer.setLength(0);
         seenFirstLine = false;
-    }
-
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "text", "Matches text statement").addChildren(children);
     }
 }

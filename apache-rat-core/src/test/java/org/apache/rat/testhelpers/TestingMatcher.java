@@ -21,13 +21,14 @@ package org.apache.rat.testhelpers;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
-import org.apache.rat.config.parameters.Component.Description;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * An Matcher for testing.
  */
+@ConfigComponent(type = Component.Type.Matcher, name = "TestingMatcher", desc = "Matcher used in testing")
 public class TestingMatcher extends AbstractHeaderMatcher {
 
     private State lastState;
@@ -45,23 +46,27 @@ public class TestingMatcher extends AbstractHeaderMatcher {
     /**
      * Constructs a matcher with the specified id and matching result.
      * @param id the ID for this matcher
-     * @param result if {@code true} will match everything, otherwise it matches nothing.
+     * @param result if {@code true} will match everything, otherwise it matches
+     * nothing.
      */
     public TestingMatcher(boolean result) {
         this("dfltMtch", result);
     }
+
     /**
      * Constructs a matcher with the specified id and matching result.
      * @param id the ID for this matcher
-     * @param result if {@code true} will match everything, otherwise it matches nothing.
+     * @param result if {@code true} will match everything, otherwise it matches
+     * nothing.
      */
     public TestingMatcher(String id, boolean result) {
         this(id, new boolean[] { result });
     }
 
     /**
-     * Constructs a matcher with the specified ID that returns the matching values in order.
-     * Will throw NPE if more {@code matches()} are called than there are results.
+     * Constructs a matcher with the specified ID that returns the matching values
+     * in order. Will throw NPE if more {@code matches()} are called than there are
+     * results.
      * @param id the id of the matcher.
      * @param results the result for each call to match.
      */
@@ -104,10 +109,4 @@ public class TestingMatcher extends AbstractHeaderMatcher {
     public final State currentState() {
         return lastState;
     }
-
-    
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "TestingMatcher", "Matcher used in testing");
-    }   
 }

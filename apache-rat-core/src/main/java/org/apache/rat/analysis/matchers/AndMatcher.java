@@ -21,11 +21,16 @@ package org.apache.rat.analysis.matchers;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * A matcher that performs a logical {@code AND} across all the contained
  * matchers.
  */
+@ConfigComponent(type=Component.Type.Matcher, name="and", desc="Returns true if all enclosed matchers return true.")
 public class AndMatcher extends AbstractMatcherContainer {
 
     /**
@@ -77,11 +82,5 @@ public class AndMatcher extends AbstractMatcherContainer {
     public State finalizeState() {
         enclosed.forEach(IHeaderMatcher::finalizeState);
         return currentState();
-    }
-
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "all", "Returns true if all enclosed matchers return true.")
-                .addChildMatchers(enclosed);
     }
 }

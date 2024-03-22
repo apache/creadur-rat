@@ -28,7 +28,8 @@ import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.DescriptionImpl;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
 
 /**
  * The definition of a License.
@@ -42,19 +43,23 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
     /**
      * @return the notes associated with this license. May be null or empty.
      */
+    @ConfigComponent(type=Component.Type.Parameter, name="notes", desc="Any notes related to this license.")
     String getNotes();
-
-    /**
-     * @return the id of a license that this license is derived from. May be null.
-     */
-    String derivedFrom();
 
     /**
      * Returns the name of this license. If no name was specified then the name of
      * the family is returned.
      * @return the name of this license.
      */
+    @ConfigComponent(type=Component.Type.Parameter, name="name", desc="The name of this license.")
     String getName();
+    
+    @ConfigComponent(type=Component.Type.Parameter, name="family", desc="The family this license belongs to.")
+    default String getFamilyName() {
+        return getLicenseFamily().getFamilyName();
+    }
+    
+    IHeaderMatcher getMatcher();
 
     /**
      * @return An ILicense.Builder instance.
@@ -68,33 +73,6 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
      */
     static Comparator<ILicense> getComparator() {
         return Comparator.comparing(IHeaderMatcher::getId);
-    }
-
-    class ILicenseDescription extends DescriptionImpl {
-        private ILicense self;
-        private IHeaderMatcher matcher;
-
-        Description[] children = {
-                new DescriptionImpl(Type.Parameter, "name", "The name of this license", () -> self.getName()),
-                new DescriptionImpl(Type.Parameter, "id", "The id of this license", () -> self.getId()),
-                new DescriptionImpl(Type.Parameter, "family", "The family this license belongs to",
-                        () -> self.getLicenseFamily().getFamilyCategory()),
-                new DescriptionImpl(Type.Parameter, "notes", "Any notes related to this family", () -> self.getNotes()), };
-
-        public ILicenseDescription(ILicense license, IHeaderMatcher matcher) {
-            super(Type.License, "license", "A license definition", null);
-            self = license;
-            this.matcher = matcher;
-        }
-
-        @Override
-        public Collection<Description> getChildren() {
-            List<Description> result = new ArrayList<>();
-            result.addAll(Arrays.asList(children));
-            result.add(matcher.getDescription());
-            return result;
-        }
-
     }
 
     /**

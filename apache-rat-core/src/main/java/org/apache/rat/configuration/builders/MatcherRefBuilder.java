@@ -18,25 +18,19 @@
  */
 package org.apache.rat.configuration.builders;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.MatcherDescription;
-import org.apache.rat.config.parameters.DescriptionImpl;
-import org.apache.rat.config.parameters.Component.Description;
-import org.apache.rat.license.ILicense;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * A reference matching Matcher builder.
- * <p>
- * This class stores a matcher id as a reference to the matcher.  It also has a map of matcher ids to the matcher
- * instances.  When build is called the matcher reference is looked up in the map.  If it is found then it is returned
- * value from the {@code build()} call.  If the reference is not located then a IHeaderMatcherProxy is returned.
- * the IHeaderMatcherProxy is resolved in a later configuration construction phase.
+ * A reference matching Matcher builder. <p> This class stores a matcher id as a
+ * reference to the matcher. It also has a map of matcher ids to the matcher
+ * instances. When build is called the matcher reference is looked up in the
+ * map. If it is found then it is returned value from the {@code build()} call.
+ * If the reference is not located then a IHeaderMatcherProxy is returned. the
+ * IHeaderMatcherProxy is resolved in a later configuration construction phase.
  */
 public class MatcherRefBuilder extends AbstractBuilder {
     private String referenceId;
@@ -71,23 +65,30 @@ public class MatcherRefBuilder extends AbstractBuilder {
 
     @Override
     public String toString() {
-        return "MathcerRefBuilder: "+referenceId;
+        return "MathcerRefBuilder: " + referenceId;
     }
-    
+
     /**
-     * A class that is a proxy to the actual matcher.  It retrieves the actual matcher from the map of
-     * matcher ids to matcher instances one the first use of the matcher.  This allows earlier read matchers
-     * to reference later constructed matchers as long as all the matchers are constructed before the earlier one is 
-     * used.
+     * A class that is a proxy to the actual matcher. It retrieves the actual
+     * matcher from the map of matcher ids to matcher instances one the first use of
+     * the matcher. This allows earlier read matchers to reference later constructed
+     * matchers as long as all the matchers are constructed before the earlier one
+     * is used.
      */
-    private class IHeaderMatcherProxy implements IHeaderMatcher {
+    @ConfigComponent(type = Component.Type.Matcher, name = "matcherRef", desc = "A pointer to another Matcher")
+    public static class IHeaderMatcherProxy implements IHeaderMatcher {
         private final String proxyId;
         private IHeaderMatcher wrapped;
         private Map<String, IHeaderMatcher> matchers;
 
-        private IHeaderMatcherProxy(String proxyId, Map<String, IHeaderMatcher> matchers) {
+        public IHeaderMatcherProxy(String proxyId, Map<String, IHeaderMatcher> matchers) {
             this.proxyId = proxyId;
             this.matchers = matchers;
+        }
+
+        @ConfigComponent(type = Component.Type.Parameter, name = "refId", desc = "Reference to an existing matcher")
+        public String getProxyId() {
+            return proxyId;
         }
 
         private void checkProxy() {
@@ -128,19 +129,6 @@ public class MatcherRefBuilder extends AbstractBuilder {
         public State finalizeState() {
             checkProxy();
             return wrapped.finalizeState();
-        }
-
-        
-        @Override
-        public Description getDescription() {
-            
-            return new MatcherDescription(this, "MatcherProxy", "A proxy to another Matcher") {
-
-                @Override
-                public String getRefId() {
-                    return proxyId;
-                }
-            };
         }
     }
 
