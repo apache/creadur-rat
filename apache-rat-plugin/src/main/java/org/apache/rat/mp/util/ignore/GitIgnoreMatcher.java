@@ -32,7 +32,8 @@ public class GitIgnoreMatcher implements IgnoreMatcher {
     public GitIgnoreMatcher(final Log log, final File projectBaseDir) {
         log.debug("Recursively loading .gitignore files in " + projectBaseDir);
         // This will walk the project tree and load all .gitignore files
-        gitIgnoreFileSet = new GitIgnoreFileSet(projectBaseDir);
+        gitIgnoreFileSet = new GitIgnoreFileSet(projectBaseDir)
+                .assumeQueriesAreProjectRelative();
     }
 
     @Override

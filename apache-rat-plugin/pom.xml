@@ -318,7 +318,7 @@
     <dependency>
       <groupId>nl.basjes.gitignore</groupId>
       <artifactId>gitignore-reader</artifactId>
-      <version>1.4.0</version>
+      <version>1.5.1</version>
     </dependency>
   </dependencies>
   <reporting>
