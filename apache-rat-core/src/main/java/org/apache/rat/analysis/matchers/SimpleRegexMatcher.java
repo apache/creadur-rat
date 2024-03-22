@@ -58,7 +58,7 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
         this.pattern = pattern;
     }
 
-    @ConfigComponent(type=Component.Type.Text, name="", desc="")
+    @ConfigComponent(type=Component.Type.Text, name="", desc="", parameterType=Pattern.class)
     private String getPattern() {
         return pattern.pattern();
     }
