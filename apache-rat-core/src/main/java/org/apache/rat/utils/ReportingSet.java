@@ -38,21 +38,22 @@ public class ReportingSet<T> implements SortedSet<T> {
     private Options duplicateOption = Options.IGNORE;
     private Log.Level duplicateLogLevel = Log.Level.WARN;
     private Log log = DefaultLog.INSTANCE;
-    private Function<T,String> duplicateFmt = (t) -> String.format("Duplicate %s (%s) detected %s", t.getClass(), t);
+    private Function<T, String> duplicateFmt = (t) -> String.format("Duplicate %s (%s) detected %s", t.getClass(), t);
 
-    public enum Options { OVERWRITE, IGNORE, FAIL }
-    
+    public enum Options {
+        OVERWRITE, IGNORE, FAIL
+    }
+
     /**
-     * Constructor.
-     * Creates a TreeSet of type T.
+     * Constructor. Creates a TreeSet of type T.
      */
     public ReportingSet() {
         this(new TreeSet<T>());
     }
-    
+
     /**
      * Constructs.
-     * 
+     *
      * @param delegate the SortedSet to delegate to.
      */
     public ReportingSet(SortedSet<T> delegate) {
@@ -61,16 +62,18 @@ public class ReportingSet<T> implements SortedSet<T> {
 
     /**
      * Sets the function to generate the log message.
-     * @param msgFmt A function to return the string to be displayed when a collision occurs.
+     * @param msgFmt A function to return the string to be displayed when a
+     * collision occurs.
      * @return This for chaining.
      */
-    public ReportingSet<T> setMsgFormat(Function<T,String> msgFmt) {
+    public ReportingSet<T> setMsgFormat(Function<T, String> msgFmt) {
         duplicateFmt = msgFmt;
         return this;
     }
+
     /**
-     * If set true attempts to duplicate will throw an IllegalArgumentException.
-     * The default state is false;.
+     * If set true attempts to duplicate will throw an IllegalArgumentException. The
+     * default state is false;.
      * @param state the state to set.
      * @return this for chaining.
      */
@@ -80,8 +83,8 @@ public class ReportingSet<T> implements SortedSet<T> {
     }
 
     /**
-     * Sets the log that the reporting set will log to.
-     * if not set the DefaultLog is used.
+     * Sets the log that the reporting set will log to. if not set the DefaultLog is
+     * used.
      * @param log the Log implementation to use.
      * @return this for chaining.
      */
@@ -91,8 +94,8 @@ public class ReportingSet<T> implements SortedSet<T> {
     }
 
     /**
-     * Sets the log level that the reporting set will log at.
-     * if not set the default level is WARN.
+     * Sets the log level that the reporting set will log at. if not set the default
+     * level is WARN.
      * @param level the log level to use.
      * @return this for chaining.
      */
@@ -102,35 +105,36 @@ public class ReportingSet<T> implements SortedSet<T> {
     }
 
     private ReportingSet<T> sameConfig(SortedSet<T> delegate) {
-        ReportingSet<T> result = delegate instanceof ReportingSet ? (ReportingSet<T>) delegate : new ReportingSet<>(delegate);
+        ReportingSet<T> result = delegate instanceof ReportingSet ? (ReportingSet<T>) delegate
+                : new ReportingSet<>(delegate);
         return result.setDuplicateOption(this.duplicateOption).setLog(this.log).setLogLevel(this.duplicateLogLevel);
     }
 
     /**
-     * Adds the item if it is not present.  Does not report collisions.
+     * Adds the item if it is not present. Does not report collisions.
      * @param e the item to add.
      * @return true if the item was added, false otherwise.
      */
     public boolean addIfNotPresent(T e) {
         return add(false, e);
     }
-    
+
     @Override
     public boolean add(T e) {
         return add(true, e);
     }
-    
+
     /**
-     * Attempts to add an item.  Report failures if reportDup is true.
+     * Attempts to add an item. Report failures if reportDup is true.
      * @param reportDup the reporting flag.
      * @param e the item to add
      * @return true if the item was added.
      */
     private boolean add(boolean reportDup, T e) {
         if (delegate.contains(e)) {
-            String msg = String.format("%s",ReportingSet.this.duplicateFmt.apply(e));
+            String msg = String.format("%s", ReportingSet.this.duplicateFmt.apply(e));
             if (reportDup) {
-                msg =  String.format( "%s (action: %s)", msg, duplicateOption);
+                msg = String.format("%s (action: %s)", msg, duplicateOption);
                 log.log(duplicateLogLevel, msg);
             }
             switch (duplicateOption) {
@@ -155,7 +159,6 @@ public class ReportingSet<T> implements SortedSet<T> {
         return updated;
     }
 
- 
     public boolean addAllIfNotPresent(Collection<? extends T> c) {
         boolean updated = false;
         for (T e : c) {
@@ -163,7 +166,7 @@ public class ReportingSet<T> implements SortedSet<T> {
         }
         return updated;
     }
-    
+
     @Override
     public void clear() {
         delegate.clear();

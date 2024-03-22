@@ -19,7 +19,6 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Locale;
-import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaders;
 
@@ -28,20 +27,16 @@ import org.apache.rat.analysis.IHeaders;
  * it to the full text of a given license (after reducing it to letters and
  * numbers as well).
  *
- * <p>
- * The text comparison is case insensitive but assumes only characters in the
- * US-ASCII charset are being matched.
- * </p>
+ * <p> The text comparison is case insensitive but assumes only characters in
+ * the US-ASCII charset are being matched. </p>
  */
 public class FullTextMatcher extends AbstractSimpleMatcher {
-
-    // Number of match characters assumed to be present on first line
-    private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
 
     private final String fullText;
 
     /**
-     * Constructs the full text matcher with a unique random id and the specified text to match.
+     * Constructs the full text matcher with a unique random id and the specified
+     * text to match.
      * @param fullText the text to match
      */
     public FullTextMatcher(String fullText) {
@@ -60,7 +55,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
 
     /**
      * Removes everything except letter or digit from text.
-     * 
+     *
      * @param text The text to remove extra chars from.
      * @return the pruned text.
      */
