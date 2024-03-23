@@ -76,7 +76,7 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
         TODO: collect all dependabot updates for release 0.17.
       </action>
       <action issue="RAT-77" type="add" dev="claudenw">
-        Adds another stylesheet to explicitly output files with missing-headers. Thus plain-rat (default), missing-headers, and unapproved-licenses can be used from the CLI with the -s option to use a short name (e.g. -s missing-headers or -s unapproved-licenses).
+        Adds another stylesheet to explicitly output files with missing-headers. Thus plain-rat (default), missing-headers, and unapproved-licenses can be used in all RAT clients. From the CLI the -s option allows to use a short name (e.g. -s missing-headers or -s unapproved-licenses).
       </action>
 
     </release>
