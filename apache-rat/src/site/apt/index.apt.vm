@@ -131,14 +131,13 @@ Available options
 +------------------------------------------+
 
 ** Styling output
- 
- Rat allows you to style the output as you see fit.  Three stylesheets are included in the rat package.
- 
-  * plain-rat  The default stylesheet.
-  
-  * unapproved-licenses  Lists only the files with unapproved licenses.
-  
-  * missing-headers  List only files that are missing headers.
-   
- These stylesheets can be specified using options in the command line, Maven or Ant clients.
 
+ Rat allows you to style the output as you see fit.  Three stylesheets are included in the rat package.
+
+  * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl}plain-rat}} - The default stylesheet.
+
+  * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl}unapproved-licenses}} - Lists only the files with unapproved licenses.
+
+  * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl}missing-headers}} - List only files that are missing headers.
+
+ These stylesheets can be specified using options in the command line, Maven or Ant clients.
