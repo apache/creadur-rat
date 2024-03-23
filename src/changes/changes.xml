@@ -75,6 +75,12 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.17.
       </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="Niels Basjes">
+        Update gitignore-reader from 1.4.0 to 1.5.1 to fetch changes resulting from fixes of RAT-362.
+      </action>
+      <action issue="RAT-362" type="fix" dev="pottlinger" due-to="Niels Basjes, Arnout Engelen">
+        Gitignore parsing fails when excluded element is part of the current base directory.
+      </action>
       <action issue="RAT-367" type="fix" dev="pottlinger" due-to="Niels Basjes">
         Older jUnit3 tests were not run during the build after switching to jUnit5.
       </action>
