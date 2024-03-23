@@ -65,8 +65,6 @@ agnostic home for software distribution comprehension and audit tools.
     <previousRatVersion>0.17</previousRatVersion>
     <currentSnapshotRatVersion>0.18-SNAPSHOT</currentSnapshotRatVersion>
     <!-- END - adapat manually before doing a release -->
-    <junit.version>5.10.2</junit.version>
-    <junit.platform.version>1.10.2</junit.platform.version>
   </properties>
   <distributionManagement>
     <site>
@@ -117,34 +115,11 @@ agnostic home for software distribution comprehension and audit tools.
         <version>1.26.1</version>
       </dependency>
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-params</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-migrationsupport</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.platform</groupId>
-        <artifactId>junit-platform-runner</artifactId>
-        <version>${junit.platform.version}</version>
-        <scope>test</scope>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.10.2</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
