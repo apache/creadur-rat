@@ -269,6 +269,14 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final File ratTxtFile = getRatTxtFile(mojo);
         final String dir = getDir(mojo);
 
+        if (dir.contains(":")) {
+            // The problem this is testing for cannot happen if there is
+            // a Windows drive letter in the name of the directory.
+            // Any duplication of a ':' will make it all fail always.
+            // So there is no point in continuing this test.
+            return;
+        }
+
         // Make the target directory for the test file
         File targetDirectory = new File(dir + dir);
         if (!targetDirectory.exists()) {
