@@ -24,7 +24,9 @@ import static org.apache.rat.mp.RatTestHelpers.newArtifactRepository;
 import static org.apache.rat.mp.RatTestHelpers.newSiteRenderer;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.ReportConfiguration;
@@ -254,4 +256,61 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
         }
     }
+
+    /**
+     * Tests verifying gitignore parsing under a special edge case condition
+     * The problem occurs when '/foo.md' is to be ignored and a file with that name exists
+     * in a directory which is the project base directory twice concatenated.
+     * So for this test we must create such a file which is specific for the current
+     * working directory.
+     */
+    public void testRAT362GitIgnore() throws Exception {
+        final RatCheckMojo mojo = newRatCheckMojo("RAT-362-GitIgnore");
+        final File ratTxtFile = getRatTxtFile(mojo);
+        final String dir = getDir(mojo);
+
+        if (dir.contains(":")) {
+            // The problem this is testing for cannot happen if there is
+            // a Windows drive letter in the name of the directory.
+            // Any duplication of a ':' will make it all fail always.
+            // So there is no point in continuing this test.
+            return;
+        }
+
+        // Make the target directory for the test file
+        File targetDirectory = new File(dir + dir);
+        if (!targetDirectory.exists()) {
+            assertTrue(targetDirectory.mkdirs());
+        }
+        assertTrue(targetDirectory.isDirectory());
+
+        // Create the test file with a content on which it must fail
+        File generatedFile = new File(targetDirectory + "/foo.md");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(generatedFile));
+        writer.write("File without a valid license\n");
+        writer.close();
+
+        final String[] expected = {
+                "Notes: 0",
+                "Binaries: 0",
+                "Archives: 0",
+                "Standards: 3$",
+                "Apache Licensed: 2$",
+                "Generated Documents: 0",
+                "^1 Unknown Licenses",
+                "^== File: \\Q" + generatedFile + "\\E$",
+        };
+        try {
+            mojo.execute();
+            fail("Expected RatCheckException: This check should have failed on the invalid test file");
+        } catch (RatCheckException e) {
+            final String msg = e.getMessage();
+            assertTrue("report filename was not contained in '" + msg + "'", msg.contains(ratTxtFile.getName()));
+            assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase().contains("NULL")));
+            ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+        }
+        // Cleanup
+        assertTrue(generatedFile.delete());
+    }
+
 }
