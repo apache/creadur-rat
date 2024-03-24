@@ -38,6 +38,7 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.configuration.builders.ChildContainerBuilder;
 import org.apache.rat.configuration.builders.MatcherRefBuilder;
@@ -85,7 +86,6 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     public final static String ATT_ID = "id";
     public final static String ATT_NAME = "name";
-    private final static String ATT_DERIVED_FROM = "derived_from";
     public final static String ATT_LICENSE_REF = "license_ref";
     public final static String ATT_CLASS_NAME = "class";
 
@@ -271,6 +271,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     private ILicense parseLicense(Node licenseNode) {
         Map<String, String> attributes = attributes(licenseNode);
         ILicense.Builder builder = ILicense.builder();
+        Description desc = DescriptionBuilder.build(null)
 
         builder.setLicenseFamilyCategory(attributes.get(FAMILY));
         builder.setName(attributes.get(ATT_NAME));
@@ -286,7 +287,6 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                 }
             }
         });
-        builder.setDerivedFrom(StringUtils.defaultIfBlank(attributes.get(ATT_DERIVED_FROM), null));
         builder.setNotes(StringUtils.defaultIfBlank(notesBuilder.toString().trim(), null));
         return builder.build(licenseFamilies);
     }

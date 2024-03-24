@@ -21,12 +21,14 @@ package org.apache.rat.report;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ReportConfiguration;
@@ -120,7 +122,7 @@ public class ConfigurationReport extends AbstractReport {
             writeDescription(description);
         }
     }
-
+    
     private void writeChildren(Description description) throws RatException, IOException {
         writeDescriptions(description.childrenOfType(Type.Parameter));
         writeDescriptions(description.childrenOfType(Type.Text));
@@ -154,6 +156,22 @@ public class ConfigurationReport extends AbstractReport {
                 break;
             case License:                
                 writer.openElement(XMLConfigurationReader.LICENSE);
+                List<Description> lst = description.childrenOfType(Type.Parameter).stream().filter(d -> !d.getCommonName().equals("notes")).collect(Collectors.toList());
+                writeDescriptions(lst);
+                
+                lst = description.childrenOfType(Type.Parameter).stream().filter(d -> !d.getCommonName().equals("notes")).collect(Collectors.toList());
+                if (!lst.isEmpty())  {
+                    if (StringUtils.isNotBlank(lst.get(0).getDescription())) {
+                        writer.comment(lst.get(0).getDescription());
+                    }
+                    for (Description note : lst) {
+                        writer.openElement(note.getCommonName());
+                        writer.content(description.getParamValue());
+                        writer.closeElement();
+                    }
+                }
+                writeDescriptions(description.childrenOfType(Type.Matcher));
+                writeDescriptions(description.childrenOfType(Type.License));
                 writeChildren(description);
                 writer.closeElement();
                 break;
