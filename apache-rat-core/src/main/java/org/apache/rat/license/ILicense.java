@@ -84,8 +84,6 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
 
         private String notes;
 
-        private String derivedFrom;
-
         private String name;
 
         private String id;
@@ -135,17 +133,6 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
         }
 
         /**
-         * Sets the derived from fields in the license.
-         * @param derivedFrom the family category of the license this license was
-         * derived from.
-         * @return this builder for chaining.
-         */
-        public Builder setDerivedFrom(String derivedFrom) {
-            this.derivedFrom = derivedFrom;
-            return this;
-        }
-
-        /**
          * Set the family category for this license. The category must be unique across
          * all licenses and must be 5 characters. If more than 5 characters are provided
          * then only the first 5 are taken. If fewer than 5 characters are provided the
@@ -178,7 +165,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
             Objects.requireNonNull(matcher, "Matcher must not be null");
             ILicenseFamily family = LicenseFamilySetFactory.search(licenseFamily.build(), licenseFamilies);
             Objects.requireNonNull(family, "License family " + licenseFamily.getCategory() + " not found.");
-            return new SimpleLicense(family, matcher.build(), derivedFrom, notes, name, id);
+            return new SimpleLicense(family, matcher.build(), notes, name, id);
         }
     }
 }
