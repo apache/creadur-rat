@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.rat.config.parameters.Component.Type;
 
-final public class Description {
+public class Description {
     
     final Type type;
     final String name;
@@ -26,6 +26,11 @@ final public class Description {
             children.forEach(d -> {this.children.put(d.name, d);});
         }
     }
+    
+    public Description(ConfigComponent configComponent, String value, Collection<Description> children) {
+        this(configComponent.type(), configComponent.name(), configComponent.desc(), value, children);
+    }
+    
     /**
      * Gets the type of the object this description decribes.
      * @return the obhect type.

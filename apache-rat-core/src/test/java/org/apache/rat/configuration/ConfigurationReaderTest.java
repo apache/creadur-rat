@@ -24,6 +24,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Description;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
@@ -96,6 +98,25 @@ public class ConfigurationReaderTest {
         checkMatcher("regex", RegexBuilder.class);
         checkMatcher("spdx", SpdxBuilder.class);
         checkMatcher("text", TextBuilder.class);
+    }
+    
+    @Test
+    public void descriptionTest() throws NoSuchMethodException, SecurityException {
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        reader.read(url);
+        reader.readMatcherBuilders();
+        
+        IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
+        Description desc = builder.getDescription();
+        print(desc);
+        
+    }
+    
+    private void print(Description desc) {
+        System.out.println( String.format( "T:%s N:%s V:%s", desc.getType(), desc.getCommonName(), desc.getParamValue()));
+        System.out.println( "   "+desc.getDescription());
+        desc.getChildren().values().forEach(this::print);
     }
 
 }
