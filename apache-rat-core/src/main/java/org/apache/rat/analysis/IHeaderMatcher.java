@@ -18,6 +18,7 @@
  */
 package org.apache.rat.analysis;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import java.util.Collection;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
@@ -46,7 +48,7 @@ public interface IHeaderMatcher extends Component {
      * 
      * @return the Identifier for this matcher.
      */
-    @ConfigComponent(type=Component.Type.Parameter, name="id", desc="The id of this matcher.")
+    @ConfigComponent(type=Component.Type.Parameter, name="id", desc="The id of this component.")
     String getId();
 
     /**
@@ -74,7 +76,12 @@ public interface IHeaderMatcher extends Component {
          * @return a new IHeaderMatcher.
          */
         IHeaderMatcher build();
-
+        
+        default Description getDescription() throws NoSuchMethodException, SecurityException {
+            Method m = this.getClass().getMethod("build");
+            return DescriptionBuilder.buildMap(m.getReturnType());
+        }
+        
         /**
          * @return an instance of the standard TextBuilder.
          * @see TextBuilder

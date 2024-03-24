@@ -28,6 +28,7 @@ import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigChildren;
 import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.Description;
 
@@ -59,6 +60,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
         return getLicenseFamily().getFamilyName();
     }
     
+    @ConfigChildren
     IHeaderMatcher getMatcher();
 
     /**
