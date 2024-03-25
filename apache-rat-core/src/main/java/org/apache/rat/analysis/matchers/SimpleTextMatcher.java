@@ -27,6 +27,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 @ConfigComponent(type = Component.Type.Matcher, name = "text", desc = "Matches the enclosed the text")
 public class SimpleTextMatcher extends AbstractSimpleMatcher {
+    @ConfigComponent(type = Component.Type.Text, desc = "")
     private final String simpleText;
 
     /**
@@ -54,7 +55,6 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
         this.simpleText = simpleText;
     }
 
-    @ConfigComponent(type = Component.Type.Text, name = "", desc = "")
     public String getSimpleText() {
         return this.simpleText;
     }

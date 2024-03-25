@@ -53,8 +53,11 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
+    @ConfigComponent(type=Component.Type.Parameter, desc="The initial date of the copyright")
     private final String start;
+    @ConfigComponent(type=Component.Type.Parameter, desc="The last date the copyright we modifed")
     private final String stop;
+    @ConfigComponent(type=Component.Type.Parameter, name="owner", desc="The owner of the copyright")
     private final String owner;
 
     /**
@@ -112,17 +115,14 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
     }
 
-    @ConfigComponent(type=Component.Type.Parameter, name="start", desc="The initial date of the copyright")
     public String getStart() {
         return start;
     }
 
-    @ConfigComponent(type=Component.Type.Parameter, name="stop", desc="The last date the copyright we modifed")
     public String getStop() {
         return stop;
     }
 
-    @ConfigComponent(type=Component.Type.Parameter, name="owner", desc="The owner of the copyright")
     public String getOwner() {
         return owner;
     }

@@ -1,11 +1,13 @@
 package org.apache.rat.config.parameters;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component.Type;
 
 public class Description {
@@ -72,5 +74,28 @@ public class Description {
      */
     public Collection<Description> childrenOfType(Type type) {
         return children.values().stream().filter(d -> d.type == type).collect(Collectors.toList());
+    }
+    
+    private String methodName(String prefix) {
+        return prefix+name.substring(0,1).toUpperCase()+name.substring(1);
+    }
+    
+    public Method getter(Class<?> clazz) throws NoSuchMethodException, SecurityException {
+        return clazz.getMethod(methodName("get"));
+    }
+    
+    public Method setter(Class<?> clazz) throws NoSuchMethodException, SecurityException {
+        switch (type) {
+        case License:
+            throw new NoSuchMethodException("Can not set a License as a child");
+        case Matcher:
+            return clazz.getMethod("add", IHeaderMatcher.Builder.class);
+        case Parameter:
+            return clazz.getMethod(methodName("set"), String.class);
+        case Text:
+            return clazz.getMethod("setText", String.class);
+        }
+        // should not happen
+        throw new IllegalStateException("Type "+type+" not valid.");
     }
 }

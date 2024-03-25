@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.ConfigChildren;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
@@ -34,9 +33,9 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
+    @ConfigComponent(desc = "enclosed Matchers", type = Component.Type.Matcher)
     protected final Collection<IHeaderMatcher> enclosed;
 
-    @ConfigChildren(name="enclosed")
     public Collection<IHeaderMatcher> getChildren() {
         return enclosed;
     }

@@ -22,7 +22,6 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.ConfigChildren;
 
 /**
  * A simple implementation of ILicense.
@@ -61,7 +60,6 @@ class SimpleLicense implements ILicense {
     }
 
     @Override
-    @ConfigChildren
     public IHeaderMatcher getMatcher() {
         return matcher;
     }

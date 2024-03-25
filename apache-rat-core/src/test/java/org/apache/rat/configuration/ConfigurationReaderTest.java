@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
@@ -108,7 +109,7 @@ public class ConfigurationReaderTest {
         reader.readMatcherBuilders();
         
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
-        Description desc = builder.getDescription();
+        Description desc = DescriptionBuilder.buildMap(builder.builtClass());
         print(desc);
         
     }

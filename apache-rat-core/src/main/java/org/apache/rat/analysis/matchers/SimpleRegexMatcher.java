@@ -30,6 +30,7 @@ import org.apache.rat.config.parameters.Description;
  */
 @ConfigComponent(type=Component.Type.Matcher, name="regex", desc="Performs a regex match using the enclosed the text")
 public class SimpleRegexMatcher extends AbstractSimpleMatcher {
+    @ConfigComponent(type=Component.Type.Text, desc="", parameterType=Pattern.class)
     private final Pattern pattern;
 
     /**
@@ -56,7 +57,6 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
         this.pattern = pattern;
     }
 
-    @ConfigComponent(type=Component.Type.Text, name="", desc="", parameterType=Pattern.class)
     private String getPattern() {
         return pattern.pattern();
     }

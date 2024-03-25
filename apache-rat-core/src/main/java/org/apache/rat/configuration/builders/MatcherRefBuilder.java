@@ -77,6 +77,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
      */
     @ConfigComponent(type = Component.Type.Matcher, name = "matcherRef", desc = "A pointer to another Matcher")
     public static class IHeaderMatcherProxy implements IHeaderMatcher {
+        @ConfigComponent(type = Component.Type.Parameter, name = "refId", desc = "Reference to an existing matcher")
         private final String proxyId;
         private IHeaderMatcher wrapped;
         private Map<String, IHeaderMatcher> matchers;
@@ -86,7 +87,6 @@ public class MatcherRefBuilder extends AbstractBuilder {
             this.matchers = matchers;
         }
 
-        @ConfigComponent(type = Component.Type.Parameter, name = "refId", desc = "Reference to an existing matcher")
         public String getProxyId() {
             return proxyId;
         }
