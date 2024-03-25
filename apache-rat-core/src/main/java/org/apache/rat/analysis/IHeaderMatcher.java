@@ -48,7 +48,6 @@ public interface IHeaderMatcher extends Component {
      * 
      * @return the Identifier for this matcher.
      */
-    @ConfigComponent(type=Component.Type.Parameter, name="id", desc="The id of this component.")
     String getId();
 
     /**
@@ -77,11 +76,10 @@ public interface IHeaderMatcher extends Component {
          */
         IHeaderMatcher build();
         
-        default Description getDescription() throws NoSuchMethodException, SecurityException {
-            Method m = this.getClass().getMethod("build");
-            return DescriptionBuilder.buildMap(m.getReturnType());
+        default Class<?> builtClass() throws NoSuchMethodException, SecurityException {
+            return this.getClass().getMethod("build").getReturnType();
         }
-        
+
         /**
          * @return an instance of the standard TextBuilder.
          * @see TextBuilder

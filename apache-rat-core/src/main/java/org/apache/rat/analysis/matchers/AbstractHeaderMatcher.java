@@ -33,6 +33,7 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
  */
 public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
 
+    @ConfigComponent(type=Component.Type.Parameter, desc="The id of the matcher.")    
     private final String id;
 
     /**
@@ -45,7 +46,6 @@ public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
         this.id = StringUtils.isBlank(id) ? UUID.randomUUID().toString() : id;
     }
 
-    @ConfigComponent(type=Component.Type.Parameter, name="id", desc="The id of the matcher.")    
     @Override
     public String getId() {
         return id;

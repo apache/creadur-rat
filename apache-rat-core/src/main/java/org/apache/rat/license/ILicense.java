@@ -18,6 +18,7 @@
  */
 package org.apache.rat.license;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,9 +29,9 @@ import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.ConfigChildren;
 import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * The definition of a License.
@@ -44,7 +45,6 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
     /**
      * @return the notes associated with this license. May be null or empty.
      */
-    @ConfigComponent(type=Component.Type.Parameter, name="notes", desc="Any notes related to this license.")
     String getNotes();
 
     /**
@@ -52,15 +52,12 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
      * the family is returned.
      * @return the name of this license.
      */
-    @ConfigComponent(type=Component.Type.Parameter, name="name", desc="The name of this license.")
     String getName();
     
-    @ConfigComponent(type=Component.Type.Parameter, name="family", desc="The family this license belongs to.")
     default String getFamilyName() {
         return getLicenseFamily().getFamilyName();
     }
     
-    @ConfigChildren
     IHeaderMatcher getMatcher();
 
     /**

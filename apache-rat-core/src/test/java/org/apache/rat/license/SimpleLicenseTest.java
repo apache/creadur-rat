@@ -18,7 +18,7 @@ public class SimpleLicenseTest {
         SimpleLicense lic = new SimpleLicense(
                 ILicenseFamily.builder().setLicenseFamilyCategory("familyId")
                         .setLicenseFamilyName("TestingLicense: familyId").build(),
-                new TestingMatcher(), "derived from", "These are the notes", "My testing license", "TestingId");
+                new TestingMatcher(), "These are the notes", "My testing license", "TestingId");
         Description underTest = lic.getDescription();
         assertEquals(Component.Type.License, underTest.getType());
         assertEquals("My testing license", underTest.getCommonName());

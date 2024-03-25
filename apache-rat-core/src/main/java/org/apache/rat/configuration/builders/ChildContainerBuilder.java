@@ -33,6 +33,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * Constructs a builder that contains other builders.
@@ -42,6 +44,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
     /**
      * The list of builders that will build the enclosed matchers.
      */
+    @ConfigComponent(type=Component.Type.Matcher, desc="The enclosed Matchers", parameterType = IHeaderMatcher.Builder.class)
     protected final List<IHeaderMatcher.Builder> children = new ArrayList<>();
 
     /**

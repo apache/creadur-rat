@@ -38,6 +38,7 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
+import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.configuration.builders.ChildContainerBuilder;
@@ -224,36 +225,58 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     private AbstractBuilder parseMatcher(Node matcherNode) {
         AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(matcherNode.getNodeName());
-
-        NamedNodeMap nnm = matcherNode.getAttributes();
-        for (int i = 0; i < nnm.getLength(); i++) {
-            Node n = nnm.item(i);
-            String methodName = "set" + StringUtils.capitalize(n.getNodeName());
-            try {
-                MethodUtils.invokeExactMethod(builder, methodName, n.getNodeValue());
-            } catch (NoSuchMethodException e) {
-                throw new ConfigurationException(
-                        String.format("'%s' does not have a setter '%s' that takes a String argument",
-                                matcherNode.getNodeName(), methodName));
-            } catch (IllegalAccessException | InvocationTargetException | DOMException e) {
-                throw new ConfigurationException(e);
-            }
-        }
-        if (builder instanceof ChildContainerBuilder) {
-            ChildContainerBuilder ccb = (ChildContainerBuilder) builder;
-            nodeListConsumer(matcherNode.getChildNodes(), x -> {
-                if (x.getNodeType() == Node.ELEMENT_NODE) {
-                    ccb.add(parseMatcher(x));
+        try {
+            Class<?> builtClass = builder.builtClass();
+            Description description = DescriptionBuilder.buildMap(builtClass);
+            Map<String, Description> children = description.getChildren();
+            Map<String, String> attributes = attributes(matcherNode);
+            for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                Description d = children.get(entry.getKey());
+                try {
+                    d.setter(builder.getClass()).invoke(builder, entry.getValue());
+                } catch (NoSuchMethodException e) {
+                    throw new ConfigurationException(
+                            String.format("'%s' does not have a '%s' setter that takes a String argument",
+                                    matcherNode.getNodeName(), entry.getKey()));
                 }
-            });
+            }
+        } catch (IllegalAccessException | InvocationTargetException | DOMException e) {
+            throw new ConfigurationException(e);
+        } catch (NoSuchMethodException e) {
+            throw new ConfigurationException(
+                    String.format("'%s' does not have no argument build() method",
+                            builder.getClass().getName()));
         }
-        if (builder instanceof TextCaptureBuilder) {
-            ((TextCaptureBuilder) builder).setText(matcherNode.getTextContent().trim());
-        }
-
-        if (builder instanceof MatcherRefBuilder) {
-            ((MatcherRefBuilder) builder).setMatchers(matchers);
-        }
+        
+//        NamedNodeMap nnm = matcherNode.getAttributes();
+//        for (int i = 0; i < nnm.getLength(); i++) {
+//            Node n = nnm.item(i);
+//            String methodName = "set" + StringUtils.capitalize(n.getNodeName());
+//            try {
+//                MethodUtils.invokeExactMethod(builder, methodName, n.getNodeValue());
+//            } catch (NoSuchMethodException e) {
+//                throw new ConfigurationException(
+//                        String.format("'%s' does not have a setter '%s' that takes a String argument",
+//                                matcherNode.getNodeName(), methodName));
+//            } catch (IllegalAccessException | InvocationTargetException | DOMException e) {
+//                throw new ConfigurationException(e);
+//            }
+//        }
+//        if (builder instanceof ChildContainerBuilder) {
+//            ChildContainerBuilder ccb = (ChildContainerBuilder) builder;
+//            nodeListConsumer(matcherNode.getChildNodes(), x -> {
+//                if (x.getNodeType() == Node.ELEMENT_NODE) {
+//                    ccb.add(parseMatcher(x));
+//                }
+//            });
+//        }
+//        if (builder instanceof TextCaptureBuilder) {
+//            ((TextCaptureBuilder) builder).setText(matcherNode.getTextContent().trim());
+//        }
+//
+//        if (builder instanceof MatcherRefBuilder) {
+//            ((MatcherRefBuilder) builder).setMatchers(matchers);
+//        }
 
         if (builder.hasId()) {
             builder = new DelegatingBuilder(builder) {
@@ -271,7 +294,6 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     private ILicense parseLicense(Node licenseNode) {
         Map<String, String> attributes = attributes(licenseNode);
         ILicense.Builder builder = ILicense.builder();
-        Description desc = DescriptionBuilder.build(null)
 
         builder.setLicenseFamilyCategory(attributes.get(FAMILY));
         builder.setName(attributes.get(ATT_NAME));

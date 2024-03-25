@@ -22,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
@@ -32,26 +31,16 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
  * allows for one (starting) year or year range, and a configurable copyright
- * owner. <br>
- * <br>
- * The matching is done case insensitive<br>
- * <br>
- * Example supported Copyright header lines, using copyright owner
- * &quot;FooBar&quot;
- * <ul>
- * <li>Copyright 2010 FooBar.</li>
- * <li>Copyright 2010-2012 FooBar.</li>
- * <li>copyright 2012 foobar</li>
- * </ul>
- * <p>
- * Note also that the copyright owner is appended to the regex pattern and so can
- * support additional regex but also requires escaping where needed,<br>
- * e.g. use &quot;FooBar \\(www\\.foobar\\.com\\)&quot; or 
- * &quot;FooBar \\Q(www.foobar.com)\\E&quot; to match &quot;FooBar
- * (www.foobar.com)&quot;
- * </p>
- * <p>The matcher also accepts "(C)", "(c)", and "©" in place of (or in addition to) the "Copyright" or "copyright" 
- * keyword</p>
+ * owner. <br> <br> The matching is done case insensitive<br> <br> Example
+ * supported Copyright header lines, using copyright owner &quot;FooBar&quot;
+ * <ul> <li>Copyright 2010 FooBar.</li> <li>Copyright 2010-2012 FooBar.</li>
+ * <li>copyright 2012 foobar</li> </ul> <p> Note also that the copyright owner
+ * is appended to the regex pattern and so can support additional regex but also
+ * requires escaping where needed,<br> e.g. use &quot;FooBar
+ * \\(www\\.foobar\\.com\\)&quot; or &quot;FooBar \\Q(www.foobar.com)\\E&quot;
+ * to match &quot;FooBar (www.foobar.com)&quot; </p> <p> The matcher also
+ * accepts "(C)", "(c)", and "©" in place of (or in addition to) the "Copyright"
+ * or "copyright" keyword </p>
  */
 @ConfigComponent(type=Component.Type.Matcher, name="copyright", desc="Matches copyright statements.")
 public class CopyrightMatcher extends AbstractSimpleMatcher {
@@ -64,15 +53,20 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
-
+    @ConfigComponent(type=Component.Type.Parameter, desc="The initial date of the copyright")
     private final String start;
+    @ConfigComponent(type=Component.Type.Parameter, desc="The last date the copyright we modifed")
     private final String stop;
+    @ConfigComponent(type=Component.Type.Parameter, name="owner", desc="The owner of the copyright")
     private final String owner;
 
     /**
-     * Constructs the CopyrightMatcher with the specified start, stop and owner strings and a unique random id..
+     * Constructs the CopyrightMatcher with the specified start, stop and owner
+     * strings and a unique random id..
+     *
      * @param start the start date for the copyright may be null.
-     * @param stop the stop date for the copyright, may be null.  May not be specified if start is not specified.
+     * @param stop the stop date for the copyright, may be null. May not be
+     * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
      */
     public CopyrightMatcher(String start, String stop, String owner) {
@@ -80,14 +74,20 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     }
 
     /**
-     * Constructs the CopyrightMatcher with the specified start, stop and owner strings.
+     * Constructs the CopyrightMatcher with the specified start, stop and owner
+     * strings.
+     *
      * @param id the id for the matcher.
      * @param start the start date for the copyright may be null.
-     * @param stop the stop date for the copyright, may be null.  May not be specified if start is not specified.
+     * @param stop the stop date for the copyright, may be null. May not be
+     * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
      */
     public CopyrightMatcher(String id, String start, String stop, String owner) {
         super(id);
+        this.start = start;
+        this.stop = stop;
+        this.owner = owner;
         String dateDefn = "";
         if (StringUtils.isNotEmpty(start)) {
             if (StringUtils.isNotEmpty(stop)) {
@@ -115,28 +115,25 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
     }
 
-    @ConfigComponent(type=Component.Type.Parameter, name="start", desc="The initial date of the copyright")
     public String getStart() {
         return start;
     }
 
-    @ConfigComponent(type=Component.Type.Parameter, name="stop", desc="The last date the copyright we modifed")
     public String getStop() {
         return stop;
     }
 
-    @ConfigComponent(type=Component.Type.Parameter, name="owner", desc="The owner of the copyright")
     public String getOwner() {
         return owner;
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
-        String lowerLine = headers.raw().toLowerCase();
-        if (lowerLine.contains("copyright") || lowerLine.contains("(c)") || lowerLine.contains("©")) {
-            Matcher matcher = COPYRIGHT_PATTERN.matcher(headers.raw());
+    protected boolean doMatch(String line) {
+        String lowerLine = line.toLowerCase();
+        if (lowerLine.contains("copyright") || lowerLine.contains("(c)") || line.contains("©")) {
+            Matcher matcher = COPYRIGHT_PATTERN.matcher(line);
             if (matcher.find()) {
-                String buffer = headers.raw().substring(matcher.end());
+                String buffer = line.substring(matcher.end());
                 matcher = dateOwnerPattern.matcher(buffer);
                 if (matcher.find() && matcher.start() == 0) {
                     return true;

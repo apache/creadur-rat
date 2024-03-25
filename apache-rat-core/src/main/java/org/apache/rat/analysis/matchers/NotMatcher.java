@@ -23,7 +23,6 @@ import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.ConfigChildren;
 import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.analysis.IHeaders;
@@ -33,6 +32,7 @@ import org.apache.rat.analysis.IHeaders;
 @ConfigComponent(type=Component.Type.Matcher, name="not", desc="Negates the enclosed matcher.")
 public class NotMatcher extends AbstractHeaderMatcher {
 
+    @ConfigComponent(desc = "enclosed Matcher", type=Component.Type.Matcher)
     private final IHeaderMatcher enclosed;
 
     /**
@@ -56,7 +56,7 @@ public class NotMatcher extends AbstractHeaderMatcher {
         this.enclosed = enclosed;
     }
     
-    @ConfigChildren(parameterType=IHeaderMatcher.class)
+
     public List<IHeaderMatcher> getEnclosed() {
         return Arrays.asList(enclosed);
     }

@@ -36,7 +36,6 @@ public class ConfigurationReportTest {
    @Test
    public void testAll() throws RatException, IOException {
        ReportConfiguration reportConfiguration = new ReportConfiguration(DefaultLog.INSTANCE);
-       reportConfiguration.setFrom(Defaults.builder().build());
        reportConfiguration.listFamilies(LicenseFilter.all);
        reportConfiguration.listLicenses(LicenseFilter.all);
        StringWriter sw = new StringWriter();
