@@ -1,6 +1,7 @@
 package org.apache.rat.config.parameters;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -97,5 +98,26 @@ public class Description {
         }
         // should not happen
         throw new IllegalStateException("Type "+type+" not valid.");
+    }
+    
+
+    @Override
+    public String toString() {
+        return toString(0);
+    }
+    
+    private String toString(int indent) {
+        char[] spaces = new char[indent];
+        Arrays.fill(spaces, ' ');
+        String padding = String.copyValueOf(spaces);
+        String top = String.format( "%sDescription[ t:%s n:%s v:%s\n%s   %s] ", padding, type, name, value, padding, desc);
+        if (children.isEmpty()) {
+            return top;
+        }
+        StringBuilder sb = new StringBuilder(top);
+        for (Description child : children.values()) {
+            sb.append("\n").append(child.toString(indent+2));
+        }
+        return sb.toString();
     }
 }

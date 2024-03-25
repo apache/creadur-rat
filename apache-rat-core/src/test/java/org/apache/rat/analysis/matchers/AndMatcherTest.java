@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.State;
+import org.apache.rat.config.parameters.Description;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.jupiter.api.Test;
 
@@ -74,5 +75,14 @@ public class AndMatcherTest {
         assertEquals(State.i, one.currentState());
         assertEquals(State.i, two.currentState());
         assertEquals(State.i, target.currentState());
+    }
+    
+    @Test
+    public void descriptionTest() {
+        IHeaderMatcher one = new TestingMatcher("one", true);
+        IHeaderMatcher two = new TestingMatcher("two", false, true);
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        Description desc = target.getDescription();
+        System.out.println( desc );
     }
 }
