@@ -23,20 +23,66 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.IHeaderMatcher.State;
+import org.apache.rat.config.parameters.Description;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.jupiter.api.Test;
 
-public class AndMatcherTest extends AbstractMatcherTest {
+
+public class AndMatcherTest {
+
+    private void assertValues(IHeaderMatcher target, State hello, State world, State finalize) {
+        assertEquals(State.i, target.currentState());
+        assertEquals(hello, target.matches("hello"));
+        assertEquals(hello, target.currentState());
+        assertEquals(world, target.matches("world"));
+        assertEquals(world, target.currentState());
+        assertEquals(finalize, target.finalizeState());
+        assertEquals(finalize, target.currentState());
+    }
 
     @Test
     public void trueTest() {
-
-        IHeaderMatcher one = new TestingMatcher("one", true, true, false, false);
-        // only need 2 entries because when one is false two test does not get called.
-        IHeaderMatcher two = new TestingMatcher("two", true, false);
+        IHeaderMatcher one = new TestingMatcher("one", true);
+        IHeaderMatcher two = new TestingMatcher("two", false, true);
         AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
-        assertValues(target, true, false, false, false);
+        assertValues(target, State.i, State.t, State.t);
         target.reset();
+        assertEquals(State.i, one.currentState());
+        assertEquals(State.i, two.currentState());
+        assertEquals(State.i, target.currentState());
+    }
+
+    @Test
+    public void falseTest() {
+        IHeaderMatcher one = new TestingMatcher("one", true);
+        IHeaderMatcher two = new TestingMatcher("two", false, false);
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        assertValues(target, State.i, State.i, State.f);
+        target.reset();
+        assertEquals(State.i, one.currentState());
+        assertEquals(State.i, two.currentState());
+        assertEquals(State.i, target.currentState());
+    }
+
+    @Test
+    public void indeterminentTest() {
+        IHeaderMatcher one = new TestingMatcher("one", false, false);
+        IHeaderMatcher two = new TestingMatcher("two", false, false);
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        assertValues(target, State.i, State.i, State.f);
+        target.reset();
+        assertEquals(State.i, one.currentState());
+        assertEquals(State.i, two.currentState());
+        assertEquals(State.i, target.currentState());
+    }
+    
+    @Test
+    public void descriptionTest() {
+        IHeaderMatcher one = new TestingMatcher("one", true);
+        IHeaderMatcher two = new TestingMatcher("two", false, true);
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        Description desc = target.getDescription();
+        System.out.println( desc );
     }
 }
