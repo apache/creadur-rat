@@ -20,6 +20,7 @@ package org.apache.rat.configuration.builders;
 
 import java.util.Map;
 
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
@@ -47,6 +48,11 @@ public class MatcherRefBuilder extends AbstractBuilder {
         return this;
     }
 
+    @Override
+    public Class<?> builtClass() throws NoSuchMethodException, SecurityException {
+        return IHeaderMatcherProxy.class;
+    }
+
     /**
      * Set the Map of matcher ids to matcher instances.
      * @param matchers the Map of ids to instances.
@@ -59,6 +65,9 @@ public class MatcherRefBuilder extends AbstractBuilder {
 
     @Override
     public IHeaderMatcher build() {
+        if (matchers == null) {
+            throw new ConfigurationException("'matchers' not set");
+        }
         IHeaderMatcher result = matchers.get(referenceId);
         return result != null ? result : new IHeaderMatcherProxy(referenceId, matchers);
     }
@@ -80,6 +89,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
         @ConfigComponent(type = Component.Type.Parameter, name = "refId", desc = "Reference to an existing matcher")
         private final String proxyId;
         private IHeaderMatcher wrapped;
+        @ConfigComponent(type = Component.Type.BuilderParam, desc = "Map of matcher names to matcher instances")
         private Map<String, IHeaderMatcher> matchers;
 
         public IHeaderMatcherProxy(String proxyId, Map<String, IHeaderMatcher> matchers) {
@@ -87,7 +97,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
             this.matchers = matchers;
         }
 
-        public String getProxyId() {
+        public String getRefId() {
             return proxyId;
         }
 

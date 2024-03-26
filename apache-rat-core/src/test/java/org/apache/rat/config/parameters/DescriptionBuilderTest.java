@@ -18,7 +18,7 @@ public class DescriptionBuilderTest {
         assertEquals(Component.Type.Matcher, underTest.getType());
         assertEquals("copyright", underTest.getCommonName());
         assertNotNull(underTest.getDescription());
-        assertNull(underTest.getParamValue());
+        assertNull(underTest.getParamValue(null));
         assertEquals(4,underTest.getChildren().size());
         assertTrue(underTest.getChildren().containsKey("id"));
         assertTrue(underTest.getChildren().containsKey("start"));
@@ -29,7 +29,7 @@ public class DescriptionBuilderTest {
         assertEquals(Component.Type.Matcher, underTest.getType());
         assertEquals("all", underTest.getCommonName());
         assertNotNull(underTest.getDescription());
-        assertNull(underTest.getParamValue());
+        assertNull(underTest.getParamValue(null));
         assertEquals(2,underTest.getChildren().size());
         assertTrue(underTest.getChildren().containsKey("id"));
         assertTrue(underTest.getChildren().containsKey("enclosed"));

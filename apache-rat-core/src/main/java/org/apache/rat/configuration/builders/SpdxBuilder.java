@@ -20,7 +20,6 @@ package org.apache.rat.configuration.builders;
 
 import java.util.Objects;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
 
 /**
@@ -36,7 +35,7 @@ public class SpdxBuilder extends AbstractBuilder {
      * @return this builder for chaining.
      */
     public SpdxBuilder setName(String name) {
-        Objects.requireNonNull(name, "name must not be null");
+        Objects.requireNonNull(name, "spdx name must not be null");
         this.name = name;
         return this;
     }
@@ -45,9 +44,9 @@ public class SpdxBuilder extends AbstractBuilder {
     public SPDXMatcherFactory.Match build() {
         return SPDXMatcherFactory.INSTANCE.create(name);
     }
-    
+
     @Override
     public String toString() {
-        return "SpdxBuilder: "+name;
+        return "SpdxBuilder: " + name;
     }
 }

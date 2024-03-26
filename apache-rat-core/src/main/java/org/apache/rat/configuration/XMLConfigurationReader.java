@@ -23,27 +23,25 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.FullTextMatcher;
-import org.apache.rat.analysis.matchers.SimpleTextMatcher;
+import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AbstractBuilder;
-import org.apache.rat.configuration.builders.ChildContainerBuilder;
-import org.apache.rat.configuration.builders.MatcherRefBuilder;
-import org.apache.rat.configuration.builders.TextCaptureBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseFamilySetFactory;
@@ -57,30 +55,20 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * A class that reads the XML configuration file format.
- * <p>
- * {@code <rat-config>}<br>
- * {@code   <licenses>}<br>
- * {@code     <license id=id name=name >}<br>
- * {@code       <notes></notes>}<br>
+ * A class that reads the XML configuration file format. <p>
+ * {@code <rat-config>}<br> {@code   <licenses>}<br>
+ * {@code     <license id=id name=name >}<br> {@code       <notes></notes>}<br>
  * {@code       <text>  </text>}<br>
  * {@code       <copyright start='' end='' owner=''/>}<br>
- * {@code       <spdx></spdx> }<br>
- * {@code       <and> <matcher/>...</and>}<br>
+ * {@code       <spdx></spdx> }<br> {@code       <and> <matcher/>...</and>}<br>
  * {@code       <or> <matcher/>...</or> }<br>
  * {@code       <matcher_ref refid='' />}<br>
- * {@code       <not><matcher /></not>}<br>
- * {@code     </license>}<br>
- * {@code   </licenses>}<br>
- * {@code   <approved>}<br>
- * {@code     <family refid=''>}<br>
- * {@code   </approved>}<br>
- * {@code   <matchers>}<br>
- * {@code     <matcher className=''/>}<br>
- * {@code     <matcher className=''/>}<br>
- * {@code   </matchers>}<br>
- * {@code </rat-config>}<br>
- * </p>
+ * {@code       <not><matcher /></not>}<br> {@code     </license>}<br>
+ * {@code   </licenses>}<br> {@code   <approved>}<br>
+ * {@code     <family refid=''>}<br> {@code   </approved>}<br>
+ * {@code   <matchers>}<br> {@code     <matcher className=''/>}<br>
+ * {@code     <matcher className=''/>}<br> {@code   </matchers>}<br>
+ * {@code </rat-config>}<br> </p>
  */
 
 public class XMLConfigurationReader implements LicenseReader, MatcherReader {
@@ -111,6 +99,11 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     private final Map<String, IHeaderMatcher> matchers;
     private final SortedSet<ILicenseFamily> licenseFamilies;
     private final SortedSet<String> approvedFamilies;
+
+    private final Predicate<Map.Entry<String, Description>> MATCHER_FILTER = (e) -> {
+        Description d = e.getValue();
+        return d.getType() == Component.Type.Unlabled && IHeaderMatcher.class.isAssignableFrom(d.getChildType());
+    };
 
     /**
      * Constructs the XML configuration reader.
@@ -144,7 +137,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     /**
      * Read the urls and extract the DOM information to create new objects.
-     * 
+     *
      * @param urls The URLs to read.
      */
     public void read(URL... urls) {
@@ -165,7 +158,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     /**
      * Applies the {@code consumer} to each node in the {@code list}
-     * 
+     *
      * @param list the NodeList to process
      * @param consumer the consumer to apply to each node in the list.
      */
@@ -177,17 +170,15 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     /**
      * Merge the new document into the document that this reader processes.
-     * 
+     *
      * @param newDoc the Document to merge.
      */
     public void add(Document newDoc) {
-        nodeListConsumer(newDoc.getElementsByTagName(FAMILIES),
-                nl -> nodeListConsumer( nl.getChildNodes(), 
+        nodeListConsumer(newDoc.getElementsByTagName(FAMILIES), nl -> nodeListConsumer(nl.getChildNodes(),
                 n -> familiesElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true)))));
         nodeListConsumer(newDoc.getElementsByTagName(LICENSE),
                 n -> licensesElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
-        nodeListConsumer(newDoc.getElementsByTagName(APPROVED),
-                nl -> nodeListConsumer( nl.getChildNodes(),
+        nodeListConsumer(newDoc.getElementsByTagName(APPROVED), nl -> nodeListConsumer(nl.getChildNodes(),
                 n -> approvedElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true)))));
         nodeListConsumer(newDoc.getElementsByTagName(MATCHERS),
                 n -> matchersElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true))));
@@ -195,7 +186,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     /**
      * Get a map of Node attribute names to values.
-     * 
+     *
      * @param node The node to process
      * @return the map of attributes on the node
      */
@@ -209,86 +200,117 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         return result;
     }
 
-    /**
-     * Create a text matcher. Will construct a FullTextMatcher or a
-     * SimpleTextMatcher depending on the complexity of the text.
-     * 
-     * @param id the id for the Matcher.
-     * @param txt the text to match
-     * @return the IHeaderMatcher that matches the text.
-     */
-    public static IHeaderMatcher createTextMatcher(String id, String txt) {
-        boolean complex = txt.contains(" ") | txt.contains("\\t") | txt.contains("\\n") | txt.contains("\\r")
-                | txt.contains("\\f") | txt.contains("\\v");
-        return complex ? new FullTextMatcher(id, txt) : new SimpleTextMatcher(id, txt);
+    private void callSetter(Description desc, IHeaderMatcher.Builder builder, Object value) {
+        try {
+            desc.setter(builder.getClass()).invoke(builder, value);
+        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | SecurityException e) {
+            throw new ConfigurationException(e.getMessage(), e);
+        }
     }
 
     private AbstractBuilder parseMatcher(Node matcherNode) {
-        AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(matcherNode.getNodeName());
+        final AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(matcherNode.getNodeName());
+        if (builder == null) {
+            throw new ConfigurationException(String.format("No builder found for: %s", matcherNode.getNodeName()));
+        }
         try {
-            Class<?> builtClass = builder.builtClass();
-            Description description = DescriptionBuilder.buildMap(builtClass);
-            Map<String, Description> children = description.getChildren();
-            Map<String, String> attributes = attributes(matcherNode);
-            for (Map.Entry<String, String> entry : attributes.entrySet()) {
-                Description d = children.get(entry.getKey());
-                try {
-                    d.setter(builder.getClass()).invoke(builder, entry.getValue());
-                } catch (NoSuchMethodException e) {
-                    throw new ConfigurationException(
-                            String.format("'%s' does not have a '%s' setter that takes a String argument",
-                                    matcherNode.getNodeName(), entry.getKey()));
+            final Description description = DescriptionBuilder.buildMap(builder.builtClass());
+
+            for (Description desc : description.childrenOfType(Component.Type.BuilderParam)) {
+                if ("matchers".equals(desc.getCommonName())) {
+                    callSetter(desc, builder, matchers);
+                } else {
+                    throw new ConfigurationException(String.format("Unknown BuilderParam: %s", desc.getCommonName()));
+                }
+            }
+
+            // process the attributes
+            description.setChildren(builder, attributes(matcherNode));
+            description.setUnlabledText(builder, matcherNode.getTextContent());
+
+            // check child nodes.
+            if (matcherNode.hasChildNodes()) {
+                Map<String, Node> children = new HashMap<>();
+                nodeListConsumer(matcherNode.getChildNodes(), (n) -> {
+                    if (n.getNodeType() == Node.ELEMENT_NODE) {
+                        children.put(n.getNodeName(), n);
+                    }
+                });
+                Iterator<Map.Entry<String, Node>> iter = children.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry<String, Node> entry = iter.next();
+                    Description childDescription = description.getChildren().get(entry.getKey());
+                    if (childDescription != null) {
+                        switch (childDescription.getType()) {
+                        case License:
+                        case Matcher:
+                        case BuilderParam:
+                            throw new ConfigurationException(
+                                    String.format("%s may not be used as an enclosed matcher.  %s '%s' found in '%s'",
+                                            childDescription.getType(), childDescription.getType(),
+                                            childDescription.getCommonName(), description.getCommonName()));
+                        case Parameter:
+                            callSetter(childDescription, builder, entry.getValue().getTextContent());
+                            iter.remove();
+                            break;
+                        case Unlabled:
+                            try {
+                                childDescription.setUnlabledText(builder, entry.getValue().getTextContent());
+                                iter.remove();
+                            } catch (NoSuchMethodException | SecurityException | IllegalAccessException
+                                    | IllegalArgumentException | InvocationTargetException | DOMException e) {
+                                throw new ConfigurationException(
+                                        String.format("Can not set parameter: %s", childDescription.getCommonName()),
+                                        e);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                // now handle all the embedded matchers.
+                if (!children.isEmpty()) {
+                    Optional<Map.Entry<String, Description>> opt = description.getChildren().entrySet().stream()
+                            .filter(MATCHER_FILTER).findAny();
+                    if (opt.isPresent()) {
+                        iter = children.entrySet().iterator();
+                        while (iter.hasNext()) {
+                            Map.Entry<String, Node> child = iter.next();
+                            if (MatcherBuilderTracker.getMatcherBuilder(child.getKey()) != null) {
+                                AbstractBuilder b = parseMatcher(child.getValue());
+                                callSetter(b.getDescription(), builder, b);
+                                iter.remove();
+                            }
+
+                        }
+                    }
+
+                }
+                if (!children.isEmpty()) {
+                    children.keySet().forEach(s -> System.out.format("unrecognised child node '%s' in node '%s'\n", s,
+                            matcherNode.getNodeName()));
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException | DOMException e) {
             throw new ConfigurationException(e);
         } catch (NoSuchMethodException e) {
             throw new ConfigurationException(
-                    String.format("'%s' does not have no argument build() method",
-                            builder.getClass().getName()));
+                    String.format("'%s' does not have no argument build() method", builder.getClass().getName()));
         }
-        
-//        NamedNodeMap nnm = matcherNode.getAttributes();
-//        for (int i = 0; i < nnm.getLength(); i++) {
-//            Node n = nnm.item(i);
-//            String methodName = "set" + StringUtils.capitalize(n.getNodeName());
-//            try {
-//                MethodUtils.invokeExactMethod(builder, methodName, n.getNodeValue());
-//            } catch (NoSuchMethodException e) {
-//                throw new ConfigurationException(
-//                        String.format("'%s' does not have a setter '%s' that takes a String argument",
-//                                matcherNode.getNodeName(), methodName));
-//            } catch (IllegalAccessException | InvocationTargetException | DOMException e) {
-//                throw new ConfigurationException(e);
-//            }
-//        }
-//        if (builder instanceof ChildContainerBuilder) {
-//            ChildContainerBuilder ccb = (ChildContainerBuilder) builder;
-//            nodeListConsumer(matcherNode.getChildNodes(), x -> {
-//                if (x.getNodeType() == Node.ELEMENT_NODE) {
-//                    ccb.add(parseMatcher(x));
-//                }
-//            });
-//        }
-//        if (builder instanceof TextCaptureBuilder) {
-//            ((TextCaptureBuilder) builder).setText(matcherNode.getTextContent().trim());
-//        }
-//
-//        if (builder instanceof MatcherRefBuilder) {
-//            ((MatcherRefBuilder) builder).setMatchers(matchers);
-//        }
+        return builder.hasId() ? new DelegatingBuilder(builder) {
+            @Override
+            public IHeaderMatcher build() {
+                IHeaderMatcher result = delegate.build();
+                matchers.put(result.getId(), result);
+                return result;
+            }
 
-        if (builder.hasId()) {
-            builder = new DelegatingBuilder(builder) {
-                @Override
-                public IHeaderMatcher build() {
-                    IHeaderMatcher result = delegate.build();
-                    matchers.put(result.getId(), result);
-                    return result;
-                }
-            };
-        }
-        return builder;
+            @Override
+            public Description getDescription() throws NoSuchMethodException, SecurityException {
+                return delegate.getDescription();
+            }
+        } : builder;
     }
 
     private ILicense parseLicense(Node licenseNode) {
@@ -302,7 +324,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         StringBuilder notesBuilder = new StringBuilder();
         nodeListConsumer(licenseNode.getChildNodes(), x -> {
             if (x.getNodeType() == Node.ELEMENT_NODE) {
-                if (x.getNodeName().equals(NOTE)) {
+                if (NOTE.equals(x.getNodeName())) {
                     notesBuilder.append(x.getTextContent()).append("\n");
                 } else {
                     builder.setMatcher(parseMatcher(x));
@@ -323,7 +345,6 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         }
         return Collections.unmodifiableSortedSet(licenses);
     }
-    
 
     @Override
     public SortedSet<ILicenseFamily> readFamilies() {
@@ -335,7 +356,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         }
         return Collections.unmodifiableSortedSet(licenseFamilies);
     }
-    
+
     private ILicenseFamily parseFamily(Map<String, String> attributes) {
         if (attributes.containsKey(ATT_ID)) {
             ILicenseFamily.Builder builder = ILicenseFamily.builder();

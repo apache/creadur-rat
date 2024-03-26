@@ -20,12 +20,15 @@ package org.apache.rat.report;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
+import org.apache.rat.configuration.ConfigurationReaderTest;
+import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
@@ -35,9 +38,13 @@ public class ConfigurationReportTest {
     
    @Test
    public void testAll() throws RatException, IOException {
+       
        ReportConfiguration reportConfiguration = new ReportConfiguration(DefaultLog.INSTANCE);
        reportConfiguration.listFamilies(LicenseFilter.all);
        reportConfiguration.listLicenses(LicenseFilter.all);
+       
+       reportConfiguration.setFrom(Defaults.builder().build());
+       
        StringWriter sw = new StringWriter();
        IXmlWriter writer = new XmlWriter(sw);
        

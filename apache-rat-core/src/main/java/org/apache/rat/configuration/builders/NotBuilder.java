@@ -19,14 +19,13 @@
 package org.apache.rat.configuration.builders;
 
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.NotMatcher;
 
 /**
  * A builder for the NotMatcher.
  */
 public class NotBuilder extends ChildContainerBuilder {
-    
+
     @Override
     public NotMatcher build() {
         if (children.size() != 1) {
@@ -34,9 +33,9 @@ public class NotBuilder extends ChildContainerBuilder {
         }
         return new NotMatcher(getId(), children.get(0).build());
     }
-    
+
     @Override
     public String toString() {
-        return String.format( "NotBuilder: %s", !children.isEmpty() ? children.get(0) : null );
+        return String.format("NotBuilder: %s", !children.isEmpty() ? children.get(0) : null);
     }
 }

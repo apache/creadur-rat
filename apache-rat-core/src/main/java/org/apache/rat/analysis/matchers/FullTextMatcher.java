@@ -88,9 +88,4 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
         }
         return false;
     }
-
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "text", "Matches text statement").addChildren(children);
-    }
 }

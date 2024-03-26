@@ -22,11 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
@@ -42,7 +39,7 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
  * accepts "(C)", "(c)", and "©" in place of (or in addition to) the "Copyright"
  * or "copyright" keyword </p>
  */
-@ConfigComponent(type=Component.Type.Matcher, name="copyright", desc="Matches copyright statements.")
+@ConfigComponent(type = Component.Type.Matcher, name = "copyright", desc = "Matches copyright statements.")
 public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©";
@@ -53,11 +50,11 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
 
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
-    @ConfigComponent(type=Component.Type.Parameter, desc="The initial date of the copyright")
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The initial date of the copyright")
     private final String start;
-    @ConfigComponent(type=Component.Type.Parameter, desc="The last date the copyright we modifed")
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The last date the copyright we modifed")
     private final String stop;
-    @ConfigComponent(type=Component.Type.Parameter, name="owner", desc="The owner of the copyright")
+    @ConfigComponent(type = Component.Type.Parameter, name = "owner", desc = "The owner of the copyright")
     private final String owner;
 
     /**

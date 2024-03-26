@@ -20,19 +20,17 @@ package org.apache.rat.analysis.matchers;
 
 import java.util.regex.Pattern;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Description;
 
 import org.apache.rat.analysis.IHeaders;
 
 /**
  * A simple regular expression matching IHeaderMatcher
  */
-@ConfigComponent(type=Component.Type.Matcher, name="regex", desc="Performs a regex match using the enclosed the text")
+@ConfigComponent(type = Component.Type.Matcher, name = "regex", desc = "Performs a regex match using the enclosed the text")
 public class SimpleRegexMatcher extends AbstractSimpleMatcher {
-    @ConfigComponent(type=Component.Type.Text, desc="", parameterType=Pattern.class)
+    @ConfigComponent(type = Component.Type.Unlabled, desc = "", parameterType = Pattern.class)
     private final Pattern pattern;
 
     /**
@@ -59,7 +57,7 @@ public class SimpleRegexMatcher extends AbstractSimpleMatcher {
         this.pattern = pattern;
     }
 
-    private String getPattern() {
+    public String getPattern() {
         return pattern.pattern();
     }
 

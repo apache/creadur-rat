@@ -46,10 +46,6 @@ public class License {
     }
     
 
-    public void setDerivedFrom(String derivedFrom) {
-        builder.setDerivedFrom(derivedFrom);
-    }
-
     public void setFamily(String licenseFamilyCategory) {
         builder.setLicenseFamilyCategory(licenseFamilyCategory);
     }
