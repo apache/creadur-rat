@@ -19,6 +19,7 @@
 package org.apache.rat.report;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -33,8 +34,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
+import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.Component.Type;
 import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.configuration.builders.MatcherRefBuilder;
@@ -77,7 +80,7 @@ public class ConfigurationReport extends AbstractReport {
                 if (!licenses.isEmpty()) {
                     writer.openElement(XMLConfigurationReader.LICENSES);
                     for (ILicense license : licenses) {
-                        writeDescription(license.getDescription());
+                        writeDescription(license.getDescription(), license);
                     }
                     writer.closeElement();// LICENSES
                 }
@@ -117,85 +120,145 @@ public class ConfigurationReport extends AbstractReport {
         }
     }
 
-    private void writeDescriptions(Collection<Description> descriptions) throws RatException {
+    private void writeDescriptions(Collection<Description> descriptions, Component component) throws RatException {
         for (Description description : descriptions) {
-            writeDescription(description);
+            writeDescription(description, component);
         }
     }
     
-    private void writeChildren(Description description) throws RatException, IOException {
-        writeDescriptions(description.childrenOfType(Type.Parameter));
-        writeDescriptions(description.childrenOfType(Type.Text));
-        writeDescriptions(description.childrenOfType(Type.Matcher));
-        writeDescriptions(description.childrenOfType(Type.License));
+    private void writeChildren(Description description, Component component) throws RatException, IOException {
+        writeDescriptions(description.childrenOfType(Type.Parameter), component);
+        writeDescriptions(description.childrenOfType(Type.Unlabled), component);
+        writeDescriptions(description.childrenOfType(Type.Matcher), component);
+        writeDescriptions(description.childrenOfType(Type.License), component);
     }
     
-    private void writeDescription(Description description) throws RatException {
-        if (description == null) {
-            return;
+    private void writeComment(Description description) throws IOException {
+        if (StringUtils.isNotBlank(description.getDescription())) {
+            writer.comment(description.getDescription());
         }
+    }
+    
+    private void writeContent(Description description, Component component) throws IOException {
+        String paramValue = description.getParamValue(component);
+        if (paramValue != null) {
+            writer.content(paramValue);
+        }
+    }
+    
+    private void writeAttribute(Description description, Component component) throws IOException {
+        String paramValue = description.getParamValue(component);
+        if (paramValue != null) {
+            writer.attribute(description.getCommonName(), paramValue);
+        }
+    }
+    
+    private void writeDescription(Description description, Component component) throws RatException {
         try {
             switch (description.getType()) {
             case Matcher:
                 // see if id was registered
                 Optional<Description> id = description.childrenOfType(Type.Parameter).stream().filter(i -> XMLConfigurationReader.ATT_ID.equals(i.getCommonName())).findFirst();
                 if (id.isPresent()) {
-                    String idStr = id.get().getParamValue();
-                    if (matchers.contains(idStr)) {
-                        description = new MatcherRefBuilder.IHeaderMatcherProxy(id.get().getParamValue(),null).getDescription();
+                    String idValue = id.get().getParamValue(component);
+                    // if we have seen the ID before just put a reference to the other one.
+                    if (matchers.contains(idValue.toString())) {
+                        component = new MatcherRefBuilder.IHeaderMatcherProxy(idValue.toString(), null);
+                        description = component.getDescription();
                     } else {
-                        matchers.add(idStr);
+                        matchers.add(idValue.toString());
                     }
                 }
-                if (StringUtils.isNotBlank(description.getDescription())) {
-                    writer.comment(description.getDescription());
-                }
+                writeComment(description);
                 writer.openElement(description.getCommonName());
-                writeChildren(description);
+                writeChildren(description, component);
                 writer.closeElement();
                 break;
-            case License:                
+            case License:
                 writer.openElement(XMLConfigurationReader.LICENSE);
-                List<Description> lst = description.childrenOfType(Type.Parameter).stream().filter(d -> !d.getCommonName().equals("notes")).collect(Collectors.toList());
-                writeDescriptions(lst);
-                
-                lst = description.childrenOfType(Type.Parameter).stream().filter(d -> !d.getCommonName().equals("notes")).collect(Collectors.toList());
-                if (!lst.isEmpty())  {
-                    if (StringUtils.isNotBlank(lst.get(0).getDescription())) {
-                        writer.comment(lst.get(0).getDescription());
-                    }
-                    for (Description note : lst) {
-                        writer.openElement(note.getCommonName());
-                        writer.content(description.getParamValue());
-                        writer.closeElement();
-                    }
+                Description notes = null;
+                for (Description desc : description.childrenOfType(Component.Type.Parameter)) {
+                        if (desc.getCommonName().equals("notes")) {
+                            notes = desc;
+                        } else {
+                            writeAttribute(desc, component);
+                        }
                 }
-                writeDescriptions(description.childrenOfType(Type.Matcher));
-                writeDescriptions(description.childrenOfType(Type.License));
-                writeChildren(description);
+                for (Description desc : description.childrenOfType(Component.Type.BuilderParam)) {
+                    if (desc.getCommonName().equals("family")) {
+                        try {
+                            ILicenseFamily family = (ILicenseFamily) desc.getter(component.getClass()).invoke(component);
+                        if (family != null) {
+                            writer.attribute("family", family.getFamilyCategory().trim());
+                        }
+                        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+                            configuration.getLog().error(e.toString());
+                        }
+                    } 
+                }
+                // end of attributes
+                if (notes != null && StringUtils.isNotBlank(notes.getParamValue(component))) {
+                    writeComment(notes);
+                    writer.openElement(notes.getCommonName());
+                    writeContent(notes, component);
+                    writer.closeElement();
+                }
+                for (Description desc : description.childrenOfType(Component.Type.Unlabled)) {
+                    writeDescription(desc, component);
+                }
+                //writeDescriptions(description.childrenOfType(Component.Type.Matcher), component);
+                //writeDescriptions(description.childrenOfType(Component.Type.License), component);
                 writer.closeElement();
                 break;
             case Parameter:
                 if ("id".equals(description.getCommonName())) {
                     try {
+                        String idValue = description.getParamValue(component);
                         // if a UUID skip it.
-                        UUID.fromString(description.getParamValue());
-                        return;
+                        if (idValue != null) {
+                            UUID.fromString(idValue.toString());
+                            return;
+                        }
                     } catch (IllegalArgumentException expected) {
                         // do nothing.
                     }
                 }
-                String paramValue = description.getParamValue();
-                if (paramValue != null) {
-                    writer.attribute(description.getCommonName(), paramValue);
+                writeAttribute(description, component);
+                break;
+            case Unlabled:
+                try {
+                    Object obj = description.getter(component.getClass()).invoke(component);
+                    if (obj instanceof Iterable) {
+                        for (Object o2 : (Iterable)obj) {
+                            processUnlabled(o2);
+                        }
+                    } else {
+                        processUnlabled(obj);
+                    }
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                        | NoSuchMethodException | SecurityException | RatException e) {
+                    configuration.getLog().error(e.getMessage());
                 }
                 break;
-            case Text:
-                writer.content(description.getParamValue());
+            case BuilderParam:
+                // ignore;
                 break;
             }
         } catch (IOException e) {
             throw new RatException(e);
+        }
+    }
+    
+    private void processUnlabled(Object obj) throws RatException, IOException {
+        if (obj instanceof Component) {
+            Description d = DescriptionBuilder.build(obj);
+            if (d != null) {
+                writeDescription( d, (Component)obj );
+            }
+        } else {
+            if (obj != null) {
+                writer.content(obj.toString());
+            }
         }
     }
 

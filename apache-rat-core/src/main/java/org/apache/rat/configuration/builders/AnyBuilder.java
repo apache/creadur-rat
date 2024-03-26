@@ -18,7 +18,6 @@
  */
 package org.apache.rat.configuration.builders;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.OrMatcher;
 
 /**
@@ -28,6 +27,6 @@ public class AnyBuilder extends ChildContainerBuilder {
 
     @Override
     public OrMatcher build() {
-        return new OrMatcher(getId(), getChildren());
+        return new OrMatcher(getId(), getChildren(), resource);
     }
 }

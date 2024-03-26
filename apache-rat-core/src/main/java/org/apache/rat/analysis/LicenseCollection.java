@@ -20,7 +20,6 @@ package org.apache.rat.analysis;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.matchers.AbstractMatcherContainer;
 import org.apache.rat.config.parameters.Description;
@@ -50,7 +49,7 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
      * implementation from. May not be null.
      */
     public LicenseCollection(Collection<ILicense> enclosed) {
-        super(enclosed);
+        super(enclosed, null);
         this.enclosed = Collections.unmodifiableCollection(enclosed);
         this.matchingLicense = null;
         this.lastState = State.i;
@@ -126,7 +125,7 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
     public String getNotes() {
         return matchingLicense == null ? null : matchingLicense.getNotes();
     }
-    
+
     @Override
     public String getName() {
         return getLicenseFamily().getFamilyName();
@@ -138,7 +137,7 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
             return matchingLicense.getDescription();
         }
         return new Description(Type.License, "licenseCollection",
-                "A collection of ILicenses that acts as a single License for purposes of Analysis.", null, null);
+                "A collection of ILicenses that acts as a single License for purposes of Analysis.", false, null, null);
     }
 
     @Override

@@ -33,8 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
-import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * Constructs a builder that contains other builders.
@@ -44,8 +42,9 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
     /**
      * The list of builders that will build the enclosed matchers.
      */
-    @ConfigComponent(type=Component.Type.Matcher, desc="The enclosed Matchers", parameterType = IHeaderMatcher.Builder.class)
     protected final List<IHeaderMatcher.Builder> children = new ArrayList<>();
+    
+    protected String resource;
 
     /**
      * Empty default constructor.
@@ -55,27 +54,28 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
 
     /**
      * Reads a text file. Each line becomes a text matcher in the resulting list.
-     * 
+     *
      * @param resourceName the name of the resource to read.
      * @return a List of Matchers, one for each non-empty line in the input file.
      */
     public AbstractBuilder setResource(String resourceName) {
-          URL url = this.getClass().getResource(resourceName);
-            try (final InputStream in = url.openStream()) {
-                BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-                String txt;
-                while (null != (txt = buffer.readLine())) {
-                    txt = txt.trim();
-                    if (StringUtils.isNotBlank(txt)) {
-                        children.add(Builder.text().setText(txt));
-                    }
+        URL url = this.getClass().getResource(resourceName);
+        try (final InputStream in = url.openStream()) {
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            String txt;
+            while (null != (txt = buffer.readLine())) {
+                txt = txt.trim();
+                if (StringUtils.isNotBlank(txt)) {
+                    children.add(Builder.text().setText(txt));
                 }
-                return this;
-            } catch (IOException e) {
-                throw new ConfigurationException("Unable to read matching text file: " + resourceName, e);
             }
+            this.resource = resourceName;
+            return this;
+        } catch (IOException e) {
+            throw new ConfigurationException("Unable to read matching text file: " + resourceName, e);
+        }
     }
-    
+
     /**
      * Adds a builder to the list of builders.
      * @param child the child builder to add.
@@ -85,7 +85,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
         children.add(child);
         return this;
     }
-    
+
     /**
      * Adds a collection of builders to the list of child builders.
      * @param children the children to add.
@@ -102,11 +102,11 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
     public List<IHeaderMatcher> getChildren() {
         return children.stream().map(IHeaderMatcher.Builder::build).collect(Collectors.toList());
     }
-    
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(this.getClass().getSimpleName()).append( ":");
-        children.stream().map(Object::toString).forEach( x -> sb.append("\n").append(x));
+        StringBuilder sb = new StringBuilder(this.getClass().getSimpleName()).append(":");
+        children.stream().map(Object::toString).forEach(x -> sb.append("\n").append(x));
         return sb.toString();
     }
 

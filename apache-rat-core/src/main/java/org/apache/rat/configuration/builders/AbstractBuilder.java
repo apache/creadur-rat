@@ -18,13 +18,8 @@
  */
 package org.apache.rat.configuration.builders;
 
-import java.lang.reflect.Method;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * An abstract IHeaderMatcher.Builder.
@@ -55,16 +50,16 @@ public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
     public final boolean hasId() {
         return !StringUtils.isBlank(id);
     }
-    
+
     /**
      * @return the id as specified in the builder.
      */
     protected String getId() {
         return id;
     }
-    
+
     @Override
     public String toString() {
-        return String.format( "%s with id %s", this.getClass(), id);
+        return String.format("%s with id %s", this.getClass(), id);
     }
 }

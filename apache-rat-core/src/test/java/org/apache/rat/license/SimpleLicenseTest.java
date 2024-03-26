@@ -23,7 +23,7 @@ public class SimpleLicenseTest {
         assertEquals(Component.Type.License, underTest.getType());
         assertEquals("My testing license", underTest.getCommonName());
         assertEquals("", underTest.getDescription());
-        assertNull(underTest.getParamValue());
+        assertNull(underTest.getParamValue(lic));
         Map<String, Description> children = underTest.getChildren();
         assertTrue(children.containsKey("id"));
         assertTrue(children.containsKey("name"));

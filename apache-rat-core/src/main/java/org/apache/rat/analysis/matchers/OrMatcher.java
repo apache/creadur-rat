@@ -23,13 +23,12 @@ import java.util.Collection;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Description;
 
 /**
  * A matcher that performs a logical {@code OR} across all the contained
  * matchers.
  */
-@ConfigComponent(type=Component.Type.Matcher, name="or", desc="Returns true if at least one of the enclosed matchers return true.")
+@ConfigComponent(type = Component.Type.Matcher, name = "any", desc = "Returns true if at least one of the enclosed matchers return true.")
 public class OrMatcher extends AbstractMatcherContainer {
 
     private State lastState;
@@ -39,8 +38,8 @@ public class OrMatcher extends AbstractMatcherContainer {
      *
      * @param enclosed the enclosed matchers.
      */
-    public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
-        this(null, enclosed);
+    public OrMatcher(Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        this(null, enclosed, resource);
     }
 
     /**
@@ -49,8 +48,8 @@ public class OrMatcher extends AbstractMatcherContainer {
      * @param id the id to use.
      * @param enclosed the enclosed matchers.
      */
-    public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
-        super(id, enclosed);
+    public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        super(id, enclosed, resource);
         lastState = State.i;
     }
 

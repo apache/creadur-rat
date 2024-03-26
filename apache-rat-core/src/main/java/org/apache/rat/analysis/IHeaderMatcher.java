@@ -18,13 +18,7 @@
  */
 package org.apache.rat.analysis;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
@@ -123,9 +117,13 @@ public interface IHeaderMatcher extends Component {
          * @return a new IHeaderMatcher.
          */
         IHeaderMatcher build();
-        
+
         default Class<?> builtClass() throws NoSuchMethodException, SecurityException {
             return this.getClass().getMethod("build").getReturnType();
+        }
+
+        default Description getDescription() throws NoSuchMethodException, SecurityException {
+            return DescriptionBuilder.buildMap(builtClass());
         }
 
         /**

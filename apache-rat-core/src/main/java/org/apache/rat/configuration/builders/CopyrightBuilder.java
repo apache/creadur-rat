@@ -18,7 +18,6 @@
  */
 package org.apache.rat.configuration.builders;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 
 /**
@@ -63,7 +62,7 @@ public class CopyrightBuilder extends AbstractBuilder {
     public CopyrightMatcher build() {
         return new CopyrightMatcher(getId(), start, end, owner);
     }
-    
+
     @Override
     public String toString() {
         return String.format("Copyright Builder: s:%s e:%s o:%s", start, end, owner);

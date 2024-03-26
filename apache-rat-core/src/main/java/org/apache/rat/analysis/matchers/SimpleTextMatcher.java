@@ -27,7 +27,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 @ConfigComponent(type = Component.Type.Matcher, name = "text", desc = "Matches the enclosed the text")
 public class SimpleTextMatcher extends AbstractSimpleMatcher {
-    @ConfigComponent(type = Component.Type.Text, desc = "")
+    @ConfigComponent(type = Component.Type.Unlabled, name = "text", desc = "")
     private final String simpleText;
 
     /**
@@ -55,7 +55,7 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
         this.simpleText = simpleText;
     }
 
-    public String getSimpleText() {
+    public String getText() {
         return this.simpleText;
     }
 
@@ -63,5 +63,4 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
     public boolean doMatch(String line) {
         return line.contains(simpleText);
     }
-
 }

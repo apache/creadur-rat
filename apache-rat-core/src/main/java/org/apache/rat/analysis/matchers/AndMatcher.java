@@ -23,14 +23,12 @@ import java.util.Collection;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * A matcher that performs a logical {@code AND} across all the contained
  * matchers.
  */
-@ConfigComponent(type=Component.Type.Matcher, name="and", desc="Returns true if all enclosed matchers return true.")
+@ConfigComponent(type = Component.Type.Matcher, name = "all", desc = "Returns true if all enclosed matchers return true.")
 public class AndMatcher extends AbstractMatcherContainer {
 
     /**
@@ -40,8 +38,8 @@ public class AndMatcher extends AbstractMatcherContainer {
      * created.
      * @param enclosed the enclosed collection.
      */
-    public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
-        super(id, enclosed);
+    public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        super(id, enclosed, resource);
     }
 
     /**
@@ -50,8 +48,8 @@ public class AndMatcher extends AbstractMatcherContainer {
      *
      * @param enclosed the enclosed collection.
      */
-    public AndMatcher(Collection<? extends IHeaderMatcher> enclosed) {
-        this(null, enclosed);
+    public AndMatcher(Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        this(null, enclosed, resource);
     }
 
     @Override

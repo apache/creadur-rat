@@ -19,10 +19,6 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Locale;
-import java.util.Objects;
-
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Description;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares

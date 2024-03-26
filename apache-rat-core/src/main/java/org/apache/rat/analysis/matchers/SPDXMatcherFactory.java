@@ -26,10 +26,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Description;
 
 /**
  * Defines a factory to produce matchers for an SPDX tag. SPDX tag is of the
@@ -114,15 +112,15 @@ public class SPDXMatcherFactory {
         return (lastMatch != null) && caller.spdxId.equals(lastMatch.spdxId);
     }
 
-    @ConfigComponent(type=Component.Type.Matcher, name="spdx", desc="Matches SPDX enclosed license identifier.")
+    @ConfigComponent(type = Component.Type.Matcher, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
     public class Match extends AbstractSimpleMatcher {
-        @ConfigComponent(type=Component.Type.Text, name="spdx", desc="The spdx ID string")
+        @ConfigComponent(type = Component.Type.Parameter, name = "name", desc = "The spdx ID string")
         String spdxId;
 
-        public String getSpdx() {
+        public String getName() {
             return spdxId;
         }
-        
+
         /**
          * Constructor.
          *

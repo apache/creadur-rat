@@ -110,14 +110,9 @@ public class ConfigurationReaderTest {
         
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
         Description desc = DescriptionBuilder.buildMap(builder.builtClass());
-        print(desc);
+        System.out.println( desc );
         
     }
     
-    private void print(Description desc) {
-        System.out.println( String.format( "T:%s N:%s V:%s", desc.getType(), desc.getCommonName(), desc.getParamValue()));
-        System.out.println( "   "+desc.getDescription());
-        desc.getChildren().values().forEach(this::print);
-    }
 
 }

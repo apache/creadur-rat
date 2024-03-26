@@ -18,25 +18,19 @@
  */
 package org.apache.rat.license;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * The definition of a License.
  */
-public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Component {
+public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
      * @return the ILicenseFamily implementation for this license.
      */
@@ -53,11 +47,11 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense>, Componen
      * @return the name of this license.
      */
     String getName();
-    
+
     default String getFamilyName() {
         return getLicenseFamily().getFamilyName();
     }
-    
+
     IHeaderMatcher getMatcher();
 
     /**

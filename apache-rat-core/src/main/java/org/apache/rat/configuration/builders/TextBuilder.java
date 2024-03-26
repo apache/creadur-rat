@@ -22,19 +22,16 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 
 /**
  * Builds text based matcher based on the complexity of the text to match.
  */
-public class TextBuilder extends AbstractBuilder implements TextCaptureBuilder {
+public class TextBuilder extends AbstractBuilder {
 
     private String text;
 
-    @SuppressWarnings("unchecked")
-    @Override
     public TextBuilder setText(String text) {
         Objects.requireNonNull(text, "text may not be null");
         this.text = text;
