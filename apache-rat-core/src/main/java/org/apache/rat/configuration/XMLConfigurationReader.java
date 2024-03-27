@@ -21,9 +21,12 @@ package org.apache.rat.configuration;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
@@ -227,20 +230,20 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
             // process the attributes
             description.setChildren(builder, attributes(matcherNode));
-            description.setUnlabledText(builder, matcherNode.getTextContent());
+            description.setUnlabledText(builder, matcherNode.getTextContent().trim());
 
             // check child nodes.
             if (matcherNode.hasChildNodes()) {
-                Map<String, Node> children = new HashMap<>();
+                List<Node> children = new ArrayList<>();
                 nodeListConsumer(matcherNode.getChildNodes(), (n) -> {
                     if (n.getNodeType() == Node.ELEMENT_NODE) {
-                        children.put(n.getNodeName(), n);
+                        children.add(n);
                     }
                 });
-                Iterator<Map.Entry<String, Node>> iter = children.entrySet().iterator();
+                Iterator<Node> iter = children.iterator();
                 while (iter.hasNext()) {
-                    Map.Entry<String, Node> entry = iter.next();
-                    Description childDescription = description.getChildren().get(entry.getKey());
+                    Node entry = iter.next();
+                    Description childDescription = description.getChildren().get(entry.getNodeName());
                     if (childDescription != null) {
                         switch (childDescription.getType()) {
                         case License:
@@ -251,12 +254,12 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                                             childDescription.getType(), childDescription.getType(),
                                             childDescription.getCommonName(), description.getCommonName()));
                         case Parameter:
-                            callSetter(childDescription, builder, entry.getValue().getTextContent());
+                            callSetter(childDescription, builder, entry.getTextContent());
                             iter.remove();
                             break;
                         case Unlabled:
                             try {
-                                childDescription.setUnlabledText(builder, entry.getValue().getTextContent());
+                                childDescription.setUnlabledText(builder, entry.getTextContent());
                                 iter.remove();
                             } catch (NoSuchMethodException | SecurityException | IllegalAccessException
                                     | IllegalArgumentException | InvocationTargetException | DOMException e) {
@@ -274,11 +277,11 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                     Optional<Map.Entry<String, Description>> opt = description.getChildren().entrySet().stream()
                             .filter(MATCHER_FILTER).findAny();
                     if (opt.isPresent()) {
-                        iter = children.entrySet().iterator();
+                        iter = children.iterator();
                         while (iter.hasNext()) {
-                            Map.Entry<String, Node> child = iter.next();
-                            if (MatcherBuilderTracker.getMatcherBuilder(child.getKey()) != null) {
-                                AbstractBuilder b = parseMatcher(child.getValue());
+                            Node child = iter.next();
+                            if (MatcherBuilderTracker.getMatcherBuilder(child.getNodeName()) != null) {
+                                AbstractBuilder b = parseMatcher(child);
                                 callSetter(b.getDescription(), builder, b);
                                 iter.remove();
                             }
@@ -288,8 +291,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
                 }
                 if (!children.isEmpty()) {
-                    children.keySet().forEach(s -> System.out.format("unrecognised child node '%s' in node '%s'\n", s,
-                            matcherNode.getNodeName()));
+                    children.forEach(n -> System.out.format("unrecognised child node '%s' in node '%s'%n", n.getNodeName(), matcherNode.getNodeName())); // TODO make this a logging entry
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException | DOMException e) {
