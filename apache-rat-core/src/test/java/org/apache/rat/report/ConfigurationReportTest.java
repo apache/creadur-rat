@@ -19,6 +19,7 @@
 package org.apache.rat.report;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -64,7 +65,7 @@ public class ConfigurationReportTest {
        report.endReport();
        writer.closeDocument();
        String result = sw.toString();
-       System.out.println( result );
+       fail("complete this test");
       // AssertTrue( result.contains( ""));
    }
    
@@ -76,7 +77,7 @@ public class ConfigurationReportTest {
        report.writeDescription(description, opt.get());
        writer.closeDocument();
        String result = sw.toString();
-       System.out.println( result );
+       fail("complete this test");
    
    }
 }

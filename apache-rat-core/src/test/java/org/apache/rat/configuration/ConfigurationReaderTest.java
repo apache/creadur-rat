@@ -19,6 +19,7 @@ package org.apache.rat.configuration;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 import java.util.Collection;
@@ -111,6 +112,7 @@ public class ConfigurationReaderTest {
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
         Description desc = DescriptionBuilder.buildMap(builder.builtClass());
         System.out.println( desc );
+        fail("complete this test");
         
     }
     
