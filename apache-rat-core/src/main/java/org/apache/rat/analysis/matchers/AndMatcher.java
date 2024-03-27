@@ -72,11 +72,7 @@ public class AndMatcher extends AbstractMatcherContainer {
 
     @Override
     public State matches(String line) {
-        enclosed.stream().filter(x -> x.currentState() == State.i).forEach(x -> {
-            System.out.format("Checking %s -> %s%n", x, 
-                    x.matches(line)
-                    );});
-        
+        enclosed.stream().filter(x -> x.currentState() == State.i).forEach(x -> x.matches(line));
         return currentState();
     }
 

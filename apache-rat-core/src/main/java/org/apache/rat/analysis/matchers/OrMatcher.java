@@ -60,10 +60,7 @@ public class OrMatcher extends AbstractMatcherContainer {
             return State.t;
         }
         for (IHeaderMatcher matcher : enclosed) {
-            State s = matcher.matches(line);
-            System.out.format("Or testing %s -> %s%n", DescriptionBuilder.build(matcher), s);
-            
-            switch (s) {
+            switch (matcher.matches(line)) {
             case t:
                 lastState = State.t;
                 return lastState;

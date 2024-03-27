@@ -156,7 +156,6 @@ public class ConfigurationReport extends AbstractReport {
     /* package privete for testing */
     void writeDescription(Description description, Component component) throws RatException {
         try {
-            System.out.format("writeDescritpion : %s\n", description);
             switch (description.getType()) {
             case Matcher:
                 // see if id was registered

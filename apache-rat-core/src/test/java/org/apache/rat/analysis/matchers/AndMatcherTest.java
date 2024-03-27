@@ -19,6 +19,7 @@
 package org.apache.rat.analysis.matchers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 
@@ -84,5 +85,6 @@ public class AndMatcherTest {
         AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two), null);
         Description desc = target.getDescription();
         System.out.println( desc );
+        fail("complete this test");
     }
 }
