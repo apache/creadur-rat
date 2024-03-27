@@ -22,17 +22,16 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.api.RatException;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.Component.Type;
@@ -41,7 +40,6 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.configuration.builders.MatcherRefBuilder;
-import org.apache.rat.configuration.builders.MatcherRefBuilder.IHeaderMatcherProxy;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -125,41 +123,42 @@ public class ConfigurationReport extends AbstractReport {
             writeDescription(description, component);
         }
     }
-    
+
     private void writeChildren(Description description, Component component) throws RatException, IOException {
         writeDescriptions(description.childrenOfType(Type.Parameter), component);
         writeDescriptions(description.childrenOfType(Type.Unlabled), component);
         writeDescriptions(description.childrenOfType(Type.Matcher), component);
         writeDescriptions(description.childrenOfType(Type.License), component);
     }
-    
+
     private void writeComment(Description description) throws IOException {
         if (StringUtils.isNotBlank(description.getDescription())) {
             writer.comment(description.getDescription());
         }
     }
-    
+
     private void writeContent(Description description, Component component) throws IOException {
         String paramValue = description.getParamValue(component);
         if (paramValue != null) {
             writer.content(paramValue);
         }
     }
-    
+
     private void writeAttribute(Description description, Component component) throws IOException {
         String paramValue = description.getParamValue(component);
         if (paramValue != null) {
             writer.attribute(description.getCommonName(), paramValue);
         }
     }
-    
+
     /* package privete for testing */
     void writeDescription(Description description, Component component) throws RatException {
         try {
             switch (description.getType()) {
             case Matcher:
                 // see if id was registered
-                Optional<Description> id = description.childrenOfType(Type.Parameter).stream().filter(i -> XMLConfigurationReader.ATT_ID.equals(i.getCommonName())).findFirst();
+                Optional<Description> id = description.childrenOfType(Type.Parameter).stream()
+                        .filter(i -> XMLConfigurationReader.ATT_ID.equals(i.getCommonName())).findFirst();
                 if (id.isPresent()) {
                     String idValue = id.get().getParamValue(component);
                     // if we have seen the ID before just put a reference to the other one.
@@ -168,6 +167,17 @@ public class ConfigurationReport extends AbstractReport {
                         description = component.getDescription();
                     } else {
                         matchers.add(idValue.toString());
+                    }
+                }
+                Optional<Description> resource = description.childrenOfType(Type.Parameter).stream()
+                        .filter(i -> "resource".equals(i.getCommonName())).findFirst();
+                if (resource.isPresent()) {
+                    Iterator<Map.Entry<String,Description>> iter = description.getChildren().entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry<String,Description> entry = iter.next();
+                        if (entry.getValue().isCollection() && IHeaderMatcher.class.isAssignableFrom(entry.getValue().getChildType())) {
+                            iter.remove();
+                        }
                     }
                 }
                 writeComment(description);
@@ -179,23 +189,25 @@ public class ConfigurationReport extends AbstractReport {
                 writer.openElement(XMLConfigurationReader.LICENSE);
                 Description notes = null;
                 for (Description desc : description.childrenOfType(Component.Type.Parameter)) {
-                        if (desc.getCommonName().equals("notes")) {
-                            notes = desc;
-                        } else {
-                            writeAttribute(desc, component);
-                        }
+                    if ("notes".equals(desc.getCommonName())) {
+                        notes = desc;
+                    } else {
+                        writeAttribute(desc, component);
+                    }
                 }
                 for (Description desc : description.childrenOfType(Component.Type.BuilderParam)) {
-                    if (desc.getCommonName().equals("family")) {
+                    if ("family".equals(desc.getCommonName())) {
                         try {
-                            ILicenseFamily family = (ILicenseFamily) desc.getter(component.getClass()).invoke(component);
-                        if (family != null) {
-                            writer.attribute("family", family.getFamilyCategory().trim());
-                        }
-                        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+                            ILicenseFamily family = (ILicenseFamily) desc.getter(component.getClass())
+                                    .invoke(component);
+                            if (family != null) {
+                                writer.attribute("family", family.getFamilyCategory().trim());
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException
+                                | InvocationTargetException | SecurityException e) {
                             configuration.getLog().error(e.toString());
                         }
-                    } 
+                    }
                 }
                 // end of attributes
                 if (notes != null && StringUtils.isNotBlank(notes.getParamValue(component))) {
@@ -228,7 +240,7 @@ public class ConfigurationReport extends AbstractReport {
                 try {
                     Object obj = description.getter(component.getClass()).invoke(component);
                     if (obj instanceof Iterable) {
-                        for (Object o2 : (Iterable)obj) {
+                        for (Object o2 : (Iterable) obj) {
                             processUnlabled(o2);
                         }
                     } else {
@@ -247,12 +259,12 @@ public class ConfigurationReport extends AbstractReport {
             throw new RatException(e);
         }
     }
-    
+
     private void processUnlabled(Object obj) throws RatException, IOException {
         if (obj instanceof Component) {
             Description d = DescriptionBuilder.build(obj);
             if (d != null) {
-                writeDescription( d, (Component)obj );
+                writeDescription(d, (Component) obj);
             }
         } else {
             if (obj != null) {

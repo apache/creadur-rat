@@ -28,6 +28,9 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -97,6 +100,16 @@ public final class XmlUtils {
     public static boolean isPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         return !xPath.compile(xpath).evaluate(source).equals("null");
     }
+    
+    public static List<Node> getNodes(Object source, XPath xPath, String xpath) throws XPathExpressionException {
+        NodeList nodeList = (NodeList) xPath.compile(xpath).evaluate(source, XPathConstants.NODESET);
+        List<Node> result = new ArrayList<>();
+        for (int i=0;i<nodeList.getLength(); i++) {
+            result.add(nodeList.item(i));
+        }
+        return result;
+    }
+
     
     public static Node getNode(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         NodeList nodeList = getNodeList(source, xPath, xpath);
