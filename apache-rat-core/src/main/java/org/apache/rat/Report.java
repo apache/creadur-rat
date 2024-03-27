@@ -21,8 +21,10 @@ package org.apache.rat;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -45,6 +47,7 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -223,7 +226,15 @@ public class Report {
                     DefaultLog.INSTANCE.error("Please specify a single stylesheet");
                     System.exit(1);
                 }
-                configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(style[0])));
+                IOSupplier<InputStream> ioSupplier = null;
+
+                URL url = Report.class.getClassLoader().getResource(String.format("org/apache/rat/%s.xsl", style[0]));
+                if (url == null) {
+                    ioSupplier = () -> Files.newInputStream(Paths.get(style[0]));
+                } else {
+                    ioSupplier = () -> url.openStream();
+                }
+                configuration.setStyleSheet(ioSupplier);
             }
         }
 
@@ -303,15 +314,13 @@ public class Report {
         opts.addOption(null, SCAN_HIDDEN_DIRECTORIES, false, "Scan hidden directories");
 
         OptionGroup addLicenseGroup = new OptionGroup();
-        String addLicenseDesc = "Add the default license header to any file with an unknown license that is not in the exclusion list. "
-                + "By default new files will be created with the license header, "
-                + "to force the modification of existing files use the --force option.";
-
         // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
         // compatibility
-        Option addLicence = new Option(ADD_OLD, "addLicence", false, addLicenseDesc);
+        Option addLicence = new Option(ADD_OLD, false, "(deprecated) Add the default license header to any file with an unknown license.  Use '-A' or ---addLicense instead.");
         addLicenseGroup.addOption(addLicence);
-        Option addLicense = new Option(ADD, "addLicense", false, addLicenseDesc);
+        Option addLicense = new Option(ADD, "addLicense", false, "Add the default license header to any file with an unknown license that is not in the exclusion list. "
+                + "By default new files will be created with the license header, "
+                + "to force the modification of existing files use the --force option.");
         addLicenseGroup.addOption(addLicense);
         opts.addOptionGroup(addLicenseGroup);
 
@@ -348,7 +357,7 @@ public class Report {
         outputType.addOption(xml);
 
         Option xslt = new Option(STYLESHEET_CLI, "stylesheet", true,
-                "XSLT stylesheet to use when creating the" + " report.  Not compatible with -x");
+                "XSLT stylesheet to use when creating the report.  Not compatible with -x.  Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses");
         outputType.addOption(xslt);
         opts.addOptionGroup(outputType);
         

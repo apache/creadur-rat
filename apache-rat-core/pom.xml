@@ -53,18 +53,7 @@
           <configuration>
             <excludes>
               <!-- These files have bad license headers because they are used to test bad license headers -->
-              <exclude>src/test/resources/appliedAL20/bad/*.*</exclude>
-              <exclude>src/test/resources/oasis/bad/*.*</exclude>
-              <!-- These files do not have license headers because they are used to test license headers -->
-              <exclude>src/test/resources/elements/Source.java</exclude>
-              <exclude>src/test/resources/elements/ILoggerFactory.java</exclude>
-              <exclude>src/test/resources/elements/sub/Empty.txt</exclude>
-              <exclude>src/test/resources/violations/bad.txt</exclude>
-              <exclude>src/test/resources/violations/FilterTest.cs</exclude>
-              <!-- used to test for binary files; does not work on UTF-8 (e.g. MacOSX) -->
-              <exclude>src/test/resources/binaries/Image-png.not</exclude>
-              <!-- These files have a valid license header that was not recognised by older rat versions -->
-              <exclude>src/test/resources/elements/TextHttps.txt</exclude>
+              <exclude>src/test/resources/**</exclude>
             </excludes>
           </configuration>
         </plugin>

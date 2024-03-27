@@ -1,0 +1,12 @@
+<!-- output generated from src/test/resources/elements directory -->
+<rat-report timestamp='2024-03-18T11:50:49+01:00'><resource name='./src/test/resources/elements/ILoggerFactory.java'><header-type name='MIT  '/><license-family name='The MIT License'/><license-approval name='true'/><type name='standard'/></resource><resource name='./src/test/resources/elements/Image.png'><type name='binary'/></resource><resource name='./src/test/resources/elements/LICENSE'><type name='notice'/></resource><resource name='./src/test/resources/elements/NOTICE'><type name='notice'/></resource><resource name='./src/test/resources/elements/Source.java'><header-sample>package elements;
+
+/*
+ * This file does intentionally *NOT* contain an AL license header,
+ * because it is used in the test suite.
+ */
+public class Source {
+
+}
+</header-sample><header-type name='?????'/><license-family name='Unknown license'/><license-approval name='false'/><type name='standard'/></resource><resource name='./src/test/resources/elements/Text.txt'><header-type name='AL   '/><license-family name='Apache License Version 2.0'/><license-approval name='true'/><type name='standard'/></resource><resource name='./src/test/resources/elements/TextHttps.txt'><header-type name='AL   '/><license-family name='Apache License Version 2.0'/><license-approval name='true'/><type name='standard'/></resource><resource name='./src/test/resources/elements/Xml.xml'><header-type name='AL   '/><license-family name='Apache License Version 2.0'/><license-approval name='true'/><type name='standard'/></resource><resource name='./src/test/resources/elements/buildr.rb'><header-type name='AL   '/><license-family name='Apache License Version 2.0'/><license-approval name='true'/><type name='standard'/></resource><resource name='./src/test/resources/elements/dummy.jar'><type name='archive'/></resource><resource name='./src/test/resources/elements/plain.json'><type name='binary'/></resource><resource name='./src/test/resources/elements/sub/Empty.txt'><header-sample>
+</header-sample><header-type name='?????'/><license-family name='Unknown license'/><license-approval name='false'/><type name='standard'/></resource></rat-report>
