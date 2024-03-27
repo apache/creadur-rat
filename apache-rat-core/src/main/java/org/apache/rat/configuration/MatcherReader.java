@@ -18,6 +18,7 @@
  */
 package org.apache.rat.configuration;
 
+import java.io.Writer;
 import java.net.URL;
 
 /**

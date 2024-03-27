@@ -263,10 +263,12 @@ public class Description {
 
     @Override
     public String toString() {
-        return toString(0);
+        String childList = children.isEmpty() ? "" : String.join( ", ", children.values().stream().map( Description::getCommonName ).collect(Collectors.toList()));
+
+        return  String.format("Description[%s t:%s c:%s %s children: [%s]] ", name, type, isCollection, childClass, childList);
     }
 
-    private String toString(int indent) {
+    public String toString(int indent) {
         char[] spaces = new char[indent];
         Arrays.fill(spaces, ' ');
         String padding = String.copyValueOf(spaces);

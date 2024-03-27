@@ -71,7 +71,7 @@ public class XmlReportTest {
         final SimpleXmlClaimReporter reporter = new SimpleXmlClaimReporter(writer);
         final IHeaderMatcher asf1Matcher = new SimpleTextMatcher("http://www.apache.org/licenses/LICENSE-2.0");
         final IHeaderMatcher asf2Matcher = new SimpleTextMatcher("https://www.apache.org/licenses/LICENSE-2.0.txt");
-        final IHeaderMatcher asfMatcher = new OrMatcher(Arrays.asList(asf1Matcher, asf2Matcher));
+        final IHeaderMatcher asfMatcher = new OrMatcher(Arrays.asList(asf1Matcher, asf2Matcher), null);
         final ILicense asfLic = new TestingLicense("ASF", asfMatcher);
 
         final IHeaderMatcher qosMatcher = new CopyrightMatcher("2004", "2011", "QOS.ch");

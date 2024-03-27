@@ -80,13 +80,20 @@ public class DescriptionBuilder {
         return result;
     }
 
+    private static ConfigComponent findConfigComponent(Class<?> clazz) {
+        if (clazz == null || clazz == String.class || clazz == Object.class) {
+            return null;
+        }
+        ConfigComponent configComponent = clazz.getAnnotation(ConfigComponent.class);
+        return configComponent == null ? findConfigComponent(clazz.getSuperclass()) : configComponent;
+    }
     /**
      * Create a description for a class.
      * @param clazz the class to build the description for.
      * @return the Description of the class or null if no ConfigComponent annotation was found on the class.
      */
     public static Description buildMap(Class<?> clazz) {
-        ConfigComponent configComponent = clazz.getAnnotation(ConfigComponent.class);
+        ConfigComponent configComponent = findConfigComponent(clazz);
         if (configComponent == null) {
             return null;
         }

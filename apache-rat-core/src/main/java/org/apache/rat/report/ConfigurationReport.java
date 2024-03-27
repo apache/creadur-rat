@@ -153,8 +153,10 @@ public class ConfigurationReport extends AbstractReport {
         }
     }
     
-    private void writeDescription(Description description, Component component) throws RatException {
+    /* package privete for testing */
+    void writeDescription(Description description, Component component) throws RatException {
         try {
+            System.out.format("writeDescritpion : %s\n", description);
             switch (description.getType()) {
             case Matcher:
                 // see if id was registered
@@ -206,8 +208,6 @@ public class ConfigurationReport extends AbstractReport {
                 for (Description desc : description.childrenOfType(Component.Type.Unlabled)) {
                     writeDescription(desc, component);
                 }
-                //writeDescriptions(description.childrenOfType(Component.Type.Matcher), component);
-                //writeDescriptions(description.childrenOfType(Component.Type.License), component);
                 writer.closeElement();
                 break;
             case Parameter:
