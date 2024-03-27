@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
@@ -127,6 +128,33 @@ public class Report {
      * @throws Exception on error.
      */
     public static void main(String[] args) throws Exception {
+        ReportConfiguration configuration = parseCommands(args, Report::printUsage);
+        if (configuration != null) {
+            configuration.validate(DefaultLog.INSTANCE::error);
+            Reporter.report(configuration);
+        }
+    }
+
+    /**
+     * Parses the standard options to create a ReportConfiguraton.
+     * @param args the arguments to parse
+     * @param helpCmd the help command to run when necessary.
+     * @return a ReportConfiguration or null if Help was printed.
+     * @throws IOException on error.
+     */
+    public static ReportConfiguration parseCommands(String[] args, Consumer<Options> helpCmd) throws IOException {
+        return parseCommands(args, helpCmd, false);
+    }
+    
+    /**
+     * Parses the standard options to create a ReportConfiguraton.
+     * @param args the arguments to parse
+     * @param helpCmd the help command to run when necessary.
+     * @param noArgs If true then the commands do not need extra arguments
+     * @return a ReportConfiguration or null if Help was printed.
+     * @throws IOException on error.
+     */
+    public static ReportConfiguration parseCommands(String[] args, Consumer<Options> helpCmd, boolean noArgs) throws IOException {
         Options opts = buildOptions();
         CommandLine cl;
         try {
@@ -135,7 +163,7 @@ public class Report {
             DefaultLog.INSTANCE.error(e.getMessage());
             DefaultLog.INSTANCE.error("Please use the \"--help\" option to see a list of valid commands and options");
             System.exit(1);
-            return; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
+            return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
                     // for "cl"
         }
 
@@ -149,17 +177,21 @@ public class Report {
             }
         }
         if (cl.hasOption(HELP)) {
-            printUsage(opts);
+            helpCmd.accept(opts);
+            return null;
         }
 
-        args = cl.getArgs();
-        if (args == null || args.length != 1) {
-            printUsage(opts);
+        if (!noArgs) {
+            args = cl.getArgs();
+            if (args == null || args.length != 1) {
+                helpCmd.accept(opts);
+                return null;
+            }
         } else {
-            ReportConfiguration configuration = createConfiguration(args[0], cl);
-            configuration.validate(DefaultLog.INSTANCE::error);
-            Reporter.report(configuration);
+            args = new String[] {null};
         }
+        ReportConfiguration configuration = createConfiguration(args[0], cl);
+        return configuration;
     }
 
     static ReportConfiguration createConfiguration(String baseDirectory, CommandLine cl) throws IOException {
@@ -227,7 +259,9 @@ public class Report {
         }
         Defaults defaults = defaultBuilder.build();
         configuration.setFrom(defaults);
-        configuration.setReportable(getDirectory(baseDirectory, configuration));
+        if (baseDirectory != null) {
+            configuration.setReportable(getDirectory(baseDirectory, configuration));
+        }
         return configuration;
     }
     
@@ -402,7 +436,7 @@ public class Report {
     /**
      * This class implements the {@code Comparator} interface for comparing Options.
      */
-    private static class OptionComparator implements Comparator<Option>, Serializable {
+    public static class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID. */
         private static final long serialVersionUID = 5305467873966684014L;
 

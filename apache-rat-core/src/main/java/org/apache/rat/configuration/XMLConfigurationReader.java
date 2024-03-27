@@ -393,6 +393,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         }
     }
 
+    ////////////////////////////////////////// MatcherReader methods
     @Override
     public SortedSet<String> approvedLicenseId() {
         if (licenses.isEmpty()) {
@@ -424,6 +425,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         read(url);
     }
 
+    ////////////// Helper classes
     /**
      * An abstract builder that delegates to another abstract builder.
      */

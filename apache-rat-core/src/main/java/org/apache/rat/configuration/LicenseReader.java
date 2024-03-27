@@ -18,6 +18,7 @@
  */
 package org.apache.rat.configuration;
 
+import java.io.Writer;
 import java.net.URL;
 import java.util.SortedSet;
 
@@ -56,4 +57,5 @@ public interface LicenseReader {
      * empty list if none specified.
      */
     SortedSet<String> approvedLicenseId();
+
 }

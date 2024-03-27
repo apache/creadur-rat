@@ -45,7 +45,7 @@ public class AndMatcherTest {
     public void trueTest() {
         IHeaderMatcher one = new TestingMatcher("one", true);
         IHeaderMatcher two = new TestingMatcher("two", false, true);
-        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two), null);
         assertValues(target, State.i, State.t, State.t);
         target.reset();
         assertEquals(State.i, one.currentState());
@@ -57,7 +57,7 @@ public class AndMatcherTest {
     public void falseTest() {
         IHeaderMatcher one = new TestingMatcher("one", true);
         IHeaderMatcher two = new TestingMatcher("two", false, false);
-        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two), null);
         assertValues(target, State.i, State.i, State.f);
         target.reset();
         assertEquals(State.i, one.currentState());
@@ -69,7 +69,7 @@ public class AndMatcherTest {
     public void indeterminentTest() {
         IHeaderMatcher one = new TestingMatcher("one", false, false);
         IHeaderMatcher two = new TestingMatcher("two", false, false);
-        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two), null);
         assertValues(target, State.i, State.i, State.f);
         target.reset();
         assertEquals(State.i, one.currentState());
@@ -81,7 +81,7 @@ public class AndMatcherTest {
     public void descriptionTest() {
         IHeaderMatcher one = new TestingMatcher("one", true);
         IHeaderMatcher two = new TestingMatcher("two", false, true);
-        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two));
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two), null);
         Description desc = target.getDescription();
         System.out.println( desc );
     }

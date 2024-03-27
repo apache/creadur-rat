@@ -66,7 +66,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
             while (null != (txt = buffer.readLine())) {
                 txt = txt.trim();
                 if (StringUtils.isNotBlank(txt)) {
-                    children.add(Builder.text().setText(txt));
+                    children.add(new TextBuilder().setText(txt));
                 }
             }
             this.resource = resourceName;
