@@ -23,6 +23,7 @@ import java.util.Collection;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * A matcher that performs a logical {@code OR} across all the contained
@@ -59,7 +60,10 @@ public class OrMatcher extends AbstractMatcherContainer {
             return State.t;
         }
         for (IHeaderMatcher matcher : enclosed) {
-            switch (matcher.matches(line)) {
+            State s = matcher.matches(line);
+            System.out.format("Or testing %s -> %s%n", DescriptionBuilder.build(matcher), s);
+            
+            switch (s) {
             case t:
                 lastState = State.t;
                 return lastState;

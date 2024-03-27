@@ -129,6 +129,5 @@ public class SimpleLicense implements ILicense {
     @Override
     public Description getDescription() {
         return DescriptionBuilder.build(this);
-
     }
 }

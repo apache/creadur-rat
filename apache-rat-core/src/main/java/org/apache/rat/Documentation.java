@@ -98,11 +98,11 @@ public class Documentation {
             switch (d.getType()) {
             case Parameter:
             case BuilderParam:
-                writer.write(String.format("'%s' %s (Datatype %s%s)%n", d.getCommonName(), d.getDescription(),
+                writer.write(String.format("'%s' %s (Datatype: %s%s)%n", d.getCommonName(), d.getDescription(),
                         d.isCollection() ? "Collection of " : "", d.getChildType().getSimpleName()));
                 break;
             case Unlabled:
-                writer.write(String.format("'%s name' %s (Datatype %s%s)%n", d.getCommonName(), d.getDescription(),
+                writer.write(String.format("'%s name' %s (Datatype: %s%s)%n", d.getCommonName(), d.getDescription(),
                         d.isCollection() ? "Collection of " : "", d.getChildType().getSimpleName()));
                 break;
             case License:

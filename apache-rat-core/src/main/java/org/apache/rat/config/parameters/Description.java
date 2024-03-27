@@ -141,7 +141,8 @@ public class Description {
             return val == null ? null : val.toString();
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
-            System.err.format("Can not retrieve value for %s from %s\n", name, o.getClass());
+            // TOOD conver this to a log message
+            System.err.format("Can not retrieve value for '%s' from %s\n", name, o.getClass().getName());
             e.printStackTrace();
             return null;
         }
