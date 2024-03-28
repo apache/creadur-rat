@@ -21,16 +21,15 @@ package org.apache.rat.testhelpers;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
 
 /**
  * An Matcher for testing.
  */
 public class TestingMatcher extends AbstractHeaderMatcher {
-    private State lastState;
     private final boolean[] initialResults;
     private Queue<Boolean> results;
-    public State finalState = State.f;
 
     /**
      * Constructs a matcher with an ID of "dfltMtch" that does not match anyting.
@@ -70,35 +69,15 @@ public class TestingMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public final State matches(String line) {
-        if (lastState == State.t) {
-            return lastState;
-        }
-        if (line != null && results.poll()) {
-            lastState = State.t;
-        }
-        return lastState;
+    public final boolean matches(IHeaders headers) {
+        return results.poll();
     }
 
     @Override
     public void reset() {
-        lastState = State.i;
         results.clear();
         for (boolean b : initialResults) {
             this.results.add(b);
         }
-    }
-
-    @Override
-    public State finalizeState() {
-        if (lastState == State.i) {
-            lastState = finalState;
-        }
-        return lastState;
-    }
-
-    @Override
-    public final State currentState() {
-        return lastState;
     }
 }

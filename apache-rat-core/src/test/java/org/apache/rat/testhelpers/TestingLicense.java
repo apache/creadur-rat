@@ -20,6 +20,7 @@ package org.apache.rat.testhelpers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -135,18 +136,8 @@ public class TestingLicense implements ILicense {
     }
 
     @Override
-    public State matches(String line) {
-        return matcher.matches(line);
-    }
-
-    @Override
-    public State finalizeState() {
-        return matcher.finalizeState();
-    }
-
-    @Override
-    public State currentState() {
-        return matcher.currentState();
+    public boolean matches(IHeaders headers) {
+        return matcher.matches(headers);
     }
 
     @Override

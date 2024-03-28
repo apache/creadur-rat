@@ -20,6 +20,7 @@ package org.apache.rat.analysis.matchers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.apache.rat.analysis.IHeaderMatcher.State;
+import org.apache.rat.analysis.HeaderCheckWorker;
+import org.apache.rat.analysis.IHeaders;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -95,10 +97,9 @@ expandResults( DO, DOS, S, D, SO ) );
         verify(testName, pass, fail);
         CopyrightMatcher matcher = new CopyrightMatcher(start, stop, owner);
         for (String[] target : pass) {
-            assertEquals(State.i, matcher.currentState(), ()->String.format("%s:%s failed", testName, target[NAME]));
-            assertEquals(State.t, matcher.matches(target[TEXT]), ()->String.format("%s:%s failed", testName, target[NAME]));
+            IHeaders headers = AbstractMatcherTest.makeHeaders(target[TEXT],null);
+            assertTrue(matcher.matches(headers),  ()->String.format("%s:%s failed", testName, target[NAME]));
             matcher.reset();
-            assertEquals(State.i, matcher.currentState(),()->String.format("%s:%s failed", testName, target[NAME]));
         }
     }
 
@@ -109,11 +110,9 @@ expandResults( DO, DOS, S, D, SO ) );
         verify(testName, pass, fail);
         CopyrightMatcher matcher = new CopyrightMatcher(start, stop, owner);
         for (String[] target : fail) {
-            assertEquals( State.i, matcher.currentState(), ()->String.format("%s:%s passed", testName, target[NAME]));
-            assertEquals( State.i, matcher.matches(target[TEXT]), ()->String.format("%s:%s passed", testName, target[NAME]));
-            assertEquals( State.f, matcher.finalizeState(), ()->String.format("%s:%s passed", testName, target[NAME]));
+            IHeaders headers = AbstractMatcherTest.makeHeaders(target[TEXT],null);
+            assertFalse( matcher.matches(headers), String.format("%s:%s passed", testName, target[NAME]));
             matcher.reset();
-            assertEquals( State.i, matcher.currentState(), ()->String.format("%s:%s passed", testName, target[NAME]));
         }
     }
 }

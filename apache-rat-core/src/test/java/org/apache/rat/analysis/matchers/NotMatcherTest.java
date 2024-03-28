@@ -21,43 +21,16 @@ package org.apache.rat.analysis.matchers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.jupiter.api.Test;
 
-public class NotMatcherTest {
-
-    private void assertValues(IHeaderMatcher target, State hello, State world, State finalize) {
-        assertEquals(State.i, target.currentState());
-        assertEquals( hello, target.matches("hello"), "hello match");
-        assertEquals( hello, target.currentState(), "hello current");
-        assertEquals(world, target.matches("world"), "world match");
-        assertEquals( world, target.currentState(), "world current");
-        assertEquals(finalize, target.finalizeState(), "finalize match");
-        assertEquals(finalize, target.currentState(), "finalize current");
-    }
+public class NotMatcherTest extends AbstractMatcherTest {
 
     @Test
-    public void testTrue() {
-        IHeaderMatcher one = new TestingMatcher("one", true);
+    public void test() {
+        IHeaderMatcher one = new TestingMatcher("one", true, false);
         NotMatcher target = new NotMatcher("Testing", one);
-        assertValues(target, State.f, State.f, State.f);
-
-        one = new TestingMatcher("one", false, true);
-        target = new NotMatcher("Testing", one);
-        assertValues(target, State.i, State.f, State.f);
-        target.reset();
-        assertEquals(State.i, target.currentState());
+        assertValues(target, false, true);
     }
 
-    @Test
-    public void testFalse() {
-        TestingMatcher one = new TestingMatcher("one", false, false);
-        one.finalState = State.t;
-        NotMatcher target = new NotMatcher("Testing", one);
-        assertValues(target, State.i, State.i, State.f);
-        target.reset();
-        assertEquals(State.i, target.currentState());
-
-    }
 }

@@ -33,40 +33,6 @@ import org.apache.rat.configuration.builders.TextBuilder;
  */
 public interface IHeaderMatcher {
     /**
-     * The state of the matcher.
-     * <ul>
-     * <li>{@code t} - The matcher has located a match.</li>
-     * <li>{@code f} - The matcher has determined that it will not match the
-     * document.</li>
-     * <li>{@code i} - The matcher can not yet determine if a matche is made or
-     * not.</li>
-     * </ul>
-     */
-    enum State {
-        t("true"), f("false"), i("indeterminent");
-
-        private final String desc;
-
-        State(String desc) {
-            this.desc = desc;
-        }
-
-        public boolean asBoolean() {
-            switch (this) {
-            case t : return true;
-            case f : return false;
-            default:
-            case i : throw new IllegalStateException( "'asBoolean' should never be called on an indeterminate state");
-            }
-        }
-        
-        @Override
-        public String toString() {
-            return super.toString()+" "+desc;
-        }
-    }
-
-    /**
      * Get the identifier for this matcher.
      * <p>All matchers must have unique identifiers</p>
      * 
@@ -84,24 +50,10 @@ public interface IHeaderMatcher {
      * Attempts to match {@code line} and returns the State after
      * the match is attempted.
      * 
-     * @param line next line of text, not null
+     * @param headers the representations of the headers to check
      * @return the new state after the matching was attempted.
      */
-    State matches(String line);
-
-    /**
-     * Gets the final state for this matcher. This is called after the EOF on the
-     * input. At this point there should be no matchers in an {@code State.i} state.
-     */
-    State finalizeState();
-
-    /**
-     * Gets the the current state of the matcher. All matchers should be
-     * in {@code State.i} at the start.
-     * 
-     * @return the current state of the matcher.
-     */
-    State currentState();
+    boolean matches(IHeaders headers);
 
     /**
      * An IHeaderMatcher builder.

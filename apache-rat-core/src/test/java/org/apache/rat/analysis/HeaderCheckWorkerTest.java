@@ -38,8 +38,6 @@ public class HeaderCheckWorkerTest {
         final Document subject = new TestingLocation("subject");
         ILicense matcher = new TestingLicense();
         HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), matcher, subject);
-        assertFalse(worker.isFinished());
         worker.read();
-        assertTrue(worker.isFinished());
     }
 }

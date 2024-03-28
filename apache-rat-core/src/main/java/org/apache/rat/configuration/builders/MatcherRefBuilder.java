@@ -21,6 +21,7 @@ package org.apache.rat.configuration.builders;
 import java.util.Map;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 
 /**
  * A reference matching Matcher builder.
@@ -104,21 +105,9 @@ public class MatcherRefBuilder extends AbstractBuilder {
         }
 
         @Override
-        public State matches(String line) {
+        public boolean matches(IHeaders headers) {
             checkProxy();
-            return wrapped.matches(line);
-        }
-
-        @Override
-        public State currentState() {
-            checkProxy();
-            return wrapped.currentState();
-        }
-
-        @Override
-        public State finalizeState() {
-            checkProxy();
-            return wrapped.finalizeState();
+            return wrapped.matches(headers);
         }
     }
 

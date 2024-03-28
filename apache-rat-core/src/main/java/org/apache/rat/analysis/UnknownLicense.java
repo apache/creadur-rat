@@ -40,7 +40,7 @@ public class UnknownLicense implements ILicense {
     /**
      * Do not allow other constructions.
      */
-    private UnknownLicense() {
+    UnknownLicense() {
         family = new ILicenseFamilyBuilder().setLicenseFamilyCategory("?????")
                 .setLicenseFamilyName("Unknown license").build();
     }
@@ -56,18 +56,8 @@ public class UnknownLicense implements ILicense {
     }
 
     @Override
-    public State matches(String line) {
-        return State.f;
-    }
-
-    @Override
-    public State finalizeState() {
-        return State.f;
-    }
-
-    @Override
-    public State currentState() {
-        return State.f;
+    public boolean matches(IHeaders headers) {
+        return false;
     }
 
     @Override

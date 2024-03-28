@@ -19,6 +19,7 @@
 package org.apache.rat.analysis.matchers;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.analysis.IHeaders;
 
 /**
  * A simple text matching IHeaderMatcher implementation.
@@ -48,7 +49,7 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    public boolean doMatch(String line) {
-        return line.contains(pattern);
+    public boolean matches(IHeaders headers) {
+        return headers.raw().contains(pattern);
     }
 }

@@ -21,23 +21,26 @@ package org.apache.rat.analysis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 
 /**
- * Reads from a stream to check license.
- * <p>
- * <strong>Note</strong> that this class is not thread safe.
- * </p>
+ * Reads from a stream to check license. <p> <strong>Note</strong> that this
+ * class is not thread safe. </p>
  */
-class HeaderCheckWorker {
+public class HeaderCheckWorker {
 
-    /* TODO revisit this class.  It is only used in one place and can be moved inline as the DocumentHeaderAnalyser states.
-     * However, it may also be possible to make the entire set threadsafe so that multiple files can be checked simultaneously.
+    /*
+     * TODO revisit this class. It is only used in one place and can be moved inline
+     * as the DocumentHeaderAnalyser states. However, it may also be possible to
+     * make the entire set threadsafe so that multiple files can be checked
+     * simultaneously.
      */
     /**
      * The default number of header lines to read while looking for the license
@@ -50,13 +53,43 @@ class HeaderCheckWorker {
     private final ILicense license;
     private final Document document;
 
-    private int headerLinesToRead;
-    private boolean finished = false;
+    /**
+     * Read the input and perform the header check.
+     *
+     * @throws IOException on input failure
+     */
+    public static IHeaders readHeader(BufferedReader reader, int numberOfLines) throws IOException {
+        final StringBuilder headers = new StringBuilder();
+        int headerLinesRead = 0;
+        String line;
+
+        while (headerLinesRead < numberOfLines && (line = reader.readLine()) != null) {
+            headers.append(line).append("\n");
+        }
+        final String raw = headers.toString();
+        final String pruned = FullTextMatcher.prune(raw).toLowerCase(Locale.ENGLISH);
+        return new IHeaders() {
+            @Override
+            public String raw() {
+                return raw;
+            }
+
+            @Override
+            public String pruned() {
+                return pruned;
+            }
+
+            @Override
+            public String toString() {
+                return "HeaderCheckWorker";
+            }
+        };
+    }
 
     /**
      * Convenience constructor wraps given <code>Reader</code> in a
      * <code>BufferedReader</code>.
-     * 
+     *
      * @param reader The reader on the document. not null.
      * @param license The license to check against. not null.
      * @param name The document that is being checked. possibly null
@@ -67,7 +100,7 @@ class HeaderCheckWorker {
 
     /**
      * Constructs a check worker for the license against the specified document.
-     * 
+     *
      * @param reader The reader on the document. not null.
      * @param numberOfRetainedHeaderLine the maximum number of lines to read to find
      * the license information.
@@ -88,57 +121,22 @@ class HeaderCheckWorker {
     }
 
     /**
-     * @return {@code true} if the header check is complete.
-     */
-    public boolean isFinished() {
-        return finished;
-    }
-
-    /**
      * Read the input and perform the header check.
-     * 
+     *
      * @throws RatHeaderAnalysisException on IO Exception.
      */
     public void read() throws RatHeaderAnalysisException {
-        if (!finished) {
-            final StringBuilder headers = new StringBuilder();
-            headerLinesToRead = numberOfRetainedHeaderLines;
-            try {
-                while (readLine(headers)) {
-                    // do nothing
-                }
-                if (license.finalizeState().asBoolean()) {
-                    document.getMetaData().reportOnLicense(license);
-                } else {
-                    document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
-                    document.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, headers.toString()));
-                }
-            } catch (IOException e) {
-                throw new RatHeaderAnalysisException("Cannot read header for " + document, e);
+        try {
+            final IHeaders headers = readHeader(reader, numberOfRetainedHeaderLines);
+            if (license.matches(headers)) {
+                document.getMetaData().reportOnLicense(license);
+            } else {
+                document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
+                document.getMetaData().set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, headers.raw()));
             }
-            license.reset();
+        } catch (IOException e) {
+            throw new RatHeaderAnalysisException("Cannot read header for " + document, e);
         }
-        finished = true;
-    }
-
-    boolean readLine(StringBuilder headers) throws IOException {
-        String line = reader.readLine();
-        boolean result = line != null;
-        if (result) {
-            if (headerLinesToRead-- > 0) {
-                headers.append(line);
-                headers.append('\n');
-            }
-            switch (license.matches(line)) {
-            case t:
-                result = false;
-                break;
-            case f:
-            case i:
-                result = true;
-                break;
-            }
-        }
-        return result;
+        license.reset();
     }
 }
