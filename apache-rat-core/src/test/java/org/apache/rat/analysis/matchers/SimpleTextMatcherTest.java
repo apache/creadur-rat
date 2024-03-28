@@ -18,7 +18,8 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,8 @@ public class SimpleTextMatcherTest {
 
     @Test
     public void testMatch() {
-        assertEquals(false, target.matches(AbstractMatcherTest.makeHeaders("what in the world",null)));
-        assertEquals(true, target.matches(AbstractMatcherTest.makeHeaders("hello world",null)));
+        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("what in the world",null)));
+        assertTrue(target.matches(AbstractMatcherTest.makeHeaders("hello world",null)));
         target.reset();
     }
 

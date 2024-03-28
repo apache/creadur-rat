@@ -18,7 +18,8 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,8 +36,8 @@ public class SPDXMatcherTest {
 
     @Test
     public void testMatch() {
-        assertEquals(false, target.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: Apache-2", null)));
-        assertEquals(true, target.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: hello", null)));
+        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: Apache-2", null)));
+        assertTrue(target.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: hello", null)));
         target.reset();
     }
 }

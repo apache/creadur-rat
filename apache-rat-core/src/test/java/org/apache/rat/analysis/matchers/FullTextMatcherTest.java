@@ -18,21 +18,16 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Locale;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.rat.analysis.IHeaders;
-
 public class FullTextMatcherTest {
 
     FullTextMatcher target = new FullTextMatcher("Hello world");
-    
+
     @BeforeEach
     public void setup() {
         target.reset();
@@ -40,8 +35,8 @@ public class FullTextMatcherTest {
 
     @Test
     public void testMatch() {
-        assertEquals(false, target.matches(AbstractMatcherTest.makeHeaders(null, "what in the world")));
-        assertEquals(true, target.matches(AbstractMatcherTest.makeHeaders(null, "hello world")));
-        assertEquals(true, target.matches(AbstractMatcherTest.makeHeaders(null, "HELLO world")));
+        assertFalse(target.matches(AbstractMatcherTest.makeHeaders(null, "what in the world")));
+        assertTrue(target.matches(AbstractMatcherTest.makeHeaders(null, "hello world")));
+        assertTrue(target.matches(AbstractMatcherTest.makeHeaders(null, "HELLO world")));
     }
 }

@@ -18,7 +18,9 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
 public class SimpleCopyrightTests {
@@ -27,8 +29,8 @@ public class SimpleCopyrightTests {
     
     @Test
     public void testTrueIsAlwaysTrue() {
-        assertEquals( true, target.matches(AbstractMatcherTest.makeHeaders("hello Copyright 1999", null)));
-        assertEquals( false, target.matches(AbstractMatcherTest.makeHeaders("A non matching line",null)));
+        assertTrue(target.matches(AbstractMatcherTest.makeHeaders("hello Copyright 1999", null)));
+        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("A non matching line",null)));
         target.reset();
     }
 }
