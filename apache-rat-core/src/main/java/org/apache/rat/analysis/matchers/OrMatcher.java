@@ -21,29 +21,36 @@ package org.apache.rat.analysis.matchers;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
- * A matcher that performs a logical {@code OR} across all the contained matchers.
+ * A matcher that performs a logical {@code OR} across all the contained
+ * matchers.
  */
+@ConfigComponent(type = Component.Type.Matcher, name = "any", desc = "Returns true if at least one of the enclosed matchers return true.")
 public class OrMatcher extends AbstractMatcherContainer {
 
     private State lastState;
 
     /**
      * Constructs the matcher from the enclosed matchers.
+     *
      * @param enclosed the enclosed matchers.
      */
-    public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
-        this(null, enclosed);
+    public OrMatcher(Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        this(null, enclosed, resource);
     }
 
     /**
      * Constructs the matcher with the specified id from the enclosed matchers.
+     *
      * @param id the id to use.
      * @param enclosed the enclosed matchers.
      */
-    public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
-        super(id, enclosed);
+    public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        super(id, enclosed, resource);
         lastState = State.i;
     }
 

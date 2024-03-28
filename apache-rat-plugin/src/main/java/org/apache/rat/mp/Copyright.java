@@ -20,6 +20,7 @@ package org.apache.rat.mp;
 
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
 
 public class Copyright extends CopyrightBuilder {
@@ -37,7 +38,7 @@ public class Copyright extends CopyrightBuilder {
     }
 
     @Override
-    public IHeaderMatcher build() {
+    public CopyrightMatcher build() {
         setStart(start).setEnd(stop).setOwner(owner);
         return super.build();
     }

@@ -18,29 +18,42 @@
  */
 package org.apache.rat.license;
 
+import java.util.Collection;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
+import org.apache.rat.config.parameters.Component.Type;
+import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * A simple implementation of ILicense.
  */
-class SimpleLicense implements ILicense {
+@ConfigComponent(type=Component.Type.License)
+public class SimpleLicense implements ILicense {
 
+    
+    @ConfigComponent(type=Component.Type.BuilderParam, desc = "The family this license belongs to.", parameterType = ILicenseFamily.class)
     private ILicenseFamily family;
+    
+    @ConfigComponent(type=Component.Type.Unlabled, desc = "The matcher for this license.")
     private IHeaderMatcher matcher;
-    private String derivedFrom;
+    @ConfigComponent(type=Component.Type.Parameter, desc = "The notes about this license.")
     private String notes;
+    @ConfigComponent(type=Component.Type.Parameter, desc = "The name of this license.")
     private String name;
+    @ConfigComponent(type=Component.Type.Parameter, desc = "The ID for this license.")
     private String id;
 
-    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String derivedFrom, String notes, String name, String id) {
+    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String notes, String name,
+            String id) {
         Objects.requireNonNull(matcher, "Matcher must not be null");
-        Objects.requireNonNull(family, "Family must not be null");  
+        Objects.requireNonNull(family, "Family must not be null");
         this.family = family;
         this.matcher = matcher;
-        this.derivedFrom = derivedFrom;
         this.notes = notes;
         this.name = StringUtils.defaultIfBlank(name, family.getFamilyName());
         this.id = StringUtils.defaultIfBlank(id, family.getFamilyCategory().trim());
@@ -48,7 +61,7 @@ class SimpleLicense implements ILicense {
 
     @Override
     public String toString() {
-        return String.format( "%s:%s", getId(), getName());
+        return String.format("%s:%s", getId(), getName());
     }
 
     public ILicenseFamily getFamily() {
@@ -59,16 +72,13 @@ class SimpleLicense implements ILicense {
         this.family = family;
     }
 
+    @Override
     public IHeaderMatcher getMatcher() {
         return matcher;
     }
 
     public void setMatcher(IHeaderMatcher matcher) {
         this.matcher = matcher;
-    }
-
-    public void setDerivedFrom(String derivedFrom) {
-        this.derivedFrom = derivedFrom;
     }
 
     @Override
@@ -85,7 +95,7 @@ class SimpleLicense implements ILicense {
     public State matches(String line) {
         return matcher.matches(line);
     }
-    
+
     @Override
     public State finalizeState() {
         return matcher.finalizeState();
@@ -112,12 +122,12 @@ class SimpleLicense implements ILicense {
     }
 
     @Override
-    public String derivedFrom() {
-        return derivedFrom;
+    public String getName() {
+        return name;
     }
     
     @Override
-    public String getName() {
-        return name;
+    public Description getDescription() {
+        return DescriptionBuilder.build(this);
     }
 }

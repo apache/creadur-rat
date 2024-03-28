@@ -43,7 +43,7 @@ public class OrMatcherTest {
     public void trueTest() {
         IHeaderMatcher one = new TestingMatcher("one", false, false);
         IHeaderMatcher two = new TestingMatcher("two", false, true);
-        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
+        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two), null);
         assertValues(target, State.i, State.t, State.t);
         target.reset();
         assertEquals(State.i, one.currentState());
@@ -55,7 +55,7 @@ public class OrMatcherTest {
     public void falseTest() {
         IHeaderMatcher one = new TestingMatcher("one", false, false);
         IHeaderMatcher two = new TestingMatcher("two", false, false);
-        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
+        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two), null);
         assertValues(target, State.i, State.i, State.f);
         target.reset();
         assertEquals(State.i, one.currentState());
@@ -67,7 +67,7 @@ public class OrMatcherTest {
     public void indeterminentTest() {
         IHeaderMatcher one = new TestingMatcher("one", false, false);
         IHeaderMatcher two = new TestingMatcher("two", false, false);
-        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
+        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two), null);
         assertValues(target, State.i, State.i, State.f);
         target.reset();
         assertEquals(State.i, one.currentState());

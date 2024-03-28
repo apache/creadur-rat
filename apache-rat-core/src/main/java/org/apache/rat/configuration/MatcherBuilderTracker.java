@@ -19,6 +19,8 @@
 package org.apache.rat.configuration;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +36,10 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
  */
 public class MatcherBuilderTracker {
 
-    private static MatcherBuilderTracker INSTANCE;
+    /**
+     * The instance of the BuildTracker.
+     */
+    public static MatcherBuilderTracker INSTANCE;
 
     private final Map<String, Class<? extends AbstractBuilder>> matcherBuilders;
 
@@ -81,6 +86,11 @@ public class MatcherBuilderTracker {
     private MatcherBuilderTracker() {
         matcherBuilders = new HashMap<>();
     }
+    
+
+    public Collection<Class<? extends AbstractBuilder>> getClasses() {
+        return Collections.unmodifiableCollection(matcherBuilders.values());
+    }
 
     private void addBuilderImpl(String className, String name) {
         Objects.requireNonNull(className, "className may not be null");
@@ -93,7 +103,6 @@ public class MatcherBuilderTracker {
         if (AbstractBuilder.class.isAssignableFrom(clazz)) {
             @SuppressWarnings("unchecked")
             Class<? extends AbstractBuilder> candidate = (Class<? extends AbstractBuilder>) clazz;
-            // String name = attributes.get(AttributeName.name);
             if (StringUtils.isBlank(name)) {
                 name = candidate.getSimpleName();
                 if (!name.endsWith("Builder")) {

@@ -20,28 +20,43 @@ package org.apache.rat.analysis.matchers;
 
 import java.util.regex.Pattern;
 
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+
 /**
  * A simple regular expression matching IHeaderMatcher
  */
+@ConfigComponent(type = Component.Type.Matcher, name = "regex", desc = "Performs a regex match using the enclosed the text")
 public class SimpleRegexMatcher extends AbstractSimpleMatcher {
+    @ConfigComponent(type = Component.Type.Unlabled, desc = "", parameterType = Pattern.class)
     private final Pattern pattern;
 
     /**
-     * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.
-     * @param pattern the pattern to match.  Pattern will only match a single line from the input stream.
+     * Constructs a regex pattern matcher with a unique random id and the specified
+     * Regex pattern.
+     *
+     * @param pattern the pattern to match. Pattern will only match a single line
+     * from the input stream.
      */
     public SimpleRegexMatcher(Pattern pattern) {
         this(null, pattern);
     }
 
     /**
-     * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.
+     * Constructs a regex pattern matcher with a unique random id and the specified
+     * Regex pattern.
+     *
      * @param id the id for this matcher
-     * @param pattern the pattern to match.  Pattern will only match a single line from the input stream.
+     * @param pattern the pattern to match. Pattern will only match a single line
+     * from the input stream.
      */
     public SimpleRegexMatcher(String id, Pattern pattern) {
         super(id);
         this.pattern = pattern;
+    }
+
+    public String getPattern() {
+        return pattern.pattern();
     }
 
     @Override

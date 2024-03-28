@@ -17,13 +17,21 @@
 package org.apache.rat.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
@@ -97,5 +105,26 @@ public class ConfigurationReaderTest {
         checkMatcher("spdx", SpdxBuilder.class);
         checkMatcher("text", TextBuilder.class);
     }
-
+    
+    @Test
+    public void descriptionTest() throws NoSuchMethodException, SecurityException {
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        reader.read(url);
+        reader.readMatcherBuilders();
+        
+        IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
+        Description desc = DescriptionBuilder.buildMap(builder.builtClass());
+        assertNotNull( desc, () -> "did not build description for 'copyright'" );
+        assertEquals("copyright", desc.getCommonName());
+        assertEquals(Component.Type.Matcher, desc.getType());
+        assertFalse(desc.isCollection());
+        assertNull(desc.getChildType());
+        assertEquals("Matches copyright statements.", desc.getDescription());
+        assertEquals(4, desc.getChildren().size());
+        assertTrue(desc.getChildren().containsKey("stop"));
+        assertTrue(desc.getChildren().containsKey("start"));
+        assertTrue(desc.getChildren().containsKey("owner"));
+        assertTrue(desc.getChildren().containsKey("id"));
+    }
 }

@@ -19,19 +19,16 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
  * it to the full text of a given license (after reducing it to letters and
  * numbers as well).
  *
- * <p>
- * The text comparison is case insensitive but assumes only characters in the
- * US-ASCII charset are being matched.
- * </p>
+ * <p> The text comparison is case insensitive but assumes only characters in
+ * the US-ASCII charset are being matched. </p>
  */
-public class FullTextMatcher extends AbstractSimpleMatcher {
+public class FullTextMatcher extends SimpleTextMatcher {
 
     // Number of match characters assumed to be present on first line
     private static final int DEFAULT_INITIAL_LINE_LENGTH = 20;
@@ -45,21 +42,23 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
     private final StringBuilder buffer = new StringBuilder();
 
     /**
-     * Constructs the full text matcher with a unique random id and the specified text to match.
-     * @param fullText the text to match
+     * Constructs the full text matcher with a unique random id and the specified
+     * text to match.
+     *
+     * @param simpleText the text to match
      */
-    public FullTextMatcher(String fullText) {
-        this(null, fullText);
+    public FullTextMatcher(String simpleText) {
+        this(null, simpleText);
     }
 
     /**
      * Constructs the full text matcher for the specified text.
+     *
      * @param id the id for the matcher
      * @param fullText the text to match
      */
     public FullTextMatcher(String id, String fullText) {
-        super(id);
-        Objects.requireNonNull(fullText, "fullText may not be null");
+        super(id, fullText);
         int offset = fullText.indexOf('\n');
         if (offset == -1) {
             offset = Math.min(DEFAULT_INITIAL_LINE_LENGTH, fullText.length());
@@ -72,7 +71,7 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
 
     /**
      * Removes everything except letter or digit from text.
-     * 
+     *
      * @param text The text to remove extra chars from.
      * @return the pruned text.
      */
@@ -128,5 +127,4 @@ public class FullTextMatcher extends AbstractSimpleMatcher {
         buffer.setLength(0);
         seenFirstLine = false;
     }
-
 }

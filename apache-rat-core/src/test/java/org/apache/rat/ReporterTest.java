@@ -35,7 +35,6 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -58,7 +57,7 @@ public class ReporterTest {
         configuration.setOut(() -> out);
         Reporter.report(configuration);
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
-        
+
         XPath xPath = XPathFactory.newInstance().newXPath();
 
         XmlUtils.getNode(doc, xPath, "/rat-report[@timestamp]");
@@ -103,7 +102,7 @@ public class ReporterTest {
         out.flush();
         String document = out.toString();
 
-        assertTrue(document.startsWith(HEADER), "'Generated at' is present in " + document );
+        assertTrue(document.startsWith(HEADER), "'Generated at' is present in " + document);
 
         // final int generatedAtLineEnd = document.indexOf(NL, HEADER.length());
         find("^Notes: 2$", document);
@@ -113,10 +112,8 @@ public class ReporterTest {
         find("^Apache Licensed: 4$", document);
         find("^Generated Documents: 0$", document);
         find("^2 Unknown Licenses$", document);
-        find("^Files with unapproved licenses:\\s+"
-                + "src/test/resources/elements/Source.java\\s+" 
-                + "src/test/resources/elements/sub/Empty.txt\\s",
-                document);
+        find("^Files with unapproved licenses:\\s+" + "src/test/resources/elements/Source.java\\s+"
+                + "src/test/resources/elements/sub/Empty.txt\\s", document);
         find("^Archives:\\s+" + "\\+ src/test/resources/elements/dummy.jar\\s*", document);
         find("MIT\\s+src/test/resources/elements/ILoggerFactory.java", document);
         find("B\\s+src/test/resources/elements/Image.png", document);
@@ -134,7 +131,7 @@ public class ReporterTest {
     }
 
     private void find(String pattern, String document) {
-        assertTrue(
-                Pattern.compile(pattern, Pattern.MULTILINE).matcher(document).find(), () ->String.format("Could not find '%s'", pattern));
+        assertTrue(Pattern.compile(pattern, Pattern.MULTILINE).matcher(document).find(),
+                () -> String.format("Could not find '%s'", pattern));
     }
 }

@@ -18,6 +18,9 @@
  */
 package org.apache.rat.analysis;
 
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
@@ -28,19 +31,16 @@ import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
 
 /**
- * Performs explicit checks against a line from the header of a file.
- * For implementations that need to check multiple lines the implementation must cache the earlier lines.
+ * Performs explicit checks against a line from the header of a file. For
+ * implementations that need to check multiple lines the implementation must
+ * cache the earlier lines.
  */
-public interface IHeaderMatcher {
+public interface IHeaderMatcher extends Component {
     /**
-     * The state of the matcher.
-     * <ul>
-     * <li>{@code t} - The matcher has located a match.</li>
-     * <li>{@code f} - The matcher has determined that it will not match the
-     * document.</li>
-     * <li>{@code i} - The matcher can not yet determine if a matche is made or
-     * not.</li>
-     * </ul>
+     * The state of the matcher. <ul> <li>{@code t} - The matcher has located a
+     * match.</li> <li>{@code f} - The matcher has determined that it will not match
+     * the document.</li> <li>{@code i} - The matcher can not yet determine if a
+     * matche is made or not.</li> </ul>
      */
     enum State {
         t("true"), f("false"), i("indeterminent");
@@ -53,37 +53,40 @@ public interface IHeaderMatcher {
 
         public boolean asBoolean() {
             switch (this) {
-            case t : return true;
-            case f : return false;
+            case t:
+                return true;
+            case f:
+                return false;
             default:
-            case i : throw new IllegalStateException( "'asBoolean' should never be called on an indeterminate state");
+            case i:
+                throw new IllegalStateException("'asBoolean' should never be called on an indeterminate state");
             }
         }
-        
+
         @Override
         public String toString() {
-            return super.toString()+" "+desc;
+            return super.toString() + " " + desc;
         }
     }
 
     /**
-     * Get the identifier for this matcher.
-     * <p>All matchers must have unique identifiers</p>
-     * 
+     * Get the identifier for this matcher. <p>All matchers must have unique
+     * identifiers</p>
+     *
      * @return the Identifier for this matcher.
      */
     String getId();
 
     /**
-     * Resets this state {@code State.i}. 
-     * If text is being cached this method should clear that cache.
+     * Resets this state {@code State.i}. If text is being cached this method should
+     * clear that cache.
      */
     void reset();
 
     /**
-     * Attempts to match {@code line} and returns the State after
-     * the match is attempted.
-     * 
+     * Attempts to match {@code line} and returns the State after the match is
+     * attempted.
+     *
      * @param line next line of text, not null
      * @return the new state after the matching was attempted.
      */
@@ -92,13 +95,14 @@ public interface IHeaderMatcher {
     /**
      * Gets the final state for this matcher. This is called after the EOF on the
      * input. At this point there should be no matchers in an {@code State.i} state.
+     * @return the finalized state.
      */
     State finalizeState();
 
     /**
-     * Gets the the current state of the matcher. All matchers should be
-     * in {@code State.i} at the start.
-     * 
+     * Gets the the current state of the matcher. All matchers should be in
+     * {@code State.i} at the start.
+     *
      * @return the current state of the matcher.
      */
     State currentState();
@@ -113,6 +117,14 @@ public interface IHeaderMatcher {
          * @return a new IHeaderMatcher.
          */
         IHeaderMatcher build();
+
+        default Class<?> builtClass() throws NoSuchMethodException, SecurityException {
+            return this.getClass().getMethod("build").getReturnType();
+        }
+
+        default Description getDescription() throws NoSuchMethodException, SecurityException {
+            return DescriptionBuilder.buildMap(builtClass());
+        }
 
         /**
          * @return an instance of the standard TextBuilder.

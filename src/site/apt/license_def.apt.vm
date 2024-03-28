@@ -1,0 +1,143 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                   --------------------------
+                   How to define new licenses
+                   --------------------------
+
+How to define licenses in Apache Rat
+
+ All licenses in Apache Rat are defined in configuration files.  There is a default 
+ {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}
+ XML based configuration file}} that can server as a good example of various definitions.
+
+ It is possible to create new parsers for different configuration formats.  But that task is beyone the 
+ scope of this document.  In this document we will address how to define licenses in the default XML format.
+ 
+ The XML document has a root node named "rat-config" which comprises 4 major sections: "Families", 
+ "Licenses", "Approved" and "Matchers".
+ 
+* Families
+ 
+ Families are groups that define licenses that share similarities.  Each family has an id and a name, and example
+ of an entry in this section is
+ 
++------------------------------------------+
+ <rat-config>
+    <families>
+        <family id="AL" name="Apache License Version 2.0" />
+    </families>
+ </rat-config>
++------------------------------------------+
+ 
+* Matchers
+
+ Matchers define tests that check the contents of files for specific patterns.  Matchers are defined in Java
+ code and are required to have Builder classes that build them.  There is {{{./matcher_def.html}additional documentation 
+ explaining how to create new Matchers}}.  In the XML document Matchers are identified by the "matcher" element that has
+ a single "class" property.  The value of the "class" property is the fully qualified class name that 
+ identifies a Builder class.  An example of a matchers entry is
+ 
++------------------------------------------+
+ <rat-config>
+    <matchers>
+        <matcher class="org.apache.rat.configuration.builders.AnyBuilder" />
+        <matcher class="org.apache.rat.configuration.builders.SpdxBuilder" />
+        <matcher class="org.apache.rat.configuration.builders.TextBuilder" />
+    </matcher>
+ </rat-config>
++------------------------------------------+
+ 
+* Licenses
+
+ License elements have three properties: "family", "id", and "name". The family property must refer to
+ the "id" of a family element.  The family element can be defined in the current document or in another
+ included document.  It has to exist by the time all the configuration files are read.  The "id" element
+ is optional, if it is not provided the id will be set to the id of the associated family.  However, the 
+ "id" property must be unique across all licenses.  The "name" property is also optional.  If not specified
+ the name of the associated family will be used.  It is recommened that each license have a unique name
+ as name conflicts make problem determination difficult.
+ 
+ License elements have two child element types.  The first is "notes".  There may be multiple "notes" 
+ child elements.  They are simple text elements that define notes about the license.  The other element
+ is a Matcher type.  A matcher element is defined by a builder in the "matchers" section as described
+ above.  The matchers listed in the example above define the "any", "spdx", and "text" matcher elements.
+ 
+ When defining the license the matcher is required and only one may be defined.  However, there are matchers
+ that accept multiple matcher child nodes.  In the example below the CDDL1 license uses the "any" matcher.
+ The "any" matcher accepts multiple child matchers and will report a match if any of the enclosed matchers
+ report a match. In the example below the "any" matcher has "text" and "spdx" child matchers.  The "text"
+ matcher will match the enclosed text and the "spdx" matcher matches {{{https://spdx.org/licenses/}SPDX}}
+ tags.  The second license defined below is the "ILLUMOS" license.  It shares the same family as the CDDL1
+ license, has its own "id" and "name" properties.  It also has a "note" child element that tells the user
+ that it is a modified CDDL1 license.  The license has a single "text" matcher.
+ 
++------------------------------------------+
+ <rat-config>
+    <licenses>
+        <license family="CDDL1">
+            <any>
+                <text>The contents of this file are subject to the terms of the
+                    Common Development and Distribution License("CDDL") (the
+                    "License"). You may not use this file except in compliance
+                    with the License.</text>
+                <spdx name='CDDL-1.0' />
+            </any>
+        </license>
+
+        <license family="CDDL1" id="ILLUMOS" name="ILLUMOS CDDL1 Derived license">
+            <note>Modified CDDL1 license</note>
+            <text>The contents of this file are subject to the terms of
+                the Common Development and Distribution License (the
+                "License") You may not use this file except in compliance
+                with the License. </text>
+        </license>
+    </licenses>
+ </rat-config>
++------------------------------------------+
+ 
+* Approved 
+ 
+ Approved element lists the approved licenses from this configuration.  It is possible to define licenses
+ that you want to detect but not allow.  If the "approved" element is not present all defined families
+ are considered to be approved.  The approved entry has "family" child entries that have "license_ref"
+ properties that reference the "id" of the family being approved.
+ 
++------------------------------------------+
+ <rat-config>
+    <approved>
+        <family license_ref='AL' />
+    </approved>
+ </rat-config>
++------------------------------------------+
+
+* Listing components
+
+ All the components (Licenses and Matchers) defined in the system can be displayed using the Documentation
+ tool.  To run the too execute:
+
++------------------------------------------+
+java -jar apache-rat-${project.version}.jar org.apache.rat.Documentation
++------------------------------------------+
+
+ The tool take the same arguments as the standard rat CLI, so additional license files can be defined.
+ To display help for the tool execute 
+
++------------------------------------------+
+java -jar apache-rat-${project.version}.jar org.apache.rat.Documentation --help
++------------------------------------------+ 
+

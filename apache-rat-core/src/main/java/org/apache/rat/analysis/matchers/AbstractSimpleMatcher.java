@@ -19,17 +19,20 @@
 package org.apache.rat.analysis.matchers;
 
 /**
- * An abstract IHeaderMatcher that does simple matching.  Implementations need to implement the {@code doMatch(String)}
- * method to perform the actual matching.  All handling of the {@code State} is managed by this class.  By default the 
- * {@code finalizeState()} method will convert {@code State.i} to {@code State.f}.
+ * An abstract IHeaderMatcher that does simple matching. Implementations need to
+ * implement the {@code doMatch(String)} method to perform the actual matching.
+ * All handling of the {@code State} is managed by this class. By default the
+ * {@code finalizeState()} method will convert {@code State.i} to
+ * {@code State.f}.
  */
 public abstract class AbstractSimpleMatcher extends AbstractHeaderMatcher {
     private State lastState;
 
     /**
-     * Constructs the AbstractSimpleMatcher with the specified id.
-     * If the id is null or an empty string a unique random id will be generated.
-     * @param id the Id to use.  May be null.
+     * Constructs the AbstractSimpleMatcher with the specified id. If the id is null
+     * or an empty string a unique random id will be generated.
+     * 
+     * @param id the Id to use. May be null.
      */
     protected AbstractSimpleMatcher(String id) {
         super(id);
@@ -38,6 +41,7 @@ public abstract class AbstractSimpleMatcher extends AbstractHeaderMatcher {
 
     /**
      * Performs the actual match test.
+     * 
      * @param line the line to check.
      * @return {@code true} if the line matches, {@code false} otherwise.
      */

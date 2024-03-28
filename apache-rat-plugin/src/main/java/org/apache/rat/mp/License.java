@@ -32,9 +32,6 @@ public class License extends EnclosingMatcher {
     @Parameter(required = false)
     private String notes;
 
-    @Parameter(required = false)
-    private String derivedFrom;
-
     @Parameter(required = true)
     private String id;
     
@@ -53,7 +50,7 @@ public class License extends EnclosingMatcher {
     }
 
     public ILicense build(SortedSet<ILicenseFamily> context) {
-        return builder.setDerivedFrom(derivedFrom).setLicenseFamilyCategory(family).setId(id)
+        return builder.setLicenseFamilyCategory(family).setId(id)
                 .setName(name).setNotes(notes).build(context);
     }
 

@@ -50,17 +50,16 @@ public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
     public final boolean hasId() {
         return !StringUtils.isBlank(id);
     }
-    
+
     /**
      * @return the id as specified in the builder.
      */
     protected String getId() {
         return id;
     }
-    
+
     @Override
     public String toString() {
-        return String.format( "%s with id %s", this.getClass(), id);
+        return String.format("%s with id %s", this.getClass(), id);
     }
-
 }

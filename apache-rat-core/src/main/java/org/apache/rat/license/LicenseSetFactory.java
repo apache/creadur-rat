@@ -15,18 +15,23 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */package org.apache.rat.license;
+ */
+package org.apache.rat.license;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.Description;
+
 /**
- * Class to take a set of ILicenses and collection of approved license categories and extract Subsets.
+ * Class to take a set of ILicenses and collection of approved license
+ * categories and extract Subsets.
  */
 public class LicenseSetFactory {
-    
+
     /**
      * An enum that defines the types of Licenses to extract.
      */
@@ -37,12 +42,12 @@ public class LicenseSetFactory {
         approved,
         /** No licenses are returned */
         none;
-        
-    	/**
-    	 * Converts from a String to an enum value. 
-    	 * @param s String representation.
-    	 * @return given licenseFilter for the given String representation.
-    	 */
+
+        /**
+         * Converts from a String to an enum value.
+         * @param s String representation.
+         * @return given licenseFilter for the given String representation.
+         */
         static public LicenseFilter fromText(String s) {
             return LicenseFilter.valueOf(s.toLowerCase());
         }
@@ -50,9 +55,10 @@ public class LicenseSetFactory {
 
     private final SortedSet<ILicense> licenses;
     private final Collection<String> approvedLicenses;
-    
+
     /**
-     * Constructs a factory with the specified set of Licenses and the approved license collection.
+     * Constructs a factory with the specified set of Licenses and the approved
+     * license collection.
      * @param licenses the set of defined licenses.
      * @param approvedLicenses the list of approved licenses.
      */
@@ -60,7 +66,7 @@ public class LicenseSetFactory {
         this.licenses = licenses;
         this.approvedLicenses = approvedLicenses;
     }
-    
+
     /**
      * Create an empty sorted Set with proper comparator.
      * @return An empty sorted set of ILicense objects.
@@ -76,7 +82,7 @@ public class LicenseSetFactory {
      */
     private static SortedSet<ILicenseFamily> extractFamily(Collection<ILicense> licenses) {
         SortedSet<ILicenseFamily> result = new TreeSet<>();
-        licenses.stream().map( ILicense::getLicenseFamily ).forEach(result::add);
+        licenses.stream().map(ILicense::getLicenseFamily).forEach(result::add);
         return result;
     }
 
@@ -99,7 +105,7 @@ public class LicenseSetFactory {
             return Collections.emptySortedSet();
         }
     }
-    
+
     /**
      * Gets the LicenseFamily objects based on the filter.
      * @param filter the types of LicenseFamily objects to return.
@@ -112,15 +118,14 @@ public class LicenseSetFactory {
         case approved:
             SortedSet<ILicenseFamily> result = LicenseFamilySetFactory.emptyLicenseFamilySet();
             licenses.stream().map(ILicense::getLicenseFamily)
-            .filter(x -> approvedLicenses.contains(x.getFamilyCategory()))
-                    .forEach(result::add);
+                    .filter(x -> approvedLicenses.contains(x.getFamilyCategory())).forEach(result::add);
             return result;
         case none:
         default:
             return Collections.emptySortedSet();
         }
     }
-    
+
     /**
      * Gets the categories of LicenseFamily objects based on the filter.
      * @param filter the types of LicenseFamily objects to return.
@@ -130,8 +135,7 @@ public class LicenseSetFactory {
         SortedSet<String> result = new TreeSet<>();
         switch (filter) {
         case all:
-            licenses.stream().map(x -> x.getLicenseFamily().getFamilyCategory())
-                    .forEach(result::add);
+            licenses.stream().map(x -> x.getLicenseFamily().getFamilyCategory()).forEach(result::add);
             break;
         case approved:
             result.addAll(approvedLicenses);
@@ -145,7 +149,7 @@ public class LicenseSetFactory {
 
     /**
      * Search a SortedSet of licenses for the matching license id.
-     * 
+     *
      * @param licenseId the id to search for.
      * @param licenses the SortedSet of licenses to search.
      * @return the matching license or {@code null} if not found.
@@ -154,39 +158,34 @@ public class LicenseSetFactory {
         ILicenseFamily searchFamily = ILicenseFamily.builder().setLicenseFamilyCategory(licenseId)
                 .setLicenseFamilyName("searching proxy").build();
         ILicense target = new ILicense() {
-    
+
             @Override
             public String getId() {
                 return licenseId;
             }
-    
+
             @Override
             public void reset() {
                 // do nothing
             }
-    
+
             @Override
             public State matches(String line) {
                 return State.f;
             }
-    
+
             @Override
             public int compareTo(ILicense arg0) {
                 return searchFamily.compareTo(arg0.getLicenseFamily());
             }
-    
+
             @Override
             public ILicenseFamily getLicenseFamily() {
                 return searchFamily;
             }
-    
+
             @Override
             public String getNotes() {
-                return null;
-            }
-    
-            @Override
-            public String derivedFrom() {
                 return null;
             }
             
@@ -194,24 +193,29 @@ public class LicenseSetFactory {
             public String getName() {
                 return searchFamily.getFamilyName();
             }
-    
+
             @Override
             public State finalizeState() {
                 return State.f;
             }
-    
+
             @Override
             public State currentState() {
                 return State.f;
             }
-    
+
+            @Override
+            public IHeaderMatcher getMatcher() {
+                return null;
+            }
+
         };
         return search(target, licenses);
     }
 
     /**
      * Search a SortedSet of licenses for the matching license.
-     * 
+     *
      * @param target the license to search for.
      * @param licenses the SortedSet of licenses to search.
      * @return the matching license or {@code null} if not found.
@@ -220,5 +224,5 @@ public class LicenseSetFactory {
         SortedSet<ILicense> part = licenses.tailSet(target);
         return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
-    
+
 }

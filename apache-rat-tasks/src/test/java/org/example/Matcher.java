@@ -17,7 +17,10 @@
 package org.example;
 
 import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
 
+@ConfigComponent(type = Component.Type.Matcher, name = "myCustomMatcher", desc = "Custom matcher example")
 public class Matcher extends AbstractSimpleMatcher {
     public Matcher() {
         super("MyCustomMatcher");
@@ -27,5 +30,4 @@ public class Matcher extends AbstractSimpleMatcher {
     public boolean doMatch(String line) {
         return true;
     }
-
 }

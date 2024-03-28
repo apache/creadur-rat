@@ -469,6 +469,18 @@ public final class XmlWriter implements IXmlWriter {
         currentAttributes.clear();
         return this;
     }
+    
+    @Override
+    public IXmlWriter comment(final CharSequence text) throws IOException {
+        if (inElement) {
+            writer.write('>');
+        }
+        inElement = false;
+        writer.write("<!-- ");
+         content(text);
+         writer.write(" -->");
+         return this;
+    }
 
     /**
      * Writes an attribute of an element. Note that this is only allowed directly
