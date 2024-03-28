@@ -30,6 +30,7 @@ import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
 
 /**
  * Creates default analysers.
@@ -38,7 +39,7 @@ public class DefaultAnalyserFactory {
 
     /**
      * Creates a DocumentAnalyser from a collection of ILicenses.
-     * @param licenses The licenses to use in the Analyser.
+     * @param licenses The licenses to use in  the Analyser.
      * @return A document analyser that uses the provides licenses.
      */
     public static IDocumentAnalyser createDefaultAnalyser(Log log, Collection<ILicense> licenses) {
