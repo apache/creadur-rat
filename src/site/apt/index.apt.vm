@@ -63,6 +63,16 @@ Apache Rat
  {{{./issue-management.html}patch}} or
  {{{./mailing-lists.html}talk to us}}
  whenever Rat falls short.
+ 
+** How do I extend Rat
+ 
+ There are several standard ways to extend Rat.
+ 
+   * Add a {{{./license_def.html}license definition}} via an XML file.
+   
+   * Add a new Matcher definition. Requires Jave expertice.
+   
+   * Add a new definition format.  Requires java expertice as well as expertice with the format.
 
 ** Who Develops Rat?
 

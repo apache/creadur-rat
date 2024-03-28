@@ -33,7 +33,7 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
     /**
      * Constructs the simple text matcher for the simple string.
      *
-     * @param pattern The pattern to match. Will only match a single line from the
+     * @param simpleText The pattern to match. Will only match a single line from the
      * input stream.
      */
     public SimpleTextMatcher(String simpleText) {

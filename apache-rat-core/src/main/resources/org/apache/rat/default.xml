@@ -56,15 +56,12 @@
 			</any>
 		</license>
 
-		<license family="CDDL1" id="ILLUMOS" name="ILLUMOS CDDL1 Derived license"
-			derived_from='CDDL1'>
+		<license family="CDDL1" id="ILLUMOS" name="ILLUMOS CDDL1 Derived license">
 			<note>Modified CDDL1 license</note>
-			<any>
-				<text>The contents of this file are subject to the terms of
+			<text>The contents of this file are subject to the terms of
 					the Common Development and Distribution License (the
 					"License") You may not use this file except in compliance
 					with the License. </text>
-			</any>
 		</license>
 
 		<license family="BSD-3" id="DOJO" name="DOJO License" derived_from="BSD-3">
