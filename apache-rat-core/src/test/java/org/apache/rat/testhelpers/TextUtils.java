@@ -27,17 +27,22 @@ import java.util.regex.Pattern;
 public class TextUtils {
     public static final String[] EMPTY = {};
     
-    public static void assertPatternInOutput(String pPattern, String out) {
+    public static void assertPatternInOutput(String pattern, String out) {
         assertTrue(
-                isMatching(pPattern, out), ()->"Output does not match string: " + pPattern+"\n"+out);
+                isMatching(pattern, out), ()->"Output does not match string: " + pattern+"\n"+out);
     }
     
-    public static void assertPatternNotInOutput(String pPattern, String out) {
+    public static void assertPatternNotInOutput(String pattern, String out) {
         assertFalse(
-                isMatching(pPattern, out), ()->"Output matches the pattern: " + pPattern+"\n"+out);
+                isMatching(pattern, out), ()->"Output matches the pattern: " + pattern+"\n"+out);
     }
 
-   public static boolean isMatching(final String pPattern, final String pValue) {
-        return Pattern.compile(pPattern, Pattern.MULTILINE).matcher(pValue).find();
+   public static boolean isMatching(final String pattern, final String value) {
+        return Pattern.compile(pattern, Pattern.MULTILINE).matcher(value).find();
     }
+   
+   public static void find(String pattern, String document) {
+       assertTrue(
+               Pattern.compile(pattern, Pattern.MULTILINE).matcher(document).find(), () ->String.format("Could not find '%s'", pattern));
+   }
 }

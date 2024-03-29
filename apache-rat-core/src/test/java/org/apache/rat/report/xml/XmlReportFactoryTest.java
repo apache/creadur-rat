@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -90,14 +91,10 @@ public class XmlReportFactoryTest {
                 output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="), "Preamble and document element are OK");
 
         assertTrue( XmlUtils.isWellFormedXml(output), "Is well formed");
-        assertEquals(Integer.valueOf(2),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY), "Binary files");
-        assertEquals(Integer.valueOf(2),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE), "Notice files");
-        assertEquals(Integer.valueOf(6),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD), "Standard files");
-        assertEquals(Integer.valueOf(1),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE), "Archives");
+        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.binary)[0], "Binary files");
+        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.notice)[0], "Notice files");
+        assertEquals(8, statistic.getDocumentCategoryMap().get(Document.Type.standard)[0], "Standard files");
+        assertEquals(1, statistic.getDocumentCategoryMap().get(Document.Type.archive)[0], "Archives");
     }
 
     @Test

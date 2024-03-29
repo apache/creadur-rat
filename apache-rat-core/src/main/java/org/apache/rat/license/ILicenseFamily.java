@@ -22,6 +22,10 @@ package org.apache.rat.license;
  * The definition of the license family.
  */
 public interface ILicenseFamily extends Comparable<ILicenseFamily> {
+    
+    static final String GENTERATED_CATEGORY = "GEN  ";
+    static final String UNKNOWN_CATEGORY = "?????";
+    
     /**
      * @return the license family name.
      */

@@ -19,9 +19,13 @@
 
 package org.apache.rat.report.claim.impl;
 
+import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.claim.ClaimStatistic.Counter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,70 +37,60 @@ import java.util.Map;
  */
 public class ClaimAggregator extends AbstractClaimReporter {
     private final ClaimStatistic statistic;
-    private final Map<String, Integer> numsByLicenseFamilyName = new HashMap<>();
-    private final Map<String, Integer> numsByLicenseFamilyCode = new HashMap<>();
-    private final Map<String, Integer> numsByFileType = new HashMap<>();
-    private int numApproved, numUnApproved, numGenerated, numUnknown;
 
     public ClaimAggregator(ClaimStatistic pStatistic) {
         statistic = pStatistic;
     }
     
-    private void incMapValue(Map<String, Integer> pMap, String pKey) {
-        final Integer num = pMap.get(pKey);
-        final int newNum;
+    private <T> void incMapValue(Map<T, int[]> map, T key, int value) {
+        final int[] num = map.get(key);
+        
         if (num == null) {
-            newNum = 1;
+            map.put(key,new int[] {value});
         } else {
-            newNum = num + 1;
+            num[0]+= value;
         }
-        pMap.put(pKey, newNum);
     }
     
     @Override
-    protected void handleDocumentCategoryClaim(String documentCategoryName) {
-        incMapValue(numsByFileType, documentCategoryName);
+    protected void handleDocumentCategoryClaim(Document.Type documentType) {
+        incMapValue(statistic.getDocumentCategoryMap(), documentType, 1);
     }
 
     @Override
-    protected void handleApprovedLicenseClaim(String licenseApproved) {
-        if (MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE.equals(licenseApproved)) {
-            numApproved++;
+    protected void handleApprovedLicenseClaim(MetaData metadata) {
+        incValueMap( statistic.getCounterMap(), ClaimStatistic.Counter.Approved, metadata.approvedLicenses().count());
+        incValueMap( statistic.getCounterMap(), ClaimStatistic.Counter.Unapproved, metadata.unapprovedLicenses().count());
+    }
+
+    private void incValueMap(Map<Counter, int[]> map, Counter key, long value) {
+        final int[] num = map.get(key);
+        
+        if (num == null) {
+            map.put(key,new int[] {(int)value});
         } else {
-            numUnApproved++;
+            num[0]+= value;
         }
     }
 
     @Override
     protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
-        incMapValue(numsByLicenseFamilyName, licenseFamilyName);
+        incMapValue(statistic.getLicenseFileNameMap(), licenseFamilyName, 1);
     }
 
     @Override
-    protected void handleHeaderCategoryClaim(String headerCategory) {
-        
-        if (MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN.equals(headerCategory)) {
-            numGenerated++;
-            incMapValue(numsByLicenseFamilyCode, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_GEN);
-        } else if (MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN.equals(headerCategory)) {
-            numUnknown++;
-            incMapValue(numsByLicenseFamilyCode, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN);
+    protected void handleHeaderCategoryClaim(ILicense license) {
+        String category = license.getLicenseFamily().getFamilyCategory(); 
+        if (category.equals(ILicenseFamily.GENTERATED_CATEGORY)) {
+            incValueMap( statistic.getCounterMap(), Counter.Generated, 1);
+        } else if (category.equals(ILicenseFamily.UNKNOWN_CATEGORY)) {
+            incValueMap( statistic.getCounterMap(), Counter.Unknown, 1);
         }
-    }
-
-    public void fillClaimStatistic(ClaimStatistic pStatistic) {
-        pStatistic.setDocumentCategoryMap(numsByFileType);
-        pStatistic.setLicenseFileCodeMap(numsByLicenseFamilyCode);
-        pStatistic.setLicenseFileNameMap(numsByLicenseFamilyName);
-        pStatistic.setNumApproved(numApproved);
-        pStatistic.setNumGenerated(numGenerated);
-        pStatistic.setNumUnApproved(numUnApproved);
-        pStatistic.setNumUnknown(numUnknown);
+        incMapValue(statistic.getLicenseFamilyCodeMap(), category, 1);
     }
 
     @Override
     public void endReport() throws RatException {
         super.endReport();
-        fillClaimStatistic(statistic);
     }
 }
