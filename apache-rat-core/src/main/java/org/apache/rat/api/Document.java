@@ -26,7 +26,7 @@ import org.apache.rat.document.CompositeDocumentException;
 
 public interface Document {
     
-    enum Type {generated, unknown, archive, notice, binary, standard};
+    enum Type {generated, unknown, archive, notice, binary, standard}
 
     /**
      * @return the name of the current document.

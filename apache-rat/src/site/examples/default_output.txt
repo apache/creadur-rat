@@ -1,0 +1,67 @@
+
+*****************************************************
+Summary
+-------
+Generated at: 2024-03-29T15:01:24+01:00
+
+Notes: 2
+Binaries: 2
+Archives: 1
+Standards: 8
+
+Apache Licensed: 5
+Generated Documents: 1
+
+JavaDocs are generated, thus a license header is optional.
+Generated files do not require license headers.
+
+2 Unknown Licenses
+
+*****************************************************
+
+Files with unapproved licenses:
+
+  src/test/resources/elements/Source.java
+  src/test/resources/elements/sub/Empty.txt
+
+*****************************************************
+
+*****************************************************
+  Documents with unapproved licenses will start with a '!'
+  The next character identifies the document type.
+   
+   char         type
+    a       Archive file
+    b       Binary file
+    g       Generated file
+    n       Notice file
+    s       Standard file
+    u       Unknown file.
+  
+ s src/test/resources/elements/ILoggerFactory.java
+    MIT   The MIT License
+ b src/test/resources/elements/Image.png
+ n src/test/resources/elements/LICENSE
+ n src/test/resources/elements/NOTICE
+!s src/test/resources/elements/Source.java
+    ????? Unknown license
+ s src/test/resources/elements/Text.txt
+    AL    Apache License Version 2.0
+ s src/test/resources/elements/TextHttps.txt
+    AL    Apache License Version 2.0
+ s src/test/resources/elements/Xml.xml
+    AL    Apache License Version 2.0
+ s src/test/resources/elements/buildr.rb
+    AL    Apache License Version 2.0
+ a src/test/resources/elements/dummy.jar
+ g src/test/resources/elements/generated.txt
+    GEN   Generated Files
+ b src/test/resources/elements/plain.json
+ s src/test/resources/elements/tri.txt
+    AL    Apache License Version 2.0
+    BSD-3 BSD 3 clause
+    TMF   The Telemanagement Forum License
+!s src/test/resources/elements/sub/Empty.txt
+    ????? Unknown license
+
+*****************************************************
