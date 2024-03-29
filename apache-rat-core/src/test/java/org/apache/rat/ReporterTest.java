@@ -136,9 +136,8 @@ public class ReporterTest {
         out.flush();
         String document = out.toString();
 
-        assertTrue(document.startsWith(HEADER), "'Generated at' is present in " + document );
+        assertTrue(document.startsWith(HEADER), "'Generated at' is not present in " + document );
 
-        // final int generatedAtLineEnd = document.indexOf(NL, HEADER.length());
         TextUtils.assertPatternInOutput("^Notes: 2$", document);
         TextUtils.assertPatternInOutput("^Binaries: 2$", document);
         TextUtils.assertPatternInOutput("^Archives: 1$", document);
@@ -163,35 +162,31 @@ public class ReporterTest {
         TextUtils.assertPatternInOutput("^ b \\Qsrc/test/resources/elements/plain.json\\E", document);
         TextUtils.assertPatternInOutput("^ s \\Qsrc/test/resources/elements/tri.txt\\E$\\s+^    AL    Apache License Version 2.0$\\s+    BSD-3 BSD 3 clause$\\s+    TMF   The Telemanagement Forum License$", document);
         TextUtils.assertPatternInOutput("^\\Q!s src/test/resources/elements/sub/Empty.txt\\E$\\s+^    \\Q?????\\E Unknown license", document);
-        /*
-        
-        s src/test/resources/elements/ILoggerFactory.java
-        MIT   The MIT License
-     b src/test/resources/elements/Image.png
-     n src/test/resources/elements/LICENSE
-     n src/test/resources/elements/NOTICE
-    !s src/test/resources/elements/Source.java
-        ????? Unknown license
-     s src/test/resources/elements/Text.txt
-        AL    Apache License Version 2.0
-     s src/test/resources/elements/TextHttps.txt
-        AL    Apache License Version 2.0
-     s src/test/resources/elements/Xml.xml
-        AL    Apache License Version 2.0
-     s src/test/resources/elements/buildr.rb
-        AL    Apache License Version 2.0
-     a src/test/resources/elements/dummy.jar
-     g src/test/resources/elements/generated.txt
-        GEN   Generated Files
-     b src/test/resources/elements/plain.json
-     s src/test/resources/elements/tri.txt
-        AL    Apache License Version 2.0
-        BSD-3 BSD 3 clause
-        TMF   The Telemanagement Forum License
-    !s src/test/resources/elements/sub/Empty.txt
-        ????? Unknown license
-        */
     }
+    
+    
+    @Test
+    public void UnapprovedLicensesReportTest() throws Exception {
+        Defaults defaults = Defaults.builder().build();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+        configuration.setFrom(defaults);
+        configuration.setReportable(new DirectoryWalker(new File(elementsPath), HiddenFileFilter.HIDDEN));
+        configuration.setOut(() -> out);
+        configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
+        Reporter.report(configuration);
+
+        out.flush();
+        String document = out.toString();
+
+        assertTrue(document.startsWith("Generated at: "), "'Generated at' is not present in " + document );
+
+        TextUtils.assertPatternInOutput("\\Qsrc/test/resources/elements/Source.java\\E$", document);
+        TextUtils.assertPatternInOutput("\\Qsrc/test/resources/elements/sub/Empty.txt\\E", document);
+    }
+    
 
     private class LicenseInfo {
         String id;

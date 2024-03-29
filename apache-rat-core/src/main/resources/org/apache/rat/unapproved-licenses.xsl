@@ -20,8 +20,9 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output method='text'/>
-<xsl:template match='/'>Files with unapproved licenses:
-<xsl:for-each select='descendant::resource[license-approval/@name="false"]'>
+<xsl:template match='/'>Generated at: <xsl:value-of select='rat-report/@timestamp'/>
+Files with unapproved licenses:
+<xsl:for-each select='descendant::resource[license[@approval="false"]]'>
   <xsl:text>  </xsl:text>
   <xsl:value-of select='@name'/>
   <xsl:text>

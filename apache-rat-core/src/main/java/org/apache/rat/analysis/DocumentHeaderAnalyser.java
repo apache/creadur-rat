@@ -18,17 +18,16 @@
  */
 package org.apache.rat.analysis;
 
+import static java.lang.String.format;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.utils.Log;
-
-import static java.lang.String.format;
 
 /**
  * A Document analyzer that analyses document headers for a license.
@@ -42,7 +41,7 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
     /**
      * Constructs the HeaderAnalyser for the specific license.
-     * 
+     *
      * @param license The license to analyse
      */
     public DocumentHeaderAnalyser(final Log log, final Collection<ILicense> licenses) {
@@ -58,10 +57,10 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
             HeaderCheckWorker worker = new HeaderCheckWorker(reader, licenses, document);
             worker.read();
         } catch (IOException e) {
-            log.warn(String.format("Can not read header of %s",document));
+            log.warn(String.format("Can not read header of %s", document));
             document.getMetaData().setDocumentType(Document.Type.unknown);
         } catch (RatHeaderAnalysisException e) {
-            log.warn(String.format("Can not process header of %s",document));
+            log.warn(String.format("Can not process header of %s", document));
             document.getMetaData().setDocumentType(Document.Type.unknown);
         }
     }

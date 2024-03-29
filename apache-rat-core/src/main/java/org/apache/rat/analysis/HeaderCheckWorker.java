@@ -28,7 +28,6 @@ import java.util.Objects;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -132,14 +131,14 @@ public class HeaderCheckWorker {
             final IHeaders headers = readHeader(reader, numberOfRetainedHeaderLines);
             licenses.stream().filter(lic -> lic.matches(headers)).forEach(document.getMetaData()::reportOnLicense);
             if (document.getMetaData().detectedLicense()) {
-                if (document.getMetaData().licenses().anyMatch( lic -> lic.getLicenseFamily().getFamilyCategory().equals(ILicenseFamily.GENTERATED_CATEGORY))) {
+                if (document.getMetaData().licenses().anyMatch(
+                        lic -> ILicenseFamily.GENTERATED_CATEGORY.equals(lic.getLicenseFamily().getFamilyCategory()))) {
                     document.getMetaData().setDocumentType(Document.Type.generated);
                 }
-            }
-            else {
+            } else {
                 document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
                 document.getMetaData().setSampleHeader(headers.raw());
-            } 
+            }
         } catch (IOException e) {
             throw new RatHeaderAnalysisException("Cannot read header for " + document, e);
         } finally {
