@@ -20,22 +20,33 @@ package org.apache.rat;
 
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
+import org.apache.rat.testhelpers.TextUtils;
+import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class ReportTest {
     @Test
@@ -69,21 +80,105 @@ public class ReportTest {
     @Test
     public void testDefaultOutput() throws Exception {
         
+        File output = new File("target/sysout");
+        output.delete();
         PrintStream origin = System.out;
         try {
-            File output = new File("target/sysout");
             System.setOut(new PrintStream(output));
             CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{});
             ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
             Reporter.report(config);
-            assertTrue(output.exists());
-            String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
-            assertTrue(content.contains("2 Unknown Licenses"));
-            assertTrue(content.contains("target/test-classes/elements/Source.java"));
-            assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
         } finally {
             System.setOut(origin);
         }
+            assertTrue(output.exists());
+            String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
+            TextUtils.isMatching("Notes: 2$", content);
+            TextUtils.isMatching("Binaries: 2$", content);
+            TextUtils.isMatching("Archives: 1$", content);
+            TextUtils.isMatching("Standards: 8$", content);
+            TextUtils.isMatching("Apache Licensed: 5$", content);
+            TextUtils.isMatching("Generated Documents 1$", content);
+            TextUtils.isMatching("^2 Unknown licenses", content);
+            assertTrue(content.contains(" s target/test-classes/elements/ILoggerFactory.java"));
+            assertTrue(content.contains(" b target/test-classes/elements/Image.png"));
+            assertTrue(content.contains(" n target/test-classes/elements/LICENSE"));
+            assertTrue(content.contains(" n target/test-classes/elements/NOTICE"));
+            assertTrue(content.contains("!s target/test-classes/elements/Source.java"));
+            assertTrue(content.contains(" s target/test-classes/elements/Text.txt"));
+            assertTrue(content.contains(" s target/test-classes/elements/TextHttps.txt"));
+            assertTrue(content.contains(" s target/test-classes/elements/Xml.xml"));
+            assertTrue(content.contains(" s target/test-classes/elements/buildr.rb"));
+            assertTrue(content.contains(" a target/test-classes/elements/dummy.jar"));
+            assertTrue(content.contains(" b target/test-classes/elements/plain.json"));
+            assertTrue(content.contains("!s target/test-classes/elements/sub/Empty.txt"));
+            assertTrue(content.contains(" s target/test-classes/elements/tri.txt"));
+            assertTrue(content.contains(" g target/test-classes/elements/generated.txt"));
     }
 
+    @Test    
+    public void testXMLOutput() throws Exception {
+        
+        File output = new File("target/sysout");
+        output.delete();
+        PrintStream origin = System.out;
+        try {
+            System.setOut(new PrintStream(output));
+            CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{"-x"});
+            ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
+            Reporter.report(config);
+        } finally {
+            System.setOut(origin);
+        }
+            assertTrue(output.exists());
+            String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
+            Document doc = XmlUtils.toDom(new FileInputStream(output));
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            
+            NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@approval='false']");
+            assertEquals(2, nodeList.getLength());
+
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='AL']");
+            assertEquals(5, nodeList.getLength());
+
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='MIT']");
+            assertEquals(1, nodeList.getLength());
+            
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='BSD-3']");
+            assertEquals(1, nodeList.getLength());
+            
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='TMF']");
+            assertEquals(1, nodeList.getLength());
+            
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='?????']");
+            assertEquals(2, nodeList.getLength());
+
+            // generated, unknown, archive, notice, binary, standard
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='standard']");
+            assertEquals(8, nodeList.getLength());
+
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='archive']");
+            assertEquals(1, nodeList.getLength());
+
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='binary']");
+            assertEquals(2, nodeList.getLength());
+
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='generated']");
+            assertEquals(1, nodeList.getLength());
+
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='unknown']");
+            assertEquals(0, nodeList.getLength());
+
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='notice']");
+            assertEquals(2, nodeList.getLength());
+            
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/sample");
+            assertEquals(1, nodeList.getLength());
+            
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='generated']/license/notes");
+            assertEquals(1,nodeList.getLength());
+            
+            nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='target/test-classes/elements/Source.java']/sample");
+            assertEquals(1,nodeList.getLength());
+    }
 }

@@ -31,19 +31,49 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
  * Tests the output of the Reporter.
  */
 public class ReporterTest {
+    
+    /**
+     * Finds a node via xpath on the document. And then checks family, approval and
+     * type of elements of the node.
+     * 
+     * @param doc The document to check/
+     * @param xpath the XPath instance to use.
+     * @param resource the xpath statement to locate the node.
+     * @param id the expected family for the node (may be null)
+     * @param approval the expected approval value (may be null)
+     * @param type the type of resource located.
+     * @throws Exception on XPath error.
+     */
+    public static void checkNode(Document doc, XPath xpath, String resource, LicenseInfo licenseInfo, String type, boolean hasSample) throws Exception {
+        XmlUtils.getNode(doc, xpath, String.format("/rat-report/resource[@name='%s'][@type='%s']", resource, type));
+        if (licenseInfo != null) {
+            XmlUtils.getNode(doc, xpath, String.format("/rat-report/resource[@name='%s'][@type='%s']/license[@id='%s'][@family='%s']",resource, type, licenseInfo.id, licenseInfo.family));
+            XmlUtils.getNode(doc, xpath, String.format("/rat-report/resource[@name='%s'][@type='%s']/license[@id='%s'][@approval='%s']", resource, type, licenseInfo.id, Boolean.toString(licenseInfo.approval)));
+            if (licenseInfo.hasNotes) {
+                XmlUtils.getNode(doc, xpath, String.format("/rat-report/resource[@name='%s'][@type='%s']/license[@id='%s']/notes", resource, type, licenseInfo.id));
+            }
+        }
+        if (hasSample) {
+            XmlUtils.getNode(doc, xpath, String.format("/rat-report/resource[@name='%s'][@type='%s']/sample", resource, type));
+        }
+    }
+
 
     @Test
     public void xmlReportTest() throws Exception {
@@ -58,27 +88,30 @@ public class ReporterTest {
         configuration.setOut(() -> out);
         Reporter.report(configuration);
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
-        
+
         XPath xPath = XPathFactory.newInstance().newXPath();
 
         XmlUtils.getNode(doc, xPath, "/rat-report[@timestamp]");
 
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", "MIT", "true", "standard");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, null, "binary");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, null, "notice");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, null, "notice");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Source.java", "?????", "false", "standard");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Text.txt", "AL", "true", "standard");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", "AL", "true", "standard");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", "AL", "true", "standard");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", "AL", "true", "standard");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, null, "archive");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, null, "binary");
-        XmlUtils.checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", "?????", "false", "standard");
-
+        LicenseInfo apacheLic = new LicenseInfo("AL", true, false);
+        checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", new LicenseInfo("MIT", true, false), "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, "binary", false);
+        checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, "notice", false);
+        checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, "notice", false);
+        checkNode(doc, xPath, "src/test/resources/elements/Source.java", new LicenseInfo("?????", false, false), "standard", true);
+        checkNode(doc, xPath, "src/test/resources/elements/Text.txt", apacheLic, "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", apacheLic, "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", apacheLic, "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", apacheLic, "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, "archive", false);
+        checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "binary", false);
+        checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", new LicenseInfo("?????", false, false), "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/tri.txt", apacheLic, "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/tri.txt", new LicenseInfo("BSD-3", true, false), "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/tri.txt", new LicenseInfo("TMF", "BSD-3", true, false), "standard", false);
+        checkNode(doc, xPath, "src/test/resources/elements/generated.txt", new LicenseInfo("GEN", true, true), "generated", false);
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
-        assertEquals(12, nodeList.getLength());
-
+        assertEquals(14, nodeList.getLength());
     }
 
     private static final String NL = System.getProperty("line.separator");
@@ -89,7 +122,7 @@ public class ReporterTest {
             "Generated at: ";
 
     @Test
-    public void plainReportWithArchivesAndUnapprovedLicenses() throws Exception {
+    public void plainReportTest() throws Exception {
         Defaults defaults = Defaults.builder().build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -106,35 +139,75 @@ public class ReporterTest {
         assertTrue(document.startsWith(HEADER), "'Generated at' is present in " + document );
 
         // final int generatedAtLineEnd = document.indexOf(NL, HEADER.length());
-        find("^Notes: 2$", document);
-        find("^Binaries: 2$", document);
-        find("^Archives: 1$", document);
-        find("^Standards: 7$", document);
-        find("^Apache Licensed: 4$", document);
-        find("^Generated Documents: 0$", document);
-        find("^2 Unknown Licenses$", document);
-        find("^Files with unapproved licenses:\\s+"
-                + "src/test/resources/elements/Source.java\\s+" 
-                + "src/test/resources/elements/sub/Empty.txt\\s",
+        TextUtils.assertPatternInOutput("^Notes: 2$", document);
+        TextUtils.assertPatternInOutput("^Binaries: 2$", document);
+        TextUtils.assertPatternInOutput("^Archives: 1$", document);
+        TextUtils.assertPatternInOutput("^Standards: 8$", document);
+        TextUtils.assertPatternInOutput("^Apache Licensed: 5$", document);
+        TextUtils.assertPatternInOutput("^Generated Documents: 1$", document);
+        TextUtils.assertPatternInOutput("^2 Unknown Licenses$", document);
+        TextUtils.assertPatternInOutput("^Files with unapproved licenses:\\s+"
+                + "\\Qsrc/test/resources/elements/Source.java\\E\\s+" 
+                + "\\Qsrc/test/resources/elements/sub/Empty.txt\\E\\s",
                 document);
-        find("^Archives:\\s+" + "\\+ src/test/resources/elements/dummy.jar\\s*", document);
-        find("MIT\\s+src/test/resources/elements/ILoggerFactory.java", document);
-        find("B\\s+src/test/resources/elements/Image.png", document);
-        find("N\\s+src/test/resources/elements/LICENSE", document);
-        find("N\\s+src/test/resources/elements/NOTICE", document);
-        find("!\\Q?????\\E\\s+src/test/resources/elements/Source.java", document);
-        find("AL\\s+src/test/resources/elements/Text.txt", document);
-        find("AL\\s+src/test/resources/elements/TextHttps.txt", document);
-        find("AL\\s+src/test/resources/elements/Xml.xml", document);
-        find("AL\\s+src/test/resources/elements/buildr.rb", document);
-        find("A\\s+src/test/resources/elements/dummy.jar", document);
-        find("B\\s+src/test/resources/elements/plain.json", document);
-        find("!\\Q?????\\E\\s+src/test/resources/elements/sub/Empty.txt", document);
-        find("== File: src/test/resources/elements/sub/Empty.txt", document);
+        TextUtils.assertPatternInOutput("^ a \\Qsrc/test/resources/elements/dummy.jar\\E", document);
+        TextUtils.assertPatternInOutput("^ s \\Qsrc/test/resources/elements/ILoggerFactory.java\\E$\\s+^    MIT   The MIT License$", document);
+        TextUtils.assertPatternInOutput("^ b \\Qsrc/test/resources/elements/Image.png\\E", document);
+        TextUtils.assertPatternInOutput("^ n \\Qsrc/test/resources/elements/LICENSE\\E", document);
+        TextUtils.assertPatternInOutput("^ n \\Qsrc/test/resources/elements/NOTICE\\E", document);
+        TextUtils.assertPatternInOutput("^\\Q!s src/test/resources/elements/Source.java\\E$\\s+^    \\Q?????\\E Unknown license$", document);
+        TextUtils.assertPatternInOutput("^ s \\Qsrc/test/resources/elements/Text.txt\\E$\\s+^    AL    Apache License Version 2.0$", document);
+        TextUtils.assertPatternInOutput("^ s \\Qsrc/test/resources/elements/Xml.xml\\E$\\s+^    AL    Apache License Version 2.0$", document);
+        TextUtils.assertPatternInOutput("^ s \\Qsrc/test/resources/elements/buildr.rb\\E$\\s+^    AL    Apache License Version 2.0$", document);
+        TextUtils.assertPatternInOutput("^ s \\Qsrc/test/resources/elements/TextHttps.txt\\E$\\s+^    AL    Apache License Version 2.0$", document);
+        TextUtils.assertPatternInOutput("^ b \\Qsrc/test/resources/elements/plain.json\\E", document);
+        TextUtils.assertPatternInOutput("^ s \\Qsrc/test/resources/elements/tri.txt\\E$\\s+^    AL    Apache License Version 2.0$\\s+    BSD-3 BSD 3 clause$\\s+    TMF   The Telemanagement Forum License$", document);
+        TextUtils.assertPatternInOutput("^\\Q!s src/test/resources/elements/sub/Empty.txt\\E$\\s+^    \\Q?????\\E Unknown license", document);
+        /*
+        
+        s src/test/resources/elements/ILoggerFactory.java
+        MIT   The MIT License
+     b src/test/resources/elements/Image.png
+     n src/test/resources/elements/LICENSE
+     n src/test/resources/elements/NOTICE
+    !s src/test/resources/elements/Source.java
+        ????? Unknown license
+     s src/test/resources/elements/Text.txt
+        AL    Apache License Version 2.0
+     s src/test/resources/elements/TextHttps.txt
+        AL    Apache License Version 2.0
+     s src/test/resources/elements/Xml.xml
+        AL    Apache License Version 2.0
+     s src/test/resources/elements/buildr.rb
+        AL    Apache License Version 2.0
+     a src/test/resources/elements/dummy.jar
+     g src/test/resources/elements/generated.txt
+        GEN   Generated Files
+     b src/test/resources/elements/plain.json
+     s src/test/resources/elements/tri.txt
+        AL    Apache License Version 2.0
+        BSD-3 BSD 3 clause
+        TMF   The Telemanagement Forum License
+    !s src/test/resources/elements/sub/Empty.txt
+        ????? Unknown license
+        */
     }
 
-    private void find(String pattern, String document) {
-        assertTrue(
-                Pattern.compile(pattern, Pattern.MULTILINE).matcher(document).find(), () ->String.format("Could not find '%s'", pattern));
+    private class LicenseInfo {
+        String id;
+        String family;
+        boolean approval;
+        boolean hasNotes;
+        
+        LicenseInfo(String id, boolean approval, boolean hasNotes) {
+            this(id, id, approval, hasNotes);
+        }
+        
+        LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
+            this.id = id;
+            this.family = ILicenseFamily.makeCategory(family);
+            this.approval = approval;
+            this.hasNotes = hasNotes;
+        }
     }
 }

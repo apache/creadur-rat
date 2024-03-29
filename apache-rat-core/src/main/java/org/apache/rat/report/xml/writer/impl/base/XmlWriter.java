@@ -514,6 +514,17 @@ public final class XmlWriter implements IXmlWriter {
         writeEscaped(content, true);
     }
 
+    private void prepareForData() throws IOException {
+        if (elementNames.isEmpty()) {
+            if (elementsWritten) {
+                throw new OperationNotAllowedException("Root element has already been closed.");
+            } 
+            throw new OperationNotAllowedException("An element must be opened before content can be written.");
+        }
+        if (inElement) {
+            writer.write('>');
+        }
+    }
     /**
      * Writes content. Calling this method will automatically Note that this method
      * does not use CDATA.
@@ -525,23 +536,30 @@ public final class XmlWriter implements IXmlWriter {
      */
     @Override
     public IXmlWriter content(CharSequence content) throws IOException {
-        if (elementNames.isEmpty()) {
-            if (elementsWritten) {
-                throw new OperationNotAllowedException("Root element has already been closed.");
-            } 
-            throw new OperationNotAllowedException("An element must be opened before content can be written.");
-        }
-        if (inElement) {
-            writer.write('>');
-        }
-        writeBodyContent(content);
+        prepareForData();
+        writeEscaped(content, false);
         inElement = false;
         return this;
     }
 
-    private void writeBodyContent(final CharSequence content) throws IOException {
-        writeEscaped(content, false);
+    
+    /**
+     * Writes content. Calling this method will automatically Note that this method
+     * does not use CDATA.
+     *
+     * @param content the content to write
+     * @return this object
+     * @throws OperationNotAllowedException if called before any call to
+     * {@link #openElement} or after the first element has been closed
+     */
+    @Override
+    public IXmlWriter cdata(CharSequence content) throws IOException {
+        prepareForData();
+        writer.write(String.format("<![CDATA[ %s ]]>",content));
+        inElement = false;
+        return this;
     }
+
 
     private void writeEscaped(final CharSequence content, boolean isAttributeContent) throws IOException {
         final int length = content.length();

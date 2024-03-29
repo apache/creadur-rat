@@ -33,21 +33,21 @@ public class UnknownLicense implements ILicense {
     /**
      * The single instance of this class.
      */
-    static final UnknownLicense INSTANCE = new UnknownLicense();
+    public static final UnknownLicense INSTANCE = new UnknownLicense();
     
     private final ILicenseFamily family ;
     
     /**
      * Do not allow other constructions.
      */
-    UnknownLicense() {
-        family = new ILicenseFamilyBuilder().setLicenseFamilyCategory("?????")
+    private UnknownLicense() {
+        family = new ILicenseFamilyBuilder().setLicenseFamilyCategory(ILicenseFamily.UNKNOWN_CATEGORY)
                 .setLicenseFamilyName("Unknown license").build();
     }
     
     @Override
     public String getId() {
-        return "?????";
+        return ILicenseFamily.UNKNOWN_CATEGORY;
     }
 
     @Override

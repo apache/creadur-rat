@@ -81,37 +81,20 @@ abstract public class AbstractLicenseTest {
     @MethodSource("parameterProvider")
     public void testMatchProcessing(String id, String familyPattern, String name, String notes, String[][] targets) throws IOException {
         ILicense license = extractCategory(id);
-        String family = ILicenseFamily.makeCategory(familyPattern);
-            try {
-                for (String[] target : targets) {
-                    if (processText(license, target[TEXT])) {
-                        data.reportOnLicense(license);
-                        assertNotNull(data.get(MetaData.RAT_URL_HEADER_CATEGORY),"No URL HEADER CATEGORY");
-                        assertEquals(family,
-                                data.get(MetaData.RAT_URL_HEADER_CATEGORY).getValue(), license.toString());
-                        assertNotNull(data.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY), "No URL LICENSE FAMILY CATEGORY");
-                        assertEquals(family,
-                                data.get(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY).getValue(), license.toString());
-                        if (StringUtils.isNotBlank(notes)) {
-                            assertNotNull(data.get(MetaData.RAT_URL_HEADER_SAMPLE), "No URL HEADER SAMPLE");
-                            assertEquals(FullTextMatcher.prune(notes),
-                                    FullTextMatcher.prune(data.get(MetaData.RAT_URL_HEADER_SAMPLE).getValue()), license.toString());
-                        } else {
-                            assertNull(data.get(MetaData.RAT_URL_HEADER_SAMPLE), "URL HEADER SAMPLE was not null");
-                        }
-                        assertNotNull(data.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME), "No URL LICENSE FAMILY NAME");
-                        assertEquals(name,
-                                data.get(MetaData.RAT_URL_LICENSE_FAMILY_NAME).getValue(), license.toString());
-                        data.clear();
-                    } else {
-                        fail(license + " was not matched by " + target[NAME]);
-                    }
-                    license.reset();
+        try {
+            for (String[] target : targets) {
+                if (processText(license, target[TEXT])) {
+                    data.reportOnLicense(license);
+                    assertEquals( 1, data.licenses().count() );
+                    assertEquals( license, data.licenses().findFirst().get());
+                } else {
+                    fail(license + " was not matched by " + target[NAME]);
                 }
-            } finally {
                 license.reset();
             }
-
+        } finally {
+            license.reset();
+        }
     }
 
     private boolean processText(ILicense license, String text) throws IOException {

@@ -20,6 +20,7 @@ package org.apache.rat.analysis;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collection;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
@@ -34,10 +35,8 @@ import static java.lang.String.format;
  */
 class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
-    /**
-     * The license to analyse
-     */
-    private final ILicense license;
+    /** The license to analyse */
+    private final Collection<ILicense> licenses;
     /** the logger to use */
     private final Log log;
 
@@ -46,22 +45,24 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
      * 
      * @param license The license to analyse
      */
-    public DocumentHeaderAnalyser(final Log log, final ILicense license) {
+    public DocumentHeaderAnalyser(final Log log, final Collection<ILicense> licenses) {
         super();
-        this.license = license;
+        this.licenses = licenses;
         this.log = log;
     }
 
     @Override
-    public void analyse(Document document) throws RatDocumentAnalysisException {
+    public void analyse(Document document) {
         try (Reader reader = document.reader()) {
             log.debug(format("Processing: %s", document));
-            HeaderCheckWorker worker = new HeaderCheckWorker(reader, license, document);
+            HeaderCheckWorker worker = new HeaderCheckWorker(reader, licenses, document);
             worker.read();
         } catch (IOException e) {
-            throw new RatDocumentAnalysisException("Cannot read header", e);
+            log.warn(String.format("Can not read header of %s",document));
+            document.getMetaData().setDocumentType(Document.Type.unknown);
         } catch (RatHeaderAnalysisException e) {
-            throw new RatDocumentAnalysisException("Cannot analyse header", e);
+            log.warn(String.format("Can not process header of %s",document));
+            document.getMetaData().setDocumentType(Document.Type.unknown);
         }
     }
 

@@ -28,7 +28,6 @@ import java.util.SortedSet;
 import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -73,8 +72,8 @@ public class DefaultPolicyTest {
     }
 
     private void assertApproval(boolean pApproved) {
-        assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE
-                .equals(document.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
+        boolean state = document.getMetaData().approvedLicenses().count() > 0;
+        assertEquals(pApproved, state);
     }
 
     private void setMetadata(ILicenseFamily family) {
@@ -88,7 +87,7 @@ public class DefaultPolicyTest {
     
     @Test
     public void testCount() {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
+        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseFamilies().size());
     }
 
     @Test
@@ -133,7 +132,7 @@ public class DefaultPolicyTest {
         assertApproval(false);
 
         policy.add(testingFamily);
-        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()), "Did not properly add ILicenseFamily");
+        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseFamilies()), "Did not properly add ILicenseFamily");
         policy.analyse(document);
         assertApproval(true);
     }
@@ -141,52 +140,35 @@ public class DefaultPolicyTest {
     @Test
     public void testAddNewApprovedLicenseNoDefaults() {
         policy = new DefaultPolicy(Collections.emptySet());
-        assertEquals(0, policy.getApprovedLicenseNames().size());
+        assertEquals(0, policy.getApprovedLicenseFamilies().size());
         ILicenseFamily testingFamily = makeFamily("test", "Testing License Family");
         setMetadata(testingFamily);
         policy.analyse(document);
         assertApproval(false);
 
         policy.add(testingFamily);
-        assertEquals(1, policy.getApprovedLicenseNames().size());
-        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()), "Did not properly add ILicenseFamily");
+        assertEquals(1, policy.getApprovedLicenseFamilies().size());
+        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseFamilies()), "Did not properly add ILicenseFamily");
         policy.analyse(document);
         assertApproval(true);
     }
     
     @Test
     public void testNonStandardDocumentsDoNotFailLicenseTests() {
-        Datum[] nonStandardDocuments = {
-                MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE,
-                MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE,
-                MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY
-        };
+        Document.Type[] nonStandardDocuments = { Document.Type.notice, Document.Type.archive, Document.Type.binary };
         
-        for (Datum d : nonStandardDocuments) {
+        for (Document.Type d : nonStandardDocuments) {
             document = new TestingLocation("subject");
-            document.getMetaData().set(d);
+            document.getMetaData().setDocumentType(d);
             policy.analyse(document);
-            assertNull( document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE), "failed on "+d.getValue());
+            assertEquals( 0, document.getMetaData().licenses().count(), "failed on "+d);
         }
     }
 
     @Test
     public void testUnclassifiedDocumentsDoNotFailLicenseTests() {
-        document.getMetaData().set(MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD);
+        document.getMetaData().setDocumentType(Document.Type.standard);
         policy.analyse(document);
         assertApproval( false );
-    }
-    
-    @Test
-    public void testReportLicenseApprovalClaim() {
-        assertNull( document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE));
-        
-        
-        policy.reportLicenseApprovalClaim(document, false);
-        assertEquals( MetaData.RAT_APPROVED_LICENSE_DATUM_FALSE, document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE));
-        
-        policy.reportLicenseApprovalClaim(document, true);
-        assertEquals( MetaData.RAT_APPROVED_LICENSE_DATUM_TRUE, document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE));
-        
     }
 }
