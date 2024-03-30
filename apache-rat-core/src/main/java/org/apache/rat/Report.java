@@ -177,7 +177,7 @@ public class Report {
             }
             
             if (!dryRun) {
-                Reporter.report(configuration);
+                new Reporter(configuration).output();
             }
         }
     }

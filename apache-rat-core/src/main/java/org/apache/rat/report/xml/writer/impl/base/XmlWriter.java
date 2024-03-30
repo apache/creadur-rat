@@ -555,7 +555,12 @@ public final class XmlWriter implements IXmlWriter {
     @Override
     public IXmlWriter cdata(CharSequence content) throws IOException {
         prepareForData();
-        writer.write(String.format("<![CDATA[ %s ]]>",content));
+        StringBuilder sb = new StringBuilder(content);
+        int found;
+        while (-1 != (found = sb.indexOf("]]>"))) {
+            sb.replace(found, found+3, "<!- Rat removed CDATA closure here ->");
+        }
+        writer.write(String.format("<![CDATA[ %s ]]>",sb.toString()));
         inElement = false;
         return this;
     }

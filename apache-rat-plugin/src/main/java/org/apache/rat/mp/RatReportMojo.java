@@ -406,11 +406,10 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         try {
             ReportConfiguration config = getConfiguration();
             config.setFrom(getDefaultsBuilder().build());
-            //config.setStyleSheet(Defaults.getUnapprovedLicensesStyleSheet());
             logLicenses(config.getLicenses(LicenseFilter.all));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             config.setOut(()->baos);
-            Reporter.report(config);
+            new Reporter(config).output();
             sink.text(baos.toString());
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);

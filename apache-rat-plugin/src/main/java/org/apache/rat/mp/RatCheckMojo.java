@@ -30,6 +30,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
+import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.config.AddLicenseHeaders;
@@ -98,6 +99,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Parameter(property = "rat.consoleOutput", defaultValue = "true")
     private boolean consoleOutput;
 
+    private Reporter reporter;
     /**
      * Invoked by Maven to execute the Mojo.
      *
@@ -120,34 +122,39 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
 
         try {
-            final ClaimStatistic report = Reporter.report(config);
-            check(report, config);
-        } catch (MojoExecutionException | MojoFailureException e) {
+            this.reporter = new Reporter(config);
+            check();
+        } catch (MojoFailureException e) {
             throw e;
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 
-    protected void check(ClaimStatistic statistics, ReportConfiguration config) throws MojoFailureException {
+    protected void check() throws MojoFailureException {
         if (numUnapprovedLicenses > 0) {
             getLog().info("You requested to accept " + numUnapprovedLicenses + " files with unapproved licenses.");
         }
+        ClaimStatistic stats = reporter.getClaimsStatistic();
 
-        int numApproved = statistics.getNumApproved();
-        getLog().info("Rat check: Summary over all files. Unapproved: " + statistics.getNumUnApproved() + //
-                ", unknown: " + statistics.getNumUnknown() + //
-                ", generated: " + statistics.getNumGenerated() + //
-                ", approved: " + numApproved + //
-                (numApproved > 0 ? " licenses." : " license."));
+        int numApproved = stats.getCounter(ClaimStatistic.Counter.Approved);
+        StringBuilder statSummary = new StringBuilder("Rat check: Summary over all files. Unapproved: ")
+                .append(stats.getCounter(ClaimStatistic.Counter.Unapproved))
+                .append( ", unknown: ")
+                .append(stats.getCounter(ClaimStatistic.Counter.Unknown))
+                .append(", generated: ")
+                .append(stats.getCounter(ClaimStatistic.Counter.Generated))
+                .append(", approved: ")
+                .append(numApproved)
+                .append((numApproved > 0 ? " licenses." : " license."));
+        
 
-        if (numUnapprovedLicenses < statistics.getNumUnApproved()) {
+        getLog().info(statSummary.toString());
+        if (numUnapprovedLicenses < stats.getCounter(ClaimStatistic.Counter.Unapproved)) {
             if (consoleOutput) {
                 try {
-                    config.setStyleSheet(Defaults.getUnapprovedLicensesStyleSheet());
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    config.setOut(()->baos);
-                    Reporter.report(config);
+                    reporter.output(Defaults.getUnapprovedLicensesStyleSheet(), ()->baos);
                     getLog().warn(baos.toString());
                 } catch (Exception e) {
                     getLog().warn("Unable to print the files with unapproved licenses to the console.");
@@ -157,10 +164,10 @@ public class RatCheckMojo extends AbstractRatMojo {
             final String seeReport = " See RAT report in: " + reportFile;
             if (!ignoreErrors) {
                 throw new RatCheckException(
-                        "Too many files with unapproved license: " + statistics.getNumUnApproved() + seeReport);
+                        "Too many files with unapproved license: " + stats.getCounter(ClaimStatistic.Counter.Unapproved) + seeReport);
             }
             getLog().warn(
-                    "Rat check: " + statistics.getNumUnApproved() + " files with unapproved licenses." + seeReport);
+                    "Rat check: " + stats.getCounter(ClaimStatistic.Counter.Unapproved) + " files with unapproved licenses." + seeReport);
         }
     }
 

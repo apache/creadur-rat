@@ -96,4 +96,9 @@ public class MetaData {
     public void reportOnLicense(ILicense license) {
         this.matchedLicenses.add(license);
     }
+    
+    @Override
+    public String toString() {
+        return String.format( "MetaData[%s license, %s approved]", matchedLicenses.size(), approvedLicenses.size());
+    }
 }

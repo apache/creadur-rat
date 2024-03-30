@@ -22,6 +22,13 @@ public class RatException extends Exception {
 
     private static final long serialVersionUID = 4940711222435919034L;
 
+    public static RatException makeInstance(Exception e) {
+        if (e instanceof RatException) {
+            return (RatException) e;
+        }
+        return new RatException(e);
+    }
+    
     public RatException() {
         super();
     }

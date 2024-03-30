@@ -30,6 +30,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentImplUtils;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 
@@ -54,51 +55,9 @@ class FilesReportable implements IReportable {
 
     @Override
     public void run(RatReport report) throws RatException {
-        FileDocument document = new FileDocument();
+        FileDocument document = null;
         for (String file : files) {
-            document.setFile(new File(basedir, file));
-            document.getMetaData().clear();
-            report.report(document);
-        }
-    }
-
-    private static class FileDocument implements Document {
-        private File file;
-        private final MetaData metaData = new MetaData();
-
-        void setFile(File file) {
-            this.file = file;
-        }
-
-        @Override
-        public boolean isComposite() {
-            return DocumentImplUtils.isZip(file);
-        }
-
-        @Override
-        public Reader reader() throws IOException {
-            final InputStream in = Files.newInputStream(file.toPath());
-            return new InputStreamReader(in);
-        }
-
-        @Override
-        public String getName() {
-            return DocumentImplUtils.toName(file);
-        }
-
-        @Override
-        public MetaData getMetaData() {
-            return metaData;
-        }
-
-        @Override
-        public InputStream inputStream() throws IOException {
-            return Files.newInputStream(file.toPath());
-        }
-
-        @Override
-        public String toString() {
-            return "File:" + file.getAbsolutePath();
+            report.report(new FileDocument(new File(basedir, file)));
         }
     }
 }
