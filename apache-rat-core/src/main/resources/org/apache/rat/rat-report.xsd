@@ -1,0 +1,29 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="rat-report">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="resource" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType mixed="true">
+            <xs:sequence>
+              <xs:element name="license" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType mixed="true">
+                  <xs:sequence>
+                    <xs:element type="xs:string" name="notes" minOccurs="0"/>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="approval" use="required"/>
+                  <xs:attribute type="xs:string" name="family" use="required"/>
+                  <xs:attribute type="xs:string" name="id" use="required"/>
+                  <xs:attribute type="xs:string" name="name" use="required"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element type="xs:string" name="sample" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="name" use="required"/>
+            <xs:attribute type="xs:string" name="type" use="required"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute type="xs:dateTime" name="timestamp" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
