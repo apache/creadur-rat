@@ -44,22 +44,27 @@ public class FileDocument implements Document {
         name = DocumentImplUtils.toName(file);
     }
 
+    @Override
     public boolean isComposite() {
         return DocumentImplUtils.isZip(file);
     }
 
+    @Override
     public Reader reader() throws IOException {
         return new FileReader(file);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public MetaData getMetaData() {
         return metaData;
     }    
     
+    @Override
     public InputStream inputStream() throws IOException {
         return new FileInputStream(file);
     }
@@ -78,6 +83,4 @@ public class FileDocument implements Document {
             + "metaData = " + this.metaData + " "
             + " )";
     }
-    
-    
 }

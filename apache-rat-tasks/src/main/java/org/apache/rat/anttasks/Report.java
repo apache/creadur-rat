@@ -222,7 +222,7 @@ public class Report extends Task {
     @Override
     public void execute() {
         try {
-            Reporter.report(validate(getConfiguration()));
+            new Reporter(validate(getConfiguration())).output();
         } catch (BuildException e) {
             throw e;
         } catch (Exception ioex) {

@@ -60,7 +60,7 @@ public class CopyrightBuilder extends AbstractBuilder {
     }
 
     @Override
-    public IHeaderMatcher build() {
+    public CopyrightMatcher build() {
         return new CopyrightMatcher(getId(), start, end, owner);
     }
     

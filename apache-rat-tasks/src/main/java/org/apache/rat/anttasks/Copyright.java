@@ -19,6 +19,7 @@
 package org.apache.rat.anttasks;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
 
 public class Copyright implements IHeaderMatcher.Builder {
@@ -38,7 +39,7 @@ public class Copyright implements IHeaderMatcher.Builder {
     }
 
     @Override
-    public IHeaderMatcher build() {
+    public CopyrightMatcher build() {
         return builder.build();
     }
     

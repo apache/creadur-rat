@@ -83,12 +83,16 @@ Archives:
 </xsl:text>
    <xsl:for-each select='descendant::license'>
        <xsl:text>    </xsl:text>
-       <xsl:value-of select='substring(concat(@id, "     "),1,5)'/>
-       <xsl:text> </xsl:text>
+       <xsl:value-of select='substring(concat(@family, "     "),1,5)'/>
+       <xsl:text>    </xsl:text>
+       <xsl:value-of select='substring(concat(@id, "          "),1,10)'/>
+       <xsl:text>    </xsl:text>
        <xsl:value-of select='@name'/>
        <xsl:text>
 </xsl:text>
    </xsl:for-each>
+   <xsl:text>
+</xsl:text>
  </xsl:for-each>
 *****************************************************
 <xsl:if test="descendant::resource[/license/@id='?????']">
