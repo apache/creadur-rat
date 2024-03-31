@@ -31,7 +31,7 @@ import java.io.StringWriter;
 
 public class ReportTransformerTest {
     
-    private static final String SIMPLE_CONTENT =  
+    private static final String SIMPLE_CONTENT = /* 
         "<?xml version='1.0'?>" +
         "<directory name='sub'>" +
         "<standard name='Empty.txt'>" +
@@ -39,6 +39,31 @@ public class ReportTransformerTest {
         "</standard>" +
         "<directory name='.svn' restricted='true'/>" +
         "</directory>";
+        */
+    " <rat-report timestamp='2024-03-29T15:04:42+01:00'>"
+    + "    <resource name='src/test/resources/elements/ILoggerFactory.java' type='standard'>"
+    + "        <license approval='true' family='MIT  ' id='MIT' name='The MIT License'/>"
+    + "    </resource>"
+    + "    <resource name='src/test/resources/elements/Image.png' type='binary'/>"
+    + "    <resource name='src/test/resources/elements/LICENSE' type='notice'/>"
+    + "    <resource name='src/test/resources/elements/NOTICE' type='notice'/>"
+    + "    <resource name='src/test/resources/elements/Source.java' type='standard'/>"
+    + "    <resource name='src/test/resources/elements/Source.java' type='standard'>"
+    + "        <license approval='false' family='?????' id='?????' name='Unknown license'/>"
+    + "    <sample><![CDATA[ package elements;"
+    + ""
+    + "/*"
+    + "* This file does intentionally *NOT* contain an AL license header,"
+    + "* because it is used in the test suite."
+    + "*/"
+    + "public class Source {"
+    + ""
+    + "}"
+    + "]]></sample>"
+    + "</resource>"
+    + "    </rat-report>";
+
+  
 
     @Test
     public void testTransform() throws Exception {
