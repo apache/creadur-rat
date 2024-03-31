@@ -39,7 +39,7 @@ public class Copyright implements IHeaderMatcher.Builder {
     }
 
     @Override
-    public CopyrightMatcher build() {
+    public IHeaderMatcher build() {
         return builder.build();
     }
     

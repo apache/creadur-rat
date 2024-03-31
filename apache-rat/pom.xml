@@ -129,6 +129,8 @@
                    have no license headers -->
               <exclude>README-ANT.txt</exclude>
               <exclude>README-CLI.txt</exclude>
+              <!-- files that are examples of output from the tool -->
+              <exclude>src/site/examples/**</exclude>
             </excludes>
           </configuration>
         </plugin>
