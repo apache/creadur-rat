@@ -55,7 +55,7 @@ public class ReportTransformerTest {
         List<Arguments> lst = new ArrayList<>();
 
         lst.add(Arguments.of("plain-rat.xsl", new String[] { "Notes: 2$", "Binaries: 2$", "Archives: 1$",
-                "Standards: 7$", "Apache Licensed: 4$", "Generated Documents: 0$", "2 Unknown Licenses" }));
+                "Standards: 8$", "Apache Licensed: 5$", "Generated Documents: 1$", "2 Unknown Licenses" }));
         lst.add(Arguments.of("unapproved-licenses.xsl", new String[] { "Files with unapproved licenses",
                 "src/test/resources/elements/Source.java", "src/test/resources/elements/sub/Empty.txt" }));
         lst.add(Arguments.of("missing-headers.xsl", new String[] { "Files with missing headers",
