@@ -59,8 +59,7 @@ public class AnalyserFactoryTest {
     @BeforeEach
     public void setUp() throws Exception {
         out = new StringWriter();
-        final XmlWriter writer = new XmlWriter(out);
-        reporter = new SimpleXmlClaimReporter(writer);
+        reporter = new SimpleXmlClaimReporter(new XmlWriter(out));
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE, Arrays.asList(MATCHES_NOTHING_MATCHER));
     }
 

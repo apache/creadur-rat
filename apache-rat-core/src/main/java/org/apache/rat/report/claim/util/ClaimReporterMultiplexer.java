@@ -37,13 +37,11 @@ public class ClaimReporterMultiplexer implements RatReport {
     
     private final IDocumentAnalyser analyser;
     private final List<? extends RatReport> reporters;
-    private final IXmlWriter writer;
     private final boolean dryRun; 
 
-    public ClaimReporterMultiplexer(final boolean dryRun, final IXmlWriter writer, final IDocumentAnalyser pAnalyser, final List<? extends RatReport> reporters) {
+    public ClaimReporterMultiplexer(final boolean dryRun, final IDocumentAnalyser pAnalyser, final List<? extends RatReport> reporters) {
         analyser = pAnalyser;
         this.reporters = reporters;
-        this.writer = writer;
         this.dryRun = dryRun;
     }
 
@@ -65,14 +63,6 @@ public class ClaimReporterMultiplexer implements RatReport {
 
     @Override
     public void startReport() throws RatException {
-        try {
-            writer.openElement(RAT_REPORT)
-                .attribute(TIMESTAMP,
-                           DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT
-                           .format(Calendar.getInstance()));
-        } catch (IOException e) {
-            throw new RatException("Cannot open start element", e);
-        }
         for (RatReport report : reporters) {
             report.startReport();
         } 
@@ -83,10 +73,5 @@ public class ClaimReporterMultiplexer implements RatReport {
         for (RatReport report : reporters) {
             report.endReport();
         } 
-        try {
-            writer.closeDocument();
-        } catch (IOException e) {
-            throw new RatException("Cannot close last element", e);
-        }
     }
 }

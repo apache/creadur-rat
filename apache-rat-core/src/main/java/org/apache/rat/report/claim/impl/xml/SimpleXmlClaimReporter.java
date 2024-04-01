@@ -100,5 +100,10 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 
     @Override
     public void endReport() throws RatException {
+        try {
+            writer.closeElement();
+        } catch (IOException e) {
+            throw new RatException("Cannot open start element", e);
+        }
     }
 }

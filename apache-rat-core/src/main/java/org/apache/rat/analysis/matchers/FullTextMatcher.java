@@ -40,8 +40,8 @@ public class FullTextMatcher extends SimpleTextMatcher {
      *
      * @param fullText the text to match
      */
-    public FullTextMatcher(String fullText) {
-        this(null, fullText);
+    public FullTextMatcher(String simpleText) {
+        this(null, simpleText);
     }
 
     /**
@@ -50,9 +50,9 @@ public class FullTextMatcher extends SimpleTextMatcher {
      * @param id the id for the matcher
      * @param fullText the text to match
      */
-    public FullTextMatcher(String id, String fullText) {
-        super(id);
-        this.fullText = prune(fullText).toLowerCase(Locale.ENGLISH);
+    public FullTextMatcher(String id, String simpleText) {
+        super(id, simpleText);
+        this.fullText = prune(simpleText).toLowerCase(Locale.ENGLISH);
     }
 
     private String getFullText() {
