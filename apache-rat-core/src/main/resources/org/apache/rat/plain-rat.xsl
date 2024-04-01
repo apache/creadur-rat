@@ -88,6 +88,9 @@ Archives:
        <xsl:value-of select='substring(concat(@id, "          "),1,10)'/>
        <xsl:text>    </xsl:text>
        <xsl:value-of select='@name'/>
+       <xsl:if test="@approval='false'">
+         <xsl:text> (Unapproved)</xsl:text>
+       </xsl:if>
        <xsl:text>
 </xsl:text>
    </xsl:for-each>

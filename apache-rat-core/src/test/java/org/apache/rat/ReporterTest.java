@@ -184,7 +184,7 @@ public class ReporterTest {
                 document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.notice, "src/test/resources/elements/NOTICE"), document);
         TextUtils.assertPatternInOutput(documentOut(false, Type.standard, "src/test/resources/elements/Source.java")
-                + licenseOut("?????", "Unknown license"), document);
+                + licenseOut("?????", "Unknown license (Unapproved)"), document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.standard, "src/test/resources/elements/Text.txt")
                 + licenseOut("AL", "Apache License Version 2.0"), document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.standard, "src/test/resources/elements/Xml.xml")
@@ -199,7 +199,7 @@ public class ReporterTest {
                 + licenseOut("AL", "Apache License Version 2.0") + licenseOut("BSD-3", "BSD 3 clause")
                 + licenseOut("BSD-3", "TMF", "The Telemanagement Forum License"), document);
         TextUtils.assertPatternInOutput(documentOut(false, Type.standard, "src/test/resources/elements/sub/Empty.txt")
-                + licenseOut("?????", "Unknown license"), document);
+                + licenseOut("?????", "Unknown license (Unapproved)"), document);
     }
 
     @Test

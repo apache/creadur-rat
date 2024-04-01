@@ -123,6 +123,7 @@ public class RatCheckMojo extends AbstractRatMojo {
 
         try {
             this.reporter = new Reporter(config);
+            reporter.output();
             check();
         } catch (MojoFailureException e) {
             throw e;

@@ -43,7 +43,7 @@ public class ClaimStatistic {
      */
     public int getCounter(Counter counter) {
         int[] count = counterMap.get(counter);
-        return count == null ? null : count[0];
+        return count == null ? 0 : count[0];
     }
 
     /**

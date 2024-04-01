@@ -87,13 +87,8 @@
             <excludes>
               <!-- These files do not have license headers because they are used to test license headers -->
               <exclude>src/it/**/src.apt</exclude>
-              <exclude>src/test/resources/unit/it2/src.txt</exclude>
-              <exclude>src/test/resources/unit/it3/src.apt</exclude>
-              <exclude>src/test/resources/unit/it4/*.html</exclude>
-              <exclude>src/test/resources/unit/RAT-335-GitIgnore/*</exclude>
-              <exclude>src/test/resources/unit/RAT-335-GitIgnore/**/*</exclude>
+              <exclude>src/test/resources/unit/**</exclude>
               <exclude>**/*.iml</exclude>
-              <exclude>src/test/resources/unit/RAT-343/*</exclude>
               <!-- These files have a custom license header (non Apache) to test validating custom licenses -->
               <exclude>src/it/CustomLicense/src/**/</exclude>
               <!-- RAT-171: needs to be added since SCM ignores are only parsed in project root -->
