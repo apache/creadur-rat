@@ -18,6 +18,7 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +33,7 @@ import org.apache.rat.analysis.IHeaders;
 @ConfigComponent(type = Component.Type.Matcher, name = "not", desc = "Negates the enclosed matcher.")
 public class NotMatcher extends AbstractHeaderMatcher {
 
-    @ConfigComponent(desc = "enclosed Matchers", type = Component.Type.Unlabled, parameterType = IHeaderMatcher.class)
+    @ConfigComponent(desc = "enclosed Matcher", type = Component.Type.Unlabled, parameterType = IHeaderMatcher.class)
     private final IHeaderMatcher enclosed;
 
     /**

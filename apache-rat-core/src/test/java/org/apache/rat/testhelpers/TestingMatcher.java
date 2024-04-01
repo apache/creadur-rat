@@ -22,13 +22,14 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
-import org.apache.rat.config.parameters.Component.Description;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Component;
 
 /**
  * An Matcher for testing.
  */
+@ConfigComponent(type = Component.Type.Matcher, name = "TestingMatcher", desc = "Matcher used in testing")
 public class TestingMatcher extends AbstractHeaderMatcher {
     private final boolean[] initialResults;
     private Queue<Boolean> results;
@@ -82,9 +83,4 @@ public class TestingMatcher extends AbstractHeaderMatcher {
             this.results.add(b);
         }
     }
-
-    @Override
-    public Description getDescription() {
-        return new IHeaderMatcher.MatcherDescription(this, "TestingMatcher", "Matcher used in testing");
-    } 
 }

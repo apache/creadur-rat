@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
 
@@ -124,21 +125,9 @@ public class MatcherRefBuilder extends AbstractBuilder {
         }
 
         @Override
-        public State matches(String line) {
+        public boolean matches(IHeaders header) {
             checkProxy();
-            return wrapped.matches(line);
-        }
-
-        @Override
-        public State currentState() {
-            checkProxy();
-            return wrapped.currentState();
-        }
-
-        @Override
-        public State finalizeState() {
-            checkProxy();
-            return wrapped.finalizeState();
+            return wrapped.matches(header);
         }
     }
 

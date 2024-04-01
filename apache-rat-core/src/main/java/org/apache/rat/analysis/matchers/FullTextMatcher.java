@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.DescriptionImpl;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
@@ -32,12 +31,9 @@ import org.apache.rat.config.parameters.DescriptionImpl;
  * <p> The text comparison is case insensitive but assumes only characters in
  * the US-ASCII charset are being matched. </p>
  */
-public class FullTextMatcher extends AbstractSimpleMatcher {
+public class FullTextMatcher extends SimpleTextMatcher {
 
     private final String fullText;
-
-    private Description[] children = { new DescriptionImpl(Type.Text, "", "The text to match", this::getFullText) };
-
     /**
      * Constructs the full text matcher with a unique random id and the specified
      * text to match.

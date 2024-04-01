@@ -134,7 +134,7 @@ public class Report {
         ReportConfiguration configuration = parseCommands(args, Report::printUsage);
         if (configuration != null) {
             configuration.validate(DefaultLog.INSTANCE::error);
-            Reporter.report(configuration);
+            new Reporter(configuration).output();
         }
     }
 

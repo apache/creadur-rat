@@ -19,6 +19,7 @@
 package org.apache.rat.analysis.matchers;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
 
@@ -60,7 +61,7 @@ public class SimpleTextMatcher extends AbstractSimpleMatcher {
     }
 
     @Override
-    public boolean doMatch(String line) {
-        return line.contains(simpleText);
+    public boolean matches(IHeaders headers) {
+        return headers.raw().contains(simpleText);
     }
 }

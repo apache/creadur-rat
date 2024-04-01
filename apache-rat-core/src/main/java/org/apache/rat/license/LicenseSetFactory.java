@@ -201,11 +201,6 @@ public class LicenseSetFactory {
                 return null;
             }
 
-            @Override
-            public Description getDescription() {
-                return new ILicenseDescription(this, null);
-            }
-
         };
         return search(target, licenses);
     }

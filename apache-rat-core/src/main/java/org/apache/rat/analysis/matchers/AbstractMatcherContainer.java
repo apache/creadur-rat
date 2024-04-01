@@ -75,16 +75,11 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
         enclosed.forEach(IHeaderMatcher::reset);
     }
 
-    @Override
-    public State finalizeState() {
-        enclosed.forEach(IHeaderMatcher::finalizeState);
-        return currentState();
-    }
-    
+
     public Collection<IHeaderMatcher> getEnclosed() {
         return Collections.unmodifiableCollection(enclosed);
     }
-    
+
     public String getResource() {
         return resource;
     }

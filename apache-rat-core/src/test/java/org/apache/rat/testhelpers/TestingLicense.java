@@ -20,6 +20,7 @@ package org.apache.rat.testhelpers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -30,7 +31,6 @@ public class TestingLicense implements ILicense {
 
     private final ILicenseFamily family;
     private IHeaderMatcher matcher;
-    private String derivedFrom;
     private String notes;
     private String name;
     private String id;
@@ -71,7 +71,6 @@ public class TestingLicense implements ILicense {
     public TestingLicense(IHeaderMatcher matcher, ILicenseFamily family) {
         this.family = family;
         this.matcher = matcher;
-        this.derivedFrom = null;
         this.notes = null;
     }
 
@@ -108,14 +107,6 @@ public class TestingLicense implements ILicense {
     }
 
     /**
-     * Sets the derived from value for this license.
-     * @param derivedFrom the license this license is derived from.
-     */
-    public void setDerivedFrom(String derivedFrom) {
-        this.derivedFrom = derivedFrom;
-    }
-
-    /**
      * Sets the name from value for this license.
      * @param name the name of this license.
      */
@@ -138,18 +129,8 @@ public class TestingLicense implements ILicense {
     }
 
     @Override
-    public State matches(String line) {
+    public boolean matches(IHeaders line) {
         return matcher.matches(line);
-    }
-
-    @Override
-    public State finalizeState() {
-        return matcher.finalizeState();
-    }
-
-    @Override
-    public State currentState() {
-        return matcher.currentState();
     }
 
     @Override

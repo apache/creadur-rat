@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
 
@@ -134,8 +135,8 @@ public class SPDXMatcherFactory {
         }
 
         @Override
-        protected boolean doMatch(String line) {
-            return SPDXMatcherFactory.this.check(line, this);
+        public boolean matches(IHeaders headers) {
+            return SPDXMatcherFactory.this.check(headers.raw(), this);
         }
 
         @Override

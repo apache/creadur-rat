@@ -33,7 +33,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
     public void trueTest() {
         IHeaderMatcher one = new TestingMatcher("one", false, false, true, true);
         IHeaderMatcher two = new TestingMatcher("two", false, true, false, true);
-        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two));
+        OrMatcher target = new OrMatcher("Testing", Arrays.asList(one, two), null);
         assertValues(target, false, true, true, true);
         target.reset();
     }
