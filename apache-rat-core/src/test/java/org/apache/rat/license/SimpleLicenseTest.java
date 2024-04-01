@@ -20,7 +20,6 @@
 package org.apache.rat.license;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
@@ -35,7 +34,8 @@ import org.junit.jupiter.api.Test;
 public class SimpleLicenseTest {
 
     @Test
-    public void descriptionTest() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public void descriptionTest() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException {
         SimpleLicense lic = new SimpleLicense(
                 ILicenseFamily.builder().setLicenseFamilyCategory("familyId")
                         .setLicenseFamilyName("TestingLicense: familyId").build(),
@@ -56,8 +56,8 @@ public class SimpleLicenseTest {
         assertTrue(children.containsKey("matcher"));
         assertEquals(Component.Type.Unlabled, children.get("matcher").getType());
         Object matcherObj = children.get("matcher").getter(lic.getClass()).invoke(lic);
-        assertTrue( matcherObj instanceof IHeaderMatcher);
-        Description matcherDesc = ((IHeaderMatcher)matcherObj).getDescription();
+        assertTrue(matcherObj instanceof IHeaderMatcher);
+        Description matcherDesc = ((IHeaderMatcher) matcherObj).getDescription();
         assertEquals(Component.Type.Matcher, matcherDesc.getType());
         assertEquals("TestingMatcher", matcherDesc.getCommonName());
     }

@@ -38,7 +38,9 @@ import org.apache.rat.configuration.builders.TextBuilder;
 public interface IHeaderMatcher extends Component {
     /**
      * Get the identifier for this matcher.
-     * <p>All matchers must have unique identifiers</p>
+     * <p>
+     * All matchers must have unique identifiers
+     * </p>
      * 
      * @return the Identifier for this matcher.
      */
@@ -51,8 +53,8 @@ public interface IHeaderMatcher extends Component {
     void reset();
 
     /**
-     * Attempts to match {@code line} and returns the State after
-     * the match is attempted.
+     * Attempts to match {@code line} and returns the State after the match is
+     * attempted.
      * 
      * @param headers the representations of the headers to check
      * @return the new state after the matching was attempted.
@@ -66,6 +68,7 @@ public interface IHeaderMatcher extends Component {
     interface Builder {
         /**
          * Build the IHeaderMatcher.
+         * 
          * @return a new IHeaderMatcher.
          */
         IHeaderMatcher build();

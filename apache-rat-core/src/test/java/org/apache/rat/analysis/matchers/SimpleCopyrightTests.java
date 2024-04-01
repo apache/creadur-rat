@@ -25,12 +25,12 @@ import org.junit.jupiter.api.Test;
 
 public class SimpleCopyrightTests {
 
-    CopyrightMatcher target = new CopyrightMatcher(null,null,null);
-    
+    CopyrightMatcher target = new CopyrightMatcher(null, null, null);
+
     @Test
     public void testTrueIsAlwaysTrue() {
         assertTrue(target.matches(AbstractMatcherTest.makeHeaders("hello Copyright 1999", null)));
-        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("A non matching line",null)));
+        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("A non matching line", null)));
         target.reset();
     }
 }

@@ -33,9 +33,11 @@ import org.apache.rat.config.parameters.ConfigComponent;
 /**
  * Defines a factory to produce matchers for an SPDX tag. SPDX tag is of the
  * format {@code SPDX-License-Identifier: short-name} where {@code short-name}
- * matches the regex pattern [A-Za-z0-9\.\-]+ <p> SPDX identifiers are specified
- * by the Software Package Data Exchange(R) also known as SPDX(R) project from
- * the Linux foundation. </p>
+ * matches the regex pattern [A-Za-z0-9\.\-]+
+ * <p>
+ * SPDX identifiers are specified by the Software Package Data Exchange(R) also
+ * known as SPDX(R) project from the Linux foundation.
+ * </p>
  *
  * @see <a href="https://spdx.dev/ids/">List of Ids at spdx.dev</a>
  */

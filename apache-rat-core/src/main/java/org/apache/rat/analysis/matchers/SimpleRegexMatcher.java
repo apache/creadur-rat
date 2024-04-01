@@ -20,10 +20,9 @@ package org.apache.rat.analysis.matchers;
 
 import java.util.regex.Pattern;
 
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
-
-import org.apache.rat.analysis.IHeaders;
 
 /**
  * A simple regular expression matching IHeaderMatcher

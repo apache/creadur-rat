@@ -21,19 +21,21 @@ package org.apache.rat.analysis.matchers;
 import java.util.Locale;
 
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.analysis.IHeaderMatcher;
 
 /**
  * Accumulates all letters and numbers contained inside the header and compares
  * it to the full text of a given license (after reducing it to letters and
  * numbers as well).
  *
- * <p> The text comparison is case insensitive but assumes only characters in
- * the US-ASCII charset are being matched. </p>
+ * <p>
+ * The text comparison is case insensitive but assumes only characters in the
+ * US-ASCII charset are being matched.
+ * </p>
  */
 public class FullTextMatcher extends SimpleTextMatcher {
 
     private final String fullText;
+
     /**
      * Constructs the full text matcher with a unique random id and the specified
      * text to match.

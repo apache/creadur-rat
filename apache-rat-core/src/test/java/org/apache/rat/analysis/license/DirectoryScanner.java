@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.BufferedReader;
 import java.io.File;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.rat.analysis.HeaderCheckWorker;
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.license.ILicense;
@@ -49,8 +48,9 @@ class DirectoryScanner {
             fail("No files found under " + directory);
         }
         for (File f : resourceFiles) {
-            try (BufferedReader br = Resources.getBufferedReader(f)){
-                IHeaders headers = HeaderCheckWorker.readHeader(br, HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES);
+            try (BufferedReader br = Resources.getBufferedReader(f)) {
+                IHeaders headers = HeaderCheckWorker.readHeader(br,
+                        HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES);
                 boolean result = license.matches(headers);
                 assertEquals(expected, result, f.toString());
             } finally {

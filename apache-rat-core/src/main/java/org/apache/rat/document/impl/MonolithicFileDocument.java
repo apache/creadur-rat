@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.rat.api.Document;
 
-
 public class MonolithicFileDocument extends AbstractMonolithicDocument {
     private static final String FILE_URL_PREFIX = "file";
 
@@ -46,27 +45,31 @@ public class MonolithicFileDocument extends AbstractMonolithicDocument {
             final File f = new File(url.getFile());
             return new MonolithicFileDocument(f);
         }
-        return new AbstractMonolithicDocument(url.toExternalForm()){
+        return new AbstractMonolithicDocument(url.toExternalForm()) {
+            @Override
             public Reader reader() throws IOException {
                 return new InputStreamReader(inputStream(), StandardCharsets.UTF_8);
-           }
+            }
 
+            @Override
             public InputStream inputStream() throws IOException {
                 return url.openStream();
             }
         };
     }
 
-     public MonolithicFileDocument(final File file) {
+    public MonolithicFileDocument(final File file) {
         super(DocumentImplUtils.toName(file));
         this.file = file;
     }
 
-     public Reader reader() throws IOException {
+    @Override
+    public Reader reader() throws IOException {
         return new FileReader(file);
     }
 
-     public InputStream inputStream() throws IOException {
+    @Override
+    public InputStream inputStream() throws IOException {
         return new FileInputStream(file);
     }
 }

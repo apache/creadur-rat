@@ -26,10 +26,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component.Type;
-import org.apache.rat.license.ILicense;
 
 /**
  * A description of a component.
@@ -37,25 +35,33 @@ import org.apache.rat.license.ILicense;
 public class Description {
     /** The type of component this describes */
     private final Type type;
-    /** The common name for the component.  Set by ConfigComponent.name() or class/field name. */
+    /**
+     * The common name for the component. Set by ConfigComponent.name() or
+     * class/field name.
+     */
     private final String name;
     /** The description for the component */
     private final String desc;
     /** The class of the getter/setter parameter */
     private final Class<?> childClass;
-    /** True if the getter/setter expects a collection of childClass objects */ 
+    /** True if the getter/setter expects a collection of childClass objects */
     private final boolean isCollection;
-    /** a map of name to Description for all the components that are children the described component */
+    /**
+     * a map of name to Description for all the components that are children the
+     * described component
+     */
     private final Map<String, Description> children;
 
     /**
      * Constructor.
+     * 
      * @param type the type of the component.
      * @param name the name of the component.
      * @param desc the description of the component.
      * @param isCollection true if the getter/setter expects a collection
      * @param childClass the class for expected for the getter/setter.
-     * @param children the collection of descriptions for all the components that are children the described component.
+     * @param children the collection of descriptions for all the components that
+     * are children the described component.
      */
     public Description(Type type, String name, String desc, boolean isCollection, Class<?> childClass,
             Collection<Description> children) {
@@ -74,10 +80,12 @@ public class Description {
 
     /**
      * Constructor
+     * 
      * @param configComponent the configuration component
      * @param isCollection the collection flag.
      * @param childClass the type of object that the method getter/setter expects.
-     * @param children the collection of descriptions for all the components that are children the described component.
+     * @param children the collection of descriptions for all the components that
+     * are children the described component.
      */
     public Description(ConfigComponent configComponent, boolean isCollection, Class<?> childClass,
             Collection<Description> children) {
@@ -87,6 +95,7 @@ public class Description {
 
     /**
      * Gets the type of the component.
+     * 
      * @return the component type.
      */
     public Type getType() {
@@ -95,6 +104,7 @@ public class Description {
 
     /**
      * Get the isCollection flag.
+     * 
      * @return true if this is a collection.
      */
     public boolean isCollection() {
@@ -103,6 +113,7 @@ public class Description {
 
     /**
      * Get the class of the objcts for the getter/setter.
+     * 
      * @return the getter/setter param class.
      */
     public Class<?> getChildType() {
@@ -112,6 +123,7 @@ public class Description {
     /**
      * Gets the common name for the matcher. (e.g. 'text', 'spdx', etc.) May not be
      * null.
+     * 
      * @return The common name for the item being inspected.
      */
     public String getCommonName() {
@@ -121,6 +133,7 @@ public class Description {
     /**
      * Gets the description of descriptive text for the component. May be an empty
      * string or null.
+     * 
      * @return the descriptive text;
      */
     public String getDescription() {
@@ -130,6 +143,7 @@ public class Description {
     /**
      * Gets the string parameter value. if this description has no value it should
      * return null.
+     * 
      * @return the string value (default returns an empty string.
      */
     public String getParamValue(Object o) {
@@ -153,6 +167,7 @@ public class Description {
      * has 'start', 'stop', and 'owner' parameters. Some IHeaderMatchers have simple
      * text values (e.g. 'regex' or 'text' types) these should list an unnamed
      * parameter (empty string) with the text value.
+     * 
      * @return the map of parameters to the objects that represent them.
      */
     public Map<String, Description> getChildren() {
@@ -161,6 +176,7 @@ public class Description {
 
     /**
      * Get all the children of a specific type
+     * 
      * @param type the type to return
      * @return the collection of children of the specified type.
      */
@@ -174,6 +190,7 @@ public class Description {
 
     /**
      * Returns the getter for the component in the specified class.
+     * 
      * @param clazz the Class to get the getter from.
      * @return the getter Method.
      * @throws NoSuchMethodException if the class does not have the getter.
@@ -183,16 +200,16 @@ public class Description {
         return clazz.getMethod(methodName("get"));
     }
 
-    
     /**
-     * Returns the setter for the component in the specified class.
-     * Notes:
+     * Returns the setter for the component in the specified class. Notes:
      * <ul>
-     * <li>Licence can not be set in components.  They are top level components.</li>
-     * <li>Matcher expects an "add" method that accepts an IHeaderMatcher.Builder.</li>
+     * <li>Licence can not be set in components. They are top level components.</li>
+     * <li>Matcher expects an "add" method that accepts an
+     * IHeaderMatcher.Builder.</li>
      * <li>Parameter expects a {@code set(String)} method.</li>
      * <li>Unlabled expects a {@code set(String)} method.</li>
-     * <li>BuilderParam expects a {@code set} method that takes a {@code childeClass} argument.</li>
+     * <li>BuilderParam expects a {@code set} method that takes a
+     * {@code childeClass} argument.</li>
      * </ul>
      * 
      * @param clazz the Class to get the getter from, generally a Builder class..
@@ -217,9 +234,10 @@ public class Description {
     }
 
     /**
-     * Sets the children of values in the builder.
-     * Sets the parameters to the values specified in the map.  Only children that accept 
-     * string arguments should be specified.
+     * Sets the children of values in the builder. Sets the parameters to the values
+     * specified in the map. Only children that accept string arguments should be
+     * specified.
+     * 
      * @param builder The Matcher builder to set the values in.
      * @param attributes a Map of parameter names to values.
      * @throws IllegalAccessException
@@ -235,7 +253,8 @@ public class Description {
             Description d = getChildren().get(entry.getKey());
             if (d == null) {
                 // TODO replace this with a logging message
-                System.err.println(String.format("%s does not define a Description.  Missing ConfigComponent annotations.", entry.getKey()));
+                System.err.println(String.format(
+                        "%s does not define a Description.  Missing ConfigComponent annotations.", entry.getKey()));
             } else {
                 d.setter(builder.getClass()).invoke(builder, entry.getValue());
             }
@@ -244,6 +263,7 @@ public class Description {
 
     /**
      * Sets the first Unlabled item that takes a string argument
+     * 
      * @param builder The Matcher builder to set the value in.
      * @param value the value.
      * @throws NoSuchMethodException
@@ -264,9 +284,12 @@ public class Description {
 
     @Override
     public String toString() {
-        String childList = children.isEmpty() ? "" : String.join( ", ", children.values().stream().map( Description::getCommonName ).collect(Collectors.toList()));
+        String childList = children.isEmpty() ? ""
+                : String.join(", ",
+                        children.values().stream().map(Description::getCommonName).collect(Collectors.toList()));
 
-        return  String.format("Description[%s t:%s c:%s %s children: [%s]] ", name, type, isCollection, childClass, childList);
+        return String.format("Description[%s t:%s c:%s %s children: [%s]] ", name, type, isCollection, childClass,
+                childList);
     }
 
     public String toString(int indent) {

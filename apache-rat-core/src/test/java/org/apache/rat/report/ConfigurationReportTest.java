@@ -20,7 +20,6 @@ package org.apache.rat.report;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -116,9 +115,9 @@ public class ConfigurationReportTest {
         XPath xPath = XPathFactory.newInstance().newXPath();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(result.getBytes()));
 
-        Node any = (Node) xPath.compile(String.format("/license[@id='GEN']/any")).evaluate(doc, XPathConstants.NODE );
+        Node any = (Node) xPath.compile(String.format("/license[@id='GEN']/any")).evaluate(doc, XPathConstants.NODE);
         assertNotNull(any, () -> "GEN/any node missing");
         assertEquals(0, any.getChildNodes().getLength());
-        assertNotNull(any.getAttributes().getNamedItem("resource"), ()->"'resource' attribute missing");
+        assertNotNull(any.getAttributes().getNamedItem("resource"), () -> "'resource' attribute missing");
     }
 }

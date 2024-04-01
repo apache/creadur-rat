@@ -19,6 +19,8 @@
 
 package org.apache.rat.report.claim.impl;
 
+import java.util.Map;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
@@ -27,13 +29,8 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.ClaimStatistic.Counter;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
 /**
- * The aggregator is used to create a numerical statistic
- * of claims.
+ * The aggregator is used to create a numerical statistic of claims.
  */
 public class ClaimAggregator extends AbstractClaimReporter {
     private final ClaimStatistic statistic;
@@ -41,17 +38,17 @@ public class ClaimAggregator extends AbstractClaimReporter {
     public ClaimAggregator(ClaimStatistic pStatistic) {
         statistic = pStatistic;
     }
-    
+
     private <T> void incMapValue(Map<T, int[]> map, T key, int value) {
         final int[] num = map.get(key);
-        
+
         if (num == null) {
-            map.put(key,new int[] {value});
+            map.put(key, new int[] { value });
         } else {
-            num[0]+= value;
+            num[0] += value;
         }
     }
-    
+
     @Override
     protected void handleDocumentCategoryClaim(Document.Type documentType) {
         incMapValue(statistic.getDocumentCategoryMap(), documentType, 1);
@@ -59,17 +56,18 @@ public class ClaimAggregator extends AbstractClaimReporter {
 
     @Override
     protected void handleApprovedLicenseClaim(MetaData metadata) {
-        incValueMap( statistic.getCounterMap(), ClaimStatistic.Counter.Approved, metadata.approvedLicenses().count());
-        incValueMap( statistic.getCounterMap(), ClaimStatistic.Counter.Unapproved, metadata.unapprovedLicenses().count());
+        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.Approved, metadata.approvedLicenses().count());
+        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.Unapproved,
+                metadata.unapprovedLicenses().count());
     }
 
     private void incValueMap(Map<Counter, int[]> map, Counter key, long value) {
         final int[] num = map.get(key);
-        
+
         if (num == null) {
-            map.put(key,new int[] {(int)value});
+            map.put(key, new int[] { (int) value });
         } else {
-            num[0]+= value;
+            num[0] += value;
         }
     }
 
@@ -80,11 +78,11 @@ public class ClaimAggregator extends AbstractClaimReporter {
 
     @Override
     protected void handleHeaderCategoryClaim(ILicense license) {
-        String category = license.getLicenseFamily().getFamilyCategory(); 
+        String category = license.getLicenseFamily().getFamilyCategory();
         if (category.equals(ILicenseFamily.GENTERATED_CATEGORY)) {
-            incValueMap( statistic.getCounterMap(), Counter.Generated, 1);
+            incValueMap(statistic.getCounterMap(), Counter.Generated, 1);
         } else if (category.equals(ILicenseFamily.UNKNOWN_CATEGORY)) {
-            incValueMap( statistic.getCounterMap(), Counter.Unknown, 1);
+            incValueMap(statistic.getCounterMap(), Counter.Unknown, 1);
         }
         incMapValue(statistic.getLicenseFamilyCodeMap(), category, 1);
     }

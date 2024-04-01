@@ -18,39 +18,35 @@
  */
 package org.apache.rat.license;
 
-import java.util.Collection;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
-import org.apache.rat.config.parameters.Component.Type;
-import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * A simple implementation of ILicense.
  */
-@ConfigComponent(type=Component.Type.License)
+@ConfigComponent(type = Component.Type.License)
 public class SimpleLicense implements ILicense {
 
-    
-    @ConfigComponent(type=Component.Type.BuilderParam, desc = "The family this license belongs to.", parameterType = ILicenseFamily.class)
+    @ConfigComponent(type = Component.Type.BuilderParam, desc = "The family this license belongs to.", parameterType = ILicenseFamily.class)
     private ILicenseFamily family;
-    
-    @ConfigComponent(type=Component.Type.Unlabled, desc = "The matcher for this license.")
+
+    @ConfigComponent(type = Component.Type.Unlabled, desc = "The matcher for this license.")
     private IHeaderMatcher matcher;
-    @ConfigComponent(type=Component.Type.Parameter, desc = "The notes about this license.")
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The notes about this license.")
     private String notes;
-    @ConfigComponent(type=Component.Type.Parameter, desc = "The name of this license.")
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The name of this license.")
     private String name;
-    @ConfigComponent(type=Component.Type.Parameter, desc = "The ID for this license.")
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The ID for this license.")
     private String id;
 
-    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String notes, String name,
-            String id) {
+    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String notes, String name, String id) {
         Objects.requireNonNull(matcher, "Matcher must not be null");
         Objects.requireNonNull(family, "Family must not be null");
         this.family = family;
@@ -116,7 +112,7 @@ public class SimpleLicense implements ILicense {
     public String getName() {
         return name;
     }
-    
+
     @Override
     public Description getDescription() {
         return DescriptionBuilder.build(this);

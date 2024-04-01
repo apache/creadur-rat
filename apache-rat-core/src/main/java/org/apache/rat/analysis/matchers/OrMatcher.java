@@ -26,7 +26,8 @@ import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * A matcher that performs a logical {@code OR} across all the contained matchers.
+ * A matcher that performs a logical {@code OR} across all the contained
+ * matchers.
  */
 @ConfigComponent(type = Component.Type.Matcher, name = "any", desc = "Returns true if at least one of the enclosed matchers return true.")
 public class OrMatcher extends AbstractMatcherContainer {
@@ -56,7 +57,7 @@ public class OrMatcher extends AbstractMatcherContainer {
             if (matcher.matches(headers)) {
                 return true;
             }
-            
+
         }
         return false;
     }

@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 import java.util.Collection;
@@ -87,7 +86,7 @@ public class ConfigurationReaderTest {
     private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {
         AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(name);
         assertNotNull(builder);
-        assertTrue(clazz.isAssignableFrom(builder.getClass()),()->name + " is not an instanceof " + clazz.getName() );
+        assertTrue(clazz.isAssignableFrom(builder.getClass()), () -> name + " is not an instanceof " + clazz.getName());
     }
 
     @Test
@@ -105,17 +104,17 @@ public class ConfigurationReaderTest {
         checkMatcher("spdx", SpdxBuilder.class);
         checkMatcher("text", TextBuilder.class);
     }
-    
+
     @Test
     public void descriptionTest() throws NoSuchMethodException, SecurityException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
         reader.readMatcherBuilders();
-        
+
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
         Description desc = DescriptionBuilder.buildMap(builder.builtClass());
-        assertNotNull( desc, () -> "did not build description for 'copyright'" );
+        assertNotNull(desc, () -> "did not build description for 'copyright'");
         assertEquals("copyright", desc.getCommonName());
         assertEquals(Component.Type.Matcher, desc.getType());
         assertFalse(desc.isCollection());

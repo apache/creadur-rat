@@ -35,7 +35,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
     @ConfigComponent(desc = "enclosed Matchers", type = Component.Type.Unlabled, parameterType = IHeaderMatcher.class)
     protected final Collection<IHeaderMatcher> enclosed;
-    
+
     @ConfigComponent(desc = "Resource to read matcher definitions from.", type = Component.Type.Parameter)
     protected final String resource;
 
@@ -74,7 +74,6 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
     public void reset() {
         enclosed.forEach(IHeaderMatcher::reset);
     }
-
 
     public Collection<IHeaderMatcher> getEnclosed() {
         return Collections.unmodifiableCollection(enclosed);

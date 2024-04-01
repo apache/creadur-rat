@@ -18,8 +18,6 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Arrays;
 
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -28,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 public class OrMatcherTest extends AbstractMatcherTest {
 
-    
     @Test
     public void trueTest() {
         IHeaderMatcher one = new TestingMatcher("one", false, false, true, true);

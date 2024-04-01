@@ -22,10 +22,10 @@ package org.apache.rat.license;
  * The definition of the license family.
  */
 public interface ILicenseFamily extends Comparable<ILicenseFamily> {
-    
+
     static final String GENTERATED_CATEGORY = "GEN  ";
     static final String UNKNOWN_CATEGORY = "?????";
-    
+
     /**
      * @return the license family name.
      */
@@ -44,8 +44,9 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
     }
 
     /**
-     * Convert a potential category string into a category string of exactly 5 characters either by truncating
-     * the string or appending spaces as necessary.
+     * Convert a potential category string into a category string of exactly 5
+     * characters either by truncating the string or appending spaces as necessary.
+     * 
      * @param cat the string to convert.
      * @return a string of exactly 5 characters.
      */
@@ -63,22 +64,25 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
      */
     interface Builder {
         /**
-         * Sets the license family category.  Will trim or extends the string with spaces to ensure that it is
-         * exactly 5 characters.
+         * Sets the license family category. Will trim or extends the string with spaces
+         * to ensure that it is exactly 5 characters.
+         * 
          * @param licenseFamilyCategory the category string
          * @return this builder for chaining.
          */
         Builder setLicenseFamilyCategory(String licenseFamilyCategory);
 
         /**
-         * Sets the license family name. 
+         * Sets the license family name.
+         * 
          * @param licenseFamilyName the name string
          * @return this builder for chaining.
          */
         Builder setLicenseFamilyName(String licenseFamilyName);
-        
+
         /**
          * Gets the category that this builder is building.
+         * 
          * @return the category that this builder is building.
          */
         String getCategory();

@@ -18,26 +18,26 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.regex.Pattern;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 public class SimpleRegexMatcherTest {
 
     SimpleRegexMatcher target = new SimpleRegexMatcher(Pattern.compile("hello\\sworld"));
-    
+
     @BeforeEach
     public void setup() {
         target.reset();
     }
-    
+
     @Test
     public void test() {
-        assertEquals( false, target.matches(AbstractMatcherTest.makeHeaders("what in the world",null)));
-        assertEquals( true, target.matches(AbstractMatcherTest.makeHeaders("hello world",null)));
+        assertEquals(false, target.matches(AbstractMatcherTest.makeHeaders("what in the world", null)));
+        assertEquals(true, target.matches(AbstractMatcherTest.makeHeaders("hello world", null)));
         target.reset();
     }
 }

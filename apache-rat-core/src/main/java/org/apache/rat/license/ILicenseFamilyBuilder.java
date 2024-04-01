@@ -35,7 +35,6 @@ public class ILicenseFamilyBuilder implements Builder {
         this.licenseFamilyCategory = licenseFamilyCategory;
         return this;
     }
-    
 
     @Override
     public String getCategory() {
@@ -56,9 +55,10 @@ public class ILicenseFamilyBuilder implements Builder {
         if (StringUtils.isBlank(licenseFamilyName)) {
             throw new ConfigurationException("LicenseFamily Name must be specified");
         }
-        return new ILicenseFamily() { 
+        return new ILicenseFamily() {
             private final String cat = ILicenseFamily.makeCategory(licenseFamilyCategory);
             private final String name = licenseFamilyName;
+
             @Override
             public String toString() {
                 return String.format("%s %s", getFamilyCategory(), getFamilyName());

@@ -21,7 +21,6 @@ package org.apache.rat.report.xml;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,7 +33,6 @@ import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReport;
@@ -74,7 +72,6 @@ public class XmlReportFactoryTest {
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
 
-        
         final TestingLicense testingLicense = new TestingLicense(new TestingMatcher(true), family);
 
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY, HiddenFileFilter.HIDDEN);
@@ -87,10 +84,10 @@ public class XmlReportFactoryTest {
         report.endReport();
         writer.closeDocument();
         final String output = out.toString();
-        assertTrue(
-                output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="), "Preamble and document element are OK");
+        assertTrue(output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="),
+                "Preamble and document element are OK");
 
-        assertTrue( XmlUtils.isWellFormedXml(output), "Is well formed");
+        assertTrue(XmlUtils.isWellFormedXml(output), "Is well formed");
         assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.binary)[0], "Binary files");
         assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.notice)[0], "Notice files");
         assertEquals(8, statistic.getDocumentCategoryMap().get(Document.Type.standard)[0], "Standard files");

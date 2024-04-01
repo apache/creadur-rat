@@ -23,10 +23,8 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.rat.analysis.IHeaders;
-
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Description;
+import org.apache.rat.analysis.IHeaders;
 
 /**
  * Class to take a set of ILicenses and collection of approved license
@@ -47,6 +45,7 @@ public class LicenseSetFactory {
 
         /**
          * Converts from a String to an enum value.
+         * 
          * @param s String representation.
          * @return given licenseFilter for the given String representation.
          */
@@ -61,6 +60,7 @@ public class LicenseSetFactory {
     /**
      * Constructs a factory with the specified set of Licenses and the approved
      * license collection.
+     * 
      * @param licenses the set of defined licenses.
      * @param approvedLicenses the list of approved licenses.
      */
@@ -71,6 +71,7 @@ public class LicenseSetFactory {
 
     /**
      * Create an empty sorted Set with proper comparator.
+     * 
      * @return An empty sorted set of ILicense objects.
      */
     public static SortedSet<ILicense> emptyLicenseSet() {
@@ -79,6 +80,7 @@ public class LicenseSetFactory {
 
     /**
      * Create a sorted set of licenses families from the collection.
+     * 
      * @param licenses the collection of all licenses.
      * @return a SortedSet of license families from the collection.
      */
@@ -90,6 +92,7 @@ public class LicenseSetFactory {
 
     /**
      * Gets the License objects based on the filter.
+     * 
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicense objects.
      */
@@ -110,6 +113,7 @@ public class LicenseSetFactory {
 
     /**
      * Gets the LicenseFamily objects based on the filter.
+     * 
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicenseFamily objects.
      */
@@ -130,6 +134,7 @@ public class LicenseSetFactory {
 
     /**
      * Gets the categories of LicenseFamily objects based on the filter.
+     * 
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicenseFamily categories.
      */
@@ -190,7 +195,7 @@ public class LicenseSetFactory {
             public String getNotes() {
                 return null;
             }
-            
+
             @Override
             public String getName() {
                 return searchFamily.getFamilyName();

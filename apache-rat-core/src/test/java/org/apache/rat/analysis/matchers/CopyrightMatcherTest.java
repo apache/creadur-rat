@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.apache.rat.analysis.HeaderCheckWorker;
 import org.apache.rat.analysis.IHeaders;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -54,27 +53,24 @@ public class CopyrightMatcherTest {
     private static final int TOTAL_TESTS = prefix.length * 9;
 
     static Arguments startStopOwner = Arguments.of("start-stop-owner", "1990", "1991", "an owner",
-            expandResults( DO, OD, DOS, ODS) , expandResults( D, S, O, OS, SO ));
-    static Arguments startOwner = Arguments.of( "start-owner", "1990", null, "an owner", 
-            expandResults( OS, SO, OD, ODS ), expandResults( D, DO, DOS, S, O ) );
-    static Arguments start = Arguments.of("start", "1990", null, null, expandResults(D, DO, DOS, S, SO ),
-            expandResults(OD, ODS, O, OS ) );
-    static Arguments owner = Arguments.of("owner", null, null, "an owner", expandResults( O, OD, ODS, OS ),
-expandResults( DO, DOS, S, D, SO ) );
-    static Arguments nada = Arguments.of("nada", null, null, null, expandResults( D, DO, DOS, S, SO ),
-            expandResults( OD, ODS, O, OS ) );
+            expandResults(DO, OD, DOS, ODS), expandResults(D, S, O, OS, SO));
+    static Arguments startOwner = Arguments.of("start-owner", "1990", null, "an owner", expandResults(OS, SO, OD, ODS),
+            expandResults(D, DO, DOS, S, O));
+    static Arguments start = Arguments.of("start", "1990", null, null, expandResults(D, DO, DOS, S, SO),
+            expandResults(OD, ODS, O, OS));
+    static Arguments owner = Arguments.of("owner", null, null, "an owner", expandResults(O, OD, ODS, OS),
+            expandResults(DO, DOS, S, D, SO));
+    static Arguments nada = Arguments.of("nada", null, null, null, expandResults(D, DO, DOS, S, SO),
+            expandResults(OD, ODS, O, OS));
 
-    
-    
     public static Stream<Arguments> parameterProvider() {
-        return Stream.of( startStopOwner, startOwner, start, owner, nada);
+        return Stream.of(startStopOwner, startOwner, start, owner, nada);
     }
 
-    private static String[][] expandResults( String[]...args) {
+    private static String[][] expandResults(String[]... args) {
         List<String[]> arry = new ArrayList<>();
         for (String pfx : prefix) {
-          Arrays.stream(args).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] })
-                  .forEach(arry::add);
+            Arrays.stream(args).map(origin -> new String[] { pfx + origin[0], pfx + origin[1] }).forEach(arry::add);
         }
         return arry.toArray(new String[arry.size()][2]);
     }
@@ -86,32 +82,31 @@ expandResults( DO, DOS, S, D, SO ) );
         Set<String> failSet = new HashSet<String>();
         Arrays.stream(fail).forEach(s -> failSet.add(s[0]));
         for (String s : passSet) {
-            assertFalse(failSet.contains(s), ()->String.format("%s is in both pass and fail sets for %s", s, testName));
+            assertFalse(failSet.contains(s),
+                    () -> String.format("%s is in both pass and fail sets for %s", s, testName));
         }
     }
 
     @ParameterizedTest
     @MethodSource("parameterProvider")
-    public void testPass(String testName, String start, String stop, String owner, String[][] pass,
-            String[][] fail) {
+    public void testPass(String testName, String start, String stop, String owner, String[][] pass, String[][] fail) {
         verify(testName, pass, fail);
         CopyrightMatcher matcher = new CopyrightMatcher(start, stop, owner);
         for (String[] target : pass) {
-            IHeaders headers = AbstractMatcherTest.makeHeaders(target[TEXT],null);
-            assertTrue(matcher.matches(headers),  ()->String.format("%s:%s failed", testName, target[NAME]));
+            IHeaders headers = AbstractMatcherTest.makeHeaders(target[TEXT], null);
+            assertTrue(matcher.matches(headers), () -> String.format("%s:%s failed", testName, target[NAME]));
             matcher.reset();
         }
     }
 
     @ParameterizedTest
     @MethodSource("parameterProvider")
-    public void testFail(String testName, String start, String stop, String owner, String[][] pass,
-            String[][] fail) {
+    public void testFail(String testName, String start, String stop, String owner, String[][] pass, String[][] fail) {
         verify(testName, pass, fail);
         CopyrightMatcher matcher = new CopyrightMatcher(start, stop, owner);
         for (String[] target : fail) {
-            IHeaders headers = AbstractMatcherTest.makeHeaders(target[TEXT],null);
-            assertFalse( matcher.matches(headers), String.format("%s:%s passed", testName, target[NAME]));
+            IHeaders headers = AbstractMatcherTest.makeHeaders(target[TEXT], null);
+            assertFalse(matcher.matches(headers), String.format("%s:%s passed", testName, target[NAME]));
             matcher.reset();
         }
     }

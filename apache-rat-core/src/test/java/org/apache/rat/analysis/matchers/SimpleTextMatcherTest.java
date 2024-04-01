@@ -35,8 +35,8 @@ public class SimpleTextMatcherTest {
 
     @Test
     public void testMatch() {
-        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("what in the world",null)));
-        assertTrue(target.matches(AbstractMatcherTest.makeHeaders("hello world",null)));
+        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("what in the world", null)));
+        assertTrue(target.matches(AbstractMatcherTest.makeHeaders("hello world", null)));
         target.reset();
     }
 

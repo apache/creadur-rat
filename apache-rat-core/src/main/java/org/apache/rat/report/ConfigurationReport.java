@@ -23,9 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.UUID;
 
@@ -124,7 +124,7 @@ public class ConfigurationReport extends AbstractReport {
         }
     }
 
-    private void writeChildren(Description description, Component component) throws RatException, IOException {
+    private void writeChildren(Description description, Component component) throws RatException {
         writeDescriptions(description.childrenOfType(Type.Parameter), component);
         writeDescriptions(description.childrenOfType(Type.Unlabled), component);
         writeDescriptions(description.childrenOfType(Type.Matcher), component);
@@ -172,10 +172,11 @@ public class ConfigurationReport extends AbstractReport {
                 Optional<Description> resource = description.childrenOfType(Type.Parameter).stream()
                         .filter(i -> "resource".equals(i.getCommonName())).findFirst();
                 if (resource.isPresent()) {
-                    Iterator<Map.Entry<String,Description>> iter = description.getChildren().entrySet().iterator();
+                    Iterator<Map.Entry<String, Description>> iter = description.getChildren().entrySet().iterator();
                     while (iter.hasNext()) {
-                        Map.Entry<String,Description> entry = iter.next();
-                        if (entry.getValue().isCollection() && IHeaderMatcher.class.isAssignableFrom(entry.getValue().getChildType())) {
+                        Map.Entry<String, Description> entry = iter.next();
+                        if (entry.getValue().isCollection()
+                                && IHeaderMatcher.class.isAssignableFrom(entry.getValue().getChildType())) {
                             iter.remove();
                         }
                     }
@@ -240,7 +241,7 @@ public class ConfigurationReport extends AbstractReport {
                 try {
                     Object obj = description.getter(component.getClass()).invoke(component);
                     if (obj instanceof Iterable) {
-                        for (Object o2 : (Iterable) obj) {
+                        for (Object o2 : (Iterable<?>) obj) {
                             processUnlabled(o2);
                         }
                     } else {

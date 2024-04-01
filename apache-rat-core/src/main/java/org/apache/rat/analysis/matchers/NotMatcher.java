@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.analysis.IHeaders;
+
 /**
  * An IHeaderMatcher that reverses the result of an enclosed matcher.
  */

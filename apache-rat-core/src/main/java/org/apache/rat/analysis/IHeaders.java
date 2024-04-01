@@ -26,9 +26,10 @@ public interface IHeaders {
      * @return the raw header as read from the file.
      */
     public String raw();
+
     /**
      * @return The pruned header.
      */
     public String pruned();
-    
+
 }

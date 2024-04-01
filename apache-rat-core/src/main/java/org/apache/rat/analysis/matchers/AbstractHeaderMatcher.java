@@ -33,7 +33,7 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
  */
 public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
 
-    @ConfigComponent(type=Component.Type.Parameter, desc="The id of the matcher.")    
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The id of the matcher.")
     private final String id;
 
     /**
@@ -55,7 +55,7 @@ public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
     public String toString() {
         return getId();
     }
-    
+
     @Override
     public Description getDescription() {
         return DescriptionBuilder.build(this);

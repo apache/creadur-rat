@@ -18,20 +18,16 @@
  */
 package org.apache.rat.analysis;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.ILicenseFamilyBuilder;
 
 /**
- * An ILicense implementation that represents an unknown license. <p> The
- * UnknownLicense is used during processing to report that a document license
- * can not be determined. </p>
+ * An ILicense implementation that represents an unknown license.
+ * <p>
+ * The UnknownLicense is used during processing to report that a document
+ * license can not be determined.
+ * </p>
  */
 public class UnknownLicense implements ILicense {
 
@@ -39,9 +35,9 @@ public class UnknownLicense implements ILicense {
      * The single instance of this class.
      */
     public static final UnknownLicense INSTANCE = new UnknownLicense();
-    
-    private final ILicenseFamily family ;
-    
+
+    private final ILicenseFamily family;
+
     /**
      * Do not allow other constructions.
      */

@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.Builder;
 
 /**
  * Constructs a builder that contains other builders.
@@ -43,7 +42,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
      * The list of builders that will build the enclosed matchers.
      */
     protected final List<IHeaderMatcher.Builder> children = new ArrayList<>();
-    
+
     protected String resource;
 
     /**
@@ -78,6 +77,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
 
     /**
      * Adds a builder to the list of builders.
+     * 
      * @param child the child builder to add.
      * @return this for chaining.
      */
@@ -88,6 +88,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
 
     /**
      * Adds a collection of builders to the list of child builders.
+     * 
      * @param children the children to add.
      * @return this for chaining.
      */

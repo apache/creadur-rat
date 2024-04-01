@@ -23,9 +23,6 @@ import java.util.Objects;
 import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Component;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * The definition of a License.
@@ -44,6 +41,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
      * Returns the name of this license. If no name was specified then the name of
      * the family is returned.
+     * 
      * @return the name of this license.
      */
     String getName();
@@ -85,6 +83,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
         /**
          * Sets the matcher from a builder.
+         * 
          * @param matcher the builder for the matcher for the license.
          * @return this builder for chaining.
          */
@@ -95,6 +94,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
         /**
          * Sets the matcher.
+         * 
          * @param matcher the matcher for the license.
          * @return this builder for chaining.
          */
@@ -106,6 +106,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         /**
          * Sets the notes for the license. If called multiple times the notes are
          * concatenated to create a single note.
+         * 
          * @param notes the notes for the license.
          * @return this builder for chaining.
          */
@@ -117,6 +118,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         /**
          * Sets the ID of the license. If the ID is not set then the ID of the license
          * family is used.
+         * 
          * @param id the ID for the license
          * @return this builder for chaining.
          */
@@ -130,6 +132,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * all licenses and must be 5 characters. If more than 5 characters are provided
          * then only the first 5 are taken. If fewer than 5 characters are provided the
          * category is padded with spaces.
+         * 
          * @param licenseFamilyCategory the family category for the license.
          * @return this builder for chaining.
          */
@@ -142,6 +145,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         /**
          * Sets the name of the license. If the name is not set then the name of the
          * license family is used.
+         * 
          * @param name the name for the license
          * @return this builder for chaining.
          */

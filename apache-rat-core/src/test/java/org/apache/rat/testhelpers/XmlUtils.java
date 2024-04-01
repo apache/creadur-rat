@@ -30,7 +30,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,7 +46,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -65,14 +63,13 @@ public final class XmlUtils {
         // Does nothing
     }
 
-    
     public static final XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
         final SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setValidating(false);
         spf.setNamespaceAware(true);
         return spf.newSAXParser().getXMLReader();
     }
-    
+
     public static final boolean isWellFormedXml(final String string) throws Exception {
         return isWellFormedXml(new InputSource(new StringReader(string)));
     }
@@ -80,7 +77,7 @@ public final class XmlUtils {
     public static final boolean isWellFormedXml(final InputStream in) throws Exception {
         return isWellFormedXml(new InputSource(in));
     }
-    
+
     public static final boolean isWellFormedXml(final InputSource isource) {
         try {
             newXMLReader().parse(isource);
@@ -96,21 +93,20 @@ public final class XmlUtils {
     public static NodeList getNodeList(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         return (NodeList) xPath.compile(xpath).evaluate(source, XPathConstants.NODESET);
     }
-    
+
     public static boolean isPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         return !xPath.compile(xpath).evaluate(source).equals("null");
     }
-    
+
     public static List<Node> getNodes(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         NodeList nodeList = (NodeList) xPath.compile(xpath).evaluate(source, XPathConstants.NODESET);
         List<Node> result = new ArrayList<>();
-        for (int i=0;i<nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) {
             result.add(nodeList.item(i));
         }
         return result;
     }
 
-    
     public static Node getNode(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         NodeList nodeList = getNodeList(source, xPath, xpath);
         assertEquals(1, nodeList.getLength(), "Could not find " + xpath);
@@ -119,11 +115,11 @@ public final class XmlUtils {
 
     public static final String printNodeList(NodeList nodeList) {
         StringBuilder sb = new StringBuilder();
-        for (int i=0;i<nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) {
             Node n = nodeList.item(0);
             sb.append(n.getNodeName()).append(" ");
             NamedNodeMap nnm = n.getAttributes();
-            for (int j=0;j<nnm.getLength();j++) {
+            for (int j = 0; j < nnm.getLength(); j++) {
                 Node a = nnm.item(j);
                 sb.append(a.getNodeName()).append("=").append(a.getNodeValue()).append(" ");
             }

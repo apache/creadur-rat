@@ -18,12 +18,9 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Arrays;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +32,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
         IHeaderMatcher one = new TestingMatcher("one", true, true, false, false);
         // only need 2 entries because when one is false two test does not get called.
         IHeaderMatcher two = new TestingMatcher("two", true, false);
-        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one,  two),null);
+        AndMatcher target = new AndMatcher("Testing", Arrays.asList(one, two), null);
         assertValues(target, true, false, false, false);
         target.reset();
     }

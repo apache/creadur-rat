@@ -28,11 +28,12 @@ import org.apache.rat.license.ILicenseFamily;
 
 /**
  * A collection of ILicenses that acts as a single License for purposes of
- * Analysis. <p> This class process each license in turn on each
- * {@code matches(String)} call. When a match is found the ILicenseFamily for
- * the matching license is captured and used as the family for this license. If
- * no matching license has been found the default {@code dummy} license category
- * is used.
+ * Analysis.
+ * <p>
+ * This class process each license in turn on each {@code matches(String)} call.
+ * When a match is found the ILicenseFamily for the matching license is captured
+ * and used as the family for this license. If no matching license has been
+ * found the default {@code dummy} license category is used.
  */
 
 class LicenseCollection extends AbstractMatcherContainer implements ILicense {
@@ -44,6 +45,7 @@ class LicenseCollection extends AbstractMatcherContainer implements ILicense {
 
     /**
      * Constructs the LicenseCollection from the provided ILicense collection.
+     * 
      * @param enclosed The collection of ILicenses to compose this License
      * implementation from. May not be null.
      */

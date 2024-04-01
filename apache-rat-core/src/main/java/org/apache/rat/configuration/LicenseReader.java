@@ -18,7 +18,6 @@
  */
 package org.apache.rat.configuration;
 
-import java.io.Writer;
 import java.net.URL;
 import java.util.SortedSet;
 
@@ -42,7 +41,7 @@ public interface LicenseReader {
      * @return A collection of ILicense.
      */
     SortedSet<ILicense> readLicenses();
-    
+
     /**
      * Reads the configuration and extracts instances of ILicenseFamily.
      * 

@@ -15,31 +15,25 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.claim.util;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
+import java.util.List;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.xml.writer.IXmlWriter;
-
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
-
 
 public class ClaimReporterMultiplexer implements RatReport {
-    private static final String RAT_REPORT = "rat-report";
-    private static final String TIMESTAMP = "timestamp";
-    
+
     private final IDocumentAnalyser analyser;
     private final List<? extends RatReport> reporters;
-    private final boolean dryRun; 
+    private final boolean dryRun;
 
-    public ClaimReporterMultiplexer(final boolean dryRun, final IDocumentAnalyser pAnalyser, final List<? extends RatReport> reporters) {
+    public ClaimReporterMultiplexer(final boolean dryRun, final IDocumentAnalyser pAnalyser,
+            final List<? extends RatReport> reporters) {
         analyser = pAnalyser;
         this.reporters = reporters;
         this.dryRun = dryRun;
@@ -57,7 +51,7 @@ public class ClaimReporterMultiplexer implements RatReport {
             }
             for (RatReport report : reporters) {
                 report.report(document);
-            } 
+            }
         }
     }
 
@@ -65,13 +59,13 @@ public class ClaimReporterMultiplexer implements RatReport {
     public void startReport() throws RatException {
         for (RatReport report : reporters) {
             report.startReport();
-        } 
+        }
     }
 
     @Override
     public void endReport() throws RatException {
         for (RatReport report : reporters) {
             report.endReport();
-        } 
+        }
     }
 }

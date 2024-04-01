@@ -26,14 +26,17 @@ import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * A matcher that performs a logical {@code AND} across all the contained matchers.
+ * A matcher that performs a logical {@code AND} across all the contained
+ * matchers.
  */
 @ConfigComponent(type = Component.Type.Matcher, name = "all", desc = "Returns true if all enclosed matchers return true.")
 public class AndMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the AndMatcher with the specified id and enclosed collection.
-     * @param id the to use.  If null or an empty string a unique random id will be created.
+     * 
+     * @param id the to use. If null or an empty string a unique random id will be
+     * created.
      * @param enclosed the enclosed collection.
      */
     public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
@@ -41,7 +44,9 @@ public class AndMatcher extends AbstractMatcherContainer {
     }
 
     /**
-     * Constructs the AndMatcher with the a unique random id and the enclosed collection.
+     * Constructs the AndMatcher with the a unique random id and the enclosed
+     * collection.
+     * 
      * @param enclosed the enclosed collection.
      */
     public AndMatcher(Collection<? extends IHeaderMatcher> enclosed, String resource) {
@@ -51,8 +56,7 @@ public class AndMatcher extends AbstractMatcherContainer {
     @Override
     public boolean matches(IHeaders headers) {
         for (IHeaderMatcher matcher : enclosed) {
-            if (!matcher.matches(headers))
-            {
+            if (!matcher.matches(headers)) {
                 return false;
             }
         }

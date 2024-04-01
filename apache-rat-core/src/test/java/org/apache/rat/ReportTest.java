@@ -126,7 +126,6 @@ public class ReportTest {
             System.setOut(origin);
         }
         assertTrue(output.exists());
-        String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         Document doc = XmlUtils.toDom(new FileInputStream(output));
         XPath xPath = XPathFactory.newInstance().newXPath();
 

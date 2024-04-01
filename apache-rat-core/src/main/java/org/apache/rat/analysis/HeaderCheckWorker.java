@@ -32,8 +32,10 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
 /**
- * Reads from a stream to check license. <p> <strong>Note</strong> that this
- * class is not thread safe. </p>
+ * Reads from a stream to check license.
+ * <p>
+ * <strong>Note</strong> that this class is not thread safe.
+ * </p>
  */
 public class HeaderCheckWorker {
 

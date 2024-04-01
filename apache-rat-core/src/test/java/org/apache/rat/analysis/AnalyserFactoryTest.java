@@ -18,25 +18,11 @@
  */
 package org.apache.rat.analysis;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.io.PrintStream;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.io.FileUtils;
-import org.apache.rat.Report;
-import org.apache.rat.ReportConfiguration;
-import org.apache.rat.Reporter;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
 import org.apache.rat.license.ILicense;
@@ -46,7 +32,6 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 
 public class AnalyserFactoryTest {
 
@@ -60,7 +45,8 @@ public class AnalyserFactoryTest {
     public void setUp() throws Exception {
         out = new StringWriter();
         reporter = new SimpleXmlClaimReporter(new XmlWriter(out));
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE, Arrays.asList(MATCHES_NOTHING_MATCHER));
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE,
+                Arrays.asList(MATCHES_NOTHING_MATCHER));
     }
 
     @Test
@@ -71,9 +57,8 @@ public class AnalyserFactoryTest {
         reporter.report(document);
         assertEquals( //
                 "<resource name='src/test/resources/elements/Text.txt' type='standard'>"
-                + "<license id='?????' name='Unknown license' approval='false' family='?????'/>"
-                + "<sample><![CDATA[ /*\n"
-                        + " * Licensed to the Apache Software Foundation (ASF) under one\n"
+                        + "<license id='?????' name='Unknown license' approval='false' family='?????'/>"
+                        + "<sample><![CDATA[ /*\n" + " * Licensed to the Apache Software Foundation (ASF) under one\n"
                         + " * or more contributor license agreements.  See the NOTICE file\n"
                         + " * distributed with this work for additional information\n"
                         + " * regarding copyright ownership.  The ASF licenses this file\n"
@@ -86,8 +71,7 @@ public class AnalyserFactoryTest {
                         + " * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n"
                         + " * KIND, either express or implied.  See the License for the\n"
                         + " * specific language governing permissions and limitations\n" + " * under the License.    \n"
-                        + " */\n" + "\n" + "            \n"
-                        + " ]]></sample></resource>",
+                        + " */\n" + "\n" + "            \n" + " ]]></sample></resource>",
                 out.toString(), "Open standard element");
     }
 
@@ -97,8 +81,8 @@ public class AnalyserFactoryTest {
                 Resources.getResourceFile("/elements/LICENSE"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/LICENSE' type='notice'/>",
-                out.toString(), "Open note element");
+        assertEquals("<resource name='src/test/resources/elements/LICENSE' type='notice'/>", out.toString(),
+                "Open note element");
     }
 
     @Test
@@ -107,9 +91,8 @@ public class AnalyserFactoryTest {
                 Resources.getResourceFile("/elements/Image.png"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals(
-                "<resource name='src/test/resources/elements/Image.png' type='binary'/>", 
-                out.toString(), "Open binary element");
+        assertEquals("<resource name='src/test/resources/elements/Image.png' type='binary'/>", out.toString(),
+                "Open binary element");
     }
 
     @Test
@@ -118,8 +101,8 @@ public class AnalyserFactoryTest {
                 Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals(
-                "<resource name='src/test/resources/elements/dummy.jar' type='archive'/>", out.toString(), "Open archive element");
+        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='archive'/>", out.toString(),
+                "Open archive element");
     }
 
     @Test
@@ -128,7 +111,7 @@ public class AnalyserFactoryTest {
                 Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals(
-                "<resource name='src/test/resources/elements/dummy.jar' type='archive'/>", out.toString(), "Open archive element");
+        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='archive'/>", out.toString(),
+                "Open archive element");
     }
 }

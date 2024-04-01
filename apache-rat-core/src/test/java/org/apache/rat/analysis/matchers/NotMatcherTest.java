@@ -18,8 +18,6 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.jupiter.api.Test;

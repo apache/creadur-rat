@@ -21,7 +21,6 @@ package org.apache.rat.report.claim.impl.xml;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -43,7 +42,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
     private static final String SAMPLE = "sample";
     private static final String TYPE = "type";
     private static final String ID = "id";
-    
+
     private final IXmlWriter writer;
     private static final String NAME = "name";
 
@@ -61,27 +60,27 @@ public class SimpleXmlClaimReporter extends AbstractReport {
     }
 
     private void writeLicenseClaims(ILicense license, MetaData metaData) throws IOException {
-        writer.openElement(LICENSE).attribute(ID, license.getId())
-        .attribute(NAME, license.getName())
-        .attribute(APPROVAL, Boolean.valueOf(metaData.isApproved(license)).toString())
-        .attribute(FAMILY, license.getLicenseFamily().getFamilyCategory());
+        writer.openElement(LICENSE).attribute(ID, license.getId()).attribute(NAME, license.getName())
+                .attribute(APPROVAL, Boolean.valueOf(metaData.isApproved(license)).toString())
+                .attribute(FAMILY, license.getLicenseFamily().getFamilyCategory());
         if (StringUtils.isNotBlank(license.getNotes())) {
             writer.openElement(NOTES).cdata(license.getNotes()).closeElement();
         }
         writer.closeElement();
     }
-    
-    private void writeDocumentClaims(final Document subject) throws IOException, RatException {
+
+    private void writeDocumentClaims(final Document subject) throws IOException {
         final MetaData metaData = subject.getMetaData();
-        writer.openElement(RESOURCE).attribute(NAME, subject.getName()).attribute(TYPE, metaData.getDocumentType().toString());
-        for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext() ;) {
+        writer.openElement(RESOURCE).attribute(NAME, subject.getName()).attribute(TYPE,
+                metaData.getDocumentType().toString());
+        for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext();) {
             writeLicenseClaims(iter.next(), metaData);
         }
         writeHeaderSample(metaData);
         writer.closeElement();
     }
 
-    private void writeHeaderSample(final MetaData metaData) throws IOException, RatException {
+    private void writeHeaderSample(final MetaData metaData) throws IOException {
         final String sample = metaData.getSampleHeader();
         if (StringUtils.isNotBlank(sample)) {
             writer.openElement(SAMPLE).cdata(sample).closeElement();
