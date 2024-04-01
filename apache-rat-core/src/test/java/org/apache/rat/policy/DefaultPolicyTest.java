@@ -31,6 +31,7 @@ import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingLocation;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -59,7 +60,7 @@ public class DefaultPolicyTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        defaults = Defaults.builder().build();
+        defaults = Defaults.builder().build(DefaultLog.INSTANCE);
         policy = new DefaultPolicy(defaults.getLicenseFamilies(LicenseFilter.approved));
         document = new TestingLocation("subject");
     }

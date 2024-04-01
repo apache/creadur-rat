@@ -29,7 +29,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 @ConfigComponent(type = Component.Type.Matcher, name = "regex", desc = "Performs a regex match using the enclosed the text")
 public class SimpleRegexMatcher extends AbstractSimpleMatcher {
-    @ConfigComponent(type = Component.Type.Unlabled, desc = "", parameterType = Pattern.class)
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The pattern to match", name="expr", parameterType = Pattern.class)
     private final Pattern pattern;
 
     /**

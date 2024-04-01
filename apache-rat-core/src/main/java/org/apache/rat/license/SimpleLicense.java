@@ -37,7 +37,7 @@ public class SimpleLicense implements ILicense {
     @ConfigComponent(type = Component.Type.BuilderParam, desc = "The family this license belongs to.", parameterType = ILicenseFamily.class)
     private ILicenseFamily family;
 
-    @ConfigComponent(type = Component.Type.Unlabled, desc = "The matcher for this license.")
+    @ConfigComponent(type = Component.Type.Unlabeled, desc = "The matcher for this license.")
     private IHeaderMatcher matcher;
     @ConfigComponent(type = Component.Type.Parameter, desc = "The notes about this license.")
     private String notes;

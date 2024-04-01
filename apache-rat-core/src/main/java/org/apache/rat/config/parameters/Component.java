@@ -31,7 +31,7 @@ public interface Component {
         /** A Parameter for example the "id" parameter found in every component */
         Parameter,
         /** A parameter without a name.  Generally this is a value for the item.  For example the enclosed matchers in the "or" license. */
-        Unlabled,
+        Unlabeled,
         /** A parameter that is supplied by the environment.  Currently systems using builders have to handle seting this.  For example the list of matchers for the "MatcherRefBuilder" */
         BuilderParam };
         

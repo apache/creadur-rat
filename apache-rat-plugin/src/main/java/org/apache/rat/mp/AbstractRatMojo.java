@@ -332,6 +332,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 case ERROR:
                     log.error(msg);
                     break;
+                case OFF:
+                    break;
             }
             }};
     }
@@ -340,7 +342,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         ReportConfiguration config = new ReportConfiguration(makeLog());
         reportDeprecatedProcessing();
         if (addDefaultLicenses) {
-            config.setFrom(getDefaultsBuilder().build());
+            config.setFrom(getDefaultsBuilder().build(config.getLog()));
         } else {
             config.setStyleSheet(Defaults.getPlainStyleSheet());
         }

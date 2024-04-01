@@ -38,7 +38,7 @@ public class Copyright extends CopyrightBuilder {
 
     @Override
     public CopyrightMatcher build() {
-        setStart(start).setEnd(stop).setOwner(owner);
+        setStart(start).setStop(stop).setOwner(owner);
         return super.build();
     }
 }

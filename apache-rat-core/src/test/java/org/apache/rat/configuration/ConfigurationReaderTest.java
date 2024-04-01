@@ -23,8 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.StringReader;
 import java.net.URL;
 import java.util.Collection;
+import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -40,7 +42,10 @@ import org.apache.rat.configuration.builders.NotBuilder;
 import org.apache.rat.configuration.builders.RegexBuilder;
 import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.InputSource;
 
 public class ConfigurationReaderTest {
 

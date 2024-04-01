@@ -27,7 +27,7 @@ public class Regex extends RegexBuilder {
     @Named("expr")
     public RegexBuilder setExpr(String exp) {
         System.out.format("Calling setText() with %s\n", exp);
-        return super.setPattern(exp);
+        return super.setExpr(exp);
     }
     public void set(String exp) {
         System.out.format("Calling set() with %s\n", exp);

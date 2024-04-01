@@ -20,6 +20,8 @@ package org.apache.rat.configuration;
 
 import java.net.URL;
 
+import org.apache.rat.utils.Log;
+
 /**
  * An interface that describes the methods of a Matcher reader.
  */
@@ -35,4 +37,5 @@ public interface MatcherReader {
      * Reads the configuration and MatcherBuilder classes and adds them to Readers.
      */
     void readMatcherBuilders();
+
 }

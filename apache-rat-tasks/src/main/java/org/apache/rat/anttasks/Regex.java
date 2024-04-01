@@ -26,12 +26,12 @@ public class Regex implements IHeaderMatcher.Builder {
 
     private final RegexBuilder builder = new RegexBuilder();
 
-    public void setRegex(String pattern) {
-        builder.setPattern(pattern);
+    public void setExpr(String pattern) {
+        builder.setExpr(pattern);
     }
 
     public void addText(String pattern) {
-        builder.setPattern(pattern);
+        builder.setExpr(pattern);
     }
 
     @Override

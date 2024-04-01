@@ -50,7 +50,7 @@ public class DescriptionBuilderTest {
         assertTrue(underTest.getChildren().containsKey("resource"));
         assertTrue(underTest.getChildren().containsKey("enclosed"));
         Description desc = underTest.getChildren().get("enclosed");
-        assertEquals(Component.Type.Unlabled, desc.getType());
+        assertEquals(Component.Type.Unlabeled, desc.getType());
     }
 
 }

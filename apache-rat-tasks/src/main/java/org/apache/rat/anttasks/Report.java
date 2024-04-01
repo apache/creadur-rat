@@ -206,7 +206,7 @@ public class Report extends Task {
     }
 
     public ReportConfiguration getConfiguration() {
-        Defaults defaults = defaultsBuilder.build();
+        Defaults defaults = defaultsBuilder.build(configuration.getLog());
 
         configuration.setFrom(defaults);
         configuration.setReportable(new ResourceCollectionContainer(nestedResources));

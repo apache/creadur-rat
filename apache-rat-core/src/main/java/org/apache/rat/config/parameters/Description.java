@@ -26,8 +26,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component.Type;
+import org.apache.rat.utils.Log;
 
 /**
  * A description of a component.
@@ -203,11 +205,11 @@ public class Description {
     /**
      * Returns the setter for the component in the specified class. Notes:
      * <ul>
-     * <li>Licence can not be set in components. They are top level components.</li>
+     * <li>License can not be set in components. They are top level components.</li>
      * <li>Matcher expects an "add" method that accepts an
      * IHeaderMatcher.Builder.</li>
      * <li>Parameter expects a {@code set(String)} method.</li>
-     * <li>Unlabled expects a {@code set(String)} method.</li>
+     * <li>Unlabeled expects a {@code set(String)} method.</li>
      * <li>BuilderParam expects a {@code set} method that takes a
      * {@code childeClass} argument.</li>
      * </ul>
@@ -224,7 +226,7 @@ public class Description {
         case Matcher:
             return clazz.getMethod("add", IHeaderMatcher.Builder.class);
         case Parameter:
-        case Unlabled:
+        case Unlabeled:
             return clazz.getMethod(methodName("set"), String.class);
         case BuilderParam:
             return clazz.getMethod(methodName("set"), childClass);
@@ -246,17 +248,25 @@ public class Description {
      * @throws NoSuchMethodException
      * @throws SecurityException
      */
-    public void setChildren(IHeaderMatcher.Builder builder, Map<String, String> attributes)
-            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
+    public void setChildren(Log log, IHeaderMatcher.Builder builder, Map<String, String> attributes) {
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
             Description d = getChildren().get(entry.getKey());
             if (d == null) {
-                // TODO replace this with a logging message
-                System.err.println(String.format(
-                        "%s does not define a Description.  Missing ConfigComponent annotations.", entry.getKey()));
+                log.error(String.format(
+                        "%s does not define a ConfigComponent for a member %s.", builder.getClass().getCanonicalName(), entry.getKey()));
             } else {
-                d.setter(builder.getClass()).invoke(builder, entry.getValue());
+                try {
+                    d.setter(builder.getClass()).invoke(builder, entry.getValue());
+                } catch (NoSuchMethodException e) {
+                    String msg = String.format("No setter for '%s' on %s", d.getCommonName(), builder.getClass().getCanonicalName()); 
+                    log.error(msg);
+                    throw new ConfigurationException(msg);
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                        |  SecurityException e) {
+                    String msg = String.format("can not call setter for '%s' on %s", d.getCommonName(), builder.getClass().getCanonicalName());
+                    log.error(msg, e);
+                    throw new ConfigurationException(msg, e);
+                }
             }
         }
     }
@@ -274,7 +284,7 @@ public class Description {
      */
     public void setUnlabledText(IHeaderMatcher.Builder builder, String value) throws NoSuchMethodException,
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Collection<Description> unlabled = childrenOfType(Component.Type.Unlabled);
+        Collection<Description> unlabled = childrenOfType(Component.Type.Unlabeled);
         for (Description d : unlabled) {
             if (!d.isCollection() && d.childClass == String.class) {
                 d.setter(builder.getClass()).invoke(builder, value);

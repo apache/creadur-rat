@@ -60,7 +60,7 @@ public class ConfigurationReportTest {
         reportConfiguration = new ReportConfiguration(DefaultLog.INSTANCE);
         reportConfiguration.listFamilies(LicenseFilter.all);
         reportConfiguration.listLicenses(LicenseFilter.all);
-        reportConfiguration.setFrom(Defaults.builder().build());
+        reportConfiguration.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
 
         sw = new StringWriter();
         writer = new XmlWriter(sw);

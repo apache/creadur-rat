@@ -29,6 +29,7 @@ import java.util.TreeSet;
 
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 
@@ -38,7 +39,7 @@ public class DefaultsTest {
 
     @Test
     public void defaultConfigTest() {
-        Defaults defaults = Defaults.builder().build();
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
 
         Set<ILicense> licenses = defaults.getLicenses(LicenseFilter.all);
 

@@ -82,7 +82,7 @@ public class ReporterTest {
 
     @Test
     public void xmlReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build();
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
@@ -146,7 +146,7 @@ public class ReporterTest {
 
     @Test
     public void plainReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build();
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
@@ -204,7 +204,7 @@ public class ReporterTest {
 
     @Test
     public void UnapprovedLicensesReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build();
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");

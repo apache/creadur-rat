@@ -292,7 +292,7 @@ public class Report {
                 defaultBuilder.add(fn);
             }
         }
-        Defaults defaults = defaultBuilder.build();
+        Defaults defaults = defaultBuilder.build(DefaultLog.INSTANCE);
         configuration.setFrom(defaults);
         if (baseDirectory != null) {
             configuration.setReportable(getDirectory(baseDirectory, configuration));

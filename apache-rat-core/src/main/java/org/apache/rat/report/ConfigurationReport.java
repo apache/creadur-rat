@@ -126,7 +126,7 @@ public class ConfigurationReport extends AbstractReport {
 
     private void writeChildren(Description description, Component component) throws RatException {
         writeDescriptions(description.childrenOfType(Type.Parameter), component);
-        writeDescriptions(description.childrenOfType(Type.Unlabled), component);
+        writeDescriptions(description.childrenOfType(Type.Unlabeled), component);
         writeDescriptions(description.childrenOfType(Type.Matcher), component);
         writeDescriptions(description.childrenOfType(Type.License), component);
     }
@@ -217,7 +217,7 @@ public class ConfigurationReport extends AbstractReport {
                     writeContent(notes, component);
                     writer.closeElement();
                 }
-                for (Description desc : description.childrenOfType(Component.Type.Unlabled)) {
+                for (Description desc : description.childrenOfType(Component.Type.Unlabeled)) {
                     writeDescription(desc, component);
                 }
                 writer.closeElement();
@@ -237,7 +237,7 @@ public class ConfigurationReport extends AbstractReport {
                 }
                 writeAttribute(description, component);
                 break;
-            case Unlabled:
+            case Unlabeled:
                 try {
                     Object obj = description.getter(component.getClass()).invoke(component);
                     if (obj instanceof Iterable) {

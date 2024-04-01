@@ -33,7 +33,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
 @ConfigComponent(type = Component.Type.Matcher, name = "not", desc = "Negates the enclosed matcher.")
 public class NotMatcher extends AbstractHeaderMatcher {
 
-    @ConfigComponent(desc = "enclosed Matcher", type = Component.Type.Unlabled, parameterType = IHeaderMatcher.class)
+    @ConfigComponent(desc = "enclosed Matcher", type = Component.Type.Unlabeled, parameterType = IHeaderMatcher.class)
     private final IHeaderMatcher enclosed;
 
     /**

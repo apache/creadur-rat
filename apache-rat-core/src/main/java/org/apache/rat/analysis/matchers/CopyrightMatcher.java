@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
@@ -66,7 +67,7 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     private final String start;
     @ConfigComponent(type = Component.Type.Parameter, desc = "The last date the copyright we modifed")
     private final String stop;
-    @ConfigComponent(type = Component.Type.Parameter, name = "owner", desc = "The owner of the copyright")
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The owner of the copyright")
     private final String owner;
 
     /**
@@ -82,6 +83,15 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         this(null, start, stop, owner);
     }
 
+    private static void assertNumber(String label, String value) {
+        try {
+            if (StringUtils.isNotEmpty(value)) {
+                Integer.parseInt(value);
+            }
+        } catch (NumberFormatException e) {
+            throw new ConfigurationException(String.format("'%s' must be numeric (value provided: '%s')", label, value));
+        }
+    }
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
      * strings.
@@ -94,15 +104,20 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
      */
     public CopyrightMatcher(String id, String start, String stop, String owner) {
         super(id);
+        if (StringUtils.isBlank(start) && !StringUtils.isBlank(stop)) {
+            throw new ConfigurationException("'stop' may not be set if 'start' is not set.");
+        }
+        assertNumber("start", start);
+        assertNumber("stop", stop);
         this.start = start;
         this.stop = stop;
         this.owner = owner;
         String dateDefn = "";
         if (StringUtils.isNotEmpty(start)) {
             if (StringUtils.isNotEmpty(stop)) {
-                dateDefn = String.format("%s\\s*-\\s*%s", start.trim(), stop.trim());
+                dateDefn = String.format("%s\\s*-\\s*%s", this.start, this.stop);
             } else {
-                dateDefn = start.trim();
+                dateDefn = this.start;
             }
         }
         if (StringUtils.isEmpty(owner)) {

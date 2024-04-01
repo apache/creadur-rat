@@ -37,7 +37,7 @@ public class RegexBuilder extends AbstractBuilder {
      * @return this builder for chaining.
      * @see Pattern#compile(String)
      */
-    public RegexBuilder setPattern(String exp) {
+    public RegexBuilder setExpr(String exp) {
         this.pattern = exp == null ? null : Pattern.compile(exp);
         return this;
     }

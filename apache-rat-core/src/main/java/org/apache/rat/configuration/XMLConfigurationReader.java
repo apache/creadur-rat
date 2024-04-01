@@ -19,6 +19,7 @@
 package org.apache.rat.configuration;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,29 +49,19 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * A class that reads the XML configuration file format. <p>
- * {@code <rat-config>}<br> {@code   <licenses>}<br>
- * {@code     <license id=id name=name >}<br> {@code       <notes></notes>}<br>
- * {@code       <text>  </text>}<br>
- * {@code       <copyright start='' end='' owner=''/>}<br>
- * {@code       <spdx></spdx> }<br> {@code       <and> <matcher/>...</and>}<br>
- * {@code       <or> <matcher/>...</or> }<br>
- * {@code       <matcher_ref refid='' />}<br>
- * {@code       <not><matcher /></not>}<br> {@code     </license>}<br>
- * {@code   </licenses>}<br> {@code   <approved>}<br>
- * {@code     <family refid=''>}<br> {@code   </approved>}<br>
- * {@code   <matchers>}<br> {@code     <matcher className=''/>}<br>
- * {@code     <matcher className=''/>}<br> {@code   </matchers>}<br>
- * {@code </rat-config>}<br> </p>
+ * A class that reads the XML configuration file format.
  */
 
 public class XMLConfigurationReader implements LicenseReader, MatcherReader {
@@ -90,6 +81,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     public final static String MATCHERS = "matchers";
     public final static String MATCHER = "matcher";
 
+    private Log log;
     private Document document;
     private final Element rootElement;
     private final Element familiesElement;
@@ -104,7 +96,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     private final Predicate<Map.Entry<String, Description>> MATCHER_FILTER = (e) -> {
         Description d = e.getValue();
-        return d.getType() == Component.Type.Unlabled && IHeaderMatcher.class.isAssignableFrom(d.getChildType());
+        return d.getType() == Component.Type.Unlabeled && IHeaderMatcher.class.isAssignableFrom(d.getChildType());
     };
 
     /**
@@ -131,10 +123,39 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         approvedFamilies = new TreeSet<>();
         matchers = new HashMap<>();
     }
+    
+    @Override
+    public void setLog(Log log) {
+        this.log = log;
+    }
+    
+    public Log getLog() {
+        return log == null ? DefaultLog.INSTANCE : log;
+    }
 
     @Override
     public void addLicenses(URL url) {
         read(url);
+    }
+    
+    /**
+     * Read xml from a reader.  
+     * @param reader the reader to read XML from.
+     */
+    public void read(Reader reader) {
+        DocumentBuilder builder;
+        try {
+            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new ConfigurationException("Unable to create DOM builder", e);
+        }
+       
+            try {
+                add(builder.parse(new InputSource(reader)));
+            } catch (SAXException | IOException e) {
+                throw new ConfigurationException("Unable to read inputSource", e);
+            }
+        
     }
 
     /**
@@ -228,7 +249,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
             }
 
             // process the attributes
-            description.setChildren(builder, attributes(matcherNode));
+            description.setChildren(getLog(), builder, attributes(matcherNode));
             description.setUnlabledText(builder, matcherNode.getTextContent().trim());
 
             // check child nodes.
@@ -256,7 +277,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                             callSetter(childDescription, builder, entry.getTextContent());
                             iter.remove();
                             break;
-                        case Unlabled:
+                        case Unlabeled:
                             try {
                                 childDescription.setUnlabledText(builder, entry.getTextContent());
                                 iter.remove();
@@ -284,13 +305,11 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                                 callSetter(b.getDescription(), builder, b);
                                 iter.remove();
                             }
-
                         }
                     }
-
                 }
                 if (!children.isEmpty()) {
-                    children.forEach(n -> System.out.format("unrecognised child node '%s' in node '%s'%n", n.getNodeName(), matcherNode.getNodeName())); // TODO make this a logging entry
+                    children.forEach(n -> getLog().warn(String.format("unrecognised child node '%s' in node '%s'%n", n.getNodeName(), matcherNode.getNodeName()))); 
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException | DOMException e) {

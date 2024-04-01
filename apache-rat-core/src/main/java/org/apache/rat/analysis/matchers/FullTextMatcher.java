@@ -57,10 +57,6 @@ public class FullTextMatcher extends SimpleTextMatcher {
         this.fullText = prune(simpleText).toLowerCase(Locale.ENGLISH);
     }
 
-    private String getFullText() {
-        return fullText;
-    }
-
     /**
      * Removes everything except letter or digit from text.
      *

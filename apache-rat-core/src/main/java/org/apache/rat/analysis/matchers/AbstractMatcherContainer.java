@@ -33,7 +33,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
-    @ConfigComponent(desc = "enclosed Matchers", type = Component.Type.Unlabled, parameterType = IHeaderMatcher.class)
+    @ConfigComponent(desc = "enclosed Matchers", type = Component.Type.Unlabeled, parameterType = IHeaderMatcher.class)
     protected final Collection<IHeaderMatcher> enclosed;
 
     @ConfigComponent(desc = "Resource to read matcher definitions from.", type = Component.Type.Parameter)

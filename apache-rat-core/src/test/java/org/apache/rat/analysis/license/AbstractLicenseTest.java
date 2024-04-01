@@ -34,6 +34,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -55,7 +56,7 @@ abstract public class AbstractLicenseTest {
     @BeforeEach
     public void setup() {
         data = new MetaData();
-        defaults = Defaults.builder().build();
+        defaults = Defaults.builder().build(DefaultLog.INSTANCE);
     }
 
     protected ILicense extractCategory(String id) {

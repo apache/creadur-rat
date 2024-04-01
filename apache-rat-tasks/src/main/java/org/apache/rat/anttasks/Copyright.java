@@ -30,8 +30,8 @@ public class Copyright implements IHeaderMatcher.Builder {
         builder.setStart(start);
     }
 
-    public void setEnd(String end) {
-        builder.setEnd(end);
+    public void setStop(String end) {
+        builder.setStop(end);
     }
 
     public void setOwner(String owner) {

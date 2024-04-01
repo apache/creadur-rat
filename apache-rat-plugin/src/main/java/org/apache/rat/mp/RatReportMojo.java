@@ -404,7 +404,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.verbatim(SinkEventAttributeSet.BOXED);
         try {
             ReportConfiguration config = getConfiguration();
-            config.setFrom(getDefaultsBuilder().build());
+            config.setFrom(getDefaultsBuilder().build(config.getLog()));
             logLicenses(config.getLicenses(LicenseFilter.all));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             config.setOut(() -> baos);

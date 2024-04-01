@@ -54,7 +54,7 @@ public class SimpleLicenseTest {
         assertEquals("These are the notes", children.get("notes").getParamValue(lic));
 
         assertTrue(children.containsKey("matcher"));
-        assertEquals(Component.Type.Unlabled, children.get("matcher").getType());
+        assertEquals(Component.Type.Unlabeled, children.get("matcher").getType());
         Object matcherObj = children.get("matcher").getter(lic.getClass()).invoke(lic);
         assertTrue(matcherObj instanceof IHeaderMatcher);
         Description matcherDesc = ((IHeaderMatcher) matcherObj).getDescription();

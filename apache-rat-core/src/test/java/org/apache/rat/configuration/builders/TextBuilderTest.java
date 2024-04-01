@@ -16,21 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.rat.configuration.builders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
+import org.apache.rat.configuration.XMLConfigurationReader;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 public class TextBuilderTest {
@@ -49,7 +53,7 @@ public class TextBuilderTest {
         attributes.put("id", "IDValue");
 
         Description description = DescriptionBuilder.buildMap(underTest.builtClass());
-        description.setChildren(underTest, attributes);
+        description.setChildren(DefaultLog.INSTANCE, underTest, attributes);
         description.setUnlabledText(underTest, "example text");
 
         SimpleTextMatcher m = underTest.build();
@@ -58,7 +62,7 @@ public class TextBuilderTest {
         assertEquals(FullTextMatcher.class, m.getClass());
 
         boolean foundText = false;
-        for (Description d : description.childrenOfType(Component.Type.Unlabled)) {
+        for (Description d : description.childrenOfType(Component.Type.Unlabeled)) {
             if (!d.isCollection()) {
                 assertEquals("example text", d.getter(m.getClass()).invoke(m));
                 foundText = true;
@@ -82,7 +86,7 @@ public class TextBuilderTest {
         TextBuilder underTest = new TextBuilder();
 
         Description description = DescriptionBuilder.buildMap(underTest.builtClass());
-        description.setChildren(underTest, attributes);
+        description.setChildren(DefaultLog.INSTANCE, underTest, attributes);
         description.setUnlabledText(underTest, "exampletext");
 
         SimpleTextMatcher m = underTest.build();
@@ -90,7 +94,7 @@ public class TextBuilderTest {
         assertEquals(SimpleTextMatcher.class, m.getClass());
 
         boolean foundText = false;
-        for (Description d : description.childrenOfType(Component.Type.Unlabled)) {
+        for (Description d : description.childrenOfType(Component.Type.Unlabeled)) {
             if (!d.isCollection()) {
                 assertEquals("exampletext", d.getter(m.getClass()).invoke(m));
                 foundText = true;
@@ -107,4 +111,23 @@ public class TextBuilderTest {
         assertTrue(foundText);
     }
 
+    @Test
+    public void xmlTest() {
+        String configStr = "<rat-config>"
+                + "        <families>"
+                + "            <family id='newFam' name='my new family' />"
+                + "        </families>"
+                + "        <licenses>"
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <text>The text to match</text>"
+                + "            </license>"
+                + "        </licenses>"
+                + "    </rat-config>"
+                + "";
+        
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        reader.read(new StringReader(configStr));
+        SortedSet<ILicense> licenses = reader.readLicenses();
+        assertEquals(1, licenses.size());
+    }
 }
