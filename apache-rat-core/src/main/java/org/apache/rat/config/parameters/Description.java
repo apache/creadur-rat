@@ -143,23 +143,25 @@ public class Description {
     }
 
     /**
-     * Gets the string parameter value. if this description has no value it should
-     * return null.
+     * Retrieve the value of a the described parameter from the specified object.
      * 
-     * @return the string value (default returns an empty string.
+     * If the parameter is a collection return {@code null}.
+     * 
+     * @param log the Log to log issues to. 
+     * @param object the object that contains the value.
+     * @return the string value.
      */
-    public String getParamValue(Object o) {
+    public String getParamValue(Log log, Object object) {
         if (isCollection) {
             return null;
         }
         try {
-            Object val = getter(o.getClass()).invoke(o);
+            Object val = getter(object.getClass()).invoke(object);
             return val == null ? null : val.toString();
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
-            // TOOD conver this to a log message
-            System.err.format("Can not retrieve value for '%s' from %s\n", name, o.getClass().getName());
-            e.printStackTrace();
+            log.error(System.err.format("Can not retrieve value for '%s' from %s\n", name, object.getClass().getName()),
+                    e);
             return null;
         }
     }
@@ -235,6 +237,20 @@ public class Description {
         throw new IllegalStateException("Type " + type + " not valid.");
     }
 
+    private void callSetter(Log log, Description description, IHeaderMatcher.Builder builder, String value) {
+        try {
+            description.setter(builder.getClass()).invoke(builder, value);
+        } catch (NoSuchMethodException e) {
+            String msg = String.format("No setter for '%s' on %s", description.getCommonName(), builder.getClass().getCanonicalName()); 
+            log.error(msg);
+            throw new ConfigurationException(msg);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                |  SecurityException e) {
+            String msg = String.format("can not call setter for '%s' on %s", description.getCommonName(), builder.getClass().getCanonicalName());
+            log.error(msg, e);
+            throw new ConfigurationException(msg, e);
+        }
+    }
     /**
      * Sets the children of values in the builder. Sets the parameters to the values
      * specified in the map. Only children that accept string arguments should be
@@ -242,11 +258,6 @@ public class Description {
      * 
      * @param builder The Matcher builder to set the values in.
      * @param attributes a Map of parameter names to values.
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
      */
     public void setChildren(Log log, IHeaderMatcher.Builder builder, Map<String, String> attributes) {
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
@@ -255,18 +266,7 @@ public class Description {
                 log.error(String.format(
                         "%s does not define a ConfigComponent for a member %s.", builder.getClass().getCanonicalName(), entry.getKey()));
             } else {
-                try {
-                    d.setter(builder.getClass()).invoke(builder, entry.getValue());
-                } catch (NoSuchMethodException e) {
-                    String msg = String.format("No setter for '%s' on %s", d.getCommonName(), builder.getClass().getCanonicalName()); 
-                    log.error(msg);
-                    throw new ConfigurationException(msg);
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                        |  SecurityException e) {
-                    String msg = String.format("can not call setter for '%s' on %s", d.getCommonName(), builder.getClass().getCanonicalName());
-                    log.error(msg, e);
-                    throw new ConfigurationException(msg, e);
-                }
+                callSetter(log, d, builder, entry.getValue());
             }
         }
     }
@@ -274,20 +274,15 @@ public class Description {
     /**
      * Sets the first Unlabled item that takes a string argument
      * 
+     * @param log the log to write to.
      * @param builder The Matcher builder to set the value in.
      * @param value the value.
-     * @throws NoSuchMethodException
-     * @throws SecurityException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
      */
-    public void setUnlabledText(IHeaderMatcher.Builder builder, String value) throws NoSuchMethodException,
-            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public void setUnlabledText(Log log, IHeaderMatcher.Builder builder, String value)  {
         Collection<Description> unlabled = childrenOfType(Component.Type.Unlabeled);
         for (Description d : unlabled) {
             if (!d.isCollection() && d.childClass == String.class) {
-                d.setter(builder.getClass()).invoke(builder, value);
+                callSetter(log, d, builder, value);
             }
         }
     }
@@ -302,6 +297,11 @@ public class Description {
                 childList);
     }
 
+    /**
+     * Write a description with indentation.
+     * @param indent the number of spaces to indent.
+     * @return the string with the formatted data.
+     */
     public String toString(int indent) {
         char[] spaces = new char[indent];
         Arrays.fill(spaces, ' ');

@@ -25,8 +25,22 @@ import java.io.Reader;
 import org.apache.rat.document.CompositeDocumentException;
 
 public interface Document {
-    
-    enum Type {generated, unknown, archive, notice, binary, standard}
+    /**
+     * An enumeraton of document types.
+     */
+    enum Type {
+        /** A generated document. */
+        generated, 
+        /** An unknowns document type. */
+        unknown,
+        /** An archive type document. */
+        archive, 
+        /** A notice document (e.g. LICENSE file) */
+        notice,
+        /** A binary file */
+        binary,
+        /** A standard document */
+        standard}
 
     /**
      * @return the name of the current document.
@@ -44,19 +58,19 @@ public interface Document {
     
     /**
      * Streams the document's contents.
-     * @return not null
+     * @return a non null input stream of the document.
      * @throws IOException when stream could not be opened
      */
     InputStream inputStream() throws IOException;
 
     /**
      * Gets data describing this resource.
-     * @return not null
+     * @return a non null MetaData object.
      */
     MetaData getMetaData();
     
     /**
-     * Is this a composite document?
+     * Tests if this a composite document.
      * @return true if composite, false otherwise
      */
     boolean isComposite();

@@ -33,12 +33,18 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
+    /** The collection of enclosed headers */
     @ConfigComponent(desc = "enclosed Matchers", type = Component.Type.Unlabeled, parameterType = IHeaderMatcher.class)
     protected final Collection<IHeaderMatcher> enclosed;
 
+    /** The resource the headers were read from.  May be null */
     @ConfigComponent(desc = "Resource to read matcher definitions from.", type = Component.Type.Parameter)
     protected final String resource;
 
+    /**
+     * Get the children of this matcher.
+     * @return the children of this matcher.
+     */
     public Collection<IHeaderMatcher> getChildren() {
         return enclosed;
     }
@@ -51,6 +57,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
      *
      * @param id The id for the matcher.
      * @param enclosed the collection of enclosed matchers.
+     * @param resource the name of the resource if this container was read from a file or URL.
      */
     public AbstractMatcherContainer(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
         super(id);
@@ -65,6 +72,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
      * order of of the original collection.
      *
      * @param enclosed the collection of enclosed matchers.
+     * @param resource the name of the resource if this container was read from a file or URL.
      */
     public AbstractMatcherContainer(Collection<? extends IHeaderMatcher> enclosed, String resource) {
         this(null, enclosed, resource);
@@ -75,10 +83,18 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
         enclosed.forEach(IHeaderMatcher::reset);
     }
 
+    /**
+     * Retrieves the collection of matchers that comprise the children of this matcher.
+     * @return the children of this matcher
+     */
     public Collection<IHeaderMatcher> getEnclosed() {
         return Collections.unmodifiableCollection(enclosed);
     }
 
+    /**
+     * Get the resource that was provided in the constructor.
+     * @return the resource or {@code null} if none was provided in the constructor.
+     */
     public String getResource() {
         return resource;
     }

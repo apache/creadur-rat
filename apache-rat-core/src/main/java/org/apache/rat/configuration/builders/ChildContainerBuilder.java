@@ -38,11 +38,10 @@ import org.apache.rat.analysis.IHeaderMatcher;
  */
 public abstract class ChildContainerBuilder extends AbstractBuilder {
 
-    /**
-     * The list of builders that will build the enclosed matchers.
-     */
+    /** The list of builders that will build the enclosed matchers. */
     protected final List<IHeaderMatcher.Builder> children = new ArrayList<>();
 
+    /** The resource the builders came from if it was read from a resource */
     protected String resource;
 
     /**

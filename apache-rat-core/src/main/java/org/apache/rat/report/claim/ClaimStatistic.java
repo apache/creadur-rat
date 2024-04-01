@@ -30,7 +30,16 @@ import org.apache.rat.api.Document;
  * the report.
  */
 public class ClaimStatistic {
-    public enum Counter { Approved, Unapproved, Generated, Unknown };
+    /** The counter types */
+    public enum Counter { 
+        /** count of approved files */
+        Approved, 
+        /** count of unapproved files */
+        Unapproved, 
+        /** count of generated files */
+        Generated, 
+        /** count of unknown files */
+        Unknown };
     
     private final Map<String, int[]> licenseFamilyNameMap = new HashMap<>();
     private final Map<String, int[]> licenseFamilyCodeMap = new HashMap<>();
@@ -39,6 +48,8 @@ public class ClaimStatistic {
 
 
     /**
+     * Returns the counts for the counter.
+     * @param the counter to get the value for.
      * @return Returns the number of files with approved licenses.
      */
     public int getCounter(Counter counter) {

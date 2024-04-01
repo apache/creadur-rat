@@ -35,8 +35,12 @@ import org.apache.rat.report.claim.ClaimStatistic.Counter;
 public class ClaimAggregator extends AbstractClaimReporter {
     private final ClaimStatistic statistic;
 
-    public ClaimAggregator(ClaimStatistic pStatistic) {
-        statistic = pStatistic;
+    /**
+     * Constructor.
+     * @param statistic The statistic to store the statistics in.
+     */
+    public ClaimAggregator(ClaimStatistic statistic) {
+        this.statistic = statistic;
     }
 
     private <T> void incMapValue(Map<T, int[]> map, T key, int value) {

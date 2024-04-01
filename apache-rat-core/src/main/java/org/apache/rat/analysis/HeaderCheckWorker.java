@@ -94,7 +94,7 @@ public class HeaderCheckWorker {
      * <code>BufferedReader</code>.
      *
      * @param reader The reader on the document. not null.
-     * @param license The license to check against. not null.
+     * @param licenses The licenses to check against. not null.
      * @param name The document that is being checked. possibly null
      */
     public HeaderCheckWorker(Reader reader, final Collection<ILicense> licenses, final Document name) {
@@ -107,7 +107,7 @@ public class HeaderCheckWorker {
      * @param reader The reader on the document. not null.
      * @param numberOfRetainedHeaderLine the maximum number of lines to read to find
      * the license information.
-     * @param license The licenses to check against. not null.
+     * @param licenses The licenses to check against. not null.
      * @param document The document that is being checked. possibly null
      */
     public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,

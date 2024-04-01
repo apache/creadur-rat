@@ -138,14 +138,14 @@ public class ConfigurationReport extends AbstractReport {
     }
 
     private void writeContent(Description description, Component component) throws IOException {
-        String paramValue = description.getParamValue(component);
+        String paramValue = description.getParamValue(configuration.getLog(), component);
         if (paramValue != null) {
             writer.content(paramValue);
         }
     }
 
     private void writeAttribute(Description description, Component component) throws IOException {
-        String paramValue = description.getParamValue(component);
+        String paramValue = description.getParamValue(configuration.getLog(), component);
         if (paramValue != null) {
             writer.attribute(description.getCommonName(), paramValue);
         }
@@ -160,7 +160,7 @@ public class ConfigurationReport extends AbstractReport {
                 Optional<Description> id = description.childrenOfType(Type.Parameter).stream()
                         .filter(i -> XMLConfigurationReader.ATT_ID.equals(i.getCommonName())).findFirst();
                 if (id.isPresent()) {
-                    String idValue = id.get().getParamValue(component);
+                    String idValue = id.get().getParamValue(configuration.getLog(), component);
                     // if we have seen the ID before just put a reference to the other one.
                     if (matchers.contains(idValue.toString())) {
                         component = new MatcherRefBuilder.IHeaderMatcherProxy(idValue.toString(), null);
@@ -211,7 +211,7 @@ public class ConfigurationReport extends AbstractReport {
                     }
                 }
                 // end of attributes
-                if (notes != null && StringUtils.isNotBlank(notes.getParamValue(component))) {
+                if (notes != null && StringUtils.isNotBlank(notes.getParamValue(configuration.getLog(), component))) {
                     writeComment(notes);
                     writer.openElement(notes.getCommonName());
                     writeContent(notes, component);
@@ -225,7 +225,7 @@ public class ConfigurationReport extends AbstractReport {
             case Parameter:
                 if ("id".equals(description.getCommonName())) {
                     try {
-                        String idValue = description.getParamValue(component);
+                        String idValue = description.getParamValue(configuration.getLog(), component);
                         // if a UUID skip it.
                         if (idValue != null) {
                             UUID.fromString(idValue.toString());

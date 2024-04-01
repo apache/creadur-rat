@@ -250,7 +250,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
             // process the attributes
             description.setChildren(getLog(), builder, attributes(matcherNode));
-            description.setUnlabledText(builder, matcherNode.getTextContent().trim());
+            description.setUnlabledText(getLog(), builder, matcherNode.getTextContent().trim());
 
             // check child nodes.
             if (matcherNode.hasChildNodes()) {
@@ -278,15 +278,8 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                             iter.remove();
                             break;
                         case Unlabeled:
-                            try {
-                                childDescription.setUnlabledText(builder, entry.getTextContent());
-                                iter.remove();
-                            } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-                                    | IllegalArgumentException | InvocationTargetException | DOMException e) {
-                                throw new ConfigurationException(
-                                        String.format("Can not set parameter: %s", childDescription.getCommonName()),
-                                        e);
-                            }
+                            childDescription.setUnlabledText(getLog(), builder, entry.getTextContent());
+                            iter.remove();
                             break;
                         }
                     }
@@ -312,7 +305,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                     children.forEach(n -> getLog().warn(String.format("unrecognised child node '%s' in node '%s'%n", n.getNodeName(), matcherNode.getNodeName()))); 
                 }
             }
-        } catch (IllegalAccessException | InvocationTargetException | DOMException e) {
+        } catch (DOMException e) {
             throw new ConfigurationException(e);
         } catch (NoSuchMethodException e) {
             throw new ConfigurationException(

@@ -32,9 +32,15 @@ public class ClaimReporterMultiplexer implements RatReport {
     private final List<? extends RatReport> reporters;
     private final boolean dryRun;
 
-    public ClaimReporterMultiplexer(final boolean dryRun, final IDocumentAnalyser pAnalyser,
+    /**
+     * A multiplexer to run multiple claim reports.
+     * @param dryRun true if this is a dry run.
+     * @param analyser the analyser to use.
+     * @param reporters the reports to execute.
+     */
+    public ClaimReporterMultiplexer(final boolean dryRun, final IDocumentAnalyser analyser,
             final List<? extends RatReport> reporters) {
-        analyser = pAnalyser;
+        this.analyser  = analyser;
         this.reporters = reporters;
         this.dryRun = dryRun;
     }

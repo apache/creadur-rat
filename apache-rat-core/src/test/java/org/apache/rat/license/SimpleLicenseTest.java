@@ -29,6 +29,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.testhelpers.TestingMatcher;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 public class SimpleLicenseTest {
@@ -47,11 +48,11 @@ public class SimpleLicenseTest {
         Map<String, Description> children = underTest.getChildren();
         assertEquals(5, children.size());
         assertTrue(children.containsKey("id"));
-        assertEquals("TestingId", children.get("id").getParamValue(lic));
+        assertEquals("TestingId", children.get("id").getParamValue(DefaultLog.INSTANCE, lic));
         assertTrue(children.containsKey("name"));
-        assertEquals("My testing license", children.get("name").getParamValue(lic));
+        assertEquals("My testing license", children.get("name").getParamValue(DefaultLog.INSTANCE, lic));
         assertTrue(children.containsKey("notes"));
-        assertEquals("These are the notes", children.get("notes").getParamValue(lic));
+        assertEquals("These are the notes", children.get("notes").getParamValue(DefaultLog.INSTANCE, lic));
 
         assertTrue(children.containsKey("matcher"));
         assertEquals(Component.Type.Unlabeled, children.get("matcher").getType());

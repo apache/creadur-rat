@@ -54,7 +54,7 @@ public class TextBuilderTest {
 
         Description description = DescriptionBuilder.buildMap(underTest.builtClass());
         description.setChildren(DefaultLog.INSTANCE, underTest, attributes);
-        description.setUnlabledText(underTest, "example text");
+        description.setUnlabledText(DefaultLog.INSTANCE, underTest, "example text");
 
         SimpleTextMatcher m = underTest.build();
         assertEquals("example text", m.getText());
@@ -87,7 +87,7 @@ public class TextBuilderTest {
 
         Description description = DescriptionBuilder.buildMap(underTest.builtClass());
         description.setChildren(DefaultLog.INSTANCE, underTest, attributes);
-        description.setUnlabledText(underTest, "exampletext");
+        description.setUnlabledText(DefaultLog.INSTANCE, underTest, "exampletext");
 
         SimpleTextMatcher m = underTest.build();
         assertEquals("exampletext", m.getText());

@@ -23,6 +23,7 @@ package org.apache.rat.config.parameters;
  *
  */
 public interface Component {
+    /** Types of components */
     public enum Type {
         /** A License, the top level component. May not be used as a child of any component type. */
         License,

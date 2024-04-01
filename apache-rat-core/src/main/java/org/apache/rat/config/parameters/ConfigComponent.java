@@ -32,20 +32,24 @@ import java.lang.annotation.Target;
 public @interface ConfigComponent {
     /**
      * The common name for the component. If not specified the name of the field or class is used.
+     * @return the component name.
      */
     String name() default "";
 
     /**
      * The description of the component.
+     * @return the component description.
      */
     String desc() default "";
     /**
      * The component type
+     * @return the component type.
      */
     Component.Type type();
     
     /**
      * For collections defines the enclosed type.
+     * @return the enclosed type.
      */
     Class<?> parameterType() default void.class;
 }
