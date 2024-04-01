@@ -205,7 +205,6 @@ public final class RatTestHelpers {
     public static void ensureRatReportIsCorrect(File pRatTxtFile, String[] in, String[] notIn) throws IOException {
         List<String> lines = IOUtils.readLines(new FileInputStream(pRatTxtFile), Charsets.UTF_8);
         String document = String.join("\n", lines);
-        System.out.println( document );
         for (String pattern : in) {
             TextUtils.assertPatternInOutput(pattern, document);
         }

@@ -19,7 +19,6 @@
 package org.apache.rat.mp;
 
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
 
