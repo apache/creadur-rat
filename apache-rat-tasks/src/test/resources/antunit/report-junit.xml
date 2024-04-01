@@ -71,7 +71,7 @@
 			<rat:license
 				family="YASL1"
 				notes="Interesting License">
-				<rat:copyright start="2023" stop="2024" owner="public domain" />
+				<rat:copyright start="2023" end="2024" owner="public domain" />
 			</rat:license>
 			<file file="${ant.file}" />
 		</rat:report>
@@ -161,7 +161,7 @@
 			<rat:license
 				family="YASL1"
 				notes="Interesting License">
-				<rat:copyright start="2023" stop="2024" owner="public domain" />
+				<rat:copyright start="2023" end="2024" owner="public domain" />
 			</rat:license>
 		</rat:report>
 	</target>

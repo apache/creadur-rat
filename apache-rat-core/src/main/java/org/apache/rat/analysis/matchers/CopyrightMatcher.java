@@ -66,7 +66,7 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     @ConfigComponent(type = Component.Type.Parameter, desc = "The initial date of the copyright")
     private final String start;
     @ConfigComponent(type = Component.Type.Parameter, desc = "The last date the copyright we modifed")
-    private final String stop;
+    private final String end;
     @ConfigComponent(type = Component.Type.Parameter, desc = "The owner of the copyright")
     private final String owner;
 
@@ -75,12 +75,12 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
      * strings and a unique random id..
      *
      * @param start the start date for the copyright may be null.
-     * @param stop the stop date for the copyright, may be null. May not be
+     * @param end the stop date for the copyright, may be null. May not be
      * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
      */
-    public CopyrightMatcher(String start, String stop, String owner) {
-        this(null, start, stop, owner);
+    public CopyrightMatcher(String start, String end, String owner) {
+        this(null, start, end, owner);
     }
 
     private static void assertNumber(String label, String value) {
@@ -98,24 +98,24 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
      *
      * @param id the id for the matcher.
      * @param start the start date for the copyright may be null.
-     * @param stop the stop date for the copyright, may be null. May not be
+     * @param end the end date for the copyright, may be null. May not be
      * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
      */
-    public CopyrightMatcher(String id, String start, String stop, String owner) {
+    public CopyrightMatcher(String id, String start, String end, String owner) {
         super(id);
-        if (StringUtils.isBlank(start) && !StringUtils.isBlank(stop)) {
-            throw new ConfigurationException("'stop' may not be set if 'start' is not set.");
+        if (StringUtils.isBlank(start) && !StringUtils.isBlank(end)) {
+            throw new ConfigurationException("'end' may not be set if 'start' is not set.");
         }
         assertNumber("start", start);
-        assertNumber("stop", stop);
+        assertNumber("end", end);
         this.start = start;
-        this.stop = stop;
+        this.end = end;
         this.owner = owner;
         String dateDefn = "";
         if (StringUtils.isNotEmpty(start)) {
-            if (StringUtils.isNotEmpty(stop)) {
-                dateDefn = String.format("%s\\s*-\\s*%s", this.start, this.stop);
+            if (StringUtils.isNotEmpty(end)) {
+                dateDefn = String.format("%s\\s*-\\s*%s", this.start, this.end);
             } else {
                 dateDefn = this.start;
             }
@@ -144,7 +144,7 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
     }
 
     public String getStop() {
-        return stop;
+        return end;
     }
 
     public String getOwner() {

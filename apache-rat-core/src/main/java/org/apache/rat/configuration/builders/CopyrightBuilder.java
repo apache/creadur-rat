@@ -43,7 +43,7 @@ public class CopyrightBuilder extends AbstractBuilder {
      * @param end the End data for the copyright.
      * @return this for chaining.
      */
-    public CopyrightBuilder setStop(String end) {
+    public CopyrightBuilder setEnd(String end) {
         this.end = end;
         return this;
     }

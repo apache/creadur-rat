@@ -38,7 +38,7 @@ public class DescriptionBuilderTest {
         assertEquals(4, underTest.getChildren().size());
         assertTrue(underTest.getChildren().containsKey("id"));
         assertTrue(underTest.getChildren().containsKey("start"));
-        assertTrue(underTest.getChildren().containsKey("stop"));
+        assertTrue(underTest.getChildren().containsKey("end"));
         assertTrue(underTest.getChildren().containsKey("owner"));
 
         underTest = DescriptionBuilder.buildMap(AndMatcher.class);

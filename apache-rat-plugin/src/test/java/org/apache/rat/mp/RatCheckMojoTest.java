@@ -306,10 +306,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         // Create the test file with a content on which it must fail
         File generatedFile = new File(targetDirectory + "/foo.md");
-        BufferedWriter writer = new BufferedWriter(new FileWriter(generatedFile));
-        writer.write("File without a valid license\n");
-        writer.close();
-
         final String[] expected = {
                 "Notes: 0",
                 "Binaries: 0",
@@ -322,6 +318,10 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                     RatTestHelpers.UNKNOWN_LICENSE,
         };
         try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(generatedFile));
+            writer.write("File without a valid license\n");
+            writer.close();
+
             mojo.execute();
             fail("Expected RatCheckException: This check should have failed on the invalid test file");
         } catch (RatCheckException e) {
@@ -329,9 +329,10 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             assertTrue("report filename was not contained in '" + msg + "'", msg.contains(ratTxtFile.getName()));
             assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase().contains("NULL")));
             ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+        } finally {
+            // Cleanup
+            assertTrue(generatedFile.delete());
         }
-        // Cleanup
-        assertTrue(generatedFile.delete());
     }
 
 }

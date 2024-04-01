@@ -28,7 +28,7 @@ public class Copyright extends CopyrightBuilder {
     private String start;
 
     @Parameter(required = false)
-    private String stop;
+    private String end;
 
     @Parameter(required = false)
     private String owner;
@@ -38,7 +38,7 @@ public class Copyright extends CopyrightBuilder {
 
     @Override
     public CopyrightMatcher build() {
-        setStart(start).setStop(stop).setOwner(owner);
+        setStart(start).setEnd(end).setOwner(owner);
         return super.build();
     }
 }

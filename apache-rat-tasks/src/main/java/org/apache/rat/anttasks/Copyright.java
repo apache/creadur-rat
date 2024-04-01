@@ -19,7 +19,6 @@
 package org.apache.rat.anttasks;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
 
 public class Copyright implements IHeaderMatcher.Builder {
@@ -30,8 +29,8 @@ public class Copyright implements IHeaderMatcher.Builder {
         builder.setStart(start);
     }
 
-    public void setStop(String end) {
-        builder.setStop(end);
+    public void setEnd(String end) {
+        builder.setEnd(end);
     }
 
     public void setOwner(String owner) {

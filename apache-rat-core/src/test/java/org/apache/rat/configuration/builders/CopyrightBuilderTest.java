@@ -25,185 +25,130 @@ import java.util.SortedSet;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 public class CopyrightBuilderTest {
 
     @Test
     public void xmlTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright/>" + "            </license>" + "        </licenses>"
+                + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
     }
-    
+
     @Test
     public void xmlOwnerTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright owner='someone'/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright owner='someone'/>" + "            </license>" + "        </licenses>"
+                + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
     }
-    
+
     @Test
     public void xmlStartTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1989'/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright start='1989'/>" + "            </license>" + "        </licenses>"
+                + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
     }
-    
+
     @Test
     public void xmlStartOwnerTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1989' owner='somebody'/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright start='1989' owner='somebody'/>" + "            </license>"
+                + "        </licenses>" + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
     }
-    
+
     @Test
     public void xmlEndTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1989' end='1990'/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright start='1989' end='1990'/>" + "            </license>"
+                + "        </licenses>" + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
     }
-    
+
     @Test
     public void xmlEndOwnerTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1989' stop='1990' owner='somebody'/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright start='1989' end='1990' owner='somebody'/>" + "            </license>"
+                + "        </licenses>" + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
     }
-    
+
     @Test
     public void xmlEndNoStartTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright stop='1990'/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright end='1990'/>" + "            </license>" + "        </licenses>"
+                + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, ()-> reader.readLicenses());
+        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
     }
-    
+
     @Test
     public void xmlNonNumericStartTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='now'/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright start='now'/>" + "            </license>" + "        </licenses>"
+                + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, ()-> reader.readLicenses());
+        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
     }
-    
+
     @Test
-    public void xmlNonNumericStopTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1990' stop='now'/>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+    public void xmlNonNumericEndTest() {
+        String configStr = "<rat-config>" + "        <families>"
+                + "            <family id='newFam' name='my new family' />" + "        </families>"
+                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
+                + "                <copyright start='1990' end='now'/>" + "            </license>"
+                + "        </licenses>" + "    </rat-config>" + "";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, ()-> reader.readLicenses());
+        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
     }
 }
