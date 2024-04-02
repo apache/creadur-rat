@@ -17,12 +17,12 @@
 package org.example;
 
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.analysis.matchers.AbstractSimpleMatcher;
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 @ConfigComponent(type = Component.Type.Matcher, name = "myCustomMatcher", desc = "Custom matcher example")
-public class Matcher extends AbstractSimpleMatcher {
+public class Matcher extends AbstractHeaderMatcher {
     public Matcher() {
         super("MyCustomMatcher");
     }

@@ -53,7 +53,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * </p>
  */
 @ConfigComponent(type = Component.Type.Matcher, name = "copyright", desc = "Matches copyright statements.")
-public class CopyrightMatcher extends AbstractSimpleMatcher {
+public class CopyrightMatcher extends AbstractHeaderMatcher {
 
     private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©";
     private static final String COPYRIGHT_PATTERN_DEFN = "(\\b)?" + COPYRIGHT_SYMBOL_DEFN + "|Copyright\\b";

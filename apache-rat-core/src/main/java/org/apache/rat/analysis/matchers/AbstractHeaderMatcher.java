@@ -29,7 +29,7 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * An abstract class to simplify IHeaderMatcher creation. This class ensures
- * that the id is set.
+ * that the id is set
  */
 public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
 

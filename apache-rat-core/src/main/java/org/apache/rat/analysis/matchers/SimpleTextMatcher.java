@@ -27,7 +27,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * A simple text matching IHeaderMatcher implementation.
  */
 @ConfigComponent(type = Component.Type.Matcher, name = "text", desc = "Matches the enclosed the text")
-public class SimpleTextMatcher extends AbstractSimpleMatcher {
+public class SimpleTextMatcher extends AbstractHeaderMatcher {
     @ConfigComponent(type = Component.Type.Unlabeled, name = "text", desc = "")
     private final String simpleText;
 

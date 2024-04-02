@@ -28,7 +28,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * A simple regular expression matching IHeaderMatcher
  */
 @ConfigComponent(type = Component.Type.Matcher, name = "regex", desc = "Performs a regex match using the enclosed the text")
-public class SimpleRegexMatcher extends AbstractSimpleMatcher {
+public class SimpleRegexMatcher extends AbstractHeaderMatcher {
     @ConfigComponent(type = Component.Type.Parameter, desc = "The pattern to match", name="expr", parameterType = Pattern.class)
     private final Pattern pattern;
 

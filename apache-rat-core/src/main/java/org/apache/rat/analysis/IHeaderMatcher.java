@@ -18,7 +18,6 @@
  */
 package org.apache.rat.analysis;
 
-import org.apache.rat.ConfigurationException;
 import org.apache.rat.ImplementationException;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.Description;
@@ -49,17 +48,19 @@ public interface IHeaderMatcher extends Component {
     String getId();
 
     /**
-     * Resets this state {@code State.i}. If text is being cached this method should
-     * clear that cache.
+     * Resets this state of this matcher to its initial state in preparation for
+     * use with another document scan.  In most cases this method does not need to 
+     * do anything.
      */
-    void reset();
+    default void reset() {
+        // does nothing.
+    }
 
     /**
-     * Attempts to match {@code line} and returns the State after the match is
-     * attempted.
+     * Attempts to match text in the IHeaders instance.
      * 
      * @param headers the representations of the headers to check
-     * @return the new state after the matching was attempted.
+     * @return {@code true} if the matcher matches the text, {@code false} otherwise.
      */
     boolean matches(IHeaders headers);
 
@@ -91,7 +92,7 @@ public interface IHeaderMatcher extends Component {
 
         /**
          * Gets the Description for this builder.
-         * @return The description of hte builder 
+         * @return The description of the builder 
          */
         default Description getDescription() {
             Class<?> clazz = builtClass();

@@ -116,7 +116,7 @@ public class SPDXMatcherFactory {
     }
 
     @ConfigComponent(type = Component.Type.Matcher, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
-    public class Match extends AbstractSimpleMatcher {
+    public class Match extends AbstractHeaderMatcher {
         @ConfigComponent(type = Component.Type.Parameter, name = "name", desc = "The spdx ID string")
         String spdxId;
 

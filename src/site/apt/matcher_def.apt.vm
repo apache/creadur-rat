@@ -21,4 +21,344 @@
 
 How to define matchers in Apache Rat
 
+ Matchers in Apache Rat are paired with Builders.  A Matcher must implement the "IHeaderMatcher" interface and its associated Builder must implement the IHeaderMatcher.Builder interface.
+
+* A simple example
+
+** The Matcher implementation
+
+ For our example we will implement a Matcher that implements the phrase "Quality, speed and cost, pick any two” by looking for the occurrence of all three words anywhere in the header.  
+ In most cases is it simplest to extend the AbstractHeaderMatcher class as this class will handle setting of the unique ID for instances that do not otherwise have a unique id.
+
++------------------------------------------+
+public interface IHeaderMatcher extends Component {
+    /**
+     * Get the identifier for this matcher.
+     * <p>
+     * All matchers must have unique identifiers
+     * </p>
+     * 
+     * @return the Identifier for this matcher.
+     */
+    String getId();
+
+    /**
+     * Resets this state of this matcher to its initial state in preparation for
+     * use with another document scan.  In most cases this method does not need to 
+     * do anything.
+     */
+    default void reset() {
+        // does nothing.
+    }
+
+    /**
+     * Attempts to match text in the IHeaders instance.
+     * 
+     * @param headers the representations of the headers to check
+     * @return {@code true} if the matcher matches the text, {@code false} otherwise.
+     */
+    boolean matches(IHeaders headers);
+}
++------------------------------------------+
+
++------------------------------------------+
+public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
+
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The id of the matcher.")
+    private final String id;
+
+    /**
+     * Constructs the IHeaderMatcher with an id value. If {@code id} is null then a
+     * unique random id is created.
+     * 
+     * @param id the Id to use.
+     */
+    protected AbstractHeaderMatcher(String id) {
+        this.id = StringUtils.isBlank(id) ? UUID.randomUUID().toString() : id;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return getId();
+    }
+
+    @Override
+    public Description getDescription() {
+        return DescriptionBuilder.build(this);
+    }
+}
++------------------------------------------+
+
+ So lets start by creating our matcher class and implementing the match method.
+
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+
+@ConfigComponent(type = Component.Type.Matcher, name = "QSC", desc = "Reports if the 'Quality, speed and cost, pick any two' rule is violated")
+public class QSCMatcher extends AbstraactHeaderMatcher {
+
+    public QSCMatcher(String id) {
+        super(id);
+    }
+
+    @Override
+    public boolean matches(IHeaders headers) {
+        String text = headers.prune()
+        return text.contains("quality") && text.contains("speed") && text.contains("cost");
+    }
+}
++------------------------------------------+
+
+ In the above example we use the ConfigComponent annotation to identify that this is a Matcher component, that it has the name 'QSC' and a description of what it does.  
+ If the "name" was not specified it would have been extracted from the class name by removing the "Matcher" from "QSCMatcher".
+
+ The Constructor calls the AbstractHeaderMatcher with a null argument so tha the parent class will assign an id.
+
+ The matcher uses the pruned text to check for the strings.  Pruned text has only the letters and numbers from the text included and all characters are converted to 
+ lower case.  There is an issue with this matcher in that it would match the string: "The quality of Dennis Hopper's acting, as Keanu Reeves costar in 'Speed', is outstanding."
  
+ the correction of that is left as an exercise for the reader.  Hint: matching the pruned text can be a quick gating check for a set of more expensive regular expression checks. 
+
+** The Matcher.Builder implementation
+
+  The builder must implement the IHeaderMatcher.Builder interface.
+
++------------------------------------------+
+@FunctionalInterface
+interface Builder {
+    /**
+     * Build the IHeaderMatcher.
+     * 
+     * Implementations of this interface should return a specific child class of IHeaderMatcher.
+     * 
+     * @return a new IHeaderMatcher.
+     */
+    IHeaderMatcher build();
+
+    /**
+     * Gets the class that is build by this builder.
+     * @return The class that is build by this builder.
+     */
+    default Class<?> builtClass() throws SecurityException {
+        try {
+            return this.getClass().getMethod("build").getReturnType();
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new IllegalStateException("the 'build' method of the Builder interface must alwasy be public");
+        }
+    }
+
+    /**
+     * Gets the Description for this builder.
+     * @return The description of the builder 
+     */
+    default Description getDescription() {
+        Class<?> clazz = builtClass();
+        if (clazz == IHeaderMatcher.class) {
+            throw new ImplementationException(String.format(
+                    "Class %s must implement built() method to return a child class of IHeaderMatcher", 
+                    this.getClass()));
+        }
+        return DescriptionBuilder.buildMap(clazz);
+    }
+}
++------------------------------------------+
+
+  The work of handling the Id and some other tasks is handled by the AbstractBuilder.
+  
++------------------------------------------+
+public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
+
+    private String id;
+
+    /**
+     * Protected empty constructor.
+     */
+    protected AbstractBuilder() {
+    }
+
+    /**
+     * Set the id for the matcher.
+     * @param id the id to use.
+     * @return this builder for chaining.
+     */
+    public final AbstractBuilder setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    /**
+     * @return {@code true} if the id is not null and not blank.
+     */
+    public final boolean hasId() {
+        return !StringUtils.isBlank(id);
+    }
+
+    /**
+     * @return the id as specified in the builder.
+     */
+    protected String getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s with id %s", this.getClass(), id);
+    }
+}  
++------------------------------------------+
+  
+  So we have:
+
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.rat.configuration.builders.AbstractBuilder;
+
+public class QSCBuilder extends AbstractBuilder. {
+    QSCMatcher build() {
+        return new QSCMatcher(getId());
+    }
+}
++------------------------------------------+
+
+** Registering the builder for use in XML configuration 
+
+  In order to use the matcher in a Rat configuration it has to be registered with the system.  This can be done by creating file with the builder specified and passing it
+  to the command line runner as a license ( "--licenses" option) file.  The XML parser will accept "<QSC>" as the matcher in license definitions. Since this is a joke license 
+  we should create a joke family to contain any such licenses and a QSC license that uses the QSC matcher.  The new license file now looks like:
+
++------------------------------------------+
+<rat-config>
+    <families>
+        <family id="Joke" name="A joke license" />
+    </families>
+    <licenses>
+        <license family="Joke" id="QSC" name="The QSC license">
+            <qsc/>
+        </license>
+    </licenses>
+    <matchers>
+        <matcher class="com.example.ratMatcher.QSCBuilder" />
+    </matchers>
+</rat-config>
++------------------------------------------+
+
+  If the license entry did not have an "id" attribute its ID would be the same as the family.
+
+* A more complex example
+
+ In many cases it is necessary to set properties on the matcher.  So let's write a generalized version of the QSC matcher that accepts any 3 strings and triggers if all 3 are found
+ in the header.
+
+
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.commons.lang3.StringUtils;
+
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+
+@ConfigComponent(type = Component.Type.Matcher, name = "TPM", desc = "Checks that the three string are found in the header")
+public class TPMatcher extends AbstraactHeaderMatcher {
+
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The first parameter")
+    private final String one;
+    
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The second parameter")
+    private final String two;
+    
+    @ConfigComponent(type = Component.Type.Parameter, desc = "The third parameter")
+    private final String three;
+
+    public TPMatcher(String id, String one, String two, String three) { 
+        super(id);
+        if (StringUtils.isEmpthy(one) || StringUtils.isEmpty(two) || StringUtils.isEmpty(three) {
+            throw new ConfigurationException( "None of the three properties (one, two, or three) may be empty");
+        }
+        this.one = one;
+        this.two = two;
+        this.three = three;
+    }
+    
+    public String getOne() { return one; }
+
+    public String getThree() { return two; }
+
+    public String getTwo() { return three; }
+
+    @Override
+    public boolean matches(IHeaders headers) {
+        String text = headers.prune()
+        return text.contains(one) && text.contains(two) && text.contains(three);
+    }
+}
++------------------------------------------+
+
+ The ComponentConfigurations with the parameter type indicate that the members specify properties of the component.  The Matcher must have a "get" method for each parameter and the builder
+ must have a corresponding "set" method.  The names of the methods and the attributes in the XML paarser can be changed by adding a 'name' attribute to the ConfigComponent.
+
+ The builder now looks like:
+
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.rat.configuration.builders.AbstractBuilder;
+
+public class TPBuilder extends AbstractBuilder {
+
+    private String one;
+    
+    private String two;
+    
+    private String three;
+
+    TPMatcher build() {
+        return new TPMatcher(one, two, three);
+    }
+    
+    public TPBuilder setOne(String one) { this.one = one; }
+
+    public TPBuilder setTwo(String two) { this.two = two; }
+
+    public TPBuilder setThree(String three) { this.three = three; }
+}
++------------------------------------------+
+
+ And the new license file looks like:
+
++------------------------------------------+
+<rat-config>
+    <families>
+        <family id="Joke" name="A joke license" />
+    </families>
+    <licenses>
+        <license family="Joke" id="QSC" name="The QSC license">
+            <qsc/>
+        </license>
+        <license family="Joke" id="TPM" name="The TPM Check">
+            <tpm one="once" two="upon" three="time">
+        </license>
+    </licenses>
+    <matchers>
+        <matcher class="com.example.ratMatcher.QSCBuilder" />
+        <matcher class="com.example.ratMatcher.TPBuilder" />
+    </matchers>
+</rat-config>
++------------------------------------------+
+
+* Embedded matchers.
+
+ It is possible to create matchers that embed other matchers.  The examples in the codebase are the "All", "Any" and "Not" matchers and their associated builders.
