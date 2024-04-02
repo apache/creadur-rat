@@ -48,7 +48,7 @@ Files with unapproved licenses:
  n src/test/resources/elements/NOTICE
 
 !s src/test/resources/elements/Source.java
-    ?????    ?????         Unknown license
+    ?????    ?????         Unknown license (Unapproved)
 
  s src/test/resources/elements/Text.txt
     AL       AL            Apache License Version 2.0
@@ -75,7 +75,7 @@ Files with unapproved licenses:
     BSD-3    TMF           The Telemanagement Forum License
 
 !s src/test/resources/elements/sub/Empty.txt
-    ?????    ?????         Unknown license
+    ?????    ?????         Unknown license (Unapproved)
 
 
 *****************************************************
