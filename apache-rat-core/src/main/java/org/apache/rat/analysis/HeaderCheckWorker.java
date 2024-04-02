@@ -61,8 +61,9 @@ public class HeaderCheckWorker {
      *
      * The number of lines indicates how many lines from the top of the file will be read for processing
      * 
-     * @param reader The reader to read the header from
-     * @param numberOfLines the number of lines to read from the header.  
+     * @param reader The reader for the document.
+     * @param numberOfLines the number of lines to read from the header.
+     * @return The IHeaders instance for the header.  
      * @throws IOException on input failure
      */
     public static IHeaders readHeader(BufferedReader reader, int numberOfLines) throws IOException {
