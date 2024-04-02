@@ -40,7 +40,7 @@ public class FullTextMatcher extends SimpleTextMatcher {
      * Constructs the full text matcher with a unique random id and the specified
      * text to match.
      *
-     * @param fullText the text to match
+     * @param simpleText the text to match
      */
     public FullTextMatcher(String simpleText) {
         this(null, simpleText);
@@ -50,7 +50,7 @@ public class FullTextMatcher extends SimpleTextMatcher {
      * Constructs the full text matcher for the specified text.
      *
      * @param id the id for the matcher
-     * @param fullText the text to match
+     * @param simpleText the text to match
      */
     public FullTextMatcher(String id, String simpleText) {
         super(id, simpleText);

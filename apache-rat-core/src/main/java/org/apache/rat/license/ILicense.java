@@ -46,10 +46,18 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
      */
     String getName();
 
+    /**
+     * Gets the name of the family that this license if part of.
+     * @return the name of the license family that this license is part of.
+     */
     default String getFamilyName() {
         return getLicenseFamily().getFamilyName();
     }
 
+    /**
+     * Get the header matcher for this license.
+     * @return the header matcher for this license.
+     */
     IHeaderMatcher getMatcher();
 
     /**

@@ -36,9 +36,14 @@ public class FullTextMatchingLicense extends BaseLicense {
 
     private String text;
 
+    /** constructor */
     public FullTextMatchingLicense() {
     }
 
+    /**
+     * Set the text to match
+     * @param text the text to match
+     */
     public final void setFullText(String text) {
         this.text = text;
     }

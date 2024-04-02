@@ -45,12 +45,20 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
+/**
+ * A report that dumps the ReportConfiguration into the XML output.
+ */
 public class ConfigurationReport extends AbstractReport {
 
     private final ReportConfiguration configuration;
     private final IXmlWriter writer;
     private final Set<String> matchers;
 
+    /**
+     * Constructor.
+     * @param writer The writer to write the XML data to.
+     * @param configuration the configuration to dump
+     */
     public ConfigurationReport(IXmlWriter writer, ReportConfiguration configuration) {
         this.configuration = configuration;
         this.writer = writer;

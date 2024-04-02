@@ -24,6 +24,9 @@ import java.io.Reader;
 
 import org.apache.rat.document.CompositeDocumentException;
 
+/**
+ * The representation of a document being scanned.
+ */
 public interface Document {
     /**
      * An enumeraton of document types.

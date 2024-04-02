@@ -139,14 +139,26 @@ public class CopyrightMatcher extends AbstractSimpleMatcher {
         }
     }
 
+    /**
+     * Gets the start date of the copyright.
+     * @return the start date of the copyright or {@code null} if not set
+     */
     public String getStart() {
         return start;
     }
 
-    public String getStop() {
+    /**
+     * Gets the end date of the copyright.
+     * @return the end date of the copyright or {@code null} if not set
+     */
+    public String getEnd() {
         return end;
     }
 
+    /**
+     * Gets the owner of the copyright.
+     * @return the owner of the copyright or {@code null} if not set
+     */
     public String getOwner() {
         return owner;
     }

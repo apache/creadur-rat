@@ -307,10 +307,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
             }
         } catch (DOMException e) {
             throw new ConfigurationException(e);
-        } catch (NoSuchMethodException e) {
-            throw new ConfigurationException(
-                    String.format("'%s' does not have no argument build() method", builder.getClass().getName()));
-        }
+        } 
         return builder.hasId() ? new DelegatingBuilder(builder) {
             @Override
             public IHeaderMatcher build() {
@@ -320,7 +317,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
             }
 
             @Override
-            public Description getDescription() throws NoSuchMethodException, SecurityException {
+            public Description getDescription() {
                 return delegate.getDescription();
             }
         } : builder;

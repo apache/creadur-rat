@@ -256,6 +256,7 @@ public class Description {
      * specified in the map. Only children that accept string arguments should be
      * specified.
      * 
+     * @param log The log to write messages to.
      * @param builder The Matcher builder to set the values in.
      * @param attributes a Map of parameter names to values.
      */

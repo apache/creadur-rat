@@ -15,16 +15,33 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.header;
-@Deprecated // since 0.17
-interface CharFilter {
+ */
+package org.apache.rat;
 
-    /**
-     * Is the given character filtered out?
-     * @param character character to be filtered
-     * @return true if this character should be filtered out,
-     * false if this character should be filtered in
-     */
-    boolean isFilteredOut(char character);
+/**
+ * An exception thrown when there is an issue with the Configuration.
+ */
+public class ImplementationException extends RuntimeException {
+
+    private static final long serialVersionUID = 7257245932787579431L;
+    
+    public static ImplementationException makeInstance(Exception e) {
+        if (e instanceof ImplementationException) {
+            return (ImplementationException) e;
+        }
+        return new ImplementationException(e);
+    }
+
+    public ImplementationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ImplementationException(String message) {
+        super(message);
+    }
+
+    public ImplementationException(Throwable cause) {
+        super(cause);
+    }
+
 }

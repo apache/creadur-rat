@@ -34,10 +34,18 @@ public class DefaultLog implements Log {
         level = Level.WARN;
     }
 
+    /**
+     * Sets the logging level of the logger.
+     * @param level the level to log messages at
+     */
     public void setLevel(Level level) {
         this.level = level;
     }
     
+    /**
+     * Gets the currently set logging level.
+     * @return the currently set logging level.
+     */
     public Level getLevel() {
         return level;
     }

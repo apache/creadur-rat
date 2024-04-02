@@ -243,6 +243,7 @@ public class Defaults {
 
         /**
          * Builds the defaults object.
+         * @param log the Log to use to report errors when building the defaults.
          * @return the current defaults object.
          */
         public Defaults build(Log log) {

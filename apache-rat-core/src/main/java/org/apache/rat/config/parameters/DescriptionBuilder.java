@@ -26,8 +26,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ImplementationException;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
 
+/**
+ * Builds Description objects for the various Component instances.
+ */
 public class DescriptionBuilder {
     /* do not instantiate */
     private DescriptionBuilder() {}
@@ -93,6 +98,9 @@ public class DescriptionBuilder {
      * @return the Description of the class or null if no ConfigComponent annotation was found on the class.
      */
     public static Description buildMap(Class<?> clazz) {
+        if (clazz == IHeaderMatcher.class) {
+            throw new ImplementationException("'clazz' parameter must not be IHeaderMatcher.class but may be a child of it"); 
+        }
         ConfigComponent configComponent = findConfigComponent(clazz);
         if (configComponent == null) {
             return null;

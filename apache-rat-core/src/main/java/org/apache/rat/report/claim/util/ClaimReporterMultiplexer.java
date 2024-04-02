@@ -26,6 +26,9 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
 
+/**
+ * Executes a RatReport that multiplexes the running of multiple RatReports
+ */
 public class ClaimReporterMultiplexer implements RatReport {
 
     private final IDocumentAnalyser analyser;

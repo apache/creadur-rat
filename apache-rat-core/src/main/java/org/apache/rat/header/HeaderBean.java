@@ -20,6 +20,7 @@ package org.apache.rat.header;
 
 import java.util.regex.Pattern;
 
+@Deprecated // since 0.17
 public class HeaderBean {
 
     private Pattern headerPattern;

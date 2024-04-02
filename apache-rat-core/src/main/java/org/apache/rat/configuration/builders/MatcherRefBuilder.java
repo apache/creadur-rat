@@ -50,7 +50,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
     }
 
     @Override
-    public Class<?> builtClass() throws NoSuchMethodException, SecurityException {
+    public Class<?> builtClass() {
         return IHeaderMatcherProxy.class;
     }
 

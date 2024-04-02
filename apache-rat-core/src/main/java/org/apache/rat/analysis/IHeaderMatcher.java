@@ -18,6 +18,8 @@
  */
 package org.apache.rat.analysis;
 
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.ImplementationException;
 import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
@@ -69,16 +71,36 @@ public interface IHeaderMatcher extends Component {
         /**
          * Build the IHeaderMatcher.
          * 
+         * Implementations of this interface should return a specific child class of IHeaderMatcher.
+         * 
          * @return a new IHeaderMatcher.
          */
         IHeaderMatcher build();
 
-        default Class<?> builtClass() throws NoSuchMethodException, SecurityException {
-            return this.getClass().getMethod("build").getReturnType();
+        /**
+         * Gets the class that is build by this builder.
+         * @return The class that is build by this builder.
+         */
+        default Class<?> builtClass() throws SecurityException {
+            try {
+                return this.getClass().getMethod("build").getReturnType();
+            } catch (NoSuchMethodException | SecurityException e) {
+                throw new IllegalStateException("the 'build' method of the Builder interface must alwasy be public");
+            }
         }
 
-        default Description getDescription() throws NoSuchMethodException, SecurityException {
-            return DescriptionBuilder.buildMap(builtClass());
+        /**
+         * Gets the Description for this builder.
+         * @return The description of hte builder 
+         */
+        default Description getDescription() {
+            Class<?> clazz = builtClass();
+            if (clazz == IHeaderMatcher.class) {
+                throw new ImplementationException(String.format(
+                        "Class %s must implement built() method to return a child class of IHeaderMatcher", 
+                        this.getClass()));
+            }
+            return DescriptionBuilder.buildMap(clazz);
         }
 
         /**

@@ -49,7 +49,7 @@ public class ClaimStatistic {
 
     /**
      * Returns the counts for the counter.
-     * @param the counter to get the value for.
+     * @param counter the counter to get the value for.
      * @return Returns the number of files with approved licenses.
      */
     public int getCounter(Counter counter) {

@@ -46,6 +46,12 @@ public class Documentation {
     private Documentation() {
     }
 
+    /**
+     * Output the ReportConfiguration to a writer.
+     * @param cfg The configuration to write.
+     * @param writer the writer to write to.
+     * @throws IOException on error.
+     */
     public static void output(ReportConfiguration cfg, Writer writer) throws IOException {
         writer.write(String.format("%n>>>> LICENSES <<<<%n%n"));
         for (ILicense l : cfg.getLicenses(LicenseFilter.all)) {
