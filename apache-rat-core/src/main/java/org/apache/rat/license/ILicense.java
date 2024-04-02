@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.SortedSet;
 
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 
 /**
@@ -29,11 +30,13 @@ import org.apache.rat.analysis.IHeaderMatcher;
  */
 public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
+     * Gets the license family.
      * @return the ILicenseFamily implementation for this license.
      */
     ILicenseFamily getLicenseFamily();
 
     /**
+     * Gets the notes associated with the license.
      * @return the notes associated with this license. May be null or empty.
      */
     String getNotes();
@@ -61,6 +64,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     IHeaderMatcher getMatcher();
 
     /**
+     * Gets a builder for licenses.
      * @return An ILicense.Builder instance.
      */
     static ILicense.Builder builder() {
@@ -68,6 +72,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     }
 
     /**
+     * Gets the comparator for comparing licenses.
      * @return The comparator for used to sort Licenses.
      */
     static Comparator<ILicense> getComparator() {
@@ -163,13 +168,16 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         }
 
         /**
+         * Builds the license.
          * @param licenseFamilies the set of defined license families.
          * @return A new License implementation.
          */
         public ILicense build(SortedSet<ILicenseFamily> licenseFamilies) {
             Objects.requireNonNull(matcher, "Matcher must not be null");
             ILicenseFamily family = LicenseFamilySetFactory.search(licenseFamily.build(), licenseFamilies);
-            Objects.requireNonNull(family, "License family " + licenseFamily.getCategory() + " not found.");
+            if (family == null) {
+                throw new ConfigurationException("License family " + licenseFamily.getCategory() + " not found.");
+            }
             return new SimpleLicense(family, matcher.build(), notes, name, id);
         }
     }

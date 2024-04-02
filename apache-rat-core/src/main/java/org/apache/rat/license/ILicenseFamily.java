@@ -30,16 +30,19 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
     static final String UNKNOWN_CATEGORY = "?????";
 
     /**
+     * Gets the family name.
      * @return the license family name.
      */
     String getFamilyName();
 
     /**
+     * Gets the family category.
      * @return the license family category.
      */
     String getFamilyCategory();
 
     /**
+     * Gets the Builder for license families.
      * @return A builder for an ILicenseFamily.
      */
     static ILicenseFamily.Builder builder() {
@@ -91,6 +94,7 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
         String getCategory();
 
         /**
+         * Builds the defined license family.
          * @return a new ILicenseFamily instance.
          */
         ILicenseFamily build();
