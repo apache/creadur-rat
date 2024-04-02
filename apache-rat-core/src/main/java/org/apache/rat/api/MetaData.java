@@ -48,43 +48,84 @@ public class MetaData {
         this.approvedLicenses = new HashSet<>();
     }
 
+    /**
+     * Determines if a mathcing license has been detected.
+     * @return true if there is a matching license.
+     */
     public boolean detectedLicense() {
         return !matchedLicenses.isEmpty();
     }
 
+    /**
+     * Sets the set of approved licenses.
+     * @param approvedLicenseFamilies the set of approved license families.
+     */
     public void setApprovedLicenses(Set<ILicenseFamily> approvedLicenseFamilies) {
         licenses().filter(lic -> approvedLicenseFamilies.contains(lic.getLicenseFamily()))
                 .forEach(lic -> approvedLicenses.add(lic.getId()));
     }
 
+    /**
+     * Gets the stream of licenses that have been matched.
+     * @return the stream of licenses that have been matched.
+     */
     public Stream<ILicense> licenses() {
         return matchedLicenses.stream();
     }
 
+    /**
+     * Gets the stream of approved licenses that have been matched.
+     * @return the stream of approved licenses theat have been matched.
+     */
     public Stream<ILicense> approvedLicenses() {
         return licenses().filter(this::isApproved);
     }
 
+    /**
+     * Determine if the license is an approved license.
+     * @param license the license to check;
+     * @return {@code true} if the license is in the list of approved licenses, {@code false} otherwise.
+     */
     public boolean isApproved(ILicense license) {
         return approvedLicenses.contains(license.getId());
     }
 
+    /**
+     * Gets the stream of unapproved licenses that have been matched.
+     * @return the stream of unapproved licenses that have been matched.
+     */
     public Stream<ILicense> unapprovedLicenses() {
         return licenses().filter(lic -> !isApproved(lic));
     }
 
+    /**
+     * Sets the sample header.  This is the header that was collected during processing.
+     * @param sampleHeader the sample header to use.
+     */
     public void setSampleHeader(String sampleHeader) {
         this.sampleHeader = sampleHeader;
     }
 
+    /**
+     * Gets the sample header.
+     * @return the smaple header.
+     */
     public String getSampleHeader() {
         return sampleHeader;
     }
 
+    /** 
+     * Sets the document type.
+     * @param type the document type for the document being recorded.
+     */
     public void setDocumentType(Document.Type type) {
         this.documentType = type;
     }
 
+    /**
+     * Gets the document type.
+     * @return the document type of the document that was recorded.
+     */
     public Document.Type getDocumentType() {
         return this.documentType;
     }

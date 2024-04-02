@@ -99,32 +99,65 @@ public interface Log {
     default void error(Object message) {
         log(Level.ERROR, message);
     }
-    default void log(Level level, String message, Throwable t) {       
+    
+    /**
+     * Write a log message and report throwable stack trace at the specified log level.
+     * @param level the level to report at
+     * @param message the message for the log
+     * @param throwable the throwable
+     */
+    default void log(Level level, String message, Throwable throwable) {       
         StringWriter writer = new StringWriter(500);
         PrintWriter pWriter = new PrintWriter(writer);
         pWriter.print(message);
         pWriter.print(System.lineSeparator());
-        t.printStackTrace(pWriter);
+        throwable.printStackTrace(pWriter);
         log(level, writer.toString());
     }
     
-    default void log(Level level, Object message, Throwable t){
-        log(level, message == null ? "NULL" : message.toString(), t);
+    /**
+     * Write a log message and report throwable stack trace at the specified log level.
+     * @param level the level to report at
+     * @param message the message for the log
+     * @param throwable the throwable
+     */
+    default void log(Level level, Object message, Throwable throwable){
+        log(level, message == null ? "NULL" : message.toString(), throwable);
     }
     
-    default void debug(Object message, Throwable t) {
-        log(Level.DEBUG, message, t);
+    /**
+     * Write a debug message and report throwable stack trace.
+     * @param message the message for the log
+     * @param throwable the throwable
+     */
+    default void debug(Object message, Throwable throwable) {
+        log(Level.DEBUG, message, throwable);
     }
 
-    default void info(Object message, Throwable t) {
-        log(Level.INFO, message, t);
+    /**
+     * Write an info message and report throwable stack trace.
+     * @param message the message for the log
+     * @param throwable the throwable
+     */
+    default void info(Object message, Throwable throwable) {
+        log(Level.INFO, message, throwable);
     }
     
-    default void warn(Object message, Throwable t) {
-        log(Level.WARN, message, t);
+    /**
+     * Write a warn message and report throwable stack trace.
+     * @param message the message for the log
+     * @param throwable the throwable
+     */
+    default void warn(Object message, Throwable throwable) {
+        log(Level.WARN, message, throwable);
     }
     
-    default void error(Object message, Throwable t) {
-        log(Level.ERROR, message, t);
+    /**
+     * Write an error message and report throwable stack trace.
+     * @param message the message for the log
+     * @param throwable the throwable
+     */
+    default void error(Object message, Throwable throwable) {
+        log(Level.ERROR, message, throwable);
     }
 }

@@ -36,9 +36,7 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
  */
 public class MatcherBuilderTracker {
 
-    /**
-     * The instance of the BuildTracker.
-     */
+    /** The instance of the BuildTracker. */
     public static MatcherBuilderTracker INSTANCE;
 
     private final Map<String, Class<? extends AbstractBuilder>> matcherBuilders;
@@ -88,6 +86,10 @@ public class MatcherBuilderTracker {
     }
     
 
+    /**
+     * Gets a collection of classes that are recognized as builders.
+     * @return the collection of builder classes
+     */
     public Collection<Class<? extends AbstractBuilder>> getClasses() {
         return Collections.unmodifiableCollection(matcherBuilders.values());
     }

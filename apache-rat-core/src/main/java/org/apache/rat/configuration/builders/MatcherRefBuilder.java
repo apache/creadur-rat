@@ -37,6 +37,8 @@ import org.apache.rat.config.parameters.ConfigComponent;
 public class MatcherRefBuilder extends AbstractBuilder {
     private String referenceId;
     private Map<String, IHeaderMatcher> matchers;
+    
+    /** the reference id attribute */
     public static final String ATT_REF_ID = "refId";
 
     /**
@@ -93,11 +95,22 @@ public class MatcherRefBuilder extends AbstractBuilder {
         @ConfigComponent(type = Component.Type.BuilderParam, desc = "Map of matcher names to matcher instances")
         private Map<String, IHeaderMatcher> matchers;
 
+        /**
+         * Constuctor.
+         * The matchers map should be a reference to an object that will be updated by later processing
+         * of matcher definitions.
+         * @param proxyId the id of the matcher to find.
+         * @param matchers a mapping of matchers that have been found. 
+         */
         public IHeaderMatcherProxy(String proxyId, Map<String, IHeaderMatcher> matchers) {
             this.proxyId = proxyId;
             this.matchers = matchers;
         }
 
+        /**
+         * Get the reference ID that this proxy is using.
+         * @return the reference id that points to the actual matcher.
+         */
         public String getRefId() {
             return proxyId;
         }
