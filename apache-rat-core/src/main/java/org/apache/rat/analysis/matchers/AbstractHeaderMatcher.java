@@ -55,9 +55,4 @@ public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
     public String toString() {
         return getId();
     }
-
-    @Override
-    public Description getDescription() {
-        return DescriptionBuilder.build(this);
-    }
 }

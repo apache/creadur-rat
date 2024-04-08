@@ -15,8 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */
-package org.apache.rat.license;
+ */package org.apache.rat.license;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,18 +25,15 @@ import java.util.TreeSet;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 
 /**
- * Class to take a set of ILicenses and collection of approved license
- * categories and extract Subsets.
+ * Class to take a set of ILicenses and collection of approved license categories and extract Subsets.
  */
 public class LicenseFamilySetFactory {
 
     private final SortedSet<ILicenseFamily> families;
     private final Collection<String> approvedLicenses;
-
+    
     /**
-     * Constructs a factory with the specified set of Licenses and the approved
-     * license collection.
-     * 
+     * Constructs a factory with the specified set of Licenses and the approved license collection.
      * @param licenses the set of defined licenses.
      * @param approvedLicenses the list of approved licenses.
      */
@@ -45,19 +41,18 @@ public class LicenseFamilySetFactory {
         this.families = licenses;
         this.approvedLicenses = approvedLicenses;
     }
-
+    
     /**
      * Create an empty sorted Set with proper comparator.
-     * 
      * @return An empty sorted set of ILicenseFamily objects.
      */
     public static SortedSet<ILicenseFamily> emptyLicenseFamilySet() {
         return new TreeSet<>();
     }
 
+
     /**
      * Gets the License objects based on the filter.
-     * 
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicense objects.
      */
@@ -67,17 +62,18 @@ public class LicenseFamilySetFactory {
             return Collections.unmodifiableSortedSet(families);
         case approved:
             SortedSet<ILicenseFamily> result = emptyLicenseFamilySet();
-            families.stream().filter(x -> approvedLicenses.contains(x.getFamilyCategory())).forEach(result::add);
+            families.stream().filter(x -> approvedLicenses.contains(x.getFamilyCategory()))
+                    .forEach(result::add);
             return result;
         case none:
         default:
             return Collections.emptySortedSet();
         }
     }
-
+    
+    
     /**
      * Gets the categories of LicenseFamily objects based on the filter.
-     * 
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicenseFamily categories.
      */
@@ -85,7 +81,8 @@ public class LicenseFamilySetFactory {
         SortedSet<String> result = new TreeSet<>();
         switch (filter) {
         case all:
-            families.stream().map(ILicenseFamily::getFamilyCategory).forEach(result::add);
+            families.stream().map(ILicenseFamily::getFamilyCategory)
+                    .forEach(result::add);
             break;
         case approved:
             result.addAll(approvedLicenses);
@@ -97,24 +94,21 @@ public class LicenseFamilySetFactory {
         return result;
     }
 
+    
     /**
-     * Search a SortedSet of ILicenseFamily instances looking for a matching
-     * instance.
-     * 
+     * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
      * @param target The instance to search for.
      * @param licenseFamilies the license families to search
      * @return the matching instance of the target given.
      */
     public static ILicenseFamily search(String target, SortedSet<ILicenseFamily> licenseFamilies) {
-        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory(target)
-                .setLicenseFamilyName("Searching family").build();
-        return search(family, licenseFamilies);
+        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory(target).setLicenseFamilyName("Searching family")
+                .build();
+        return search( family, licenseFamilies);
     }
 
     /**
-     * Search a SortedSet of ILicenseFamily instances looking for a matching
-     * instance.
-     * 
+     * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
      * @param target The instance to search for.
      * @param licenseFamilies the license families to search
      * @return the matching instance of the target given.
@@ -123,5 +117,5 @@ public class LicenseFamilySetFactory {
         SortedSet<ILicenseFamily> part = licenseFamilies.tailSet(target);
         return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
-
+    
 }
