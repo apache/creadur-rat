@@ -9,3 +9,5 @@ github:
     - apache
     - creadur
     - rat
+notifications:
+  commits: commits@creadur.apache.org
