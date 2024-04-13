@@ -158,8 +158,8 @@ public class SimpleLicense implements ILicense {
          * Sets the notes for the license. If called multiple times the notes are
          * concatenated to create a single note.
          * 
-         * @param notes the notes for the license.
-         * @return this builder for chaining.
+         * @param note the note for the license.
+         * @return this builder.
          */
         @Override
         public Builder setNote(String note) {

@@ -25,6 +25,13 @@ import java.util.SortedSet;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicenseFamily;
 
+/**
+ * Parameters that can be set by the BUILDER_PARAM ComponentType.  The name of the method listed here
+ * should be the same as the name specified in the ConfigComponent.
+ * 
+ * @see ComponentType
+ * @see ConfigComponent
+ */
 public interface BuilderParams {
 
     /**

@@ -152,8 +152,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
         /**
          * Builds the license.
-         * 
-         * @param licenseFamilies the set of defined license families.
+         *
          * @return A new License implementation.
          */
         @Override

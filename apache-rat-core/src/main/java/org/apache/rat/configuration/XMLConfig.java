@@ -19,9 +19,6 @@
 package org.apache.rat.configuration;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Configuration definitions for XMLConfiguration reader and writer.
@@ -57,13 +54,16 @@ public class XMLConfig {
 
     /** License property names that should be children */
     static final String[] LICENSE_CHILDREN = { "note", "matcher" };
-    /** License property names that should not be displayed contents should be placed inline */
+    /**
+     * License property names that should not be displayed contents should be placed
+     * inline
+     */
     static final String[] LICENSE_INLINE = { "matcher" };
 
-    /** 
-     * Matcher properties that should be directly inlined
-     * Entries are matcher node name / property name pairs. 
-     * A matcher may only have one inline node and then only if there is no other non-property node.
+    /**
+     * Matcher properties that should be directly inlined Entries are matcher node
+     * name / property name pairs. A matcher may only have one inline node and then
+     * only if there is no other non-property node.
      */
     static final String[][] INLINE_NODES = { { "any", "enclosed" }, { "all", "enclosed" }, { "not", "enclosed" },
             { "text", "simpleText" } };
@@ -73,7 +73,9 @@ public class XMLConfig {
     }
 
     /**
-     * Returns true if the specified child node should be placed inline in the XML document.
+     * Returns true if the specified child node should be placed inline in the XML
+     * document.
+     * 
      * @param parent the parent node name.
      * @param child the child node name.
      * @return true if the child should be inlined.
@@ -83,8 +85,9 @@ public class XMLConfig {
     }
 
     /**
-     * Returns true if the child should be a child node of a license node, as opposed to
-     * a attribute of the license.
+     * Returns true if the child should be a child node of a license node, as
+     * opposed to a attribute of the license.
+     * 
      * @param child the name of the child node.
      * @return true if the child should be a child node.
      */
@@ -94,6 +97,7 @@ public class XMLConfig {
 
     /**
      * Return true if the child should be inlined in the parent node.
+     * 
      * @param child the name of the child node.
      * @return true if the child should be inlined.
      */
