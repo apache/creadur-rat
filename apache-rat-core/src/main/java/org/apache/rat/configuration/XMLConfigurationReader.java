@@ -68,7 +68,6 @@ import org.xml.sax.SAXException;
 /**
  * A class that reads the XML configuration file format.
  */
-
 public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     private Log log;
