@@ -31,7 +31,7 @@ public class TestingLicense implements ILicense {
 
     private final ILicenseFamily family;
     private IHeaderMatcher matcher;
-    private String notes;
+    private String note;
     private String name;
     private String id;
 
@@ -71,7 +71,7 @@ public class TestingLicense implements ILicense {
     public TestingLicense(IHeaderMatcher matcher, ILicenseFamily family) {
         this.family = family;
         this.matcher = matcher;
-        this.notes = null;
+        this.note = null;
     }
 
     /**
@@ -144,8 +144,8 @@ public class TestingLicense implements ILicense {
     }
 
     @Override
-    public String getNotes() {
-        return notes;
+    public String getNote() {
+        return note;
     }
 
     @Override

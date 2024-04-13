@@ -51,9 +51,9 @@ public class FullTextMatchingLicense extends BaseLicense {
     @Override
     public ILicense.Builder getLicense() {
         return ILicense.builder()
-        .setLicenseFamilyCategory(getLicenseFamilyCategory())
+        .setFamily(getLicenseFamilyCategory())
         .setName(getLicenseFamilyName())
-        .setMatcher( new TextBuilder().setText(text) )
-        .setNotes(getNotes());
+        .setMatcher( new TextBuilder().setSimpleText(text) )
+        .setNote(getNotes());
     }
 }

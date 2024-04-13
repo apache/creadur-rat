@@ -60,7 +60,7 @@ public class XmlReportFactory {
             reporters.add(new LicenseAddingReport(configuration.getLog(), configuration.getCopyrightMessage(), configuration.isAddingLicensesForced()));
         }
         
-        if (configuration.listFamilies() != LicenseFilter.none || configuration.listLicenses() != LicenseFilter.none) {
+        if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
             
             reporters.add(new ConfigurationReport(writer, configuration));
         }
@@ -68,8 +68,8 @@ public class XmlReportFactory {
         reporters.add(new SimpleXmlClaimReporter(writer));
 
         final IDocumentAnalyser analyser =
-            DefaultAnalyserFactory.createDefaultAnalyser(configuration.getLog(), configuration.getLicenses(LicenseFilter.all));
-        final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseFamilies(LicenseFilter.approved));
+            DefaultAnalyserFactory.createDefaultAnalyser(configuration.getLog(), configuration.getLicenses(LicenseFilter.ALL));
+        final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseFamilies(LicenseFilter.APPROVED));
 
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);

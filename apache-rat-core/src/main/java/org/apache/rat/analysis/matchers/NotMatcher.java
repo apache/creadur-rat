@@ -24,31 +24,22 @@ import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * An IHeaderMatcher that reverses the result of an enclosed matcher.
  */
-@ConfigComponent(type = Component.Type.Matcher, name = "not", desc = "Negates the enclosed matcher.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "not", desc = "Negates the enclosed matcher.")
 public class NotMatcher extends AbstractHeaderMatcher {
 
-    @ConfigComponent(desc = "enclosed Matcher", type = Component.Type.Unlabeled, parameterType = IHeaderMatcher.class)
+    @ConfigComponent(desc = "enclosed Matcher", type = ComponentType.PARAMETER, parameterType = IHeaderMatcher.class, required=true)
     private final IHeaderMatcher enclosed;
-
-    /**
-     * Create the matcher with the enclosed matcher.
-     * 
-     * @param enclosed the enclosed matcher
-     */
-    public NotMatcher(IHeaderMatcher enclosed) {
-        this(null, enclosed);
-    }
 
     /**
      * Create the matcher with the enclosed matcher and id.
      * 
-     * @param id the id for this matcher.
+     * @param id the id for this matcher. May be null
      * @param enclosed the enclosed matcher
      */
     public NotMatcher(String id, IHeaderMatcher enclosed) {
@@ -57,8 +48,8 @@ public class NotMatcher extends AbstractHeaderMatcher {
         this.enclosed = enclosed;
     }
 
-    public List<IHeaderMatcher> getEnclosed() {
-        return Arrays.asList(enclosed);
+    public IHeaderMatcher getEnclosed() {
+        return enclosed;
     }
 
     @Override

@@ -26,6 +26,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
             while (null != (txt = buffer.readLine())) {
                 txt = txt.trim();
                 if (StringUtils.isNotBlank(txt)) {
-                    children.add(new TextBuilder().setText(txt));
+                    children.add(new TextBuilder().setSimpleText(txt));
                 }
             }
             this.resource = resourceName;
@@ -80,7 +81,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
      * @param child the child builder to add.
      * @return this for chaining.
      */
-    public AbstractBuilder add(IHeaderMatcher.Builder child) {
+    public AbstractBuilder addEnclosed(IHeaderMatcher.Builder child) {
         children.add(child);
         return this;
     }
@@ -91,15 +92,18 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
      * @param children the children to add.
      * @return this for chaining.
      */
-    public AbstractBuilder add(Collection<IHeaderMatcher.Builder> children) {
+    public AbstractBuilder addEnclosed(Collection<IHeaderMatcher.Builder> children) {
         this.children.addAll(children);
         return this;
     }
 
+    public List<IHeaderMatcher.Builder> getEnclosedBuilders() {
+        return Collections.unmodifiableList(children);
+    }
     /**
      * @return the list of child builders for this builder.
      */
-    public List<IHeaderMatcher> getChildren() {
+    public List<IHeaderMatcher> getEnclosed() {
         return children.stream().map(IHeaderMatcher.Builder::build).collect(Collectors.toList());
     }
 

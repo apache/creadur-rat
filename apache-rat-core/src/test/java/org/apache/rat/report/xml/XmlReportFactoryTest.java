@@ -88,10 +88,10 @@ public class XmlReportFactoryTest {
                 "Preamble and document element are OK");
 
         assertTrue(XmlUtils.isWellFormedXml(output), "Is well formed");
-        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.binary)[0], "Binary files");
-        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.notice)[0], "Notice files");
-        assertEquals(8, statistic.getDocumentCategoryMap().get(Document.Type.standard)[0], "Standard files");
-        assertEquals(1, statistic.getDocumentCategoryMap().get(Document.Type.archive)[0], "Archives");
+        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.BINARY)[0], "Binary files");
+        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.NOTICE)[0], "Notice files");
+        assertEquals(8, statistic.getDocumentCategoryMap().get(Document.Type.STANDARD)[0], "Standard files");
+        assertEquals(1, statistic.getDocumentCategoryMap().get(Document.Type.ARCHIVE)[0], "Archives");
     }
 
     @Test

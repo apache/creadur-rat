@@ -91,8 +91,8 @@ public class ReportConfiguration {
         removedLicenseCategories = new TreeSet<>();
         directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
         styleReport = true;
-        listFamilies = LicenseFilter.none;
-        listLicenses = LicenseFilter.none;
+        listFamilies = LicenseFilter.NONE;
+        listLicenses = LicenseFilter.NONE;
         dryRun = false;
     }
     
@@ -247,8 +247,8 @@ public class ReportConfiguration {
      * @param defaults The defaults to set.
      */
     public void setFrom(Defaults defaults) {
-        addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.all));
-        addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.approved));
+        addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.ALL));
+        addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.APPROVED));
         if (isStyleReport() && getStyleSheet() == null) {
             setStyleSheet(Defaults.getPlainStyleSheet());
         }
@@ -377,7 +377,7 @@ public class ReportConfiguration {
      */
     public ILicense addLicense(ILicense.Builder builder) {
         if (builder != null) {
-            ILicense license = builder.build(families);
+            ILicense license = builder.setLicenseFamilies(families).build();
             this.licenses.add(license);
             return license;
         }
@@ -581,11 +581,11 @@ public class ReportConfiguration {
      */
     public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
         switch (filter) {
-        case all:
+        case ALL:
             return Collections.unmodifiableSortedSet(licenses);
-        case approved:
+        case APPROVED:
             return new LicenseSetFactory(licenses, getApprovedLicenseCategories()).getLicenses(filter);
-        case none:
+        case NONE:
         default:
             return LicenseSetFactory.emptyLicenseSet();
         }

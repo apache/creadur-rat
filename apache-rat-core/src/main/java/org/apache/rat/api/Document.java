@@ -33,17 +33,17 @@ public interface Document {
      */
     enum Type {
         /** A generated document. */
-        generated, 
-        /** An unknowns document type. */
-        unknown,
+        GENERATED, 
+        /** An unknown document type. */
+        UNKNOWN,
         /** An archive type document. */
-        archive, 
+        ARCHIVE, 
         /** A notice document (e.g. LICENSE file) */
-        notice,
+        NOTICE,
         /** A binary file */
-        binary,
+        BINARY,
         /** A standard document */
-        standard}
+        STANDARD}
 
     /**
      * @return the name of the current document.

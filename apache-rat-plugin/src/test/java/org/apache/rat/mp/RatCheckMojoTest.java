@@ -112,7 +112,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final RatCheckMojo mojo = newRatCheckMojo("it1");
         final File ratTxtFile = getRatTxtFile(mojo);
         final String[] expected = { 
-                RatTestHelpers.documentOut(true, Document.Type.standard, getDir(mojo) + "pom.xml") +
+                RatTestHelpers.documentOut(true, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
                 RatTestHelpers.APACHE_LICENSE,
                 "Notes: 0", "Binaries: 0", "Archives: 0",
                 "Standards: 1$", "Apache Licensed: 1$", "Generated Documents: 0", "^0 Unknown Licenses" };
@@ -139,9 +139,9 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 "Notes: 0", 
                 "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
                 "^1 Unknown Licenses", 
-                RatTestHelpers.documentOut(false, Document.Type.standard, dir + "src.txt") +
+                RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "src.txt") +
                 RatTestHelpers.UNKNOWN_LICENSE,
-                RatTestHelpers.documentOut(true, Document.Type.standard, dir + "pom.xml") +
+                RatTestHelpers.documentOut(true, Document.Type.STANDARD, dir + "pom.xml") +
                 RatTestHelpers.APACHE_LICENSE
                 };
         try {
@@ -165,9 +165,9 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final String[] expected = { "^Files with unapproved licenses:\\s+\\Q" + dir + "src.apt\\E\\s+", "Notes: 0",
                 "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
                 "^1 Unknown Licenses", 
-                RatTestHelpers.documentOut(false, Document.Type.standard, dir + "src.apt") +
+                RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "src.apt") +
                 RatTestHelpers.UNKNOWN_LICENSE,
-                RatTestHelpers.documentOut(true, Document.Type.standard, dir + "pom.xml") +
+                RatTestHelpers.documentOut(true, Document.Type.STANDARD, dir + "pom.xml") +
                 RatTestHelpers.APACHE_LICENSE
         };
 
@@ -196,10 +196,10 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
         assertTrue(config.getApprovedLicenseCategories().contains(ILicenseFamily.makeCategory("YAL")));
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL");
-        assertNotNull(LicenseFamilySetFactory.search("YAL", config.getLicenseFamilies(LicenseFilter.all)));
+        assertNotNull(LicenseFamilySetFactory.search("YAL", config.getLicenseFamilies(LicenseFilter.ALL)));
         ReportConfigurationTest.validateDefaultLicenses(config, "MyLicense", "CpyrT", "RegxT", "SpdxT", "TextT", 
                 "Not", "All", "Any");
-        assertNotNull(LicenseSetFactory.search("MyLicense", config.getLicenses(LicenseFilter.all)));
+        assertNotNull(LicenseSetFactory.search("MyLicense", config.getLicenses(LicenseFilter.ALL)));
         assertNull("Should not have inputFileFilter", config.getInputFileFilter());
         mojo.execute();
 
@@ -216,7 +216,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final File ratTxtFile = getRatTxtFile(mojo);
         // POM reports AL, BSD and CC BYas BSD because it contains the BSD and CC BY strings
         final String[] expected = { 
-                RatTestHelpers.documentOut(false, Document.Type.standard, getDir(mojo) + "pom.xml") +
+                RatTestHelpers.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
                 RatTestHelpers.APACHE_LICENSE +
                 RatTestHelpers.licenseOut("BSD", "BSD") +
                 RatTestHelpers.licenseOut("CC BY", "Creative Commons Attribution (Unapproved)"),
@@ -257,13 +257,13 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             "Apache Licensed: 2$",
             "Generated Documents: 0",
             "^3 Unknown Licenses",
-            RatTestHelpers.documentOut(true, Document.Type.standard, dir + "pom.xml")+
+            RatTestHelpers.documentOut(true, Document.Type.STANDARD, dir + "pom.xml")+
             RatTestHelpers.APACHE_LICENSE,
-            RatTestHelpers.documentOut(false, Document.Type.standard, dir + "dir1/dir1.md")+
+            RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "dir1/dir1.md")+
                 RatTestHelpers.UNKNOWN_LICENSE,
-            RatTestHelpers.documentOut(false, Document.Type.standard, dir + "dir2/dir2.txt")+
+            RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "dir2/dir2.txt")+
                 RatTestHelpers.UNKNOWN_LICENSE,
-            RatTestHelpers.documentOut(false, Document.Type.standard, dir + "dir3/file3.log")+
+            RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "dir3/file3.log")+
                 RatTestHelpers.UNKNOWN_LICENSE,  
         };
         try {
@@ -314,7 +314,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 "Apache Licensed: 2$",
                 "Generated Documents: 0",
                 "^1 Unknown Licenses",
-                RatTestHelpers.documentOut(false, Document.Type.standard, generatedFile.getCanonicalPath()) +
+                RatTestHelpers.documentOut(false, Document.Type.STANDARD, generatedFile.getCanonicalPath()) +
                     RatTestHelpers.UNKNOWN_LICENSE,
         };
         try {

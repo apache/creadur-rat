@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
@@ -34,20 +34,12 @@ import org.apache.rat.config.parameters.ConfigComponent;
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
     /** The collection of enclosed headers */
-    @ConfigComponent(desc = "enclosed Matchers", type = Component.Type.Unlabeled, parameterType = IHeaderMatcher.class)
-    protected final Collection<IHeaderMatcher> enclosed;
+    @ConfigComponent(desc = "enclosed Matchers", type = ComponentType.PARAMETER, parameterType = IHeaderMatcher.class, required=true)
+    private final Collection<IHeaderMatcher> enclosed;
 
     /** The resource the headers were read from.  May be null */
-    @ConfigComponent(desc = "Resource to read matcher definitions from.", type = Component.Type.Parameter)
-    protected final String resource;
-
-    /**
-     * Get the children of this matcher.
-     * @return the children of this matcher.
-     */
-    public Collection<IHeaderMatcher> getChildren() {
-        return enclosed;
-    }
+    @ConfigComponent(desc = "Resource to read matcher definitions from.", type = ComponentType.PARAMETER)
+    private final String resource;
 
     /**
      * Constructs the abstract matcher container. If the {@code id} is not set then

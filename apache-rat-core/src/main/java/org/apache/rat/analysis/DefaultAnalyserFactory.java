@@ -74,13 +74,13 @@ public class DefaultAnalyserFactory {
         @Override
         public void analyse(Document document) throws RatDocumentAnalysisException {
             if (NoteGuesser.isNote(document)) {
-                document.getMetaData().setDocumentType(Document.Type.notice);
+                document.getMetaData().setDocumentType(Document.Type.NOTICE);
             } else if (ArchiveGuesser.isArchive(document)) {
-                document.getMetaData().setDocumentType(Document.Type.archive);
+                document.getMetaData().setDocumentType(Document.Type.ARCHIVE);
             } else if (BinaryGuesser.isBinary(document)) {
-                document.getMetaData().setDocumentType(Document.Type.binary);
+                document.getMetaData().setDocumentType(Document.Type.BINARY);
             } else {
-                document.getMetaData().setDocumentType(Document.Type.standard);
+                document.getMetaData().setDocumentType(Document.Type.STANDARD);
                 new DocumentHeaderAnalyser(log, licenses).analyse(document);
             }
         }

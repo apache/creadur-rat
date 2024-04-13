@@ -22,14 +22,13 @@ import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * A matcher that performs a logical {@code OR} across all the contained
- * matchers.
+ * A matcher that performs a logical {@code OR} across all the contained matchers.
  */
-@ConfigComponent(type = Component.Type.Matcher, name = "any", desc = "Returns true if at least one of the enclosed matchers return true.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "any", desc = "Returns true if at least one of the enclosed matchers returns true.")
 public class OrMatcher extends AbstractMatcherContainer {
 
     /**
@@ -53,7 +52,7 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     @Override
     public boolean matches(IHeaders headers) {
-        for (IHeaderMatcher matcher : enclosed) {
+        for (IHeaderMatcher matcher : getEnclosed()) {
             if (matcher.matches(headers)) {
                 return true;
             }

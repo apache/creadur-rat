@@ -50,10 +50,10 @@ public class SimplePatternBasedLicense  extends BaseLicense {
 
     private AbstractBuilder getMatcher() {
         if (patterns.length == 1) {
-            return new TextBuilder().setText(patterns[0]);
+            return new TextBuilder().setSimpleText(patterns[0]);
         } else {
             AnyBuilder any = new AnyBuilder();
-            Arrays.stream(patterns).map(s -> new TextBuilder().setText(s)).forEach(b-> any.add(b));
+            Arrays.stream(patterns).map(s -> new TextBuilder().setSimpleText(s)).forEach(b-> any.addEnclosed(b));
             return any;
         }
     }
@@ -61,9 +61,9 @@ public class SimplePatternBasedLicense  extends BaseLicense {
     @Override
     public ILicense.Builder getLicense() {
         return ILicense.builder()
-        .setLicenseFamilyCategory(getLicenseFamilyCategory())
+        .setFamily(getLicenseFamilyCategory())
         .setName(getLicenseFamilyName())
         .setMatcher( getMatcher() )
-        .setNotes(getNotes());
+        .setNote(getNotes());
     }
 }

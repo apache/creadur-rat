@@ -49,7 +49,7 @@ public class MetaData {
     }
 
     /**
-     * Determines if a mathcing license has been detected.
+     * Determines if a matching license has been detected.
      * @return true if there is a matching license.
      */
     public boolean detectedLicense() {
@@ -75,7 +75,7 @@ public class MetaData {
 
     /**
      * Gets the stream of approved licenses that have been matched.
-     * @return the stream of approved licenses theat have been matched.
+     * @return the stream of approved licenses that have been matched.
      */
     public Stream<ILicense> approvedLicenses() {
         return licenses().filter(this::isApproved);

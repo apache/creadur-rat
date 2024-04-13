@@ -20,6 +20,8 @@ package org.apache.rat.configuration.builders;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
 
 /**
@@ -31,12 +33,29 @@ public class SpdxBuilder extends AbstractBuilder {
 
     /**
      * sets the name for the SPDX matcher
+     * 
      * @param name The text that follows the colon ':' in the SPDX tag.
      * @return this builder for chaining.
      */
     public SpdxBuilder setName(String name) {
         Objects.requireNonNull(name, "spdx name must not be null");
         this.name = name;
+        super.setId("SPDX:" + name);
+        return this;
+    }
+
+    /**
+     * Set the id for the matcher.
+     * 
+     * @param id the id to use.
+     * @return this builder for chaining.
+     */
+    @Override
+    public AbstractBuilder setId(String id) {
+        if (StringUtils.isNotBlank(id)) {
+            throw new ConfigurationException("'id' is not supported for SPDX matchers.  "
+                    + "SPXD matchers always have 'SPDX:<name>' as their id");
+        }
         return this;
     }
 

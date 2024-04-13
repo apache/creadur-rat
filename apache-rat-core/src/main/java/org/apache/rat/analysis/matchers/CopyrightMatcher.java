@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
@@ -52,10 +52,10 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * to) the "Copyright" or "copyright" keyword
  * </p>
  */
-@ConfigComponent(type = Component.Type.Matcher, name = "copyright", desc = "Matches copyright statements.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "copyright", desc = "Matches copyright statements.")
 public class CopyrightMatcher extends AbstractHeaderMatcher {
 
-    private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©";
+    private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©|\\&[Cc][Oo][Pp][Yy]\\;";
     private static final String COPYRIGHT_PATTERN_DEFN = "(\\b)?" + COPYRIGHT_SYMBOL_DEFN + "|Copyright\\b";
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile(COPYRIGHT_PATTERN_DEFN);
     private static final String ONE_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s";
@@ -63,11 +63,11 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
 
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
-    @ConfigComponent(type = Component.Type.Parameter, desc = "The initial date of the copyright")
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The initial date of the copyright")
     private final String start;
-    @ConfigComponent(type = Component.Type.Parameter, desc = "The last date the copyright we modifed")
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The last date the copyright was modifed")
     private final String end;
-    @ConfigComponent(type = Component.Type.Parameter, desc = "The owner of the copyright")
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The owner of the copyright")
     private final String owner;
 
     /**
@@ -166,7 +166,8 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     @Override
     public boolean matches(IHeaders headers) {
         String lowerLine = headers.raw().toLowerCase();
-        if (lowerLine.contains("copyright") || lowerLine.contains("(c)") || lowerLine.contains("©")) {
+        if (lowerLine.contains("copyright") || lowerLine.contains("(c)") || lowerLine.contains("©") ||
+                lowerLine.contains("&copy;")) {
             Matcher matcher = COPYRIGHT_PATTERN.matcher(headers.raw());
             if (matcher.find()) {
                 String buffer = headers.raw().substring(matcher.end());

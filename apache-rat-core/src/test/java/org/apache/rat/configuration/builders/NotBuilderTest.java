@@ -17,37 +17,72 @@
 package org.apache.rat.configuration.builders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.StringReader;
 import java.util.SortedSet;
 
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.FullTextMatcher;
+import org.apache.rat.analysis.matchers.NotMatcher;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 public class NotBuilderTest {
 
     @Test
     public void xmlTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <not>"
-                + "                   <text>The text to match</text>"
-                + "                </not>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <not>" //
+                + "                   <text>The text to match</text>" //
+                + "                </not>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals(NotMatcher.class, matcher.getClass());
+        NotMatcher result = (NotMatcher) matcher;
+        assertNotNull(result.getEnclosed());
+        assertEquals(FullTextMatcher.class, result.getEnclosed().getClass());
     }
 
+    @Test
+    public void xmlIdTest() {
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <not id='foo'>" //
+                + "                   <text>The text to match</text>" //
+                + "                </not>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
+
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        reader.read(new StringReader(configStr));
+        SortedSet<ILicense> licenses = reader.readLicenses();
+        assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals("foo", matcher.getId());
+        assertEquals(NotMatcher.class, matcher.getClass());
+        NotMatcher result = (NotMatcher) matcher;
+        assertNotNull(result.getEnclosed());
+        assertEquals(FullTextMatcher.class, result.getEnclosed().getClass());
+    }
 }

@@ -32,6 +32,6 @@ public class Any implements IHeaderMatcher.Builder {
     }
     
     public void add(IHeaderMatcher.Builder builder) {
-        this.builder.add(builder);
+        this.builder.addEnclosed(builder);
     }
 }

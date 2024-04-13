@@ -47,7 +47,7 @@ public class RegexBuilder extends AbstractBuilder {
         if (null == pattern) {
             throw new ConfigurationException("'regex' type matcher requires an expression");
         }
-        return new SimpleRegexMatcher(pattern);
+        return new SimpleRegexMatcher(getId(), pattern);
     }
 
     @Override

@@ -27,6 +27,6 @@ public class AnyBuilder extends ChildContainerBuilder {
 
     @Override
     public OrMatcher build() {
-        return new OrMatcher(getId(), getChildren(), resource);
+        return new OrMatcher(getId(), getEnclosed(), resource);
     }
 }

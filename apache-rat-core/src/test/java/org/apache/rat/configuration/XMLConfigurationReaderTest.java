@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AbstractBuilder;
@@ -42,7 +42,7 @@ import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
 import org.junit.jupiter.api.Test;
 
-public class ConfigurationReaderTest {
+public class XMLConfigurationReaderTest {
 
     public static final String[] EXPECTED_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3", "MIT", "OASIS",
             "W3C", "W3CD" };
@@ -53,7 +53,7 @@ public class ConfigurationReaderTest {
     @Test
     public void approvedLicenseIdTest() {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
 
         Collection<String> readCategories = reader.approvedLicenseId();
@@ -64,7 +64,7 @@ public class ConfigurationReaderTest {
     @Test
     public void LicensesTest() {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
 
         Collection<String> readCategories = reader.readLicenses().stream().map(x -> x.getId())
@@ -75,7 +75,7 @@ public class ConfigurationReaderTest {
     @Test
     public void LicenseFamiliesTest() {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
 
         Collection<String> readCategories = reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim())
@@ -92,7 +92,7 @@ public class ConfigurationReaderTest {
     @Test
     public void checkSystemMatcherTest() {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
         reader.readMatcherBuilders();
         checkMatcher("all", AllBuilder.class);
@@ -108,7 +108,7 @@ public class ConfigurationReaderTest {
     @Test
     public void descriptionTest() throws NoSuchMethodException, SecurityException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URL url = ConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url);
         reader.readMatcherBuilders();
 
@@ -116,7 +116,7 @@ public class ConfigurationReaderTest {
         Description desc = DescriptionBuilder.buildMap(builder.builtClass());
         assertNotNull(desc, () -> "did not build description for 'copyright'");
         assertEquals("copyright", desc.getCommonName());
-        assertEquals(Component.Type.Matcher, desc.getType());
+        assertEquals(ComponentType.MATCHER, desc.getType());
         assertFalse(desc.isCollection());
         assertNull(desc.getChildType());
         assertEquals("Matches copyright statements.", desc.getDescription());

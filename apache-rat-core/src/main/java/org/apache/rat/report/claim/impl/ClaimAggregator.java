@@ -60,8 +60,8 @@ public class ClaimAggregator extends AbstractClaimReporter {
 
     @Override
     protected void handleApprovedLicenseClaim(MetaData metadata) {
-        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.Approved, metadata.approvedLicenses().count());
-        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.Unapproved,
+        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.APPROVED, metadata.approvedLicenses().count());
+        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.UNAPPROVED,
                 metadata.unapprovedLicenses().count());
     }
 
@@ -84,9 +84,9 @@ public class ClaimAggregator extends AbstractClaimReporter {
     protected void handleHeaderCategoryClaim(ILicense license) {
         String category = license.getLicenseFamily().getFamilyCategory();
         if (category.equals(ILicenseFamily.GENTERATED_CATEGORY)) {
-            incValueMap(statistic.getCounterMap(), Counter.Generated, 1);
+            incValueMap(statistic.getCounterMap(), Counter.GENERATED, 1);
         } else if (category.equals(ILicenseFamily.UNKNOWN_CATEGORY)) {
-            incValueMap(statistic.getCounterMap(), Counter.Unknown, 1);
+            incValueMap(statistic.getCounterMap(), Counter.UNKNOWN, 1);
         }
         incMapValue(statistic.getLicenseFamilyCodeMap(), category, 1);
     }

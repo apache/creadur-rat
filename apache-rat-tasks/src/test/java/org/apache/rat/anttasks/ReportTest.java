@@ -62,7 +62,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
     
     private String logLine(boolean approved, String antFile, String id) {
-        return String.format( "%ss \\Q%s\\E\\s+\\Q%s\\E ", approved?" ":"!", antFile, id);
+        return String.format( "%sS \\Q%s\\E\\s+\\Q%s\\E ", approved?" ":"!", antFile, id);
     }
     
     @Test
@@ -74,7 +74,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
-        final String alLine = " s \\Q" + getAntFileName() + "\\E";
+        final String alLine = " S \\Q" + getAntFileName() + "\\E";
 
         if (!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
             throw new IOException("Could not create temporary directory " + getTempDir());

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
@@ -33,7 +33,7 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
  */
 public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
 
-    @ConfigComponent(type = Component.Type.Parameter, desc = "The id of the matcher.")
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The id of the matcher.")
     private final String id;
 
     /**

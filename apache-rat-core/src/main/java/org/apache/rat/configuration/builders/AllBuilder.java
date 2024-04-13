@@ -27,6 +27,6 @@ public class AllBuilder extends ChildContainerBuilder {
 
     @Override
     public AndMatcher build() {
-        return new AndMatcher(getId(), getChildren(), resource);
+        return new AndMatcher(getId(), getEnclosed(), resource);
     }
 }

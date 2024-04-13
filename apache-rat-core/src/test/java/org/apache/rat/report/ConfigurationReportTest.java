@@ -58,8 +58,8 @@ public class ConfigurationReportTest {
     @BeforeEach
     public void setup() {
         reportConfiguration = new ReportConfiguration(DefaultLog.INSTANCE);
-        reportConfiguration.listFamilies(LicenseFilter.all);
-        reportConfiguration.listLicenses(LicenseFilter.all);
+        reportConfiguration.listFamilies(LicenseFilter.ALL);
+        reportConfiguration.listLicenses(LicenseFilter.ALL);
         reportConfiguration.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
 
         sw = new StringWriter();
@@ -96,28 +96,9 @@ public class ConfigurationReportTest {
         for (String familyName : FAMILY_IDS) {
             List<Node> nodes = XmlUtils.getNodes(doc, xPath,
                     String.format("/rat-config/licenses/license/*", familyName));
-            nodes.stream().filter(n -> n.getNodeType() == Node.ELEMENT_NODE && !"notes".equals(n.getNodeName()))
+            nodes.stream().filter(n -> n.getNodeType() == Node.ELEMENT_NODE && !"note".equals(n.getNodeName()))
                     .forEach(n -> assertNotNull(MatcherBuilderTracker.getMatcherBuilder(n.getNodeName()),
                             () -> String.format("Missing matcher named '%s'", n.getNodeName())));
         }
-    }
-
-    @Test
-    public void testGen() throws Exception {
-        Optional<ILicense> opt = reportConfiguration.getLicenses(LicenseFilter.approved).stream()
-                .filter(l -> "GEN".equals(l.getId())).findAny();
-        assertTrue(opt.isPresent());
-        Description description = opt.get().getDescription();
-        report.writeDescription(description, opt.get());
-        writer.closeDocument();
-        String result = sw.toString();
-
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        Document doc = XmlUtils.toDom(new ByteArrayInputStream(result.getBytes()));
-
-        Node any = (Node) xPath.compile(String.format("/license[@id='GEN']/any")).evaluate(doc, XPathConstants.NODE);
-        assertNotNull(any, () -> "GEN/any node missing");
-        assertEquals(0, any.getChildNodes().getLength());
-        assertNotNull(any.getAttributes().getNamedItem("resource"), () -> "'resource' attribute missing");
     }
 }

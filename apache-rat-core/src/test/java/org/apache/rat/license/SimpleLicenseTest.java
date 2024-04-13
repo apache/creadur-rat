@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
@@ -42,24 +42,24 @@ public class SimpleLicenseTest {
                         .setLicenseFamilyName("TestingLicense: familyId").build(),
                 new TestingMatcher(), "These are the notes", "My testing license", "TestingId");
         Description underTest = lic.getDescription();
-        assertEquals(Component.Type.License, underTest.getType());
+        assertEquals(ComponentType.LICENSE, underTest.getType());
         assertEquals("TestingId", underTest.getCommonName());
         assertEquals("My testing license", underTest.getDescription());
         Map<String, Description> children = underTest.getChildren();
-        assertEquals(5, children.size());
+        assertEquals(6, children.size());
         assertTrue(children.containsKey("id"));
         assertEquals("TestingId", children.get("id").getParamValue(DefaultLog.INSTANCE, lic));
         assertTrue(children.containsKey("name"));
         assertEquals("My testing license", children.get("name").getParamValue(DefaultLog.INSTANCE, lic));
-        assertTrue(children.containsKey("notes"));
-        assertEquals("These are the notes", children.get("notes").getParamValue(DefaultLog.INSTANCE, lic));
+        assertTrue(children.containsKey("note"));
+        assertEquals("These are the notes", children.get("note").getParamValue(DefaultLog.INSTANCE, lic));
 
         assertTrue(children.containsKey("matcher"));
-        assertEquals(Component.Type.Unlabeled, children.get("matcher").getType());
+        assertEquals(ComponentType.PARAMETER, children.get("matcher").getType());
         Object matcherObj = children.get("matcher").getter(lic.getClass()).invoke(lic);
         assertTrue(matcherObj instanceof IHeaderMatcher);
         Description matcherDesc = ((IHeaderMatcher) matcherObj).getDescription();
-        assertEquals(Component.Type.Matcher, matcherDesc.getType());
+        assertEquals(ComponentType.MATCHER, matcherDesc.getType());
         assertEquals("TestingMatcher", matcherDesc.getCommonName());
     }
 }

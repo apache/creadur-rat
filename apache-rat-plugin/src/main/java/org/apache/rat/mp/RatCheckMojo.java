@@ -115,7 +115,7 @@ public class RatCheckMojo extends AbstractRatMojo {
             return;
         }
         ReportConfiguration config = getConfiguration();
-        logLicenses(config.getLicenses(LicenseFilter.all));
+        logLicenses(config.getLicenses(LicenseFilter.ALL));
         final File parent = reportFile.getParentFile();
         if (!parent.mkdirs() && !parent.isDirectory()) {
             throw new MojoExecutionException("Could not create report parent directory " + parent);
@@ -138,15 +138,15 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
         ClaimStatistic stats = reporter.getClaimsStatistic();
 
-        int numApproved = stats.getCounter(ClaimStatistic.Counter.Approved);
+        int numApproved = stats.getCounter(ClaimStatistic.Counter.APPROVED);
         StringBuilder statSummary = new StringBuilder("Rat check: Summary over all files. Unapproved: ")
-                .append(stats.getCounter(ClaimStatistic.Counter.Unapproved)).append(", unknown: ")
-                .append(stats.getCounter(ClaimStatistic.Counter.Unknown)).append(", generated: ")
-                .append(stats.getCounter(ClaimStatistic.Counter.Generated)).append(", approved: ").append(numApproved)
+                .append(stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)).append(", unknown: ")
+                .append(stats.getCounter(ClaimStatistic.Counter.UNKNOWN)).append(", generated: ")
+                .append(stats.getCounter(ClaimStatistic.Counter.GENERATED)).append(", approved: ").append(numApproved)
                 .append((numApproved > 0 ? " licenses." : " license."));
 
         getLog().info(statSummary.toString());
-        if (numUnapprovedLicenses < stats.getCounter(ClaimStatistic.Counter.Unapproved)) {
+        if (numUnapprovedLicenses < stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)) {
             if (consoleOutput) {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -160,9 +160,9 @@ public class RatCheckMojo extends AbstractRatMojo {
             final String seeReport = " See RAT report in: " + reportFile;
             if (!ignoreErrors) {
                 throw new RatCheckException("Too many files with unapproved license: "
-                        + stats.getCounter(ClaimStatistic.Counter.Unapproved) + seeReport);
+                        + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED) + seeReport);
             }
-            getLog().warn("Rat check: " + stats.getCounter(ClaimStatistic.Counter.Unapproved)
+            getLog().warn("Rat check: " + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)
                     + " files with unapproved licenses." + seeReport);
         }
     }

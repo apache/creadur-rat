@@ -33,13 +33,13 @@ public class ClaimStatistic {
     /** The counter types */
     public enum Counter { 
         /** count of approved files */
-        Approved, 
+        APPROVED, 
         /** count of unapproved files */
-        Unapproved, 
+        UNAPPROVED, 
         /** count of generated files */
-        Generated, 
+        GENERATED, 
         /** count of unknown files */
-        Unknown };
+        UNKNOWN };
     
     private final Map<String, int[]> licenseFamilyNameMap = new HashMap<>();
     private final Map<String, int[]> licenseFamilyCodeMap = new HashMap<>();

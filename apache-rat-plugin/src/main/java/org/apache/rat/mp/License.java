@@ -50,8 +50,10 @@ public class License extends EnclosingMatcher {
     }
 
     public ILicense build(SortedSet<ILicenseFamily> context) {
-        return builder.setLicenseFamilyCategory(family).setId(id)
-                .setName(name).setNotes(notes).build(context);
+        
+        return builder.setLicenseFamilies(context)
+                .setFamily(family).setId(id)
+                .setName(name).setNote(notes).build();
     }
 
     @Override

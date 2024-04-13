@@ -22,14 +22,14 @@ import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * A matcher that performs a logical {@code AND} across all the contained
  * matchers.
  */
-@ConfigComponent(type = Component.Type.Matcher, name = "all", desc = "Returns true if all enclosed matchers return true.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "all", desc = "Returns true if all enclosed matchers return true.")
 public class AndMatcher extends AbstractMatcherContainer {
 
     /**
@@ -57,7 +57,7 @@ public class AndMatcher extends AbstractMatcherContainer {
 
     @Override
     public boolean matches(IHeaders headers) {
-        for (IHeaderMatcher matcher : enclosed) {
+        for (IHeaderMatcher matcher : getEnclosed()) {
             if (!matcher.matches(headers)) {
                 return false;
             }

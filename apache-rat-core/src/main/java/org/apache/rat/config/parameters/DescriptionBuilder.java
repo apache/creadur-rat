@@ -20,12 +20,14 @@
 package org.apache.rat.config.parameters;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.ImplementationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
@@ -48,15 +50,28 @@ public class DescriptionBuilder {
             ILicense license = (ILicense)obj;
             Class<?> clazz = obj.getClass();
             ConfigComponent configComponent = clazz.getAnnotation(ConfigComponent.class);
-            if (configComponent == null || configComponent.type() != Component.Type.License) {
-                throw new IllegalArgumentException(String.format("Licenses must have License type specified in ConfigComponent annotation.  Annotation missing or incorrect in %s", clazz));
+            if (configComponent == null || configComponent.type() != ComponentType.LICENSE) {
+                throw new ConfigurationException(String.format("Licenses must have License type specified in ConfigComponent annotation.  Annotation missing or incorrect in %s", clazz));
             }
             List<Description> children = getConfigComponents(obj.getClass());
-            return new Description(Component.Type.License, license.getId(), license.getName(), false, null, children);
+            return new Description(ComponentType.LICENSE, license.getId(), license.getName(), false, null, children, false);
         }
         return buildMap(obj.getClass());
     }
 
+    private static String fixupMethodName(Method method) {
+        String name = method.getName();
+        if (name.startsWith("get") || name.startsWith("set") || name.startsWith("add")) {
+            if (name.length() > 3) {
+                String retval = name.substring(3,4).toLowerCase();
+                if (name.length() > 4) {
+                    retval+=name.substring(4);
+                }
+                return retval;
+            }
+        } 
+        throw new ImplementationException(String.format("'%s' is not a recognized method name", name));
+    }
     /**
      * Build the list of descriptions for children of the class.
      * @param clazz
@@ -76,7 +91,20 @@ public class DescriptionBuilder {
                 boolean isCollection = Iterable.class.isAssignableFrom(field.getType());
 
                 Description desc = new Description(configComponent.type(), name, configComponent.desc(), isCollection,
-                        childClazz, getConfigComponents(childClazz));
+                        childClazz, getConfigComponents(childClazz), configComponent.required());
+                result.add(desc);
+            }
+        }
+        for (Method method : clazz.getDeclaredMethods()) {
+            ConfigComponent configComponent = method.getAnnotation(ConfigComponent.class);
+            if (configComponent != null) {
+                String name = StringUtils.isBlank(configComponent.name()) ? fixupMethodName(method) : configComponent.name();
+                Class<?> childClazz = configComponent.parameterType() == void.class ? method.getReturnType()
+                        : configComponent.parameterType();
+                boolean isCollection = Iterable.class.isAssignableFrom(method.getReturnType());
+
+                Description desc = new Description(configComponent.type(), name, configComponent.desc(), isCollection,
+                        childClazz, getConfigComponents(childClazz), configComponent.required());
                 result.add(desc);
             }
         }

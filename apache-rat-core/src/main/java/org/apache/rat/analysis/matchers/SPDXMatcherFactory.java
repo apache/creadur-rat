@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
@@ -115,9 +115,9 @@ public class SPDXMatcherFactory {
         return (lastMatch != null) && caller.spdxId.equals(lastMatch.spdxId);
     }
 
-    @ConfigComponent(type = Component.Type.Matcher, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
+    @ConfigComponent(type = ComponentType.MATCHER, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
     public class Match extends AbstractHeaderMatcher {
-        @ConfigComponent(type = Component.Type.Parameter, name = "name", desc = "The spdx ID string")
+        @ConfigComponent(type = ComponentType.PARAMETER, name = "name", desc = "The spdx ID string")
         String spdxId;
 
         public String getName() {

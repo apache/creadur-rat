@@ -19,6 +19,7 @@
 package org.apache.rat.configuration.builders;
 
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.NotMatcher;
 
 /**
@@ -28,7 +29,7 @@ public class NotBuilder extends ChildContainerBuilder {
 
     @Override
     public NotMatcher build() {
-        if (children.size() != 1) {
+        if (children.isEmpty()) {
             throw new ConfigurationException("'not' type matcher requires one and only one enclosed matcher");
         }
         return new NotMatcher(getId(), children.get(0).build());
@@ -37,5 +38,14 @@ public class NotBuilder extends ChildContainerBuilder {
     @Override
     public String toString() {
         return String.format("NotBuilder: %s", !children.isEmpty() ? children.get(0) : null);
+    }
+    
+    public NotBuilder setEnclosed(IHeaderMatcher.Builder enclosed) {
+        if (children.isEmpty()) {
+            children.add(enclosed);
+        } else {
+            children.set(0, enclosed);
+        }
+       return this;
     }
 }

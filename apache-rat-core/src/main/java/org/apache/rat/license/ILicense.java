@@ -19,10 +19,8 @@
 package org.apache.rat.license;
 
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.SortedSet;
 
-import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 
 /**
@@ -31,15 +29,17 @@ import org.apache.rat.analysis.IHeaderMatcher;
 public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
      * Gets the license family.
+     * 
      * @return the ILicenseFamily implementation for this license.
      */
     ILicenseFamily getLicenseFamily();
 
     /**
-     * Gets the notes associated with the license.
-     * @return the notes associated with this license. May be null or empty.
+     * Gets the note associated with the license.
+     * 
+     * @return the note associated with this license. May be null or empty.
      */
-    String getNotes();
+    String getNote();
 
     /**
      * Returns the name of this license. If no name was specified then the name of
@@ -51,6 +51,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
     /**
      * Gets the name of the family that this license if part of.
+     * 
      * @return the name of the license family that this license is part of.
      */
     default String getFamilyName() {
@@ -59,20 +60,23 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
     /**
      * Get the header matcher for this license.
+     * 
      * @return the header matcher for this license.
      */
     IHeaderMatcher getMatcher();
 
     /**
      * Gets a builder for licenses.
+     * 
      * @return An ILicense.Builder instance.
      */
     static ILicense.Builder builder() {
-        return new Builder();
+        return new SimpleLicense.Builder();
     }
 
     /**
      * Gets the comparator for comparing licenses.
+     * 
      * @return The comparator for used to sort Licenses.
      */
     static Comparator<ILicense> getComparator() {
@@ -82,17 +86,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
      * A builder for ILicense instances.
      */
-    class Builder {
-
-        private IHeaderMatcher.Builder matcher;
-
-        private String notes;
-
-        private String name;
-
-        private String id;
-
-        private final ILicenseFamily.Builder licenseFamily = ILicenseFamily.builder();
+    interface Builder extends IHeaderMatcher.Builder {
 
         /**
          * Sets the matcher from a builder.
@@ -100,10 +94,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @param matcher the builder for the matcher for the license.
          * @return this builder for chaining.
          */
-        public Builder setMatcher(IHeaderMatcher.Builder matcher) {
-            this.matcher = matcher;
-            return this;
-        }
+        Builder setMatcher(IHeaderMatcher.Builder matcher);
 
         /**
          * Sets the matcher.
@@ -111,10 +102,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @param matcher the matcher for the license.
          * @return this builder for chaining.
          */
-        public Builder setMatcher(IHeaderMatcher matcher) {
-            this.matcher = () -> matcher;
-            return this;
-        }
+        Builder setMatcher(IHeaderMatcher matcher);
 
         /**
          * Sets the notes for the license. If called multiple times the notes are
@@ -123,10 +111,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @param notes the notes for the license.
          * @return this builder for chaining.
          */
-        public Builder setNotes(String notes) {
-            this.notes = notes;
-            return this;
-        }
+        Builder setNote(String notes);
 
         /**
          * Sets the ID of the license. If the ID is not set then the ID of the license
@@ -135,10 +120,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @param id the ID for the license
          * @return this builder for chaining.
          */
-        public Builder setId(String id) {
-            this.id = id;
-            return this;
-        }
+        Builder setId(String id);
 
         /**
          * Set the family category for this license. The category must be unique across
@@ -149,11 +131,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @param licenseFamilyCategory the family category for the license.
          * @return this builder for chaining.
          */
-        public Builder setLicenseFamilyCategory(String licenseFamilyCategory) {
-            this.licenseFamily.setLicenseFamilyCategory(licenseFamilyCategory);
-            this.licenseFamily.setLicenseFamilyName("License Family for searching");
-            return this;
-        }
+        Builder setFamily(String licenseFamilyCategory);
 
         /**
          * Sets the name of the license. If the name is not set then the name of the
@@ -162,23 +140,23 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @param name the name for the license
          * @return this builder for chaining.
          */
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
+        public Builder setName(String name);
+
+        /**
+         * Sets the set of license families to use duirng build.
+         * 
+         * @param licenseFamilies the license families to use
+         * @return this builder.
+         */
+        public Builder setLicenseFamilies(SortedSet<ILicenseFamily> licenseFamilies);
 
         /**
          * Builds the license.
+         * 
          * @param licenseFamilies the set of defined license families.
          * @return A new License implementation.
          */
-        public ILicense build(SortedSet<ILicenseFamily> licenseFamilies) {
-            Objects.requireNonNull(matcher, "Matcher must not be null");
-            ILicenseFamily family = LicenseFamilySetFactory.search(licenseFamily.build(), licenseFamilies);
-            if (family == null) {
-                throw new ConfigurationException("License family " + licenseFamily.getCategory() + " not found.");
-            }
-            return new SimpleLicense(family, matcher.build(), notes, name, id);
-        }
+        @Override
+        public ILicense build();
     }
 }

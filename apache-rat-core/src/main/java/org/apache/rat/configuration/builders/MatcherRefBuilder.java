@@ -23,26 +23,29 @@ import java.util.Map;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * A reference matching Matcher builder. <p> This class stores a matcher id as a
- * reference to the matcher. It also has a map of matcher ids to the matcher
- * instances. When build is called the matcher reference is looked up in the
- * map. If it is found then it is returned value from the {@code build()} call.
- * If the reference is not located then a IHeaderMatcherProxy is returned. the
- * IHeaderMatcherProxy is resolved in a later configuration construction phase.
+ * A reference matching Matcher builder.
+ * <p>
+ * This class stores a matcher id as a reference to the matcher. It also has a
+ * map of matcher ids to the matcher instances. When build is called the matcher
+ * reference is looked up in the map. If it is found then it is returned value
+ * from the {@code build()} call. If the reference is not located then a
+ * IHeaderMatcherProxy is returned. the IHeaderMatcherProxy is resolved in a
+ * later configuration construction phase.
  */
 public class MatcherRefBuilder extends AbstractBuilder {
     private String referenceId;
     private Map<String, IHeaderMatcher> matchers;
-    
+
     /** the reference id attribute */
     public static final String ATT_REF_ID = "refId";
 
     /**
      * Constructs the MatcherReferenceBuilder using the provided reference id.
+     * 
      * @param refId the reverence to the matcher id.
      * @return this builder for chaining.
      */
@@ -58,10 +61,11 @@ public class MatcherRefBuilder extends AbstractBuilder {
 
     /**
      * Set the Map of matcher ids to matcher instances.
+     * 
      * @param matchers the Map of ids to instances.
      * @return this builder for chaining.
      */
-    public MatcherRefBuilder setMatchers(Map<String, IHeaderMatcher> matchers) {
+    public MatcherRefBuilder setMatcherMap(Map<String, IHeaderMatcher> matchers) {
         this.matchers = matchers;
         return this;
     }
@@ -87,20 +91,22 @@ public class MatcherRefBuilder extends AbstractBuilder {
      * matchers as long as all the matchers are constructed before the earlier one
      * is used.
      */
-    @ConfigComponent(type = Component.Type.Matcher, name = "matcherRef", desc = "A pointer to another Matcher")
+    @ConfigComponent(type = ComponentType.MATCHER, name = "matcherRef", desc = "A pointer to another Matcher")
     public static class IHeaderMatcherProxy implements IHeaderMatcher {
-        @ConfigComponent(type = Component.Type.Parameter, name = "refId", desc = "Reference to an existing matcher")
+
+        @ConfigComponent(type = ComponentType.PARAMETER, name = "refId", desc = "Reference to an existing matcher")
         private final String proxyId;
         private IHeaderMatcher wrapped;
-        @ConfigComponent(type = Component.Type.BuilderParam, desc = "Map of matcher names to matcher instances")
+
+        @ConfigComponent(type = ComponentType.BULID_PARAMETER, name = "matcherMap", desc = "Map of matcher names to matcher instances")
         private Map<String, IHeaderMatcher> matchers;
 
         /**
-         * Constuctor.
-         * The matchers map should be a reference to an object that will be updated by later processing
-         * of matcher definitions.
+         * Constuctor. The matchers map should be a reference to an object that will be
+         * updated by later processing of matcher definitions.
+         * 
          * @param proxyId the id of the matcher to find.
-         * @param matchers a mapping of matchers that have been found. 
+         * @param matchers a mapping of matchers that have been found.
          */
         public IHeaderMatcherProxy(String proxyId, Map<String, IHeaderMatcher> matchers) {
             this.proxyId = proxyId;
@@ -109,6 +115,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
 
         /**
          * Get the reference ID that this proxy is using.
+         * 
          * @return the reference id that points to the actual matcher.
          */
         public String getRefId() {

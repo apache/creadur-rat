@@ -57,11 +57,11 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
             HeaderCheckWorker worker = new HeaderCheckWorker(reader, licenses, document);
             worker.read();
         } catch (IOException e) {
-            log.warn(String.format("Can not read header of %s", document));
-            document.getMetaData().setDocumentType(Document.Type.unknown);
+            log.warn(String.format("Cannot read header of %s", document));
+            document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
         } catch (RatHeaderAnalysisException e) {
-            log.warn(String.format("Can not process header of %s", document));
-            document.getMetaData().setDocumentType(Document.Type.unknown);
+            log.warn(String.format("Cannot process header of %s", document));
+            document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
         }
     }
 

@@ -61,7 +61,7 @@ public class DefaultPolicyTest {
     @BeforeEach
     public void setUp() throws Exception {
         defaults = Defaults.builder().build(DefaultLog.INSTANCE);
-        policy = new DefaultPolicy(defaults.getLicenseFamilies(LicenseFilter.approved));
+        policy = new DefaultPolicy(defaults.getLicenseFamilies(LicenseFilter.APPROVED));
         document = new TestingLocation("subject");
     }
 
@@ -96,10 +96,10 @@ public class DefaultPolicyTest {
 
     @Test
     public void testUnApprovedLicenses() {
-        SortedSet<ILicenseFamily> all = defaults.getLicenseFamilies(LicenseFilter.all);
+        SortedSet<ILicenseFamily> all = defaults.getLicenseFamilies(LicenseFilter.ALL);
         SortedSet<ILicenseFamily> unapproved = LicenseFamilySetFactory.emptyLicenseFamilySet();
         unapproved.addAll(all);
-        unapproved.removeAll(defaults.getLicenseFamilies(LicenseFilter.approved));
+        unapproved.removeAll(defaults.getLicenseFamilies(LicenseFilter.APPROVED));
 
         assertEquals(all.size() - NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, unapproved.size(),
                 "Unapproved license count mismatch");
@@ -150,7 +150,7 @@ public class DefaultPolicyTest {
 
     @Test
     public void testNonStandardDocumentsDoNotFailLicenseTests() {
-        Document.Type[] nonStandardDocuments = { Document.Type.notice, Document.Type.archive, Document.Type.binary };
+        Document.Type[] nonStandardDocuments = { Document.Type.NOTICE, Document.Type.ARCHIVE, Document.Type.BINARY };
 
         for (Document.Type d : nonStandardDocuments) {
             document = new TestingLocation("subject");
@@ -162,7 +162,7 @@ public class DefaultPolicyTest {
 
     @Test
     public void testUnclassifiedDocumentsDoNotFailLicenseTests() {
-        document.getMetaData().setDocumentType(Document.Type.standard);
+        document.getMetaData().setDocumentType(Document.Type.STANDARD);
         policy.analyse(document);
         assertApproval(false);
     }

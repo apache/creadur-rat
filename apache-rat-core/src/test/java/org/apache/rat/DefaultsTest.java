@@ -41,7 +41,7 @@ public class DefaultsTest {
     public void defaultConfigTest() {
         Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
 
-        Set<ILicense> licenses = defaults.getLicenses(LicenseFilter.all);
+        Set<ILicense> licenses = defaults.getLicenses(LicenseFilter.ALL);
 
         Set<String> names = new TreeSet<>();
         licenses.forEach(x -> names.add(x.getLicenseFamily().getFamilyCategory()));

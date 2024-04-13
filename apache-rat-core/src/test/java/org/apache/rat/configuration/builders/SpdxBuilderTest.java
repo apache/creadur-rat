@@ -17,34 +17,60 @@
 package org.apache.rat.configuration.builders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.StringReader;
 import java.util.SortedSet;
 
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 public class SpdxBuilderTest {
 
     @Test
     public void xmlTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <spdx name='the-key' />"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
-        
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <spdx name='the-key' />" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals(SPDXMatcherFactory.Match.class, matcher.getClass());
+        SPDXMatcherFactory.Match result = (SPDXMatcherFactory.Match) matcher;
+        assertEquals("the-key", result.getName());
+    }
+
+    @Test
+    public void xmlIdTest() {
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <spdx id='foo' name='the-key' />" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
+
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        reader.read(new StringReader(configStr));
+        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
     }
 }

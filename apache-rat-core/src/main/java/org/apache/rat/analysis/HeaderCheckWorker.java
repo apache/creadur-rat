@@ -89,7 +89,7 @@ public class HeaderCheckWorker {
 
             @Override
             public String toString() {
-                return "HeaderCheckWorker";
+                return this.getClass().getSimpleName();
             }
         };
     }
@@ -140,7 +140,7 @@ public class HeaderCheckWorker {
             if (document.getMetaData().detectedLicense()) {
                 if (document.getMetaData().licenses().anyMatch(
                         lic -> ILicenseFamily.GENTERATED_CATEGORY.equals(lic.getLicenseFamily().getFamilyCategory()))) {
-                    document.getMetaData().setDocumentType(Document.Type.generated);
+                    document.getMetaData().setDocumentType(Document.Type.GENERATED);
                 }
             } else {
                 document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);

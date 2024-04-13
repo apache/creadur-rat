@@ -22,6 +22,6 @@ import org.apache.rat.configuration.builders.TextBuilder;
 
 public class Text extends TextBuilder {
     public void set(String text) {
-        super.setText(text);
+        super.setSimpleText(text);
     }
 }

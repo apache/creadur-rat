@@ -38,7 +38,7 @@ public class CopyrightMatcherTest {
     private final static int NAME = 0;
     private final static int TEXT = 1;
     // to be added
-    private static String[] prefix = { "Copyright", "©", "(C)", "(c)" };
+    private static String[] prefix = { "Copyright", "©", "(C)", "(c)", "&copy;" };
 
     private final static String[] D = { "-d", " 1990-1991" };
     private final static String[] DO = { "-d-o", " 1990-1991 an owner" };

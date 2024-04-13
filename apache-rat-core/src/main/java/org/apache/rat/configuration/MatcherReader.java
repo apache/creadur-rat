@@ -20,8 +20,6 @@ package org.apache.rat.configuration;
 
 import java.net.URL;
 
-import org.apache.rat.utils.Log;
-
 /**
  * An interface that describes the methods of a Matcher reader.
  */

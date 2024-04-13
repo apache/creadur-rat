@@ -26,10 +26,10 @@ Summary
 -------
 Generated at: <xsl:value-of select='rat-report/@timestamp'/>
 
-Notes: <xsl:value-of select='count(descendant::resource[attribute::type="notice"])'/>
-Binaries: <xsl:value-of select='count(descendant::resource[attribute::type="binary"])'/>
-Archives: <xsl:value-of select='count(descendant::resource[attribute::type="archive"])'/>
-Standards: <xsl:value-of select='count(descendant::resource[attribute::type="standard"])'/>
+Notes: <xsl:value-of select='count(descendant::resource[attribute::type="NOTICE"])'/>
+Binaries: <xsl:value-of select='count(descendant::resource[attribute::type="BINARY"])'/>
+Archives: <xsl:value-of select='count(descendant::resource[attribute::type="ARCHIVE"])'/>
+Standards: <xsl:value-of select='count(descendant::resource[attribute::type="STANDARD"])'/>
 
 Apache Licensed: <xsl:value-of select='count(descendant::license[attribute::family="AL   "])'/>
 Generated Documents: <xsl:value-of select='count(descendant::license[attribute::family="GEN  "])'/>
@@ -51,9 +51,9 @@ Files with unapproved licenses:
 </xsl:for-each>
 *****************************************************
 </xsl:if>
-<xsl:if test="descendant::resource[type/@name='archive']">
+<xsl:if test="descendant::resource[@type='ARCHIVE']">
 Archives:
-<xsl:for-each select='descendant::resource[@type="archive"]'>
+<xsl:for-each select='descendant::resource[@type="ARCHIVE"]'>
  + <xsl:value-of select='@name'/>
  <xsl:text>
  </xsl:text>
@@ -65,12 +65,12 @@ Archives:
   The next character identifies the document type.
    
    char         type
-    a       Archive file
-    b       Binary file
-    g       Generated file
-    n       Notice file
-    s       Standard file
-    u       Unknown file.
+    A       Archive file
+    B       Binary file
+    G       Generated file
+    N       Notice file
+    S       Standard file
+    U       Unknown file.
   
 </xsl:text>
  <xsl:for-each select='descendant::resource'>

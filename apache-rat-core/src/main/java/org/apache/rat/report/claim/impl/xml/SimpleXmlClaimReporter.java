@@ -63,8 +63,8 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         writer.openElement(LICENSE).attribute(ID, license.getId()).attribute(NAME, license.getName())
                 .attribute(APPROVAL, Boolean.valueOf(metaData.isApproved(license)).toString())
                 .attribute(FAMILY, license.getLicenseFamily().getFamilyCategory());
-        if (StringUtils.isNotBlank(license.getNotes())) {
-            writer.openElement(NOTES).cdata(license.getNotes()).closeElement();
+        if (StringUtils.isNotBlank(license.getNote())) {
+            writer.openElement(NOTES).cdata(license.getNote()).closeElement();
         }
         writer.closeElement();
     }

@@ -95,20 +95,20 @@ public class ReportTest {
         TextUtils.isMatching("Apache Licensed: 5$", content);
         TextUtils.isMatching("Generated Documents 1$", content);
         TextUtils.isMatching("^2 Unknown licenses", content);
-        assertTrue(content.contains(" s target/test-classes/elements/ILoggerFactory.java"));
-        assertTrue(content.contains(" b target/test-classes/elements/Image.png"));
-        assertTrue(content.contains(" n target/test-classes/elements/LICENSE"));
-        assertTrue(content.contains(" n target/test-classes/elements/NOTICE"));
-        assertTrue(content.contains("!s target/test-classes/elements/Source.java"));
-        assertTrue(content.contains(" s target/test-classes/elements/Text.txt"));
-        assertTrue(content.contains(" s target/test-classes/elements/TextHttps.txt"));
-        assertTrue(content.contains(" s target/test-classes/elements/Xml.xml"));
-        assertTrue(content.contains(" s target/test-classes/elements/buildr.rb"));
-        assertTrue(content.contains(" a target/test-classes/elements/dummy.jar"));
-        assertTrue(content.contains(" b target/test-classes/elements/plain.json"));
-        assertTrue(content.contains("!s target/test-classes/elements/sub/Empty.txt"));
-        assertTrue(content.contains(" s target/test-classes/elements/tri.txt"));
-        assertTrue(content.contains(" g target/test-classes/elements/generated.txt"));
+        assertTrue(content.contains(" S target/test-classes/elements/ILoggerFactory.java"));
+        assertTrue(content.contains(" B target/test-classes/elements/Image.png"));
+        assertTrue(content.contains(" N target/test-classes/elements/LICENSE"));
+        assertTrue(content.contains(" N target/test-classes/elements/NOTICE"));
+        assertTrue(content.contains("!S target/test-classes/elements/Source.java"));
+        assertTrue(content.contains(" S target/test-classes/elements/Text.txt"));
+        assertTrue(content.contains(" S target/test-classes/elements/TextHttps.txt"));
+        assertTrue(content.contains(" S target/test-classes/elements/Xml.xml"));
+        assertTrue(content.contains(" S target/test-classes/elements/buildr.rb"));
+        assertTrue(content.contains(" A target/test-classes/elements/dummy.jar"));
+        assertTrue(content.contains(" B target/test-classes/elements/plain.json"));
+        assertTrue(content.contains("!S target/test-classes/elements/sub/Empty.txt"));
+        assertTrue(content.contains(" S target/test-classes/elements/tri.txt"));
+        assertTrue(content.contains(" G target/test-classes/elements/generated.txt"));
     }
 
     @Test
@@ -147,29 +147,29 @@ public class ReportTest {
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='?????']");
         assertEquals(2, nodeList.getLength());
 
-        // generated, unknown, archive, notice, binary, standard
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='standard']");
+        // GENERATED, UNKNOWN, ARCHIVE, NOTICE, BINARY, STANDARD
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='STANDARD']");
         assertEquals(8, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='archive']");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='ARCHIVE']");
         assertEquals(1, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='binary']");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='BINARY']");
         assertEquals(2, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='generated']");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='GENERATED']");
         assertEquals(1, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='unknown']");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='UNKNOWN']");
         assertEquals(0, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='notice']");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='NOTICE']");
         assertEquals(2, nodeList.getLength());
 
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/sample");
         assertEquals(1, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='generated']/license/notes");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='GENERATED']/license/notes");
         assertEquals(1, nodeList.getLength());
 
         nodeList = XmlUtils.getNodeList(doc, xPath,

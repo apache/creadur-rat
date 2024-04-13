@@ -32,7 +32,7 @@ public class DescriptionBuilderTest {
     public void matcherMapBuildTest() {
 
         Description underTest = DescriptionBuilder.buildMap(CopyrightMatcher.class);
-        assertEquals(Component.Type.Matcher, underTest.getType());
+        assertEquals(ComponentType.MATCHER, underTest.getType());
         assertEquals("copyright", underTest.getCommonName());
         assertNotNull(underTest.getDescription());
         assertEquals(4, underTest.getChildren().size());
@@ -42,7 +42,7 @@ public class DescriptionBuilderTest {
         assertTrue(underTest.getChildren().containsKey("owner"));
 
         underTest = DescriptionBuilder.buildMap(AndMatcher.class);
-        assertEquals(Component.Type.Matcher, underTest.getType());
+        assertEquals(ComponentType.MATCHER, underTest.getType());
         assertEquals("all", underTest.getCommonName());
         assertNotNull(underTest.getDescription());
         assertEquals(3, underTest.getChildren().size());
@@ -50,7 +50,7 @@ public class DescriptionBuilderTest {
         assertTrue(underTest.getChildren().containsKey("resource"));
         assertTrue(underTest.getChildren().containsKey("enclosed"));
         Description desc = underTest.getChildren().get("enclosed");
-        assertEquals(Component.Type.Unlabeled, desc.getType());
+
     }
 
 }

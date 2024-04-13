@@ -153,7 +153,7 @@ public class Reporter {
             pw.format("Licenses (%s):%n", filter);
             configuration.getLicenses(filter)
                     .forEach(lic -> pw.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
-                            lic.getLicenseFamily().getFamilyName(), lic.getNotes()));
+                            lic.getLicenseFamily().getFamilyName(), lic.getNote()));
             pw.println();
         }
     }

@@ -23,13 +23,13 @@ import java.util.Queue;
 
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Component;
 
 /**
  * An Matcher for testing.
  */
-@ConfigComponent(type = Component.Type.Matcher, name = "TestingMatcher", desc = "Matcher used in testing")
+@ConfigComponent(type = ComponentType.MATCHER, name = "TestingMatcher", desc = "Matcher used in testing")
 public class TestingMatcher extends AbstractHeaderMatcher {
     private final boolean[] initialResults;
     private Queue<Boolean> results;

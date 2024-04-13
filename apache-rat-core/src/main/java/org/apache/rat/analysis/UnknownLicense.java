@@ -72,7 +72,7 @@ public class UnknownLicense implements ILicense {
     }
 
     @Override
-    public String getNotes() {
+    public String getNote() {
         return null;
     }
 

@@ -20,15 +20,16 @@ package org.apache.rat.analysis.matchers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaders;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * A simple text matching IHeaderMatcher implementation.
  */
-@ConfigComponent(type = Component.Type.Matcher, name = "text", desc = "Matches the enclosed the text")
+@ConfigComponent(type = ComponentType.MATCHER, name = "text", desc = "Matches the enclosed text")
 public class SimpleTextMatcher extends AbstractHeaderMatcher {
-    @ConfigComponent(type = Component.Type.Unlabeled, name = "text", desc = "")
+    
+    @ConfigComponent(type = ComponentType.PARAMETER, name = "simpleText", desc = "The text to match", required=true)
     private final String simpleText;
 
     /**
@@ -56,7 +57,7 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
         this.simpleText = simpleText;
     }
 
-    public String getText() {
+    public String getSimpleText() {
         return this.simpleText;
     }
 

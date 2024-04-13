@@ -37,11 +37,11 @@ public class LicenseSetFactory {
      */
     public enum LicenseFilter {
         /** All defined licenses are returned */
-        all,
+        ALL,
         /** Only approved licenses are returned */
-        approved,
+        APPROVED,
         /** No licenses are returned */
-        none;
+        NONE;
 
         /**
          * Converts from a String to an enum value.
@@ -98,14 +98,14 @@ public class LicenseSetFactory {
      */
     public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
         switch (filter) {
-        case all:
+        case ALL:
             return Collections.unmodifiableSortedSet(licenses);
-        case approved:
+        case APPROVED:
             SortedSet<ILicense> result = LicenseSetFactory.emptyLicenseSet();
             licenses.stream().filter(x -> approvedLicenses.contains(x.getLicenseFamily().getFamilyCategory()))
                     .forEach(result::add);
             return result;
-        case none:
+        case NONE:
         default:
             return Collections.emptySortedSet();
         }
@@ -119,14 +119,14 @@ public class LicenseSetFactory {
      */
     public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
         switch (filter) {
-        case all:
+        case ALL:
             return extractFamily(licenses);
-        case approved:
+        case APPROVED:
             SortedSet<ILicenseFamily> result = LicenseFamilySetFactory.emptyLicenseFamilySet();
             licenses.stream().map(ILicense::getLicenseFamily)
                     .filter(x -> approvedLicenses.contains(x.getFamilyCategory())).forEach(result::add);
             return result;
-        case none:
+        case NONE:
         default:
             return Collections.emptySortedSet();
         }
@@ -141,13 +141,13 @@ public class LicenseSetFactory {
     public SortedSet<String> getLicenseFamilyIds(LicenseFilter filter) {
         SortedSet<String> result = new TreeSet<>();
         switch (filter) {
-        case all:
+        case ALL:
             licenses.stream().map(x -> x.getLicenseFamily().getFamilyCategory()).forEach(result::add);
             break;
-        case approved:
+        case APPROVED:
             result.addAll(approvedLicenses);
             break;
-        case none:
+        case NONE:
         default:
             // do nothing
         }
@@ -192,7 +192,7 @@ public class LicenseSetFactory {
             }
 
             @Override
-            public String getNotes() {
+            public String getNote() {
                 return null;
             }
 

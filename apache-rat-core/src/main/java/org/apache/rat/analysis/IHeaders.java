@@ -29,7 +29,8 @@ public interface IHeaders {
     public String raw();
 
     /**
-     * Gets the pruned header.  This is the header with all non letter and non number characters removed and the string converted to lower case..
+     * Gets the pruned header.  This is the header with all non letter 
+     * and non number characters removed and the string converted to lower case.
      * @return The pruned header.
      */
     public String pruned();

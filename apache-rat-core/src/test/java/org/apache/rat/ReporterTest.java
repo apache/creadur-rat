@@ -100,27 +100,27 @@ public class ReporterTest {
 
         LicenseInfo apacheLic = new LicenseInfo("AL", true, false);
         checkNode(doc, xPath, "src/test/resources/elements/ILoggerFactory.java", new LicenseInfo("MIT", true, false),
-                "standard", false);
-        checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, "binary", false);
-        checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, "notice", false);
-        checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, "notice", false);
+                "STANDARD", false);
+        checkNode(doc, xPath, "src/test/resources/elements/Image.png", null, "BINARY", false);
+        checkNode(doc, xPath, "src/test/resources/elements/LICENSE", null, "NOTICE", false);
+        checkNode(doc, xPath, "src/test/resources/elements/NOTICE", null, "NOTICE", false);
         checkNode(doc, xPath, "src/test/resources/elements/Source.java", new LicenseInfo("?????", false, false),
-                "standard", true);
-        checkNode(doc, xPath, "src/test/resources/elements/Text.txt", apacheLic, "standard", false);
-        checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", apacheLic, "standard", false);
-        checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", apacheLic, "standard", false);
-        checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", apacheLic, "standard", false);
-        checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, "archive", false);
-        checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "binary", false);
+                "STANDARD", true);
+        checkNode(doc, xPath, "src/test/resources/elements/Text.txt", apacheLic, "STANDARD", false);
+        checkNode(doc, xPath, "src/test/resources/elements/TextHttps.txt", apacheLic, "STANDARD", false);
+        checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", apacheLic, "STANDARD", false);
+        checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", apacheLic, "STANDARD", false);
+        checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, "ARCHIVE", false);
+        checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "BINARY", false);
         checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", new LicenseInfo("?????", false, false),
-                "standard", false);
-        checkNode(doc, xPath, "src/test/resources/elements/tri.txt", apacheLic, "standard", false);
-        checkNode(doc, xPath, "src/test/resources/elements/tri.txt", new LicenseInfo("BSD-3", true, false), "standard",
+                "STANDARD", false);
+        checkNode(doc, xPath, "src/test/resources/elements/tri.txt", apacheLic, "STANDARD", false);
+        checkNode(doc, xPath, "src/test/resources/elements/tri.txt", new LicenseInfo("BSD-3", true, false), "STANDARD",
                 false);
         checkNode(doc, xPath, "src/test/resources/elements/tri.txt", new LicenseInfo("TMF", "BSD-3", true, false),
-                "standard", false);
+                "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/generated.txt", new LicenseInfo("GEN", true, true),
-                "generated", false);
+                "GENERATED", false);
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
         assertEquals(14, nodeList.getLength());
     }
@@ -172,33 +172,33 @@ public class ReporterTest {
                 "^Files with unapproved licenses:\\s+" + "\\Qsrc/test/resources/elements/Source.java\\E\\s+"
                         + "\\Qsrc/test/resources/elements/sub/Empty.txt\\E\\s",
                 document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.archive, "src/test/resources/elements/dummy.jar"),
+        TextUtils.assertPatternInOutput(documentOut(true, Type.ARCHIVE, "src/test/resources/elements/dummy.jar"),
                 document);
         TextUtils.assertPatternInOutput(
-                documentOut(true, Type.standard, "src/test/resources/elements/ILoggerFactory.java")
+                documentOut(true, Type.STANDARD, "src/test/resources/elements/ILoggerFactory.java")
                         + licenseOut("MIT", "The MIT License"),
                 document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.binary, "src/test/resources/elements/Image.png"),
+        TextUtils.assertPatternInOutput(documentOut(true, Type.BINARY, "src/test/resources/elements/Image.png"),
                 document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.notice, "src/test/resources/elements/LICENSE"),
+        TextUtils.assertPatternInOutput(documentOut(true, Type.NOTICE, "src/test/resources/elements/LICENSE"),
                 document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.notice, "src/test/resources/elements/NOTICE"), document);
-        TextUtils.assertPatternInOutput(documentOut(false, Type.standard, "src/test/resources/elements/Source.java")
+        TextUtils.assertPatternInOutput(documentOut(true, Type.NOTICE, "src/test/resources/elements/NOTICE"), document);
+        TextUtils.assertPatternInOutput(documentOut(false, Type.STANDARD, "src/test/resources/elements/Source.java")
                 + licenseOut("?????", "Unknown license (Unapproved)"), document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.standard, "src/test/resources/elements/Text.txt")
+        TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/Text.txt")
                 + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.standard, "src/test/resources/elements/Xml.xml")
+        TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/Xml.xml")
                 + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.standard, "src/test/resources/elements/buildr.rb")
+        TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/buildr.rb")
                 + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.standard, "src/test/resources/elements/TextHttps.txt")
+        TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/TextHttps.txt")
                 + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.binary, "src/test/resources/elements/plain.json"),
+        TextUtils.assertPatternInOutput(documentOut(true, Type.BINARY, "src/test/resources/elements/plain.json"),
                 document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.standard, "src/test/resources/elements/tri.txt")
+        TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/tri.txt")
                 + licenseOut("AL", "Apache License Version 2.0") + licenseOut("BSD-3", "BSD 3 clause")
                 + licenseOut("BSD-3", "TMF", "The Telemanagement Forum License"), document);
-        TextUtils.assertPatternInOutput(documentOut(false, Type.standard, "src/test/resources/elements/sub/Empty.txt")
+        TextUtils.assertPatternInOutput(documentOut(false, Type.STANDARD, "src/test/resources/elements/sub/Empty.txt")
                 + licenseOut("?????", "Unknown license (Unapproved)"), document);
     }
 

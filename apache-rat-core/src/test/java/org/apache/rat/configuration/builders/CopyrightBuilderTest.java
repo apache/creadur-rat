@@ -16,6 +16,7 @@
  */
 package org.apache.rat.configuration.builders;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -23,6 +24,8 @@ import java.io.StringReader;
 import java.util.SortedSet;
 
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.license.ILicense;
 import org.junit.jupiter.api.Test;
@@ -31,95 +34,194 @@ public class CopyrightBuilderTest {
 
     @Test
     public void xmlTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright/>" + "            </license>" + "        </licenses>"
-                + "    </rat-config>" + "";
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals(CopyrightMatcher.class, matcher.getClass());
+        CopyrightMatcher result = (CopyrightMatcher) matcher;
+        assertNull(result.getEnd());
+        assertNull(result.getStart());
+        assertNull(result.getOwner());
     }
 
     @Test
     public void xmlOwnerTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright owner='someone'/>" + "            </license>" + "        </licenses>"
-                + "    </rat-config>" + "";
-
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright owner='someone'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals(CopyrightMatcher.class, matcher.getClass());
+        CopyrightMatcher result = (CopyrightMatcher) matcher;
+        assertNull(result.getEnd());
+        assertNull(result.getStart());
+        assertEquals("someone", result.getOwner());
     }
 
     @Test
     public void xmlStartTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1989'/>" + "            </license>" + "        </licenses>"
-                + "    </rat-config>" + "";
-
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright start='1989'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals(CopyrightMatcher.class, matcher.getClass());
+        CopyrightMatcher result = (CopyrightMatcher) matcher;
+        assertNull(result.getEnd());
+        assertEquals("1989", result.getStart());
+        assertNull(result.getOwner());
     }
 
     @Test
     public void xmlStartOwnerTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1989' owner='somebody'/>" + "            </license>"
-                + "        </licenses>" + "    </rat-config>" + "";
-
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright start='1989' owner='someone'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals(CopyrightMatcher.class, matcher.getClass());
+        CopyrightMatcher result = (CopyrightMatcher) matcher;
+        assertNull(result.getEnd());
+        assertEquals("1989", result.getStart());
+        assertEquals("someone", result.getOwner());
     }
 
     @Test
     public void xmlEndTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1989' end='1990'/>" + "            </license>"
-                + "        </licenses>" + "    </rat-config>" + "";
-
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright start='1989' end='1990'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals(CopyrightMatcher.class, matcher.getClass());
+        CopyrightMatcher result = (CopyrightMatcher) matcher;
+        assertEquals("1990", result.getEnd());
+        assertEquals("1989", result.getStart());
+        assertNull(result.getOwner());
     }
 
     @Test
     public void xmlEndOwnerTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1989' end='1990' owner='somebody'/>" + "            </license>"
-                + "        </licenses>" + "    </rat-config>" + "";
-
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright start='1989' end='1990' owner='someone'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals(CopyrightMatcher.class, matcher.getClass());
+        CopyrightMatcher result = (CopyrightMatcher) matcher;
+        assertEquals("1990", result.getEnd());
+        assertEquals("1989", result.getStart());
+        assertEquals("someone", result.getOwner());
+    }
+
+    @Test
+    public void xmlIdEndOwnerTest() {
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright id='foo' start='1989' end='1990' owner='someone'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        reader.read(new StringReader(configStr));
+        SortedSet<ILicense> licenses = reader.readLicenses();
+        assertEquals(1, licenses.size());
+        IHeaderMatcher matcher = licenses.first().getMatcher();
+        assertEquals("foo", matcher.getId());
+        assertEquals(CopyrightMatcher.class, matcher.getClass());
+        CopyrightMatcher result = (CopyrightMatcher) matcher;
+        assertEquals("1990", result.getEnd());
+        assertEquals("1989", result.getStart());
+        assertEquals("someone", result.getOwner());
     }
 
     @Test
     public void xmlEndNoStartTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright end='1990'/>" + "            </license>" + "        </licenses>"
-                + "    </rat-config>" + "";
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright end='1990'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -128,12 +230,17 @@ public class CopyrightBuilderTest {
 
     @Test
     public void xmlNonNumericStartTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='now'/>" + "            </license>" + "        </licenses>"
-                + "    </rat-config>" + "";
-
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright start='not a number'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         assertThrows(ConfigurationException.class, () -> reader.readLicenses());
@@ -141,11 +248,17 @@ public class CopyrightBuilderTest {
 
     @Test
     public void xmlNonNumericEndTest() {
-        String configStr = "<rat-config>" + "        <families>"
-                + "            <family id='newFam' name='my new family' />" + "        </families>"
-                + "        <licenses>" + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <copyright start='1990' end='now'/>" + "            </license>"
-                + "        </licenses>" + "    </rat-config>" + "";
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <copyright start='1989' end='not a number'/>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));

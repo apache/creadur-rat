@@ -18,8 +18,6 @@
  */
 package org.apache.rat.configuration.builders;
 
-import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
@@ -32,9 +30,11 @@ public class TextBuilder extends AbstractBuilder {
 
     private String text;
 
-    public TextBuilder setText(String text) {
-        Objects.requireNonNull(text, "text may not be null");
-        this.text = text;
+    public TextBuilder setSimpleText(String text) {
+        this.text = text.trim();
+        if (StringUtils.isBlank(text)) {
+            throw new ConfigurationException("'text' may not be null");
+        }
         return this;
     }
 

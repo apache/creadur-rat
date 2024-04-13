@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 public class SimpleRegexMatcherTest {
 
-    SimpleRegexMatcher target = new SimpleRegexMatcher(Pattern.compile("hello\\sworld"));
+    SimpleRegexMatcher target = new SimpleRegexMatcher(null, Pattern.compile("hello\\sworld"));
 
     @BeforeEach
     public void setup() {

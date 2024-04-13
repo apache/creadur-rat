@@ -58,14 +58,14 @@ public class LicenseFamilySetFactory {
      */
     public SortedSet<ILicenseFamily> getFamilies(LicenseFilter filter) {
         switch (filter) {
-        case all:
+        case ALL:
             return Collections.unmodifiableSortedSet(families);
-        case approved:
+        case APPROVED:
             SortedSet<ILicenseFamily> result = emptyLicenseFamilySet();
             families.stream().filter(x -> approvedLicenses.contains(x.getFamilyCategory()))
                     .forEach(result::add);
             return result;
-        case none:
+        case NONE:
         default:
             return Collections.emptySortedSet();
         }
@@ -80,14 +80,14 @@ public class LicenseFamilySetFactory {
     public SortedSet<String> getFamilyIds(LicenseFilter filter) {
         SortedSet<String> result = new TreeSet<>();
         switch (filter) {
-        case all:
+        case ALL:
             families.stream().map(ILicenseFamily::getFamilyCategory)
                     .forEach(result::add);
             break;
-        case approved:
+        case APPROVED:
             result.addAll(approvedLicenses);
             break;
-        case none:
+        case NONE:
         default:
             // do nothing
         }

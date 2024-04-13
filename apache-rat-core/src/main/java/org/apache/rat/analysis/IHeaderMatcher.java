@@ -19,7 +19,6 @@
 package org.apache.rat.analysis;
 
 import org.apache.rat.ImplementationException;
-import org.apache.rat.config.parameters.Component;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
@@ -36,7 +35,7 @@ import org.apache.rat.configuration.builders.TextBuilder;
  * implementations that need to check multiple lines the implementation must
  * cache the earlier lines.
  */
-public interface IHeaderMatcher extends Component {
+public interface IHeaderMatcher {
     /**
      * Get the identifier for this matcher.
      * <p>
@@ -63,6 +62,14 @@ public interface IHeaderMatcher extends Component {
      * @return {@code true} if the matcher matches the text, {@code false} otherwise.
      */
     boolean matches(IHeaders headers);
+    
+    /**
+     * Generates the component Description.
+     * @return the component description.
+     */
+    default Description getDescription() {
+        return  DescriptionBuilder.build(this);
+    }
 
     /**
      * An IHeaderMatcher builder.
@@ -86,7 +93,7 @@ public interface IHeaderMatcher extends Component {
             try {
                 return this.getClass().getMethod("build").getReturnType();
             } catch (NoSuchMethodException | SecurityException e) {
-                throw new IllegalStateException("the 'build' method of the Builder interface must alwasy be public");
+                throw new IllegalStateException("the 'build' method of the Builder interface must always be public");
             }
         }
 
@@ -98,7 +105,7 @@ public interface IHeaderMatcher extends Component {
             Class<?> clazz = builtClass();
             if (clazz == IHeaderMatcher.class) {
                 throw new ImplementationException(String.format(
-                        "Class %s must implement built() method to return a child class of IHeaderMatcher", 
+                        "Class %s must implement buildClass() method to return a child class of IHeaderMatcher", 
                         this.getClass()));
             }
             return DescriptionBuilder.buildMap(clazz);

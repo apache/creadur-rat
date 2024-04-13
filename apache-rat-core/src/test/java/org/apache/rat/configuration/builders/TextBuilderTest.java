@@ -27,9 +27,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
-import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.XMLConfigurationReader;
@@ -54,30 +55,27 @@ public class TextBuilderTest {
 
         Description description = DescriptionBuilder.buildMap(underTest.builtClass());
         description.setChildren(DefaultLog.INSTANCE, underTest, attributes);
-        description.setUnlabledText(DefaultLog.INSTANCE, underTest, "example text");
+        description.setChild(DefaultLog.INSTANCE, underTest, "simpleText", "example text");
 
         SimpleTextMatcher m = underTest.build();
-        assertEquals("example text", m.getText());
+        assertEquals("example text", m.getSimpleText());
         assertEquals("IDValue", m.getId());
         assertEquals(FullTextMatcher.class, m.getClass());
 
         boolean foundText = false;
-        for (Description d : description.childrenOfType(Component.Type.Unlabeled)) {
-            if (!d.isCollection()) {
+        boolean foundId = false;
+        for (Description d : description.childrenOfType(ComponentType.PARAMETER)) {
+            if (d.getCommonName().equals("simpleText")) {
                 assertEquals("example text", d.getter(m.getClass()).invoke(m));
                 foundText = true;
             }
-        }
-        assertTrue(foundText);
-        foundText = false;
-        for (Description d : description.childrenOfType(Component.Type.Parameter)) {
-            if (!d.isCollection()) {
+            if (d.getCommonName().equals("id")) {
                 assertEquals("IDValue", d.getter(m.getClass()).invoke(m));
-                foundText = true;
+                foundId = true;
             }
         }
         assertTrue(foundText);
-
+        assertTrue(foundId);
     }
 
     @Test
@@ -87,47 +85,83 @@ public class TextBuilderTest {
 
         Description description = DescriptionBuilder.buildMap(underTest.builtClass());
         description.setChildren(DefaultLog.INSTANCE, underTest, attributes);
-        description.setUnlabledText(DefaultLog.INSTANCE, underTest, "exampletext");
+        description.setChild(DefaultLog.INSTANCE, underTest, "simpleText", "exampletext");
 
         SimpleTextMatcher m = underTest.build();
-        assertEquals("exampletext", m.getText());
+        assertEquals("exampletext", m.getSimpleText());
         assertEquals(SimpleTextMatcher.class, m.getClass());
 
         boolean foundText = false;
-        for (Description d : description.childrenOfType(Component.Type.Unlabeled)) {
-            if (!d.isCollection()) {
+        boolean foundId = false;
+        for (Description d : description.childrenOfType(ComponentType.PARAMETER)) {
+            if (d.getCommonName().equals("simpleText")) {
                 assertEquals("exampletext", d.getter(m.getClass()).invoke(m));
                 foundText = true;
             }
-        }
-        assertTrue(foundText);
-        foundText = false;
-        for (Description d : description.childrenOfType(Component.Type.Parameter)) {
-            if (!d.isCollection()) {
+            if (d.getCommonName().equals("id")) {
                 assertEquals("IDValue", d.getter(m.getClass()).invoke(m));
-                foundText = true;
+                foundId = true;
             }
         }
         assertTrue(foundText);
+        assertTrue(foundId);
     }
 
     @Test
-    public void xmlTest() {
-        String configStr = "<rat-config>"
-                + "        <families>"
-                + "            <family id='newFam' name='my new family' />"
-                + "        </families>"
-                + "        <licenses>"
-                + "            <license family='newFam' id='EXAMPLE' name='Example License'>"
-                + "                <text>The text to match</text>"
-                + "            </license>"
-                + "        </licenses>"
-                + "    </rat-config>"
-                + "";
+    public void xmlFullTextTest() {
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <text id='5'>The text to match</text>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
         
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
         assertEquals(1, licenses.size());
+        ILicense license = licenses.first();
+        assertEquals("EXAMPLE", license.getId());
+        assertEquals("newFa", license.getLicenseFamily().getFamilyCategory());
+        assertEquals("my new family", license.getFamilyName());
+        IHeaderMatcher matcher = license.getMatcher();
+        assertEquals(FullTextMatcher.class, matcher.getClass());
+        assertEquals("5", matcher.getId());
+        FullTextMatcher ftm = (FullTextMatcher) matcher;
+        assertEquals("The text to match", ftm.getSimpleText());
+    }
+    
+    @Test
+    public void xmlSimpleTextTest() {
+        String configStr = "<rat-config>" //
+                + "        <families>" //
+                + "            <family id='newFam' name='my new family' />" //
+                + "        </families>" //
+                + "        <licenses>" //
+                + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
+                + "                <text id='5'>The-text-to-match</text>" //
+                + "            </license>" //
+                + "        </licenses>" //
+                + "    </rat-config>" //
+                + ""; //
+        
+        XMLConfigurationReader reader = new XMLConfigurationReader();
+        reader.read(new StringReader(configStr));
+        SortedSet<ILicense> licenses = reader.readLicenses();
+        assertEquals(1, licenses.size());
+        ILicense license = licenses.first();
+        assertEquals("EXAMPLE", license.getId());
+        assertEquals("newFa", license.getLicenseFamily().getFamilyCategory());
+        assertEquals("my new family", license.getFamilyName());
+        IHeaderMatcher matcher = license.getMatcher();
+        assertEquals(SimpleTextMatcher.class, matcher.getClass());
+        assertEquals("5", matcher.getId());
+        SimpleTextMatcher stm = (SimpleTextMatcher) matcher;
+        assertEquals("The-text-to-match", stm.getSimpleText());
     }
 }

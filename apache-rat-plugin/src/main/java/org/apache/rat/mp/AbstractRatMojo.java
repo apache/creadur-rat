@@ -402,9 +402,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     };
 
             Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
-            SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.all);
+            SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.ALL);
             getDeprecatedConfigs().map(DeprecatedConfig::getLicense).filter(Objects::nonNull)
-            .map(x -> x.build(families)).forEach(process);
+            .map(x -> x.setLicenseFamilies(families).build()).forEach(process);
             getLicenses().map(x -> x.build(families)).forEach(process);
         }
 

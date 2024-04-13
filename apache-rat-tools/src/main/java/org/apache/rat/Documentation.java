@@ -54,7 +54,7 @@ public class Documentation {
      */
     public static void output(ReportConfiguration cfg, Writer writer) throws IOException {
         writer.write(String.format("%n>>>> LICENSES <<<<%n%n"));
-        for (ILicense l : cfg.getLicenses(LicenseFilter.all)) {
+        for (ILicense l : cfg.getLicenses(LicenseFilter.ALL)) {
             printLicense(l, writer);
         }
 
@@ -71,7 +71,7 @@ public class Documentation {
         }
 
         writer.write(String.format("%n>>>> FAMILIES (Datatype ILicenseFamily) <<<<%n%n"));
-        for (ILicenseFamily family : cfg.getLicenseFamilies(LicenseFilter.all)) {
+        for (ILicenseFamily family : cfg.getLicenseFamilies(LicenseFilter.ALL)) {
             printFamily(family, writer);
         }
     }
@@ -102,19 +102,15 @@ public class Documentation {
         for (Description d : children.values()) {
             writeIndent(indent, writer);
             switch (d.getType()) {
-            case Parameter:
-            case BuilderParam:
+            case PARAMETER:
+            case BULID_PARAMETER:
                 writer.write(String.format("'%s' %s (Datatype: %s%s)%n", d.getCommonName(), d.getDescription(),
                         d.isCollection() ? "Collection of " : "", d.getChildType().getSimpleName()));
                 break;
-            case Unlabeled:
-                writer.write(String.format("'%s name' %s (Datatype: %s%s)%n", d.getCommonName(), d.getDescription(),
-                        d.isCollection() ? "Collection of " : "", d.getChildType().getSimpleName()));
+            case LICENSE:
+                // do nothing
                 break;
-            case License:
-                // do noting
-                break;
-            case Matcher:
+            case MATCHER:
                 writeIndent(indent + 1, writer);
                 writer.write(String.format("%s %s %n", d.isCollection() ? "Collection of " : "A ",
                         d.getChildType().getSimpleName()));
@@ -125,7 +121,7 @@ public class Documentation {
     }
 
     /**
-     * Creates the documentation.  Writes to the outpus specified by the -o or --out option.  Defaults to System.out.
+     * Creates the documentation.  Writes to the output specified by the -o or --out option.  Defaults to System.out.
      * @param args the arguments.  Try --help for help.
      * @throws IOException on error
      */

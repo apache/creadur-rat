@@ -62,7 +62,7 @@ abstract public class AbstractLicenseTest {
     protected ILicense extractCategory(String id) {
         TestingLicense testingLicense = new TestingLicense();
         testingLicense.setId(id);
-        ILicense result = LicenseSetFactory.search(testingLicense, defaults.getLicenses(LicenseFilter.all));
+        ILicense result = LicenseSetFactory.search(testingLicense, defaults.getLicenses(LicenseFilter.ALL));
         if (result == null) {
             fail("No licenses for id: " + id);
         }

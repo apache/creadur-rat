@@ -24,11 +24,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.BuilderParams;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.config.parameters.Component.Type;
 import org.apache.rat.utils.Log;
 
 /**
@@ -36,7 +38,7 @@ import org.apache.rat.utils.Log;
  */
 public class Description {
     /** The type of component this describes */
-    private final Type type;
+    private final ComponentType type;
     /**
      * The common name for the component. Set by ConfigComponent.name() or
      * class/field name.
@@ -48,11 +50,17 @@ public class Description {
     private final Class<?> childClass;
     /** True if the getter/setter expects a collection of childClass objects */
     private final boolean isCollection;
+    /** True if this component is required. */
+    private final boolean required;
     /**
-     * a map of name to Description for all the components that are children the
-     * described component
+     * A map of name to Description for all the components that are children of the
+     * described component.
      */
     private final Map<String, Description> children;
+
+    public static Predicate<Description> typePredicate(ComponentType type) {
+        return (d) -> d.getType() == type;
+    }
 
     /**
      * Constructor.
@@ -63,15 +71,26 @@ public class Description {
      * @param isCollection true if the getter/setter expects a collection
      * @param childClass the class for expected for the getter/setter.
      * @param children the collection of descriptions for all the components that
-     * are children the described component.
+     * are children of the described component.
      */
-    public Description(Type type, String name, String desc, boolean isCollection, Class<?> childClass,
-            Collection<Description> children) {
+    public Description(ComponentType type, String name, String desc, boolean isCollection, Class<?> childClass,
+            Collection<Description> children, boolean required) {
         this.type = type;
         this.name = name;
         this.desc = desc;
         this.isCollection = isCollection;
-        this.childClass = childClass;
+        this.required = required;
+        if (type == ComponentType.BULID_PARAMETER) {
+            Method m;
+            try {
+                m = BuilderParams.class.getMethod(name);
+            } catch (NoSuchMethodException | SecurityException e) {
+                throw new ConfigurationException(String.format("'%s' is not a valid BuildParams method", name));
+            }
+            this.childClass = m.getReturnType();
+        } else {
+            this.childClass = childClass;
+        }
         this.children = new TreeMap<>();
         if (children != null) {
             children.forEach(d -> {
@@ -91,8 +110,17 @@ public class Description {
      */
     public Description(ConfigComponent configComponent, boolean isCollection, Class<?> childClass,
             Collection<Description> children) {
-        this(configComponent.type(), configComponent.name(), configComponent.desc(), isCollection, childClass,
-                children);
+        this(configComponent.type(), configComponent.name(), configComponent.desc(), isCollection, childClass, children,
+                configComponent.required());
+    }
+
+    /**
+     * Get the canBeChild flag.
+     * 
+     * @return {@code true} if this item can be a child of the containing item.
+     */
+    public boolean isRequired() {
+        return required;
     }
 
     /**
@@ -100,7 +128,7 @@ public class Description {
      * 
      * @return the component type.
      */
-    public Type getType() {
+    public ComponentType getType() {
         return type;
     }
 
@@ -114,7 +142,7 @@ public class Description {
     }
 
     /**
-     * Get the class of the objcts for the getter/setter.
+     * Get the class of the objects for the getter/setter methods.
      * 
      * @return the getter/setter param class.
      */
@@ -147,7 +175,7 @@ public class Description {
      * 
      * If the parameter is a collection return {@code null}.
      * 
-     * @param log the Log to log issues to. 
+     * @param log the Log to log issues to.
      * @param object the object that contains the value.
      * @return the string value.
      */
@@ -184,12 +212,28 @@ public class Description {
      * @param type the type to return
      * @return the collection of children of the specified type.
      */
-    public Collection<Description> childrenOfType(Type type) {
-        return children.values().stream().filter(d -> d.type == type).collect(Collectors.toList());
+    public Collection<Description> childrenOfType(ComponentType type) {
+        return filterChildren(d -> d.getType() == type);
     }
 
-    private String methodName(String prefix) {
-        return prefix + name.substring(0, 1).toUpperCase() + name.substring(1);
+    /**
+     * Get all the children of a specific type
+     * 
+     * @param type the type to return
+     * @return the collection of children of the specified type.
+     */
+    public Collection<Description> filterChildren(Predicate<Description> filter) {
+        return children.values().stream().filter(filter).collect(Collectors.toList());
+    }
+
+    /**
+     * Generate a method name for this description.
+     * 
+     * @param prefix the start of the method name (e.g. "set", "get" )
+     * @return the method name.
+     */
+    public String methodName(String prefix) {
+        return prefix + StringUtils.capitalize(name);
     }
 
     /**
@@ -222,16 +266,17 @@ public class Description {
      * @throws SecurityException if the getter can not be accessed.
      */
     public Method setter(Class<?> clazz) throws NoSuchMethodException, SecurityException {
+        String methodName = methodName(isCollection ? "add" : "set");
         switch (type) {
-        case License:
+        case LICENSE:
             throw new NoSuchMethodException("Can not set a License as a child");
-        case Matcher:
-            return clazz.getMethod("add", IHeaderMatcher.Builder.class);
-        case Parameter:
-        case Unlabeled:
-            return clazz.getMethod(methodName("set"), String.class);
-        case BuilderParam:
-            return clazz.getMethod(methodName("set"), childClass);
+        case MATCHER:
+            return clazz.getMethod(methodName, IHeaderMatcher.Builder.class);
+        case PARAMETER:
+            return clazz.getMethod(methodName,
+                    IHeaderMatcher.class.isAssignableFrom(childClass) ? IHeaderMatcher.Builder.class : childClass);
+        case BULID_PARAMETER:
+            return clazz.getMethod(methodName, childClass);
         }
         // should not happen
         throw new IllegalStateException("Type " + type + " not valid.");
@@ -241,16 +286,18 @@ public class Description {
         try {
             description.setter(builder.getClass()).invoke(builder, value);
         } catch (NoSuchMethodException e) {
-            String msg = String.format("No setter for '%s' on %s", description.getCommonName(), builder.getClass().getCanonicalName()); 
+            String msg = String.format("No setter for '%s' on %s", description.getCommonName(),
+                    builder.getClass().getCanonicalName());
             log.error(msg);
             throw new ConfigurationException(msg);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                |  SecurityException e) {
-            String msg = String.format("can not call setter for '%s' on %s", description.getCommonName(), builder.getClass().getCanonicalName());
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+            String msg = String.format("Unable to call setter for '%s' on %s", description.getCommonName(),
+                    builder.getClass().getCanonicalName());
             log.error(msg, e);
             throw new ConfigurationException(msg, e);
         }
     }
+
     /**
      * Sets the children of values in the builder. Sets the parameters to the values
      * specified in the map. Only children that accept string arguments should be
@@ -261,30 +308,24 @@ public class Description {
      * @param attributes a Map of parameter names to values.
      */
     public void setChildren(Log log, IHeaderMatcher.Builder builder, Map<String, String> attributes) {
-        for (Map.Entry<String, String> entry : attributes.entrySet()) {
-            Description d = getChildren().get(entry.getKey());
-            if (d == null) {
-                log.error(String.format(
-                        "%s does not define a ConfigComponent for a member %s.", builder.getClass().getCanonicalName(), entry.getKey()));
-            } else {
-                callSetter(log, d, builder, entry.getValue());
-            }
-        }
+        attributes.entrySet().forEach(entry -> setChild(log, builder, entry.getKey(), entry.getValue()));
     }
 
     /**
-     * Sets the first Unlabled item that takes a string argument
+     * Sets the child value in the builder.
      * 
-     * @param log the log to write to.
-     * @param builder The Matcher builder to set the value in.
-     * @param value the value.
+     * @param log The log to write messages to.
+     * @param builder The Matcher builder to set the values in.
+     * @param name the name of the child to set
+     * @param value the value of the parameter.
      */
-    public void setUnlabledText(Log log, IHeaderMatcher.Builder builder, String value)  {
-        Collection<Description> unlabled = childrenOfType(Component.Type.Unlabeled);
-        for (Description d : unlabled) {
-            if (!d.isCollection() && d.childClass == String.class) {
-                callSetter(log, d, builder, value);
-            }
+    public void setChild(Log log, IHeaderMatcher.Builder builder, String name, String value) {
+        Description d = getChildren().get(name);
+        if (d == null) {
+            log.error(String.format("%s does not define a ConfigComponent for a member %s.",
+                    builder.getClass().getCanonicalName(), name));
+        } else {
+            callSetter(log, d, builder, value);
         }
     }
 
@@ -300,6 +341,7 @@ public class Description {
 
     /**
      * Write a description with indentation.
+     * 
      * @param indent the number of spaces to indent.
      * @return the string with the formatted data.
      */
