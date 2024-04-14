@@ -106,7 +106,7 @@ public interface Log {
      * @param message the message for the log
      * @param throwable the throwable
      */
-    default void log(Level level, String message, Throwable throwable) {       
+    default void log(Level level, String message, Throwable throwable) {
         StringWriter writer = new StringWriter(500);
         PrintWriter pWriter = new PrintWriter(writer);
         pWriter.print(message);

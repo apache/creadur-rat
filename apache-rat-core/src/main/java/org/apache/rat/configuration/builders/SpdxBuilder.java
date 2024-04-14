@@ -32,13 +32,14 @@ public class SpdxBuilder extends AbstractBuilder {
     private String name;
 
     /**
-     * sets the name for the SPDX matcher
+     * Sets the name for the SPDX matcher.  This is the same as the identifier in the SPDX license list.
      * 
      * @param name The text that follows the colon ':' in the SPDX tag.
-     * @return this builder for chaining.
+     * @return this builder.
+     * @link https://spdx.org/licenses/
      */
     public SpdxBuilder setName(String name) {
-        Objects.requireNonNull(name, "spdx name must not be null");
+        Objects.requireNonNull(name, "SPDX name must not be null");
         this.name = name;
         super.setId("SPDX:" + name);
         return this;
@@ -48,7 +49,7 @@ public class SpdxBuilder extends AbstractBuilder {
      * Set the id for the matcher.
      * 
      * @param id the id to use.
-     * @return this builder for chaining.
+     * @return this builder.
      */
     @Override
     public AbstractBuilder setId(String id) {

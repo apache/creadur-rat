@@ -73,14 +73,14 @@ public class SPDXMatcherFactory {
     }
 
     /**
-     * Creates the spdx matcher.
+     * Creates the SPDX matcher.
      *
-     * @param spdxId the spdx name to match.
-     * @return a spdx matcher.
+     * @param spdxId the SPDX name to match.
+     * @return a SPDX matcher.
      */
     public Match create(String spdxId) {
         if (StringUtils.isBlank(spdxId)) {
-            throw new ConfigurationException("'spdx' type matcher requires a name");
+            throw new ConfigurationException("'SPDX' type matcher requires a name");
         }
         Match matcher = matchers.get(spdxId);
         if (matcher == null) {
@@ -117,7 +117,7 @@ public class SPDXMatcherFactory {
 
     @ConfigComponent(type = ComponentType.MATCHER, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
     public class Match extends AbstractHeaderMatcher {
-        @ConfigComponent(type = ComponentType.PARAMETER, name = "name", desc = "The spdx ID string")
+        @ConfigComponent(type = ComponentType.PARAMETER, name = "name", desc = "The SPDX identifier string")
         String spdxId;
 
         public String getName() {

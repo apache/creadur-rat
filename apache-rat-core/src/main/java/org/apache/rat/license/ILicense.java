@@ -77,7 +77,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
      * Gets the comparator for comparing licenses.
      * 
-     * @return The comparator for used to sort Licenses.
+     * @return The comparator for used for sorting Licenses.
      */
     static Comparator<ILicense> getComparator() {
         return Comparator.comparing(IHeaderMatcher::getId);

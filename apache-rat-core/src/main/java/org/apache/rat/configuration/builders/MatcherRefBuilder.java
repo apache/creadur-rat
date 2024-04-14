@@ -30,8 +30,8 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * A reference matching Matcher builder.
  * <p>
  * This class stores a matcher id as a reference to the matcher. It also has a
- * map of matcher ids to the matcher instances. When build is called the matcher
- * reference is looked up in the map. If it is found then it is returned value
+ * map of matcher ids to the matcher instances. When {@code build()} is called the matcher
+ * reference is looked up in the map. If it is found then its value is returned
  * from the {@code build()} call. If the reference is not located then a
  * IHeaderMatcherProxy is returned. the IHeaderMatcherProxy is resolved in a
  * later configuration construction phase.
@@ -86,7 +86,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
 
     /**
      * A class that is a proxy to the actual matcher. It retrieves the actual
-     * matcher from the map of matcher ids to matcher instances one the first use of
+     * matcher from the map of matcher ids to matcher instances on the first use of
      * the matcher. This allows earlier read matchers to reference later constructed
      * matchers as long as all the matchers are constructed before the earlier one
      * is used.

@@ -33,6 +33,8 @@ public class XMLConfig {
     public final static String ATT_LICENSE_REF = "license_ref";
     /** class name attribute name */
     public final static String ATT_CLASS_NAME = "class";
+    /** resource file name attribute name. */
+    public final static String ATT_RESOURCE = "resource";
     /** root of the configuration file */
     public final static String ROOT = "rat-config";
     /** families element name */

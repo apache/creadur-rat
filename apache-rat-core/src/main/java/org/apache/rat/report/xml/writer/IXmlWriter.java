@@ -77,7 +77,7 @@ public interface IXmlWriter extends AutoCloseable {
     /**
      * Writes content.
      * Note that this method does not support CDATA.
-     * This method automatically excapes characters.
+     * This method automatically escapes characters.
      * 
      * @param content the content to write
      * @return this object
@@ -89,7 +89,9 @@ public interface IXmlWriter extends AutoCloseable {
     
     /**
      * Writes CDATA content.
-     * 
+     * This method DOES NOT automatically escapes characters.
+     * It will removed enclosed CDATA closing strings (e.g. "]]>")
+     *
      * @param content the content to write
      * @return this object
      * @throws OperationNotAllowedException 

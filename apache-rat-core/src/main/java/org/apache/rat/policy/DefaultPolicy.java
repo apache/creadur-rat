@@ -45,7 +45,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
     }
 
     /**
-     * adds an ILicenseFamily to the list of approved licenses.
+     * Adds an ILicenseFamily to the list of approved licenses.
      * 
      * @param approvedLicense license to be approved.
      */

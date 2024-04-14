@@ -24,12 +24,17 @@ import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 
 /**
- * Builds text based matcher based on the complexity of the text to match.
+ * Builds text matcher.  The specific implementation is based on the complexity of the text to match.
  */
 public class TextBuilder extends AbstractBuilder {
 
     private String text;
 
+    /**
+     * Sets the text to match.
+     * @param text the text to match
+     * @return this builder.
+     */
     public TextBuilder setSimpleText(String text) {
         this.text = text.trim();
         if (StringUtils.isBlank(text)) {

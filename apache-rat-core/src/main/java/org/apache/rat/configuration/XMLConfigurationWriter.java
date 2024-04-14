@@ -223,7 +223,7 @@ public class XMLConfigurationWriter {
 
                 // if resource only list the resource not the contents of the matcher
                 Optional<Description> resource = description.childrenOfType(ComponentType.PARAMETER).stream()
-                        .filter(i -> "resource".equals(i.getCommonName())).findFirst();
+                        .filter(i -> XMLConfig.ATT_RESOURCE.equals(i.getCommonName())).findFirst();
                 if (resource.isPresent()) {
                     String resourceStr = resource.get().getParamValue(configuration.getLog(), component);
                     if (StringUtils.isNotBlank(resourceStr)) {

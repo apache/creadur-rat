@@ -60,16 +60,16 @@ public class ClaimAggregator extends AbstractClaimReporter {
 
     @Override
     protected void handleApprovedLicenseClaim(MetaData metadata) {
-        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.APPROVED, metadata.approvedLicenses().count());
+        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.APPROVED, (int) metadata.approvedLicenses().count());
         incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.UNAPPROVED,
-                metadata.unapprovedLicenses().count());
+                (int) metadata.unapprovedLicenses().count());
     }
 
-    private void incValueMap(Map<Counter, int[]> map, Counter key, long value) {
+    private void incValueMap(Map<Counter, int[]> map, Counter key, int value) {
         final int[] num = map.get(key);
 
         if (num == null) {
-            map.put(key, new int[] { (int) value });
+            map.put(key, new int[] { value });
         } else {
             num[0] += value;
         }

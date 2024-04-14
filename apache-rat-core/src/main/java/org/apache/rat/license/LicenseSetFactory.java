@@ -50,7 +50,7 @@ public class LicenseSetFactory {
          * @return given licenseFilter for the given String representation.
          */
         static public LicenseFilter fromText(String s) {
-            return LicenseFilter.valueOf(s.toLowerCase());
+            return LicenseFilter.valueOf(s.toUpperCase());
         }
     }
 
@@ -213,7 +213,7 @@ public class LicenseSetFactory {
     /**
      * Search a SortedSet of licenses for the matching license.
      *
-     * @param target the license to search for.
+     * @param target the license to search for. Must not be null.
      * @param licenses the SortedSet of licenses to search.
      * @return the matching license or {@code null} if not found.
      */
@@ -221,5 +221,4 @@ public class LicenseSetFactory {
         SortedSet<ILicense> part = licenses.tailSet(target);
         return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
-
 }

@@ -537,15 +537,7 @@ public final class XmlWriter implements IXmlWriter {
             writer.write('>');
         }
     }
-    /**
-     * Writes content. Calling this method will automatically Note that this method
-     * does not use CDATA.
-     *
-     * @param content the content to write
-     * @return this object
-     * @throws OperationNotAllowedException if called before any call to
-     * {@link #openElement} or after the first element has been closed
-     */
+
     @Override
     public IXmlWriter content(CharSequence content) throws IOException {
         prepareForData();
@@ -554,25 +546,15 @@ public final class XmlWriter implements IXmlWriter {
         return this;
     }
 
-    
-    /**
-     * Writes content. Calling this method will automatically Note that this method
-     * does not use CDATA.
-     *
-     * @param content the content to write
-     * @return this object
-     * @throws OperationNotAllowedException if called before any call to
-     * {@link #openElement} or after the first element has been closed
-     */
     @Override
     public IXmlWriter cdata(CharSequence content) throws IOException {
         prepareForData();
         StringBuilder sb = new StringBuilder(content);
         int found;
         while (-1 != (found = sb.indexOf("]]>"))) {
-            sb.replace(found, found+3, "<!- Rat removed CDATA closure here ->");
+            sb.replace(found, found + 3, "<!-- Rat removed CDATA closure here -->");
         }
-        writer.write(String.format("<![CDATA[ %s ]]>",sb.toString()));
+        writer.write(String.format("<![CDATA[ %s ]]>", sb.toString()));
         inElement = false;
         return this;
     }
