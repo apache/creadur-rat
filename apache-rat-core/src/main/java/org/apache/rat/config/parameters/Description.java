@@ -217,10 +217,10 @@ public class Description {
     }
 
     /**
-     * Get all the children of a specific type
+     * Get a filtered collection of the child descriptions.
      * 
-     * @param type the type to return
-     * @return the collection of children of the specified type.
+     * @param filter the filter to apply to the child descriptions.
+     * @return the collection of children that matche the filter..
      */
     public Collection<Description> filterChildren(Predicate<Description> filter) {
         return children.values().stream().filter(filter).collect(Collectors.toList());

@@ -36,7 +36,7 @@ public class SpdxBuilder extends AbstractBuilder {
      * 
      * @param name The text that follows the colon ':' in the SPDX tag.
      * @return this builder.
-     * @link https://spdx.org/licenses/
+     * @see <a href="https://spdx.org/licenses/">SPDX license list</a>
      */
     public SpdxBuilder setName(String name) {
         Objects.requireNonNull(name, "SPDX name must not be null");
