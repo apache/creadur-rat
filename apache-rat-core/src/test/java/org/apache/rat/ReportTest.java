@@ -119,8 +119,8 @@ public class ReportTest {
         File output = new File(tempDirectory,"sysout");
         output.delete();
         PrintStream origin = System.out;
-        try {
-            System.setOut(new PrintStream(output));
+        try (PrintStream out = new PrintStream(output)){
+            System.setOut(out);
             CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] { "-x" });
             ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
             new Reporter(config).output();
