@@ -52,7 +52,7 @@ import org.w3c.dom.Document;
  */
 public class Reporter {
 
-    /*
+    /**
      * Format used for listing license families
      */
     private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s%n";
@@ -66,6 +66,11 @@ public class Reporter {
     private final ClaimStatistic statistic;
     private final ReportConfiguration configuration;
 
+    /**
+     * Create the reporter.
+     * @param configuration the configuration to use.
+     * @throws RatException on error.
+     */
     public Reporter(ReportConfiguration configuration) throws RatException {
         this.configuration = configuration;
         try {
@@ -91,10 +96,18 @@ public class Reporter {
         }
     }
 
+    /**
+     * Get the claim statistics from the run.
+     * @return the claim statistics.
+     */
     public ClaimStatistic getClaimsStatistic() {
         return statistic;
     }
 
+    /**
+     * Outputs the report using the stylesheet and output specified in the configuraiton.
+     * @throws RatException on error.
+     */
     public void output() throws RatException {
         if (configuration.isStyleReport()) {
             output(configuration.getStyleSheet(), configuration.getOutput());
@@ -103,13 +116,20 @@ public class Reporter {
         }
     }
 
+    /**
+     * Outputs the report to the specified output useing the optional stylesheet.
+     * @param stylesheet the style sheet to use for XSLT formatting, may be null for XML output.
+     * @param output the output stream to write to.
+     * @throws RatException one error.
+     */
     public void output(IOSupplier<InputStream> stylesheet, IOSupplier<OutputStream> output) throws RatException {
-
+        InputStream styleIn = null;
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
-        try {
+        try (OutputStream out=output.get()){
             if (stylesheet != null) {
-                transformer = tf.newTransformer(new StreamSource(stylesheet.get()));
+                styleIn = stylesheet.get();
+                transformer = tf.newTransformer(new StreamSource(styleIn));
             } else {
                 transformer = tf.newTransformer();
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
@@ -119,11 +139,18 @@ public class Reporter {
                 transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             }
 
-
             transformer.transform(new DOMSource(document),
-                    new StreamResult(new OutputStreamWriter(output.get(), "UTF-8")));
+                    new StreamResult(new OutputStreamWriter(out, "UTF-8")));
         } catch (TransformerException | IOException e) {
             throw new RatException(e);
+        } finally {
+            if (styleIn != null) {
+                try {
+                    styleIn.close();
+                } catch (IOException e) {
+                    configuration.getLog().error("Error closing stylesheet", e);
+                }
+            }
         }
     }
 
