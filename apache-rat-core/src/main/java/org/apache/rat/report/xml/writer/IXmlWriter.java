@@ -90,7 +90,7 @@ public interface IXmlWriter extends AutoCloseable {
     /**
      * Writes CDATA content.
      * This method DOES NOT automatically escapes characters.
-     * It will removed enclosed CDATA closing strings (e.g. "]]&gt;>")
+     * It will removed enclosed CDATA closing strings (e.g. {@code ]]>}
      *
      * @param content the content to write
      * @return this object

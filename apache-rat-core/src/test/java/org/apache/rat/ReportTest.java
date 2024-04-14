@@ -40,10 +40,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 public class ReportTest {
+    @TempDir
+    File tempDirectory;
+    
     @Test
     public void parseExclusionsForCLIUsage() {
         final FilenameFilter filter = Report
@@ -61,10 +65,10 @@ public class ReportTest {
 
     @Test
     public void testOutputOption() throws Exception {
-        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] { "-o", "target/test" });
+        File output = new File(tempDirectory, "test");
+        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] { "-o", output.getCanonicalPath()});
         ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
         new Reporter(config).output();
-        File output = new File("target/test");
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         assertTrue(content.contains("2 Unknown Licenses"));
@@ -74,8 +78,7 @@ public class ReportTest {
 
     @Test
     public void testDefaultOutput() throws Exception {
-
-        File output = new File("target/sysout");
+        File output = new File(tempDirectory,"sysout");
         output.delete();
         PrintStream origin = System.out;
         try {
@@ -113,8 +116,7 @@ public class ReportTest {
 
     @Test
     public void testXMLOutput() throws Exception {
-
-        File output = new File("target/sysout");
+        File output = new File(tempDirectory,"sysout");
         output.delete();
         PrintStream origin = System.out;
         try {
