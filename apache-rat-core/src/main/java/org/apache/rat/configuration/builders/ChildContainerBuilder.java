@@ -110,7 +110,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(this.getClass().getSimpleName()).append(":");
-        children.stream().map(Object::toString).forEach(x -> sb.append("\n").append(x));
+        children.stream().map(Object::toString).forEach(x -> sb.append(System.lineSeparator()).append(x));
         return sb.toString();
     }
 

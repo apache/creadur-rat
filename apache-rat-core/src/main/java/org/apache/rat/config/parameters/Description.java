@@ -188,7 +188,7 @@ public class Description {
             return val == null ? null : val.toString();
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
-            log.error(System.err.format("Can not retrieve value for '%s' from %s\n", name, object.getClass().getName()),
+            log.error(System.err.format("Can not retrieve value for '%s' from %s%n", name, object.getClass().getName()),
                     e);
             return null;
         }
@@ -349,14 +349,14 @@ public class Description {
         char[] spaces = new char[indent];
         Arrays.fill(spaces, ' ');
         String padding = String.copyValueOf(spaces);
-        String top = String.format("%sDescription[ t:%s n:%s c:%s %s\n%s   %s] ", padding, type, name, isCollection,
+        String top = String.format("%sDescription[ t:%s n:%s c:%s %s%n%s   %s] ", padding, type, name, isCollection,
                 childClass, padding, desc);
         if (children.isEmpty()) {
             return top;
         }
         StringBuilder sb = new StringBuilder(top);
         for (Description child : children.values()) {
-            sb.append("\n").append(child.toString(indent + 2));
+            sb.append(System.lineSeparator()).append(child.toString(indent + 2));
         }
         return sb.toString();
     }

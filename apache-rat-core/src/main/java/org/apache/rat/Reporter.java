@@ -55,12 +55,12 @@ public class Reporter {
     /*
      * Format used for listing license families
      */
-    private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s\n";
+    private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s%n";
 
     /**
      * Format used for listing licenses.
      */
-    private static final String LICENSE_FORMAT = "%s:\t%s\n\t\t%s\n";
+    private static final String LICENSE_FORMAT = "%s:\t%s%n\t\t%s%n";
 
     private final Document document;
     private final ClaimStatistic statistic;

@@ -72,7 +72,7 @@ public class HeaderCheckWorker {
         String line;
 
         while (headerLinesRead < numberOfLines && (line = reader.readLine()) != null) {
-            headers.append(line).append("\n");
+            headers.append(line).append(System.lineSeparator());
         }
         final String raw = headers.toString();
         final String pruned = FullTextMatcher.prune(raw).toLowerCase(Locale.ENGLISH);

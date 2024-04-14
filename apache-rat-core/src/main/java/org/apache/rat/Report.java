@@ -417,13 +417,13 @@ public class Report {
     private static void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
         f.setOptionComparator(new OptionComparator());
-        String header = "\nAvailable options";
+        String header = System.lineSeparator()+"Available options";
 
-        String footer = "\nNOTE:\n" + "Rat is really little more than a grep ATM\n"
-                + "Rat is also rather memory hungry ATM\n" + "Rat is very basic ATM\n"
-                + "Rat highlights possible issues\n" + "Rat reports require interpretation\n"
-                + "Rat often requires some tuning before it runs well against a project\n"
-                + "Rat relies on heuristics: it may miss issues\n";
+        String footer = String.format("%nNOTE:%nRat is really little more than a grep ATM%n"
+                + "Rat is also rather memory hungry ATM%n" + "Rat is very basic ATM%n"
+                + "Rat highlights possible issues%n" + "Rat reports require interpretation%n"
+                + "Rat often requires some tuning before it runs well against a project%n"
+                + "Rat relies on heuristics: it may miss issues%n");
 
         f.printHelp("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]", header, opts,
                 footer, false);
