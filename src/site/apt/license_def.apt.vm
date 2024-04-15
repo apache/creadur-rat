@@ -22,10 +22,10 @@
 How to define licenses in Apache Rat
 
  All licenses in Apache Rat are defined in configuration files.  There is a default 
- {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}
- XML based configuration file}} that can server as a good example of various definitions.
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}
+ XML based configuration file}} that can serve as a good example of various definitions.
 
- It is possible to create new parsers for different configuration formats.  But that task is beyone the 
+ It is possible to create new parsers for different configuration formats.  But that task is beyond the 
  scope of this document.  In this document we will address how to define licenses in the default XML format.
  
  The XML document has a root node named "rat-config" which comprises 4 major sections: "Families", 
@@ -33,7 +33,7 @@ How to define licenses in Apache Rat
  
 * Families
  
- Families are groups that define licenses that share similarities.  Each family has an id and a name, and example
+ Families are groups that define licenses that share similarities.  Each family has an id and a name. An example
  of an entry in this section is
  
 +------------------------------------------+
@@ -69,7 +69,7 @@ How to define licenses in Apache Rat
  included document.  It has to exist by the time all the configuration files are read.  The "id" element
  is optional, if it is not provided the id will be set to the id of the associated family.  However, the 
  "id" property must be unique across all licenses.  The "name" property is also optional.  If not specified
- the name of the associated family will be used.  It is recommened that each license have a unique name
+ the name of the associated family will be used.  It is recommended that each license have a unique name
  as name conflicts make problem determination difficult.
  
  License elements have two child element types.  The first is "notes".  There may be multiple "notes" 
@@ -128,16 +128,16 @@ How to define licenses in Apache Rat
 * Listing components
 
  All the components (Licenses and Matchers) defined in the system can be displayed using the Documentation
- tool.  To run the too execute:
+ tool.  Download the apache-rat-tools-${project.version}.jar and run the tool execute:
 
 +------------------------------------------+
-java -jar apache-rat-${project.version}.jar org.apache.rat.Documentation
+java -cp apache-rat-${project.version}.jar:apache-rat-tools-${project.version} org.apache.rat.Documentation
 +------------------------------------------+
 
- The tool take the same arguments as the standard rat CLI, so additional license files can be defined.
+ The tool take the same arguments as the standard Rat CLI, so additional license files can be defined.
  To display help for the tool execute 
 
 +------------------------------------------+
-java -jar apache-rat-${project.version}.jar org.apache.rat.Documentation --help
+java -cp apache-rat-${project.version}.jar:apache-rat-tools-${project.version} org.apache.rat.Documentation --help
 +------------------------------------------+ 
 

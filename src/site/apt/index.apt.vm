@@ -70,9 +70,9 @@ Apache Rat
  
    * Add a {{{./license_def.html}license definition}} via an XML file.
    
-   * Add a new {{{./matcher_def.html}Matcher definition}}. Requires Java expertice.
+   * Add a new {{{./matcher_def.html}Matcher definition}}. Requires Java expertise.
    
-   * Add a new definition format.  Requires java expertice as well as expertice with the format.
+   * Add a new definition format.  Requires Java expertice as well as expertise with the format.
 
 ** Who Develops Rat?
 
