@@ -97,9 +97,9 @@ public class QSCBuilder extends AbstractBuilder. {
 
 ** Registering the builder for use in XML configuration 
 
-  In order to use the matcher in a Rat configuration it has to be registered with the system.  This can be done by creating file with the builder specified and passing it
-  to the command line runner as a license ( "--licenses" option) file.  The XML parser will accept "<QSC>" as the matcher in license definitions. Since this is a joke license 
-  we should create a joke family to contain any such licenses and a QSC license that uses the QSC matcher.  The new configuration file now looks like:
+  In order to use the matcher in a Rat configuration it has to be registered with the system.  This can be done by creating an XML configuration file with the builder specified and passing it
+  to the command line runner as a license ( "--licenses" option) file.  The name of the matcher is "QSC" so "QSC" is also the xml element that the parser will accept in license definitions. 
+  Since this is a joke license we should create a "Joke" family to contain any such licenses and a QSC license that uses the QSC matcher.  The new configuration file now looks like:
 
 +------------------------------------------+
 <rat-config>
@@ -107,12 +107,14 @@ public class QSCBuilder extends AbstractBuilder. {
         <family id="Joke" name="A joke license" />
     </families>
     <licenses>
+        <!-- the family attribute below references the family id specified above -->
         <license family="Joke" id="QSC" name="The QSC license">
+            <!-- the QSC below is the name specified in the QSCMatcher ConfigComponent annotation -->
             <QSC/>
         </license>
     </licenses>
     <matchers>
-        <!-- establishes QSC as a matcher ->
+        <!-- establishes QSC as a matcher -->
         <matcher class="com.example.ratMatcher.QSCBuilder" />
     </matchers>
 </rat-config>
@@ -172,7 +174,7 @@ public class TPMatcher extends AbstractHeaderMatcher {
 +------------------------------------------+
 
  The ConfigComponents with the PARAMETER type indicate that the members specify properties of the component.  The matcher must have a "get" method for each parameter and the builder
- must have a corresponding "set" method.  The names of the methods and the attributes in the XML paarser can be changed by adding a 'name' attribute to the ConfigComponent.
+ must have a corresponding "set" method.  The names of the methods and the attributes in the XML parser can be changed by adding a 'name' attribute to the ConfigComponent.
 
  The builder now looks like:
 
@@ -312,7 +314,8 @@ Add the above to the configuration and we have:
 </rat-config>
 +------------------------------------------+
 
- The HighlanderBuilder builds a Highlander object.  The Highlander object is annotated with a ConfigComponent that does not specify the name, so the Highlander matcher has the name "highlander".
+ The HighlanderBuilder builds a Highlander object.  The Highlander object is annotated with a ConfigComponent that does not specify the name, the system strips the "Matcher" fom the simple class name and lowercases
+ the first character, so the Highlander matcher has the name "highlander".
  The last "license" entry does not have an id or name set so it will have the id of "Joke" and the name of "A joke license" inherited from the family.
  
  Since there is no "approved" section of the rat-conf all the licenses are assumed to be approved.
