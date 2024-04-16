@@ -316,6 +316,13 @@ agnostic home for software distribution comprehension and audit tools.
               </plugin>
             </plugins>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
