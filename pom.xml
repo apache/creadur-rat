@@ -285,6 +285,10 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+      </plugin>
     </plugins>
   </reporting>
   <build>
@@ -297,6 +301,22 @@ agnostic home for software distribution comprehension and audit tools.
         if ours is different.
       -->
       <plugins>
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>4.8.4.0</version>
+          <configuration>
+            <!--includeFilterFile>spotbugs-security-include.xml</includeFilterFile>
+                  <excludeFilterFile>spotbugs-security-exclude.xml</excludeFilterFile-->
+            <plugins>
+              <plugin>
+                <groupId>com.h3xstream.findsecbugs</groupId>
+                <artifactId>findsecbugs-plugin</artifactId>
+                <version>1.13.0</version>
+              </plugin>
+            </plugins>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
@@ -440,6 +460,10 @@ agnostic home for software distribution comprehension and audit tools.
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
