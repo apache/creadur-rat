@@ -18,10 +18,13 @@
  */
 package org.apache.rat.analysis;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
+import org.apache.rat.api.Document.Type;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
@@ -29,6 +32,11 @@ import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.utils.Log;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  * Creates default analysers.
@@ -71,17 +79,52 @@ public class DefaultAnalyserFactory {
             this.log = log;
         }
 
+//        @Override
+//        public void analyse(Document document) throws RatDocumentAnalysisException {
+//            if (NoteGuesser.isNote(document)) {
+//                document.getMetaData().setDocumentType(Document.Type.NOTICE);
+//            } else if (ArchiveGuesser.isArchive(document)) {
+//                document.getMetaData().setDocumentType(Document.Type.ARCHIVE);
+//            } else if (BinaryGuesser.isBinary(document)) {
+//                document.getMetaData().setDocumentType(Document.Type.BINARY);
+//            } else {
+//                document.getMetaData().setDocumentType(Document.Type.STANDARD);
+//                new DocumentHeaderAnalyser(log, licenses).analyse(document);
+//            }
+//        }
+        
+        
+        
         @Override
         public void analyse(Document document) throws RatDocumentAnalysisException {
-            if (NoteGuesser.isNote(document)) {
-                document.getMetaData().setDocumentType(Document.Type.NOTICE);
-            } else if (ArchiveGuesser.isArchive(document)) {
-                document.getMetaData().setDocumentType(Document.Type.ARCHIVE);
-            } else if (BinaryGuesser.isBinary(document)) {
-                document.getMetaData().setDocumentType(Document.Type.BINARY);
-            } else {
-                document.getMetaData().setDocumentType(Document.Type.STANDARD);
-                new DocumentHeaderAnalyser(log, licenses).analyse(document);
+            BodyContentHandler handler = new BodyContentHandler();
+
+            AutoDetectParser parser = new AutoDetectParser();
+            Metadata metadata = new Metadata();
+            try (InputStream stream = document.inputStream()) {
+                parser.parse(stream, handler, metadata);
+                document.getMetaData()
+                        .setDocumentType(Document.Type.fromContentType(metadata.get(Metadata.CONTENT_TYPE),log));
+                if (Type.STANDARD == document.getMetaData().getDocumentType()) {
+                    if (NoteGuesser.isNote(document)) {
+                        document.getMetaData().setDocumentType(Document.Type.NOTICE);
+                    }
+                }
+                switch (document.getMetaData().getDocumentType()) {
+                case STANDARD:
+                    DocumentHeaderAnalyser analyser = new DocumentHeaderAnalyser(log, licenses);
+                    analyser.analyse(document);
+                case NOTICE:
+                case ARCHIVE:
+                case BINARY:
+                case UNKNOWN:
+                default:
+                    break;
+                }
+            }
+
+            catch (IOException | SAXException | TikaException e) {
+                throw new RatDocumentAnalysisException(e);
             }
         }
     }

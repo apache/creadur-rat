@@ -111,7 +111,7 @@ public class ReporterTest {
         checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", apacheLic, "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", apacheLic, "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, "ARCHIVE", false);
-        checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "BINARY", false);
+        checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", new LicenseInfo("?????", false, false),
                 "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/tri.txt", apacheLic, "STANDARD", false);
@@ -162,14 +162,16 @@ public class ReporterTest {
         assertTrue(document.startsWith(HEADER), "'Generated at' is not present in " + document);
 
         TextUtils.assertPatternInOutput("^Notes: 2$", document);
-        TextUtils.assertPatternInOutput("^Binaries: 2$", document);
+        TextUtils.assertPatternInOutput("^Binaries: 1$", document);
         TextUtils.assertPatternInOutput("^Archives: 1$", document);
-        TextUtils.assertPatternInOutput("^Standards: 8$", document);
+        TextUtils.assertPatternInOutput("^Standards: 9$", document);
         TextUtils.assertPatternInOutput("^Apache Licensed: 5$", document);
         TextUtils.assertPatternInOutput("^Generated Documents: 1$", document);
-        TextUtils.assertPatternInOutput("^2 Unknown Licenses$", document);
+        TextUtils.assertPatternInOutput("^3 Unknown Licenses$", document);
         TextUtils.assertPatternInOutput(
-                "^Files with unapproved licenses:\\s+" + "\\Qsrc/test/resources/elements/Source.java\\E\\s+"
+                "^Files with unapproved licenses:\\s+" //
+                        + "\\Qsrc/test/resources/elements/Source.java\\E\\s+" //
+                        + "\\Qsrc/test/resources/elements/plain.json\\E\\s+" //
                         + "\\Qsrc/test/resources/elements/sub/Empty.txt\\E\\s",
                 document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.ARCHIVE, "src/test/resources/elements/dummy.jar"),
@@ -193,7 +195,7 @@ public class ReporterTest {
                 + licenseOut("AL", "Apache License Version 2.0"), document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/TextHttps.txt")
                 + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInOutput(documentOut(true, Type.BINARY, "src/test/resources/elements/plain.json"),
+        TextUtils.assertPatternInOutput(documentOut(false, Type.STANDARD, "src/test/resources/elements/plain.json"),
                 document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/tri.txt")
                 + licenseOut("AL", "Apache License Version 2.0") + licenseOut("BSD-3", "BSD 3 clause")
