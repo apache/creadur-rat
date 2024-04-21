@@ -24,6 +24,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -61,7 +63,7 @@ public class FileDocument implements Document {
     }    
     
     public InputStream inputStream() throws IOException {
-        return new FileInputStream(file);
+        return Files.newInputStream(file.toPath());
     }
 
     /**

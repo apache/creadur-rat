@@ -23,6 +23,7 @@ import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -296,7 +297,7 @@ public class Report extends Task {
     private class Logger implements Log {
 
         private void write(int level, String msg) {
-            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level)))
+            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level), false, StandardCharsets.UTF_8))
             {
                pw.write(msg);
             }
@@ -318,7 +319,6 @@ public class Report extends Task {
                 write(Project.MSG_ERR, msg);
                 break;
 			case OFF:
-				break;
 			default:
 				break;
             }

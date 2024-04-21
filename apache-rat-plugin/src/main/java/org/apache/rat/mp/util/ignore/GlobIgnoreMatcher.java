@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,7 +78,7 @@ public class GlobIgnoreMatcher implements IgnoreMatcher {
         if (scmIgnore != null && scmIgnore.exists() && scmIgnore.isFile()) {
             log.debug("Parsing exclusions from " + scmIgnore);
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(scmIgnore))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(scmIgnore, StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (!isComment(line)) {
