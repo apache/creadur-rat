@@ -308,8 +308,8 @@ agnostic home for software distribution comprehension and audit tools.
           <configuration>
             <!-- TODO remove after RAT-369 is done -->
             <failOnError>false</failOnError>
-            <!-- we only want to see our own problems -->
-            <onlyAnalyze>org.apache.rat.*</onlyAnalyze>
+            <!-- we only want to see our own problems and in all subpackages -->
+            <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
             <excludeFilterFile>${basedir}/spotbugs_ignore.xml</excludeFilterFile>
             <plugins>
               <plugin>
