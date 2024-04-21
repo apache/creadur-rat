@@ -297,7 +297,7 @@ public class Report extends Task {
     private class Logger implements Log {
 
         private void write(int level, String msg) {
-            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level), false, StandardCharsets.UTF_8))
+            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level)))
             {
                pw.write(msg);
             }

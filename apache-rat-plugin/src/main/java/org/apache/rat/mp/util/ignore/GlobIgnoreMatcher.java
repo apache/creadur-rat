@@ -78,7 +78,7 @@ public class GlobIgnoreMatcher implements IgnoreMatcher {
         if (scmIgnore != null && scmIgnore.exists() && scmIgnore.isFile()) {
             log.debug("Parsing exclusions from " + scmIgnore);
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(scmIgnore, StandardCharsets.UTF_8))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(scmIgnore))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (!isComment(line)) {

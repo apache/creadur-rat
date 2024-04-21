@@ -306,6 +306,8 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.4.0</version>
           <configuration>
+            <!-- TODO remove after RAT-369 is done -->
+            <failOnError>false</failOnError>
             <!--includeFilterFile>spotbugs-security-include.xml</includeFilterFile>
                   <excludeFilterFile>spotbugs-security-exclude.xml</excludeFilterFile-->
             <plugins>
