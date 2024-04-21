@@ -308,7 +308,9 @@ agnostic home for software distribution comprehension and audit tools.
           <configuration>
             <!-- TODO remove after RAT-369 is done -->
             <failOnError>false</failOnError>
-            <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
+            <!-- we only want to see our own problems -->
+            <onlyAnalyze>org.apache.rat.*</onlyAnalyze>
+            <excludeFilterFile>${basedir}/spotbugs_ignore.xml</excludeFilterFile>
             <plugins>
               <plugin>
                 <groupId>com.h3xstream.findsecbugs</groupId>
