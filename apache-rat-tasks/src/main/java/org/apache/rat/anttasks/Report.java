@@ -223,7 +223,7 @@ public class Report extends Task {
     public void execute() {
         try {
             Reporter r = new Reporter(validate(getConfiguration()));
-            r.output(null, ()->System.out);
+            r.output(null, () -> new ReportConfiguration.NoCloseOutputStream(System.out));
             r.output();
         } catch (BuildException e) {
             throw e;
