@@ -17,7 +17,7 @@
  * under the License.                                           *
  */ 
 package org.apache.rat.header;
-
+@Deprecated // since 0.17
 interface CharFilter {
 
     /**

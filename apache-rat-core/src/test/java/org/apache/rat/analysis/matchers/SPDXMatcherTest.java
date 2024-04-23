@@ -18,10 +18,10 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.State;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,51 +36,8 @@ public class SPDXMatcherTest {
 
     @Test
     public void testMatch() {
-        assertEquals(State.i, target.currentState());
-        assertEquals(State.i, target.matches("SPDX-License-Identifier: Apache-2"));
-        assertEquals(State.i, target.currentState());
-        assertEquals(State.t, target.matches("SPDX-License-Identifier: hello"));
-        assertEquals(State.t, target.currentState());
-        assertEquals(State.t, target.finalizeState());
-        assertEquals(State.t, target.currentState());
+        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: Apache-2", null)));
+        assertTrue(target.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: hello", null)));
         target.reset();
-        assertEquals(State.i, target.currentState());
-    }
-
-    @Test
-    public void testNoMatch() {
-        assertEquals(State.i, target.currentState());
-        assertEquals(State.i, target.matches("SPDX-License-Identifier: Apache-2"));
-        assertEquals(State.i, target.currentState());
-        assertEquals(State.i, target.matches("SPDX-License-Identifier: MIT"));
-        assertEquals(State.i, target.currentState());
-        assertEquals(State.f, target.finalizeState());
-        assertEquals(State.f, target.currentState());
-        target.reset();
-        assertEquals(State.i, target.currentState());
-    }
-
-    @Test
-    public void testTrueIsAlwaysTrue() {
-        assertEquals(State.i, target.currentState());
-        assertEquals(State.t, target.matches("SPDX-License-Identifier: hello"));
-        assertEquals(State.t, target.currentState());
-        assertEquals(State.t, target.matches("SPDX-License-Identifier: Apache-2"));
-        assertEquals(State.t, target.currentState());
-        assertEquals(State.t, target.finalizeState());
-        assertEquals(State.t, target.currentState());
-        target.reset();
-        assertEquals(State.i, target.currentState());
-    }
-    
-    @Test
-    public void testResetClearsLastMatch() {
-        
-        assertEquals(State.i, target.currentState());
-        assertEquals(State.t, target.matches("SPDX-License-Identifier: hello"));
-        assertEquals(State.t, target.currentState());
-        target.reset();
-        assertEquals(State.i, target.currentState());
-        assertEquals(State.i, target.matches("Something weird"));;
     }
 }

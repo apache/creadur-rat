@@ -25,7 +25,6 @@ import org.junit.jupiter.params.provider.Arguments;
 public class AppliedApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
     private static String ID = "ASL";
-    private static String NAME = "Applied Apache License Version 2.0";
     private static String[][] targets = { { "simple", "/*\n" + " *  Copyright 2012-2013 FooBar.\n" + " *\n"
             + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
             + " *  you may not use this file except in compliance with the License.\n" + " *\n"
@@ -39,19 +38,4 @@ public class AppliedApacheSoftwareLicenseTest extends AbstractLicenseTest {
     public static Stream<Arguments> parameterProvider() {
         return Stream.of(Arguments.of(ID, ApacheSoftwareLicenseTest.id, ApacheSoftwareLicenseTest.name, null, targets));
     }
-
-    /*
-      
-    
-    @Test(timeout = 2000) // may need to be adjusted if many more files are added
-    public void goodFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("appliedAL20/good", license, true);
-    }
-    
-    @Test(timeout = 2000) // may need to be adjusted if many more files are added
-    public void baddFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("appliedAL20/bad", license, false);
-    }
-    */
-
 }

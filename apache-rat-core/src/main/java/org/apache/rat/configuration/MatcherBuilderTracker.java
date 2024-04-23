@@ -19,6 +19,8 @@
 package org.apache.rat.configuration;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +36,8 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
  */
 public class MatcherBuilderTracker {
 
-    private static MatcherBuilderTracker INSTANCE;
+    /** The instance of the BuildTracker. */
+    public static MatcherBuilderTracker INSTANCE;
 
     private final Map<String, Class<? extends AbstractBuilder>> matcherBuilders;
 
@@ -64,9 +67,9 @@ public class MatcherBuilderTracker {
     public static AbstractBuilder getMatcherBuilder(String name) {
         Class<? extends AbstractBuilder> clazz = instance().matcherBuilders.get(name);
         if (clazz == null) {
-            StringBuilder sb = new StringBuilder("\nValid builders\n");
-            instance().matcherBuilders.keySet().forEach(x -> sb.append(x).append("\n"));
-            sb.append("ERROR MSG\n");
+            StringBuilder sb = new StringBuilder(System.lineSeparator()).append("Valid builders").append(System.lineSeparator());
+            instance().matcherBuilders.keySet().forEach(x -> sb.append(x).append(System.lineSeparator()));
+            sb.append("ERROR MSG").append(System.lineSeparator());
             throw new ConfigurationException(sb.append("No matcher builder named ").append(name).toString());
         }
         try {
@@ -81,6 +84,15 @@ public class MatcherBuilderTracker {
     private MatcherBuilderTracker() {
         matcherBuilders = new HashMap<>();
     }
+    
+
+    /**
+     * Gets a collection of classes that are recognized as builders.
+     * @return the collection of builder classes
+     */
+    public Collection<Class<? extends AbstractBuilder>> getClasses() {
+        return Collections.unmodifiableCollection(matcherBuilders.values());
+    }
 
     private void addBuilderImpl(String className, String name) {
         Objects.requireNonNull(className, "className may not be null");
@@ -93,7 +105,6 @@ public class MatcherBuilderTracker {
         if (AbstractBuilder.class.isAssignableFrom(clazz)) {
             @SuppressWarnings("unchecked")
             Class<? extends AbstractBuilder> candidate = (Class<? extends AbstractBuilder>) clazz;
-            // String name = attributes.get(AttributeName.name);
             if (StringUtils.isBlank(name)) {
                 name = candidate.getSimpleName();
                 if (!name.endsWith("Builder")) {

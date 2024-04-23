@@ -19,7 +19,10 @@
 
 package org.apache.rat.report.claim;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.rat.api.Document;
 
 
 /**
@@ -27,83 +30,31 @@ import java.util.Map;
  * the report.
  */
 public class ClaimStatistic {
-    private Map<String, Integer> documentCategoryMap, licenseFamilyCodeMap, licenseFamilyNameMap;
-    private int numApproved, numUnApproved, numGenerated, numUnknown;
+    /** The counter types */
+    public enum Counter { 
+        /** count of approved files */
+        APPROVED, 
+        /** count of unapproved files */
+        UNAPPROVED, 
+        /** count of generated files */
+        GENERATED, 
+        /** count of unknown files */
+        UNKNOWN };
+    
+    private final Map<String, int[]> licenseFamilyNameMap = new HashMap<>();
+    private final Map<String, int[]> licenseFamilyCodeMap = new HashMap<>();
+    private final Map<Document.Type, int[]> documentCategoryMap = new HashMap<>();
+    private final Map<ClaimStatistic.Counter, int[]> counterMap = new HashMap<>();
+
 
     /**
+     * Returns the counts for the counter.
+     * @param counter the counter to get the value for.
      * @return Returns the number of files with approved licenses.
      */
-    public int getNumApproved() {
-        return numApproved;
-    }
-
-    /**
-     * Sets the number of files with approved licenses.
-     * @param pNumApproved number of files with approved licenses.
-     */
-    public void setNumApproved(int pNumApproved) {
-        numApproved = pNumApproved;
-    }
-
-    /**
-     * @return Returns the number of files with unapproved licenses.
-     * <em>Note:</em> This might include files with unknown
-     * licenses.
-     * @see #getNumUnknown()
-     */
-    public int getNumUnApproved() {
-        return numUnApproved;
-    }
-
-    /**
-     * Sets the number of files with unapproved licenses.
-     * @param pNumUnApproved number of files with unapproved licenses.
-     */
-    public void setNumUnApproved(int pNumUnApproved) {
-        numUnApproved = pNumUnApproved;
-    }
-
-    /**
-     * @return Returns the number of generated files.
-     */
-    public int getNumGenerated() {
-        return numGenerated;
-    }
-
-    /**
-     * Sets the number of generated files.
-     * @param pNumGenerated the number of generated files.
-     */
-    public void setNumGenerated(int pNumGenerated) {
-        numGenerated = pNumGenerated;
-    }
-
-    /**
-     * @return Returns the number of files, which are neither
-     * generated nor have a known license header.
-     */
-    public int getNumUnknown() {
-        return numUnknown;
-    }
-
-    /**
-     * Sets the number of files, which are neither
-     * generated nor have a known license header.
-     * @param pNumUnknown set number of files. 
-     */
-    public void setNumUnknown(int pNumUnknown) {
-        numUnknown = pNumUnknown;
-    }
-
-    /**
-     * Sets a map with the file types. The map keys
-     * are file type names and the map values
-     * are integers with the number of resources matching
-     * the file type.
-     * @param pDocumentCategoryMap doc-category map.
-     */
-    public void setDocumentCategoryMap(Map<String, Integer> pDocumentCategoryMap) {
-        documentCategoryMap = pDocumentCategoryMap;
+    public int getCounter(Counter counter) {
+        int[] count = counterMap.get(counter);
+        return count == null ? 0 : count[0];
     }
 
     /**
@@ -112,7 +63,18 @@ public class ClaimStatistic {
      * are integers with the number of resources matching
      * the file type.
      */
-    public Map<String, Integer> getDocumentCategoryMap() {
+    public Map<Counter, int[]> getCounterMap() {
+        return counterMap;
+    }
+
+    
+    /**
+     * @return Returns a map with the file types. The map keys
+     * are file type names and the map values
+     * are integers with the number of resources matching
+     * the file type.
+     */
+    public Map<Document.Type, int[]> getDocumentCategoryMap() {
         return documentCategoryMap;
     }
 
@@ -122,19 +84,8 @@ public class ClaimStatistic {
      * the map values are integers with the number of resources
      * matching the license family code.
      */
-    public Map<String, Integer> getLicenseFileCodeMap() {
+    public Map<String, int[]> getLicenseFamilyCodeMap() {
         return licenseFamilyCodeMap;
-    }
-
-    /**
-     * Sets a map with the license family codes. The map
-     * keys are instances of license family category names and
-     * the map values are integers with the number of resources
-     * matching the license family code.
-     * @param pLicenseFamilyCodeMap license family map.
-     */
-    public void setLicenseFileCodeMap(Map<String, Integer> pLicenseFamilyCodeMap) {
-        licenseFamilyCodeMap = pLicenseFamilyCodeMap;
     }
 
     /**
@@ -143,18 +94,8 @@ public class ClaimStatistic {
      * the map values are integers with the number of resources
      * matching the license family name.
      */
-    public Map<String, Integer> getLicenseFileNameMap() {
+    public Map<String, int[]> getLicenseFileNameMap() {
         return licenseFamilyNameMap;
     }
 
-    /**
-     * Sets map with the license family codes. The map
-     * keys are the name of the license families and
-     * the map values are integers with the number of resources
-     * matching the license family name.
-     * @param pLicenseFamilyNameMap license family-name map.
-     */
-    public void setLicenseFileNameMap(Map<String, Integer> pLicenseFamilyNameMap) {
-        licenseFamilyNameMap = pLicenseFamilyNameMap;
-    }
 }

@@ -36,6 +36,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.utils.Log;
 
 /**
  * A class that holds the list of licenses and approved licenses from one or more configuration files.
@@ -70,8 +71,8 @@ public class Defaults {
     /**
      * Builder constructs instances.
      */
-    private Defaults(Set<URL> urls) {
-        this.setFactory = Defaults.readConfigFiles(urls);
+    private Defaults(Log log, Set<URL> urls) {
+        this.setFactory = Defaults.readConfigFiles(log, urls);
     }
 
     /**
@@ -86,7 +87,7 @@ public class Defaults {
      * Reads the configuration files.
      * @param urls the URLs to read.
      */
-    private static LicenseSetFactory readConfigFiles(Collection<URL> urls) {
+    private static LicenseSetFactory readConfigFiles(Log log, Collection<URL> urls) {
 
         SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
 
@@ -102,6 +103,7 @@ public class Defaults {
 
             LicenseReader lReader = fmt.licenseReader();
             if (lReader != null) {
+                lReader.setLog(log);
                 lReader.addLicenses(url);
                 licenses.addAll(lReader.readLicenses());
                 lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
@@ -241,10 +243,11 @@ public class Defaults {
 
         /**
          * Builds the defaults object.
+         * @param log the Log to use to report errors when building the defaults.
          * @return the current defaults object.
          */
-        public Defaults build() {
-            return new Defaults(fileNames);
+        public Defaults build(Log log) {
+            return new Defaults(log, fileNames);
         }
     }
 }

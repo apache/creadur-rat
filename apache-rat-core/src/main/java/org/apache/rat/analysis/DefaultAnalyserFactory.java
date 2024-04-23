@@ -22,7 +22,6 @@ import java.util.Collection;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.ArchiveGuesser;
@@ -30,7 +29,6 @@ import org.apache.rat.document.impl.guesser.BinaryGuesser;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.utils.Log;
-import org.apache.rat.utils.Log.Level;
 
 /**
  * Creates default analysers.
@@ -39,7 +37,9 @@ public class DefaultAnalyserFactory {
 
     /**
      * Creates a DocumentAnalyser from a collection of ILicenses.
-     * @param licenses The licenses to use in  the Analyser.
+     * 
+     * @param log The Log to use for logging.
+     * @param licenses The licenses to use in the Analyser.
      * @return A document analyser that uses the provides licenses.
      */
     public static IDocumentAnalyser createDefaultAnalyser(Log log, Collection<ILicense> licenses) {
@@ -48,7 +48,7 @@ public class DefaultAnalyserFactory {
         }
         log.debug("Licenses in Test");
         licenses.forEach(log::debug);
-        return new DefaultAnalyser(log, new LicenseCollection(licenses));
+        return new DefaultAnalyser(log, licenses);
     }
 
     /**
@@ -56,37 +56,33 @@ public class DefaultAnalyserFactory {
      */
     private final static class DefaultAnalyser implements IDocumentAnalyser {
 
-        /**
-         * The license to analyze
-         */
-        private final ILicense license;
+        /** The licenses to analyze */
+        private final Collection<ILicense> licenses;
         /** The log to use */
         private final Log log;
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
+         * 
          * @param license The license to analyse
          */
-        public DefaultAnalyser(final Log log, final ILicense license) {
-            this.license = license;
+        public DefaultAnalyser(final Log log, final Collection<ILicense> licenses) {
+            this.licenses = licenses;
             this.log = log;
         }
 
         @Override
         public void analyse(Document document) throws RatDocumentAnalysisException {
-            final MetaData.Datum documentCategory;
             if (NoteGuesser.isNote(document)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
+                document.getMetaData().setDocumentType(Document.Type.NOTICE);
             } else if (ArchiveGuesser.isArchive(document)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
+                document.getMetaData().setDocumentType(Document.Type.ARCHIVE);
             } else if (BinaryGuesser.isBinary(document)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
+                document.getMetaData().setDocumentType(Document.Type.BINARY);
             } else {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(log, license);
-                headerAnalyser.analyse(document);
+                document.getMetaData().setDocumentType(Document.Type.STANDARD);
+                new DocumentHeaderAnalyser(log, licenses).analyse(document);
             }
-            document.getMetaData().set(documentCategory);
         }
     }
 }

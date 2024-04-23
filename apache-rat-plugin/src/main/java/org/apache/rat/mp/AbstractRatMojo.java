@@ -332,6 +332,8 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                 case ERROR:
                     log.error(msg);
                     break;
+                case OFF:
+                    break;
             }
             }};
     }
@@ -340,7 +342,7 @@ public abstract class AbstractRatMojo extends AbstractMojo {
         ReportConfiguration config = new ReportConfiguration(makeLog());
         reportDeprecatedProcessing();
         if (addDefaultLicenses) {
-            config.setFrom(getDefaultsBuilder().build());
+            config.setFrom(getDefaultsBuilder().build(config.getLog()));
         } else {
             config.setStyleSheet(Defaults.getPlainStyleSheet());
         }
@@ -400,9 +402,9 @@ public abstract class AbstractRatMojo extends AbstractMojo {
                     };
 
             Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
-            SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.all);
+            SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.ALL);
             getDeprecatedConfigs().map(DeprecatedConfig::getLicense).filter(Objects::nonNull)
-            .map(x -> x.build(families)).forEach(process);
+            .map(x -> x.setLicenseFamilies(families).build()).forEach(process);
             getLicenses().map(x -> x.build(families)).forEach(process);
         }
 

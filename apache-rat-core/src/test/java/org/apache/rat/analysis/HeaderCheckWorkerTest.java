@@ -19,10 +19,8 @@
 
 package org.apache.rat.analysis;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import java.io.StringReader;
+import java.util.Arrays;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.license.ILicense;
@@ -37,9 +35,7 @@ public class HeaderCheckWorkerTest {
     public void isFinished() throws Exception {
         final Document subject = new TestingLocation("subject");
         ILicense matcher = new TestingLicense();
-        HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), matcher, subject);
-        assertFalse(worker.isFinished());
+        HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), Arrays.asList(matcher), subject);
         worker.read();
-        assertTrue(worker.isFinished());
     }
 }

@@ -18,7 +18,6 @@
  */
 package org.apache.rat.configuration.builders;
 
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.AndMatcher;
 
 /**
@@ -27,7 +26,7 @@ import org.apache.rat.analysis.matchers.AndMatcher;
 public class AllBuilder extends ChildContainerBuilder {
 
     @Override
-    public IHeaderMatcher build() {
-        return new AndMatcher(getId(), getChildren());
+    public AndMatcher build() {
+        return new AndMatcher(getId(), getEnclosed(), resource);
     }
 }

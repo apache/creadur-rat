@@ -43,7 +43,7 @@ public class CDDL1LicenseTest extends AbstractLicenseTest {
             { "spdx-space", "SPDX-License-Identifier: CDDL-1.0" } };
 
     public static Stream<Arguments> parameterProvider() {
-        return Stream.of(Arguments.of( id, id, name, null, targets));
+        return Stream.of(Arguments.of(id, id, name, null, targets));
     }
 
 }

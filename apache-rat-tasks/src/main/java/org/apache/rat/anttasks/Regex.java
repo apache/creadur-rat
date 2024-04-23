@@ -19,22 +19,23 @@
 package org.apache.rat.anttasks;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
 import org.apache.rat.configuration.builders.RegexBuilder;
 
 public class Regex implements IHeaderMatcher.Builder {
 
     private final RegexBuilder builder = new RegexBuilder();
 
-    public void setRegex(String pattern) {
+    public void setExpr(String pattern) {
         builder.setExpr(pattern);
     }
-    
+
     public void addText(String pattern) {
         builder.setExpr(pattern);
     }
 
     @Override
-    public IHeaderMatcher build() {
+    public SimpleRegexMatcher build() {
         return builder.build();
     }
 }

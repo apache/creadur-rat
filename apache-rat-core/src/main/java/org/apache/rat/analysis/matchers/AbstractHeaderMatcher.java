@@ -22,16 +22,24 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.ComponentType;
+import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
- * An abstract class to simplify IHeaderMatcher creation.  This class ensures that the id is set.
+ * An abstract class to simplify IHeaderMatcher creation. This class ensures
+ * that the id is set
  */
 public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
 
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The id of the matcher.")
     private final String id;
 
     /**
-     * Constructs the IHeaderMatcher with an id value.  If {@code id} is null then a unique random id is created.
+     * Constructs the IHeaderMatcher with an id value. If {@code id} is null then a
+     * unique random id is created.
+     * 
      * @param id the Id to use.
      */
     protected AbstractHeaderMatcher(String id) {

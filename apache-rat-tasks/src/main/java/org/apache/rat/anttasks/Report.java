@@ -206,7 +206,7 @@ public class Report extends Task {
     }
 
     public ReportConfiguration getConfiguration() {
-        Defaults defaults = defaultsBuilder.build();
+        Defaults defaults = defaultsBuilder.build(configuration.getLog());
 
         configuration.setFrom(defaults);
         configuration.setReportable(new ResourceCollectionContainer(nestedResources));
@@ -222,7 +222,9 @@ public class Report extends Task {
     @Override
     public void execute() {
         try {
-            Reporter.report(validate(getConfiguration()));
+            Reporter r = new Reporter(validate(getConfiguration()));
+            r.output(null, ()->System.out);
+            r.output();
         } catch (BuildException e) {
             throw e;
         } catch (Exception ioex) {

@@ -21,7 +21,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output method='text'/>
 <xsl:template match='/'>Files with missing headers:
-<xsl:for-each select='descendant::resource[header-type/@name="?????"]'>
+<xsl:for-each select='descendant::resource[license[@family="?????"]]'>
   <xsl:text>  </xsl:text>
   <xsl:value-of select='@name'/>
   <xsl:text>

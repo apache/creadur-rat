@@ -20,20 +20,18 @@ package org.apache.rat.policy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Collections;
 import java.util.SortedSet;
 
 import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingLocation;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,39 +40,34 @@ import org.junit.jupiter.api.Test;
  */
 public class DefaultPolicyTest {
     /**
-     * This is the number of accepted licenses in the default license file : /org/apache/rat/default.xml
+     * This is the number of accepted licenses in the default license file :
+     * /org/apache/rat/default.xml
      */
     private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 11;
-    
-    private static final ILicenseFamily[] APPROVED_FAMILIES = {
-            makeFamily("AL", "Apache License Version 2.0"),
+
+    private static final ILicenseFamily[] APPROVED_FAMILIES = { makeFamily("AL", "Apache License Version 2.0"),
             makeFamily("BSD-3", "BSD 3 clause"),
             makeFamily("CDDL1", "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"),
-            makeFamily("GEN", "Generated Files"),
-            makeFamily("GPL1", "GNU General Public License, version 1"),
+            makeFamily("GEN", "Generated Files"), makeFamily("GPL1", "GNU General Public License, version 1"),
             makeFamily("GPL2", "GNU General Public License, version 2"),
-            makeFamily("GPL3", "GNU General Public License, version 3"),
-            makeFamily("MIT", "The MIT License"),
-            makeFamily("OASIS", "OASIS Open License"),
-            makeFamily("W3CD", "W3C Document Copyright"),
-            makeFamily("W3C", "W3C Software Copyright"),
-    };
+            makeFamily("GPL3", "GNU General Public License, version 3"), makeFamily("MIT", "The MIT License"),
+            makeFamily("OASIS", "OASIS Open License"), makeFamily("W3CD", "W3C Document Copyright"),
+            makeFamily("W3C", "W3C Software Copyright"), };
 
     private Document document;
     private DefaultPolicy policy;
     private Defaults defaults;
 
-
     @BeforeEach
     public void setUp() throws Exception {
-        defaults = Defaults.builder().build();
-        policy = new DefaultPolicy(defaults.getLicenseFamilies(LicenseFilter.approved));
+        defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        policy = new DefaultPolicy(defaults.getLicenseFamilies(LicenseFilter.APPROVED));
         document = new TestingLocation("subject");
     }
 
     private void assertApproval(boolean pApproved) {
-        assertEquals(pApproved, MetaData.RAT_APPROVED_LICENSE_VALUE_TRUE
-                .equals(document.getMetaData().value(MetaData.RAT_URL_APPROVED_LICENSE)));
+        boolean state = document.getMetaData().approvedLicenses().count() > 0;
+        assertEquals(pApproved, state);
     }
 
     private void setMetadata(ILicenseFamily family) {
@@ -82,18 +75,17 @@ public class DefaultPolicyTest {
     }
 
     private static ILicenseFamily makeFamily(String category, String name) {
-        return ILicenseFamily.builder().setLicenseFamilyCategory(category)
-                .setLicenseFamilyName(name).build();
+        return ILicenseFamily.builder().setLicenseFamilyCategory(category).setLicenseFamilyName(name).build();
     }
-    
+
     @Test
     public void testCount() {
-        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseNames().size());
+        assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, policy.getApprovedLicenseFamilies().size());
     }
 
     @Test
     public void testApprovedLicenses() {
-        
+
         assertEquals(NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, APPROVED_FAMILIES.length, "Approved license count mismatch");
         for (ILicenseFamily family : APPROVED_FAMILIES) {
             setMetadata(family);
@@ -101,22 +93,22 @@ public class DefaultPolicyTest {
             assertApproval(true);
         }
     }
-    
+
     @Test
     public void testUnApprovedLicenses() {
-        SortedSet<ILicenseFamily> all = defaults.getLicenseFamilies(LicenseFilter.all);
+        SortedSet<ILicenseFamily> all = defaults.getLicenseFamilies(LicenseFilter.ALL);
         SortedSet<ILicenseFamily> unapproved = LicenseFamilySetFactory.emptyLicenseFamilySet();
         unapproved.addAll(all);
-        unapproved.removeAll(defaults.getLicenseFamilies(LicenseFilter.approved));
+        unapproved.removeAll(defaults.getLicenseFamilies(LicenseFilter.APPROVED));
 
-        assertEquals(all.size()-NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, unapproved.size(), "Unapproved license count mismatch");
+        assertEquals(all.size() - NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, unapproved.size(),
+                "Unapproved license count mismatch");
         for (ILicenseFamily family : unapproved) {
             setMetadata(family);
             policy.analyse(document);
             assertApproval(false);
         }
     }
-    
 
     @Test
     public void testUnknownFamily() throws Exception {
@@ -133,7 +125,8 @@ public class DefaultPolicyTest {
         assertApproval(false);
 
         policy.add(testingFamily);
-        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()), "Did not properly add ILicenseFamily");
+        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseFamilies()),
+                "Did not properly add ILicenseFamily");
         policy.analyse(document);
         assertApproval(true);
     }
@@ -141,52 +134,36 @@ public class DefaultPolicyTest {
     @Test
     public void testAddNewApprovedLicenseNoDefaults() {
         policy = new DefaultPolicy(Collections.emptySet());
-        assertEquals(0, policy.getApprovedLicenseNames().size());
+        assertEquals(0, policy.getApprovedLicenseFamilies().size());
         ILicenseFamily testingFamily = makeFamily("test", "Testing License Family");
         setMetadata(testingFamily);
         policy.analyse(document);
         assertApproval(false);
 
         policy.add(testingFamily);
-        assertEquals(1, policy.getApprovedLicenseNames().size());
-        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseNames()), "Did not properly add ILicenseFamily");
+        assertEquals(1, policy.getApprovedLicenseFamilies().size());
+        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseFamilies()),
+                "Did not properly add ILicenseFamily");
         policy.analyse(document);
         assertApproval(true);
     }
-    
+
     @Test
     public void testNonStandardDocumentsDoNotFailLicenseTests() {
-        Datum[] nonStandardDocuments = {
-                MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE,
-                MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE,
-                MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY
-        };
-        
-        for (Datum d : nonStandardDocuments) {
+        Document.Type[] nonStandardDocuments = { Document.Type.NOTICE, Document.Type.ARCHIVE, Document.Type.BINARY };
+
+        for (Document.Type d : nonStandardDocuments) {
             document = new TestingLocation("subject");
-            document.getMetaData().set(d);
+            document.getMetaData().setDocumentType(d);
             policy.analyse(document);
-            assertNull( document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE), "failed on "+d.getValue());
+            assertEquals(0, document.getMetaData().licenses().count(), "failed on " + d);
         }
     }
 
     @Test
     public void testUnclassifiedDocumentsDoNotFailLicenseTests() {
-        document.getMetaData().set(MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD);
+        document.getMetaData().setDocumentType(Document.Type.STANDARD);
         policy.analyse(document);
-        assertApproval( false );
-    }
-    
-    @Test
-    public void testReportLicenseApprovalClaim() {
-        assertNull( document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE));
-        
-        
-        policy.reportLicenseApprovalClaim(document, false);
-        assertEquals( MetaData.RAT_APPROVED_LICENSE_DATUM_FALSE, document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE));
-        
-        policy.reportLicenseApprovalClaim(document, true);
-        assertEquals( MetaData.RAT_APPROVED_LICENSE_DATUM_TRUE, document.getMetaData().get(MetaData.RAT_URL_APPROVED_LICENSE));
-        
+        assertApproval(false);
     }
 }

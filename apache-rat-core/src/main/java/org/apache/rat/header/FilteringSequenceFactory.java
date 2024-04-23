@@ -21,7 +21,7 @@ package org.apache.rat.header;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
-
+@Deprecated // since 0.17
 class FilteringSequenceFactory {
     
     private static final int BUFFER_CAPACITY = 5000;

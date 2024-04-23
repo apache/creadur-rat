@@ -26,11 +26,11 @@ public class Text implements IHeaderMatcher.Builder {
     private final TextBuilder builder = new TextBuilder();
     
     public void addText(String text) {
-        builder.setText(text);
+        builder.setSimpleText(text);
     }
 
     public void setText(String text) {
-        builder.setText(text);
+        builder.setSimpleText(text);
     }
     @Override
     public IHeaderMatcher build() {

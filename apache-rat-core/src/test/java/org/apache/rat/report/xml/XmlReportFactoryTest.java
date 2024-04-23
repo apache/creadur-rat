@@ -21,7 +21,6 @@ package org.apache.rat.report.xml;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,8 +32,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.analysis.IHeaderMatcher.State;
-import org.apache.rat.api.MetaData;
+import org.apache.rat.api.Document;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReport;
@@ -74,7 +72,6 @@ public class XmlReportFactoryTest {
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
 
-        
         final TestingLicense testingLicense = new TestingLicense(new TestingMatcher(true), family);
 
         DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY, HiddenFileFilter.HIDDEN);
@@ -87,25 +84,21 @@ public class XmlReportFactoryTest {
         report.endReport();
         writer.closeDocument();
         final String output = out.toString();
-        assertTrue(
-                output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="), "Preamble and document element are OK");
+        assertTrue(output.startsWith("<?xml version='1.0'?>" + "<rat-report timestamp="),
+                "Preamble and document element are OK");
 
-        assertTrue( XmlUtils.isWellFormedXml(output), "Is well formed");
-        assertEquals(Integer.valueOf(2),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_BINARY), "Binary files");
-        assertEquals(Integer.valueOf(2),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_NOTICE), "Notice files");
-        assertEquals(Integer.valueOf(6),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_STANDARD), "Standard files");
-        assertEquals(Integer.valueOf(1),
-                statistic.getDocumentCategoryMap().get(MetaData.RAT_DOCUMENT_CATEGORY_VALUE_ARCHIVE), "Archives");
+        assertTrue(XmlUtils.isWellFormedXml(output), "Is well formed");
+        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.BINARY)[0], "Binary files");
+        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.NOTICE)[0], "Notice files");
+        assertEquals(8, statistic.getDocumentCategoryMap().get(Document.Type.STANDARD)[0], "Standard files");
+        assertEquals(1, statistic.getDocumentCategoryMap().get(Document.Type.ARCHIVE)[0], "Archives");
     }
 
     @Test
     public void testNoLicense() throws Exception {
 
         final ILicense mockLicense = mock(ILicense.class);
-        when(mockLicense.matches(any())).thenReturn(State.t);
+        when(mockLicense.matches(any())).thenReturn(true);
         when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         final ClaimStatistic statistic = new ClaimStatistic();

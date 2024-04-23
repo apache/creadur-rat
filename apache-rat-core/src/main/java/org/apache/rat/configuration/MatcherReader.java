@@ -35,4 +35,5 @@ public interface MatcherReader {
      * Reads the configuration and MatcherBuilder classes and adds them to Readers.
      */
     void readMatcherBuilders();
+
 }

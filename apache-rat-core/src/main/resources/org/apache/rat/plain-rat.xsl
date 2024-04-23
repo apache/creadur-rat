@@ -26,24 +26,24 @@ Summary
 -------
 Generated at: <xsl:value-of select='rat-report/@timestamp'/>
 
-Notes: <xsl:value-of select='count(descendant::type[attribute::name="notice"])'/>
-Binaries: <xsl:value-of select='count(descendant::type[attribute::name="binary"])'/>
-Archives: <xsl:value-of select='count(descendant::type[attribute::name="archive"])'/>
-Standards: <xsl:value-of select='count(descendant::type[attribute::name="standard"])'/>
+Notes: <xsl:value-of select='count(descendant::resource[attribute::type="NOTICE"])'/>
+Binaries: <xsl:value-of select='count(descendant::resource[attribute::type="BINARY"])'/>
+Archives: <xsl:value-of select='count(descendant::resource[attribute::type="ARCHIVE"])'/>
+Standards: <xsl:value-of select='count(descendant::resource[attribute::type="STANDARD"])'/>
 
-Apache Licensed: <xsl:value-of select='count(descendant::header-type[attribute::name="AL   "])'/>
-Generated Documents: <xsl:value-of select='count(descendant::header-type[attribute::name="GEN  "])'/>
+Apache Licensed: <xsl:value-of select='count(descendant::license[attribute::family="AL   "])'/>
+Generated Documents: <xsl:value-of select='count(descendant::license[attribute::family="GEN  "])'/>
 
 JavaDocs are generated, thus a license header is optional.
 Generated files do not require license headers.
 
-<xsl:value-of select='count(descendant::header-type[attribute::name="?????"])'/> Unknown Licenses
-<xsl:if test="descendant::resource[license-approval/@name='false']">
+<xsl:value-of select='count(descendant::license[attribute::family="?????"])'/> Unknown Licenses
+<xsl:if test="descendant::resource[license/@approval='false']">
 *****************************************************
 
 Files with unapproved licenses:
 
-<xsl:for-each select='descendant::resource[license-approval/@name="false"]'>
+<xsl:for-each select='descendant::resource[license/@approval="false"]'>
   <xsl:text>  </xsl:text>
   <xsl:value-of select='@name'/>
   <xsl:text>
@@ -51,44 +51,60 @@ Files with unapproved licenses:
 </xsl:for-each>
 *****************************************************
 </xsl:if>
-<xsl:if test="descendant::resource[type/@name='archive']">
+<xsl:if test="descendant::resource[@type='ARCHIVE']">
 Archives:
-<xsl:for-each select='descendant::resource[type/@name="archive"]'>
+<xsl:for-each select='descendant::resource[@type="ARCHIVE"]'>
  + <xsl:value-of select='@name'/>
  <xsl:text>
  </xsl:text>
  </xsl:for-each>
 </xsl:if>
+<xsl:text>
 *****************************************************
-  Files with Apache License headers will be marked AL
-  Binary files (which do not require any license headers) will be marked B
-  Compressed archives will be marked A
-  Notices, licenses etc. will be marked N
+  Documents with unapproved licenses will start with a '!'
+  The next character identifies the document type.
+   
+   char         type
+    A       Archive file
+    B       Binary file
+    G       Generated file
+    N       Notice file
+    S       Standard file
+    U       Unknown file.
+  
+</xsl:text>
  <xsl:for-each select='descendant::resource'>
   <xsl:choose>
-     <xsl:when test='license-approval/@name="false"'>!</xsl:when>
+     <xsl:when test='license/@approval="false"'>!</xsl:when>
      <xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise>
- </xsl:choose>
- <xsl:choose>
-     <xsl:when test='type/@name="notice"'>N    </xsl:when>
-     <xsl:when test='type/@name="archive"'>A    </xsl:when>
-     <xsl:when test='type/@name="binary"'>B    </xsl:when>
-     <xsl:when test='type/@name="standard"'><xsl:value-of select='header-type/@name'/></xsl:when>
-     <xsl:otherwise>!!!!!</xsl:otherwise>
- </xsl:choose>
- <xsl:text> </xsl:text>
- <xsl:value-of select='@name'/>
- <xsl:text>
- </xsl:text>
+   </xsl:choose>
+   <xsl:value-of select="substring(@type,1,1)"/><xsl:text> </xsl:text>
+   <xsl:value-of select='@name'/><xsl:text>
+</xsl:text>
+   <xsl:for-each select='descendant::license'>
+       <xsl:text>    </xsl:text>
+       <xsl:value-of select='substring(concat(@family, "     "),1,5)'/>
+       <xsl:text>    </xsl:text>
+       <xsl:value-of select='substring(concat(@id, "          "),1,10)'/>
+       <xsl:text>    </xsl:text>
+       <xsl:value-of select='@name'/>
+       <xsl:if test="@approval='false'">
+         <xsl:text> (Unapproved)</xsl:text>
+       </xsl:if>
+       <xsl:text>
+</xsl:text>
+   </xsl:for-each>
+   <xsl:text>
+</xsl:text>
  </xsl:for-each>
 *****************************************************
-<xsl:if test="descendant::resource[header-type/@name='?????']">
+<xsl:if test="descendant::resource[/license/@id='?????']">
  Printing headers for text files without a valid license header...
- <xsl:for-each select='descendant::resource[header-type/@name="?????"]'>
+ <xsl:for-each select='descendant::resource[/license/@id="?????"]'>
 =====================================================
 == File: <xsl:value-of select='@name'/>
 =====================================================
-<xsl:value-of select='header-sample'/>
+<xsl:value-of select='sample'/>
 </xsl:for-each>
 </xsl:if>
 </xsl:template>

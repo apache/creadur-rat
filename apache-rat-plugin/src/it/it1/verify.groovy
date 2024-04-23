@@ -20,4 +20,6 @@ assert f.exists()
 
 content = f.text
 
-assert content.contains( 'YAL   src.apt' )
+assert content.contains( ' G src.apt' )
+assert content.contains( '    YAL      MyLicense     Yet another license' )
+assert content.contains( '    GEN      Not           Not ');

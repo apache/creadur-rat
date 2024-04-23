@@ -28,6 +28,7 @@
         <version>@pom.version@</version>
         <configuration>
           <addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
+          <numUnapprovedLicenses>1</numUnapprovedLicenses>
           <licenses>
             <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
               <licenseFamilyCategory>MIT</licenseFamilyCategory>

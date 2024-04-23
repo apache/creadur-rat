@@ -31,7 +31,7 @@ public class All extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
     @Override
     protected void setMatcher(IHeaderMatcher.Builder builder) {
-        this.builder.add(builder);
+        this.builder.addEnclosed(builder);
     }
 
     @Override

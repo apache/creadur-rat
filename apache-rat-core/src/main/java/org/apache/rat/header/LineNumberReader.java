@@ -29,6 +29,7 @@ import java.io.Reader;
  * This implementation is compatible with the latter variant,
  * thus providing upwards compatibility for RAT.
  */
+@Deprecated // since 0.17
 public class LineNumberReader {
 	private final Reader parent;
 	private boolean previousCharWasCR = false;

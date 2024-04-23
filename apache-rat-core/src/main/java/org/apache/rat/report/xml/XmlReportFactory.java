@@ -24,6 +24,7 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.policy.DefaultPolicy;
+import org.apache.rat.report.ConfigurationReport;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.impl.ClaimAggregator;
@@ -55,17 +56,23 @@ public class XmlReportFactory {
         if (statistic != null) {
             reporters.add(new ClaimAggregator(statistic));
         }
-        if (configuration.isAddingLicenses()) {
+        if (configuration.isAddingLicenses() && !configuration.isDryRun()) {
             reporters.add(new LicenseAddingReport(configuration.getLog(), configuration.getCopyrightMessage(), configuration.isAddingLicensesForced()));
         }
+        
+        if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
+            
+            reporters.add(new ConfigurationReport(writer, configuration));
+        }
+        
         reporters.add(new SimpleXmlClaimReporter(writer));
 
         final IDocumentAnalyser analyser =
-            DefaultAnalyserFactory.createDefaultAnalyser(configuration.getLog(), configuration.getLicenses(LicenseFilter.all));
-        final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseFamilies(LicenseFilter.approved));
+            DefaultAnalyserFactory.createDefaultAnalyser(configuration.getLog(), configuration.getLicenses(LicenseFilter.ALL));
+        final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseFamilies(LicenseFilter.APPROVED));
 
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);
-        return new ClaimReporterMultiplexer(analysisMultiplexer, reporters);
+        return new ClaimReporterMultiplexer(configuration.isDryRun(), analysisMultiplexer, reporters);
     }
 }

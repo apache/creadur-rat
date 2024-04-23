@@ -20,32 +20,38 @@ package org.apache.rat.analysis.matchers;
 
 import java.util.regex.Pattern;
 
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.config.parameters.ComponentType;
+import org.apache.rat.config.parameters.ConfigComponent;
+
 /**
  * A simple regular expression matching IHeaderMatcher
  */
-public class SimpleRegexMatcher extends AbstractSimpleMatcher {
+@ConfigComponent(type = ComponentType.MATCHER, name = "regex", desc = "Performs a regex match using the enclosed the text")
+public class SimpleRegexMatcher extends AbstractHeaderMatcher {
+    
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The pattern to match", name="expr", parameterType = String.class)
     private final Pattern pattern;
 
     /**
-     * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.
-     * @param pattern the pattern to match.  Pattern will only match a single line from the input stream.
-     */
-    public SimpleRegexMatcher(Pattern pattern) {
-        this(null, pattern);
-    }
-
-    /**
-     * Constructs a regex pattern matcher with a unique random id and the specified Regex pattern.
-     * @param id the id for this matcher
-     * @param pattern the pattern to match.  Pattern will only match a single line from the input stream.
+     * Constructs a regex pattern matcher with a unique random id and the specified
+     * Regex pattern.
+     *
+     * @param id the id for this matcher, may be null
+     * @param pattern the pattern to match. Pattern will only match a single line
+     * from the input stream.
      */
     public SimpleRegexMatcher(String id, Pattern pattern) {
         super(id);
         this.pattern = pattern;
     }
 
+    public String getPattern() {
+        return pattern.pattern();
+    }
+
     @Override
-    public boolean doMatch(String line) {
-        return pattern.matcher(line).find();
+    public boolean matches(IHeaders headers) {
+        return pattern.matcher(headers.raw()).find();
     }
 }
