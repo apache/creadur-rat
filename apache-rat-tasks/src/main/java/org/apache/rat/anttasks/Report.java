@@ -318,9 +318,9 @@ public class Report extends Task {
             case ERROR:
                 write(Project.MSG_ERR, msg);
                 break;
-			case OFF:
-			default:
-				break;
+            case OFF:
+            default:
+                break;
             }
         }
         
