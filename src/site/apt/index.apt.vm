@@ -112,6 +112,8 @@ java -jar apache-rat-${project.version}.jar --help
 
  Use the plugin for {{{https://maven.apache.org}Apache Maven ${mavenVersion}}} or later.
 
+ <<ATTENTION!>> Maven4 is based on Java 17 and thus cannot be used with RAT, that relies on Java 8.
+
 +------------------------------------------+
   <plugin>
     <groupId>org.apache.rat</groupId>
