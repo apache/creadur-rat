@@ -73,7 +73,7 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-355" type="add" dev="claudenw">
-        Optionally Export XML configuration file as part of run.  Added framework to inspect available licenses and matchers.
+        Optionally export XML configuration file as part of run. Added framework to inspect available licenses and matchers.
       </action>
       <action issue="RAT-366" type="update" dev="claudenw">
         Switch to processing header matches in one call rather than line by line.
