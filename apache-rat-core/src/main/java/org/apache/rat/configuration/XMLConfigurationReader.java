@@ -231,12 +231,12 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     }
 
     private void processBuilderParams(Description description, IHeaderMatcher.Builder builder) {
-        for (Description desc : description.childrenOfType(ComponentType.BULID_PARAMETER)) {
+        for (Description desc : description.childrenOfType(ComponentType.BUILD_PARAMETER)) {
             Method m = builderParams.get(desc.getCommonName());
             try {
                 callSetter(desc, builder, m.invoke(builderParams));
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                ImplementationException.makeInstance(e);
+                throw ImplementationException.makeInstance(e);
             }
         }
     }
@@ -270,7 +270,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         return (child, childDescription) -> {
             switch (childDescription.getType()) {
             case LICENSE:
-            case BULID_PARAMETER:
+            case BUILD_PARAMETER:
                 throw new ConfigurationException(String.format(
                         "%s may not be used as an enclosed matcher.  %s '%s' found in '%s'", childDescription.getType(),
                         childDescription.getType(), childDescription.getCommonName(), description.getCommonName()));
@@ -411,7 +411,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                 throw new ConfigurationException(String.format(
                         "%s may not be enclosed in another license.  %s '%s' found in '%s'", childDescription.getType(),
                         childDescription.getType(), childDescription.getCommonName(), description.getCommonName()));
-            case BULID_PARAMETER:
+            case BUILD_PARAMETER:
                 break;
             case MATCHER:
                 AbstractBuilder b = parseMatcher(child);

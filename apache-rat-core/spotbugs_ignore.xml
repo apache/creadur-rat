@@ -23,4 +23,22 @@
     <Class name="org.apache.rat.Report"/>
     <Bug pattern="DM_DEFAULT_ENCODING"/>
   </Match>
+  <Match>
+    <!--
+    Convenience constructors that allow setting a charset are not available in Java8 for FileWriter.
+  -->
+    <Class name="org.apache.rat.annotation.AbstractLicenseAppender"/>
+    <Bug pattern="DM_DEFAULT_ENCODING"/>
+  </Match>
+  <Match>
+    <!--
+    Convenience constructors that allow setting a charset are not available in Java8 for FileReader.
+  -->
+    <Class name="org.apache.rat.document.impl.FileDocument"/>
+    <Bug pattern="DM_DEFAULT_ENCODING"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.rat.document.impl.MonolithicFileDocument"/>
+    <Bug pattern="DM_DEFAULT_ENCODING"/>
+  </Match>
 </FindBugsFilter>

@@ -25,12 +25,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class GlobIgnoreMatcher implements IgnoreMatcher {
 
@@ -116,7 +111,7 @@ public class GlobIgnoreMatcher implements IgnoreMatcher {
     }
 
     public List<String> getExclusionLines() {
-        return exclusionLines;
+        return Collections.unmodifiableList(exclusionLines);
     }
 
     @Override

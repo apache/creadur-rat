@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -76,7 +77,7 @@ public class Reporter {
         try {
             if (configuration.getReportable() != null) {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                Writer outputWriter = new OutputStreamWriter(outputStream);
+                Writer outputWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
                 try (IXmlWriter writer = new XmlWriter(outputWriter)) {
                     statistic = new ClaimStatistic();
                     RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);

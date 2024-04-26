@@ -285,7 +285,7 @@ public class XMLConfigurationWriter {
                     }
                 }
                 break;
-            case BULID_PARAMETER:
+            case BUILD_PARAMETER:
                 // ignore;
                 break;
             }

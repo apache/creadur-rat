@@ -98,7 +98,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
         private final String proxyId;
         private IHeaderMatcher wrapped;
 
-        @ConfigComponent(type = ComponentType.BULID_PARAMETER, name = "matcherMap", desc = "Map of matcher names to matcher instances")
+        @ConfigComponent(type = ComponentType.BUILD_PARAMETER, name = "matcherMap", desc = "Map of matcher names to matcher instances")
         private Map<String, IHeaderMatcher> matchers;
 
         /**

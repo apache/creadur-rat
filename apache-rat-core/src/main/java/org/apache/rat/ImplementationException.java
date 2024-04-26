@@ -19,7 +19,7 @@
 package org.apache.rat;
 
 /**
- * An exception thrown when there is an issue with the Configuration.
+ * An exception thrown when there is an issue with the configuration.
  */
 public class ImplementationException extends RuntimeException {
 
