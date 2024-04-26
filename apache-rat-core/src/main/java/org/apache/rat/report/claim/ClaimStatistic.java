@@ -19,8 +19,10 @@
 
 package org.apache.rat.report.claim;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.rat.api.Document;
 
@@ -39,12 +41,12 @@ public class ClaimStatistic {
         /** count of generated files */
         GENERATED, 
         /** count of unknown files */
-        UNKNOWN };
+        UNKNOWN }
     
-    private final Map<String, int[]> licenseFamilyNameMap = new HashMap<>();
-    private final Map<String, int[]> licenseFamilyCodeMap = new HashMap<>();
-    private final Map<Document.Type, int[]> documentCategoryMap = new HashMap<>();
-    private final Map<ClaimStatistic.Counter, int[]> counterMap = new HashMap<>();
+    protected final Map<String, int[]> licenseFamilyNameMap = new HashMap<>();
+    protected final Map<String, int[]> licenseFamilyCodeMap = new HashMap<>();
+    protected final Map<Document.Type, int[]> documentCategoryMap = new HashMap<>();
+    protected final Map<ClaimStatistic.Counter, int[]> counterMap = new HashMap<>();
 
 
     /**
@@ -57,45 +59,108 @@ public class ClaimStatistic {
         return count == null ? 0 : count[0];
     }
 
-    /**
-     * @return Returns a map with the file types. The map keys
-     * are file type names and the map values
-     * are integers with the number of resources matching
-     * the file type.
-     */
-    public Map<Counter, int[]> getCounterMap() {
-        return counterMap;
+    public void incCounter(Counter key, int value) {
+        final int[] num = counterMap.get(key);
+
+        if (num == null) {
+            counterMap.put(key, new int[] { value });
+        } else {
+            num[0] += value;
+        }
     }
 
-    
-    /**
-     * @return Returns a map with the file types. The map keys
-     * are file type names and the map values
-     * are integers with the number of resources matching
-     * the file type.
-     */
-    public Map<Document.Type, int[]> getDocumentCategoryMap() {
-        return documentCategoryMap;
-    }
+//    /**
+//     * @return Returns a map with the file types. The map keys
+//     * are file type names and the map values
+//     * are integers with the number of resources matching
+//     * the file type.
+//     */
+//    public Map<Counter, int[]> getCounterMap() {
+//        return counterMap;
+//    }
 
     /**
-     * @return Returns a map with the license family codes. The map
-     * keys are license family category names,
-     * the map values are integers with the number of resources
-     * matching the license family code.
+     * Returns the counts for the counter.
+     * @param documentType the document type to get the counter for.
+     * @return Returns the number of files with approved licenses.
      */
-    public Map<String, int[]> getLicenseFamilyCodeMap() {
-        return licenseFamilyCodeMap;
+    public int getCounter(Document.Type documentType) {
+        int[] count = documentCategoryMap.get(documentType);
+        return count == null ? 0 : count[0];
     }
 
-    /**
-     * @return Returns a map with the license family codes. The map
-     * keys are the names of the license families and
-     * the map values are integers with the number of resources
-     * matching the license family name.
-     */
-    public Map<String, int[]> getLicenseFileNameMap() {
-        return licenseFamilyNameMap;
+    public void incCounter(Document.Type documentType, int value) {
+        final int[] num = documentCategoryMap.get(documentType);
+
+        if (num == null) {
+            documentCategoryMap.put(documentType, new int[] { value });
+        } else {
+            num[0] += value;
+        }
+    }
+//    /**
+//     * @return Returns a map with the file types. The map keys
+//     * are file type names and the map values
+//     * are integers with the number of resources matching
+//     * the file type.
+//     */
+//    public Map<Document.Type, int[]> getDocumentCategoryMap() {
+//        return documentCategoryMap;
+//    }
+
+//    /**
+//     * @return Returns a map with the license family codes. The map
+//     * keys are license family category names,
+//     * the map values are integers with the number of resources
+//     * matching the license family code.
+//     */
+//    public Map<String, int[]> getLicenseFamilyCodeMap() {
+//        return licenseFamilyCodeMap;
+//    }
+
+    public int getLicenseFamilyCount(String licenseFamilyName) {
+        int[] count = licenseFamilyCodeMap.get(licenseFamilyName);
+        return count == null ? 0 : count[0];
     }
 
+    public void incLicenseFamilyCount(String licenseFamilyName, int value) {
+        final int[] num = licenseFamilyCodeMap.get(licenseFamilyName);
+
+        if (num == null) {
+            licenseFamilyCodeMap.put(licenseFamilyName, new int[] { value });
+        } else {
+            num[0] += value;
+        }
+    }
+
+    public Set<String> getLicenseFamilyNames() {
+        return Collections.unmodifiableSet(licenseFamilyCodeMap.keySet());
+    }
+//    /**
+//     * @return Returns a map with the license family codes. The map
+//     * keys are the names of the license families and
+//     * the map values are integers with the number of resources
+//     * matching the license family name.
+//     */
+//    public Map<String, int[]> getLicenseFileNameMap() {
+//        return licenseFamilyNameMap;
+//    }
+    public Set<String> getLicenseFileNames() {
+        return Collections.unmodifiableSet(licenseFamilyNameMap.keySet());
+    }
+
+    public int getLicenseFileNameCount(String licenseFilename) {
+        int[] count = licenseFamilyNameMap.get(licenseFilename);
+        return count == null ? 0 : count[0];
+    }
+
+    public void incLicenseFileNameCount(String licenseFileNameName, int value) {
+        final int[] num = licenseFamilyNameMap.get(licenseFileNameName);
+
+        if (num == null) {
+            licenseFamilyNameMap.put(licenseFileNameName, new int[] { value });
+        } else {
+            num[0] += value;
+        }
+    }
 }

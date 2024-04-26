@@ -57,13 +57,13 @@ public class DirectoryWalkerTest {
             writer.flush();
         }
 
-        DirectoryWalker walker = new DirectoryWalker(toWalk, NameBasedHiddenFileFilter.HIDDEN);
+        DirectoryWalker walker = new DirectoryWalker(toWalk, NameBasedHiddenFileFilter.HIDDEN, null);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
 
         assertEquals(1, scanned.size());
 
-        walker = new DirectoryWalker(toWalk, FalseFileFilter.FALSE);
+        walker = new DirectoryWalker(toWalk, FalseFileFilter.FALSE, null);
         scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
 

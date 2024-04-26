@@ -71,7 +71,7 @@ public class DefaultAnalyserFactory {
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
-         * 
+         * @param log the Log to use
          * @param license The license to analyse
          */
         public DefaultAnalyser(final Log log, final Collection<ILicense> licenses) {

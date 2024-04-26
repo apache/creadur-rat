@@ -43,52 +43,31 @@ public class ClaimAggregator extends AbstractClaimReporter {
         this.statistic = statistic;
     }
 
-    private <T> void incMapValue(Map<T, int[]> map, T key, int value) {
-        final int[] num = map.get(key);
-
-        if (num == null) {
-            map.put(key, new int[] { value });
-        } else {
-            num[0] += value;
-        }
-    }
-
     @Override
     protected void handleDocumentCategoryClaim(Document.Type documentType) {
-        incMapValue(statistic.getDocumentCategoryMap(), documentType, 1);
+        statistic.incCounter(documentType, 1);
     }
 
     @Override
     protected void handleApprovedLicenseClaim(MetaData metadata) {
-        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.APPROVED, (int) metadata.approvedLicenses().count());
-        incValueMap(statistic.getCounterMap(), ClaimStatistic.Counter.UNAPPROVED,
-                (int) metadata.unapprovedLicenses().count());
-    }
-
-    private void incValueMap(Map<Counter, int[]> map, Counter key, int value) {
-        final int[] num = map.get(key);
-
-        if (num == null) {
-            map.put(key, new int[] { value });
-        } else {
-            num[0] += value;
-        }
+        statistic.incCounter(ClaimStatistic.Counter.APPROVED, (int) metadata.approvedLicenses().count());
+        statistic.incCounter(ClaimStatistic.Counter.UNAPPROVED,  (int) metadata.unapprovedLicenses().count());
     }
 
     @Override
     protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
-        incMapValue(statistic.getLicenseFileNameMap(), licenseFamilyName, 1);
+        statistic.incLicenseFileNameCount(licenseFamilyName, 1);
     }
 
     @Override
     protected void handleHeaderCategoryClaim(ILicense license) {
         String category = license.getLicenseFamily().getFamilyCategory();
         if (category.equals(ILicenseFamily.GENTERATED_CATEGORY)) {
-            incValueMap(statistic.getCounterMap(), Counter.GENERATED, 1);
+            statistic.incCounter(Counter.GENERATED, 1);
         } else if (category.equals(ILicenseFamily.UNKNOWN_CATEGORY)) {
-            incValueMap(statistic.getCounterMap(), Counter.UNKNOWN, 1);
+            statistic.incCounter(Counter.UNKNOWN, 1);
         }
-        incMapValue(statistic.getLicenseFamilyCodeMap(), category, 1);
+        statistic.getLicenseFamilyCount(category);
     }
 
     @Override

@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.FileWriter;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.api.Document;
@@ -200,7 +202,10 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         ReportConfigurationTest.validateDefaultLicenses(config, "MyLicense", "CpyrT", "RegxT", "SpdxT", "TextT", 
                 "Not", "All", "Any");
         assertNotNull(LicenseSetFactory.search("MyLicense", config.getLicenses(LicenseFilter.ALL)));
-        assertNull("Should not have inputFileFilter", config.getInputFileFilter());
+        assertNotNull("Should have filesToIgnore", config.getFilesToIgnore());
+        assertEquals("WildcardFileFilter(*.json)", config.getFilesToIgnore().toString());
+        assertNotNull("Should have directoriesToIgnore", config.getDirectoriesToIgnore());
+        assertEquals("NameBasedHiddenFileFilter", config.getDirectoriesToIgnore().toString());
         mojo.execute();
 
         ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
@@ -228,11 +233,12 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         assertThat(config.isAddingLicenses()).isFalse();
         assertThat(config.isAddingLicensesForced()).isFalse();
         assertThat(config.getCopyrightMessage()).isNull();
-        assertThat(config.getInputFileFilter()).isNull();
         assertThat(config.isStyleReport()).isTrue();
-        assertThat(config.getStyleSheet()).isNotNull().withFailMessage("Stylesheet should not be null");
-        assertThat(config.getDirectoryFilter()).isNotNull().withFailMessage("Directory filter should not be null");
-        assertThat(config.getDirectoryFilter()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+        assertThat(config.getStyleSheet()).withFailMessage("Stylesheet should not be null").isNotNull();
+        assertThat(config.getDirectoriesToIgnore()).withFailMessage("directoriesToIgnore filter should not be null").isNotNull();
+        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+        assertThat(config.getFilesToIgnore()).withFailMessage("filesToIgnore filter should not be null").isNotNull();
+        assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(WildcardFileFilter.class);
         
         ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "BSD", "CC BY");

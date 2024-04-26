@@ -19,6 +19,7 @@
 package org.apache.rat;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,6 +29,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
@@ -37,6 +41,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.utils.Log;
+import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
  * A class that holds the list of licenses and approved licenses from one or more configuration files.
@@ -57,6 +62,10 @@ public class Defaults {
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
     private final LicenseSetFactory setFactory;
+
+    private final FilenameFilter filesToIgnore = WildcardFileFilter.builder().setWildcards("*.json").setIoCase(IOCase.INSENSITIVE).get();
+
+    private final IOFileFilter directoriesToIgnore = NameBasedHiddenFileFilter.HIDDEN;
     
     /**
      * Initialize the system configuration reader..
@@ -154,6 +163,14 @@ public class Defaults {
      */
     public SortedSet<String> getLicenseIds(LicenseFilter filter) {
         return setFactory.getLicenseFamilyIds(filter);
+    }
+
+    public FilenameFilter getFilesToIgnore() {
+        return filesToIgnore;
+    }
+
+    public IOFileFilter getDirectoriesToIgnore() {
+        return directoriesToIgnore;
     }
     
     /**

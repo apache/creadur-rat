@@ -53,12 +53,12 @@ public class ReporterTest {
      * @param doc The document to check/
      * @param xpath the XPath instance to use.
      * @param resource the xpath statement to locate the node.
-     * @param id the expected family for the node (may be null)
-     * @param approval the expected approval value (may be null)
+     * @param licenseInfo the license info for the node. (may = null)
      * @param type the type of resource located.
+     * @param hasSample true if a sample from the document should be present.
      * @throws Exception on XPath error.
      */
-    public static void checkNode(Document doc, XPath xpath, String resource, LicenseInfo licenseInfo, String type,
+    private static void checkNode(Document doc, XPath xpath, String resource, LicenseInfo licenseInfo, String type,
             boolean hasSample) throws Exception {
         XmlUtils.getNode(doc, xpath, String.format("/rat-report/resource[@name='%s'][@type='%s']", resource, type));
         if (licenseInfo != null) {
@@ -67,7 +67,7 @@ public class ReporterTest {
                             resource, type, licenseInfo.id, licenseInfo.family));
             XmlUtils.getNode(doc, xpath,
                     String.format("/rat-report/resource[@name='%s'][@type='%s']/license[@id='%s'][@approval='%s']",
-                            resource, type, licenseInfo.id, Boolean.toString(licenseInfo.approval)));
+                            resource, type, licenseInfo.id, licenseInfo.approval));
             if (licenseInfo.hasNotes) {
                 XmlUtils.getNode(doc, xpath,
                         String.format("/rat-report/resource[@name='%s'][@type='%s']/license[@id='%s']/notes", resource,
@@ -89,7 +89,7 @@ public class ReporterTest {
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         configuration.setStyleReport(false);
         configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new File(elementsPath), HiddenFileFilter.HIDDEN));
+        configuration.setReportable(new DirectoryWalker(new File(elementsPath), configuration.getFilesToIgnore(), HiddenFileFilter.HIDDEN));
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
@@ -111,7 +111,6 @@ public class ReporterTest {
         checkNode(doc, xPath, "src/test/resources/elements/Xml.xml", apacheLic, "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/buildr.rb", apacheLic, "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/dummy.jar", null, "ARCHIVE", false);
-        checkNode(doc, xPath, "src/test/resources/elements/plain.json", null, "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/sub/Empty.txt", new LicenseInfo("?????", false, false),
                 "STANDARD", false);
         checkNode(doc, xPath, "src/test/resources/elements/tri.txt", apacheLic, "STANDARD", false);
@@ -122,10 +121,10 @@ public class ReporterTest {
         checkNode(doc, xPath, "src/test/resources/elements/generated.txt", new LicenseInfo("GEN", true, true),
                 "GENERATED", false);
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
-        assertEquals(14, nodeList.getLength());
+        assertEquals(13, nodeList.getLength());
     }
 
-    private static final String NL = System.getProperty("line.separator");
+    private static final String NL = System.lineSeparator();
     private static final String PARAGRAPH = "*****************************************************";
     private static final String HEADER = NL + PARAGRAPH + NL + //
             "Summary" + NL + //
@@ -133,7 +132,7 @@ public class ReporterTest {
             "Generated at: ";
 
     private String documentOut(boolean approved, Type type, String name) {
-        return String.format("^\\Q%s%s %s\\E$", approved ? " " : "!", type.name().substring(0, 1), name);
+        return String.format("^\\Q%s%s %s\\E$", approved ? " " : "!", type.name().charAt(0), name);
     }
 
     private String licenseOut(String family, String name) {
@@ -152,7 +151,7 @@ public class ReporterTest {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new File(elementsPath), HiddenFileFilter.HIDDEN));
+        configuration.setReportable(new DirectoryWalker(new File(elementsPath), configuration.getFilesToIgnore(), HiddenFileFilter.HIDDEN));
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
 
@@ -164,14 +163,13 @@ public class ReporterTest {
         TextUtils.assertPatternInOutput("^Notes: 2$", document);
         TextUtils.assertPatternInOutput("^Binaries: 1$", document);
         TextUtils.assertPatternInOutput("^Archives: 1$", document);
-        TextUtils.assertPatternInOutput("^Standards: 9$", document);
+        TextUtils.assertPatternInOutput("^Standards: 8$", document);
         TextUtils.assertPatternInOutput("^Apache Licensed: 5$", document);
         TextUtils.assertPatternInOutput("^Generated Documents: 1$", document);
-        TextUtils.assertPatternInOutput("^3 Unknown Licenses$", document);
+        TextUtils.assertPatternInOutput("^2 Unknown Licenses$", document);
         TextUtils.assertPatternInOutput(
                 "^Files with unapproved licenses:\\s+" //
                         + "\\Qsrc/test/resources/elements/Source.java\\E\\s+" //
-                        + "\\Qsrc/test/resources/elements/plain.json\\E\\s+" //
                         + "\\Qsrc/test/resources/elements/sub/Empty.txt\\E\\s",
                 document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.ARCHIVE, "src/test/resources/elements/dummy.jar"),
@@ -195,8 +193,6 @@ public class ReporterTest {
                 + licenseOut("AL", "Apache License Version 2.0"), document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/TextHttps.txt")
                 + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInOutput(documentOut(false, Type.STANDARD, "src/test/resources/elements/plain.json"),
-                document);
         TextUtils.assertPatternInOutput(documentOut(true, Type.STANDARD, "src/test/resources/elements/tri.txt")
                 + licenseOut("AL", "Apache License Version 2.0") + licenseOut("BSD-3", "BSD 3 clause")
                 + licenseOut("BSD-3", "TMF", "The Telemanagement Forum License"), document);
@@ -212,7 +208,7 @@ public class ReporterTest {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new File(elementsPath), HiddenFileFilter.HIDDEN));
+        configuration.setReportable(new DirectoryWalker(new File(elementsPath), configuration.getFilesToIgnore(), HiddenFileFilter.HIDDEN));
         configuration.setOut(() -> out);
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
         new Reporter(configuration).output();
@@ -226,7 +222,7 @@ public class ReporterTest {
         TextUtils.assertPatternInOutput("\\Qsrc/test/resources/elements/sub/Empty.txt\\E", document);
     }
 
-    private class LicenseInfo {
+    private static class LicenseInfo {
         String id;
         String family;
         boolean approval;

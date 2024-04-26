@@ -19,6 +19,7 @@
 
 package org.apache.rat.walker;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.report.IReportable;
 
 import java.io.File;
@@ -33,38 +34,32 @@ public abstract class Walker implements IReportable {
     protected final File file;
     protected final String name;
 
-    protected final FilenameFilter filter;
+    protected final FilenameFilter filesToIgnore;
 
     protected static FilenameFilter regexFilter(final Pattern pattern) {
         return (dir, name) -> {
             final boolean result;
             if (pattern == null) {
-                result = true;
+                result = false;
             } else {
-                result = !pattern.matcher(name).matches();
+                result = pattern.matcher(name).matches();
             }
             return result;
         };
     }
  
     protected final boolean isNotIgnored(final File file) {
-        boolean result = false;
-        if (filter != null) {
-            final String name = file.getName();
-            final File dir = file.getParentFile();
-            result = !filter.accept(dir, name);
-        }
-        return !result;
+        return !filesToIgnore.accept(file.getParentFile(), file.getName());
     }
 
     public Walker(File file, final FilenameFilter filter) {
         this(file.getPath(), file, filter);
     }
 
-    protected Walker(final String name, final File file, final FilenameFilter filter) {
+    protected Walker(final String name, final File file, final FilenameFilter filesToIgnore) {
         this.name = name;
         this.file = file;
-        this.filter = filter;
+        this.filesToIgnore = filesToIgnore == null ? FalseFileFilter.FALSE : filesToIgnore;
     }
 
 }

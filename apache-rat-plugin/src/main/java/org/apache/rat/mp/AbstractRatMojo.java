@@ -68,6 +68,7 @@ import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoringDirectoryScanner;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.walker.NameBasedHiddenFileFilter;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
@@ -341,11 +342,15 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         ReportConfiguration config = new ReportConfiguration(makeLog());
         reportDeprecatedProcessing();
+        Defaults defaults = getDefaultsBuilder().build(config.getLog());
         if (addDefaultLicenses) {
-            config.setFrom(getDefaultsBuilder().build(config.getLog()));
+            config.setFrom(defaults);
         } else {
             config.setStyleSheet(Defaults.getPlainStyleSheet());
+            config.setDirectoriesToIgnore(defaults.getDirectoriesToIgnore());
+            config.setFilesToIgnore(defaults.getFilesToIgnore());
         }
+
         if (additionalLicenseFiles != null) {
             for (String licenseFile : additionalLicenseFiles) {
                 try {
