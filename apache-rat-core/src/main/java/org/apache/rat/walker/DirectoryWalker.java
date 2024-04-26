@@ -22,13 +22,10 @@ package org.apache.rat.walker;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;

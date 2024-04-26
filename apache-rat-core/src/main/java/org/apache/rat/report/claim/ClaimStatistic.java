@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.apache.rat.api.Document;
 
-
 /**
  * This class provides a numerical overview about
  * the report.
@@ -69,16 +68,6 @@ public class ClaimStatistic {
         }
     }
 
-//    /**
-//     * @return Returns a map with the file types. The map keys
-//     * are file type names and the map values
-//     * are integers with the number of resources matching
-//     * the file type.
-//     */
-//    public Map<Counter, int[]> getCounterMap() {
-//        return counterMap;
-//    }
-
     /**
      * Returns the counts for the counter.
      * @param documentType the document type to get the counter for.
@@ -98,25 +87,6 @@ public class ClaimStatistic {
             num[0] += value;
         }
     }
-//    /**
-//     * @return Returns a map with the file types. The map keys
-//     * are file type names and the map values
-//     * are integers with the number of resources matching
-//     * the file type.
-//     */
-//    public Map<Document.Type, int[]> getDocumentCategoryMap() {
-//        return documentCategoryMap;
-//    }
-
-//    /**
-//     * @return Returns a map with the license family codes. The map
-//     * keys are license family category names,
-//     * the map values are integers with the number of resources
-//     * matching the license family code.
-//     */
-//    public Map<String, int[]> getLicenseFamilyCodeMap() {
-//        return licenseFamilyCodeMap;
-//    }
 
     public int getLicenseFamilyCount(String licenseFamilyName) {
         int[] count = licenseFamilyCodeMap.get(licenseFamilyName);
@@ -136,15 +106,7 @@ public class ClaimStatistic {
     public Set<String> getLicenseFamilyNames() {
         return Collections.unmodifiableSet(licenseFamilyCodeMap.keySet());
     }
-//    /**
-//     * @return Returns a map with the license family codes. The map
-//     * keys are the names of the license families and
-//     * the map values are integers with the number of resources
-//     * matching the license family name.
-//     */
-//    public Map<String, int[]> getLicenseFileNameMap() {
-//        return licenseFamilyNameMap;
-//    }
+
     public Set<String> getLicenseFileNames() {
         return Collections.unmodifiableSet(licenseFamilyNameMap.keySet());
     }
