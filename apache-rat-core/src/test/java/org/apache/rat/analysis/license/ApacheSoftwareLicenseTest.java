@@ -66,18 +66,4 @@ public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
     public static Stream<Arguments> parameterProvider() {
         return Stream.of(Arguments.of(id, id, name, null, targets));
     }
-
-//
-//    @Test(timeout = 2000) // may need to be adjusted if many more files are added
-//    public void goodFiles() throws Exception {
-//        IHeaderMatcher matcher = new MultiplexLicense("goodFiles", AbstractMatcherTest.extractCategory(category));
-//        DirectoryScanner.testFilesInDir("appliedAL20/good", matcher, true);
-//    }
-//
-//    @Test(timeout = 2000) // may need to be adjusted if many more files are added
-//    public void badFiles() throws Exception {
-//        IHeaderMatcher matcher = new MultiplexLicense("badFiles", AbstractMatcherTest.extractCategory(category));
-//        DirectoryScanner.testFilesInDir("appliedAL20/bad", matcher, false);
-//    }
-
 }

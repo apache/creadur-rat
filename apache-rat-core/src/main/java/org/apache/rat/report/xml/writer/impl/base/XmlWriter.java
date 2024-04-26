@@ -469,6 +469,18 @@ public final class XmlWriter implements IXmlWriter {
         currentAttributes.clear();
         return this;
     }
+    
+    @Override
+    public IXmlWriter comment(final CharSequence text) throws IOException {
+        if (inElement) {
+            writer.write('>');
+        }
+        inElement = false;
+        writer.write("<!-- ");
+         content(text);
+         writer.write(" -->");
+         return this;
+    }
 
     /**
      * Writes an attribute of an element. Note that this is only allowed directly
@@ -514,17 +526,7 @@ public final class XmlWriter implements IXmlWriter {
         writeEscaped(content, true);
     }
 
-    /**
-     * Writes content. Calling this method will automatically Note that this method
-     * does not use CDATA.
-     *
-     * @param content the content to write
-     * @return this object
-     * @throws OperationNotAllowedException if called before any call to
-     * {@link #openElement} or after the first element has been closed
-     */
-    @Override
-    public IXmlWriter content(CharSequence content) throws IOException {
+    private void prepareForData() throws IOException {
         if (elementNames.isEmpty()) {
             if (elementsWritten) {
                 throw new OperationNotAllowedException("Root element has already been closed.");
@@ -534,14 +536,29 @@ public final class XmlWriter implements IXmlWriter {
         if (inElement) {
             writer.write('>');
         }
-        writeBodyContent(content);
+    }
+
+    @Override
+    public IXmlWriter content(CharSequence content) throws IOException {
+        prepareForData();
+        writeEscaped(content, false);
         inElement = false;
         return this;
     }
 
-    private void writeBodyContent(final CharSequence content) throws IOException {
-        writeEscaped(content, false);
+    @Override
+    public IXmlWriter cdata(CharSequence content) throws IOException {
+        prepareForData();
+        StringBuilder sb = new StringBuilder(content);
+        int found;
+        while (-1 != (found = sb.indexOf("]]>"))) {
+            sb.replace(found, found + 3, "<!-- Rat removed CDATA closure here -->");
+        }
+        writer.write(String.format("<![CDATA[ %s ]]>", sb.toString()));
+        inElement = false;
+        return this;
     }
+
 
     private void writeEscaped(final CharSequence content, boolean isAttributeContent) throws IOException {
         final int length = content.length();

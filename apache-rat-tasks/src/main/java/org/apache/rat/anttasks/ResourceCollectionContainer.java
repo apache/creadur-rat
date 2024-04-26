@@ -48,11 +48,10 @@ class ResourceCollectionContainer implements IReportable {
 
     @Override
     public void run(RatReport report) throws RatException {
-        ResourceDocument document = new ResourceDocument();
+        ResourceDocument document = null;
         for (Resource r : rc) {
             if (!r.isDirectory()) {
-                document.setResource(r);
-                document.getMetaData().clear();
+                document = new ResourceDocument(r);
                 report.report(document);
             }
         }
@@ -60,11 +59,12 @@ class ResourceCollectionContainer implements IReportable {
 
     private static class ResourceDocument implements Document {
 
-        private Resource resource;
-        private final MetaData metaData = new MetaData();
+        private final Resource resource;
+        private final MetaData metaData;
 
-        private void setResource(Resource resource) {
+        private ResourceDocument(Resource resource) {
             this.resource = resource;
+            this.metaData = new MetaData();
         }
 
         @Override

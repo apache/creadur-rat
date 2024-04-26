@@ -18,27 +18,28 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.config.parameters.ComponentType;
+import org.apache.rat.config.parameters.ConfigComponent;
+
 /**
  * An IHeaderMatcher that reverses the result of an enclosed matcher.
  */
+@ConfigComponent(type = ComponentType.MATCHER, name = "not", desc = "Negates the enclosed matcher.")
 public class NotMatcher extends AbstractHeaderMatcher {
 
+    @ConfigComponent(desc = "enclosed Matcher", type = ComponentType.PARAMETER, parameterType = IHeaderMatcher.class, required=true)
     private final IHeaderMatcher enclosed;
 
     /**
-     * Create the matcher with the enclosed matcher.
-     * @param enclosed the enclosed matcher
-     */
-    public NotMatcher(IHeaderMatcher enclosed) {
-        this(null, enclosed);
-    }
-
-    /**
      * Create the matcher with the enclosed matcher and id.
-     * @param id the id for this matcher.
+     * 
+     * @param id the id for this matcher. May be null
      * @param enclosed the enclosed matcher
      */
     public NotMatcher(String id, IHeaderMatcher enclosed) {
@@ -47,33 +48,17 @@ public class NotMatcher extends AbstractHeaderMatcher {
         this.enclosed = enclosed;
     }
 
+    public IHeaderMatcher getEnclosed() {
+        return enclosed;
+    }
+
     @Override
-    public State matches(String line) {
-        enclosed.matches(line);
-        return currentState();
+    public boolean matches(IHeaders headers) {
+        return !enclosed.matches(headers);
     }
 
     @Override
     public void reset() {
         enclosed.reset();
-    }
-
-    @Override
-    public State finalizeState() {
-        enclosed.finalizeState();
-        return currentState();
-    }
-
-    @Override
-    public State currentState() {
-        switch (enclosed.currentState()) {
-        case t:
-            return State.f;
-        case f:
-            return State.t;
-        default:
-        case i:
-            return State.i;
-        }
     }
 }

@@ -23,8 +23,11 @@ package org.apache.rat.config;
  * Value of addLicenseHeaders configuration option.
  */
 public enum AddLicenseHeaders {
-    TRUE, //
-    FALSE, //
+    /** Add license headers to a *.new file*/
+    TRUE, 
+    /** Do not add headers */
+    FALSE, 
+    /** Add headers and overwrite the old file */
     FORCED;
 
     private static final char SEPARATOR = '|';

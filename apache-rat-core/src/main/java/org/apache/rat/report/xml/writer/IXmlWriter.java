@@ -50,6 +50,16 @@ public interface IXmlWriter extends AutoCloseable {
     IXmlWriter openElement(CharSequence elementName) throws IOException;
     
     /**
+     * Writes a comment
+     * 
+     * @param text the comment text
+     * @return this object 
+     * @throws OperationNotAllowedException 
+     * if called after the first element has been closed
+     */
+    IXmlWriter comment(CharSequence text) throws IOException;
+    
+    /**
      * Writes an attribute of an element.
      * Note that this is only allowed directly after {@link #openElement(CharSequence)}
      * or {@link #attribute}.
@@ -66,8 +76,8 @@ public interface IXmlWriter extends AutoCloseable {
     
     /**
      * Writes content.
-     * Calling this method will automatically 
-     * Note that this method does not use CDATA.
+     * Note that this method does not support CDATA.
+     * This method automatically escapes characters.
      * 
      * @param content the content to write
      * @return this object
@@ -76,6 +86,19 @@ public interface IXmlWriter extends AutoCloseable {
      * or after the first element has been closed
      */
     IXmlWriter content(CharSequence content) throws IOException;
+    
+    /**
+     * Writes CDATA content.
+     * This method DOES NOT automatically escapes characters.
+     * It will removed enclosed CDATA closing strings (e.g. {@code ]]>}
+     *
+     * @param content the content to write
+     * @return this object
+     * @throws OperationNotAllowedException 
+     * if called before any call to {@link #openElement} 
+     * or after the first element has been closed
+     */
+    IXmlWriter cdata(CharSequence content) throws IOException;
     
     /**
      * Closes the last element written.

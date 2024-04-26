@@ -18,31 +18,33 @@
  */
 package org.apache.rat.configuration.builders;
 
-import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 
 /**
- * Builds text based matcher based on the complexity of the text to match.
+ * Builds text matcher.  The specific implementation is based on the complexity of the text to match.
  */
-public class TextBuilder extends AbstractBuilder implements TextCaptureBuilder {
+public class TextBuilder extends AbstractBuilder {
 
     private String text;
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public TextBuilder setText(String text) {
-        Objects.requireNonNull(text, "text may not be null");
-        this.text = text;
+    /**
+     * Sets the text to match.
+     * @param text the text to match
+     * @return this builder.
+     */
+    public TextBuilder setSimpleText(String text) {
+        this.text = text.trim();
+        if (StringUtils.isBlank(text)) {
+            throw new ConfigurationException("'text' may not be null");
+        }
         return this;
     }
 
     @Override
-    public IHeaderMatcher build() {
+    public SimpleTextMatcher build() {
         if (StringUtils.isBlank(text)) {
             throw new ConfigurationException("text value is required");
         }

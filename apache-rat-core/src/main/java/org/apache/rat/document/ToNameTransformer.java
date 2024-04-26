@@ -20,7 +20,7 @@ package org.apache.rat.document;
 
 import org.apache.commons.collections4.Transformer;
 import org.apache.rat.api.Document;
-
+@Deprecated // since 0.17 - Not used in the codebase.
 public class ToNameTransformer implements Transformer<Object, Object> {
 
     private static final Transformer<Object, Object> TO_NAME_TRANSFORMER = new ToNameTransformer();

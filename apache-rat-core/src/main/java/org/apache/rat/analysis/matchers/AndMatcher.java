@@ -21,56 +21,47 @@ package org.apache.rat.analysis.matchers;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.config.parameters.ComponentType;
+import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * A matcher that performs a logical {@code AND} across all the contained matchers.
+ * A matcher that performs a logical {@code AND} across all the contained
+ * matchers.
  */
+@ConfigComponent(type = ComponentType.MATCHER, name = "all", desc = "Returns true if all enclosed matchers return true.")
 public class AndMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the AndMatcher with the specified id and enclosed collection.
-     * @param id the to use.  If null or an empty string a unique random id will be created.
+     * 
+     * @param id the to use. If null or an empty string a unique random id will be
+     * created.
      * @param enclosed the enclosed collection.
+     * @param resource the name of the resource the collection was read from if any.  may be null.
      */
-    public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
-        super(id, enclosed);
+    public AndMatcher(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        super(id, enclosed, resource);
     }
 
     /**
-     * Constructs the AndMatcher with the a unique random id and the enclosed collection.
+     * Constructs the AndMatcher with the a unique random id and the enclosed
+     * collection.
+     * 
      * @param enclosed the enclosed collection.
+     * @param resource the name of the resource the collection was read from if any.  may be null.
      */
-    public AndMatcher(Collection<? extends IHeaderMatcher> enclosed) {
-        this(null, enclosed);
+    public AndMatcher(Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        this(null, enclosed, resource);
     }
 
     @Override
-    public State currentState() {
-        State dflt = State.t;
-        for (IHeaderMatcher matcher : enclosed) {
-            switch (matcher.currentState()) {
-            case f:
-                return State.f;
-            case i:
-                dflt = State.i;
-                break;
-            default:
-                // do nothing
-                break;
+    public boolean matches(IHeaders headers) {
+        for (IHeaderMatcher matcher : getEnclosed()) {
+            if (!matcher.matches(headers)) {
+                return false;
             }
         }
-        return dflt;
-    }
-
-    @Override
-    public State matches(String line) {
-        enclosed.stream().filter(x -> x.currentState() == State.i).forEach(x -> x.matches(line));
-        return currentState();
-    }
-
-    @Override
-    public State finalizeState() {
-        enclosed.forEach(IHeaderMatcher::finalizeState);
-        return currentState();
+        return true;
     }
 }

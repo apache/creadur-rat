@@ -21,75 +21,43 @@ package org.apache.rat.analysis.matchers;
 import java.util.Collection;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.config.parameters.ComponentType;
+import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * A matcher that performs a logical {@code OR} across all the contained matchers.
  */
+@ConfigComponent(type = ComponentType.MATCHER, name = "any", desc = "Returns true if at least one of the enclosed matchers returns true.")
 public class OrMatcher extends AbstractMatcherContainer {
-
-    private State lastState;
 
     /**
      * Constructs the matcher from the enclosed matchers.
+     * 
      * @param enclosed the enclosed matchers.
      */
-    public OrMatcher(Collection<? extends IHeaderMatcher> enclosed) {
-        this(null, enclosed);
+    public OrMatcher(Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        this(null, enclosed, resource);
     }
 
     /**
      * Constructs the matcher with the specified id from the enclosed matchers.
+     * 
      * @param id the id to use.
      * @param enclosed the enclosed matchers.
      */
-    public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed) {
-        super(id, enclosed);
-        lastState = State.i;
+    public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
+        super(id, enclosed, resource);
     }
 
     @Override
-    public State matches(String line) {
-        if (lastState == State.t) {
-            return State.t;
-        }
-        for (IHeaderMatcher matcher : enclosed) {
-            switch (matcher.matches(line)) {
-            case t:
-                lastState = State.t;
-                return lastState;
-            case f:
-            case i:
-                lastState = State.i;
+    public boolean matches(IHeaders headers) {
+        for (IHeaderMatcher matcher : getEnclosed()) {
+            if (matcher.matches(headers)) {
+                return true;
             }
-        }
-        return lastState;
-    }
 
-    @Override
-    public State currentState() {
-        if (lastState == State.t) {
-            return lastState;
         }
-        for (IHeaderMatcher matcher : enclosed) {
-            switch (matcher.currentState()) {
-            case t:
-                lastState = State.t;
-                return lastState;
-            case i:
-                lastState = State.i;
-                return lastState;
-            case f:
-                // do nothing;
-                break;
-            }
-        }
-        lastState = State.f;
-        return lastState;
-    }
-
-    @Override
-    public void reset() {
-        super.reset();
-        lastState = State.i;
+        return false;
     }
 }

@@ -63,6 +63,16 @@ Apache Rat
  {{{./issue-management.html}patch}} or
  {{{./mailing-lists.html}talk to us}}
  whenever Rat falls short.
+ 
+** How do I extend Rat
+ 
+ There are several standard ways to extend Rat.
+ 
+   * Add a {{{./license_def.html}license definition}} via an XML file.
+   
+   * Add a new {{{./matcher_def.html}Matcher definition}}. Requires Java expertise.
+   
+   * Add a new definition format.  Requires Java expertice as well as expertise with the format.
 
 ** Who Develops Rat?
 
@@ -101,6 +111,8 @@ java -jar apache-rat-${project.version}.jar --help
 ** Apache Maven
 
  Use the plugin for {{{https://maven.apache.org}Apache Maven ${mavenVersion}}} or later.
+
+ <<ATTENTION!>> Maven4 is based on Java 17 and thus cannot be used with RAT, that relies on Java 8.
 
 +------------------------------------------+
   <plugin>

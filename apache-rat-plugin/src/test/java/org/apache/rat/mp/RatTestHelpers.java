@@ -39,6 +39,7 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
+import org.apache.rat.api.Document.Type;
 import org.apache.rat.testhelpers.TextUtils;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -49,6 +50,10 @@ import com.google.common.base.Charsets;
  * Test helpers used when verifying mojo interaction in RAT integration tests.
  */
 public final class RatTestHelpers {
+
+    public static final String APACHE_LICENSE = licenseOut("AL", "Apache License Version 2.0");
+    public static final String UNKNOWN_LICENSE = licenseOut("?????", "Unknown license (Unapproved)");
+    
 
     /**
      * @param pDir Removes the given directory recursively.
@@ -208,4 +213,37 @@ public final class RatTestHelpers {
             TextUtils.assertPatternInOutput(pattern, document);
         }
     }
+    
+    /**
+     * Defines the expected document string.
+     * @param approved the approved flag.
+     * @param type the document type
+     * @param name the document name.
+     * @return the string to match the document.
+     */
+    public static String documentOut(boolean approved, Type type, String name) {
+        return String.format("^\\Q%s%s %s\\E$", approved ? " " : "!", type.name().substring(0, 1), name);
+    }
+
+    /**
+     * Defines the expected license string.
+     * @param family the license family
+     * @param name the license name
+     * @return the string to match the license.
+     */
+    public static String licenseOut(String family, String name) {
+        return licenseOut(family, family, name);
+    }
+
+    /**
+     * Defines the expected license string.
+     * @param family the license family
+     * @param id the ID for the license.
+     * @param name the license name
+     * @return the string to match the license.
+     */
+    public static String licenseOut(String family, String id, String name) {
+        return String.format("\\s+\\Q%s\\E\\s+\\Q%s\\E\\s+\\Q%s\\E$", family, id, name);
+    }
+
 }

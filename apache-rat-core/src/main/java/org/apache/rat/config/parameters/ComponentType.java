@@ -16,11 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.configuration.builders;
+package org.apache.rat.config.parameters;
 
-/**
- * A marker interface for builders that accept text plain text to match.
+/** 
+ * Types of components 
  */
-public interface TextCaptureBuilder {
-    <T extends TextCaptureBuilder> T setText(String text);
+public enum ComponentType {
+    /** A License, the top level component. May not be used as a child of any component type. */
+    LICENSE,
+    /** A Matcher */
+    MATCHER,
+    /** A Parameter for example the "id" parameter found in every component */
+    PARAMETER,
+    /** A parameter that is supplied by the environment.  Currently systems using builders have to handle seting this.  For example the list of matchers for the "MatcherRefBuilder" */
+    BULID_PARAMETER 
 }

@@ -15,17 +15,17 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis;
 
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.RatDocumentAnalysisException;
 
 public class RatReportAnalysisResultException extends RatDocumentAnalysisException {
-    
+
     private static final long serialVersionUID = 4018716722707721989L;
     private static final String MESSAGE = "Could not report results of analysis";
-    
+
     public RatReportAnalysisResultException() {
         super(MESSAGE);
     }

@@ -26,17 +26,31 @@ import org.apache.rat.analysis.matchers.NotMatcher;
  * A builder for the NotMatcher.
  */
 public class NotBuilder extends ChildContainerBuilder {
-    
+
     @Override
-    public IHeaderMatcher build() {
-        if (children.size() != 1) {
+    public NotMatcher build() {
+        if (children.isEmpty()) {
             throw new ConfigurationException("'not' type matcher requires one and only one enclosed matcher");
         }
         return new NotMatcher(getId(), children.get(0).build());
     }
-    
+
     @Override
     public String toString() {
-        return String.format( "NotBuilder: %s", !children.isEmpty() ? children.get(0) : null );
+        return String.format("NotBuilder: %s", !children.isEmpty() ? children.get(0) : null);
+    }
+    
+    /**
+     * Sets the enclosed matcher.  Prior to this call the builder is invalid and the {@code build()} will fail.
+     * @param enclosed The matcher to negate.
+     * @return this.
+     */
+    public NotBuilder setEnclosed(IHeaderMatcher.Builder enclosed) {
+        if (children.isEmpty()) {
+            children.add(enclosed);
+        } else {
+            children.set(0, enclosed);
+        }
+       return this;
     }
 }

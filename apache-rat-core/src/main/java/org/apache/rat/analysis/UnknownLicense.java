@@ -25,29 +25,30 @@ import org.apache.rat.license.ILicenseFamilyBuilder;
 /**
  * An ILicense implementation that represents an unknown license.
  * <p>
- * The UnknownLicense is used during processing to report that a document license can not be determined.
+ * The UnknownLicense is used during processing to report that a document
+ * license can not be determined.
  * </p>
  */
 public class UnknownLicense implements ILicense {
-    
+
     /**
      * The single instance of this class.
      */
-    static final UnknownLicense INSTANCE = new UnknownLicense();
-    
-    private final ILicenseFamily family ;
-    
+    public static final UnknownLicense INSTANCE = new UnknownLicense();
+
+    private final ILicenseFamily family;
+
     /**
      * Do not allow other constructions.
      */
     private UnknownLicense() {
-        family = new ILicenseFamilyBuilder().setLicenseFamilyCategory("?????")
+        family = new ILicenseFamilyBuilder().setLicenseFamilyCategory(ILicenseFamily.UNKNOWN_CATEGORY)
                 .setLicenseFamilyName("Unknown license").build();
     }
-    
+
     @Override
     public String getId() {
-        return "?????";
+        return ILicenseFamily.UNKNOWN_CATEGORY;
     }
 
     @Override
@@ -56,18 +57,8 @@ public class UnknownLicense implements ILicense {
     }
 
     @Override
-    public State matches(String line) {
-        return State.f;
-    }
-
-    @Override
-    public State finalizeState() {
-        return State.f;
-    }
-
-    @Override
-    public State currentState() {
-        return State.f;
+    public boolean matches(IHeaders headers) {
+        return false;
     }
 
     @Override
@@ -81,7 +72,7 @@ public class UnknownLicense implements ILicense {
     }
 
     @Override
-    public String getNotes() {
+    public String getNote() {
         return null;
     }
 
@@ -91,7 +82,7 @@ public class UnknownLicense implements ILicense {
     }
 
     @Override
-    public String derivedFrom() {
+    public IHeaderMatcher getMatcher() {
         return null;
     }
 }

@@ -72,6 +72,9 @@ public class ReportConfiguration {
     private FilenameFilter inputFileFilter;
     private IOFileFilter directoryFilter;
     private Log log;
+    private LicenseFilter listFamilies;
+    private LicenseFilter listLicenses;
+    private boolean dryRun;
 
    
     /**
@@ -81,13 +84,16 @@ public class ReportConfiguration {
     public ReportConfiguration(Log log) {
         this.log = log;
         families = new ReportingSet<>(LicenseFamilySetFactory.emptyLicenseFamilySet()).setLog(log)
-                .setMsgFormat( s -> String.format("Duplicate LicenseFamily category: %s",  s.getFamilyCategory()));
+                .setMsgFormat( s -> String.format("Duplicate LicenseFamily category: %s", s.getFamilyCategory()));
         licenses = new ReportingSet<>(LicenseSetFactory.emptyLicenseSet()).setLog(log)
                 .setMsgFormat( s -> String.format( "Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
         approvedLicenseCategories = new TreeSet<>();
         removedLicenseCategories = new TreeSet<>();
         directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
         styleReport = true;
+        listFamilies = LicenseFilter.NONE;
+        listLicenses = LicenseFilter.NONE;
+        dryRun = false;
     }
     
     /**
@@ -128,6 +134,46 @@ public class ReportConfiguration {
      */
     public void licenseDuplicateOption(ReportingSet.Options state) {
         licenses.setDuplicateOption(state);
+    }
+    
+    /**
+     * Set the level of license families that should be output in the XML document.
+     * @param filter the license families to list.
+     */
+    public void listFamilies(LicenseFilter filter) {
+        listFamilies = filter;
+    }
+    
+    public LicenseFilter listFamilies() {
+        return listFamilies;
+    }
+    
+    /**
+     * Set the level of licenses that should be output in the XML document.
+     * @param filter the licenses to list.
+     */
+    public void listLicenses(LicenseFilter filter) {
+        listLicenses = filter;
+    }
+    
+    public LicenseFilter listLicenses() {
+        return listLicenses;
+    }
+    
+    /**
+     * Sets the dry run flag.
+     * @param state the state for the dry run flag.
+     */
+    public void setDryRun(boolean state) {
+        dryRun = state;
+    }
+    
+    /**
+     * Returns the state of the dry run flag.
+     * @return the stae of the dry run flag.
+     */
+    public boolean isDryRun() {
+        return dryRun;
     }
     
     /**
@@ -201,8 +247,8 @@ public class ReportConfiguration {
      * @param defaults The defaults to set.
      */
     public void setFrom(Defaults defaults) {
-        addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.all));
-        addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.approved));
+        addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.ALL));
+        addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.APPROVED));
         if (isStyleReport() && getStyleSheet() == null) {
             setStyleSheet(Defaults.getPlainStyleSheet());
         }
@@ -327,10 +373,11 @@ public class ReportConfiguration {
      * of approved licenses.
      * 
      * @param builder The license builder to build and add to the list of licenses.
+     * @return The ILicense implementation that was added.
      */
     public ILicense addLicense(ILicense.Builder builder) {
         if (builder != null) {
-            ILicense license = builder.build(families);
+            ILicense license = builder.setLicenseFamilies(families).build();
             this.licenses.add(license);
             return license;
         }
@@ -534,11 +581,11 @@ public class ReportConfiguration {
      */
     public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
         switch (filter) {
-        case all:
+        case ALL:
             return Collections.unmodifiableSortedSet(licenses);
-        case approved:
+        case APPROVED:
             return new LicenseSetFactory(licenses, getApprovedLicenseCategories()).getLicenses(filter);
-        case none:
+        case NONE:
         default:
             return LicenseSetFactory.emptyLicenseSet();
         }

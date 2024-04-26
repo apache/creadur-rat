@@ -56,18 +56,15 @@
 			</any>
 		</license>
 
-		<license family="CDDL1" id="ILLUMOS" name="ILLUMOS CDDL1 Derived license"
-			derived_from='CDDL1'>
+		<license family="CDDL1" id="ILLUMOS" name="ILLUMOS CDDL1 Derived license">
 			<note>Modified CDDL1 license</note>
-			<any>
-				<text>The contents of this file are subject to the terms of
+			<text>The contents of this file are subject to the terms of
 					the Common Development and Distribution License (the
 					"License") You may not use this file except in compliance
 					with the License. </text>
-			</any>
 		</license>
 
-		<license family="BSD-3" id="DOJO" name="DOJO License" derived_from="BSD-3">
+		<license family="BSD-3" id="DOJO" name="DOJO License">
 			<text>http://dojotoolkit.org/community/licensing.shtml</text>
 		</license>
 
@@ -158,17 +155,19 @@
 					may
 					be prepared copied published and distributed</text>
 				<copyright
-					owner="OASIS Open" start="[0-9]{4}" />
+					owner="OASIS Open"/>
 			</all>
 		</license>
 
-		<license family="BSD-3" id="TMF" name="The Telemanagement Forum License"
-			derived_from="BSD-3">
+		<license family="BSD-3" id="TMF" name="The Telemanagement Forum License">
 			<all>
 				<text>TMF854 Version 1.0</text>
 				<copyright
 					owner="TeleManagement Forum" />
+				<any>	
 				<matcherRef refId="BSD-3-txt" />
+				<spdx name='BSD-3-Clause' />
+				</any>
 			</all>
 		</license>
 
@@ -181,8 +180,7 @@
 			<any>
 				<text>
 					http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</text>
-				<spdx
-					name='W3C' />
+				<spdx name='W3C' />
 			</any>
 		</license>
 

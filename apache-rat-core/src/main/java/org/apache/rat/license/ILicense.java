@@ -19,7 +19,6 @@
 package org.apache.rat.license;
 
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -29,35 +28,56 @@ import org.apache.rat.analysis.IHeaderMatcher;
  */
 public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
+     * Gets the license family.
+     * 
      * @return the ILicenseFamily implementation for this license.
      */
     ILicenseFamily getLicenseFamily();
 
     /**
-     * @return the notes associated with this license.  May be null or empty.
+     * Gets the note associated with the license.
+     * 
+     * @return the note associated with this license. May be null or empty.
      */
-    String getNotes();
+    String getNote();
 
     /**
-     * @return the id of a license that this license is derived from. May be null.
-     */
-    String derivedFrom();
-    
-    /**
-     * Returns the name of this license.  If no name was specified then the name of the family is returned.
+     * Returns the name of this license. If no name was specified then the name of
+     * the family is returned.
+     * 
      * @return the name of this license.
      */
     String getName();
 
     /**
-     * @return An ILicense.Builder instance.
+     * Gets the name of the family that this license if part of.
+     * 
+     * @return the name of the license family that this license is part of.
      */
-    static ILicense.Builder builder() {
-        return new Builder();
+    default String getFamilyName() {
+        return getLicenseFamily().getFamilyName();
     }
 
     /**
-     * @return The comparator for used to sort Licenses. 
+     * Get the header matcher for this license.
+     * 
+     * @return the header matcher for this license.
+     */
+    IHeaderMatcher getMatcher();
+
+    /**
+     * Gets a builder for licenses.
+     * 
+     * @return An ILicense.Builder instance.
+     */
+    static ILicense.Builder builder() {
+        return new SimpleLicense.Builder();
+    }
+
+    /**
+     * Gets the comparator for comparing licenses.
+     * 
+     * @return The comparator for used for sorting Licenses.
      */
     static Comparator<ILicense> getComparator() {
         return Comparator.comparing(IHeaderMatcher::getId);
@@ -66,106 +86,76 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
      * A builder for ILicense instances.
      */
-    class Builder  {
-
-        private IHeaderMatcher.Builder matcher;
-
-        private String notes;
-
-        private String derivedFrom;
-        
-        private String name;
-        
-        private String id;
-
-        private final ILicenseFamily.Builder licenseFamily = ILicenseFamily.builder();
+    interface Builder extends IHeaderMatcher.Builder {
 
         /**
          * Sets the matcher from a builder.
+         * 
          * @param matcher the builder for the matcher for the license.
          * @return this builder for chaining.
          */
-        public Builder setMatcher(IHeaderMatcher.Builder matcher) {
-            this.matcher = matcher;
-            return this;
-        }
+        Builder setMatcher(IHeaderMatcher.Builder matcher);
 
         /**
          * Sets the matcher.
+         * 
          * @param matcher the matcher for the license.
          * @return this builder for chaining.
          */
-        public Builder setMatcher(IHeaderMatcher matcher) {
-            this.matcher = ()->matcher;
-            return this;
-        }
+        Builder setMatcher(IHeaderMatcher matcher);
 
         /**
-         * Sets the notes for the license.
-         * If called multiple times the notes are concatenated to create a single note.
+         * Sets the notes for the license. If called multiple times the notes are
+         * concatenated to create a single note.
+         * 
          * @param notes the notes for the license.
          * @return this builder for chaining.
          */
-        public Builder setNotes(String notes) {
-            this.notes = notes;
-            return this;
-        }
+        Builder setNote(String notes);
 
         /**
-         * Sets the ID of the license.
-         * If the ID is not set then the ID of the license family is used.
+         * Sets the ID of the license. If the ID is not set then the ID of the license
+         * family is used.
+         * 
          * @param id the ID for the license
          * @return this builder for chaining.
          */
-        public Builder setId(String id) {
-            this.id = id;
-            return this;
-        }
+        Builder setId(String id);
 
         /**
-         * Sets the derived from fields in the license.
-         * @param derivedFrom the family category of the license this license was derived from.
-         * @return this builder for chaining.
-         */
-        public Builder setDerivedFrom(String derivedFrom) {
-            this.derivedFrom = derivedFrom;
-            return this;
-        }
-
-        /**
-         * Set the family category for this license.
-         * The category must be unique across all licenses and must be 5 characters. If more than 
-         * 5 characters are provided then only the first 5 are taken.  If fewer than 5 characters are provided
-         * the category is padded with spaces.
+         * Set the family category for this license. The category must be unique across
+         * all licenses and must be 5 characters. If more than 5 characters are provided
+         * then only the first 5 are taken. If fewer than 5 characters are provided the
+         * category is padded with spaces.
+         * 
          * @param licenseFamilyCategory the family category for the license.
          * @return this builder for chaining.
          */
-        public Builder setLicenseFamilyCategory(String licenseFamilyCategory) {
-            this.licenseFamily.setLicenseFamilyCategory(licenseFamilyCategory);
-            this.licenseFamily.setLicenseFamilyName("License Family for searching");
-            return this;
-        }
+        Builder setFamily(String licenseFamilyCategory);
 
         /**
-         * Sets the name of the license.
-         * If the name is not set then the name of the license family is used.
+         * Sets the name of the license. If the name is not set then the name of the
+         * license family is used.
+         * 
          * @param name the name for the license
          * @return this builder for chaining.
          */
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
+        public Builder setName(String name);
 
         /**
-         * @param licenseFamilies the set of defined license families.
+         * Sets the set of license families to use duirng build.
+         * 
+         * @param licenseFamilies the license families to use
+         * @return this builder.
+         */
+        public Builder setLicenseFamilies(SortedSet<ILicenseFamily> licenseFamilies);
+
+        /**
+         * Builds the license.
+         *
          * @return A new License implementation.
          */
-        public ILicense build(SortedSet<ILicenseFamily> licenseFamilies) {
-        	Objects.requireNonNull(matcher, "Matcher must not be null");
-            ILicenseFamily family = LicenseFamilySetFactory.search(licenseFamily.build(), licenseFamilies);
-            Objects.requireNonNull(family, "License family "+licenseFamily.getCategory()+" not found.");
-            return new SimpleLicense(family, matcher.build(), derivedFrom, notes, name, id); 
-        }
+        @Override
+        public ILicense build();
     }
 }

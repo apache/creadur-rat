@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
  * <p><strong>Note:</strong> use only from a single thread.</p>
  *
  */
+@Deprecated // since 0.17
 public class HeaderMatcher {
 
     private final FilteringSequenceFactory factory;

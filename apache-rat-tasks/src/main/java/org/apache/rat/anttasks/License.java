@@ -34,24 +34,20 @@ public class License {
     }
 
     public ILicense build(SortedSet<ILicenseFamily> context) {
-        return builder.build(context);
+        return builder.setLicenseFamilies(context).build();
     }
 
     public void setNotes(String notes) {
-        builder.setNotes(notes);
+        builder.setNote(notes);
     }
 
     public void addNotes(String notes) {
-        builder.setNotes(notes);
+        builder.setNote(notes);
     }
     
 
-    public void setDerivedFrom(String derivedFrom) {
-        builder.setDerivedFrom(derivedFrom);
-    }
-
     public void setFamily(String licenseFamilyCategory) {
-        builder.setLicenseFamilyCategory(licenseFamilyCategory);
+        builder.setFamily(licenseFamilyCategory);
     }
     
     public void setId(String id) {

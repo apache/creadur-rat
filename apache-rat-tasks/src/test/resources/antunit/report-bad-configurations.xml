@@ -37,8 +37,7 @@
   </taskdef>
 
   <target name="allTests">
-    <au:antunit xmlns:au="antlib:org.apache.ant.antunit"
-                failonerror="true">
+    <au:antunit xmlns:au="antlib:org.apache.ant.antunit" failonerror="true">
       <file file="${ant.file}"/>
       <au:plainlistener />
     </au:antunit>
@@ -59,7 +58,7 @@
   </target>
 
   <target name="testNoStylesheet">
-    <rat:report format="styled">
+    <rat:report styleReport="styled">
         <file file="${ant.file}"/>
       </rat:report>
   </target>
@@ -76,7 +75,7 @@
 
   <target name="testLicenseRequiresFamilyName">
     <au:expectfailure
-        expectedMessage="License family YASL1 not found">
+        expectedMessage="License family 'YASL1' not found">
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license

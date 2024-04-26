@@ -24,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.BufferedReader;
 import java.io.File;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.rat.analysis.IHeaderMatcher.State;
+import org.apache.rat.analysis.HeaderCheckWorker;
+import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.test.utils.Resources;
 import org.junit.jupiter.api.Test;
@@ -48,18 +48,13 @@ class DirectoryScanner {
             fail("No files found under " + directory);
         }
         for (File f : resourceFiles) {
-            BufferedReader br = null;
-            try {
-                boolean result = false;
-                br = Resources.getBufferedReader(f);
-                String line;
-                while (!result && (line = br.readLine()) != null) {
-                    result = license.matches(line) == State.t;
-                }
+            try (BufferedReader br = Resources.getBufferedReader(f)) {
+                IHeaders headers = HeaderCheckWorker.readHeader(br,
+                        HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES);
+                boolean result = license.matches(headers);
                 assertEquals(expected, result, f.toString());
             } finally {
                 license.reset();
-                IOUtils.closeQuietly(br);
             }
         }
     }

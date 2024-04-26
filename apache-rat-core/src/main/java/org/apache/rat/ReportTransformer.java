@@ -52,6 +52,7 @@ class ReportTransformer implements Runnable {
         this.in = in;
     }
     
+    @Override
     public void run() {
         try {
             transform();

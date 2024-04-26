@@ -39,28 +39,29 @@ public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
      * @param id the id to use.
      * @return this builder for chaining.
      */
-    public final AbstractBuilder setId(String id) {
+    public AbstractBuilder setId(String id) {
         this.id = id;
         return this;
     }
 
     /**
+     * Returns true if this builder has an ID specified.
      * @return {@code true} if the id is not null and not blank.
      */
     public final boolean hasId() {
         return !StringUtils.isBlank(id);
     }
-    
+
     /**
+     * Gets the ID as specified in the builder.
      * @return the id as specified in the builder.
      */
-    protected String getId() {
+    public final String getId() {
         return id;
     }
-    
+
     @Override
     public String toString() {
-        return String.format( "%s with id %s", this.getClass(), id);
+        return String.format("%s with id %s", this.getClass(), id);
     }
-
 }

@@ -18,6 +18,9 @@
  */
 package org.apache.rat.analysis;
 
+import org.apache.rat.ImplementationException;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
@@ -28,80 +31,45 @@ import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
 
 /**
- * Performs explicit checks against a line from the header of a file.
- * For implementations that need to check multiple lines the implementation must cache the earlier lines.
+ * Performs explicit checks against a line from the header of a file. For
+ * implementations that need to check multiple lines the implementation must
+ * cache the earlier lines.
  */
 public interface IHeaderMatcher {
     /**
-     * The state of the matcher.
-     * <ul>
-     * <li>{@code t} - The matcher has located a match.</li>
-     * <li>{@code f} - The matcher has determined that it will not match the
-     * document.</li>
-     * <li>{@code i} - The matcher can not yet determine if a matche is made or
-     * not.</li>
-     * </ul>
-     */
-    enum State {
-        t("true"), f("false"), i("indeterminent");
-
-        private final String desc;
-
-        State(String desc) {
-            this.desc = desc;
-        }
-
-        public boolean asBoolean() {
-            switch (this) {
-            case t : return true;
-            case f : return false;
-            default:
-            case i : throw new IllegalStateException( "'asBoolean' should never be called on an indeterminate state");
-            }
-        }
-        
-        @Override
-        public String toString() {
-            return super.toString()+" "+desc;
-        }
-    }
-
-    /**
      * Get the identifier for this matcher.
-     * <p>All matchers must have unique identifiers</p>
+     * <p>
+     * All matchers must have unique identifiers
+     * </p>
      * 
      * @return the Identifier for this matcher.
      */
     String getId();
 
     /**
-     * Resets this state {@code State.i}. 
-     * If text is being cached this method should clear that cache.
+     * Resets this state of this matcher to its initial state in preparation for
+     * use with another document scan.  In most cases this method does not need to 
+     * do anything.
      */
-    void reset();
+    default void reset() {
+        // does nothing.
+    }
 
     /**
-     * Attempts to match {@code line} and returns the State after
-     * the match is attempted.
+     * Attempts to match text in the IHeaders instance.
      * 
-     * @param line next line of text, not null
-     * @return the new state after the matching was attempted.
+     * @param headers the representations of the headers to check
+     * @return {@code true} if the matcher matches the text, {@code false} otherwise.
      */
-    State matches(String line);
-
+    boolean matches(IHeaders headers);
+    
     /**
-     * Gets the final state for this matcher. This is called after the EOF on the
-     * input. At this point there should be no matchers in an {@code State.i} state.
+     * Generates the component Description.
+     * @return the component description.
      */
-    State finalizeState();
-
-    /**
-     * Gets the the current state of the matcher. All matchers should be
-     * in {@code State.i} at the start.
-     * 
-     * @return the current state of the matcher.
-     */
-    State currentState();
+    default Description getDescription() {
+        return  DescriptionBuilder.build(this);
+    }
 
     /**
      * An IHeaderMatcher builder.
@@ -110,9 +78,38 @@ public interface IHeaderMatcher {
     interface Builder {
         /**
          * Build the IHeaderMatcher.
+         * 
+         * Implementations of this interface should return a specific child class of IHeaderMatcher.
+         * 
          * @return a new IHeaderMatcher.
          */
         IHeaderMatcher build();
+
+        /**
+         * Gets the class that is build by this builder.
+         * @return The class that is build by this builder.
+         */
+        default Class<?> builtClass() throws SecurityException {
+            try {
+                return this.getClass().getMethod("build").getReturnType();
+            } catch (NoSuchMethodException | SecurityException e) {
+                throw new IllegalStateException("the 'build' method of the Builder interface must always be public");
+            }
+        }
+
+        /**
+         * Gets the Description for this builder.
+         * @return The description of the builder 
+         */
+        default Description getDescription() {
+            Class<?> clazz = builtClass();
+            if (clazz == IHeaderMatcher.class) {
+                throw new ImplementationException(String.format(
+                        "Class %s must implement buildClass() method to return a child class of IHeaderMatcher", 
+                        this.getClass()));
+            }
+            return DescriptionBuilder.buildMap(clazz);
+        }
 
         /**
          * @return an instance of the standard TextBuilder.
