@@ -72,6 +72,22 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-54" type="fix" dev="claudenw">
+        MIME Detection Using Tika
+      </action>
+      <action issue="RAT-20" type="fix" dev="claudenw">
+        Changed to detecting binary by content not name.
+      </action>
+      <action issue="RAT-147" type="fix" dev="claudenw">
+        Change to detect non UTF-8 text as text not binary.
+      </action>
+      <action issue="RAT-150" type="fix" dev="claudenw">
+        Switch to Tika to detect file types.
+      </action>
+      <action issue="RAT-211" type="fix" dev="claudenw">
+        Generated rat-output.xml is now well-formed, even if BinaryGuesser fails or there is XML content
+        in the sample element.
+      </action>
       <action issue="RAT-368" type="update" dev="claudenw">
         Removed ReportFailedRuntimeException, ReportTransformer, RatReportAnalysisResultException, MimeTyper, ToNameTransformer,
         UnsuitableDocumentException, ReportTransformerTest, and ToNameTransformerTest as they are no longer used in the codebase.
