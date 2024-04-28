@@ -22,7 +22,6 @@ package org.apache.rat.walker;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -48,20 +47,8 @@ public class DirectoryWalker extends Walker implements IReportable {
      *               or null when no filtering should be performed
      * @param directoriesToIgnore filters directories (optional), or null when no filtering should be performed.
      */
-    public DirectoryWalker(File file, final FilenameFilter filesToIgnore, IOFileFilter directoriesToIgnore) {
-        super(file.getPath(), file, filesToIgnore);
-        this.directoriesToIgnore = directoriesToIgnore == null ? FalseFileFilter.FALSE : directoriesToIgnore;
-    }
-
-    /**
-     * Constructs a walker.
-     *
-     * @param file the directory to walk (not null).
-     * @param ignoreNameRegex ignore directories/files with name matching the regex.
-     * @param directoriesToIgnore filters directories (optional), or null when no filtering should be performed.
-     */
-    public DirectoryWalker(File file, final Pattern ignoreNameRegex, IOFileFilter directoriesToIgnore) {
-        super(file.getPath(), file, regexFilter(ignoreNameRegex));
+    public DirectoryWalker(final File file, final FilenameFilter filesToIgnore, final IOFileFilter directoriesToIgnore) {
+        super(file, filesToIgnore);
         this.directoriesToIgnore = directoriesToIgnore == null ? FalseFileFilter.FALSE : directoriesToIgnore;
     }
 
@@ -72,7 +59,7 @@ public class DirectoryWalker extends Walker implements IReportable {
      * @param file   the directory to process
      * @throws RatException on error.
      */
-    private void processDirectory(RatReport report, final File file) throws RatException {
+    private void processDirectory(final RatReport report, final File file) throws RatException {
         if (!directoriesToIgnore.accept(file)) {
             process(report, file);
         }
@@ -86,7 +73,7 @@ public class DirectoryWalker extends Walker implements IReportable {
      * @throws RatException on error
      */
     public void run(final RatReport report) throws RatException {
-        process(report, file);
+        process(report, getBaseFile());
     }
 
     /**
@@ -96,7 +83,7 @@ public class DirectoryWalker extends Walker implements IReportable {
      * @param file   the run the report against
      * @throws RatException on error
      */
-    private void process(final RatReport report, final File file) throws RatException {
+    protected void process(final RatReport report, final File file) throws RatException {
         final File[] files = file.listFiles();
         if (files != null) {
             Arrays.sort(files, COMPARATOR);
@@ -104,6 +91,10 @@ public class DirectoryWalker extends Walker implements IReportable {
             processNonDirectories(report, files);
             processDirectories(report, files);
         }
+    }
+
+    private boolean isNotIgnoredDirectory(final File file) {
+        return !directoriesToIgnore.accept(file.getParentFile(), file.getName());
     }
 
     /**
@@ -115,7 +106,7 @@ public class DirectoryWalker extends Walker implements IReportable {
      */
     private void processDirectories(final RatReport report, final File[] files) throws RatException {
         for (final File file : files) {
-            if (file.isDirectory() && isNotIgnored(file)) {
+            if (file.isDirectory() && isNotIgnoredDirectory(file)) {
                 processDirectory(report, file);
             }
         }

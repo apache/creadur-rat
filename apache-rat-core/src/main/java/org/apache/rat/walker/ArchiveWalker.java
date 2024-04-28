@@ -45,20 +45,19 @@ public class ArchiveWalker extends Walker implements IReportable {
     /**
      * Constructs a walker.
      * @param file not null
-     * @param filter filters input files (optional), 
-     * or null when no filtering should be performed
-     * @throws FileNotFoundException in case of I/O errors. 
+     * @param filter filters input files (optional) null when no filtering should be performed
+     * @throws FileNotFoundException in case of I/O errors.
      */
-    public ArchiveWalker(File file, final FilenameFilter filter) throws FileNotFoundException {
+    public ArchiveWalker(final File file, final FilenameFilter filter) throws FileNotFoundException {
         super(file, filter);
     }
-    
+
     /**
      * Run a report over all files and directories in this GZIPWalker,
      * ignoring any files/directories set to be ignored.
-     * 
+     *
      * @param report the defined RatReport to run on this GZIP walker.
-     * 
+     *
      */
     public void run(final RatReport report) throws RatException {
 
@@ -68,12 +67,12 @@ public class ArchiveWalker extends Walker implements IReportable {
             /* I am really sad that classes aren't first-class objects in
                Java :'( */
             try {
-                input = new TarArchiveInputStream(new GzipCompressorInputStream(Files.newInputStream(file.toPath())));
+                input = new TarArchiveInputStream(new GzipCompressorInputStream(Files.newInputStream(getBaseFile().toPath())));
             } catch (IOException e) {
                 try {
-                    input = new TarArchiveInputStream(new BZip2CompressorInputStream(Files.newInputStream(file.toPath())));
+                    input = new TarArchiveInputStream(new BZip2CompressorInputStream(Files.newInputStream(getBaseFile().toPath())));
                 } catch (IOException e2) {
-                    input = new ZipArchiveInputStream(Files.newInputStream(file.toPath()));
+                    input = new ZipArchiveInputStream(Files.newInputStream(getBaseFile().toPath()));
                 }
             }
 
@@ -105,15 +104,13 @@ public class ArchiveWalker extends Walker implements IReportable {
 
     /**
      * Report on the given file.
-     * 
+     *
      * @param report the report to process the file with
      * @param file the file to be reported on
      * @throws RatException
      */
-    private void report(final RatReport report, byte[] contents, File file) throws RatException {
-
+    private void report(final RatReport report, final byte[] contents, final File file) throws RatException {
         Document document = new ArchiveEntryDocument(file, contents);
         report.report(document);
-
     }
 }
