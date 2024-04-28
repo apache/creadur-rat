@@ -44,7 +44,10 @@ import org.apache.rat.utils.Log;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
- * A class that holds the list of licenses and approved licenses from one or more configuration files.
+ * A class that provides the standard system defaults for the ReportConfiguration.
+ *
+ * Properties in this class may be overridden or added to by configuration options in the various UIs.
+ * See the specific UI for details.
  */
 public class Defaults {
 
@@ -63,10 +66,10 @@ public class Defaults {
 
     private final LicenseSetFactory setFactory;
 
-    private final FilenameFilter filesToIgnore = WildcardFileFilter.builder().setWildcards("*.json").setIoCase(IOCase.INSENSITIVE).get();
+    private static final FilenameFilter FILES_TO_IGNORE = WildcardFileFilter.builder().setWildcards("*.json").setIoCase(IOCase.INSENSITIVE).get();
 
-    private final IOFileFilter directoriesToIgnore = NameBasedHiddenFileFilter.HIDDEN;
-    
+    private static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
+
     /**
      * Initialize the system configuration reader..
      */
@@ -165,12 +168,12 @@ public class Defaults {
         return setFactory.getLicenseFamilyIds(filter);
     }
 
-    public FilenameFilter getFilesToIgnore() {
-        return filesToIgnore;
+    public static FilenameFilter getFilesToIgnore() {
+        return FILES_TO_IGNORE;
     }
 
-    public IOFileFilter getDirectoriesToIgnore() {
-        return directoriesToIgnore;
+    public static IOFileFilter getDirectoriesToIgnore() {
+        return DIRECTORIES_TO_IGNORE;
     }
     
     /**

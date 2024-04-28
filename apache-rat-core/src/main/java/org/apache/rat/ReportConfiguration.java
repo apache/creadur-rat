@@ -245,8 +245,8 @@ public class ReportConfiguration {
      * @param defaults The defaults to set.
      */
     public void setFrom(Defaults defaults) {
-        setFilesToIgnore(defaults.getFilesToIgnore());
-        setDirectoriesToIgnore(defaults.getDirectoriesToIgnore());
+        setFilesToIgnore(Defaults.getFilesToIgnore());
+        setDirectoriesToIgnore(Defaults.getDirectoriesToIgnore());
         addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.ALL));
         addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.APPROVED));
         if (isStyleReport() && getStyleSheet() == null) {
