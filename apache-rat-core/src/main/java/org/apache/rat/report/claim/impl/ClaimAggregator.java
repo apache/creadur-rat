@@ -19,8 +19,6 @@
 
 package org.apache.rat.report.claim.impl;
 
-import java.util.Map;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
@@ -55,19 +53,15 @@ public class ClaimAggregator extends AbstractClaimReporter {
     }
 
     @Override
-    protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
-        statistic.incLicenseFileNameCount(licenseFamilyName, 1);
-    }
-
-    @Override
-    protected void handleHeaderCategoryClaim(ILicense license) {
+    protected void handleLicenseClaim(ILicense license) {
         String category = license.getLicenseFamily().getFamilyCategory();
         if (category.equals(ILicenseFamily.GENTERATED_CATEGORY)) {
             statistic.incCounter(Counter.GENERATED, 1);
         } else if (category.equals(ILicenseFamily.UNKNOWN_CATEGORY)) {
             statistic.incCounter(Counter.UNKNOWN, 1);
         }
-        statistic.getLicenseFamilyCount(category);
+        statistic.incLicenseCategoryCount(category, 1);
+        statistic.incLicenseFamilyNameCount(license.getFamilyName(), 1);
     }
 
     @Override

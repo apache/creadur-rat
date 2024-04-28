@@ -20,9 +20,8 @@
 package org.apache.rat.report.claim;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.rat.api.Document;
 
@@ -42,87 +41,129 @@ public class ClaimStatistic {
         /** count of unknown files */
         UNKNOWN }
     
-    protected final Map<String, int[]> licenseFamilyNameMap = new HashMap<>();
-    protected final Map<String, int[]> licenseFamilyCodeMap = new HashMap<>();
-    protected final Map<Document.Type, int[]> documentCategoryMap = new HashMap<>();
-    protected final Map<ClaimStatistic.Counter, int[]> counterMap = new HashMap<>();
+    private final ConcurrentHashMap<String, IntCounter> licenseFamilyNameMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, IntCounter> licenseFamilyCategoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Document.Type, IntCounter> documentCategoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
-
+    /** converts null counter to 0.
+     *
+     * @param counter the Counter to retrieve the value from.
+     * @return 0 if counter is {@code null} or counter value otherwise.
+     */
+    private int getValue(IntCounter counter) {
+        return counter == null ? 0 : counter.value();
+    }
     /**
      * Returns the counts for the counter.
      * @param counter the counter to get the value for.
-     * @return Returns the number of files with approved licenses.
+     * @return Returns the number times the Counter type was seen.
      */
     public int getCounter(Counter counter) {
-        int[] count = counterMap.get(counter);
-        return count == null ? 0 : count[0];
-    }
-
-    public void incCounter(Counter key, int value) {
-        final int[] num = counterMap.get(key);
-
-        if (num == null) {
-            counterMap.put(key, new int[] { value });
-        } else {
-            num[0] += value;
-        }
+        return getValue(counterMap.get(counter));
     }
 
     /**
-     * Returns the counts for the counter.
-     * @param documentType the document type to get the counter for.
-     * @return Returns the number of files with approved licenses.
+     * Increments the counts for hte counter.
+     * @param counter the counter to increment.
+     * @param value the value to increment the counter by.
+     */
+    public void incCounter(Counter counter, int value) {
+        counterMap.compute(counter, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
+    }
+
+    /**
+     * Gets the counts for the Document.Type.
+     * @param documentType the Document.Type to get the counter for.
+     * @return Returns the number times the Document.Type was seen
      */
     public int getCounter(Document.Type documentType) {
-        int[] count = documentCategoryMap.get(documentType);
-        return count == null ? 0 : count[0];
+        return getValue(documentCategoryMap.get(documentType));
     }
 
+    /**
+     * Increments the number of times the Document.Type was seen.
+     * @param documentType the Document.Type to increment.
+     * @param value the vlaue to increment the counter by.
+     */
     public void incCounter(Document.Type documentType, int value) {
-        final int[] num = documentCategoryMap.get(documentType);
-
-        if (num == null) {
-            documentCategoryMap.put(documentType, new int[] { value });
-        } else {
-            num[0] += value;
-        }
+        documentCategoryMap.compute(documentType, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
     }
 
-    public int getLicenseFamilyCount(String licenseFamilyName) {
-        int[] count = licenseFamilyCodeMap.get(licenseFamilyName);
-        return count == null ? 0 : count[0];
+    /**
+     * Gets the counts for hte license category.
+     * @param licenseFamilyCategory the license family category to get the count for.
+     * @return the number of times the license family category was seen.
+     */
+    public int getLicenseCategoryCount(String licenseFamilyCategory) {
+        return getValue(licenseFamilyCategoryMap.get(licenseFamilyCategory));
     }
 
-    public void incLicenseFamilyCount(String licenseFamilyName, int value) {
-        final int[] num = licenseFamilyCodeMap.get(licenseFamilyName);
-
-        if (num == null) {
-            licenseFamilyCodeMap.put(licenseFamilyName, new int[] { value });
-        } else {
-            num[0] += value;
-        }
+    /**
+     * Increments the number of times a license family category was seen.
+     * @param licenseFamilyCategory the License family category to incmrement.
+     * @param value the value to increment the count by.
+     */
+    public void incLicenseCategoryCount(String licenseFamilyCategory, int value) {
+        licenseFamilyCategoryMap.compute(licenseFamilyCategory, (k, v)-> v == null? new IntCounter().increment(value) : v.increment(value));
     }
 
+    /**
+     * Gets the set of license family categories that were seen.
+     * @return A set of license family categories.
+     */
+    public Set<String> getLicenseFamilyCategories() {
+        return Collections.unmodifiableSet(licenseFamilyCategoryMap.keySet());
+    }
+
+    /**
+     * Gets the set of license family names that were seen.
+     * @return a Set of license family names that were seen.
+     */
     public Set<String> getLicenseFamilyNames() {
-        return Collections.unmodifiableSet(licenseFamilyCodeMap.keySet());
-    }
-
-    public Set<String> getLicenseFileNames() {
         return Collections.unmodifiableSet(licenseFamilyNameMap.keySet());
     }
 
-    public int getLicenseFileNameCount(String licenseFilename) {
-        int[] count = licenseFamilyNameMap.get(licenseFilename);
-        return count == null ? 0 : count[0];
+    /**
+     * Retrieves the number of times a license family name was seen.
+     * @param licenseFilename the license family name to look for.
+     * @return the number of times the license family name was seen.
+     */
+    public int getLicenseFamilyNameCount(String licenseFilename) {
+        return getValue(licenseFamilyNameMap.get(licenseFilename));
     }
 
-    public void incLicenseFileNameCount(String licenseFileNameName, int value) {
-        final int[] num = licenseFamilyNameMap.get(licenseFileNameName);
+    /**
+     * Increments the license family name count.
+     * @param licenseFamilyName the license family name to increment.
+     * @param value the value to increment the count by.
+     */
+    public void incLicenseFamilyNameCount(String licenseFamilyName, int value) {
+        licenseFamilyNameMap.compute(licenseFamilyName, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
+    }
 
-        if (num == null) {
-            licenseFamilyNameMap.put(licenseFileNameName, new int[] { value });
-        } else {
-            num[0] += value;
+    /**
+     * A class that wraps and int and allows easy increment and retrieval.
+     */
+    static class IntCounter {
+        int value = 0;
+
+        /**
+         * Increment the count.
+         * @param count the count to increment by (may be negative)
+         * @return this.
+         */
+        public IntCounter increment(int count) {
+            value += count;
+            return this;
+        }
+
+        /**
+         * Retrieves the count.
+         * @return the count contained by this counter.
+         */
+        public int value() {
+            return value;
         }
     }
 }

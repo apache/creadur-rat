@@ -19,8 +19,6 @@
 
 package org.apache.rat.report.claim.impl;
 
-import java.util.stream.Collectors;
-
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
@@ -53,28 +51,18 @@ public abstract class AbstractClaimReporter extends AbstractReport {
     }
 
     /**
-     * Increment the license family counter
-     * The default implementation does nothing.
-     * @param licenseFamilyName name of the license family
-     */
-    protected void handleLicenseFamilyNameClaim(String licenseFamilyName) {
-        // Does Nothing
-    }
-
-    /**
-     * Increment the license category count.
+     * Increment the counts associated with the license
      * The default implementation does nothing.
      * @param license the license to record the category for.
      */
-    protected void handleHeaderCategoryClaim(ILicense license) {
+    protected void handleLicenseClaim(ILicense license) {
         // Does nothing
     }
 
     @Override
     public void report(Document subject) throws RatException {
         final MetaData metaData = subject.getMetaData();
-        metaData.licenses().forEach(this::handleHeaderCategoryClaim);
-        metaData.licenses().map(lic -> lic.getLicenseFamily().getFamilyName()).collect(Collectors.toSet()).forEach(this::handleLicenseFamilyNameClaim);
+        metaData.licenses().forEach(this::handleLicenseClaim);
         handleDocumentCategoryClaim(metaData.getDocumentType());
         handleApprovedLicenseClaim(metaData);
     }
