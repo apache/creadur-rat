@@ -203,9 +203,9 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 "Not", "All", "Any");
         assertNotNull(LicenseSetFactory.search("MyLicense", config.getLicenses(LicenseFilter.ALL)));
         assertNotNull("Should have filesToIgnore", config.getFilesToIgnore());
-        assertEquals("WildcardFileFilter(*.json)", config.getFilesToIgnore().toString());
+        assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         assertNotNull("Should have directoriesToIgnore", config.getDirectoriesToIgnore());
-        assertEquals("NameBasedHiddenFileFilter", config.getDirectoriesToIgnore().toString());
+        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
         mojo.execute();
 
         ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
@@ -238,7 +238,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         assertThat(config.getDirectoriesToIgnore()).withFailMessage("directoriesToIgnore filter should not be null").isNotNull();
         assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
         assertThat(config.getFilesToIgnore()).withFailMessage("filesToIgnore filter should not be null").isNotNull();
-        assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(WildcardFileFilter.class);
+        assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         
         ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "BSD", "CC BY");
