@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
+import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.RatReport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -71,8 +72,8 @@ public class DirectoryWalkerTest {
         fileWriter(hidden, ".hiddenFile", "hidden file");
     }
 
-    private String expectedName(String[] name) {
-        return toWalk.toString()+File.separator+name[0]+File.separator+name[1];
+    private String expectedName(String name) {
+        return DocumentImplUtils.toName(toWalk)+name;
     }
 
 
@@ -82,12 +83,9 @@ public class DirectoryWalkerTest {
         DirectoryWalker walker = new DirectoryWalker(toWalk, null,null);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
-        String[][] expected = {{"regular", "regularFile"}, {"regular", ".hiddenFile"}, {".hidden", "regularFile"}, {".hidden", ".hiddenFile"}};
+        String[] expected = {"/regular/regularFile", "/regular/.hiddenFile", "/.hidden/regularFile", "/.hidden/.hiddenFile"};
         assertEquals(4, scanned.size());
-        for (String s : scanned) {
-            System.out.println(s);
-        }
-        for (String[] ex : expected) {
+        for (String ex : expected) {
             assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
         }
     }
@@ -97,9 +95,9 @@ public class DirectoryWalkerTest {
         DirectoryWalker walker = new DirectoryWalker(toWalk, NameBasedHiddenFileFilter.HIDDEN,null);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
-        String[][] expected = {{"regular", "regularFile"}, {".hidden", "regularFile"}};
+        String[] expected = {"/regular/regularFile", "/.hidden/regularFile"};
         assertEquals(2, scanned.size());
-        for (String ex[] : expected) {
+        for (String ex : expected) {
             assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
         }
     }
@@ -109,9 +107,9 @@ public class DirectoryWalkerTest {
         DirectoryWalker walker = new DirectoryWalker(toWalk, null, NameBasedHiddenFileFilter.HIDDEN);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
-        String[][] expected = {{"regular", "regularFile"}, {"regular", ".hiddenFile"}};
+        String[] expected = {"/regular/regularFile", "/regular/.hiddenFile"};
         assertEquals(2, scanned.size());
-        for (String[] ex : expected) {
+        for (String ex : expected) {
             assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
         }
     }
@@ -121,9 +119,9 @@ public class DirectoryWalkerTest {
         DirectoryWalker walker = new DirectoryWalker(toWalk, NameBasedHiddenFileFilter.HIDDEN, NameBasedHiddenFileFilter.HIDDEN);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
-        String[][] expected = {{"regular", "regularFile"}};
+        String[] expected = {"/regular/regularFile"};
         assertEquals(1, scanned.size());
-        for (String[] ex : expected) {
+        for (String ex : expected) {
             assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
         }
     }
