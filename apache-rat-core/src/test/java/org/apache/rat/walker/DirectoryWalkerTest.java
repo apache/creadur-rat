@@ -84,8 +84,11 @@ public class DirectoryWalkerTest {
         walker.run(new TestRatReport(scanned));
         String[][] expected = {{"regular", "regularFile"}, {"regular", ".hiddenFile"}, {".hidden", "regularFile"}, {".hidden", ".hiddenFile"}};
         assertEquals(4, scanned.size());
+        for (String s : scanned) {
+            System.out.println(s);
+        }
         for (String[] ex : expected) {
-            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s (%s)",ex, expectedName(ex)));
+            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
         }
     }
 
