@@ -29,10 +29,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
@@ -50,7 +48,7 @@ import org.apache.rat.walker.NameBasedHiddenFileFilter;
  * Properties in this class may be overridden or added to by configuration options in the various UIs.
  * See the specific UI for details.
  */
-public class Defaults {
+public final class Defaults {
 
     /**
      * The default configuration file from the package.
@@ -84,7 +82,7 @@ public class Defaults {
     /**
      * Builder constructs instances.
      */
-    private Defaults(Log log, Set<URL> urls) {
+    private Defaults(final Log log, final Set<URL> urls) {
         this.setFactory = Defaults.readConfigFiles(log, urls);
     }
 
@@ -100,7 +98,7 @@ public class Defaults {
      * Reads the configuration files.
      * @param urls the URLs to read.
      */
-    private static LicenseSetFactory readConfigFiles(Log log, Collection<URL> urls) {
+    private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URL> urls) {
 
         SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
 
@@ -146,16 +144,16 @@ public class Defaults {
      * @param filter define which type of licenses to return.
      * @return sorted set of licenses.
      */
-    public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
+    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
         return setFactory.getLicenses(filter);
     }
-    
+
     /**
      * Gets the sorted set of approved licenses for a given filter condition.
      * @param filter define which type of licenses to return.
      * @return sorted set of license families.
      */
-    public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
+    public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
         return setFactory.getLicenseFamilies(filter);
     }
 
@@ -165,7 +163,7 @@ public class Defaults {
      * @param filter define which type of licenses to return.
      * @return The sorted set of approved licenseIds.
      */
-    public SortedSet<String> getLicenseIds(LicenseFilter filter) {
+    public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
         return setFactory.getLicenseFamilyIds(filter);
     }
 
@@ -180,7 +178,7 @@ public class Defaults {
     /**
      * The Defaults builder.
      */
-    public static class Builder {
+    public final static class Builder {
         private final Set<URL> fileNames = new TreeSet<>(Comparator.comparing(URL::toString));
 
         private Builder() {
@@ -188,12 +186,12 @@ public class Defaults {
         }
 
         /**
-         * Adds a URL to a configuration file to be read.
+         * Adds a URI to a configuration file to be read.
          * 
          * @param url the URL to add
          * @return this Builder for chaining
          */
-        public Builder add(URL url) {
+        public Builder add(final URL url) {
             fileNames.add(url);
             return this;
         }
@@ -205,7 +203,7 @@ public class Defaults {
          * @return this Builder for chaining
          * @throws MalformedURLException in case the fileName cannot be found.
          */
-        public Builder add(String fileName) throws MalformedURLException {
+        public Builder add(final String fileName) throws MalformedURLException {
             return add(new File(fileName));
         }
 
@@ -216,7 +214,7 @@ public class Defaults {
          * @return this Builder for chaining
          * @throws MalformedURLException in case the file cannot be found.
          */
-        public Builder add(File file) throws MalformedURLException {
+        public Builder add(final File file) throws MalformedURLException {
             return add(file.toURI().toURL());
         }
 
@@ -226,7 +224,7 @@ public class Defaults {
          * @param url the URL of the file to remove.
          * @return this Builder for chaining
          */
-        public Builder remove(URL url) {
+        public Builder remove(final URL url) {
             fileNames.remove(url);
             return this;
         }
@@ -238,7 +236,7 @@ public class Defaults {
          * @return this Builder for chaining
          * @throws MalformedURLException in case the fileName cannot be found.
          */
-        public Builder remove(String fileName) throws MalformedURLException {
+        public Builder remove(final String fileName) throws MalformedURLException {
             return remove(new File(fileName));
         }
 
@@ -249,7 +247,7 @@ public class Defaults {
          * @return this Builder for chaining
          * @throws MalformedURLException in case the file cannot be found.
          */
-        public Builder remove(File file) throws MalformedURLException {
+        public Builder remove(final File file) throws MalformedURLException {
             return remove(file.toURI().toURL());
         }
 
@@ -267,7 +265,7 @@ public class Defaults {
          * @param log the Log to use to report errors when building the defaults.
          * @return the current defaults object.
          */
-        public Defaults build(Log log) {
+        public Defaults build(final Log log) {
             return new Defaults(log, fileNames);
         }
     }

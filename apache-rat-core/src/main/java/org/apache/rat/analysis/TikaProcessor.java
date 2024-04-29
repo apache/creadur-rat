@@ -23,11 +23,9 @@ import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
 import org.apache.rat.utils.Log;
 import org.apache.tika.Tika;
-import org.apache.tika.metadata.HttpHeaders;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.mime.MediaType;
-import org.apache.tika.mime.MimeType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,11 +38,11 @@ import java.util.Map;
 public class TikaProcessor {
 
     /** the Tika parser */
-    private static final Tika tika = new Tika();
+    private static final Tika TIKA = new Tika();
     /** A map of mime type string to non BINARY types.
      * "text" types are already handled everything else
      * BINARY unless listed here*/
-    static Map<String, Document.Type> documentTypeMap;
+    private static Map<String, Document.Type> documentTypeMap;
 
     static {
         documentTypeMap = new HashMap<>();
@@ -102,11 +100,11 @@ public class TikaProcessor {
      * @return the mimetype as a string.
      * @throws RatDocumentAnalysisException on error.
      */
-    public static String process(Log log, Document document) throws RatDocumentAnalysisException {
+    public static String process(final Log log, final Document document) throws RatDocumentAnalysisException {
         Metadata metadata = new Metadata();
         try (InputStream stream = document.inputStream()) {
             metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName());
-            String result = tika.detect(stream, metadata);
+            String result = TIKA.detect(stream, metadata);
             String[] parts = result.split("/");
             MediaType mediaType = new MediaType(parts[0], parts[1]);
             document.getMetaData().setMediaType(mediaType);
@@ -124,7 +122,7 @@ public class TikaProcessor {
         }
     }
 
-    public static Document.Type fromMediaType(MediaType mediaType, Log log) {
+    public static Document.Type fromMediaType(final MediaType mediaType, final Log log) {
         if ("text".equals(mediaType.getType())) {
             return Document.Type.STANDARD;
         }
