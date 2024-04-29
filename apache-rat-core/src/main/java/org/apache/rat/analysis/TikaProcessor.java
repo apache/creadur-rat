@@ -94,6 +94,15 @@ public class TikaProcessor {
     }
 
     /**
+     * Creates a copy of the document type map.
+     * Exposed for testing.
+     * @return a copy of the document type map.
+     */
+    static Map<String, Document.Type> getDocumentTypeMap() {
+        return new HashMap<>(documentTypeMap);
+    }
+
+    /**
      * Process the input document.
      * @param log the log for messages.
      * @param document the Document to process.

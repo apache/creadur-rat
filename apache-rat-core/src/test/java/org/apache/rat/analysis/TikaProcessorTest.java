@@ -33,7 +33,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.MalformedInputException;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -105,7 +104,7 @@ public class TikaProcessorTest
     @Test
     public void testTikaFiles() throws RatDocumentAnalysisException, IOException {
         File dir = new File("src/test/resources/tikaFiles");
-        Map<String, Document.Type> unseenMime = new HashMap<>(TikaProcessor.documentTypeMap);
+        Map<String, Document.Type> unseenMime = TikaProcessor.getDocumentTypeMap();
         for (Document.Type docType : Document.Type.values()) {
             File typeDir = new File(dir, docType.name().toLowerCase(Locale.ROOT));
             if (typeDir.isDirectory()) {
