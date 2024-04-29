@@ -30,6 +30,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.function.IOSupplier;
@@ -66,7 +67,7 @@ public class Defaults {
 
     private final LicenseSetFactory setFactory;
 
-    private static final FilenameFilter FILES_TO_IGNORE = WildcardFileFilter.builder().setWildcards("*.json").setIoCase(IOCase.INSENSITIVE).get();
+    private static final FilenameFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
 
     private static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
 

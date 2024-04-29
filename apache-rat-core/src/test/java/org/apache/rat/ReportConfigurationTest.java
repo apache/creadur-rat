@@ -196,7 +196,7 @@ public class ReportConfigurationTest {
 
         underTest.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
         assertThat(underTest.getFilesToIgnore()).isNotNull();
-        assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(WildcardFileFilter.class);
+        assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
 
         FilenameFilter filter = mock(FilenameFilter.class);
         underTest.setFilesToIgnore(filter);
@@ -562,7 +562,7 @@ public class ReportConfigurationTest {
         assertThat(config.isAddingLicenses()).isFalse();
         assertThat(config.isAddingLicensesForced()).isFalse();
         assertThat(config.getCopyrightMessage()).isNull();
-        assertThat(config.getFilesToIgnore().toString()).isEqualTo(WildcardFileFilter.builder().setWildcards("*.json").setIoCase(IOCase.INSENSITIVE).get().toString());
+        assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         assertThat(config.isStyleReport()).isTrue();
         assertThat(config.getStyleSheet()).isNotNull().withFailMessage("Stylesheet should not be null");
         assertThat(config.getDirectoriesToIgnore()).isNotNull().withFailMessage("Directory filter should not be null");

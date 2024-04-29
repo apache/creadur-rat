@@ -93,8 +93,6 @@ public class TikaProcessor {
         documentTypeMap.put("image/svg+xml", Document.Type.STANDARD);
 //        org.apache.tika.parser.xml.FictionBookParser
         documentTypeMap.put("application/x-fictionbook+xml", Document.Type.STANDARD);
-
-        documentTypeMap.put("application/json", Document.Type.STANDARD);
     }
 
     /**

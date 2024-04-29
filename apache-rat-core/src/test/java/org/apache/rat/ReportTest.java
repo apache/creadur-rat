@@ -92,7 +92,7 @@ public class ReportTest {
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         TextUtils.assertPatternInOutput("Notes: 2$", content);
-        TextUtils.assertPatternInOutput("Binaries: 1$", content);
+        TextUtils.assertPatternInOutput("Binaries: 2$", content);
         TextUtils.assertPatternInOutput("Archives: 1$", content);
         TextUtils.assertPatternInOutput("Standards: 8$", content);
         TextUtils.assertPatternInOutput("Apache Licensed: 5$", content);
@@ -156,7 +156,7 @@ public class ReportTest {
         assertEquals(1, nodeList.getLength());
 
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='BINARY']");
-        assertEquals(1, nodeList.getLength());
+        assertEquals(2, nodeList.getLength());
 
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='GENERATED']");
         assertEquals(1, nodeList.getLength());

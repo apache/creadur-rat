@@ -121,7 +121,7 @@ public class ReporterTest {
         checkNode(doc, xPath, "src/test/resources/elements/generated.txt", new LicenseInfo("GEN", true, true),
                 "GENERATED", false);
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
-        assertEquals(13, nodeList.getLength());
+        assertEquals(14, nodeList.getLength());
     }
 
     private static final String NL = System.lineSeparator();
@@ -161,7 +161,7 @@ public class ReporterTest {
         assertTrue(document.startsWith(HEADER), "'Generated at' is not present in " + document);
 
         TextUtils.assertPatternInOutput("^Notes: 2$", document);
-        TextUtils.assertPatternInOutput("^Binaries: 1$", document);
+        TextUtils.assertPatternInOutput("^Binaries: 2$", document);
         TextUtils.assertPatternInOutput("^Archives: 1$", document);
         TextUtils.assertPatternInOutput("^Standards: 8$", document);
         TextUtils.assertPatternInOutput("^Apache Licensed: 5$", document);
