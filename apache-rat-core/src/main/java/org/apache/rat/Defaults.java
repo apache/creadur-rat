@@ -186,7 +186,7 @@ public final class Defaults {
         }
 
         /**
-         * Adds a URI to a configuration file to be read.
+         * Adds a URL to a configuration file to be read.
          * 
          * @param url the URL to add
          * @return this Builder for chaining

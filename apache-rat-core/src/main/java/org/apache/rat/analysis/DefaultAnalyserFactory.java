@@ -61,7 +61,7 @@ public class DefaultAnalyserFactory {
         /**
          * Constructs a DocumentAnalyser for the specified license.
          * @param log the Log to use
-         * @param licenses The license to analyse
+         * @param licenses The licenses to analyse
          */
         public DefaultAnalyser(final Log log, final Collection<ILicense> licenses) {
             this.licenses = licenses;
