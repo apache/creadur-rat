@@ -21,11 +21,13 @@ package org.apache.rat.analysis;
 import java.util.Collection;
 
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.utils.Log;
+import org.apache.rat.walker.ArchiveWalker;
 
 /**
  * Creates default analysers.
@@ -58,6 +60,8 @@ public class DefaultAnalyserFactory {
         /** The log to use */
         private final Log log;
 
+        private ReportConfiguration reportConfiguration;
+
         /**
          * Constructs a DocumentAnalyser for the specified license.
          * @param log the Log to use
@@ -77,8 +81,12 @@ public class DefaultAnalyserFactory {
             case STANDARD:
                 DocumentHeaderAnalyser analyser = new DocumentHeaderAnalyser(log, licenses);
                 analyser.analyse(document);
-            case NOTICE:
+                break;
             case ARCHIVE:
+                ArchiveWalker archiveWalker = new ArchiveWalker(document.getName(), reportConfiguration.getFilesToIgnore());
+                archiveWalker.run();
+                break;
+            case NOTICE:
             case BINARY:
             case UNKNOWN:
             default:

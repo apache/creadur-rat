@@ -443,26 +443,22 @@ public class Report {
      * @return the IReportable instance containing the files.
      */
     private static IReportable getDirectory(String baseDirectory, ReportConfiguration config) {
-        try (PrintStream out = new PrintStream(config.getOutput().get())) {
-            File base = new File(baseDirectory);
-            
-            if (!base.exists()) {
-                config.getLog().log(Level.ERROR, "Directory '"+baseDirectory+"' does not exist");
-                return null;
-            }
+        File base = new File(baseDirectory);
 
-            if (base.isDirectory()) {
-                return new DirectoryWalker(base, config.getFilesToIgnore(), config.getDirectoriesToIgnore());
-            }
+        if (!base.exists()) {
+            config.getLog().log(Level.ERROR, "Directory '"+baseDirectory+"' does not exist");
+            return null;
+        }
 
-            try {
-                return new ArchiveWalker(base, config.getFilesToIgnore());
-            } catch (IOException ex) {
-                config.getLog().log(Level.ERROR, "file '"+baseDirectory+"' is not valid gzip data.");
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ConfigurationException("Error opening output", e);
+        if (base.isDirectory()) {
+            return new DirectoryWalker(base, config.getFilesToIgnore(), config.getDirectoriesToIgnore());
+        }
+
+        try {
+            return new ArchiveWalker(base, config.getFilesToIgnore());
+        } catch (IOException ex) {
+            config.getLog().log(Level.ERROR, "file '"+baseDirectory+"' is not valid gzip data.");
+            return null;
         }
     }
 
