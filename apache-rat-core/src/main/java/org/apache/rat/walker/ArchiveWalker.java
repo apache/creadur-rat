@@ -19,22 +19,22 @@
 
 package org.apache.rat.walker;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.ArchiveEntryDocument;
@@ -49,9 +49,8 @@ public class ArchiveWalker extends Walker {
      * Constructs a walker.
      * @param file not null
      * @param filter filters input files (optional) null when no filtering should be performed
-     * @throws FileNotFoundException in case of I/O errors.
      */
-    public ArchiveWalker(final File file, final FilenameFilter filter) throws FileNotFoundException {
+    public ArchiveWalker(final File file, final FilenameFilter filter) {
         super(file, filter);
     }
 
@@ -63,142 +62,34 @@ public class ArchiveWalker extends Walker {
      *
      */
     public void run(final RatReport report) throws RatException {
-
-        try {
-            ArchiveInputStream<? extends ArchiveEntry> input;
-
-            /* I am really sad that classes aren't first-class objects in
-               Java :'( */
-            try {
-                input = new TarArchiveInputStream(new GzipCompressorInputStream(Files.newInputStream(getBaseFile().toPath())));
-            } catch (IOException e) {
-                try {
-                    input = new TarArchiveInputStream(new BZip2CompressorInputStream(Files.newInputStream(getBaseFile().toPath())));
-                } catch (IOException e2) {
-                    input = new ZipArchiveInputStream(Files.newInputStream(getBaseFile().toPath()));
-                }
-            }
-
-            ArchiveEntry entry = input.getNextEntry();
-
-            while (entry != null) {
-                File f = new File(entry.getName());
-                byte[] contents = new byte[(int) entry.getSize()];
-                int offset = 0;
-                int length = contents.length;
-
-                while (offset < entry.getSize()) {
-                    int actualRead = input.read(contents, offset, length);
-                    length -= actualRead;
-                    offset += actualRead;
-                }
-
-                if (!entry.isDirectory() && isNotIgnored(f)) {
-                    report(report, contents, f);
-                }
-
-                entry = input.getNextEntry();
-            }
-
-            input.close();
-        } catch (IOException e) {
-            throw new RatException(e);
+        for (Document document : getDocuments()) {
+            report.report(document);
         }
     }
 
-    public Iterator<Document> getDocuments() {
-        try {
-            ArchiveInputStream<? extends ArchiveEntry> input =  new ArchiveStreamFactory().createArchiveInputStream(Files.newInputStream(getBaseFile().toPath()));
-
-            return new Iterator<Document>() {
-                ArchiveEntry entry = input.getNextEntry();
-                @Override
-                public boolean hasNext() {
-                    if (entry == null) {
-                        setNextEntry();
-                    }
-                    return entry != null;
-                }
-
-                @Override
-                public Document next() {
-                    if (!hasNext()) {
-                        throw new NoSuchElementException();
-                    }
-
-                    try {
-                        byte[] contents = new byte[(int) entry.getSize()];
-                        int offset = 0;
-                        int length = contents.length;
-
-                        while (offset < entry.getSize()) {
-                            int actualRead = input.read(contents, offset, length);
-                            length -= actualRead;
-                            offset += actualRead;
-                        }
-
-                        return new ArchiveEntryDocument(new File(entry.getName()), contents);
-                    } finally {
-                        entry = null;
-                    }
-
-                }
-
-                private void setNextEntry()  {
-                    try {
-                        ArchiveEntry candidate = input.getNextEntry();
-                        while (candidate != null) {
-                            if (!candidate.isDirectory()) {
-                                File f = new File(candidate.getName());
-                                if (isNotIgnored(new File(candidate.getName()))) {
-                                    entry = candidate;
-                                    return;
-                                }
-                            }
-                            candidate = input.getNextEntry();
-                        }
-                        entry = null;
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            };
-
-            ArchiveEntry entry = input.getNextEntry();
-            while (entry != null) {
-                File f = new File(entry.getName());
-                byte[] contents = new byte[(int) entry.getSize()];
-                int offset = 0;
-                int length = contents.length;
-
-                while (offset < entry.getSize()) {
-                    int actualRead = input.read(contents, offset, length);
-                    length -= actualRead;
-                    offset += actualRead;
-                }
-
-                if (!entry.isDirectory() && isNotIgnored(f)) {
-                    report(report, contents, f);
-                }
-
-                entry = input.getNextEntry();
-            }
-
-            input.close();
-        } catch (IOException | ArchiveException | RatException e) {
-            throw new RuntimeException(e);
-        }
+    private InputStream createInputStream() throws IOException {
+        return new BufferedInputStream(Files.newInputStream(getBaseFile().toPath()));
     }
-
     /**
-     * Report on the given file.
-     *
-     * @param report the report to process the file with
-     * @param file the file to be reported on
-     * @throws RatException
+     * Retrieves the documents from the archive.
+     * @return A collection of documents that pass the file filter.
+     * @throws RatException on error.
      */
-    private void report(final RatReport report, final byte[] contents, final File file) throws RatException {
-        Document document = new ArchiveEntryDocument(file, contents);
-        report.report(document);
+    public Collection<Document> getDocuments() throws RatException {
+        List<Document> result = new ArrayList<>();
+        try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
+            ArchiveEntry entry = null;
+            while ((entry = input.getNextEntry()) != null) {
+                if (!entry.isDirectory() && super.isNotIgnored(new File(entry.getName())) && input.canReadEntryData(entry)) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    IOUtils.copy(input,baos);
+
+                    result.add(new ArchiveEntryDocument(new File(entry.getName()), baos.toByteArray()));
+                }
+            }
+        } catch (ArchiveException | IOException e) {
+            throw RatException.asRatException(e);
+        }
+        return result;
     }
 }

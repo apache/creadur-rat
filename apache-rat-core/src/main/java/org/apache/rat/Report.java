@@ -454,12 +454,12 @@ public class Report {
             return new DirectoryWalker(base, config.getFilesToIgnore(), config.getDirectoriesToIgnore());
         }
 
-        try {
+        //try {
             return new ArchiveWalker(base, config.getFilesToIgnore());
-        } catch (IOException ex) {
-            config.getLog().log(Level.ERROR, "file '"+baseDirectory+"' is not valid gzip data.");
-            return null;
-        }
+//        } catch (IOException ex) {
+//            config.getLog().log(Level.ERROR, "file '"+baseDirectory+"' is not valid gzip data.");
+//            return null;
+//        }
     }
 
     /**

@@ -21,12 +21,17 @@ package org.apache.rat.analysis;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.FilenameFilter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.rat.Defaults;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.impl.MonolithicFileDocument;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -35,9 +40,7 @@ import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AnalyserFactoryTest {
-
-    private static ILicense MATCHES_NOTHING_MATCHER = UnknownLicense.INSTANCE;
+public class DefaultAnalyserFactoryTest {
 
     private StringWriter out;
     private SimpleXmlClaimReporter reporter;
@@ -48,7 +51,7 @@ public class AnalyserFactoryTest {
         out = new StringWriter();
         reporter = new SimpleXmlClaimReporter(new XmlWriter(out));
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE,
-                Arrays.asList(MATCHES_NOTHING_MATCHER));
+                Collections.singletonList(UnknownLicense.INSTANCE), FalseFileFilter.FALSE);
     }
 
     @Test
@@ -107,6 +110,9 @@ public class AnalyserFactoryTest {
     public void archiveTypeAnalyser() throws Exception {
         final MonolithicFileDocument document = new MonolithicFileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE,
+                defaults.getLicenses(LicenseSetFactory.LicenseFilter.ALL), FalseFileFilter.FALSE);
         analyser.analyse(document);
         reporter.report(document);
         assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString(),
