@@ -157,7 +157,6 @@ agnostic home for software distribution comprehension and audit tools.
         <version>3.25.3</version>
         <scope>test</scope>
       </dependency>
-      <!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
       <dependency>
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-core</artifactId>
