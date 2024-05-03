@@ -40,8 +40,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TikaProcessorTest
-{
+public class TikaProcessorTest {
     /**
      * Used to swallow a MalformedInputException and return false
      * because the encoding of the stream was different from the
@@ -52,7 +51,7 @@ public class TikaProcessorTest
      */
     @Test
     public void RAT81() throws Exception {
-        // creat a document that throws a MalformedInputException
+        // create a document that throws a MalformedInputException
         Document doc = getDocument(new InputStream() {
             @Override
             public int read() throws IOException {
@@ -60,7 +59,6 @@ public class TikaProcessorTest
             }
         });
         assertThrows(RatDocumentAnalysisException.class, () -> TikaProcessor.process(DefaultLog.INSTANCE, doc));
-
     }
 
     @Test
