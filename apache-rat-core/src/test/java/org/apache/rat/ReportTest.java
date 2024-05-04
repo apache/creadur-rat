@@ -18,40 +18,27 @@
  */
 package org.apache.rat;
 
-import static java.lang.String.format;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
-import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.testhelpers.TextUtils;
-import org.apache.rat.testhelpers.XmlUtils;
-import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 public class ReportTest {
     @TempDir
@@ -80,7 +67,7 @@ public class ReportTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] { "-o", output.getCanonicalPath()});
+        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{"-o", output.getCanonicalPath()});
         ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
         new Reporter(config).output();
         assertTrue(output.exists());
@@ -91,7 +78,7 @@ public class ReportTest {
     }
 
     @Test
-    public void helpTest() throws Exception {
+    public void helpTest() {
         Options opts = Report.buildOptions();
         StringWriter out = new StringWriter();
         Report.printUsage(new PrintWriter(out), opts);
@@ -121,17 +108,17 @@ public class ReportTest {
     }
 
     private static String shortOpt(Option opt) {
-        return "-"+opt.getOpt();
+        return "-" + opt.getOpt();
     }
 
     private static String longOpt(Option opt) {
-        return "--"+opt.getLongOpt();
+        return "--" + opt.getLongOpt();
     }
 
     @Test
     public void testXMLOutput() throws Exception {
-        ReportConfiguration  config = createConfig();
-        assertTrue(config.isStyleReport() );
+        ReportConfiguration config = createConfig();
+        assertTrue(config.isStyleReport());
 
         config = createConfig(shortOpt(Report.XML));
         assertFalse(config.isStyleReport());

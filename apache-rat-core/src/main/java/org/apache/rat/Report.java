@@ -46,9 +46,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
@@ -57,6 +55,7 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
@@ -80,32 +79,32 @@ public class Report {
             "Rat relies on heuristics: it may miss issues"
     };
 
+    private static final String[] STYLE_SHEETS = {"plain-rat", "missing-headers", "unapproved-licenses"};
+
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
 
     static {
+        Arrays.sort(STYLE_SHEETS);
         ARGUMENT_TYPES = new TreeMap<>();
         ARGUMENT_TYPES.put("FileOrURI", () -> "A file name or URI");
-        ARGUMENT_TYPES.put("DirOrArchive",() -> "A director or archive file to scan");
-            ARGUMENT_TYPES.put("Expression",() -> "A wildcard file matching pattern. example: *-test-*.txt");
+        ARGUMENT_TYPES.put("DirOrArchive", () -> "A director or archive file to scan");
+        ARGUMENT_TYPES.put("Expression", () -> "A wildcard file matching pattern. example: *-test-*.txt");
         ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include.  Valid values: %s.",
-                        asString(LicenseFilter.values())));
+                asString(LicenseFilter.values())));
         ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use.  Valid values %s.", asString(Log.Level.values())));
         ARGUMENT_TYPES.put("ProcessingType", () -> format("Specifies how to process file types.  Valid values are: %s",
-                        Arrays.stream(ReportConfiguration.Processing.values())
-                                .map(v -> format("\t%s: %s", v.name(), v.desc()))
-                                .collect(Collectors.joining(""))));
+                Arrays.stream(ReportConfiguration.Processing.values())
+                        .map(v -> format("\t%s: %s", v.name(), v.desc()))
+                        .collect(Collectors.joining(""))));
         ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file may be one of the internal named sheets: %s.",
-                    IOUtils.readLines(Report.class.getClassLoader().getResourceAsStream("org/apache/rat/"), Charsets.UTF_8)
-                            .stream().filter(s ->s.endsWith(".xsl")).map(s->s.substring(0,s.lastIndexOf(".xsl")))
-                            .collect(Collectors.joining(", "))));
-    };
-
-    /**
-     * Adds license headers to files missing headers.
-     */
+                String.join(", ", STYLE_SHEETS)));
+    }
 
     // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
     // compatibility
+    /**
+     * Adds license headers to files missing headers.
+     */
     private static final OptionGroup ADD = new OptionGroup()
             .addOption(new Option("a", false,
                     "(deprecated) Add the default license header to any file with an unknown license.  Use '-A' or ---addLicense instead."))
@@ -209,9 +208,12 @@ public class Report {
      */
     static final Option XML = new Option("x", "xml", false, "Output the report in raw XML format.  Not compatible with -s");
 
+    /**
+     * Specify the processing of ARCHIVE files.
+     */
     static final Option ARCHIVE = Option.builder().longOpt("archive").hasArg().argName("ProcessingType")
             .desc(format("Specifies how ARCHIVE processing will be handled. (default is %s)",
-                            ReportConfiguration.Processing.NOTIFICATION))
+                    ReportConfiguration.Processing.NOTIFICATION))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();
 
@@ -391,7 +393,6 @@ public class Report {
         if (baseDirectory != null) {
             configuration.setReportable(getDirectory(baseDirectory, configuration));
         }
-        System.out.println("Created configuration");
         return configuration;
     }
 
@@ -458,30 +459,30 @@ public class Report {
         return new String(padding);
     }
 
+   static String header(String txt) {
+        return String.format("%n====== %s ======%n", WordUtils.capitalizeFully(txt));
+   }
     static void printUsage(PrintWriter writer, Options opts) {
 
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.setWidth(130);
         helpFormatter.setOptionComparator(new OptionComparator());
-        String header = System.lineSeparator() + "Available options";
         String syntax = "java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]";
-        helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header, opts,
+        helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header("Available options"), opts,
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(),
-                "", false);
+                header("Argument Types"), false);
 
-
-        writer.println("\n---Argument Types---");
-        String argumentPadding = createPadding(helpFormatter.getLeftPadding()+5);
-        for (Map.Entry<String,Supplier<String>> argInfo : ARGUMENT_TYPES.entrySet()) {
+        String argumentPadding = createPadding(helpFormatter.getLeftPadding() + 5);
+        for (Map.Entry<String, Supplier<String>> argInfo : ARGUMENT_TYPES.entrySet()) {
             writer.format("\n<%s>\n", argInfo.getKey());
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + 10,
-                    argumentPadding+argInfo.getValue().get());
+                    argumentPadding + argInfo.getValue().get());
         }
-        writer.println("\n---Notes---");
+        writer.println(header("Notes"));
 
         int idx = 1;
-        for (String note : NOTES ) {
-            writer.format("\n%d. %s", idx++, note);
+        for (String note : NOTES) {
+            writer.format("%d. %s%n", idx++, note);
         }
         writer.flush();
     }
