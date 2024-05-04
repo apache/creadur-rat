@@ -341,11 +341,15 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         ReportConfiguration config = new ReportConfiguration(makeLog());
         reportDeprecatedProcessing();
+        Defaults defaults = getDefaultsBuilder().build(config.getLog());
         if (addDefaultLicenses) {
-            config.setFrom(getDefaultsBuilder().build(config.getLog()));
+            config.setFrom(defaults);
         } else {
             config.setStyleSheet(Defaults.getPlainStyleSheet());
+            config.setDirectoriesToIgnore(Defaults.getDirectoriesToIgnore());
+            config.setFilesToIgnore(Defaults.getFilesToIgnore());
         }
+
         if (additionalLicenseFiles != null) {
             for (String licenseFile : additionalLicenseFiles) {
                 try {

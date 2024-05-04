@@ -94,7 +94,7 @@ public class Report extends Task {
     }
 
     public void setInputFileFilter(FilenameFilter inputFileFilter) {
-        configuration.setInputFileFilter(inputFileFilter);
+        configuration.setFilesToIgnore(inputFileFilter);
     }
 
     public void setReportFile(File reportFile) {

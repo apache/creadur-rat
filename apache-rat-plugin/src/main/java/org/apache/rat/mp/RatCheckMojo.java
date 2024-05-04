@@ -177,7 +177,7 @@ public class RatCheckMojo extends AbstractRatMojo {
             configuration.setCopyrightMessage(copyrightMessage);
         }
         if (scanHiddenDirectories) {
-            configuration.setDirectoryFilter(null);
+            configuration.setDirectoriesToIgnore(null);
         }
         if (reportFile != null) {
             if (!reportFile.exists()) {

@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.tika.mime.MediaType;
 
 /**
  * Data about the document under test..
@@ -37,6 +38,7 @@ public class MetaData {
     /** The list of License Family Categories that are approved */
     private final Set<String> approvedLicenses;
 
+    private MediaType mediaType;
     private Document.Type documentType;
     private String sampleHeader;
 
@@ -46,6 +48,22 @@ public class MetaData {
     public MetaData() {
         this.matchedLicenses = new TreeSet<>();
         this.approvedLicenses = new HashSet<>();
+    }
+
+    /**
+     * Gets the defined media type.
+     * @return the media type.
+     */
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    /**
+     * Sets the defined media type.
+     * @param mediaType the media type.
+     */
+    public void setMediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
     }
 
     /**

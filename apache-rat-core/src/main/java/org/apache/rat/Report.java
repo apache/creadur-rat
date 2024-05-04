@@ -238,7 +238,7 @@ public class Report {
         }
 
         if (cl.hasOption(SCAN_HIDDEN_DIRECTORIES)) {
-            configuration.setDirectoryFilter(null);
+            configuration.setDirectoriesToIgnore(null);
         }
 
         if (cl.hasOption('a') || cl.hasOption('A')) {
@@ -250,14 +250,14 @@ public class Report {
             String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
             if (excludes != null) {
                 final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
-                configuration.setInputFileFilter(filter);
+                configuration.setFilesToIgnore(filter);
             }
         } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
             String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
             if (excludeFileName != null) {
                 final FilenameFilter filter = parseExclusions(
                         FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8));
-                configuration.setInputFileFilter(filter);
+                configuration.setFilesToIgnore(filter);
             }
         }
 
@@ -451,11 +451,11 @@ public class Report {
             }
 
             if (base.isDirectory()) {
-                return new DirectoryWalker(base, config.getInputFileFilter(), config.getDirectoryFilter());
+                return new DirectoryWalker(base, config.getFilesToIgnore(), config.getDirectoriesToIgnore());
             }
 
             try {
-                return new ArchiveWalker(base, config.getInputFileFilter());
+                return new ArchiveWalker(base, config.getFilesToIgnore());
             } catch (IOException ex) {
                 config.getLog().log(Level.ERROR, "file '"+baseDirectory+"' is not valid gzip data.");
                 return null;

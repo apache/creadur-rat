@@ -19,52 +19,42 @@
 
 package org.apache.rat.walker;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.report.IReportable;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.regex.Pattern;
 
 /**
  * Abstract walker.
  */
 public abstract class Walker implements IReportable {
 
-    protected final File file;
-    protected final String name;
+    /** The file that this walker started at */
+    private final File baseFile;
 
-    protected final FilenameFilter filter;
+    /** The file name filter that the walker is applying */
+    private final FilenameFilter filesToIgnore;
 
-    protected static FilenameFilter regexFilter(final Pattern pattern) {
-        return (dir, name) -> {
-            final boolean result;
-            if (pattern == null) {
-                result = true;
-            } else {
-                result = !pattern.matcher(name).matches();
-            }
-            return result;
-        };
+    public Walker(final File file, final FilenameFilter filesToIgnore) {
+        this.baseFile = file;
+        this.filesToIgnore = filesToIgnore == null ? FalseFileFilter.FALSE : filesToIgnore;
     }
- 
+
+    /**
+     * Retrieve the file from the constructor.
+     * @return the file from the constructor.
+     */
+    protected File getBaseFile() {
+        return baseFile;
+    }
+
+    /**
+     * Test if the specified file should be ignored.
+     * @param file the file to test.
+     * @return {@code true} if the file should be ignored.
+     */
     protected final boolean isNotIgnored(final File file) {
-        boolean result = false;
-        if (filter != null) {
-            final String name = file.getName();
-            final File dir = file.getParentFile();
-            result = !filter.accept(dir, name);
-        }
-        return !result;
+        return !filesToIgnore.accept(file.getParentFile(), file.getName());
     }
-
-    public Walker(File file, final FilenameFilter filter) {
-        this(file.getPath(), file, filter);
-    }
-
-    protected Walker(final String name, final File file, final FilenameFilter filter) {
-        this.name = name;
-        this.file = file;
-        this.filter = filter;
-    }
-
 }

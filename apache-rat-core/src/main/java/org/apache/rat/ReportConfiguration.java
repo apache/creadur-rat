@@ -50,7 +50,6 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.Log;
 import org.apache.rat.utils.ReportingSet;
-import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
  * A configuration object is used by the front end to invoke the
@@ -69,9 +68,9 @@ public class ReportConfiguration {
     private boolean styleReport;
     private IOSupplier<InputStream> styleSheet;
     private IReportable reportable;
-    private FilenameFilter inputFileFilter;
-    private IOFileFilter directoryFilter;
-    private Log log;
+    private FilenameFilter filesToIgnore;
+    private IOFileFilter directoriesToIgnore;
+    private final Log log;
     private LicenseFilter listFamilies;
     private LicenseFilter listLicenses;
     private boolean dryRun;
@@ -89,7 +88,6 @@ public class ReportConfiguration {
                 .setMsgFormat( s -> String.format( "Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
         approvedLicenseCategories = new TreeSet<>();
         removedLicenseCategories = new TreeSet<>();
-        directoryFilter = NameBasedHiddenFileFilter.HIDDEN;
         styleReport = true;
         listFamilies = LicenseFilter.NONE;
         listLicenses = LicenseFilter.NONE;
@@ -179,31 +177,31 @@ public class ReportConfiguration {
     /**
      * @return The filename filter for the potential input files.
      */
-    public FilenameFilter getInputFileFilter() {
-        return inputFileFilter;
+    public FilenameFilter getFilesToIgnore() {
+        return filesToIgnore;
     }
 
     /**
-     * @param inputFileFilter the filename filter to filter the input files.
+     * @param filesToIgnore the filename filter to filter the input files.
      */
-    public void setInputFileFilter(FilenameFilter inputFileFilter) {
-        this.inputFileFilter = inputFileFilter;
+    public void setFilesToIgnore(FilenameFilter filesToIgnore) {
+        this.filesToIgnore = filesToIgnore;
     }
 
-    public IOFileFilter getDirectoryFilter() {
-        return directoryFilter;
+    public IOFileFilter getDirectoriesToIgnore() {
+        return directoriesToIgnore;
     }
 
-    public void setDirectoryFilter(IOFileFilter directoryFilter) {
-        if (directoryFilter == null) {
-            this.directoryFilter = FalseFileFilter.FALSE;
+    public void setDirectoriesToIgnore(IOFileFilter directoriesToIgnore) {
+        if (directoriesToIgnore == null) {
+            this.directoriesToIgnore = FalseFileFilter.FALSE;
         } else {
-            this.directoryFilter = directoryFilter;
+            this.directoriesToIgnore = directoriesToIgnore;
         }
     }
 
-    public void addDirectoryFilter(IOFileFilter directoryFilter) {
-        this.directoryFilter = this.directoryFilter.and(directoryFilter);
+    public void addDirectoryToIgnore(IOFileFilter directoryToIgnore) {
+        this.directoriesToIgnore = this.directoriesToIgnore.and(directoryToIgnore);
     }
 
     /**
@@ -247,6 +245,8 @@ public class ReportConfiguration {
      * @param defaults The defaults to set.
      */
     public void setFrom(Defaults defaults) {
+        setFilesToIgnore(Defaults.getFilesToIgnore());
+        setDirectoriesToIgnore(Defaults.getDirectoriesToIgnore());
         addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.ALL));
         addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.APPROVED));
         if (isStyleReport() && getStyleSheet() == null) {
