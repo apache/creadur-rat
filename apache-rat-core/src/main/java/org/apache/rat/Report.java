@@ -22,10 +22,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -33,7 +31,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
@@ -69,6 +72,34 @@ import static java.lang.String.format;
  * The CLI based configuration object for report generation.
  */
 public class Report {
+
+    private static final String[] NOTES = {
+            "Rat highlights possible issues.",
+            "Rat reports require interpretation.",
+            "Rat often requires some tuning before it runs well against a project.",
+            "Rat relies on heuristics: it may miss issues"
+    };
+
+    private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
+
+    static {
+        ARGUMENT_TYPES = new TreeMap<>();
+        ARGUMENT_TYPES.put("FileOrURI", () -> "A file name or URI");
+        ARGUMENT_TYPES.put("DirOrArchive",() -> "A director or archive file to scan");
+            ARGUMENT_TYPES.put("Expression",() -> "A wildcard file matching pattern. example: *-test-*.txt");
+        ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include.  Valid values: %s.",
+                        asString(LicenseFilter.values())));
+        ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use.  Valid values %s.", asString(Log.Level.values())));
+        ARGUMENT_TYPES.put("ProcessingType", () -> format("Specifies how to process file types.  Valid values are: %s",
+                        Arrays.stream(ReportConfiguration.Processing.values())
+                                .map(v -> format("\t%s: %s", v.name(), v.desc()))
+                                .collect(Collectors.joining(""))));
+        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file may be one of the internal named sheets: %s.",
+                    IOUtils.readLines(Report.class.getClassLoader().getResourceAsStream("org/apache/rat/"), Charsets.UTF_8)
+                            .stream().filter(s ->s.endsWith(".xsl")).map(s->s.substring(0,s.lastIndexOf(".xsl")))
+                            .collect(Collectors.joining(", "))));
+    };
+
     /**
      * Adds license headers to files missing headers.
      */
@@ -92,7 +123,7 @@ public class Report {
             .converter(Converter.FILE).build();
 
     static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
-            .desc("Used to indicate source when using --exclude").argName("DirOrArchive").build();
+            .desc("(deprecated, use '--') Used to indicate source when using --exclude.").argName("DirOrArchive").build();
 
     /**
      * Forces changes to be written to new files.
@@ -109,8 +140,8 @@ public class Report {
      * Name of File to exclude from report consideration.
      */
     static final Option EXCLUDE_CLI = Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
-            .desc("Excludes files matching wildcard <expression>. "
-                    + "Note that --dir is required when using this parameter. " + "Allows multiple arguments.")
+            .desc("Excludes files matching wildcard <expression>. May be followed by multiple arguments"
+                    + "Note that '--' or a following option is required when using this parameter.")
             .build();
     /**
      * Name of file that contains a list of files to exclude from report
@@ -118,15 +149,15 @@ public class Report {
      */
     static final Option EXCLUDE_FILE_CLI = Option.builder("E").longOpt("exclude-file")
             .argName("FileOrURI")
-            .hasArgs().desc("Excludes files matching regular expression in <file> "
-                    + "Note that --dir is required when using this parameter. ")
+            .hasArgs().desc("Excludes files matching regular expression in the input file.")
             .build();
 
     /**
      * The stylesheet to use to style the XML output.
      */
     static final Option STYLESHEET_CLI = Option.builder("s").longOpt("stylesheet").hasArg()
-            .desc("XSLT stylesheet to use when creating the report.  Not compatible with -x.  Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses")
+            .desc("XSLT stylesheet to use when creating the report.  Not compatible with -x.  " +
+                    "Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses")
             .build();
     /**
      * Produce help
@@ -360,6 +391,7 @@ public class Report {
         if (baseDirectory != null) {
             configuration.setReportable(getDirectory(baseDirectory, configuration));
         }
+        System.out.println("Created configuration");
         return configuration;
     }
 
@@ -417,44 +449,41 @@ public class Report {
     }
 
     private static void printUsage(Options opts) {
-        printUsage(new OutputStreamWriter(System.out), opts);
-        System.exit(0);
+        printUsage(new PrintWriter(System.out), opts);
     }
 
-    static void printUsage(Writer writer, Options opts) {
+    protected static String createPadding(int len) {
+        char[] padding = new char[len];
+        Arrays.fill(padding, ' ');
+        return new String(padding);
+    }
+
+    static void printUsage(PrintWriter writer, Options opts) {
 
         HelpFormatter helpFormatter = new HelpFormatter();
+        helpFormatter.setWidth(130);
         helpFormatter.setOptionComparator(new OptionComparator());
         String header = System.lineSeparator() + "Available options";
-
-        StringBuilder footer = new StringBuilder(format("------- Argument Descriptions ------%n"));
-        String[] footerEntries = {
-                "FileOrURI: A file name or URI",
-                "DirOrArchive: A director or archive file to scan",
-                "Expression: A wildcard file matching pattern. example: *-test-*.txt",
-                format("LicenseFilter: A defined filter for the licenses to include.  One of %s.",
-                        asString(LicenseFilter.values())),
-                format("LogLevel: The log level to use.  One of %s.", asString(Log.Level.values())),
-                format("ProcessingType: Specifies how to process file types.  Valid values are:" +
-                        Arrays.stream(ReportConfiguration.Processing.values())
-                                .map(v ->format("%n\t%s: %s", v.name(), v.desc()))
-                                .collect(Collectors.joining(", ")))
-        };
-        Arrays.sort(footerEntries);
-        for (String s : footerEntries) {
-            footer.append(s).append(System.lineSeparator()).append(System.lineSeparator());
-        }
-        footer.append("------- NOTES -------").append(System.lineSeparator());
-        footer.append( String.format("Rat is really little more than a grep ATM%n"
-                + "Rat is also rather memory hungry ATM%n" + "Rat is very basic ATM%n"
-                + "Rat highlights possible issues%n" + "Rat reports require interpretation%n"
-                + "Rat often requires some tuning before it runs well against a project%n"
-                + "Rat relies on heuristics: it may miss issues%n"));
-
-        helpFormatter.printHelp(new PrintWriter(writer), helpFormatter.getWidth(),
-                "java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]", header, opts,
+        String syntax = "java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]";
+        helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header, opts,
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(),
-                footer.toString(), false);
+                "", false);
+
+
+        writer.println("\n---Argument Types---");
+        String argumentPadding = createPadding(helpFormatter.getLeftPadding()+5);
+        for (Map.Entry<String,Supplier<String>> argInfo : ARGUMENT_TYPES.entrySet()) {
+            writer.format("\n<%s>\n", argInfo.getKey());
+            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + 10,
+                    argumentPadding+argInfo.getValue().get());
+        }
+        writer.println("\n---Notes---");
+
+        int idx = 1;
+        for (String note : NOTES ) {
+            writer.format("\n%d. %s", idx++, note);
+        }
+        writer.flush();
     }
 
     private Report() {

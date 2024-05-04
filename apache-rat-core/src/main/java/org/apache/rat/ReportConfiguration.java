@@ -60,7 +60,7 @@ public class ReportConfiguration {
 
     public enum Processing {NOTIFICATION("List archive as present"), PRESENCE("List any licenses found"), ABSENCE("List licenses found and any unknown licences");
 
-    String description;
+    private final String description;
     Processing(String description) {
         this.description = description;
     }
@@ -195,14 +195,14 @@ public class ReportConfiguration {
     
     /**
      * Returns the state of the dry run flag.
-     * @return the stae of the dry run flag.
+     * @return the state of the dry run flag.
      */
     public boolean isDryRun() {
         return dryRun;
     }
     
     /**
-     * Gets the file nemae filter for files to ignore.
+     * Gets the file name filter for files to ignore.
      * @return The filename filter that identifies files to ignore.
      */
     public FilenameFilter getFilesToIgnore() {

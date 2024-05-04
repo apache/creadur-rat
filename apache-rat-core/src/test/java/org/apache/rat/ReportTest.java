@@ -94,9 +94,11 @@ public class ReportTest {
     public void helpTest() throws Exception {
         Options opts = Report.buildOptions();
         StringWriter out = new StringWriter();
-        Report.printUsage(out,opts);
+        Report.printUsage(new PrintWriter(out), opts);
 
         String result = out.toString();
+        System.out.println(result);
+
         TextUtils.assertContains("-a ", result);
         TextUtils.assertContains("-A,--addLicense ", result);
         TextUtils.assertContains("--archive <ProcessingType> ", result);
