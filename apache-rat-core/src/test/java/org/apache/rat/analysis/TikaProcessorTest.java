@@ -22,6 +22,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.tika.mime.MimeTypes;
@@ -108,12 +109,14 @@ public class TikaProcessorTest {
     public void testTikaFiles() throws RatDocumentAnalysisException, IOException {
         File dir = new File("src/test/resources/tikaFiles");
         Map<String, Document.Type> unseenMime = TikaProcessor.getDocumentTypeMap();
+        ClaimStatistic statistic = new ClaimStatistic();
         for (Document.Type docType : Document.Type.values()) {
             File typeDir = new File(dir, docType.name().toLowerCase(Locale.ROOT));
             if (typeDir.isDirectory()) {
                 for (File file : Objects.requireNonNull(typeDir.listFiles())) {
                     Document doc = new FileDocument(file);
                     String mimeType = TikaProcessor.process(DefaultLog.INSTANCE, doc);
+                    statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
                     assertEquals( docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for "+file.toString());
                     unseenMime.remove(mimeType);
                 }
@@ -121,6 +124,9 @@ public class TikaProcessorTest {
         }
         System.out.println( "untested mime types");
         unseenMime.keySet().forEach(System.out::println);
+        for (Document.Type type : Document.Type.values()) {
+            System.out.format("Tested %s %s files%n", statistic.getCounter(type), type );
+        }
     }
 
 
