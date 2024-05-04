@@ -139,7 +139,7 @@ public class Report {
      * Name of File to exclude from report consideration.
      */
     static final Option EXCLUDE_CLI = Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
-            .desc("Excludes files matching wildcard <expression>. May be followed by multiple arguments"
+            .desc("Excludes files matching wildcard <expression>. May be followed by multiple arguments. "
                     + "Note that '--' or a following option is required when using this parameter.")
             .build();
     /**
@@ -148,7 +148,7 @@ public class Report {
      */
     static final Option EXCLUDE_FILE_CLI = Option.builder("E").longOpt("exclude-file")
             .argName("FileOrURI")
-            .hasArgs().desc("Excludes files matching regular expression in the input file.")
+            .hasArg().desc("Excludes files matching regular expression in the input file.")
             .build();
 
     /**
