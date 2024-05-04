@@ -97,6 +97,12 @@ public class TikaProcessorTest {
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
+    @Test
+    public void javaFileWithChineseCharacters() throws Exception {
+        FileDocument doc = new FileDocument(Resources.getResourceFile("/tikaFiles/standard/UDFVersion.java"));
+        TikaProcessor.process(DefaultLog.INSTANCE, doc);
+        assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
+    }
 
     @Test
     public void testTikaFiles() throws RatDocumentAnalysisException, IOException {
