@@ -22,57 +22,33 @@ package org.apache.rat.walker;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
-import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 
 /**
  * Walks directories.
  */
-public class DirectoryWalker extends Walker implements IReportable {
+public class DirectoryWalker extends Walker {
 
     private static final FileNameComparator COMPARATOR = new FileNameComparator();
 
-    private final IOFileFilter directoryFilter;
-
-    /**
-     * Constructs a walker.
-     *
-     * @param file the directory to walk.
-     * @param directoryFilter directory filter to eventually exclude some directories/files from the scan.
-     */
-    public DirectoryWalker(File file, IOFileFilter directoryFilter) {
-        this(file, (FilenameFilter) null, directoryFilter);
-    }
+    private final IOFileFilter directoriesToIgnore;
 
     /**
      * Constructs a walker.
      *
      * @param file the directory to walk (not null).
-     * @param filter filters input files (optional),
+     * @param filesToIgnore filters input files (optional),
      *               or null when no filtering should be performed
-     * @param directoryFilter filters directories (optional), or null when no filtering should be performed.
+     * @param directoriesToIgnore filters directories (optional), or null when no filtering should be performed.
      */
-    public DirectoryWalker(File file, final FilenameFilter filter, IOFileFilter directoryFilter) {
-        super(file.getPath(), file, filter);
-        this.directoryFilter = directoryFilter;
-    }
-
-    /**
-     * Constructs a walker.
-     *
-     * @param file the directory to walk (not null).
-     * @param ignoreNameRegex ignore directories/files with name matching the regex.
-     * @param directoryFilter filters directories (optional), or null when no filtering should be performed.
-     */
-    public DirectoryWalker(File file, final Pattern ignoreNameRegex, IOFileFilter directoryFilter) {
-        super(file.getPath(), file, regexFilter(ignoreNameRegex));
-        this.directoryFilter = directoryFilter;
+    public DirectoryWalker(final File file, final FilenameFilter filesToIgnore, final IOFileFilter directoriesToIgnore) {
+        super(file, filesToIgnore);
+        this.directoriesToIgnore = directoriesToIgnore == null ? FalseFileFilter.FALSE : directoriesToIgnore;
     }
 
     /**
@@ -80,14 +56,10 @@ public class DirectoryWalker extends Walker implements IReportable {
      *
      * @param report The report to process the directory with
      * @param file   the directory to process
-     * @throws RatException
+     * @throws RatException on error.
      */
-    private void processDirectory(RatReport report, final File file) throws RatException {
-        if (directoryFilter != null) {
-            if (!directoryFilter.accept(file)) {
-                process(report, file);
-            }
-        } else {
+    private void processDirectory(final RatReport report, final File file) throws RatException {
+        if (!directoriesToIgnore.accept(file)) {
             process(report, file);
         }
     }
@@ -97,9 +69,10 @@ public class DirectoryWalker extends Walker implements IReportable {
      * ignoring any files/directories set to be ignored.
      *
      * @param report the defined RatReport to run on this Directory walker.
+     * @throws RatException on error
      */
     public void run(final RatReport report) throws RatException {
-        process(report, file);
+        process(report, getBaseFile());
     }
 
     /**
@@ -107,9 +80,9 @@ public class DirectoryWalker extends Walker implements IReportable {
      *
      * @param report the report to use in processing
      * @param file   the run the report against
-     * @throws RatException
+     * @throws RatException on error
      */
-    private void process(final RatReport report, final File file) throws RatException {
+    protected void process(final RatReport report, final File file) throws RatException {
         final File[] files = file.listFiles();
         if (files != null) {
             Arrays.sort(files, COMPARATOR);
@@ -119,16 +92,20 @@ public class DirectoryWalker extends Walker implements IReportable {
         }
     }
 
+    private boolean isNotIgnoredDirectory(final File file) {
+        return !directoriesToIgnore.accept(file.getParentFile(), file.getName());
+    }
+
     /**
      * Process all directories in a set of file objects, ignoring any directories set to be ignored.
      *
      * @param report the report to use in processing
      * @param files  the files to process (only directories will be processed)
-     * @throws RatException
+     * @throws RatException on error
      */
     private void processDirectories(final RatReport report, final File[] files) throws RatException {
         for (final File file : files) {
-            if (isNotIgnored(file) && file.isDirectory()) {
+            if (file.isDirectory() && isNotIgnoredDirectory(file)) {
                 processDirectory(report, file);
             }
         }
@@ -139,28 +116,13 @@ public class DirectoryWalker extends Walker implements IReportable {
      *
      * @param report the report to use in processing
      * @param files  the files to process (only files will be processed)
-     * @throws RatException
+     * @throws RatException on error
      */
     private void processNonDirectories(final RatReport report, final File[] files) throws RatException {
         for (final File file : files) {
-            if (isNotIgnored(file) && !file.isDirectory()) {
-                report(report, file);
+            if (!file.isDirectory() && isNotIgnored(file)) {
+                report.report(new FileDocument(file));
             }
         }
-
-    }
-
-    /**
-     * Report on the given file.
-     *
-     * @param report the report to process the file with
-     * @param file   the file to be reported on
-     * @throws RatException
-     */
-    private void report(final RatReport report, File file) throws RatException {
-
-        Document document = new FileDocument(file);
-        report.report(document);
-
     }
 }

@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.license.ILicense;
@@ -50,8 +51,7 @@ import org.junit.jupiter.api.Test;
 
 public class XmlReportFactoryTest {
 
-    private static final Pattern IGNORE_EMPTY = Pattern.compile(".svn|Empty.txt");
-    private ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("TEST")
+    private final ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("TEST")
             .setLicenseFamilyName("Testing family").build();
 
     private StringWriter out;
@@ -71,12 +71,13 @@ public class XmlReportFactoryTest {
     @Test
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-
-        final TestingLicense testingLicense = new TestingLicense(new TestingMatcher(true), family);
-
-        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), IGNORE_EMPTY, HiddenFileFilter.HIDDEN);
-        final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+        final TestingLicense testingLicense = new TestingLicense(new TestingMatcher(true), family);
+        configuration.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
+
+        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), configuration.getFilesToIgnore(), HiddenFileFilter.HIDDEN);
+        final ClaimStatistic statistic = new ClaimStatistic();
+
         configuration.addLicense(testingLicense);
         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
         report.startReport();
@@ -88,10 +89,10 @@ public class XmlReportFactoryTest {
                 "Preamble and document element are OK");
 
         assertTrue(XmlUtils.isWellFormedXml(output), "Is well formed");
-        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.BINARY)[0], "Binary files");
-        assertEquals(2, statistic.getDocumentCategoryMap().get(Document.Type.NOTICE)[0], "Notice files");
-        assertEquals(8, statistic.getDocumentCategoryMap().get(Document.Type.STANDARD)[0], "Standard files");
-        assertEquals(1, statistic.getDocumentCategoryMap().get(Document.Type.ARCHIVE)[0], "Archives");
+        assertEquals(2, statistic.getCounter(Document.Type.BINARY), "Binary files");
+        assertEquals(2, statistic.getCounter(Document.Type.NOTICE), "Notice files");
+        assertEquals(8, statistic.getCounter(Document.Type.STANDARD), "Standard files");
+        assertEquals(1, statistic.getCounter(Document.Type.ARCHIVE), "Archives");
     }
 
     @Test

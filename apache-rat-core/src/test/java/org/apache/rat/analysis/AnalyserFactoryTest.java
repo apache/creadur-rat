@@ -18,7 +18,6 @@
  */
 package org.apache.rat.analysis;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,6 +30,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,13 +72,13 @@ public class AnalyserFactoryTest {
                 " * specific language governing permissions and limitations", //
                 " * under the License.", //
                 " ]]></sample></resource>" };
-        
+
         final MonolithicFileDocument document = new MonolithicFileDocument(
                 Resources.getResourceFile("/elements/Text.txt"));
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        for (String exp : expected ) { 
+        for (String exp : expected) {
             assertTrue(result.contains(exp), () -> exp);
         }
     }
@@ -121,5 +121,58 @@ public class AnalyserFactoryTest {
         reporter.report(document);
         assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString(),
                 "Open archive element");
+    }
+
+    @Test
+    public void RAT211_bmp_Test() throws Exception {
+        MonolithicFileDocument document = new MonolithicFileDocument(
+                Resources.getResourceFile("/jira/RAT211/side_left.bmp"));
+        analyser.analyse(document);
+        reporter.report(document);
+        assertEquals("<resource name='src/test/resources/jira/RAT211/side_left.bmp' type='BINARY'/>", out.toString(),
+                "Open archive element");
+    }
+
+    @Test
+    public void RAT211_dia_Test() throws Exception {
+        MonolithicFileDocument document = new MonolithicFileDocument(
+                Resources.getResourceFile("/jira/RAT211/leader-election-message-arrives.dia"));
+        analyser.analyse(document);
+        reporter.report(document);
+        assertEquals(
+                "<resource name='src/test/resources/jira/RAT211/leader-election-message-arrives.dia' type='ARCHIVE'/>",
+                out.toString(), "Open archive element");
+    }
+
+    @Test
+    public void RAT147_unix_Test() throws Exception {
+        MonolithicFileDocument document = new MonolithicFileDocument(
+                Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"));
+        analyser.analyse(document);
+        reporter.report(document);
+        String result = out.toString();
+        TextUtils.assertPatternInOutput(
+                "<resource name='src/test/resources/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'",
+                result);
+        TextUtils.assertPatternInOutput("sentence 1.$", result);
+        TextUtils.assertPatternInOutput("^sentence 2.$", result);
+        TextUtils.assertPatternInOutput("^sentence 3.$", result);
+        TextUtils.assertPatternInOutput("^sentence 4.$", result);
+    }
+
+    @Test
+    public void RAT147_windows_Test() throws Exception {
+        MonolithicFileDocument document = new MonolithicFileDocument(
+                Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"));
+        analyser.analyse(document);
+        reporter.report(document);
+        String result = out.toString();
+        TextUtils.assertPatternInOutput(
+                "<resource name='src/test/resources/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'",
+                result);
+        TextUtils.assertPatternInOutput("sentence 1.$", result);
+        TextUtils.assertPatternInOutput("^sentence 2.$", result);
+        TextUtils.assertPatternInOutput("^sentence 3.$", result);
+        TextUtils.assertPatternInOutput("^sentence 4.$", result);
     }
 }

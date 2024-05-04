@@ -57,6 +57,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
@@ -186,24 +187,33 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void inputFileFilterTest() {
+    public void filesToIgnoreTest() {
+
+        assertThat(underTest.getFilesToIgnore()).isNull();
+
+        underTest.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
+        assertThat(underTest.getFilesToIgnore()).isNotNull();
+        assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
+
         FilenameFilter filter = mock(FilenameFilter.class);
-        assertThat(underTest.getInputFileFilter()).isNull();
-        underTest.setInputFileFilter(filter);
-        assertThat(underTest.getInputFileFilter()).isEqualTo(filter);
+        underTest.setFilesToIgnore(filter);
+        assertThat(underTest.getFilesToIgnore()).isEqualTo(filter);
     }
 
     @Test
-    public void directoryFilterTest() {
-        assertThat(underTest.getDirectoryFilter()).isNotNull();
-        assertThat(underTest.getDirectoryFilter()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+    public void directoriesToIgnoreTest() {
+        assertThat(underTest.getDirectoriesToIgnore()).isNull();
 
-        underTest.setDirectoryFilter(DirectoryFileFilter.DIRECTORY);
-        underTest.addDirectoryFilter(NameBasedHiddenFileFilter.HIDDEN);
-        assertThat(underTest.getDirectoryFilter()).isExactlyInstanceOf(AndFileFilter.class);
+        underTest.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
+        assertThat(underTest.getDirectoriesToIgnore()).isNotNull();
+        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
 
-        underTest.setDirectoryFilter(null);
-        assertThat(underTest.getDirectoryFilter()).isExactlyInstanceOf(FalseFileFilter.class);
+        underTest.setDirectoriesToIgnore(DirectoryFileFilter.DIRECTORY);
+        underTest.addDirectoryToIgnore(NameBasedHiddenFileFilter.HIDDEN);
+        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(AndFileFilter.class);
+
+        underTest.setDirectoriesToIgnore(null);
+        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
     }
 
     @Test
@@ -549,11 +559,11 @@ public class ReportConfigurationTest {
         assertThat(config.isAddingLicenses()).isFalse();
         assertThat(config.isAddingLicensesForced()).isFalse();
         assertThat(config.getCopyrightMessage()).isNull();
-        assertThat(config.getInputFileFilter()).isNull();
+        assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         assertThat(config.isStyleReport()).isTrue();
         assertThat(config.getStyleSheet()).isNotNull().withFailMessage("Stylesheet should not be null");
-        assertThat(config.getDirectoryFilter()).isNotNull().withFailMessage("Directory filter should not be null");
-        assertThat(config.getDirectoryFilter()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+        assertThat(config.getDirectoriesToIgnore()).isNotNull().withFailMessage("Directory filter should not be null");
+        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
         
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);

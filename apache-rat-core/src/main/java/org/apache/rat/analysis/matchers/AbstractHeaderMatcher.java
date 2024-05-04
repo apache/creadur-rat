@@ -24,8 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * An abstract class to simplify IHeaderMatcher creation. This class ensures

@@ -19,6 +19,7 @@
 package org.apache.rat.walker;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,48 +27,100 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
+import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.report.RatReport;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 public class DirectoryWalkerTest {
-    
-    @TempDir
-	private File toWalk;
-    
-    @Test
-    public void walk() throws IOException, RatException {
-        File regular = new File(toWalk, "regular");
-        regular.mkdir();
-        File regularFile = new File(regular, "test");
-        try (FileWriter writer = new FileWriter(regularFile)) {
-            writer.write("test");
+
+	private static File toWalk;
+
+    private static void fileWriter(File dir, String name, String contents) throws IOException {
+        try (FileWriter writer = new FileWriter(new File(dir, name))) {
+            writer.write(contents);
             writer.flush();
         }
+    }
+    @BeforeAll
+    public static void setUp(@TempDir File dir) throws Exception {
+        toWalk = dir;
+        /*
+        Create a directory structure like this:
+
+            regular
+                regularFile
+                .hiddenFile
+            .hidden
+                regularFile
+                .hiddenFile
+         */
+        File regular = new File(toWalk, "regular");
+        regular.mkdir();
+        fileWriter(regular, "regularFile", "regular file");
+        fileWriter(regular, ".hiddenFile", "hidden file");
 
         File hidden = new File(toWalk, ".hidden");
         hidden.mkdir();
-        File hiddenFile = new File(hidden, "test");
+        fileWriter(hidden, "regularFile", "regular file");
+        fileWriter(hidden, ".hiddenFile", "hidden file");
+    }
 
-        try (FileWriter writer = new FileWriter(hiddenFile)) {
-            writer.write("test");
-            writer.flush();
-        }
+    private String expectedName(String name) {
+        return DocumentImplUtils.toName(toWalk)+name;
+    }
 
-        DirectoryWalker walker = new DirectoryWalker(toWalk, NameBasedHiddenFileFilter.HIDDEN);
+
+    
+    @Test
+    public void noFiltersTest() throws IOException, RatException {
+        DirectoryWalker walker = new DirectoryWalker(toWalk, null,null);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
+        String[] expected = {"/regular/regularFile", "/regular/.hiddenFile", "/.hidden/regularFile", "/.hidden/.hiddenFile"};
+        assertEquals(4, scanned.size());
+        for (String ex : expected) {
+            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
+        }
+    }
 
-        assertEquals(1, scanned.size());
-
-        walker = new DirectoryWalker(toWalk, FalseFileFilter.FALSE);
-        scanned = new ArrayList<>();
+    @Test
+    public void noHiddenFileFiltersTest() throws IOException, RatException {
+        DirectoryWalker walker = new DirectoryWalker(toWalk, NameBasedHiddenFileFilter.HIDDEN,null);
+        List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
-
+        String[] expected = {"/regular/regularFile", "/.hidden/regularFile"};
         assertEquals(2, scanned.size());
+        for (String ex : expected) {
+            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
+        }
+    }
+
+    @Test
+    public void noHiddenDirectoryFiltersTest() throws IOException, RatException {
+        DirectoryWalker walker = new DirectoryWalker(toWalk, null, NameBasedHiddenFileFilter.HIDDEN);
+        List<String> scanned = new ArrayList<>();
+        walker.run(new TestRatReport(scanned));
+        String[] expected = {"/regular/regularFile", "/regular/.hiddenFile"};
+        assertEquals(2, scanned.size());
+        for (String ex : expected) {
+            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
+        }
+    }
+
+    @Test
+    public void noHiddenDirectoryAndNoHiddenFileFiltersTest() throws IOException, RatException {
+        DirectoryWalker walker = new DirectoryWalker(toWalk, NameBasedHiddenFileFilter.HIDDEN, NameBasedHiddenFileFilter.HIDDEN);
+        List<String> scanned = new ArrayList<>();
+        walker.run(new TestRatReport(scanned));
+        String[] expected = {"/regular/regularFile"};
+        assertEquals(1, scanned.size());
+        for (String ex : expected) {
+            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
+        }
     }
 
     class TestRatReport implements RatReport {
@@ -92,7 +145,5 @@ public class DirectoryWalkerTest {
         public void endReport() {
             // no-op
         }
-
     }
-
 }

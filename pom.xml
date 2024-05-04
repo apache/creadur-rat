@@ -95,11 +95,6 @@ agnostic home for software distribution comprehension and audit tools.
         <version>4.4</version>
       </dependency>
       <dependency>
-        <groupId>commons-beanutils</groupId>
-        <artifactId>commons-beanutils</artifactId>
-        <version>1.9.4</version>
-      </dependency>
-      <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.16.1</version>
@@ -161,6 +156,11 @@ agnostic home for software distribution comprehension and audit tools.
         <artifactId>assertj-core</artifactId>
         <version>3.25.3</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-core</artifactId>
+        <version>2.9.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -24,9 +24,6 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.document.impl.guesser.ArchiveGuesser;
-import org.apache.rat.document.impl.guesser.BinaryGuesser;
-import org.apache.rat.document.impl.guesser.NoteGuesser;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.utils.Log;
 
@@ -63,8 +60,8 @@ public class DefaultAnalyserFactory {
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
-         * 
-         * @param license The license to analyse
+         * @param log the Log to use
+         * @param licenses The licenses to analyse
          */
         public DefaultAnalyser(final Log log, final Collection<ILicense> licenses) {
             this.licenses = licenses;
@@ -73,16 +70,23 @@ public class DefaultAnalyserFactory {
 
         @Override
         public void analyse(Document document) throws RatDocumentAnalysisException {
-            if (NoteGuesser.isNote(document)) {
-                document.getMetaData().setDocumentType(Document.Type.NOTICE);
-            } else if (ArchiveGuesser.isArchive(document)) {
-                document.getMetaData().setDocumentType(Document.Type.ARCHIVE);
-            } else if (BinaryGuesser.isBinary(document)) {
-                document.getMetaData().setDocumentType(Document.Type.BINARY);
-            } else {
-                document.getMetaData().setDocumentType(Document.Type.STANDARD);
-                new DocumentHeaderAnalyser(log, licenses).analyse(document);
+
+            TikaProcessor.process(log, document);
+
+            switch (document.getMetaData().getDocumentType()) {
+            case STANDARD:
+                DocumentHeaderAnalyser analyser = new DocumentHeaderAnalyser(log, licenses);
+                analyser.analyse(document);
+            case NOTICE:
+            case ARCHIVE:
+            case BINARY:
+            case UNKNOWN:
+            default:
+                break;
             }
+
+
+
         }
     }
 }

@@ -91,13 +91,13 @@ public class ReportTest {
         }
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
-        TextUtils.isMatching("Notes: 2$", content);
-        TextUtils.isMatching("Binaries: 2$", content);
-        TextUtils.isMatching("Archives: 1$", content);
-        TextUtils.isMatching("Standards: 8$", content);
-        TextUtils.isMatching("Apache Licensed: 5$", content);
-        TextUtils.isMatching("Generated Documents 1$", content);
-        TextUtils.isMatching("^2 Unknown licenses", content);
+        TextUtils.assertPatternInOutput("Notes: 2$", content);
+        TextUtils.assertPatternInOutput("Binaries: 2$", content);
+        TextUtils.assertPatternInOutput("Archives: 1$", content);
+        TextUtils.assertPatternInOutput("Standards: 8$", content);
+        TextUtils.assertPatternInOutput("Apache Licensed: 5$", content);
+        TextUtils.assertPatternInOutput("Generated Documents: 1$", content);
+        TextUtils.assertPatternInOutput("^2 Unknown Licenses", content);
         assertTrue(content.contains(" S target/test-classes/elements/ILoggerFactory.java"));
         assertTrue(content.contains(" B target/test-classes/elements/Image.png"));
         assertTrue(content.contains(" N target/test-classes/elements/LICENSE"));
@@ -108,7 +108,6 @@ public class ReportTest {
         assertTrue(content.contains(" S target/test-classes/elements/Xml.xml"));
         assertTrue(content.contains(" S target/test-classes/elements/buildr.rb"));
         assertTrue(content.contains(" A target/test-classes/elements/dummy.jar"));
-        assertTrue(content.contains(" B target/test-classes/elements/plain.json"));
         assertTrue(content.contains("!S target/test-classes/elements/sub/Empty.txt"));
         assertTrue(content.contains(" S target/test-classes/elements/tri.txt"));
         assertTrue(content.contains(" G target/test-classes/elements/generated.txt"));
