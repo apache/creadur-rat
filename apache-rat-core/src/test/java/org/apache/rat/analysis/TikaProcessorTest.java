@@ -64,7 +64,6 @@ public class TikaProcessorTest {
     @Test
     public void UTF16_input() throws Exception {
         Document doc = getDocument(Resources.getResourceStream("/binaries/UTF16_with_signature.xml"));
-        //FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/UTF16_with_signature.xml"));
         TikaProcessor.process(DefaultLog.INSTANCE, doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
