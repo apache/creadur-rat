@@ -72,6 +72,9 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-366" type="add" dev="pottlinger">
+        Integrate checkstyle and spotbugs into the build and webpage generation. Most charset-related errors cannot be fixed until we break JDK8-compliance and move to newer versions.
+      </action>
       <action issue="RAT-368" type="update" dev="claudenw">
         Removed ReportFailedRuntimeException, ReportTransformer, RatReportAnalysisResultException, MimeTyper, ToNameTransformer,
         UnsuitableDocumentException, ReportTransformerTest, and ToNameTransformerTest as they are no longer used in the codebase.
