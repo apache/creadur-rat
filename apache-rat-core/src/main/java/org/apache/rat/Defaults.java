@@ -44,7 +44,6 @@ import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
  * A class that provides the standard system defaults for the ReportConfiguration.
- *
  * Properties in this class may be overridden or added to by configuration options in the various UIs.
  * See the specific UI for details.
  */
@@ -63,14 +62,21 @@ public final class Defaults {
      */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
+     public static final FilenameFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
+
+    public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
+
+    public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
+
+    public static final LicenseFilter LIST_FAMILIES = LicenseFilter.NONE;
+
+    public static final LicenseFilter LIST_LICENSES = LicenseFilter.NONE;
+
     private final LicenseSetFactory setFactory;
 
-    private static final FilenameFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
-
-    private static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
 
     /**
-     * Initialize the system configuration reader..
+     * Initialize the system configuration reader.
      */
     public static void init() {
         Format fmt = Format.fromURL(DEFAULT_CONFIG_URL);
@@ -165,14 +171,6 @@ public final class Defaults {
      */
     public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
         return setFactory.getLicenseFamilyIds(filter);
-    }
-
-    public static FilenameFilter getFilesToIgnore() {
-        return FILES_TO_IGNORE;
-    }
-
-    public static IOFileFilter getDirectoriesToIgnore() {
-        return DIRECTORIES_TO_IGNORE;
     }
     
     /**

@@ -346,8 +346,6 @@ public abstract class AbstractRatMojo extends AbstractMojo {
             config.setFrom(defaults);
         } else {
             config.setStyleSheet(Defaults.getPlainStyleSheet());
-            config.setDirectoriesToIgnore(Defaults.getDirectoriesToIgnore());
-            config.setFilesToIgnore(Defaults.getFilesToIgnore());
         }
 
         if (additionalLicenseFiles != null) {

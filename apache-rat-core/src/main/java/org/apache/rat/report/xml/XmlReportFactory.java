@@ -67,9 +67,7 @@ public class XmlReportFactory {
         
         reporters.add(new SimpleXmlClaimReporter(writer));
 
-        final IDocumentAnalyser analyser =
-            DefaultAnalyserFactory.createDefaultAnalyser(configuration.getLog(), configuration.getLicenses(LicenseFilter.ALL),
-                    configuration.getFilesToIgnore());
+        final IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(configuration);
         final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseFamilies(LicenseFilter.APPROVED));
 
         final IDocumentAnalyser[] analysers = {analyser, policy};
