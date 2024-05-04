@@ -18,18 +18,15 @@
  */
 package org.apache.rat.walker;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentImplUtils;

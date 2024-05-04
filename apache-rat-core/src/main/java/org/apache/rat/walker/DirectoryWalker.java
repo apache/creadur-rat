@@ -27,13 +27,12 @@ import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
-import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 
 /**
  * Walks directories.
  */
-public class DirectoryWalker extends Walker implements IReportable {
+public class DirectoryWalker extends Walker {
 
     private static final FileNameComparator COMPARATOR = new FileNameComparator();
 

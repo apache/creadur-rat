@@ -30,7 +30,6 @@ import java.io.FileWriter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.api.Document;

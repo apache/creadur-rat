@@ -119,11 +119,8 @@ public class TikaProcessorTest {
                 }
             }
         }
-        MimeTypes mimeTypes = MimeTypes.getDefaultMimeTypes();
-
         System.out.println( "untested mime types");
         unseenMime.keySet().forEach(System.out::println);
-
     }
 
 

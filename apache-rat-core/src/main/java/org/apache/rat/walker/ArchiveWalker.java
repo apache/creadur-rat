@@ -34,13 +34,12 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.ArchiveEntryDocument;
-import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 
 /**
  * Walks various kinds of archives files
  */
-public class ArchiveWalker extends Walker implements IReportable {
+public class ArchiveWalker extends Walker {
 
     /**
      * Constructs a walker.

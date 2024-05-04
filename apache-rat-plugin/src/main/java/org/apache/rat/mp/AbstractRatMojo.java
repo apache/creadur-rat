@@ -68,7 +68,6 @@ import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoringDirectoryScanner;
 import org.apache.rat.report.IReportable;
-import org.apache.rat.walker.NameBasedHiddenFileFilter;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**

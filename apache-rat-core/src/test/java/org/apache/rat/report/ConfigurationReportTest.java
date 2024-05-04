@@ -18,24 +18,19 @@
  */
 package org.apache.rat.report;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Optional;
 
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.config.parameters.Description;
 import org.apache.rat.configuration.MatcherBuilderTracker;
-import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;

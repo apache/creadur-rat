@@ -18,8 +18,6 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import org.apache.rat.analysis.IHeaderMatcher;

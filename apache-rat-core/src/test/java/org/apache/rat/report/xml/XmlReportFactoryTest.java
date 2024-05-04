@@ -51,7 +51,6 @@ import org.junit.jupiter.api.Test;
 
 public class XmlReportFactoryTest {
 
-    private static final Pattern IGNORE_EMPTY = Pattern.compile(".svn|Empty.txt");
     private final ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("TEST")
             .setLicenseFamilyName("Testing family").build();
 
