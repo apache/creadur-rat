@@ -98,8 +98,8 @@ public class TikaProcessorTest {
     }
 
     @Test
-    public void javaFileWithChineseCharacters() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/tikaFiles/standard/UDFVersion.java"));
+    public void javaFileWithChineseCharacters_RAT301() throws Exception {
+        FileDocument doc = new FileDocument(Resources.getResourceFile("/tikaFiles/standard/ChineseCommentsJava.java"));
         TikaProcessor.process(DefaultLog.INSTANCE, doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
