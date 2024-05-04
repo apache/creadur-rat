@@ -44,9 +44,9 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.function.Function;
 
-import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -189,10 +189,9 @@ public class ReportConfigurationTest {
     @Test
     public void filesToIgnoreTest() {
 
-        assertThat(underTest.getFilesToIgnore()).isNull();
+        assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
 
         underTest.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
-        assertThat(underTest.getFilesToIgnore()).isNotNull();
         assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
 
         FilenameFilter filter = mock(FilenameFilter.class);
@@ -202,18 +201,34 @@ public class ReportConfigurationTest {
 
     @Test
     public void directoriesToIgnoreTest() {
-        assertThat(underTest.getDirectoriesToIgnore()).isNull();
+        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
 
         underTest.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
-        assertThat(underTest.getDirectoriesToIgnore()).isNotNull();
         assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
 
         underTest.setDirectoriesToIgnore(DirectoryFileFilter.DIRECTORY);
         underTest.addDirectoryToIgnore(NameBasedHiddenFileFilter.HIDDEN);
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(AndFileFilter.class);
+        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(OrFileFilter.class);
 
         underTest.setDirectoriesToIgnore(null);
         assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
+    }
+
+    @Test
+    public void archiveProcessingTest() {
+        assertThat(underTest.getArchiveProcessing()).isEqualTo(ReportConfiguration.Processing.NOTIFICATION);
+
+        underTest.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
+        assertThat(underTest.getArchiveProcessing()).isEqualTo(ReportConfiguration.Processing.NOTIFICATION);
+
+        underTest.setArchiveProcessing(ReportConfiguration.Processing.ABSENCE);
+        assertThat(underTest.getArchiveProcessing()).isEqualTo(ReportConfiguration.Processing.ABSENCE);
+
+        underTest.setArchiveProcessing(ReportConfiguration.Processing.PRESENCE);
+        assertThat(underTest.getArchiveProcessing()).isEqualTo(ReportConfiguration.Processing.PRESENCE);
+
+        underTest.setArchiveProcessing(null);
+        assertThat(underTest.getArchiveProcessing()).isEqualTo(ReportConfiguration.Processing.NOTIFICATION);
     }
 
     @Test
