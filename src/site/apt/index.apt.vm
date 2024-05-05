@@ -72,7 +72,9 @@ Apache Rat
    
    * Add a new {{{./matcher_def.html}Matcher definition}}. Requires Java expertise.
    
-   * Add a new definition format.  Requires Java expertice as well as expertise with the format.
+   * Add a new definition format.  Requires Java expertise as well as expertise with the format.
+
+   * Write a new {{{./xslt_def.html}output report}}.  Requires XSLT knowledge.
 
 ** Who Develops Rat?
 
@@ -135,6 +137,8 @@ java -jar apache-rat-${project.version}.jar --help
   * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl}missing-headers}} - List only files that are missing headers.
 
  These stylesheets can be specified using options in the command line, Maven or Ant clients.
+
+ In addition, new {{{/xslt_def.html}stylesheets may be developed}} and applied to create new reports.
 
 * Checking Out Rat
 

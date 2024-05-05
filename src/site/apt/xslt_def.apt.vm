@@ -1,0 +1,86 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+            --------------------------
+            How to define new Rat reports
+            --------------------------
+
+How to define new Rat reports
+
+ All Rat reports are {{{https://www.w3.org/TR/xslt-30/}XSLT stylesheets}} that transform the XML output.  The {{{https://www.w3.org/TR/xmlschema11-1/}schema}} for the XML output can be found in the
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/rat-report.xsd}
+core resources rat-report.xsd file.}}
+
+ There are three internal reports in the same directory that can also be used as examples:
+
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl}
+plain-rat.xsl}}: The default report.
+
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl}
+missing-headers.xsl}}: A report that lists files that do not have headers.
+
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl}
+unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
+
+* The Report XML
+
+ The apache-rat sub-module has an example of
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat/src/site/examples/rat-report.txt}the Rat report XML file.}}
+
+** <<<rat-report>>> Element
+
+ The XML document starts with a <<<rat-report>>> element that has a <<<timestamp>>> attribute that contains the date and time the Rat report was
+ created.  The <<<rat-report>>> only contains <<<resource>>> elements.
+
+** <<<resource>>> Element
+
+ There in one <<<resource>>> element for every file that was processed.  The <<<resource>>> may contain <<<license>>> and <<<sample>>> child elements.
+ It has two attributes:
+
+ * <<<name>>>: The name of the file.
+
+ * <<<type>>>: The document type.  This is one of the <<<Document.Type>>> enum values.  The value is always in lower case.  For a complete
+ list see the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat/src/main/java/org/apache/rat/api/Document.java}Document.java}}
+ file for a complete list of document types.
+
+** <<<license>>> Element
+
+ The <<<license>>> element is only found as a child of a <<<resource>>> element and may have a <<<notes>>> child element.  The <<<license>>> element has four elements:
+
+ * <<<approval>>>: Specifies whether the license is approved.  Values are restricted to 'true' and 'false'.
+
+ * <<<family>>>: The license family code.  This is always 5 characters long and may have spaces at the end.
+
+ * <<<id>>>: The license id.  This is often the same as the license family code with trailing spaces removed, but may be other values.
+ It is guaranteed to be unique within licenses.
+
+ * <<<name>>>: The name of the license.  This is the human readable name that was provided when the license was defined.
+
+** <<<sample>>> Element
+
+ The  <<<sample>>> element contains a <<<CDATA>>> block comprising the text that was processed when the <<<resource>>> was processed.
+
+** <<<notes>>> Element
+
+ The <<<notes>>> element contains a <<<CDATA>>> blcok comprising the text of any notes about the license that were provided when the license was defined.
+
+* How to use the report
+
+ Once an XSLT stylesheet has been developed it can be tested by running Rat and providing the full path to the XSLT stylesheet as the stylesheet
+ argument for the client being used.  See Running Rat from the {{{/apache-rat/index.html}Command line}},
+ {{{/apache-rat-plugin/index.html}Maven}}, or
+ {{{/apache-rat-tasks/index.html}Ant}} for details.
