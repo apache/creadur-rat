@@ -79,12 +79,28 @@ public class Report {
             "Rat relies on heuristics: it may miss issues"
     };
 
-    private static final String[] STYLE_SHEETS = {"plain-rat", "missing-headers", "unapproved-licenses"};
+    private enum StyleSheets { PLAIN("plain-rat", "The default style"),
+        MISSING_HEADERS("missing-headers", "Produces a report of files that are missing headers"),
+        UNAPPROVED_LICENSES("unapproved-licenses", "Produces a report of the files with unapproved licenses");
+        private final String arg;
+        private final String desc;
+        StyleSheets(String arg, String description) {
+            this.arg = arg;
+            this.desc = description;
+        }
+
+        public String arg() {
+            return arg;
+        }
+
+        public String desc() {
+            return desc;
+        }
+    }
 
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
 
     static {
-        Arrays.sort(STYLE_SHEETS);
         ARGUMENT_TYPES = new TreeMap<>();
         ARGUMENT_TYPES.put("FileOrURI", () -> "A file name or URI");
         ARGUMENT_TYPES.put("DirOrArchive", () -> "A director or archive file to scan");
@@ -96,8 +112,10 @@ public class Report {
                 Arrays.stream(ReportConfiguration.Processing.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
                         .collect(Collectors.joining(""))));
-        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file may be one of the internal named sheets: %s.",
-                String.join(", ", STYLE_SHEETS)));
+        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file may be one of the internal named sheets.  Internal sheets are: %s.",
+                Arrays.stream(StyleSheets.values())
+                        .map(v -> format("\t%s: %s", v.arg(), v.desc()))
+                        .collect(Collectors.joining(""))));
     }
 
     // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
