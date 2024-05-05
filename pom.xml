@@ -315,10 +315,11 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.4.0</version>
           <configuration>
-            <!-- TODO remove after RAT-369 is done -->
+            <!-- RAT-369: as spotbugs does not allow setting a global (numeric) threshold of currently accepted errors/bugs we do not fail the build -->
             <failOnError>false</failOnError>
             <!-- we only want to see our own problems and in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
+            <!-- in order to have a global spotbugs configuration an exclusion file needs to exist in all submodules -->
             <excludeFilterFile>${basedir}/spotbugs_ignore.xml</excludeFilterFile>
             <plugins>
               <plugin>
