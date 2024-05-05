@@ -58,7 +58,7 @@ import org.apache.rat.utils.ReportingSet;
  */
 public class ReportConfiguration {
 
-    public enum Processing {NOTIFICATION("List archive as present"), PRESENCE("List any licenses found"), ABSENCE("List licenses found and any unknown licences");
+    public enum Processing {NOTIFICATION("List file as present"), PRESENCE("List any licenses found"), ABSENCE("List licenses found and any unknown licences");
 
     private final String description;
     Processing(String description) {
