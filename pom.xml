@@ -202,6 +202,10 @@ agnostic home for software distribution comprehension and audit tools.
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${mavenJavadocPluginVersion}</version>
         <configuration>
@@ -285,6 +289,10 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+      </plugin>
     </plugins>
   </reporting>
   <build>
@@ -297,6 +305,38 @@ agnostic home for software distribution comprehension and audit tools.
         if ours is different.
       -->
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>4.8.4.0</version>
+          <configuration>
+            <!-- RAT-369: as spotbugs does not allow setting a global (numeric) threshold of currently accepted errors/bugs we do not fail the build -->
+            <failOnError>false</failOnError>
+            <!-- we only want to see our own problems and in all subpackages -->
+            <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
+            <!-- in order to have a global spotbugs configuration an exclusion file needs to exist in all submodules -->
+            <excludeFilterFile>${basedir}/spotbugs_ignore.xml</excludeFilterFile>
+            <plugins>
+              <plugin>
+                <groupId>com.h3xstream.findsecbugs</groupId>
+                <artifactId>findsecbugs-plugin</artifactId>
+                <version>1.13.0</version>
+              </plugin>
+            </plugins>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
@@ -440,6 +480,14 @@ agnostic home for software distribution comprehension and audit tools.
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>

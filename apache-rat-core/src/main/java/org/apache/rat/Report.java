@@ -277,7 +277,7 @@ public class Report {
                 if (url == null) {
                     ioSupplier = () -> Files.newInputStream(Paths.get(style[0]));
                 } else {
-                    ioSupplier = () -> url.openStream();
+                    ioSupplier = url::openStream;
                 }
                 configuration.setStyleSheet(ioSupplier);
             }
@@ -332,8 +332,7 @@ public class Report {
     }
 
     static Options buildOptions() {
-        String licFilterValues = String.join(", ", 
-                Arrays.stream(LicenseFilter.values()).map(LicenseFilter::name).collect(Collectors.toList()));
+        String licFilterValues = Arrays.stream(LicenseFilter.values()).map(LicenseFilter::name).collect(Collectors.joining(", "));
 
         Options opts = new Options()
         .addOption(Option.builder().longOpt(DRY_RUN)

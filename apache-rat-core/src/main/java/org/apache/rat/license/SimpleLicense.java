@@ -39,7 +39,7 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 @ConfigComponent(type = ComponentType.LICENSE)
 public class SimpleLicense implements ILicense {
 
-    @ConfigComponent(type = ComponentType.BULID_PARAMETER, desc = "The defined license families.", name = "licenseFamilies")
+    @ConfigComponent(type = ComponentType.BUILD_PARAMETER, desc = "The defined license families.", name = "licenseFamilies")
     private ILicenseFamily family;
 
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The matcher for this license.", required = true)

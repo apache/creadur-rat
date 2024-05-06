@@ -103,7 +103,7 @@ public class Documentation {
             writeIndent(indent, writer);
             switch (d.getType()) {
             case PARAMETER:
-            case BULID_PARAMETER:
+            case BUILD_PARAMETER:
                 writer.write(String.format("'%s' %s (Datatype: %s%s)%n", d.getCommonName(), d.getDescription(),
                         d.isCollection() ? "Collection of " : "", d.getChildType().getSimpleName()));
                 break;

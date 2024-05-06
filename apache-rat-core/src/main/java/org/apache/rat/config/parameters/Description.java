@@ -80,7 +80,7 @@ public class Description {
         this.desc = desc;
         this.isCollection = isCollection;
         this.required = required;
-        if (type == ComponentType.BULID_PARAMETER) {
+        if (type == ComponentType.BUILD_PARAMETER) {
             Method m;
             try {
                 m = BuilderParams.class.getMethod(name);
@@ -275,7 +275,7 @@ public class Description {
         case PARAMETER:
             return clazz.getMethod(methodName,
                     IHeaderMatcher.class.isAssignableFrom(childClass) ? IHeaderMatcher.Builder.class : childClass);
-        case BULID_PARAMETER:
+        case BUILD_PARAMETER:
             return clazz.getMethod(methodName, childClass);
         }
         // should not happen

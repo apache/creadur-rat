@@ -18,11 +18,10 @@
 */
 package org.apache.rat.anttasks;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -319,10 +318,9 @@ public class Report extends Task {
             case ERROR:
                 write(Project.MSG_ERR, msg);
                 break;
-			case OFF:
-				break;
-			default:
-				break;
+            case OFF:
+            default:
+                break;
             }
         }
         
