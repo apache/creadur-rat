@@ -58,7 +58,13 @@ import org.apache.rat.utils.ReportingSet;
  */
 public class ReportConfiguration {
 
-    public enum Processing {NOTIFICATION("List file as present"), PRESENCE("List any licenses found"), ABSENCE("List licenses found and any unknown licences");
+    public enum Processing {
+        /** List file as present only */
+        NOTIFICATION("List file as present"),
+        /** List all present licenses */
+        PRESENCE("List any licenses found"),
+        /** List all present licenses and unknown licenses */
+        ABSENCE("List licenses found and any unknown licences");
 
     private final String description;
     Processing(String description) {
@@ -86,7 +92,7 @@ public class ReportConfiguration {
     private LicenseFilter listLicenses;
     private boolean dryRun;
     private Processing archiveProcessing;
-   
+    private Processing standardProcessing;
     /**
      * Constructor
      * @param log The Log implementation that messages will be written to.
@@ -119,6 +125,22 @@ public class ReportConfiguration {
      */
     public void setArchiveProcessing(Processing archiveProcessing) {
         this.archiveProcessing = archiveProcessing;
+    }
+
+    /**
+     * Retrieves the archive processing type.
+     * @return The archive processing type.
+     */
+    public Processing getStandardProcessing() {
+        return standardProcessing == null ? Defaults.STANDARD_PROCESSING : standardProcessing;
+    }
+
+    /**
+     * Sets the archive processing type.  If not set will default to NOTIFICATION.
+     * @param standardProcessing the type of processing archives should have.
+     */
+    public void setStandardProcessing(Processing standardProcessing) {
+        this.standardProcessing = standardProcessing;
     }
 
     /**

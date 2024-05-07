@@ -19,6 +19,7 @@
 package org.apache.rat.analysis;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringWriter;
@@ -153,7 +154,7 @@ public class DefaultAnalyserFactoryTest {
     }
 
     @Test
-    public void archiveTypeAnalyserIntelliJ() throws Exception {
+    public void archiveTypeAnalyser() throws Exception {
         final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
@@ -212,4 +213,67 @@ public class DefaultAnalyserFactoryTest {
         TextUtils.assertPatternInTarget("^sentence 3.$", result);
         TextUtils.assertPatternInTarget("^sentence 4.$", result);
     }
+
+    @Test
+    public void standardNotificationTest() throws Exception {
+
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        config.setFrom(defaults);
+        config.setFilesToIgnore(FalseFileFilter.FALSE);
+        config.setStandardProcessing(ReportConfiguration.Processing.NOTIFICATION);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+
+        Document document = new FileDocument(
+                Resources.getResourceFile("/elements/Text.txt"));
+        analyser.analyse(document);
+        assertFalse(document.getMetaData().detectedLicense());
+
+        document = new FileDocument(
+                Resources.getResourceFile("/elements/sub/Empty.txt"));
+        analyser.analyse(document);
+        assertFalse(document.getMetaData().detectedLicense());
+    }
+
+    @Test
+    public void standardAbsenceTest() throws Exception {
+
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        config.setFrom(defaults);
+        config.setFilesToIgnore(FalseFileFilter.FALSE);
+        config.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+
+        Document document = new FileDocument(
+                Resources.getResourceFile("/elements/Text.txt"));
+        analyser.analyse(document);
+        assertTrue(document.getMetaData().detectedLicense());
+
+        document = new FileDocument(
+                Resources.getResourceFile("/elements/sub/Empty.txt"));
+        analyser.analyse(document);
+        assertTrue(document.getMetaData().detectedLicense());
+    }
+
+    @Test
+    public void standardPresenceTest() throws Exception {
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        config.setFrom(defaults);
+        config.setFilesToIgnore(FalseFileFilter.FALSE);
+        config.setStandardProcessing(ReportConfiguration.Processing.PRESENCE);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+
+        Document document = new FileDocument(
+                Resources.getResourceFile("/elements/Text.txt"));
+        analyser.analyse(document);
+        assertTrue(document.getMetaData().detectedLicense());
+
+        document = new FileDocument(
+                Resources.getResourceFile("/elements/sub/Empty.txt"));
+        analyser.analyse(document);
+        assertFalse(document.getMetaData().detectedLicense());
+    }
+
 }

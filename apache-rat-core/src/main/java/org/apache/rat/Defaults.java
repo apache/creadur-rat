@@ -68,6 +68,8 @@ public final class Defaults {
 
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
 
+    public static final ReportConfiguration.Processing STANDARD_PROCESSING = ReportConfiguration.Processing.ABSENCE;
+
     public static final LicenseFilter LIST_FAMILIES = LicenseFilter.NONE;
 
     public static final LicenseFilter LIST_LICENSES = LicenseFilter.NONE;

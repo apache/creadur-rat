@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.Defaults;
+import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
@@ -30,6 +32,8 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.ConfigurationReport;
+import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 
 /**
@@ -74,25 +78,48 @@ public class DefaultAnalyserFactory {
             this.configuration = config;
         }
 
+        /**
+         * Generates a predicateo to filter out licnses that should not be reported.
+         * @param proc the processing status to filter.
+         * @return a Predicate to do the filtering.
+         */
+        private  Predicate<ILicense> licenseFilter(ReportConfiguration.Processing proc)  {
+            return license -> {
+                switch (proc) {
+                    case PRESENCE:
+                        return !license.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
+                    case ABSENCE:
+                        return true;
+                    default:
+                        return false;
+                }
+            };
+
+        }
         @Override
         public void analyse(Document document) throws RatDocumentAnalysisException {
 
             TikaProcessor.process(configuration.getLog(), document);
+            Predicate<ILicense> licensePredicate = null;
 
             switch (document.getMetaData().getDocumentType()) {
             case STANDARD:
+                licensePredicate = licenseFilter(configuration.getStandardProcessing()).negate();
                 new DocumentHeaderAnalyser(configuration.getLog(), licenses).analyse(document);
+                if (configuration.getStandardProcessing() != Defaults.STANDARD_PROCESSING) {
+                    document.getMetaData().removeLicenses(licensePredicate);
+                }
                 break;
             case ARCHIVE:
+                licensePredicate = licenseFilter(configuration.getArchiveProcessing());
                 if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
                     ArchiveWalker archiveWalker = new ArchiveWalker(configuration, document);
                     Predicate<ILicense> filter = configuration.getArchiveProcessing() == ReportConfiguration.Processing.ABSENCE ?
                             l -> Boolean.TRUE : lic -> !lic.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
                     try {
-                        Collection<Document> docs = archiveWalker.getDocuments(configuration.getLog());
-                        for (Document doc : docs) {
+                        for (Document doc : archiveWalker.getDocuments(configuration.getLog())) {
                             analyse(doc);
-                            doc.getMetaData().licenses().filter(filter).forEach(lic -> document.getMetaData().reportOnLicense(lic));
+                            doc.getMetaData().licenses().filter(licensePredicate).forEach(lic -> document.getMetaData().reportOnLicense(lic));
                         }
                     } catch (RatException e) {
                         throw new RatDocumentAnalysisException(e);
