@@ -403,10 +403,10 @@ public class Report {
                 }
 
                 URL url = Report.class.getClassLoader().getResource(String.format("org/apache/rat/%s.xsl", style[0]));
+
                 IOSupplier<InputStream> ioSupplier = (url == null) ?
                         () -> Files.newInputStream(Paths.get(style[0])) :
                         url::openStream;
-
                 configuration.setStyleSheet(ioSupplier);
             }
         }

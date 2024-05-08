@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -60,7 +61,7 @@ public class ArchiveEntryDocument implements Document {
     }
 
     public Reader reader() throws IOException {
-        return new InputStreamReader(new ByteArrayInputStream(contents));
+        return new InputStreamReader(new ByteArrayInputStream(contents), StandardCharsets.UTF_8);
     }
 
 

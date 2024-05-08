@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,7 +116,7 @@ public class GlobIgnoreMatcher implements IgnoreMatcher {
     }
 
     public List<String> getExclusionLines() {
-        return exclusionLines;
+        return Collections.unmodifiableList(exclusionLines);
     }
 
     @Override

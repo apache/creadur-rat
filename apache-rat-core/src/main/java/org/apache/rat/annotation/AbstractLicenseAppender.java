@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -287,7 +288,7 @@ public abstract class AbstractLicenseAppender {
         BufferedReader br = null;
         try {
             fis = new FileInputStream(document);
-            br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis)));
+            br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis), StandardCharsets.UTF_8));
 
             if (!expectsHashPling
                     && !expectsAtEcho

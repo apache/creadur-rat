@@ -28,6 +28,6 @@ public enum ComponentType {
     MATCHER,
     /** A Parameter for example the "id" parameter found in every component */
     PARAMETER,
-    /** A parameter that is supplied by the environment.  Currently systems using builders have to handle seting this.  For example the list of matchers for the "MatcherRefBuilder" */
-    BULID_PARAMETER 
+    /** A parameter that is supplied by the environment.  Currently systems using builders have to handle setting this.  For example the list of matchers for the "MatcherRefBuilder" */
+    BUILD_PARAMETER
 }
