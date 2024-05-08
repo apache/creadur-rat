@@ -26,8 +26,9 @@ import java.io.StringWriter;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.impl.MonolithicFileDocument;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -73,7 +74,7 @@ public class DefaultAnalyserFactoryTest {
                 " * under the License.", //
                 " ]]></sample></resource>" };
 
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/Text.txt"));
         analyser.analyse(document);
         reporter.report(document);
@@ -85,7 +86,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void noteTypeAnalyser() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/LICENSE"));
         analyser.analyse(document);
         reporter.report(document);
@@ -94,7 +95,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void binaryTypeAnalyser() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/Image.png"));
         analyser.analyse(document);
         reporter.report(document);
@@ -103,7 +104,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void archiveTypeAnalyserTest() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
         Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
         ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
@@ -117,7 +118,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void archivesAbsenceTest() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
         Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
         ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
@@ -135,7 +136,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void archivesPresenceTest() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
         Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
         ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
@@ -153,7 +154,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void archiveTypeAnalyserIntelliJ() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
         reporter.report(document);
@@ -162,7 +163,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT211_bmp_Test() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/jira/RAT211/side_left.bmp"));
         analyser.analyse(document);
         reporter.report(document);
@@ -171,7 +172,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT211_dia_Test() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/jira/RAT211/leader-election-message-arrives.dia"));
         analyser.analyse(document);
         reporter.report(document);
@@ -182,7 +183,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT147_unix_Test() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"));
         analyser.analyse(document);
         reporter.report(document);
@@ -198,7 +199,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT147_windows_Test() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"));
         analyser.analyse(document);
         reporter.report(document);

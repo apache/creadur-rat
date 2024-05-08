@@ -21,15 +21,15 @@ package org.apache.rat.testhelpers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Collections;
+import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
-public class TestingLocation implements Document {
+public class TestingLocation extends Document {
 
-    public final String name;
     public final String url;
-    private final MetaData metaData = new MetaData();
 
     public TestingLocation() {
         this("name", "url");
@@ -40,14 +40,8 @@ public class TestingLocation implements Document {
     }
 
     public TestingLocation(String name, String url) {
-        super();
-        this.name = name;
+        super(name);
         this.url = url;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     public String getURL() {
@@ -60,13 +54,18 @@ public class TestingLocation implements Document {
     }
 
     @Override
-    public Reader reader() throws IOException {
-        throw new UnsupportedOperationException("Opening Reader in TestingLocation");
+    public boolean isDirectory() {
+        return false;
     }
 
     @Override
-    public MetaData getMetaData() {
-        return metaData;
+    public SortedSet<Document> listChildren() {
+        return Collections.emptySortedSet();
+    }
+
+    @Override
+    public Reader reader() throws IOException {
+        throw new UnsupportedOperationException("Opening Reader in TestingLocation");
     }
 
     @Override

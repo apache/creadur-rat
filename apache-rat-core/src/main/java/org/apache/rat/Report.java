@@ -56,7 +56,9 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.api.Document;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
@@ -539,11 +541,12 @@ public class Report {
             return null;
         }
 
+        Document doc = new FileDocument(base);
         if (base.isDirectory()) {
-            return new DirectoryWalker(base, config.getFilesToIgnore(), config.getDirectoriesToIgnore());
+            return new DirectoryWalker(config, doc);
         }
 
-        return new ArchiveWalker(base, config.getFilesToIgnore());
+        return new ArchiveWalker(config, doc);
     }
 
     /**

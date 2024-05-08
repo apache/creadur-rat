@@ -18,14 +18,11 @@
  */
 package org.apache.rat.analysis;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
@@ -33,7 +30,6 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 
 /**
@@ -89,11 +85,12 @@ public class DefaultAnalyserFactory {
                 break;
             case ARCHIVE:
                 if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
-                    ArchiveWalker archiveWalker = new ArchiveWalker(new File(document.getName()), configuration.getFilesToIgnore());
+                    ArchiveWalker archiveWalker = new ArchiveWalker(configuration, document);
                     Predicate<ILicense> filter = configuration.getArchiveProcessing() == ReportConfiguration.Processing.ABSENCE ?
                             l -> Boolean.TRUE : lic -> !lic.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
                     try {
-                        for (Document doc : archiveWalker.getDocuments()) {
+                        Collection<Document> docs = archiveWalker.getDocuments(configuration.getLog());
+                        for (Document doc : docs) {
                             analyse(doc);
                             doc.getMetaData().licenses().filter(filter).forEach(lic -> document.getMetaData().reportOnLicense(lic));
                         }

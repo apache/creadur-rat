@@ -42,7 +42,8 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
     /**
      * Constructs the HeaderAnalyser for the specific license.
      *
-     * @param license The license to analyse
+     * @param log The log to write message to.
+     * @param licenses The licenses to analyse
      */
     public DocumentHeaderAnalyser(final Log log, final Collection<ILicense> licenses) {
         super();

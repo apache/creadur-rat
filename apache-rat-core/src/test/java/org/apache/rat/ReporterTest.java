@@ -37,6 +37,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.api.Document.Type;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
@@ -212,7 +213,8 @@ public class ReporterTest {
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         configuration.setStyleReport(false);
         configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new File(elementsPath), configuration.getFilesToIgnore(), HiddenFileFilter.HIDDEN));
+        configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
+        configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
@@ -274,7 +276,8 @@ public class ReporterTest {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new File(elementsPath), configuration.getFilesToIgnore(), HiddenFileFilter.HIDDEN));
+        configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
+        configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
 
@@ -331,7 +334,8 @@ public class ReporterTest {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new File(elementsPath), configuration.getFilesToIgnore(), HiddenFileFilter.HIDDEN));
+        configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
+        configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));
         configuration.setOut(() -> out);
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
         new Reporter(configuration).output();

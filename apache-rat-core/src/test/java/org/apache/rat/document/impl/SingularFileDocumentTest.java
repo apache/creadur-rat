@@ -37,7 +37,7 @@ public class SingularFileDocumentTest {
     @BeforeEach
     public void setUp() throws Exception {
         file = Resources.getResourceFile("elements/Source.java");
-        document = new MonolithicFileDocument(file);
+        document = new FileDocument(file);
     }
 
     @Test

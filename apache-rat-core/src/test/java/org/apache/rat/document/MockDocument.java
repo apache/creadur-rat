@@ -21,15 +21,16 @@ package org.apache.rat.document;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
-public class MockDocument implements Document {
+public class MockDocument extends Document {
 
     private final Reader reader;
-    private final String name;
-    private final MetaData metaData = new MetaData();
 
     public MockDocument() {
         this(null, "name");
@@ -40,9 +41,9 @@ public class MockDocument implements Document {
     }
 
     public MockDocument(Reader reader, String name) {
-        super();
+        super(name);
         this.reader = reader;
-        this.name = name;
+
     }
 
     @Override
@@ -50,10 +51,6 @@ public class MockDocument implements Document {
         return reader;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
 
     @Override
     public boolean isComposite() {
@@ -61,9 +58,15 @@ public class MockDocument implements Document {
     }
 
     @Override
-    public MetaData getMetaData() {
-        return metaData;
+    public boolean isDirectory() {
+        return false;
     }
+
+    @Override
+    public SortedSet<Document> listChildren() {
+        return Collections.emptySortedSet();
+    }
+
 
     @Override
     public InputStream inputStream() throws IOException {

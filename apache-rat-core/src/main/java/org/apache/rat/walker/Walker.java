@@ -20,10 +20,12 @@
 package org.apache.rat.walker;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.rat.api.Document;
 import org.apache.rat.report.IReportable;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Path;
 
 /**
  * Abstract walker.
@@ -31,13 +33,14 @@ import java.io.FilenameFilter;
 public abstract class Walker implements IReportable {
 
     /** The file that this walker started at */
-    private final File baseFile;
+
 
     /** The file name filter that the walker is applying */
     private final FilenameFilter filesToIgnore;
+    private  final Document document;
 
-    public Walker(final File file, final FilenameFilter filesToIgnore) {
-        this.baseFile = file;
+    public Walker(final Document document, final FilenameFilter filesToIgnore) {
+        this.document = document;
         this.filesToIgnore = filesToIgnore == null ? FalseFileFilter.FALSE : filesToIgnore;
     }
 
@@ -45,16 +48,25 @@ public abstract class Walker implements IReportable {
      * Retrieve the file from the constructor.
      * @return the file from the constructor.
      */
-    protected File getBaseFile() {
-        return baseFile;
+    protected Document getDocument() {
+        return document;
     }
 
     /**
      * Test if the specified file should be ignored.
-     * @param file the file to test.
+     * @param document the document to test.
      * @return {@code true} if the file should be ignored.
      */
-    protected final boolean isNotIgnored(final File file) {
-        return !filesToIgnore.accept(file.getParentFile(), file.getName());
+    protected final boolean isNotIgnored() {
+        return isNotIgnored(document.getPath());
+    }
+
+    /**
+     * Test if the specified file should be ignored.
+     * @param document the document to test.
+     * @return {@code true} if the file should be ignored.
+     */
+    protected final boolean isNotIgnored(Path pth) {
+        return !filesToIgnore.accept(pth.getParent().toFile(), pth.toString());
     }
 }
