@@ -28,29 +28,13 @@ import org.apache.commons.io.IOUtils;
 
 public class DocumentImplUtils {
 
+    /**
+     * Normalizes a file name.  Accounts for Windows to Unix conversion.
+     * @param file
+     * @return
+     */
     public final static String toName(File file) {
         String path = file.getPath();
         return path.replace('\\', '/');
     }
-    
-    public static final boolean isZipStream(InputStream stream) {
-        ZipInputStream zip = new ZipInputStream(stream);
-        try {
-            zip.getNextEntry();
-            return true;
-        } catch (IOException e) {
-            return false;
-        } finally {
-            IOUtils.closeQuietly(zip);
-        }
-    }
-
-    public static final boolean isZip(File file) {
-        try {
-            return isZipStream(new FileInputStream(file));
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
 }

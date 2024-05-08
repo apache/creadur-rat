@@ -24,11 +24,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentImplUtils;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.tools.ant.types.Resource;
@@ -57,14 +60,23 @@ class ResourceCollectionContainer implements IReportable {
         }
     }
 
-    private static class ResourceDocument implements Document {
+    private static class ResourceDocument extends Document {
 
         private final Resource resource;
-        private final MetaData metaData;
+
+        private static String asName(Resource resource) {
+            if (resource instanceof FileResource) {
+                final FileResource fileResource = (FileResource) resource;
+                final File file = fileResource.getFile();
+                return DocumentImplUtils.toName(file);
+            }
+            return resource.getName();
+        }
+
 
         private ResourceDocument(Resource resource) {
+            super(asName(resource));
             this.resource = resource;
-            this.metaData = new MetaData();
         }
 
         @Override
@@ -74,32 +86,22 @@ class ResourceCollectionContainer implements IReportable {
         }
 
         @Override
-        public String getName() {
-            // TODO: reconsider names
-            String result = null;
+        public boolean isDirectory() {
             if (resource instanceof FileResource) {
                 final FileResource fileResource = (FileResource) resource;
                 final File file = fileResource.getFile();
-                result = DocumentImplUtils.toName(file);
-            } else {
-                result = resource.getName();
-            }
-            return result;
-        }
-
-        @Override
-        public boolean isComposite() {
-            if (resource instanceof FileResource) {
-                final FileResource fileResource = (FileResource) resource;
-                final File file = fileResource.getFile();
-                return DocumentImplUtils.isZip(file);
+                return file.isDirectory();
             }
             return false;
         }
 
         @Override
-        public MetaData getMetaData() {
-            return metaData;
+        public SortedSet<Document> listChildren() {
+            if (resource instanceof FileResource) {
+                final FileResource fileResource = (FileResource) resource;
+                return new FileDocument(fileResource.getFile()).listChildren();
+            }
+            return Collections.emptySortedSet();
         }
 
         @Override

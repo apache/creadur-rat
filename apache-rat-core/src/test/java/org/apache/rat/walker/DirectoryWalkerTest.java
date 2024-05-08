@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
@@ -89,6 +90,8 @@ public class DirectoryWalkerTest {
     
     @Test
     public void noFiltersTest() throws IOException, RatException {
+        reportConfiguration.setFilesToIgnore(FalseFileFilter.FALSE);
+        reportConfiguration.setDirectoriesToIgnore(FalseFileFilter.FALSE);
         DirectoryWalker walker = new DirectoryWalker(reportConfiguration, toWalk);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
@@ -102,6 +105,7 @@ public class DirectoryWalkerTest {
     @Test
     public void noHiddenFileFiltersTest() throws IOException, RatException {
         reportConfiguration.setFilesToIgnore(NameBasedHiddenFileFilter.HIDDEN);
+        reportConfiguration.setDirectoriesToIgnore(FalseFileFilter.FALSE);
         DirectoryWalker walker = new DirectoryWalker(reportConfiguration, toWalk);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
@@ -114,6 +118,7 @@ public class DirectoryWalkerTest {
 
     @Test
     public void noHiddenDirectoryFiltersTest() throws IOException, RatException {
+        reportConfiguration.setFilesToIgnore(FalseFileFilter.FALSE);
         reportConfiguration.setDirectoriesToIgnore(NameBasedHiddenFileFilter.HIDDEN);
         DirectoryWalker walker = new DirectoryWalker(reportConfiguration, toWalk);
         List<String> scanned = new ArrayList<>();

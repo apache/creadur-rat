@@ -49,11 +49,6 @@ public class TestingLocation extends Document {
     }
 
     @Override
-    public boolean isComposite() {
-        return false;
-    }
-
-    @Override
     public boolean isDirectory() {
         return false;
     }

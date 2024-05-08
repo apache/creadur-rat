@@ -146,12 +146,6 @@ public class TikaProcessorTest {
                 return stream;
             }
 
-
-            @Override
-            public boolean isComposite() {
-                return false;
-            }
-
             @Override
             public boolean isDirectory() {
                 return false;

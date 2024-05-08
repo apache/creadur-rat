@@ -54,7 +54,7 @@ public class DefaultAnalyserFactory {
     }
 
     /**
-     * A DocumentAnalyser for the license
+     * A DocumentAnalyser a collection of licenses
      */
     private final static class DefaultAnalyser implements IDocumentAnalyser {
 

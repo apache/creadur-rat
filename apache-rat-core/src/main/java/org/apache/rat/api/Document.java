@@ -52,6 +52,10 @@ public abstract class Document implements Comparable<Document> {
     private final MetaData metaData;
     private final String name;
 
+    /**
+     * Creates an instance.
+     * @param name the name of the resource.
+     */
     protected Document(String name) {
         this.name = name;
         this.metaData = new MetaData();
@@ -64,6 +68,7 @@ public abstract class Document implements Comparable<Document> {
         return name;
     }
 
+    @Override
     public int compareTo(Document doc) {
         return getPath().compareTo(doc.getPath());
     }
@@ -81,9 +86,14 @@ public abstract class Document implements Comparable<Document> {
         return getPath().equals(((Document)obj).getPath());
     }
 
+    /**
+     * Get the path that identifies the document.
+     * @return
+     */
     public Path getPath() {
         return Paths.get(getName());
     }
+
     /**
      * Reads the contents of this document.
      * 
@@ -112,13 +122,6 @@ public abstract class Document implements Comparable<Document> {
     }
 
     /**
-     * Tests if this a composite document.
-     * 
-     * @return true if composite, false otherwise
-     */
-    public abstract boolean isComposite();
-
-    /**
      * Representations suitable for logging.
      * @return a <code>String</code> representation
      * of this object.
@@ -129,8 +132,16 @@ public abstract class Document implements Comparable<Document> {
         return String.format("%s( name = %s metaData = %s )", this.getClass().getSimpleName(), getName(), getMetaData());
     }
 
+    /**
+     * Determines if this Document is a directory type.
+     * @return {@code true} if this is a directory.
+     */
     public abstract boolean isDirectory();
 
+    /**
+     * Gets a sorted set of Documents that are children of this document.
+     * @return A sorted set of child Documents.  May  be empty
+     */
     public abstract SortedSet<Document> listChildren();
 
 }

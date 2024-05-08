@@ -37,13 +37,17 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 
 /**
- * Document wrapping a file of undetermined composition.
- *
+ * Document wrapping a File object
  */
 public class FileDocument extends Document {
 
+    /** the wrapped file */
     private final File file;
-    
+
+    /**
+     * Creates a File document.
+     * @param file the file to wrap.
+     */
     public FileDocument(final File file) {
         super(DocumentImplUtils.toName(file));
         this.file = file;
@@ -52,10 +56,6 @@ public class FileDocument extends Document {
     @Override
     public Path getPath() {
         return file.toPath();
-    }
-
-    public boolean isComposite() {
-        return DocumentImplUtils.isZip(file);
     }
 
     @Override

@@ -39,20 +39,8 @@ import org.apache.rat.report.RatReport;
  */
 public class DirectoryWalker extends Walker {
 
+    /** The directories to ignore */
     private final IOFileFilter directoriesToIgnore;
-
-//    /**
-//     * Constructs a walker.
-//     *
-//     * @param file the directory to walk (not null).
-//     * @param filesToIgnore filters input files (optional),
-//     *               or null when no filtering should be performed
-//     * @param directoriesToIgnore filters directories (optional), or null when no filtering should be performed.
-//     */
-//    public DirectoryWalker(final File file, final FilenameFilter filesToIgnore, final IOFileFilter directoriesToIgnore) {
-//        super(new FileDocument(file), filesToIgnore);
-//        this.directoriesToIgnore = directoriesToIgnore == null ? FalseFileFilter.FALSE : directoriesToIgnore;
-//    }
 
     /**
      * Constructs a directory walker.
@@ -69,7 +57,7 @@ public class DirectoryWalker extends Walker {
      * Process a directory, restricted directories will be ignored.
      *
      * @param report The report to process the directory with
-     * @param file   the directory to process
+     * @param document  the document to process.
      * @throws RatException on error.
      */
     private void processDirectory(final RatReport report, Document document) throws RatException {
@@ -93,19 +81,19 @@ public class DirectoryWalker extends Walker {
      * Process a directory, ignoring any files/directories set to be ignored.
      *
      * @param report the report to use in processing
-     * @param file   the run the report against
+     * @param document the document to run the report against
      * @throws RatException on error
      */
     protected void process(final RatReport report, Document document) throws RatException {
         final SortedSet<Document> documents = document.listChildren();
         if (documents != null) {
-
             // breadth first traversal
             processNonDirectories(report, documents);
             processDirectories(report, documents);
         }
     }
 
+    /** test for directory that is not ignored */
     private boolean isNotIgnoredDirectory(Path path) {
         return !directoriesToIgnore.accept(path.getParent().toFile(), path.toString());
     }
@@ -114,7 +102,7 @@ public class DirectoryWalker extends Walker {
      * Process all directories in a set of file objects, ignoring any directories set to be ignored.
      *
      * @param report the report to use in processing
-     * @param files  the files to process (only directories will be processed)
+     * @param documents  the documentss to process (only directories will be processed)
      * @throws RatException on error
      */
     private void processDirectories(final RatReport report, final SortedSet<Document> documents) throws RatException {
@@ -129,7 +117,7 @@ public class DirectoryWalker extends Walker {
      * Process all files in a set of file objects, ignoring any files set to be ignored.
      *
      * @param report the report to use in processing
-     * @param files  the files to process (only files will be processed)
+     * @param documents  the documents to process (only files will be processed)
      * @throws RatException on error
      */
     private void processNonDirectories(final RatReport report, final SortedSet<Document> documents) throws RatException {

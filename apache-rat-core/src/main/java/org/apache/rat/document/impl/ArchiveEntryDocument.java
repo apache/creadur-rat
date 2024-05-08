@@ -34,24 +34,31 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 
+/**
+ * A Document that wraps an Archive entry.
+ */
 public class ArchiveEntryDocument extends Document {
 
+    /** The contents of the entry */
     private final byte[] contents;
 
+    /** The path for the entry */
     private final Path path;
 
+    /**
+     * Creates an Archive entry.
+     * @param path The path for the entry.
+     * @param contents the contents of the entry.
+     */
     public ArchiveEntryDocument(Path path, byte[] contents) {
         super(DocumentImplUtils.toName(path.toFile()));
         this.path = path;
         this.contents = contents;
     }
 
+    @Override
     public InputStream inputStream() throws IOException {
         return new ByteArrayInputStream(contents);
-    }
-
-    public boolean isComposite() {
-        return DocumentImplUtils.isZipStream(new ByteArrayInputStream(contents));
     }
 
     @Override
@@ -64,6 +71,7 @@ public class ArchiveEntryDocument extends Document {
         return Collections.emptySortedSet();
     }
 
+    @Override
     public Reader reader() throws IOException {
         return new InputStreamReader(new ByteArrayInputStream(contents), StandardCharsets.UTF_8);
     }

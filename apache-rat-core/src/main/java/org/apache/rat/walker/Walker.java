@@ -32,14 +32,17 @@ import java.nio.file.Path;
  */
 public abstract class Walker implements IReportable {
 
-    /** The file that this walker started at */
-
-
     /** The file name filter that the walker is applying */
     private final FilenameFilter filesToIgnore;
+    /** The document this walker is walking */
     private  final Document document;
 
-    public Walker(final Document document, final FilenameFilter filesToIgnore) {
+    /**
+     * Create  the walker
+     * @param document The document the walker is walking.
+     * @param filesToIgnore the Files to ignore.  If {@code null} no files are ignored.
+     */
+    protected Walker(final Document document, final FilenameFilter filesToIgnore) {
         this.document = document;
         this.filesToIgnore = filesToIgnore == null ? FalseFileFilter.FALSE : filesToIgnore;
     }
@@ -53,18 +56,9 @@ public abstract class Walker implements IReportable {
     }
 
     /**
-     * Test if the specified file should be ignored.
-     * @param document the document to test.
-     * @return {@code true} if the file should be ignored.
-     */
-    protected final boolean isNotIgnored() {
-        return isNotIgnored(document.getPath());
-    }
-
-    /**
-     * Test if the specified file should be ignored.
-     * @param document the document to test.
-     * @return {@code true} if the file should be ignored.
+     * Test if the specified path should be ignored.
+     * @param pth the Path to test
+     * @return {@code true} if the file should not be ignored.
      */
     protected final boolean isNotIgnored(Path pth) {
         return !filesToIgnore.accept(pth.getParent().toFile(), pth.toString());

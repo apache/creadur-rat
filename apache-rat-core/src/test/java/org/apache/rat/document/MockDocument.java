@@ -51,12 +51,6 @@ public class MockDocument extends Document {
         return reader;
     }
 
-
-    @Override
-    public boolean isComposite() {
-        return false;
-    }
-
     @Override
     public boolean isDirectory() {
         return false;
