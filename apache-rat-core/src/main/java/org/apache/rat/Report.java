@@ -134,6 +134,7 @@ public class Report {
 
     /**
      * Defines the output for the file.
+     * @since 0.16.0
      */
     static final Option OUT = Option.builder().option("o").longOpt("out").hasArg()
             .desc("Define the output file where to write a report to (default is System.out).")
@@ -182,12 +183,14 @@ public class Report {
     static final Option HELP = new Option("h", "help", false, "Print help for the RAT command line interface and exit.");
     /**
      * Flag to identify a file with license definitions.
+     * @since 0.16.0
      */
     static final Option LICENSES = Option.builder().longOpt("licenses").hasArgs().argName("FileOrURI")
             .desc("File names or URLs for license definitions")
             .build();
     /**
      * Do not use the default files.
+     * @since 0.16.0
      */
     static final Option NO_DEFAULTS = new Option(null, "no-default-licenses", false, "Ignore default configuration. By default all approved default licenses are used");
 
@@ -198,6 +201,7 @@ public class Report {
 
     /**
      * List the licenses that were used for the run.
+     * @since 0.16.0
      */
     static final Option LIST_LICENSES = Option.builder().longOpt("list-licenses").hasArg().argName("LicenseFilter")
             .desc("List the defined licenses (default is NONE). Valid options are: " + asString(LicenseFilter.values()))
@@ -206,18 +210,27 @@ public class Report {
 
     /**
      * List the all families for the run.
+     * @since 0.16.0
      */
     static final Option LIST_FAMILIES = Option.builder().longOpt("list-families").hasArg().argName("LicenseFilter")
             .desc("List the defined license families (default is NONE). Valid options are: " + asString(LicenseFilter.values()))
             .converter(s -> LicenseFilter.valueOf(s.toUpperCase()))
             .build();
 
+    /**
+     * Specify the log level for output
+     * @since 0.16.0
+     */
     static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
             .hasArgs().argName("LogLevel")
             .desc("sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build();
 
+    /**
+     * Do not update files.
+     * @since 0.16.0
+     */
     static final Option DRY_RUN = Option.builder().longOpt("dry-run")
             .desc("If set do not update the files but generate the reports.")
             .build();
@@ -228,9 +241,10 @@ public class Report {
 
     /**
      * Specify the processing of ARCHIVE files.
+     * @since 0.17.0
      */
     static final Option ARCHIVE = Option.builder().longOpt("archive").hasArg().argName("ProcessingType")
-            .desc(format("Specifies how ARCHIVE processing will be handled. (default is %s)",
+            .desc(format("Specifies the level of detail in ARCHIVE reporting. (default is %s)",
                     ReportConfiguration.Processing.NOTIFICATION))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();

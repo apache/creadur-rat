@@ -72,6 +72,13 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-372" type="add" dev="claudenw">
+        Added ability to process archive files within a project to look for license files.  This necessitated an addition
+        of a command line option "archive" to limit specify the level of detail in the archive report.  See command line
+        help for more details.  By default, there is no change in the reporting and only the presence of archives are reported.
+
+        This change also marked as deprecated the "-a", "--dir" and command line options.
+      </action>
       <action issue="RAT-301" type="fix" dev="pottlinger" due-to="claudenw">
         Chinese characters in comments are not classified as binary anymore (due to Tika integration).
       </action>
@@ -85,13 +92,14 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
         Change to detect non UTF-8 text files as text not binary.
       </action>
       <action issue="RAT-150" type="fix" dev="claudenw">
-        Switch to Tika to detect file types.
+        Switch to Tika to detect file types.  This will result in more file types being properly categorized and may
+        result in some failures where the scans previously did not fail because we now properly check all text files.
       </action>
       <action issue="RAT-211" type="fix" dev="claudenw">
         Generated rat-output.xml is now well-formed, even if BinaryGuesser fails or there is XML content
         in the sample element.
       </action>
-      <action issue="RAT-368" type="update" dev="claudenw">
+      <action issue="RAT-368" type="remove" dev="claudenw">
         Removed ReportFailedRuntimeException, ReportTransformer, RatReportAnalysisResultException, MimeTyper, ToNameTransformer,
         UnsuitableDocumentException, ReportTransformerTest, and ToNameTransformerTest as they are no longer used in the codebase.
         Note: FullTextMatchingeLicense and SimplePatternBasedLicense will be removed in 0.18.0
@@ -104,12 +112,15 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       </action>
       <action issue="RAT-366" type="update" dev="claudenw">
         Switch to processing header matches in one call rather than line by line.
+
+        This change also resulted in the possibility of multiple licenses being detected and reported.  forcing a change in the
+        XML ouptut.  XML schema was developed for the output.
       </action>
       <action issue="RAT-333" type="fix" dev="claudenw">
         Fix if --force option is used executable bit is not set properly on newly created/license-augmented file.
       </action>
       <action issue="RAT-345" type="update" dev="pottlinger" due-to="Niels Basjes">
-        Update gitignore-reader from 1.4.0 to 1.5.1 to fetch changes resulting from fixes of RAT-362.
+        Update gitignore-reader from 1.4.0 to 1.5.1 to fetch changes resulting from fixes of RAT-362.
       </action>
       <action issue="RAT-362" type="fix" dev="pottlinger" due-to="Niels Basjes, Arnout Engelen">
         Gitignore parsing fails when excluded element is part of the current base directory.
@@ -181,28 +192,28 @@ Thanks for your patience and all the feedback in the making of this release!">
         Fix double output by deleting any existing RAT report before writing a fresh file during plugin runs.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        Update mavenPluginPluginVersion from 3.10.2 to 3.11.0 and introduce goalPrefix in plugin configuration.
+        Update mavenPluginPluginVersion from 3.10.2 to 3.11.0 and introduce goalPrefix in plugin configuration.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        Update junit-platform-runner from 1.8.1 to 1.10.1.
+        Update junit-platform-runner from 1.8.1 to 1.10.1.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        Update junit from 5.10.0 to 5.10.1.
+        Update junit from 5.10.0 to 5.10.1.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        Update actions/cache from 3.3.2 to 4.0.0.
+        Update actions/cache from 3.3.2 to 4.0.0.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-surefire-plugin from 3.2.3 to 3.2.5.
+        Update maven-surefire-plugin from 3.2.3 to 3.2.5.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-jxr-plugin from 3.3.1 to 3.3.2.
+        Update maven-jxr-plugin from 3.3.1 to 3.3.2.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        Update slf4j-simple from 2.0.9 to 2.0.11.
+        Update slf4j-simple from 2.0.9 to 2.0.11.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">
-        Update assertj-core from 3.24.2 to 3.25.1.
+        Update assertj-core from 3.24.2 to 3.25.1.
       </action>
     </release>
     <release version="0.16" date="2023-12-28" description=
@@ -220,79 +231,79 @@ Thanks to all new contributors for improving RAT!">
         Update actions/cache from 3.0.11 to 3.3.2
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update actions/checkout from 3 to 4.
+        Update actions/checkout from 3 to 4.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update mockito-core from 4.7.0 to 4.11.0, newer versions 5.x cannot be applied due to our JDK8-compatibility restriction.
+        Update mockito-core from 4.7.0 to 4.11.0, newer versions 5.x cannot be applied due to our JDK8-compatibility restriction.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update plexus-utils from 3.4.2 to 3.5.1, versions 4.x are for upcoming Maven4 and must not be applied here.
+        Update plexus-utils from 3.4.2 to 3.5.1, versions 4.x are for upcoming Maven4 and must not be applied here.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-plugin-version from 3.6.4 to 3.8.2.
+        Update maven-plugin-version from 3.6.4 to 3.8.2.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update wagon-ssh from 3.5.2 to 3.5.3.
+        Update wagon-ssh from 3.5.2 to 3.5.3.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update Ant from 1.10.12 to 1.10.14.
+        Update Ant from 1.10.12 to 1.10.14.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
         Update ASF parent pom from 27 to 31 and update multiple maven plugin versions implicitly (surefire, release, project-info, enforcer, jxr).
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update doxiaVersion from 1.11.1 to 1.12.0.
+        Update doxiaVersion from 1.11.1 to 1.12.0.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-shared-utils from 3.3.4 to 3.4.2.
+        Update maven-shared-utils from 3.3.4 to 3.4.2.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update org.slf4j:slf4j-simple from 1.7.36 to 2.0.9.
+        Update org.slf4j:slf4j-simple from 1.7.36 to 2.0.9.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update commons-lang3 from 3.5 to 3.14.0.
+        Update commons-lang3 from 3.5 to 3.14.0.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
         Update commons-compress from 1.21 to 1.25.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update commons-io from 2.11.0 to 2.15.1.
+        Update commons-io from 2.11.0 to 2.15.1.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update commons-cli from 1.5.0 to 1.6.0.
+        Update commons-cli from 1.5.0 to 1.6.0.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-pmd-plugin from 3.18.0 to 3.21.2.
+        Update maven-pmd-plugin from 3.18.0 to 3.21.2.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
         Update maven-dependency-plugin from 3.3.0 to 3.6.1.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-compiler-plugin from 3.10.1 to 3.12.1.
+        Update maven-compiler-plugin from 3.10.1 to 3.12.1.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-javadoc-plugin from 3.4.1 to 3.6.3.
+        Update maven-javadoc-plugin from 3.4.1 to 3.6.3.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-         Update maven-release-plugin from 2.5.3 to 3.0.1.
+         Update maven-release-plugin from 2.5.3 to 3.0.1.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-enforcer-plugin from 3.1.0 to 3.4.1.
+        Update maven-enforcer-plugin from 3.1.0 to 3.4.1.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update extra-enforcer-rules from 1.6.1 to 1.7.0
+        Update extra-enforcer-rules from 1.6.1 to 1.7.0
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-release-plugin from 2.5.3 to 3.0.1.
+        Update maven-release-plugin from 2.5.3 to 3.0.1.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update animal-sniffer-maven-plugin from 1.22 to 1.23.
+        Update animal-sniffer-maven-plugin from 1.22 to 1.23.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-project-info-reports-plugin from 3.4.1 to 3.5.0.
+        Update maven-project-info-reports-plugin from 3.4.1 to 3.5.0.
       </action>
       <action issue="RAT-311" type="update" dev="pottlinger" due-to="dependabot">
-        Update maven-surefire-plugin from 3.2.2 to 3.2.3.
+        Update maven-surefire-plugin from 3.2.2 to 3.2.3.
       </action>
       <action issue="RAT-326" type="fix" dev="pottlinger">
         Fix existing javadoc build errors and add javadoc generation to existing GithubActions to not introduce build errors via merge requests.
