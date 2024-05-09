@@ -102,7 +102,7 @@ public class ReportTest {
         TextUtils.assertContains("--log-level <LogLevel> ", result);
         TextUtils.assertContains("--no-default-licenses ", result);
         TextUtils.assertContains("-o,--out <arg> ", result);
-        TextUtils.assertContains("-s,--stylesheet <arg> ", result);
+        TextUtils.assertContains("-s,--stylesheet <StyleSheet> ", result);
         TextUtils.assertContains("--scan-hidden-directories ", result);
         TextUtils.assertContains("-x,--xml ", result);
     }
