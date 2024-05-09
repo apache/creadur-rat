@@ -175,7 +175,7 @@ public class Report {
     /**
      * The stylesheet to use to style the XML output.
      */
-    static final Option STYLESHEET_CLI = Option.builder("s").longOpt("stylesheet").hasArg()
+    static final Option STYLESHEET_CLI = Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
             .desc("XSLT stylesheet to use when creating the report.  Not compatible with -x.  " +
                     "Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses")
             .build();
