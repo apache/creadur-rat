@@ -19,22 +19,18 @@
 package org.apache.rat.document.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 
 /**
  * Document wrapping a File object
@@ -49,8 +45,18 @@ public class FileDocument extends Document {
      * @param file the file to wrap.
      */
     public FileDocument(final File file) {
-        super(DocumentImplUtils.toName(file));
+        super(normalizeFileName(file));
         this.file = file;
+    }
+
+    /**
+     * Normalizes a file name.  Accounts for Windows to Unix conversion.
+     * @param file
+     * @return
+     */
+    public final static String normalizeFileName(File file) {
+        String path = file.getPath();
+        return path.replace('\\', '/');
     }
 
     @Override

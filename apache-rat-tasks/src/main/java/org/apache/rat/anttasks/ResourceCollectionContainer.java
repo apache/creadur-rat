@@ -28,9 +28,7 @@ import java.util.Collections;
 import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -65,12 +63,9 @@ class ResourceCollectionContainer implements IReportable {
         private final Resource resource;
 
         private static String asName(Resource resource) {
-            if (resource instanceof FileResource) {
-                final FileResource fileResource = (FileResource) resource;
-                final File file = fileResource.getFile();
-                return DocumentImplUtils.toName(file);
-            }
-            return resource.getName();
+            return resource instanceof FileResource ?
+                    FileDocument.normalizeFileName(((FileResource) resource).getFile())
+                    : resource.getName();
         }
 
 

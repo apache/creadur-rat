@@ -31,6 +31,7 @@ import org.apache.rat.document.CompositeDocumentException;
  * The representation of a document being scanned.
  */
 public abstract class Document implements Comparable<Document> {
+
     /**
      * An enumeraton of document types.
      */

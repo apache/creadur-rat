@@ -18,23 +18,40 @@
  */ 
 package org.apache.rat.document.impl;
 
+import org.apache.rat.api.Document;
+import org.apache.rat.test.utils.Resources;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipInputStream;
+import java.io.Reader;
 
-import org.apache.commons.io.IOUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DocumentImplUtils {
+public class FileDocumentTest {
+    private Document document;
+    private File file;
+    
+    @BeforeEach
+    public void setUp() throws Exception {
+        file = Resources.getResourceFile("elements/Source.java");
+        document = new FileDocument(file);
+    }
 
-    /**
-     * Normalizes a file name.  Accounts for Windows to Unix conversion.
-     * @param file
-     * @return
-     */
-    public final static String toName(File file) {
-        String path = file.getPath();
-        return path.replace('\\', '/');
+    @Test
+    public void reader() throws Exception {
+        Reader reader = document.reader();
+        assertNotNull(reader, "Reader should be returned");
+        assertEquals("package elements;", 
+                 new BufferedReader(reader).readLine(), "First file line expected");
+    }
+
+    @Test
+    public void getName() {
+        final String name = document.getName();
+        assertNotNull("Name is set", name);
+        assertEquals(FileDocument.normalizeFileName(file), name, "Name is filename");
     }
 }

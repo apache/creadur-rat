@@ -20,7 +20,6 @@
 package org.apache.rat.document.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,8 +30,6 @@ import java.util.Collections;
 import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 
 /**
  * A Document that wraps an Archive entry.
@@ -51,7 +48,7 @@ public class ArchiveEntryDocument extends Document {
      * @param contents the contents of the entry.
      */
     public ArchiveEntryDocument(Path path, byte[] contents) {
-        super(DocumentImplUtils.toName(path.toFile()));
+        super(FileDocument.normalizeFileName(path.toFile()));
         this.path = path;
         this.contents = contents;
     }

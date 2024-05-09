@@ -31,7 +31,6 @@ import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.impl.DocumentImplUtils;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.DefaultLog;
