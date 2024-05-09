@@ -38,7 +38,7 @@ public abstract class Walker implements IReportable {
     private  final Document document;
 
     /**
-     * Create  the walker
+     * Creates  the walker
      * @param document The document the walker is walking.
      * @param filesToIgnore the Files to ignore.  If {@code null} no files are ignored.
      */
@@ -48,15 +48,15 @@ public abstract class Walker implements IReportable {
     }
 
     /**
-     * Retrieve the file from the constructor.
-     * @return the file from the constructor.
+     * Retrieves the document from the constructor.
+     * @return the document from the constructor.
      */
     protected Document getDocument() {
         return document;
     }
 
     /**
-     * Test if the specified path should be ignored.
+     * Tests if the specified path should be ignored.
      * @param pth the Path to test
      * @return {@code true} if the file should not be ignored.
      */

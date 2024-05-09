@@ -16,54 +16,21 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.document;
+package org.apache.rat.testhelpers;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.SortedSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
+import org.apache.rat.document.IDocumentAnalyser;
 
-public class MockDocument extends Document {
+public class TestingDocumentAnalyser implements IDocumentAnalyser {
 
-    private final Reader reader;
-
-    public MockDocument() {
-        this(null, "name");
-    }
-
-    public MockDocument(String name) {
-        this(null, name);
-    }
-
-    public MockDocument(Reader reader, String name) {
-        super(name);
-        this.reader = reader;
-
-    }
+    public final List<Document> matches = new ArrayList<>();
 
     @Override
-    public Reader reader() throws IOException {
-        return reader;
+    public void analyse(Document document)  {
+        matches.add(document);
     }
 
-    @Override
-    public boolean isDirectory() {
-        return false;
-    }
-
-    @Override
-    public SortedSet<Document> listChildren() {
-        return Collections.emptySortedSet();
-    }
-
-
-    @Override
-    public InputStream inputStream() throws IOException {
-        throw new UnsupportedOperationException();
-    }
 }

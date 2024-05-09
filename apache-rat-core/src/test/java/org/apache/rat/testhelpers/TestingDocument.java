@@ -25,27 +25,28 @@ import java.util.Collections;
 import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 
-public class TestingLocation extends Document {
+public class TestingDocument extends Document {
 
-    public final String url;
+    private final Reader reader;
 
-    public TestingLocation() {
-        this("name", "url");
+    public TestingDocument() {
+        this(null, "name");
     }
 
-    public TestingLocation(String name) {
-        this(name, "url");
+    public TestingDocument(String name) {
+        this(null, name);
     }
 
-    public TestingLocation(String name, String url) {
+    public TestingDocument(Reader reader, String name) {
         super(name);
-        this.url = url;
+        this.reader = reader;
+
     }
 
-    public String getURL() {
-        return url;
+    @Override
+    public Reader reader() throws IOException {
+        return reader;
     }
 
     @Override
@@ -58,13 +59,9 @@ public class TestingLocation extends Document {
         return Collections.emptySortedSet();
     }
 
-    @Override
-    public Reader reader() throws IOException {
-        throw new UnsupportedOperationException("Opening Reader in TestingLocation");
-    }
 
     @Override
     public InputStream inputStream() throws IOException {
-        throw new UnsupportedOperationException("Opening inputStream in TestingLocation");
+        throw new UnsupportedOperationException();
     }
 }

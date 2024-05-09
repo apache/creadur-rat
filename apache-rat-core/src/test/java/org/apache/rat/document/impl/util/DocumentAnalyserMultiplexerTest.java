@@ -19,8 +19,8 @@
 package org.apache.rat.document.impl.util;
 
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.MockDocument;
-import org.apache.rat.document.MockDocumentAnalyser;
+import org.apache.rat.testhelpers.TestingDocument;
+import org.apache.rat.testhelpers.TestingDocumentAnalyser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,30 +30,30 @@ public class DocumentAnalyserMultiplexerTest {
 
     private DocumentAnalyserMultiplexer multiplexer;
     private IDocumentAnalyser[] analysers;
-    private MockDocument document;
+    private TestingDocument document;
     
     @BeforeEach
     public void setUp() {
         IDocumentAnalyser[] analysers = {
-                new MockDocumentAnalyser(), 
-                new MockDocumentAnalyser(),
-                new MockDocumentAnalyser()
+                new TestingDocumentAnalyser(),
+                new TestingDocumentAnalyser(),
+                new TestingDocumentAnalyser()
         };
         this.analysers = analysers;
-        document = new MockDocument();
+        document = new TestingDocument();
         multiplexer = new DocumentAnalyserMultiplexer(analysers);
     }
 
     @Test
     public void testAnalyse() throws Exception {
         multiplexer.analyse(document);
-        MockDocumentAnalyser analyser =  (MockDocumentAnalyser) (analysers[0]);
+        TestingDocumentAnalyser analyser =  (TestingDocumentAnalyser) (analysers[0]);
         assertEquals(1, analyser.matches.size(),"Call made to analyser");
         assertEquals( document, analyser.matches.get(0), "Call made to analyser");
-        analyser =  (MockDocumentAnalyser) (analysers[1]);
+        analyser =  (TestingDocumentAnalyser) (analysers[1]);
         assertEquals(1, analyser.matches.size(), "Call made to analyser");
         assertEquals(document, analyser.matches.get(0), "Call made to analyser");
-        analyser =  (MockDocumentAnalyser) (analysers[2]);
+        analyser =  (TestingDocumentAnalyser) (analysers[2]);
         assertEquals( 1, analyser.matches.size());
         assertEquals( document, analyser.matches.get(0),"Call made to analyser");
     }

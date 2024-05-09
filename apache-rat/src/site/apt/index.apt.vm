@@ -85,7 +85,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
  -A,--addLicense                      Add the default license header to any file with an unknown license that is not in the
                                       exclusion list. By default new files will be created with the license header, to force the
                                       modification of existing files use the --force option.
-    --archive <ProcessingType>        Specifies how ARCHIVE processing will be handled. (default is NOTIFICATION)
+    --archive <ProcessingType>        Specifies the level of detail in ARCHIVE reporting. (default is NOTIFICATION)
  -c,--copyright <arg>                 The copyright message to use in the license headers, usually in the form of "Copyright 2008
                                       Foo"
  -d,--dir <DirOrArchive>              (deprecated, use '--') Used to indicate source when using --exclude.
@@ -102,7 +102,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
     --log-level <LogLevel>            sets the log level.
     --no-default-licenses             Ignore default configuration. By default all approved default licenses are used
  -o,--out <arg>                       Define the output file where to write a report to (default is System.out).
- -s,--stylesheet <arg>                XSLT stylesheet to use when creating the report.  Not compatible with -x.  Either an
+ -s,--stylesheet <StyleSheet>         XSLT stylesheet to use when creating the report.  Not compatible with -x.  Either an
                                       external xsl file may be specified or one of the internal named sheets: plain-rat (default),
                                       missing-headers, or unapproved-licenses
     --scan-hidden-directories         Scan hidden directories

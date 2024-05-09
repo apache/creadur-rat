@@ -23,9 +23,9 @@ import java.io.StringReader;
 import java.util.Arrays;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.testhelpers.TestingLicense;
-import org.apache.rat.testhelpers.TestingLocation;
 import org.junit.jupiter.api.Test;
 
 
@@ -33,7 +33,7 @@ public class HeaderCheckWorkerTest {
 
     @Test
     public void isFinished() throws Exception {
-        final Document subject = new TestingLocation("subject");
+        final Document subject = new TestingDocument("subject");
         ILicense matcher = new TestingLicense();
         HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), Arrays.asList(matcher), subject);
         worker.read();

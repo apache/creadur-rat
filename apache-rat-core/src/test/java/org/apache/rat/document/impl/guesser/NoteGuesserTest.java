@@ -18,7 +18,7 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
-import org.apache.rat.document.MockDocument;
+import org.apache.rat.testhelpers.TestingDocument;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,13 +27,13 @@ public class NoteGuesserTest {
 
     @Test
     public void testMatches() {
-        assertTrue(NoteGuesser.isNote(new MockDocument("DEPENDENCIES")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("LICENSE")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("LICENSE.txt")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("NOTICE")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("NOTICE.txt")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("README")));
-        assertTrue(NoteGuesser.isNote(new MockDocument("README.txt")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("DEPENDENCIES")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("LICENSE")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("LICENSE.txt")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("NOTICE")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("NOTICE.txt")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("README")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("README.txt")));
     }
 
     @Test

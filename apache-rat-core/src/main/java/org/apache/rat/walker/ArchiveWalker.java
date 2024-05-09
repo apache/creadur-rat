@@ -75,8 +75,8 @@ public class ArchiveWalker extends Walker {
 
     /**
      * Creates an input stream from the Directory being walked.
-     * @return
-     * @throws IOException
+     * @return A buffered input stream reading the archive data.
+     * @throws IOException on error
      */
     private InputStream createInputStream() throws IOException {
         return new BufferedInputStream(getDocument().inputStream());
