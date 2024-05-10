@@ -25,4 +25,5 @@ assert ! content.contains( '[WARNING]' )
 
 report = new File( basedir, 'target/site/rat-report.html' ).text
 
-assert report.contains( 'AL    pom.xml' )
+assert report.contains( '0 Unknown Licenses' )
+assert report.contains( 'S pom.xml' )
