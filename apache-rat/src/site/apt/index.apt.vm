@@ -132,7 +132,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
            ABSENCE: List licenses found and any unknown licences
 
 <StyleSheet>
-      Either an external xsl file may be one of the internal named sheets.  Internal sheets are:
+      Either an external xsl file or maybe one of the internal named sheets.  Internal sheets are:
            plain-rat: The default style
            missing-headers: Produces a report of files that are missing headers
            unapproved-licenses: Produces a report of the files with unapproved licenses.
