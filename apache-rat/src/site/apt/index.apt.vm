@@ -75,9 +75,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar
 
 
 +------------------------------------------+
-usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
-            [options] [DIR|TARBALL]
-
+usage: java -jar apache-rat/target/apache-rat-${project.version}.jar [options] [DIR|TARBALL]
 
 ====== Available Options ======
  -a                                   (deprecated) Add the default license header to any file with an unknown license.  Use '-A'
@@ -85,7 +83,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
  -A,--addLicense                      Add the default license header to any file with an unknown license that is not in the
                                       exclusion list. By default new files will be created with the license header, to force the
                                       modification of existing files use the --force option.
-    --archive <ProcessingType>        Specifies the level of detail in ARCHIVE reporting. (default is NOTIFICATION)
+    --archive <ProcessingType>        Specifies the level of detail in ARCHIVE file reporting. (default is NOTIFICATION)
  -c,--copyright <arg>                 The copyright message to use in the license headers, usually in the form of "Copyright 2008
                                       Foo"
  -d,--dir <DirOrArchive>              (deprecated, use '--') Used to indicate source when using --exclude.
@@ -106,6 +104,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
                                       external xsl file may be specified or one of the internal named sheets: plain-rat (default),
                                       missing-headers, or unapproved-licenses
     --scan-hidden-directories         Scan hidden directories
+    --standard <ProcessingType>       Specifies the level of detail in STANDARD file reporting.. (default is ABSENCE)
  -x,--xml                             Output the report in raw XML format.  Not compatible with -s
 
 ====== Argument Types ======
@@ -143,6 +142,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
 2. Rat reports require interpretation.
 3. Rat often requires some tuning before it runs well against a project.
 4. Rat relies on heuristics: it may miss issues
+
 
 +------------------------------------------+
 
