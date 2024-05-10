@@ -111,7 +111,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
 ====== Argument Types ======
 
 <DirOrArchive>
-      A director or archive file to scan
+      A directory or archive file to scan
 
 <Expression>
       A wildcard file matching pattern. example: *-test-*.txt

@@ -105,7 +105,7 @@ public class Report {
     static {
         ARGUMENT_TYPES = new TreeMap<>();
         ARGUMENT_TYPES.put("FileOrURI", () -> "A file name or URI");
-        ARGUMENT_TYPES.put("DirOrArchive", () -> "A director or archive file to scan");
+        ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan");
         ARGUMENT_TYPES.put("Expression", () -> "A wildcard file matching pattern. example: *-test-*.txt");
         ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include.  Valid values: %s.",
                 asString(LicenseFilter.values())));
