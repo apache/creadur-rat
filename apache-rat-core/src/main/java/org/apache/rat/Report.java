@@ -347,7 +347,7 @@ public class Report {
 
         if (cl.hasOption(LIST_LICENSES)) {
             try {
-                configuration.listFamilies(cl.getParsedOptionValue(LIST_LICENSES));
+                configuration.listLicenses(cl.getParsedOptionValue(LIST_LICENSES));
             } catch (ParseException e) {
                 logParseException(e, LIST_LICENSES, cl, Defaults.LIST_LICENSES);
             }
@@ -424,7 +424,7 @@ public class Report {
         }
         Defaults defaults = defaultBuilder.build(DefaultLog.INSTANCE);
         configuration.setFrom(defaults);
-        if (baseDirectory != null) {
+        if (StringUtils.isNotBlank(baseDirectory)) {
             configuration.setReportable(getDirectory(baseDirectory, configuration));
         }
         return configuration;
@@ -553,9 +553,7 @@ public class Report {
      * This class implements the {@code Comparator} interface for comparing Options.
      */
     public static class OptionComparator implements Comparator<Option>, Serializable {
-        /**
-         * The serial version UID.
-         */
+        /** The serial version UID.  */
         private static final long serialVersionUID = 5305467873966684014L;
 
         private String getKey(Option opt) {
