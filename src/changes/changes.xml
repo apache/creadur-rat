@@ -81,6 +81,9 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
 
         This change also marks an architecture change from processing Files to processing Documents in order to facilitate
         processing nested files in archives.
+
+      <action issue="RAT-314" type="add" dev="pottlinger">
+        Add integration test for new default exclude .mvn, that was introduced with v0.16.
       </action>
       <action issue="RAT-366" type="add" dev="pottlinger">
         Integrate checkstyle and spotbugs into the build and webpage generation. Most charset-related errors cannot be fixed until we break JDK8-compliance and move to newer versions.
