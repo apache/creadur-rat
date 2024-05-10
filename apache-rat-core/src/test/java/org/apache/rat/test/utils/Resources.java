@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.rat.document.impl.DocumentImplUtils;
+import org.apache.rat.document.impl.FileDocument;
 
 /**
  * Utility class, which provides static methods for creating test cases.
@@ -127,6 +127,6 @@ public class Resources {
     public static String getResourceDirectory(String pResource) throws IOException {
         final File resource = getResourceFile(pResource);
         final File dir = resource.getParentFile();
-        return DocumentImplUtils.toName(dir);
+        return FileDocument.normalizeFileName(dir);
     }
 }

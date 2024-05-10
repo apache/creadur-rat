@@ -54,9 +54,10 @@ Files with unapproved licenses:
 <xsl:if test="descendant::resource[@type='ARCHIVE']">
 Archives:
 <xsl:for-each select='descendant::resource[@type="ARCHIVE"]'>
- + <xsl:value-of select='@name'/>
- <xsl:text>
- </xsl:text>
+  <xsl:text>  </xsl:text>
+  <xsl:value-of select='@name'/>
+  <xsl:text>
+</xsl:text>
  </xsl:for-each>
 </xsl:if>
 <xsl:text>

@@ -19,13 +19,18 @@
 package org.apache.rat.analysis;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.utils.Log;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.walker.ArchiveWalker;
 
 /**
  * Creates default analysers.
@@ -35,58 +40,71 @@ public class DefaultAnalyserFactory {
     /**
      * Creates a DocumentAnalyser from a collection of ILicenses.
      * 
-     * @param log The Log to use for logging.
-     * @param licenses The licenses to use in the Analyser.
+     * @param configuration the ReportConfiguration
      * @return A document analyser that uses the provides licenses.
      */
-    public static IDocumentAnalyser createDefaultAnalyser(Log log, Collection<ILicense> licenses) {
+    public static IDocumentAnalyser createDefaultAnalyser(final ReportConfiguration configuration) {
+        Set<ILicense> licenses = configuration.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
-        log.debug("Licenses in Test");
-        licenses.forEach(log::debug);
-        return new DefaultAnalyser(log, licenses);
+        configuration.getLog().debug("Licenses in Test");
+        licenses.forEach(configuration.getLog()::debug);
+        return new DefaultAnalyser(configuration, licenses);
     }
 
     /**
-     * A DocumentAnalyser for the license
+     * A DocumentAnalyser a collection of licenses
      */
     private final static class DefaultAnalyser implements IDocumentAnalyser {
 
         /** The licenses to analyze */
         private final Collection<ILicense> licenses;
-        /** The log to use */
-        private final Log log;
+
+        /** the Report Configuration */
+        private final ReportConfiguration configuration;
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
-         * @param log the Log to use
+         * @param config the ReportConfiguration
          * @param licenses The licenses to analyse
          */
-        public DefaultAnalyser(final Log log, final Collection<ILicense> licenses) {
+        public DefaultAnalyser(ReportConfiguration config, final Collection<ILicense> licenses) {
             this.licenses = licenses;
-            this.log = log;
+            this.configuration = config;
         }
 
         @Override
         public void analyse(Document document) throws RatDocumentAnalysisException {
 
-            TikaProcessor.process(log, document);
+            TikaProcessor.process(configuration.getLog(), document);
 
             switch (document.getMetaData().getDocumentType()) {
             case STANDARD:
-                DocumentHeaderAnalyser analyser = new DocumentHeaderAnalyser(log, licenses);
-                analyser.analyse(document);
-            case NOTICE:
+                new DocumentHeaderAnalyser(configuration.getLog(), licenses).analyse(document);
+                break;
             case ARCHIVE:
+                if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
+                    ArchiveWalker archiveWalker = new ArchiveWalker(configuration, document);
+                    Predicate<ILicense> filter = configuration.getArchiveProcessing() == ReportConfiguration.Processing.ABSENCE ?
+                            l -> Boolean.TRUE : lic -> !lic.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
+                    try {
+                        Collection<Document> docs = archiveWalker.getDocuments(configuration.getLog());
+                        for (Document doc : docs) {
+                            analyse(doc);
+                            doc.getMetaData().licenses().filter(filter).forEach(lic -> document.getMetaData().reportOnLicense(lic));
+                        }
+                    } catch (RatException e) {
+                        throw new RatDocumentAnalysisException(e);
+                    }
+                }
+                break;
+            case NOTICE:
             case BINARY:
             case UNKNOWN:
             default:
                 break;
             }
-
-
-
         }
     }
 }

@@ -26,23 +26,56 @@ import java.util.regex.Pattern;
 
 public class TextUtils {
     public static final String[] EMPTY = {};
-    
-    public static void assertPatternInOutput(String pattern, String out) {
+
+    /**
+     * Asserts a regular expression pattern is in a string
+     *
+     * @param pattern the pattern to match.
+     * @param target  the string to match.
+     */
+    public static void assertPatternInTarget(String pattern, String target) {
         assertTrue(
-                isMatching(pattern, out), ()->"Output does not match string: " + pattern+"\n"+out);
-    }
-    
-    public static void assertPatternNotInOutput(String pattern, String out) {
-        assertFalse(
-                isMatching(pattern, out), ()->"Output matches the pattern: " + pattern+"\n"+out);
+                isMatching(pattern, target), () -> "Target does not match string: " + pattern + "\n" + target);
     }
 
-   public static boolean isMatching(final String pattern, final String value) {
-        return Pattern.compile(pattern, Pattern.MULTILINE).matcher(value).find();
+    /**
+     * Asserts a regular expression pattern is not in a string
+     *
+     * @param pattern the pattern to match.
+     * @param target  the string to match.
+     */
+    public static void assertPatternNotInTarget(String pattern, String target) {
+        assertFalse(
+                isMatching(pattern, target), () -> "Target matches the pattern: " + pattern + "\n" + target);
     }
-   
-   public static void find(String pattern, String document) {
-       assertTrue(
-               Pattern.compile(pattern, Pattern.MULTILINE).matcher(document).find(), () ->String.format("Could not find '%s'", pattern));
-   }
+
+    /**
+     * Returns {@code true} if a regular expression pattern is in a string
+     *
+     * @param pattern the pattern to match.
+     * @param target  the string to match.
+     */
+    public static boolean isMatching(final String pattern, final String target) {
+        return Pattern.compile(pattern, Pattern.MULTILINE).matcher(target).find();
+    }
+
+    /**
+     * Asserts that a string is contained within another string.
+     * @param find The string to find.
+     * @param target The string to search.
+     */
+    public static void assertContains(final String find, final String target) {
+        assertTrue(
+                target.contains(find), () -> "Target does not contain the text: " + find + "\n" + target);
+    }
+
+    /**
+     * Asserts that a string is not contained within another string.
+     * @param find The string to find.
+     * @param target The string to search.
+     */
+    public static void assertNotContains(final String find, final String target) {
+        assertFalse(
+                target.contains(find), () -> "Target does contain the text: " + find + "\n" + target);
+    }
 }

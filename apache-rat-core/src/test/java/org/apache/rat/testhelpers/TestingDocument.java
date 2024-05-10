@@ -21,56 +21,47 @@ package org.apache.rat.testhelpers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Collections;
+import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 
-public class TestingLocation implements Document {
+public class TestingDocument extends Document {
 
-    public final String name;
-    public final String url;
-    private final MetaData metaData = new MetaData();
+    private final Reader reader;
 
-    public TestingLocation() {
-        this("name", "url");
+    public TestingDocument() {
+        this(null, "name");
     }
 
-    public TestingLocation(String name) {
-        this(name, "url");
+    public TestingDocument(String name) {
+        this(null, name);
     }
 
-    public TestingLocation(String name, String url) {
-        super();
-        this.name = name;
-        this.url = url;
-    }
+    public TestingDocument(Reader reader, String name) {
+        super(name);
+        this.reader = reader;
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public String getURL() {
-        return url;
-    }
-
-    @Override
-    public boolean isComposite() {
-        return false;
     }
 
     @Override
     public Reader reader() throws IOException {
-        throw new UnsupportedOperationException("Opening Reader in TestingLocation");
+        return reader;
     }
 
     @Override
-    public MetaData getMetaData() {
-        return metaData;
+    public boolean isDirectory() {
+        return false;
     }
+
+    @Override
+    public SortedSet<Document> listChildren() {
+        return Collections.emptySortedSet();
+    }
+
 
     @Override
     public InputStream inputStream() throws IOException {
-        throw new UnsupportedOperationException("Opening inputStream in TestingLocation");
+        throw new UnsupportedOperationException();
     }
 }

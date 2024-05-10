@@ -206,11 +206,11 @@ public final class RatTestHelpers {
         List<String> lines = IOUtils.readLines(new FileInputStream(pRatTxtFile), Charsets.UTF_8);
         String document = String.join("\n", lines);
         for (String pattern : in) {
-            TextUtils.assertPatternInOutput(pattern, document);
+            TextUtils.assertPatternInTarget(pattern, document);
         }
 
         for (String pattern : notIn) {
-            TextUtils.assertPatternInOutput(pattern, document);
+            TextUtils.assertPatternInTarget(pattern, document);
         }
     }
     

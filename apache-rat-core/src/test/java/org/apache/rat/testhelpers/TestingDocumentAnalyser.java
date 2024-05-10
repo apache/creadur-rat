@@ -15,42 +15,22 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.document.impl;
+ */
+package org.apache.rat.testhelpers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.rat.api.Document;
+import org.apache.rat.document.IDocumentAnalyser;
 
-public class DocumentImplUtils {
+public class TestingDocumentAnalyser implements IDocumentAnalyser {
 
-    public final static String toName(File file) {
-        String path = file.getPath();
-        return path.replace('\\', '/');
-    }
-    
-    public static final boolean isZipStream(InputStream stream) {
-        ZipInputStream zip = new ZipInputStream(stream);
-        try {
-            zip.getNextEntry();
-            return true;
-        } catch (IOException e) {
-            return false;
-        } finally {
-            IOUtils.closeQuietly(zip);
-        }
-    }
+    public final List<Document> matches = new ArrayList<>();
 
-    public static final boolean isZip(File file) {
-        try {
-            return isZipStream(new FileInputStream(file));
-        } catch (IOException e) {
-            return false;
-        }
+    @Override
+    public void analyse(Document document)  {
+        matches.add(document);
     }
 
 }

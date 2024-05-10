@@ -20,41 +20,47 @@
 package org.apache.rat.walker;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.rat.api.Document;
 import org.apache.rat.report.IReportable;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Path;
 
 /**
  * Abstract walker.
  */
 public abstract class Walker implements IReportable {
 
-    /** The file that this walker started at */
-    private final File baseFile;
-
     /** The file name filter that the walker is applying */
     private final FilenameFilter filesToIgnore;
+    /** The document this walker is walking */
+    private  final Document document;
 
-    public Walker(final File file, final FilenameFilter filesToIgnore) {
-        this.baseFile = file;
+    /**
+     * Creates  the walker
+     * @param document The document the walker is walking.
+     * @param filesToIgnore the Files to ignore.  If {@code null} no files are ignored.
+     */
+    protected Walker(final Document document, final FilenameFilter filesToIgnore) {
+        this.document = document;
         this.filesToIgnore = filesToIgnore == null ? FalseFileFilter.FALSE : filesToIgnore;
     }
 
     /**
-     * Retrieve the file from the constructor.
-     * @return the file from the constructor.
+     * Retrieves the document from the constructor.
+     * @return the document from the constructor.
      */
-    protected File getBaseFile() {
-        return baseFile;
+    protected Document getDocument() {
+        return document;
     }
 
     /**
-     * Test if the specified file should be ignored.
-     * @param file the file to test.
-     * @return {@code true} if the file should be ignored.
+     * Tests if the specified path should be ignored.
+     * @param path the Path to test
+     * @return {@code true} if the file should not be ignored.
      */
-    protected final boolean isNotIgnored(final File file) {
-        return !filesToIgnore.accept(file.getParentFile(), file.getName());
+    protected final boolean isNotIgnored(Path path) {
+        return !filesToIgnore.accept(path.getParent().toFile(), path.toString());
     }
 }

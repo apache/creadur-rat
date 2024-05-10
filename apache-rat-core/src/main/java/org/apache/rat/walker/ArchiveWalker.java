@@ -19,36 +19,45 @@
 
 package org.apache.rat.walker;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.io.IOUtils;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.ArchiveEntryDocument;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.utils.Log;
 
 /**
  * Walks various kinds of archives files
  */
 public class ArchiveWalker extends Walker {
+    private final Log log;
 
     /**
      * Constructs a walker.
-     * @param file not null
-     * @param filter filters input files (optional) null when no filtering should be performed
-     * @throws FileNotFoundException in case of I/O errors.
+     * @param config the report configuration for this run.
+     * @param document the document to process.
      */
-    public ArchiveWalker(final File file, final FilenameFilter filter) throws FileNotFoundException {
-        super(file, filter);
+    public ArchiveWalker(final ReportConfiguration config, Document document) {
+        super(document, config.getFilesToIgnore());
+        this.log = config.getLog();
     }
 
     /**
@@ -59,57 +68,43 @@ public class ArchiveWalker extends Walker {
      *
      */
     public void run(final RatReport report) throws RatException {
-
-        try {
-            ArchiveInputStream<? extends ArchiveEntry> input;
-
-            /* I am really sad that classes aren't first-class objects in
-               Java :'( */
-            try {
-                input = new TarArchiveInputStream(new GzipCompressorInputStream(Files.newInputStream(getBaseFile().toPath())));
-            } catch (IOException e) {
-                try {
-                    input = new TarArchiveInputStream(new BZip2CompressorInputStream(Files.newInputStream(getBaseFile().toPath())));
-                } catch (IOException e2) {
-                    input = new ZipArchiveInputStream(Files.newInputStream(getBaseFile().toPath()));
-                }
-            }
-
-            ArchiveEntry entry = input.getNextEntry();
-            while (entry != null) {
-                File f = new File(entry.getName());
-                byte[] contents = new byte[(int) entry.getSize()];
-                int offset = 0;
-                int length = contents.length;
-
-                while (offset < entry.getSize()) {
-                    int actualRead = input.read(contents, offset, length);
-                    length -= actualRead;
-                    offset += actualRead;
-                }
-
-                if (!entry.isDirectory() && isNotIgnored(f)) {
-                    report(report, contents, f);
-                }
-
-                entry = input.getNextEntry();
-            }
-
-            input.close();
-        } catch (IOException e) {
-            throw new RatException(e);
+        for (Document document : getDocuments(log)) {
+            report.report(document);
         }
     }
 
     /**
-     * Report on the given file.
-     *
-     * @param report the report to process the file with
-     * @param file the file to be reported on
-     * @throws RatException
+     * Creates an input stream from the Directory being walked.
+     * @return A buffered input stream reading the archive data.
+     * @throws IOException on error
      */
-    private void report(final RatReport report, final byte[] contents, final File file) throws RatException {
-        Document document = new ArchiveEntryDocument(file, contents);
-        report.report(document);
+    private InputStream createInputStream() throws IOException {
+        return new BufferedInputStream(getDocument().inputStream());
+    }
+    /**
+     * Retrieves the documents from the archive.
+     * @param log The log to write messages to.
+     * @return A collection of documents that pass the file filter.
+     * @throws RatException on error.
+     */
+    public Collection<Document> getDocuments(Log log) throws RatException {
+        List<Document> result = new ArrayList<>();
+        try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
+            ArchiveEntry entry = null;
+            while ((entry = input.getNextEntry()) != null) {
+                Path path = this.getDocument().getPath().resolve("#"+entry.getName());
+                if (!entry.isDirectory() && this.isNotIgnored(path) && input.canReadEntryData(entry)) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    IOUtils.copy(input,baos);
+                    result.add(new ArchiveEntryDocument(path, baos.toByteArray()));
+                }
+            }
+        } catch (ArchiveException e) {
+            log.warn(String.format("Unable to process %s: %s", getDocument().getName(), e.getMessage()));
+        }
+        catch (IOException e) {
+            throw RatException.asRatException(e);
+        }
+        return result;
     }
 }

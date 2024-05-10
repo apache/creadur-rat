@@ -20,62 +20,56 @@
 package org.apache.rat.document.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 
-public class ArchiveEntryDocument implements Document {
+/**
+ * A Document that wraps an Archive entry.
+ */
+public class ArchiveEntryDocument extends Document {
 
+    /** The contents of the entry */
     private final byte[] contents;
-    private final String name;
 
-    private final MetaData metaData = new MetaData();
+    /** The path for the entry */
+    private final Path path;
 
-    public ArchiveEntryDocument(File file, byte[] contents) throws RatException {
-        super();
-        name = DocumentImplUtils.toName(file);
+    /**
+     * Creates an Archive entry.
+     * @param path The path for the entry.
+     * @param contents the contents of the entry.
+     */
+    public ArchiveEntryDocument(Path path, byte[] contents) {
+        super(FileDocument.normalizeFileName(path.toFile()));
+        this.path = path;
         this.contents = contents;
     }
 
-    public MetaData getMetaData() {
-        return metaData;
-    }
-
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public InputStream inputStream() throws IOException {
         return new ByteArrayInputStream(contents);
     }
 
-    public boolean isComposite() {
-        return DocumentImplUtils.isZipStream(new ByteArrayInputStream(contents));
+    @Override
+    public boolean isDirectory() {
+        return false;
     }
 
+    @Override
+    public SortedSet<Document> listChildren() {
+        return Collections.emptySortedSet();
+    }
+
+    @Override
     public Reader reader() throws IOException {
         return new InputStreamReader(new ByteArrayInputStream(contents), StandardCharsets.UTF_8);
-    }
-
-
-    /**
-     * Representations suitable for logging.
-     * @return a <code>String</code> representation 
-     * of this object.
-     */
-    @Override
-    public String toString()
-    {
-        return "TarEntryDocument ( "
-            + "name = " + this.name + " "
-            + "metaData = " + this.metaData + " "
-            + " )";
     }
 }

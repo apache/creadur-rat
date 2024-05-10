@@ -552,9 +552,20 @@ public final class XmlWriter implements IXmlWriter {
         StringBuilder sb = new StringBuilder(content);
         int found;
         while (-1 != (found = sb.indexOf("]]>"))) {
-            sb.replace(found, found + 3, "<!-- Rat removed CDATA closure here -->");
+            sb.replace(found, found + 3, "{rat:CDATA close}");
         }
-        writer.write(String.format("<![CDATA[ %s ]]>", sb.toString()));
+
+        writer.write("<![CDATA[ " );
+        for (int i=0;i<sb.length();i++) {
+            char c = sb.charAt(i);
+            if (isOutOfRange(c)) {
+                writer.write(String.format("\\u%X", (int)c));
+            } else {
+                writer.write(c);
+            }
+        }
+        writer.write(" ]]>");
+
         inElement = false;
         return this;
     }

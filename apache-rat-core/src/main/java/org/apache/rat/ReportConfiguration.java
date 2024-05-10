@@ -57,6 +57,17 @@ import org.apache.rat.utils.ReportingSet;
  * configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration {
+
+    public enum Processing {NOTIFICATION("List file as present"), PRESENCE("List any licenses found"), ABSENCE("List licenses found and any unknown licences");
+
+    private final String description;
+    Processing(String description) {
+        this.description = description;
+    }
+    public String desc() { return description; }
+    }
+
+
     private final ReportingSet<ILicenseFamily> families;
     private final ReportingSet<ILicense> licenses;
     private final SortedSet<String> approvedLicenseCategories;
@@ -74,7 +85,7 @@ public class ReportConfiguration {
     private LicenseFilter listFamilies;
     private LicenseFilter listLicenses;
     private boolean dryRun;
-
+    private Processing archiveProcessing;
    
     /**
      * Constructor
@@ -89,11 +100,27 @@ public class ReportConfiguration {
         approvedLicenseCategories = new TreeSet<>();
         removedLicenseCategories = new TreeSet<>();
         styleReport = true;
-        listFamilies = LicenseFilter.NONE;
-        listLicenses = LicenseFilter.NONE;
+        listFamilies = Defaults.LIST_FAMILIES;
+        listLicenses = Defaults.LIST_LICENSES;
         dryRun = false;
     }
-    
+
+    /**
+     * Retrieves the archive processing type.
+     * @return The archive processing type.
+     */
+    public Processing getArchiveProcessing() {
+        return archiveProcessing == null ? Defaults.ARCHIVE_PROCESSING : archiveProcessing;
+    }
+
+    /**
+     * Sets the archive processing type.  If not set will default to NOTIFICATION.
+     * @param archiveProcessing the type of processing archives should have.
+     */
+    public void setArchiveProcessing(Processing archiveProcessing) {
+        this.archiveProcessing = archiveProcessing;
+    }
+
     /**
      * Retrieves the Log that was provided in the constructor.
      * @return the Log for the system.
@@ -168,40 +195,55 @@ public class ReportConfiguration {
     
     /**
      * Returns the state of the dry run flag.
-     * @return the stae of the dry run flag.
+     * @return the state of the dry run flag.
      */
     public boolean isDryRun() {
         return dryRun;
     }
     
     /**
-     * @return The filename filter for the potential input files.
+     * Gets the file name filter for files to ignore.
+     * @return The filename filter that identifies files to ignore.
      */
     public FilenameFilter getFilesToIgnore() {
-        return filesToIgnore;
+        return filesToIgnore == null ? Defaults.FILES_TO_IGNORE : filesToIgnore;
     }
 
     /**
+     * Sets the files name filter for files to ignore.
+     * If not set or set to {@code null} uses the Default.FILES_TO_IGNORE value.
      * @param filesToIgnore the filename filter to filter the input files.
+     * @see Defaults#FILES_TO_IGNORE
      */
     public void setFilesToIgnore(FilenameFilter filesToIgnore) {
         this.filesToIgnore = filesToIgnore;
     }
 
+    /**
+     * Gets the directories filter.
+     * @return the directories filter.
+     */
     public IOFileFilter getDirectoriesToIgnore() {
-        return directoriesToIgnore;
+        return directoriesToIgnore == null ? Defaults.DIRECTORIES_TO_IGNORE : directoriesToIgnore;
     }
 
+    /**
+     * Sets the directories to ignore.
+     * If {@code directoriesToIgnore} is null removes all directories to ignore.
+     * If not set {@code Defaults.DIRECTORIES_TO_IGNORE} is used.
+     * @param directoriesToIgnore the filter that defines the directories to ignore.
+     * @see Defaults#DIRECTORIES_TO_IGNORE
+     */
     public void setDirectoriesToIgnore(IOFileFilter directoriesToIgnore) {
-        if (directoriesToIgnore == null) {
-            this.directoriesToIgnore = FalseFileFilter.FALSE;
-        } else {
-            this.directoriesToIgnore = directoriesToIgnore;
-        }
+        this.directoriesToIgnore = directoriesToIgnore == null ? FalseFileFilter.FALSE : directoriesToIgnore;
     }
 
+    /**
+     * Adds a directory filter to the directories to ignore.
+     * @param directoryToIgnore the directory filter to add.
+     */
     public void addDirectoryToIgnore(IOFileFilter directoryToIgnore) {
-        this.directoriesToIgnore = this.directoriesToIgnore.and(directoryToIgnore);
+        this.directoriesToIgnore = this.directoriesToIgnore.or(directoryToIgnore);
     }
 
     /**
@@ -245,8 +287,6 @@ public class ReportConfiguration {
      * @param defaults The defaults to set.
      */
     public void setFrom(Defaults defaults) {
-        setFilesToIgnore(Defaults.getFilesToIgnore());
-        setDirectoriesToIgnore(Defaults.getDirectoriesToIgnore());
         addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.ALL));
         addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.APPROVED));
         if (isStyleReport() && getStyleSheet() == null) {

@@ -34,6 +34,7 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReport;
@@ -74,8 +75,8 @@ public class XmlReportFactoryTest {
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
         final TestingLicense testingLicense = new TestingLicense(new TestingMatcher(true), family);
         configuration.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
-
-        DirectoryWalker directory = new DirectoryWalker(new File(elementsPath), configuration.getFilesToIgnore(), HiddenFileFilter.HIDDEN);
+        configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
+        DirectoryWalker directory = new DirectoryWalker(configuration, new FileDocument(new File(elementsPath)));
         final ClaimStatistic statistic = new ClaimStatistic();
 
         configuration.addLicense(testingLicense);

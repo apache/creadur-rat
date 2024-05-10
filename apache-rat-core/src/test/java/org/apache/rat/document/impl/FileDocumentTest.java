@@ -19,30 +19,39 @@
 package org.apache.rat.document.impl;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
+import org.apache.rat.test.utils.Resources;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.Reader;
 
-/**
- * Abstract base class for monolithic documents.
- */
-public abstract class AbstractMonolithicDocument implements Document {
-    private final String name;
-    private final MetaData metaData;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-    public AbstractMonolithicDocument(String pName) {
-        name = pName;
-        this.metaData = new MetaData();
+public class FileDocumentTest {
+    private Document document;
+    private File file;
+    
+    @BeforeEach
+    public void setUp() throws Exception {
+        file = Resources.getResourceFile("elements/Source.java");
+        document = new FileDocument(file);
     }
 
-    public boolean isComposite() {
-        return false;
+    @Test
+    public void reader() throws Exception {
+        Reader reader = document.reader();
+        assertNotNull(reader, "Reader should be returned");
+        assertEquals("package elements;", 
+                 new BufferedReader(reader).readLine(), "First file line expected");
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public MetaData getMetaData() {
-        return metaData;
+    @Test
+    public void getName() {
+        final String name = document.getName();
+        assertNotNull("Name is set", name);
+        assertEquals(FileDocument.normalizeFileName(file), name, "Name is filename");
     }
 }

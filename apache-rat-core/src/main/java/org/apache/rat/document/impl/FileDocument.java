@@ -19,67 +19,71 @@
 package org.apache.rat.document.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 
 /**
- * Document wrapping a file of undetermined composition.
- *
+ * Document wrapping a File object
  */
-public class FileDocument implements Document {
+public class FileDocument extends Document {
 
+    /** the wrapped file */
     private final File file;
-    private final String name;
-    private final MetaData metaData = new MetaData();
-    
+
+    /**
+     * Creates a File document.
+     * @param file the file to wrap.
+     */
     public FileDocument(final File file) {
-        super();
+        super(normalizeFileName(file));
         this.file = file;
-        name = DocumentImplUtils.toName(file);
     }
 
-    public boolean isComposite() {
-        return DocumentImplUtils.isZip(file);
+    /**
+     * Normalizes a file name.  Accounts for Windows to Unix conversion.
+     * @param file
+     * @return
+     */
+    public final static String normalizeFileName(File file) {
+        String path = file.getPath();
+        return path.replace('\\', '/');
+    }
+
+    @Override
+    public Path getPath() {
+        return file.toPath();
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return file.isDirectory();
+    }
+
+    @Override
+    public SortedSet<Document> listChildren() {
+        if (isDirectory()) {
+            SortedSet<Document> result = new TreeSet<>();
+            Arrays.stream(file.listFiles()).map(f -> new FileDocument(f)).forEach(result::add);
+            return result;
+        }
+        return Collections.emptySortedSet();
     }
 
     public Reader reader() throws IOException {
         return new FileReader(file);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public MetaData getMetaData() {
-        return metaData;
-    }    
-    
     public InputStream inputStream() throws IOException {
         return Files.newInputStream(file.toPath());
     }
-
-    /**
-     * Representations suitable for logging.
-     * @return a <code>String</code> representation 
-     * of this object.
-     */
-    @Override
-    public String toString()
-    {
-        return "FileDocument ( "
-            + "file = " + this.file + " "
-            + "name = " + this.name + " "
-            + "metaData = " + this.metaData + " "
-            + " )";
-    }
-    
-    
 }

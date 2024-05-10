@@ -34,9 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.MalformedInputException;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -135,13 +133,8 @@ public class TikaProcessorTest {
      * @return
      */
     private static Document getDocument(final InputStream stream) {
-        MetaData metaData = new MetaData();
 
-        Document doc = new Document() {
-            @Override
-            public String getName() {
-                return "Testing Document";
-            }
+        Document doc = new Document("Testing Document") {
 
             @Override
             public Reader reader() throws IOException {
@@ -154,13 +147,13 @@ public class TikaProcessorTest {
             }
 
             @Override
-            public MetaData getMetaData() {
-                return metaData;
+            public boolean isDirectory() {
+                return false;
             }
 
             @Override
-            public boolean isComposite() {
-                return false;
+            public SortedSet<Document> listChildren() {
+                return Collections.emptySortedSet();
             }
         };
         return doc;

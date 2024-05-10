@@ -22,11 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringWriter;
-import java.util.Arrays;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.rat.Defaults;
+import org.apache.rat.ReportConfiguration;
+import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.impl.MonolithicFileDocument;
-import org.apache.rat.license.ILicense;
+import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -35,9 +37,7 @@ import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AnalyserFactoryTest {
-
-    private static ILicense MATCHES_NOTHING_MATCHER = UnknownLicense.INSTANCE;
+public class DefaultAnalyserFactoryTest {
 
     private StringWriter out;
     private SimpleXmlClaimReporter reporter;
@@ -47,8 +47,9 @@ public class AnalyserFactoryTest {
     public void setUp() throws Exception {
         out = new StringWriter();
         reporter = new SimpleXmlClaimReporter(new XmlWriter(out));
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(DefaultLog.INSTANCE,
-                Arrays.asList(MATCHES_NOTHING_MATCHER));
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        config.addLicense(UnknownLicense.INSTANCE);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
     }
 
     @Test
@@ -73,7 +74,7 @@ public class AnalyserFactoryTest {
                 " * under the License.", //
                 " ]]></sample></resource>" };
 
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/Text.txt"));
         analyser.analyse(document);
         reporter.report(document);
@@ -85,94 +86,130 @@ public class AnalyserFactoryTest {
 
     @Test
     public void noteTypeAnalyser() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/LICENSE"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/LICENSE' type='NOTICE'/>", out.toString(),
-                "Open note element");
+        assertEquals("<resource name='src/test/resources/elements/LICENSE' type='NOTICE'/>", out.toString());
     }
 
     @Test
     public void binaryTypeAnalyser() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/Image.png"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/Image.png' type='BINARY'/>", out.toString(),
-                "Open binary element");
+        assertEquals("<resource name='src/test/resources/elements/Image.png' type='BINARY'/>", out.toString());
     }
 
     @Test
-    public void archiveTypeAnalyser() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+    public void archiveTypeAnalyserTest() throws Exception {
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        config.setFrom(defaults);
+        config.setFilesToIgnore(FalseFileFilter.FALSE);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString(),
-                "Open archive element");
+        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString());
+    }
+
+    @Test
+    public void archivesAbsenceTest() throws Exception {
+        final Document document = new FileDocument(
+                Resources.getResourceFile("/elements/dummy.jar"));
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        config.setFrom(defaults);
+        config.setFilesToIgnore(FalseFileFilter.FALSE);
+        config.setArchiveProcessing(ReportConfiguration.Processing.ABSENCE);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        analyser.analyse(document);
+        reporter.report(document);
+        String result = out.toString();
+        TextUtils.assertContains("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'>", out.toString());
+        TextUtils.assertContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", out.toString());
+        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", out.toString());
+    }
+
+    @Test
+    public void archivesPresenceTest() throws Exception {
+        final Document document = new FileDocument(
+                Resources.getResourceFile("/elements/dummy.jar"));
+        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        config.setFrom(defaults);
+        config.setFilesToIgnore(FalseFileFilter.FALSE);
+        config.setArchiveProcessing(ReportConfiguration.Processing.PRESENCE);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        analyser.analyse(document);
+        reporter.report(document);
+        String result = out.toString();
+        TextUtils.assertContains("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'>", out.toString());
+        TextUtils.assertNotContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", out.toString());
+        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", out.toString());
     }
 
     @Test
     public void archiveTypeAnalyserIntelliJ() throws Exception {
-        final MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString(),
-                "Open archive element");
+        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString());
     }
 
     @Test
     public void RAT211_bmp_Test() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/jira/RAT211/side_left.bmp"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/jira/RAT211/side_left.bmp' type='BINARY'/>", out.toString(),
-                "Open archive element");
+        assertEquals("<resource name='src/test/resources/jira/RAT211/side_left.bmp' type='BINARY'/>", out.toString());
     }
 
     @Test
     public void RAT211_dia_Test() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/jira/RAT211/leader-election-message-arrives.dia"));
         analyser.analyse(document);
         reporter.report(document);
         assertEquals(
                 "<resource name='src/test/resources/jira/RAT211/leader-election-message-arrives.dia' type='ARCHIVE'/>",
-                out.toString(), "Open archive element");
+                out.toString());
     }
 
     @Test
     public void RAT147_unix_Test() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"));
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        TextUtils.assertPatternInOutput(
+        TextUtils.assertPatternInTarget(
                 "<resource name='src/test/resources/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'",
                 result);
-        TextUtils.assertPatternInOutput("sentence 1.$", result);
-        TextUtils.assertPatternInOutput("^sentence 2.$", result);
-        TextUtils.assertPatternInOutput("^sentence 3.$", result);
-        TextUtils.assertPatternInOutput("^sentence 4.$", result);
+        TextUtils.assertPatternInTarget("sentence 1.$", result);
+        TextUtils.assertPatternInTarget("^sentence 2.$", result);
+        TextUtils.assertPatternInTarget("^sentence 3.$", result);
+        TextUtils.assertPatternInTarget("^sentence 4.$", result);
     }
 
     @Test
     public void RAT147_windows_Test() throws Exception {
-        MonolithicFileDocument document = new MonolithicFileDocument(
+        final Document document = new FileDocument(
                 Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"));
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        TextUtils.assertPatternInOutput(
+        TextUtils.assertPatternInTarget(
                 "<resource name='src/test/resources/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'",
                 result);
-        TextUtils.assertPatternInOutput("sentence 1.$", result);
-        TextUtils.assertPatternInOutput("^sentence 2.$", result);
-        TextUtils.assertPatternInOutput("^sentence 3.$", result);
-        TextUtils.assertPatternInOutput("^sentence 4.$", result);
+        TextUtils.assertPatternInTarget("sentence 1.$", result);
+        TextUtils.assertPatternInTarget("^sentence 2.$", result);
+        TextUtils.assertPatternInTarget("^sentence 3.$", result);
+        TextUtils.assertPatternInTarget("^sentence 4.$", result);
     }
 }
