@@ -48,7 +48,7 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
 
 ** <<<resource>>> Element
 
- There in one <<<resource>>> element for every file that was processed.  The <<<resource>>> may contain <<<license>>> and <<<sample>>> child elements.
+ There is one <<<resource>>> element for every file that was processed.  The <<<resource>>> may contain <<<license>>> and <<<sample>>> child elements.
  It has two attributes:
 
  * <<<name>>>: The name of the file.
@@ -76,11 +76,11 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
 
 ** <<<notes>>> Element
 
- The <<<notes>>> element contains a <<<CDATA>>> blcok comprising the text of any notes about the license that were provided when the license was defined.
+ The <<<notes>>> element contains a <<<CDATA>>> block comprising the text of any notes about the license that were provided when the license was defined.
 
 * How to use the report
 
  Once an XSLT stylesheet has been developed it can be tested by running Rat and providing the full path to the XSLT stylesheet as the stylesheet
- argument for the client being used.  See Running Rat from the {{{/apache-rat/index.html}Command line}},
- {{{/apache-rat-plugin/index.html}Maven}}, or
- {{{/apache-rat-tasks/index.html}Ant}} for details.
+ argument for the client being used.  See Running Rat from the {{{./apache-rat/index.html}Command line}},
+ {{{./apache-rat-plugin/index.html}Maven}}, or
+ {{{./apache-rat-tasks/index.html}Ant}} for details.
