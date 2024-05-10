@@ -27,3 +27,4 @@ report = new File( basedir, 'target/site/rat-report.html' ).text
 
 assert report.contains( '0 Unknown Licenses' )
 assert report.contains( 'S pom.xml' )
+assert report.contains( 'AL       AL            Apache License Version 2.0' )
