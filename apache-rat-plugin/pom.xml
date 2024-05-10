@@ -86,6 +86,7 @@
           <configuration>
             <excludes>
               <!-- These files do not have license headers because they are used to test license headers -->
+              <exclude>src/it/**</exclude>
               <exclude>src/it/**/src.apt</exclude>
               <exclude>src/test/resources/unit/**</exclude>
               <exclude>**/*.iml</exclude>
