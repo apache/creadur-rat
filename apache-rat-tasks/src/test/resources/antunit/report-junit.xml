@@ -21,89 +21,176 @@
 -->
 
 <project default="all"
-    xmlns:au="antlib:org.apache.ant.antunit"
-    xmlns:rat="antlib:org.apache.rat.anttasks">
-  <taskdef uri="antlib:org.apache.ant.antunit"
-      resource="org/apache/ant/antunit/antlib.xml"
-      classpath="${test.classpath}"/>
+	xmlns:au="antlib:org.apache.ant.antunit"
+	xmlns:rat="antlib:org.apache.rat.anttasks">
 
-  <taskdef uri="antlib:org.apache.rat.anttasks"
-      resource="org/apache/rat/anttasks/antlib.xml"
-      classpath="${test.classpath}"/>
+	<taskdef uri="antlib:org.apache.ant.antunit"
+		resource="org/apache/ant/antunit/antlib.xml"
+		classpath="${test.classpath}" />
 
-  <property name="output.dir" location="target/anttasks"/>
-  <pathconvert dirsep="/" property="file.name">
-    <path>
-      <pathelement location="${ant.file}"/>
-    </path>
-  </pathconvert>
-  <property name="expectedOutput" value="AL    ${file.name}"/>
+	<taskdef uri="antlib:org.apache.rat.anttasks"
+		resource="org/apache/rat/anttasks/antlib.xml"
+		classpath="${test.classpath}" />
 
-  <target name="testWithReportSentToAnt">
-    <rat:report>
-      <file file="${ant.file}"/>
-    </rat:report>
-  </target>
+	<typedef name="matcher" classname="org.example.Matcher"
+		classpath="${test.classpath}" />
 
-  <target name="all"/>
+	<typedef name="matcherBuilder" classname="org.example.MatcherBuilder"
+		classpath="${test.classpath}" />
 
-  <target name="testWithReportSentToFile">
-    <property name="report.file" location="${output.dir}/selftest.report"/>
-    <rat:report reportFile="${report.file}">
-      <file file="${ant.file}"/>
-    </rat:report>
-  </target>
+	<pathconvert dirsep="/" property="file.name">
+		<path>
+			<pathelement location="${ant.file}" />
+		</path>
+	</pathconvert>
+	
+	<property name="expectedOutput" value="AL    ${file.name}" />
 
-  <target name="testWithALUnknown">
-    <rat:report addDefaultLicenseMatchers="false">
-      <file file="${ant.file}"/>
-      <rat:w3c/>
-    </rat:report>
-  </target>
+	<target name="testWithReportSentToAnt">
+		<rat:report>
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
 
-  <target name="testCustomMatcher">
-    <mkdir dir="${output.dir}/dest"/>
-    <mkdir dir="${output.dir}/src/org/example"/>
-    <typedef name="exmpl" classname="org.example.Matcher"
-        classpath="${test.classpath}"/>
-    <typedef name="exmpl-license" classname="org.example.LicenseFamily"
-        classpath="${test.classpath}"/>
-    <rat:report>
-      <file file="${ant.file}"/>
-      <exmpl/>
-      <exmpl-license/>
-    </rat:report>
-  </target>
+	<target name="all" />
+	
+	<target name="testDefault">
+		<rat:report />
+	</target>
+	
+	<target name="testWithReportSentToFile">
+		<property name="report.file" location="${output.dir}/selftest.report" />
+		<rat:report reportFile="${report.file}">
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
 
-  <target name="testNoResources">
-    <rat:report/>
-  </target>
+	<target name="testWithALUnknown">
+		<rat:report useDefaultLicenses="false">
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
+			<rat:license
+				family="YASL1"
+				notes="Interesting License">
+				<rat:copyright start="2023" end="2024" owner="public domain" />
+			</rat:license>
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
 
-  <target name="testNoLicenseMatchers">
-    <rat:report addDefaultLicenseMatchers="false">
-      <file file="${ant.file}"/>
-    </rat:report>
-  </target>
+	<target name="testCustomLicense">
+		<property name="license.file"
+			location="${resource.dir}/customLicense.xml" />
+		<rat:report licenses="${license.file}" useDefaultLicenses="false">
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
 
-  <target name="testAddLicenseHeaders">
-    <delete dir="${output.dir}/it-sources"/>
-    <mkdir dir="${output.dir}/it-sources"/>
-    <copy file="src/test/resources/antunit/index.apt" tofile="${output.dir}/it-sources/index.apt"/>
-    <rat:report addLicenseHeaders="true">
-       <file file="${output.dir}/it-sources/index.apt"/>
-    </rat:report>
-  </target>
+	<target name="testInlineCustomMatcher" depends="prepareCustomMatcher">
+		<rat:report useDefaultLicenses="false">
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
+			<rat:license
+				family="YASL1"
+				notes="Interesting License">
+				<inlineMatcher />
+			</rat:license>
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
 
-  <target name="testISO88591">
-    <rat:report format="xml">
-      <file file="src/test/resources/org/example/iso-8859-1.html"/>
-    </rat:report>
-  </target>
+	<target name="testCustomMatcher">
+		<rat:report useDefaultLicenses="false">
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
+			<rat:license
+				family="YASL1"
+				notes="Interesting License">
+				<matcher />
+			</rat:license>
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
 
-  <target name="testISO88591WithReportFile">
-    <property name="report.file" location="${output.dir}/selftest.report"/>
-    <rat:report reportFile="${report.file}" format="xml">
-      <file file="src/test/resources/org/example/iso-8859-1.html"/>
-    </rat:report>
-  </target>
+	<target name="testCustomMatcherBuilder">
+		<rat:report useDefaultLicenses="false">
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
+			<rat:license
+				family="YASL1"
+				notes="Interesting License">
+				<matcherBuilder />
+			</rat:license>
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
+
+	<target name="testNoResources">
+		<rat:report />
+	</target>
+
+	<target name="testNoLicenseMatchers">
+		<rat:report useDefaultLicenses="false">
+			<file file="${ant.file}" />
+		</rat:report>
+	</target>
+
+	<target name="testAddLicenseHeaders">
+		<delete dir="${output.dir}/it-sources" />
+		<mkdir dir="${output.dir}/it-sources" />
+		<copy file="${resource.dir}/index.apt"
+			tofile="${output.dir}/it-sources/index.apt" />
+		<rat:report addLicenseHeaders="true">
+			<file file="${output.dir}/it-sources/index.apt" />
+		</rat:report>
+	</target>
+
+	<target name="testISO88591">
+		<rat:report format="xml">
+			<file file="src/test/resources/org/example/iso-8859-1.html" />
+		</rat:report>
+	</target>
+
+	<target name="testISO88591WithReportFile">
+		<property name="report.file" location="${output.dir}/selftest.report" />
+		<rat:report reportFile="${report.file}" format="xml">
+			<file file="src/test/resources/org/example/iso-8859-1.html" />
+		</rat:report>
+	</target>
+
+	<target name="testCopyrightBuild">
+		<rat:report>
+			<file file="${resource.dir}/index.apt" />
+			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
+			<rat:license
+				family="YASL1"
+				notes="Interesting License">
+				<rat:copyright start="2023" end="2024" owner="public domain" />
+			</rat:license>
+		</rat:report>
+	</target>
+
+	<target name="prepareCustomMatcher">
+		<mkdir dir="${output.dir}/test-classes" />
+		<mkdir dir="${output.dir}/src/org/example" />
+		<echo file="${output.dir}/src/org/example/InlineMatcher.java"><![CDATA[
+package org.example;
+
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
+
+public class InlineMatcher extends AbstractHeaderMatcher {
+    public InlineMatcher() {
+        super("InlineMatcher");
+    }
+
+    @Override
+    public boolean matches(IHeaders headers) {
+        return true;
+    }
+}
+]]></echo>
+
+		<javac srcdir="${output.dir}/src"
+			destdir="${output.dir}/../test-classes"
+			classpath="${test.classpath}" fork="true" />
+		<typedef name="inlineMatcher" classname="org.example.InlineMatcher" />
+	</target>
+
 </project>

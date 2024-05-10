@@ -20,15 +20,16 @@ package org.apache.rat.report.xml.writer.impl.base;
 
 import org.apache.rat.report.xml.writer.InvalidXmlException;
 import org.apache.rat.report.xml.writer.OperationNotAllowedException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class XmlWriterTest {
 
@@ -37,7 +38,7 @@ public class XmlWriterTest {
     private XmlWriter writer;
     private StringWriter out;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         out = new StringWriter();
         writer = new XmlWriter(out);
@@ -45,48 +46,48 @@ public class XmlWriterTest {
 
     @Test
     public void returnValues() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("beta", "b"));
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.content("gamma"));
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
+        assertEquals( 
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+        assertEquals(
+                writer, writer.attribute("beta", "b"), "XmlWriters should always return themselves");
+        assertEquals(
+                writer, writer.content("gamma"), "XmlWriters should always return themselves");
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
     }
 
     @Test
     public void openElement() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("beta"));
-        assertEquals("Alpha element tag closed and beta started", "<alpha><beta", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Beta tag ended", "<alpha><beta/>", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("gamma"));
-        assertEquals("Gamma tag started", "<alpha><beta/><gamma", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta", out.toString(), "Alpha element tag closed and beta started");
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta/>", out.toString(), "Beta tag ended");
+        assertEquals(
+                writer, writer.openElement("gamma"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta/><gamma", out.toString(), "Gamma tag started");
     }
     
     @Test
     public void invalidElementName() throws Exception {
-        assertTrue("All strings ok", isValidElementName("alpha"));
-        assertTrue("Strings and digits ok", isValidElementName("alpha77"));
-        assertFalse("Must no start with digit", isValidElementName("5alpha77"));
-        assertFalse("Greater than not ok", isValidElementName("alph<a77"));
-        assertFalse("Less than not ok", isValidElementName("alph<a77"));
-        assertFalse("Quote not ok", isValidElementName("alph'a77"));
-        assertTrue("Dash ok", isValidElementName("alph-a77"));
-        assertTrue("Underscore ok", isValidElementName("alph_a77"));
-        assertTrue("Dot ok", isValidElementName("alph.a77"));
-        assertTrue("Colon ok", isValidElementName("alpha:77"));
-        assertFalse("Start with dash not ok", isValidElementName("-a77"));
-        assertTrue("Start with underscore ok", isValidElementName("_a77"));
-        assertFalse("Start with dot not ok", isValidElementName(".a77"));
-        assertTrue("Start with colon ok", isValidElementName(":a77"));
+        assertTrue( isValidElementName("alpha"), "All strings ok");
+        assertTrue(isValidElementName("alpha77"), "Strings and digits ok");
+        assertFalse(isValidElementName("5alpha77"), "Must no start with digit");
+        assertFalse(isValidElementName("alph<a77"), "Greater than not ok");
+        assertFalse(isValidElementName("alph<a77"), "Less than not ok");
+        assertFalse(isValidElementName("alph'a77"), "Quote not ok");
+        assertTrue(isValidElementName("alph-a77"), "Dash ok");
+        assertTrue(isValidElementName("alph_a77"), "Underscore ok");
+        assertTrue(isValidElementName("alph.a77"), "Dot ok");
+        assertTrue(isValidElementName("alpha:77"), "Colon ok");
+        assertFalse(isValidElementName("-a77"), "Start with dash not ok");
+        assertTrue(isValidElementName("_a77"), "Start with underscore ok");
+        assertFalse(isValidElementName(".a77"), "Start with dot not ok");
+        assertTrue(isValidElementName(":a77"), "Start with colon ok");
     }
     
     private boolean isValidElementName(String elementName) throws Exception {
@@ -101,12 +102,12 @@ public class XmlWriterTest {
 
     @Test
     public void callOpenElementAfterLastElementClosed() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element alpha is closed", "<alpha/>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
         try {
             writer.openElement("delta");
             fail("Cannot open new elements once the first element has been closed");
@@ -117,12 +118,12 @@ public class XmlWriterTest {
 
     @Test
     public void callCloseElementAfterLastElementClosed() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element alpha is closed", "<alpha/>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
         try {
             writer.closeElement();
             fail("Cannot close elements once the first element has been closed");
@@ -133,28 +134,28 @@ public class XmlWriterTest {
 
     @Test
     public void closeFirstElement() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element alpha is closed", "<alpha/>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+        assertEquals("<alpha", out.toString(), "Alpha element started");
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
     }
     
     @Test
     public void closeElementWithContent() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("beta"));
-        assertEquals("Beta element started", "<alpha><beta", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element beta is closed", "<alpha><beta/>", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element beta is closed", "<alpha><beta/></alpha>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+        assertEquals("<alpha", out.toString(), "Alpha element started");
+        assertEquals(
+                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta/>", out.toString(), "Element beta is closed");
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta/></alpha>", out.toString(), "Element beta is closed");
         try {
             writer.closeElement();
             fail("Cannot close elements once the first element has been closed");
@@ -175,24 +176,24 @@ public class XmlWriterTest {
     
     @Test
     public void contentAfterElement() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.content("foo bar"));
-        assertEquals("Alpha tag closed. Content written", "<alpha>foo bar", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.content(" and more foo bar"));
-        assertEquals("Alpha tag closed. Content written", "<alpha>foo bar and more foo bar", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("beta"));
-        assertEquals("Beta element started", "<alpha>foo bar and more foo bar<beta", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element beta is closed", "<alpha>foo bar and more foo bar<beta/>", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element beta is closed", "<alpha>foo bar and more foo bar<beta/></alpha>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.content("foo bar"), "XmlWriters should always return themselves");
+        assertEquals("<alpha>foo bar", out.toString(), "Alpha tag closed. Content written");
+        assertEquals(
+                writer, writer.content(" and more foo bar"), "XmlWriters should always return themselves");
+        assertEquals("<alpha>foo bar and more foo bar", out.toString(), "Alpha tag closed. Content written");
+        assertEquals(
+                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
+        assertEquals("<alpha>foo bar and more foo bar<beta", out.toString());
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha>foo bar and more foo bar<beta/>", out.toString(), "Element beta is closed");
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha>foo bar and more foo bar<beta/></alpha>", out.toString(), "Element beta is closed");
         try {
             writer.content("A Sentence Too far");
             fail("Cannot write content once the first element has been closed");
@@ -203,12 +204,12 @@ public class XmlWriterTest {
 
     @Test
     public void contentAfterLastElement() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element beta is closed", "<alpha/>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
         try {
             writer.content("A Sentence Too far");
             fail("Cannot write content once the first element has been closed");
@@ -229,29 +230,29 @@ public class XmlWriterTest {
     
     @Test
     public void contentEscaping() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.content("this&that"));
-        assertEquals("Amphersands must be escaped", "<alpha>this&amp;that", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.content("small<large"));
-        assertEquals("Left angle brackets must be escaped", "<alpha>this&amp;thatsmall&lt;large", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.content("12>1"));
-        assertEquals("Choose to escape right angle brackets", "<alpha>this&amp;thatsmall&lt;large12&gt;1", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.content("this&that"), "XmlWriters should always return themselves");
+        assertEquals("<alpha>this&amp;that", out.toString(), "Amphersands must be escaped");
+        assertEquals(
+                writer, writer.content("small<large"), "XmlWriters should always return themselves");
+        assertEquals("<alpha>this&amp;thatsmall&lt;large", out.toString(), "Left angle brackets must be escaped");
+        assertEquals(
+                writer, writer.content("12>1"), "XmlWriters should always return themselves");
+        assertEquals("<alpha>this&amp;thatsmall&lt;large12&gt;1", out.toString(), "Choose to escape right angle brackets");
 
     }
 
     @Test
     public void attributeAfterLastElement() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Element beta is closed", "<alpha/>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
         try {
             writer.attribute("foo", "bar");
             fail("Cannot write content once the first element has been closed");
@@ -273,13 +274,13 @@ public class XmlWriterTest {
     @Test
     public void invalidAttributeName() throws Exception {
         writer.openElement("alpha");
-        assertTrue("All strings ok", isValidAttributeName("alpha"));
-        assertTrue("Strings and digits ok", isValidAttributeName("alpha77"));
-        assertFalse("Must not start with digit", isValidAttributeName("5alpha77"));
-        assertTrue("Colon ok", isValidAttributeName("alpha:77"));
-        assertFalse("Greater than not ok", isValidAttributeName("alph<a77"));
-        assertFalse("Less than not ok", isValidAttributeName("alph<a77"));
-        assertFalse("Quote not ok", isValidAttributeName("alph'a77"));
+        assertTrue(isValidAttributeName("alpha"), "All string ok");
+        assertTrue(isValidAttributeName("alpha77"), "Strings and digits ok");
+        assertFalse(isValidAttributeName("5alpha77"), "Must not start with digit");
+        assertTrue(isValidAttributeName("alpha:77"), "Colon ok");
+        assertFalse(isValidAttributeName("alph<a77"),"Greater than not ok");
+        assertFalse(isValidAttributeName("alph<a77"), "Less than not ok");
+        assertFalse(isValidAttributeName("alph'a77"), "Quote not ok");
     }
     
     private boolean isValidAttributeName(String name) throws Exception {
@@ -294,34 +295,34 @@ public class XmlWriterTest {
     
     @Test
     public void escapeAttributeContent() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("one", "this&that"));
-        assertEquals("Amphersands must be escaped", "<alpha one='this&amp;that'", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("two", "small<large"));
-        assertEquals("Left angle brackets must be escaped", "<alpha one='this&amp;that' two='small&lt;large'", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("three", "12>1"));
-        assertEquals("Choose to escape right angle brackets", "<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1'", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("four", "'quote'"));
-        assertEquals("Apostrophes must be escape", "<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;'", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("five", "\"quote\""));
-        assertEquals("Double quotes must be escape", "<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;' five='&quot;quote&quot;'", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.attribute("one", "this&that"), "XmlWriters should always return themselves");
+        assertEquals("<alpha one='this&amp;that'", out.toString(), "Amphersands must be escaped");
+        assertEquals(
+                writer, writer.attribute("two", "small<large"), "XmlWriters should always return themselves");
+        assertEquals("<alpha one='this&amp;that' two='small&lt;large'", out.toString(), "Left angle brackets must be escaped");
+        assertEquals(
+                writer, writer.attribute("three", "12>1"), "XmlWriters should always return themselves");
+        assertEquals("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1'", out.toString(), "Choose to escape right angle brackets");
+        assertEquals(
+                writer, writer.attribute("four", "'quote'"), "XmlWriters should always return themselves");
+        assertEquals("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;'", out.toString(), "Apostrophes must be escape");
+        assertEquals(
+                writer, writer.attribute("five", "\"quote\""), "XmlWriters should always return themselves");
+        assertEquals("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;' five='&quot;quote&quot;'", out.toString(), "Double quotes must be escape");
 
     }
     
     @Test
     public void attributeInContent() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.content("foo bar"));
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.content("foo bar"), "XmlWriters should always return themselves");
         try {
             writer.attribute("name", "value");
             fail("attributes after body content are not allowed");
@@ -332,26 +333,26 @@ public class XmlWriterTest {
   
     @Test
     public void outOfRangeCharacter() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.content(new String(ZERO_CHAR)));
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.content(new String(ZERO_CHAR)), "XmlWriters should always return themselves");
         String out = this.out.toString();
-        assertEquals("Replace illegal characters with question marks", "<alpha>?", out);
+        assertEquals("<alpha>?", out, "Replace illegal characters with question marks");
     }
     
     @Test
     public void attributeAfterElementClosed() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("beta"));
-        assertEquals("Beta element started", "<alpha><beta", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Beta element closed", "<alpha><beta/>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta/>", out.toString(), "Beta element closed");
         try {
             writer.attribute("name", "value");
             fail("attributes after closed element are not allowed");
@@ -372,12 +373,12 @@ public class XmlWriterTest {
     
     @Test
     public void closeDocumentAfterRootElementClosed() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Beta element started", "<alpha/>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha/>", out.toString());
         try {
             writer.closeDocument();
         } catch (OperationNotAllowedException e) {
@@ -387,57 +388,57 @@ public class XmlWriterTest {
     
     @Test
     public void closeSimpleDocument() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("beta"));
-        assertEquals("Beta element started", "<alpha><beta", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeDocument());
-        assertEquals("Beta element started", "<alpha><beta/></alpha>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.closeDocument(), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta/></alpha>", out.toString(), "Beta element started");
     }
     
     @Test
     public void closeComplexDocument() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("beta"));
-        assertEquals("Beta element started", "<alpha><beta", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("name", "value"));
-        assertEquals("Beta element started", "<alpha><beta name='value'", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeElement());
-        assertEquals("Beta element started", "<alpha><beta name='value'/>", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("beta"));
-        assertEquals("Beta element started", "<alpha><beta name='value'/><beta", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("name", "value"));
-        assertEquals("Beta element started", "<alpha><beta name='value'/><beta name='value'", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("gamma"));
-        assertEquals("Beta element started", "<alpha><beta name='value'/><beta name='value'><gamma", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.closeDocument());
-        assertEquals("Beta element started", "<alpha><beta name='value'/><beta name='value'><gamma/></beta></alpha>", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.attribute("name", "value"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta name='value'", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta name='value'/>", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta name='value'/><beta", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.attribute("name", "value"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta name='value'/><beta name='value'", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.openElement("gamma"), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta name='value'/><beta name='value'><gamma", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.closeDocument(), "XmlWriters should always return themselves");
+        assertEquals("<alpha><beta name='value'/><beta name='value'><gamma/></beta></alpha>", out.toString(), "Beta element started");
     }
     
     @Test
     public void writeProlog() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.startDocument());
-        assertEquals("Prolog written", "<?xml version='1.0'?>", out.toString());
+        assertEquals(
+                writer, writer.startDocument(), "XmlWriters should always return themselves");
+        assertEquals("<?xml version='1.0'?>", out.toString(), "Prolog written");
     }
     
     @Test
     public void writeAfterElement() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
         try {
             writer.startDocument();
             fail("Operation not allowed once an element has been written");
@@ -448,9 +449,9 @@ public class XmlWriterTest {
     
     @Test
     public void writePrologTwo() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.startDocument());
-        assertEquals("Prolog written", "<?xml version='1.0'?>", out.toString());
+        assertEquals(
+                writer, writer.startDocument(), "XmlWriters should always return themselves");
+        assertEquals("<?xml version='1.0'?>", out.toString(), "Prolog written");
         try {
             writer.startDocument();
             fail("Operation not allow once a prolog has been written");
@@ -461,18 +462,18 @@ public class XmlWriterTest {
     
     @Test
     public void duplicateAttributes() throws Exception {
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("alpha"));
-        assertEquals("Alpha element started", "<alpha", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("one", "1"));
-        assertEquals("Attribute written", "<alpha one='1'", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.openElement("beta"));
-        assertEquals("Beta element started", "<alpha one='1'><beta", out.toString());
-        assertEquals("XmlWriters should always return themselves", 
-                writer, writer.attribute("one", "1"));
-        assertEquals("Beta element started", "<alpha one='1'><beta one='1'", out.toString());
+        assertEquals(
+                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
+         assertEquals("<alpha", out.toString(), "Alpha element started");;
+        assertEquals(
+                writer, writer.attribute("one", "1"), "XmlWriters should always return themselves");
+        assertEquals("<alpha one='1'", out.toString(), "Attribute written");
+        assertEquals(
+                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
+        assertEquals("<alpha one='1'><beta", out.toString(), "Beta element started");
+        assertEquals(
+                writer, writer.attribute("one", "1"), "XmlWriters should always return themselves");
+        assertEquals("<alpha one='1'><beta one='1'", out.toString(), "Beta element started");
         try {
             writer.attribute("one", "2");
             fail("Each attribute may only be written once");

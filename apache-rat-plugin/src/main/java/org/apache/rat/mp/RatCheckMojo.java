@@ -1,5 +1,3 @@
-package org.apache.rat.mp;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,8 +16,14 @@ package org.apache.rat.mp;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.rat.mp;
 
-import org.apache.commons.io.IOUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -27,20 +31,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.Reporter;
 import org.apache.rat.config.AddLicenseHeaders;
-import org.apache.rat.config.ReportFormat;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Run Rat to perform a violation check.
@@ -53,11 +47,14 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Parameter(property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
     private File reportFile;
 
+    @Parameter(property = "rat.scanHiddenDirectories", defaultValue = "false")
+    private boolean scanHiddenDirectories;
+
     /**
-     * Output style of the report. Use "plain" (the default) for a plain text
-     * report or "xml" for the raw XML report. Alternatively you can give the
-     * path of an XSL transformation that will be applied on the raw XML to
-     * produce the report written to the output file.
+     * Output style of the report. Use "plain" (the default) for a plain text report
+     * or "xml" for the raw XML report. Alternatively you can give the path of an
+     * XSL transformation that will be applied on the raw XML to produce the report
+     * written to the output file.
      */
     @Parameter(property = "rat.outputStyle", defaultValue = "plain")
     private String reportStyle;
@@ -69,23 +66,22 @@ public class RatCheckMojo extends AbstractRatMojo {
     private int numUnapprovedLicenses;
 
     /**
-     * Whether to add license headers; possible values are
-     * {@code forced}, {@code true}, and {@code false} (default).
+     * Whether to add license headers; possible values are {@code forced},
+     * {@code true}, and {@code false} (default).
      */
     @Parameter(property = "rat.addLicenseHeaders", defaultValue = "false")
     private String addLicenseHeaders;
 
     /**
-     * Copyright message to add to license headers. This option is
-     * ignored, unless {@code addLicenseHeaders} is set to {@code true},
-     * or {@code forced}.
+     * Copyright message to add to license headers. This option is ignored, unless
+     * {@code addLicenseHeaders} is set to {@code true}, or {@code forced}.
      */
     @Parameter(property = "rat.copyrightMessage")
     private String copyrightMessage;
 
     /**
-     * Will ignore rat errors and display a log message if any.
-     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * Will ignore rat errors and display a log message if any. Its use is NOT
+     * RECOMMENDED, but quite convenient on occasion.
      *
      * @since 0.9
      */
@@ -94,122 +90,110 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     /**
      * Whether to output the names of files that have unapproved licenses to the
-     * console. Defaults to {@code true} to ease builds in containers where you are unable to access rat.txt easily.
+     * console. Defaults to {@code true} to ease builds in containers where you are
+     * unable to access rat.txt easily.
      *
      * @since 0.12
      */
     @Parameter(property = "rat.consoleOutput", defaultValue = "true")
     private boolean consoleOutput;
 
-    private ClaimStatistic getRawReport()
-            throws MojoExecutionException, MojoFailureException {
-        Writer fw = null;
-        try {
-            fw = new OutputStreamWriter(
-                   new FileOutputStream(reportFile),
-                    StandardCharsets.UTF_8);
-            final ClaimStatistic statistic = createReport(fw, getStyleSheet());
-            fw.close();
-            fw = null;
-            return statistic;
-        } catch (IOException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(fw);
-        }
-    }
-
-    /**
-     * Returns the XSL stylesheet to be used for formatting the report.
-     *
-     * @return report stylesheet, or <code>null</code> for raw XML
-     * @throws MojoExecutionException if the stylesheet can not be found
-     * @see #reportStyle
-     */
-    private InputStream getStyleSheet() throws MojoExecutionException {
-        if (reportStyle == null || ReportFormat.PLAIN.is(reportStyle)) {
-            return Defaults.getPlainStyleSheet();
-        } else if (ReportFormat.XML.is(reportStyle)) {
-            return null;
-        } else {
-            try {
-                return new FileInputStream(reportStyle);
-            } catch (FileNotFoundException e) {
-                throw new MojoExecutionException(
-                        "Unable to find report stylesheet: " + reportStyle, e);
-            }
-        }
-    }
+    private Reporter reporter;
 
     /**
      * Invoked by Maven to execute the Mojo.
      *
-     * @throws MojoFailureException   An error in the plugin configuration was detected.
-     * @throws MojoExecutionException Another error occurred while executing the plugin.
+     * @throws MojoFailureException An error in the plugin configuration was
+     * detected.
+     * @throws MojoExecutionException Another error occurred while executing the
+     * plugin.
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
             return;
         }
-
+        ReportConfiguration config = getConfiguration();
+        logLicenses(config.getLicenses(LicenseFilter.ALL));
         final File parent = reportFile.getParentFile();
         if (!parent.mkdirs() && !parent.isDirectory()) {
             throw new MojoExecutionException("Could not create report parent directory " + parent);
         }
 
-        final ClaimStatistic report = getRawReport();
-        check(report);
+        try {
+            this.reporter = new Reporter(config);
+            reporter.output();
+            check();
+        } catch (MojoFailureException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
     }
 
-    protected void check(ClaimStatistic statistics)
-            throws MojoFailureException {
+    protected void check() throws MojoFailureException {
         if (numUnapprovedLicenses > 0) {
             getLog().info("You requested to accept " + numUnapprovedLicenses + " files with unapproved licenses.");
         }
+        ClaimStatistic stats = reporter.getClaimsStatistic();
 
-        int numApproved = statistics.getNumApproved();
-        getLog().info("Rat check: Summary over all files. Unapproved: " + statistics.getNumUnApproved() + //
-                ", unknown: " + statistics.getNumUnknown() + //
-                ", generated: " + statistics.getNumGenerated() + //
-                ", approved: " + numApproved + //
-                (numApproved > 0 ? " licenses." : " license."));
+        int numApproved = stats.getCounter(ClaimStatistic.Counter.APPROVED);
+        StringBuilder statSummary = new StringBuilder("Rat check: Summary over all files. Unapproved: ")
+                .append(stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)).append(", unknown: ")
+                .append(stats.getCounter(ClaimStatistic.Counter.UNKNOWN)).append(", generated: ")
+                .append(stats.getCounter(ClaimStatistic.Counter.GENERATED)).append(", approved: ").append(numApproved)
+                .append((numApproved > 0 ? " licenses." : " license."));
 
-        if (numUnapprovedLicenses < statistics.getNumUnApproved()) {
+        getLog().info(statSummary.toString());
+        if (numUnapprovedLicenses < stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)) {
             if (consoleOutput) {
                 try {
-                    getLog().warn(createReport(Defaults.getUnapprovedLicensesStyleSheet()).trim());
-                } catch (MojoExecutionException e) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    reporter.output(Defaults.getUnapprovedLicensesStyleSheet(), () -> baos);
+                    getLog().warn(baos.toString());
+                } catch (Exception e) {
                     getLog().warn("Unable to print the files with unapproved licenses to the console.");
                 }
             }
 
             final String seeReport = " See RAT report in: " + reportFile;
             if (!ignoreErrors) {
-                throw new RatCheckException("Too many files with unapproved license: " + statistics.getNumUnApproved() + seeReport);
-            } else {
-                getLog().warn("Rat check: " + statistics.getNumUnApproved() + " files with unapproved licenses." + seeReport);
+                throw new RatCheckException("Too many files with unapproved license: "
+                        + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED) + seeReport);
             }
+            getLog().warn("Rat check: " + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)
+                    + " files with unapproved licenses." + seeReport);
         }
     }
 
     @Override
-    protected ReportConfiguration getConfiguration()
-            throws MojoFailureException, MojoExecutionException {
+    protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         final ReportConfiguration configuration = super.getConfiguration();
-
-        if (AddLicenseHeaders.FORCED.name().equalsIgnoreCase(addLicenseHeaders)) {
-            configuration.setAddingLicenses(true);
-            configuration.setAddingLicensesForced(true);
+        if (StringUtils.isNotBlank(addLicenseHeaders)) {
+            configuration.setAddLicenseHeaders(AddLicenseHeaders.valueOf(addLicenseHeaders.toUpperCase()));
+        }
+        if (StringUtils.isNotBlank(copyrightMessage)) {
             configuration.setCopyrightMessage(copyrightMessage);
-        } else if (AddLicenseHeaders.TRUE.name().equalsIgnoreCase(addLicenseHeaders)) {
-            configuration.setAddingLicenses(true);
-            configuration.setCopyrightMessage(copyrightMessage);
-        } else if (AddLicenseHeaders.FALSE.name().equalsIgnoreCase(addLicenseHeaders)) {
-            // Nothing to do
-        } else {
-            throw new MojoFailureException("Invalid value for addLicenseHeaders: Expected " + AddLicenseHeaders.getValuesForHelp() + ", got "
-                    + addLicenseHeaders);
+        }
+        if (scanHiddenDirectories) {
+            configuration.setDirectoriesToIgnore(null);
+        }
+        if (reportFile != null) {
+            if (!reportFile.exists()) {
+                reportFile.getParentFile().mkdirs();
+            }
+            configuration.setOut(reportFile);
+        }
+        if (StringUtils.isNotBlank(reportStyle)) {
+            if ("xml".equalsIgnoreCase(reportStyle)) {
+                configuration.setStyleReport(false);
+            } else {
+                configuration.setStyleReport(true);
+                if (!"plain".equalsIgnoreCase(reportStyle)) {
+                    configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(reportStyle)));
+                }
+            }
         }
         return configuration;
     }

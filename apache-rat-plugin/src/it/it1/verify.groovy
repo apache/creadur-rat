@@ -14,6 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-content = new File( basedir, 'target/rat.txt' ).text
 
-assert content.contains( 'YAL__ src.apt' )
+f = new File( basedir, 'target/rat.txt' )
+assert f.exists()
+
+content = f.text
+
+assert content.contains( ' G src.apt' )
+assert content.contains( '    YAL      MyLicense     Yet another license' )
+assert content.contains( '    GEN      Not           Not ');

@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>29</version>
+    <version>32</version>
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
@@ -43,24 +43,28 @@ agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-    <project.build.outputTimestamp>10</project.build.outputTimestamp>
-    <ant.version>1.10.12</ant.version>
+    <project.build.outputTimestamp>1706130018</project.build.outputTimestamp>
+    <ant.version>1.10.14</ant.version>
     <mockito.version>4.11.0</mockito.version>
     <javaVersion>1.8</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
-    <mavenVersion>2.2.1</mavenVersion>
+    <mavenMinVersion>3.2.5</mavenMinVersion>
+    <mavenVersion>3.9.6</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
     <!-- maven plugin versions -->
-    <mavenPluginPluginVersion>3.7.0</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.13.0</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
-    <mavenJavadocPluginVersion>3.4.1</mavenJavadocPluginVersion>
-    <mavenPmdPluginVersion>3.19.0</mavenPmdPluginVersion>
+    <mavenJavadocPluginVersion>3.6.3</mavenJavadocPluginVersion>
+    <mavenPmdPluginVersion>3.22.0</mavenPmdPluginVersion>
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
-    <previousRatVersion>0.16</previousRatVersion>
-    <currentSnapshotRatVersion>0.17-SNAPSHOT</currentSnapshotRatVersion>
+    <!-- START - adapat manually before doing a release -->
+    <previousRatVersion>0.17</previousRatVersion>
+    <currentSnapshotRatVersion>0.18-SNAPSHOT</currentSnapshotRatVersion>
+    <!-- END - adapt manually before doing a release -->
   </properties>
   <distributionManagement>
     <site>
@@ -70,11 +74,6 @@ agnostic home for software distribution comprehension and audit tools.
   </distributionManagement>
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-core</artifactId>
@@ -88,7 +87,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>commons-cli</groupId>
         <artifactId>commons-cli</artifactId>
-        <version>1.5.0</version>
+        <version>1.7.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -98,23 +97,24 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.11.0</version>
+        <version>2.16.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.12.0</version>
+        <version>3.14.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.22</version>
+        <version>1.26.1</version>
       </dependency>
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.13.2</version>
-        <scope>test</scope>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.10.2</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
@@ -146,6 +146,22 @@ agnostic home for software distribution comprehension and audit tools.
         <version>${ant.version}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugin-tools</groupId>
+        <artifactId>maven-plugin-annotations</artifactId>
+        <version>${mavenPluginPluginVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.25.3</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-core</artifactId>
+        <version>2.9.2</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <reporting>
@@ -172,6 +188,8 @@ agnostic home for software distribution comprehension and audit tools.
           <onlyCurrentVersion>${commons.changes.onlyCurrentVersion}</onlyCurrentVersion>
           <maxEntries>${commons.changes.maxEntries}</maxEntries>
           <runOnlyAtExecutionRoot>${commons.changes.runOnlyAtExecutionRoot}</runOnlyAtExecutionRoot>
+          <!-- RAT-353: v3.x of the plugin will use the correct target link as parameter team, while v2.x uses teamlist -->
+          <teamlist>team.html</teamlist>
         </configuration>
         <reportSets>
           <reportSet>
@@ -181,6 +199,10 @@ agnostic home for software distribution comprehension and audit tools.
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -219,7 +241,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.2</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -244,7 +266,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.0</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -266,7 +288,10 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <version>0.16-SNAPSHOT</version><!-- RAT-314: replace with proper value after 0.16 is out -->
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </reporting>
@@ -282,6 +307,38 @@ agnostic home for software distribution comprehension and audit tools.
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>4.8.5.0</version>
+          <configuration>
+            <!-- RAT-369: as spotbugs does not allow setting a global (numeric) threshold of currently accepted errors/bugs we do not fail the build -->
+            <failOnError>false</failOnError>
+            <!-- we only want to see our own problems and in all subpackages -->
+            <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
+            <!-- in order to have a global spotbugs configuration an exclusion file needs to exist in all submodules -->
+            <excludeFilterFile>${basedir}/spotbugs_ignore.xml</excludeFilterFile>
+            <plugins>
+              <plugin>
+                <groupId>com.h3xstream.findsecbugs</groupId>
+                <artifactId>findsecbugs-plugin</artifactId>
+                <version>1.13.0</version>
+              </plugin>
+            </plugins>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
           <version>3.1.0</version>
           <dependencies>
@@ -295,7 +352,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.10.1</version>
+          <version>3.13.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -305,7 +362,12 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.4.0</version>
+          <version>3.6.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-invoker-plugin</artifactId>
+          <version>3.6.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -314,6 +376,16 @@ agnostic home for software distribution comprehension and audit tools.
           <configuration>
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${mavenPluginPluginVersion}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-report-plugin</artifactId>
+          <version>${mavenPluginPluginVersion}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -327,7 +399,7 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <!-- Do not use property values here as this causes problems during release -->
-          <version>0.16-SNAPSHOT</version><!-- RAT-314: replace with 0.16 after release -->
+          <version>0.16.1</version>
           <configuration>
             <excludes>
               <exclude>.asf.yaml</exclude>
@@ -341,17 +413,41 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>apache-rat-tasks/src/test/resources/**</exclude>
               <exclude>**/iso-8859-1.html</exclude>
               <exclude>**/velocity.log</exclude>
+              <!-- RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we manually add the fonts -->
+              <exclude>**/src/site/javadocFont/**</exclude>
             </excludes>
           </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.3</version>
+          <version>3.0.1</version>
           <configuration>
             <!-- Only prompt once for the release version -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <mavenExecutorId>forked-path</mavenExecutorId>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.3.1</version>
+          <configuration>
+            <propertiesEncoding>ISO-8859-1</propertiesEncoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.2.5</version>
+          <configuration>
+            <forkCount>1</forkCount>
+            <argLine>-Dfile.encoding=ISO-8859-1</argLine>
           </configuration>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -366,9 +462,9 @@ agnostic home for software distribution comprehension and audit tools.
                   <pluginExecutionFilter>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>
-        							apache-rat-plugin
-        						</artifactId>
-                    <versionRange>[0.15,)</versionRange>
+                      apache-rat-plugin
+                    </artifactId>
+                    <versionRange>[0.16.1,)</versionRange>
                     <goals>
                       <goal>check</goal>
                     </goals>
@@ -384,6 +480,14 @@ agnostic home for software distribution comprehension and audit tools.
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -405,7 +509,6 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.1.0</version>
         <executions>
           <execution>
             <!-- This checks the bytecode version of the dependencies transitively -->
@@ -419,7 +522,7 @@ agnostic home for software distribution comprehension and audit tools.
                   <maxJdkVersion>${javaVersion}</maxJdkVersion>
                 </enforceBytecodeVersion>
                 <requireMavenVersion>
-                  <version>3.0.5</version>
+                  <version>${mavenMinVersion}</version>
                 </requireMavenVersion>
               </rules>
               <fail>true</fail>
@@ -430,7 +533,7 @@ agnostic home for software distribution comprehension and audit tools.
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.6.1</version>
+            <version>1.8.0</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -448,7 +551,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.22</version>
+        <version>1.23</version>
         <executions>
           <execution>
             <!-- This checks the source code of our project -->
@@ -477,7 +580,6 @@ agnostic home for software distribution comprehension and audit tools.
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh</artifactId>
-        <!-- Last version that is compatible with Maven 2 -->
         <version>3.5.3</version>
       </extension>
     </extensions>
@@ -556,6 +658,16 @@ agnostic home for software distribution comprehension and audit tools.
       <name>Philipp Ottlinger</name>
       <email>pottlinger@apache.org</email>
     </developer>
+    <developer>
+      <id>claude</id>
+      <name>Claude Warren</name>
+      <email>claude@apache.org</email>
+    </developer>
+    <developer>
+      <id>jbonofre</id>
+      <name>Jean-Baptiste Onofré</name>
+      <email>jbonofre@apache.org</email>
+    </developer>
   </developers>
   <contributors>
     <contributor>
@@ -590,6 +702,10 @@ agnostic home for software distribution comprehension and audit tools.
       <name>Paul Merlin</name>
       <email>paulmerlin@apache.org</email>
     </contributor>
+    <contributor>
+      <name>Niels Basjes</name>
+      <email>nielsbasjes@apache.org</email>
+    </contributor>
   </contributors>
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/creadur-rat.git</connection>
@@ -598,11 +714,11 @@ agnostic home for software distribution comprehension and audit tools.
     <tag>HEAD</tag>
   </scm>
   <modules>
-    <module>apache-rat-api</module>
     <module>apache-rat-core</module>
     <module>apache-rat-plugin</module>
     <module>apache-rat-tasks</module>
     <module>apache-rat</module>
+    <module>apache-rat-tools</module>
   </modules>
   <licenses>
     <license>
@@ -695,11 +811,11 @@ agnostic home for software distribution comprehension and audit tools.
       </build>
     </profile>
   </profiles>
-  <!-- in order to test new releases this reference can be activated locally-->
+  <!-- in order to test new releases this reference can be activated locally
   <pluginRepositories>
     <pluginRepository>
-      <id>staged-releases-rat-015</id>
-      <url>https://repository.apache.org/content/repositories/orgapachecreadur-1008/</url>
+      <id>staged-releases-rat-016.1</id>
+      <url>https://repository.apache.org/content/repositories/orgapachecreadur-1011/</url>
     </pluginRepository>
-  </pluginRepositories>
+  </pluginRepositories-->
 </project>

@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;

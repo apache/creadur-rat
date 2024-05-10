@@ -18,402 +18,479 @@
  */
 package org.apache.rat;
 
-import org.apache.commons.cli.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.*;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.api.RatException;
+import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
-import org.apache.rat.report.RatReport;
-import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.xml.XmlReportFactory;
-import org.apache.rat.report.xml.writer.IXmlWriter;
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.PatternSyntaxException;
-
-
+/**
+ * The CLI based configuration object for report generation.
+ */
 public class Report {
+    /**
+     * Adds license headers to files missing headers.
+     */
+    private static final String ADD = "A";
+    private static final String ADD_OLD = "a";
+    /**
+     * Forces changes to be written to new files.
+     */
+    private static final String FORCE = "f";
+    /**
+     * Defines the copyright header to add to the file.
+     */
+    private static final String COPYRIGHT = "c";
+    /**
+     * Name of File to exclude from report consideration.
+     */
     private static final String EXCLUDE_CLI = "e";
+    /**
+     * Name of file that contains a list of files to exclude from report
+     * consideration.
+     */
     private static final String EXCLUDE_FILE_CLI = "E";
+    /**
+     * The stylesheet to use to style the XML output.
+     */
     private static final String STYLESHEET_CLI = "s";
+    /**
+     * Produce help
+     */
     private static final String HELP = "h";
+    /**
+     * Flag to identify a file with license definitions.
+     */
+    private static final String LICENSES = "licenses";
+    /**
+     * Do not use the default files.
+     */
+    private static final String NO_DEFAULTS = "no-default-licenses";
+    /**
+     * Scan hidden directories.
+     */
+    private static final String SCAN_HIDDEN_DIRECTORIES = "scan-hidden-directories";
+    /**
+     * List the licenses that were used for the run.
+     */
+    private static final String LIST_LICENSES = "list-licenses";
 
-    public static final void main(String[] args) throws Exception {
-        final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
-        configuration.setApproveDefaultLicenses(true);
-        Options opts = buildOptions();
+    /**
+     * List the all families for the run.
+     */
+    private static final String LIST_FAMILIES = "list-families";
 
-        CommandLine cl = null;
-        try {
-            cl = new DefaultParser().parse(opts, args);
-        } catch (ParseException e) {
-            System.err.println("Please use the \"--help\" option to see a list of valid commands and options");
-            System.exit(1);
-            return; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE for "cl"
-        }
+    private static final String LOG_LEVEL = "log-level";
+    private static final String DRY_RUN = "dry-run";
+    /**
+     * Set unstyled XML output
+     */
+    private static final String XML = "x";
 
-        if (cl.hasOption(HELP)) {
-            printUsage(opts);
-        }
 
-        args = cl.getArgs();
-        if (args == null || args.length != 1) {
-            printUsage(opts);
-        } else {
-            Report report = new Report(args[0]);
-
-            if (cl.hasOption('a') || cl.hasOption('A')) {
-                configuration.setAddingLicenses(true);
-                configuration.setAddingLicensesForced(cl.hasOption('f'));
-                configuration.setCopyrightMessage(cl.getOptionValue("c"));
-            }
-
-            if (cl.hasOption(EXCLUDE_CLI)) {
-                String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
-                if (excludes != null) {
-                    final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
-                    report.setInputFileFilter(filter);
-                }
-            } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
-                String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
-                if (excludeFileName != null) {
-                    final FilenameFilter filter = parseExclusions(FileUtils.readLines(new File(excludeFileName), Charset.forName("UTF-8")));
-                    report.setInputFileFilter(filter);
-                }
-            }
-            if (cl.hasOption('x')) {
-                report.report(System.out, configuration);
-            } else {
-                if (!cl.hasOption(STYLESHEET_CLI)) {
-                    report.styleReport(System.out, configuration);
-                } else {
-                    String[] style = cl.getOptionValues(STYLESHEET_CLI);
-                    if (style.length != 1) {
-                        System.err.println("please specify a single stylesheet");
-                        System.exit(1);
-                    }
-                    try {
-                        report(System.out,
-                                report.getDirectory(System.out),
-                                new FileInputStream(style[0]),
-                                configuration);
-                    } catch (FileNotFoundException fnfe) {
-                        System.err.println("stylesheet " + style[0]
-                                + " doesn't exist");
-                        System.exit(1);
-                    }
-                }
-            }
+    /**
+     * Processes the command line and builds a configuration and executes the
+     * report.
+     * 
+     * @param args the arguments.
+     * @throws Exception on error.
+     */
+    public static void main(String[] args) throws Exception {
+        ReportConfiguration configuration = parseCommands(args, Report::printUsage);
+        if (configuration != null) {
+            configuration.validate(DefaultLog.INSTANCE::error);
+            new Reporter(configuration).output();
         }
     }
 
-    static FilenameFilter parseExclusions(List<String> excludes) throws IOException {
+    /**
+     * Parses the standard options to create a ReportConfiguraton.
+     * @param args the arguments to parse
+     * @param helpCmd the help command to run when necessary.
+     * @return a ReportConfiguration or null if Help was printed.
+     * @throws IOException on error.
+     */
+    public static ReportConfiguration parseCommands(String[] args, Consumer<Options> helpCmd) throws IOException {
+        return parseCommands(args, helpCmd, false);
+    }
+    
+    /**
+     * Parses the standard options to create a ReportConfiguraton.
+     * @param args the arguments to parse
+     * @param helpCmd the help command to run when necessary.
+     * @param noArgs If true then the commands do not need extra arguments
+     * @return a ReportConfiguration or null if Help was printed.
+     * @throws IOException on error.
+     */
+    public static ReportConfiguration parseCommands(String[] args, Consumer<Options> helpCmd, boolean noArgs) throws IOException {
+        Options opts = buildOptions();
+        CommandLine cl;
+        try {
+            cl = new DefaultParser().parse(opts, args);
+        } catch (ParseException e) {
+            DefaultLog.INSTANCE.error(e.getMessage());
+            DefaultLog.INSTANCE.error("Please use the \"--help\" option to see a list of valid commands and options");
+            System.exit(1);
+            return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
+                    // for "cl"
+        }
+
+        if (cl.hasOption(LOG_LEVEL)) {
+            try {
+                Log.Level level = Log.Level.valueOf(cl.getOptionValue(LOG_LEVEL).toUpperCase());
+                DefaultLog.INSTANCE.setLevel(level);
+            } catch (IllegalArgumentException e) {
+                DefaultLog.INSTANCE.warn(String.format("Invalid Log Level (%s) specified.", cl.getOptionValue(LOG_LEVEL)));
+                DefaultLog.INSTANCE.warn(String.format("Log level set at: %s", DefaultLog.INSTANCE.getLevel()));
+            }
+        }
+        if (cl.hasOption(HELP)) {
+            helpCmd.accept(opts);
+            return null;
+        }
+
+        if (!noArgs) {
+            args = cl.getArgs();
+            if (args == null || args.length != 1) {
+                helpCmd.accept(opts);
+                return null;
+            }
+        } else {
+            args = new String[] {null};
+        }
+/*            ReportConfiguration configuration = createConfiguration(args[0], cl);
+            configuration.validate(DefaultLog.INSTANCE::error);
+
+            boolean dryRun = false;
+            
+            if (cl.hasOption(LIST_FAMILIES)) {
+                LicenseFilter f = LicenseFilter.fromText(cl.getOptionValue(LIST_FAMILIES));
+                if (f != LicenseFilter.none) {                        
+                    dryRun = true;
+                    Reporter.listLicenseFamilies(configuration, f);
+                }
+            }
+            if (cl.hasOption(LIST_LICENSES)) {
+                LicenseFilter f = LicenseFilter.fromText(cl.getOptionValue(LIST_LICENSES));
+                if (f != LicenseFilter.none) {                        
+                    dryRun = true;
+                    Reporter.listLicenses(configuration, f);
+                }
+            }
+            
+            if (!dryRun) {
+                new Reporter(configuration).output();
+            }
+        }
+*/        ReportConfiguration configuration = createConfiguration(args[0], cl);
+        return configuration;
+    }
+
+    static ReportConfiguration createConfiguration(String baseDirectory, CommandLine cl) throws IOException {
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+
+        configuration.setDryRun(cl.hasOption(DRY_RUN));
+        if (cl.hasOption(LIST_FAMILIES)) {
+           configuration.listFamilies( LicenseFilter.valueOf(cl.getOptionValue(LIST_FAMILIES).toLowerCase()));
+        }
+        
+        if (cl.hasOption(LIST_LICENSES)) {
+            configuration.listFamilies( LicenseFilter.valueOf(cl.getOptionValue(LIST_LICENSES).toLowerCase()));
+        }
+        
+        if (cl.hasOption('o')) {
+            configuration.setOut(new File(cl.getOptionValue('o')));
+        }
+
+        if (cl.hasOption(SCAN_HIDDEN_DIRECTORIES)) {
+            configuration.setDirectoriesToIgnore(null);
+        }
+
+        if (cl.hasOption('a') || cl.hasOption('A')) {
+            configuration.setAddLicenseHeaders(cl.hasOption('f') ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
+            configuration.setCopyrightMessage(cl.getOptionValue("c"));
+        }
+
+        if (cl.hasOption(EXCLUDE_CLI)) {
+            String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
+            if (excludes != null) {
+                final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
+                configuration.setFilesToIgnore(filter);
+            }
+        } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
+            String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
+            if (excludeFileName != null) {
+                final FilenameFilter filter = parseExclusions(
+                        FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8));
+                configuration.setFilesToIgnore(filter);
+            }
+        }
+
+        if (cl.hasOption(XML)) {
+            configuration.setStyleReport(false);
+        } else {
+            configuration.setStyleReport(true);
+            if (cl.hasOption(STYLESHEET_CLI)) {
+                String[] style = cl.getOptionValues(STYLESHEET_CLI);
+                if (style.length != 1) {
+                    DefaultLog.INSTANCE.error("Please specify a single stylesheet");
+                    System.exit(1);
+                }
+                IOSupplier<InputStream> ioSupplier = null;
+
+                URL url = Report.class.getClassLoader().getResource(String.format("org/apache/rat/%s.xsl", style[0]));
+                if (url == null) {
+                    ioSupplier = () -> Files.newInputStream(Paths.get(style[0]));
+                } else {
+                    ioSupplier = url::openStream;
+                }
+                configuration.setStyleSheet(ioSupplier);
+            }
+        }
+
+        Defaults.Builder defaultBuilder = Defaults.builder();
+        if (cl.hasOption(NO_DEFAULTS)) {
+            defaultBuilder.noDefault();
+        }
+        if (cl.hasOption(LICENSES)) {
+            for (String fn : cl.getOptionValues(LICENSES)) {
+                defaultBuilder.add(fn);
+            }
+        }
+        Defaults defaults = defaultBuilder.build(DefaultLog.INSTANCE);
+        configuration.setFrom(defaults);
+        if (baseDirectory != null) {
+            configuration.setReportable(getDirectory(baseDirectory, configuration));
+        }
+        return configuration;
+    }
+    
+    /**
+     * Creates a filename filter from patterns to exclude.
+     * 
+     * @param excludes the list of patterns to exclude.
+     * @return the FilenameFilter tht excludes the patterns
+     */
+    static FilenameFilter parseExclusions(List<String> excludes) {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
         for (String exclude : excludes) {
             try {
                 // skip comments
-                if(exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
+                if (exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
                     ignoredLines++;
                     continue;
                 }
 
                 String exclusion = exclude.trim();
-                // interpret given patterns as regular expression, direct file names or wildcards to give users more choices to configure exclusions
+                // interpret given patterns as regular expression, direct file names or
+                // wildcards to give users more choices to configure exclusions
                 orFilter.addFileFilter(new RegexFileFilter(exclusion));
                 orFilter.addFileFilter(new NameFileFilter(exclusion));
-                orFilter.addFileFilter(new WildcardFileFilter(exclusion));
-            } catch(PatternSyntaxException e) {
-                System.err.println("Will skip given exclusion '" + exclude + "' due to " + e);
+                orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
+            } catch (PatternSyntaxException e) {
+                DefaultLog.INSTANCE.error("Will skip given exclusion '" + exclude + "' due to " + e);
             }
         }
-        System.err.println("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
+        DefaultLog.INSTANCE.error("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
         return new NotFileFilter(orFilter);
     }
 
-    private static Options buildOptions() {
-        Options opts = new Options();
+    static Options buildOptions() {
+        String licFilterValues = Arrays.stream(LicenseFilter.values()).map(LicenseFilter::name).collect(Collectors.joining(", "));
 
-        Option help = new Option(HELP, "help", false,
-                "Print help for the RAT command line interface and exit");
-        opts.addOption(help);
+        Options opts = new Options()
+        .addOption(Option.builder().longOpt(DRY_RUN)
+                .desc("If set do not update the files but generate the reports.")
+                .build())
+        .addOption(
+                Option.builder().hasArg(true).longOpt(LIST_FAMILIES)
+                .desc("List the defined license families (default is none). Valid options are: "+licFilterValues+".")
+                .build())
+        .addOption(
+                Option.builder().hasArg(true).longOpt(LIST_LICENSES)
+                .desc("List the defined licenses (default is none). Valid options are: "+licFilterValues+".")
+                .build())
+
+        .addOption(new Option(HELP, "help", false, "Print help for the RAT command line interface and exit."));
+
+        Option out = new Option("o", "out", true,
+                "Define the output file where to write a report to (default is System.out).");
+        opts.addOption(out);
+
+        String defaultHandlingText = " By default all approved default licenses are used";
+        Option noDefaults = new Option(null, NO_DEFAULTS, false, "Ignore default configuration." + defaultHandlingText);
+        opts.addOption(noDefaults);
+
+        opts.addOption(null, LICENSES, true, "File names or URLs for license definitions");
+        opts.addOption(null, SCAN_HIDDEN_DIRECTORIES, false, "Scan hidden directories");
 
         OptionGroup addLicenseGroup = new OptionGroup();
-        String addLicenseDesc = "Add the default license header to any file with an unknown license that is not in the exclusion list. " +
-                "By default new files will be created with the license header, " +
-                "to force the modification of existing files use the --force option.";
-
-        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards compatibility
-        Option addLicence = new Option(
-                "a",
-                "addLicence",
-                false,
-                addLicenseDesc);
+        // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
+        // compatibility
+        Option addLicence = new Option(ADD_OLD, false, "(deprecated) Add the default license header to any file with an unknown license.  Use '-A' or ---addLicense instead.");
         addLicenseGroup.addOption(addLicence);
-        Option addLicense = new Option(
-                "A",
-                "addLicense",
-                false,
-                addLicenseDesc);
+        Option addLicense = new Option(ADD, "addLicense", false, "Add the default license header to any file with an unknown license that is not in the exclusion list. "
+                + "By default new files will be created with the license header, "
+                + "to force the modification of existing files use the --force option.");
         addLicenseGroup.addOption(addLicense);
         opts.addOptionGroup(addLicenseGroup);
 
-        Option write = new Option(
-                "f",
-                "force",
-                false,
-                "Forces any changes in files to be written directly to the source files (i.e. new files are not created)");
+        Option write = new Option(FORCE, "force", false,
+                "Forces any changes in files to be written directly to the source files (i.e. new files are not created).");
         opts.addOption(write);
 
-        Option copyright = new Option(
-                "c",
-                "copyright",
-                true,
+        Option copyright = new Option(COPYRIGHT, "copyright", true,
                 "The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\"");
         opts.addOption(copyright);
 
-        final Option exclude = Option.builder(EXCLUDE_CLI)
-                .argName("expression")
-                .longOpt("exclude")
-                .hasArgs()
-                .desc("Excludes files matching wildcard <expression>. " +
-                        "Note that --dir is required when using this parameter. " +
-                        "Allows multiple arguments.")
+        final Option exclude = Option.builder(EXCLUDE_CLI).argName("expression").longOpt("exclude").hasArgs()
+                .desc("Excludes files matching wildcard <expression>. "
+                        + "Note that --dir is required when using this parameter. " + "Allows multiple arguments.")
                 .build();
         opts.addOption(exclude);
 
-        final Option excludeFile = Option.builder(EXCLUDE_FILE_CLI)
-                .argName("fileName")
-                .longOpt("exclude-file")
-                .hasArgs()
-                .desc("Excludes files matching regular expression in <file> " +
-                        "Note that --dir is required when using this parameter. ")
+        final Option excludeFile = Option.builder(EXCLUDE_FILE_CLI).argName("fileName").longOpt("exclude-file")
+                .hasArgs().desc("Excludes files matching regular expression in <file> "
+                        + "Note that --dir is required when using this parameter. ")
                 .build();
         opts.addOption(excludeFile);
 
-        Option dir = new Option(
-                "d",
-                "dir",
-                false,
-                "Used to indicate source when using --exclude");
+        Option dir = new Option("d", "dir", false, "Used to indicate source when using --exclude");
         opts.addOption(dir);
 
+        opts.addOption( Option.builder().argName("level").longOpt(LOG_LEVEL)
+                .hasArgs().desc("sets the log level.  Valid options are: DEBUG, INFO, WARN, ERROR, OFF")
+                .build() );
+        
         OptionGroup outputType = new OptionGroup();
 
-        Option xml = new Option(
-                "x",
-                "xml",
-                false,
-                "Output the report in raw XML format.  Not compatible with -s");
+        Option xml = new Option(XML, "xml", false, "Output the report in raw XML format.  Not compatible with -s");
         outputType.addOption(xml);
 
-        Option xslt = new Option(STYLESHEET_CLI,
-                "stylesheet",
-                true,
-                "XSLT stylesheet to use when creating the"
-                        + " report.  Not compatible with -x");
+        Option xslt = new Option(STYLESHEET_CLI, "stylesheet", true,
+                "XSLT stylesheet to use when creating the report.  Not compatible with -x.  Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses");
         outputType.addOption(xslt);
         opts.addOptionGroup(outputType);
+        
+        
 
         return opts;
     }
 
     private static void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
-        String header = "\nAvailable options";
+        f.setOptionComparator(new OptionComparator());
+        String header = System.lineSeparator()+"Available options";
 
-        String footer = "\nNOTE:\n" +
-                "Rat is really little more than a grep ATM\n" +
-                "Rat is also rather memory hungry ATM\n" +
-                "Rat is very basic ATM\n" +
-                "Rat highlights possible issues\n" +
-                "Rat reports require interpretation\n" +
-                "Rat often requires some tuning before it runs well against a project\n" +
-                "Rat relies on heuristics: it may miss issues\n";
+        String footer = String.format("%nNOTE:%nRat is really little more than a grep ATM%n"
+                + "Rat is also rather memory hungry ATM%n" + "Rat is very basic ATM%n"
+                + "Rat highlights possible issues%n" + "Rat reports require interpretation%n"
+                + "Rat often requires some tuning before it runs well against a project%n"
+                + "Rat relies on heuristics: it may miss issues%n");
 
-        f.printHelp("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]",
-                header, opts, footer, false);
+        f.printHelp("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]", header, opts,
+                footer, false);
         System.exit(0);
     }
 
-    private final String baseDirectory;
-
-    private FilenameFilter inputFileFilter = null;
-
-    private Report(String baseDirectory) {
-        this.baseDirectory = baseDirectory;
+    private Report() {
+        // do not instantiate
     }
 
     /**
-     * Sets the current filter used to select files.
-     *
-     * @param inputFileFilter filter, or null when no filter has been set
+     * Creates an IReportable object from the directory name and ReportConfiguration
+     * object.
+     * 
+     * @param baseDirectory the directory that contains the files to report on.
+     * @param config the ReportConfiguration.
+     * @return the IReportable instance containing the files.
      */
-    public void setInputFileFilter(FilenameFilter inputFileFilter) {
-        this.inputFileFilter = inputFileFilter;
-    }
+    private static IReportable getDirectory(String baseDirectory, ReportConfiguration config) {
+        try (PrintStream out = new PrintStream(config.getOutput().get())) {
+            File base = new File(baseDirectory);
+            
+            if (!base.exists()) {
+                config.getLog().log(Level.ERROR, "Directory '"+baseDirectory+"' does not exist");
+                return null;
+            }
 
-    /**
-     * @param out - the output stream to receive the styled report
-     * @return the currently collected numerical statistics.
-     * @throws Exception in case of errors.
-     * @deprecated use {@link #report(PrintStream, ReportConfiguration)} instead
-     */
-    @Deprecated
-    public ClaimStatistic report(PrintStream out) throws Exception {
-        final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
-        configuration.setApproveDefaultLicenses(true);
-        return report(out, configuration);
-    }
+            if (base.isDirectory()) {
+                return new DirectoryWalker(base, config.getFilesToIgnore(), config.getDirectoriesToIgnore());
+            }
 
-    /**
-     * @param out           - the output stream to receive the styled report
-     * @param configuration - current configuration options.
-     * @return the currently collected numerical statistics.
-     * @throws Exception in case of errors.
-     * @since Rat 0.8
-     */
-    public ClaimStatistic report(PrintStream out,
-                                 ReportConfiguration configuration)
-            throws Exception {
-        final IReportable base = getDirectory(out);
-        if (base != null) {
-            return report(base, new OutputStreamWriter(out), configuration);
-        }
-        return null;
-    }
-
-    private IReportable getDirectory(PrintStream out) {
-        File base = new File(baseDirectory);
-        if (!base.exists()) {
-            out.print("ERROR: ");
-            out.print(baseDirectory);
-            out.print(" does not exist.\n");
-            return null;
-        }
-
-        if (base.isDirectory()) {
-            return new DirectoryWalker(base, inputFileFilter);
-        }
-
-        try {
-            return new ArchiveWalker(base, inputFileFilter);
-        } catch (IOException ex) {
-            out.print("ERROR: ");
-            out.print(baseDirectory);
-            out.print(" is not valid gzip data.\n");
-            return null;
+            try {
+                return new ArchiveWalker(base, config.getFilesToIgnore());
+            } catch (IOException ex) {
+                config.getLog().log(Level.ERROR, "file '"+baseDirectory+"' is not valid gzip data.");
+                return null;
+            }
+        } catch (IOException e) {
+            throw new ConfigurationException("Error opening output", e);
         }
     }
 
     /**
-     * Output a report in the default style and default license
-     * header matcher.
-     *
-     * @param out - the output stream to receive the styled report
-     * @throws Exception in case of errors.
-     * @deprecated use {@link #styleReport(PrintStream, ReportConfiguration)} instead
+     * This class implements the {@code Comparator} interface for comparing Options.
      */
-    @Deprecated
-    public void styleReport(PrintStream out) throws Exception {
-        final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setHeaderMatcher(Defaults.createDefaultMatcher());
-        configuration.setApproveDefaultLicenses(true);
-        styleReport(out, configuration);
-    }
+    public static class OptionComparator implements Comparator<Option>, Serializable {
+        /** The serial version UID. */
+        private static final long serialVersionUID = 5305467873966684014L;
 
-    /**
-     * Output a report in the default style and default license
-     * header matcher.
-     *
-     * @param out           - the output stream to receive the styled report
-     * @param configuration the configuration to use
-     * @throws Exception in case of errors.
-     * @since Rat 0.8
-     */
-    public void styleReport(PrintStream out,
-                            ReportConfiguration configuration)
-            throws Exception {
-        final IReportable base = getDirectory(out);
-        if (base != null) {
-            InputStream style = Defaults.getDefaultStyleSheet();
-            report(out, base, style, configuration);
+        private String getKey(Option opt) {
+            String key = opt.getOpt();
+            key = key == null ? opt.getLongOpt() : key;
+            return key;
         }
-    }
 
-    /**
-     * Output a report that is styled using a defined stylesheet.
-     *
-     * @param out            the stream to write the report to
-     * @param base           the files or directories to report on
-     * @param style          an input stream representing the stylesheet to use for styling the report
-     * @param pConfiguration current report configuration.
-     * @throws IOException                       in case of I/O errors.
-     * @throws TransformerConfigurationException in case of XML errors.
-     * @throws InterruptedException              in case of threading errors.
-     * @throws RatException                      in case of internal errors.
-     */
-    public static void report(PrintStream out, IReportable base, final InputStream style,
-                              ReportConfiguration pConfiguration)
-            throws IOException, TransformerConfigurationException, InterruptedException, RatException {
-        report(new OutputStreamWriter(out), base, style, pConfiguration);
-    }
-
-    /**
-     * Output a report that is styled using a defined stylesheet.
-     *
-     * @param out            the writer to write the report to
-     * @param base           the files or directories to report on
-     * @param style          an input stream representing the stylesheet to use for styling the report
-     * @param pConfiguration current report configuration.
-     * @return the currently collected numerical statistics.
-     * @throws IOException                       in case of I/O errors.
-     * @throws TransformerConfigurationException in case of XML errors.
-     * @throws InterruptedException              in case of threading errors.
-     * @throws RatException                      in case of internal errors.
-     */
-    public static ClaimStatistic report(Writer out, IReportable base, final InputStream style,
-                                        ReportConfiguration pConfiguration)
-            throws IOException, TransformerConfigurationException, InterruptedException, RatException {
-        PipedReader reader = new PipedReader();
-        PipedWriter writer = new PipedWriter(reader);
-        ReportTransformer transformer = new ReportTransformer(out, style, reader);
-        Thread transformerThread = new Thread(transformer);
-        transformerThread.start();
-        final ClaimStatistic statistic = report(base, writer, pConfiguration);
-        writer.flush();
-        writer.close();
-        transformerThread.join();
-        return statistic;
-    }
-
-    /**
-     * @param container      the files or directories to report on
-     * @param out            the writer to write the report to
-     * @param pConfiguration current report configuration.
-     * @return the currently collected numerical statistics.
-     * @throws IOException  in case of I/O errors.
-     * @throws RatException in case of internal errors.
-     */
-    public static ClaimStatistic report(final IReportable container, final Writer out,
-                                        ReportConfiguration pConfiguration) throws IOException, RatException {
-        IXmlWriter writer = new XmlWriter(out);
-        final ClaimStatistic statistic = new ClaimStatistic();
-        RatReport report = XmlReportFactory.createStandardReport(writer, statistic, pConfiguration);
-        report.startReport();
-        container.run(report);
-        report.endReport();
-        writer.closeDocument();
-        return statistic;
+        /**
+         * Compares its two arguments for order. Returns a negative integer, zero, or a
+         * positive integer as the first argument is less than, equal to, or greater
+         * than the second.
+         *
+         * @param opt1 The first Option to be compared.
+         * @param opt2 The second Option to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument
+         * is less than, equal to, or greater than the second.
+         */
+        @Override
+        public int compare(final Option opt1, final Option opt2) {
+            return getKey(opt1).compareToIgnoreCase(getKey(opt2));
+        }
     }
 }

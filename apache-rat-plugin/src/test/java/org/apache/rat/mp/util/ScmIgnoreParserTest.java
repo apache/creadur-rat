@@ -16,35 +16,32 @@ package org.apache.rat.mp.util;
  * limitations under the License.
  */
 
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.apache.rat.mp.util.ScmIgnoreParser.getExclusionsFromSCM;
+import static org.apache.rat.mp.util.ignore.GlobIgnoreMatcher.isComment;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
-import static org.apache.rat.mp.util.ScmIgnoreParser.getExcludesFromFile;
-import static org.apache.rat.mp.util.ScmIgnoreParser.getExclusionsFromSCM;
-import static org.apache.rat.mp.util.ScmIgnoreParser.isComment;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mockito;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ScmIgnoreParserTest {
-    @Rule
-    public final TemporaryFolder testFolder = new TemporaryFolder();
-
-    @Mock
-    private Log log;
+     
+	@TempDir
+	private File tempDir;
+	
+	private Log log = Mockito.mock(Log.class);
 
     private static final String IGNORE_EXAMPLE = "**/*.java\r\n## Justus commentos\r\nignoredDirectory";
 
@@ -67,6 +64,9 @@ public class ScmIgnoreParserTest {
         assertTrue(isComment("     /* comment that is */ "));
     }
 
+    public List<String> getExcludesFromFile(final Log log, final File scmIgnore) {
+        return new GlobIgnoreMatcher(log, scmIgnore).getExclusionLines();
+    }
 
     @Test
     public void parseFromNonExistingFileOrDirectoryOrNull() {
@@ -77,18 +77,20 @@ public class ScmIgnoreParserTest {
 
     @Test
     public void parseFromTargetDirectoryHopefullyWithoutSCMIgnores() {
-        assertTrue(getExclusionsFromSCM(log, new File("./target")).isEmpty());
+        // The target directory contains ignore files from other tests
+        assertTrue(getExclusionsFromSCM(log, new File("./target/classes")).isEmpty());
     }
 
     @Test
     public void parseFromEmptyIgnoreFile() throws IOException {
-        File ignore = testFolder.newFile();
-        assertTrue(ignore.exists());
-        writeToFile(IGNORE_EXAMPLE, ignore);
+    	File ignore  = Files.createTempFile(tempDir.getName(), "sip").toFile();
 
-        final List<String> excludes = getExcludesFromFile(log, ignore);
-        assertFalse(excludes.isEmpty());
-        assertEquals(2, excludes.size());
+    	assertTrue(ignore.exists());
+    	writeToFile(IGNORE_EXAMPLE, ignore);
+
+    	final List<String> excludes = getExcludesFromFile(log, ignore);
+    	assertFalse(excludes.isEmpty());
+    	assertEquals(2, excludes.size());
     }
 
     private static void writeToFile(String contents, File file) throws IOException {

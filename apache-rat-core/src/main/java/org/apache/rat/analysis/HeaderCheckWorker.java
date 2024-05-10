@@ -18,94 +18,138 @@ package org.apache.rat.analysis;
  * under the License.                                           *
  */
 
-import org.apache.commons.io.IOUtils;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Objects;
+
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.analysis.matchers.FullTextMatcher;
+import org.apache.rat.api.Document;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 
 /**
- * <p>Reads from a stream to check license.</p>
- * <p><strong>Note</strong> that this class is not thread safe.</p> 
+ * Reads from a stream to check license.
+ * <p>
+ * <strong>Note</strong> that this class is not thread safe.
+ * </p>
  */
-class HeaderCheckWorker {
+public class HeaderCheckWorker {
 
+    /*
+     * TODO revisit this class. It is only used in one place and can be moved inline
+     * as the DocumentHeaderAnalyser states. However, it may also be possible to
+     * make the entire set threadsafe so that multiple files can be checked
+     * simultaneously.
+     */
+    /**
+     * The default number of header lines to read while looking for the license
+     * information.
+     */
     public static final int DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES = 50;
 
     private final int numberOfRetainedHeaderLines;
     private final BufferedReader reader;
-    private final IHeaderMatcher matcher;
-    private final Document subject;
-    
-    private boolean match = false;
-
-    private int headerLinesToRead;
-    private boolean finished = false;
+    private final Collection<ILicense> licenses;
+    private final Document document;
 
     /**
-     * Convenience constructor wraps given <code>Reader</code>
-     * in a <code>BufferedReader</code>.
-     * @param reader a <code>Reader</code> for the content, not null
-     * @param name the name of the checked content, possibly null
+     * Read the input and perform the header check.
+     *
+     * The number of lines indicates how many lines from the top of the file will be read for processing
+     * 
+     * @param reader The reader for the document.
+     * @param numberOfLines the number of lines to read from the header.
+     * @return The IHeaders instance for the header.  
+     * @throws IOException on input failure
      */
-    public HeaderCheckWorker(Reader reader, final IHeaderMatcher matcher, final Document name) {
-        this(new BufferedReader(reader), matcher, name);
+    public static IHeaders readHeader(BufferedReader reader, int numberOfLines) throws IOException {
+        final StringBuilder headers = new StringBuilder();
+        int headerLinesRead = 0;
+        String line;
+
+        while (headerLinesRead < numberOfLines && (line = reader.readLine()) != null) {
+            headers.append(line).append(System.lineSeparator());
+        }
+        final String raw = headers.toString();
+        final String pruned = FullTextMatcher.prune(raw).toLowerCase(Locale.ENGLISH);
+        return new IHeaders() {
+            @Override
+            public String raw() {
+                return raw;
+            }
+
+            @Override
+            public String pruned() {
+                return pruned;
+            }
+
+            @Override
+            public String toString() {
+                return this.getClass().getSimpleName();
+            }
+        };
     }
 
-    public HeaderCheckWorker(BufferedReader reader, final IHeaderMatcher matcher,
-            final Document name) {
-        this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, matcher, name);
+    /**
+     * Convenience constructor wraps given <code>Reader</code> in a
+     * <code>BufferedReader</code>.
+     *
+     * @param reader The reader on the document. not null.
+     * @param licenses The licenses to check against. not null.
+     * @param name The document that is being checked. possibly null
+     */
+    public HeaderCheckWorker(Reader reader, final Collection<ILicense> licenses, final Document name) {
+        this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, licenses, name);
     }
 
-    public HeaderCheckWorker(BufferedReader reader, int numberOfRetainedHeaderLine, final IHeaderMatcher matcher,
-            final Document name) {
-        this.reader = reader;
+    /**
+     * Constructs a check worker for the license against the specified document.
+     *
+     * @param reader The reader on the document. not null.
+     * @param numberOfRetainedHeaderLine the maximum number of lines to read to find
+     * the license information.
+     * @param licenses The licenses to check against. not null.
+     * @param document The document that is being checked. possibly null
+     */
+    public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,
+            final Document document) {
+        Objects.requireNonNull(reader, "Reader may not be null");
+        Objects.requireNonNull(licenses, "Licenses may not be null");
+        if (numberOfRetainedHeaderLine < 0) {
+            throw new ConfigurationException("numberOfRetainedHeaderLine may not be less than zero");
+        }
+        this.reader = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
         this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
-        this.matcher = matcher;
-        this.subject = name;
+        this.licenses = licenses;
+        this.document = document;
     }
 
-    public boolean isFinished() {
-        return finished;
-    }
-
+    /**
+     * Read the input and perform the header check.
+     *
+     * @throws RatHeaderAnalysisException on IO Exception.
+     */
     public void read() throws RatHeaderAnalysisException {
-        if (!finished) {
-            final StringBuilder headers = new StringBuilder();
-            headerLinesToRead = numberOfRetainedHeaderLines;
-            try {
-                while(readLine(headers)) {
-                    // do nothing
+        try {
+            final IHeaders headers = readHeader(reader, numberOfRetainedHeaderLines);
+            licenses.stream().filter(lic -> lic.matches(headers)).forEach(document.getMetaData()::reportOnLicense);
+            if (document.getMetaData().detectedLicense()) {
+                if (document.getMetaData().licenses().anyMatch(
+                        lic -> ILicenseFamily.GENTERATED_CATEGORY.equals(lic.getLicenseFamily().getFamilyCategory()))) {
+                    document.getMetaData().setDocumentType(Document.Type.GENERATED);
                 }
-                if (!match) {
-                    final String notes = headers.toString();
-                    final MetaData metaData = subject.getMetaData();
-                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_SAMPLE, notes));
-                    metaData.set(new MetaData.Datum(MetaData.RAT_URL_HEADER_CATEGORY, MetaData.RAT_LICENSE_FAMILY_CATEGORY_VALUE_UNKNOWN));
-                    metaData.set(MetaData.RAT_LICENSE_FAMILY_NAME_DATUM_UNKNOWN);
-                }
-            } catch (IOException e) {
-                throw new RatHeaderAnalysisException("Cannot read header for " + subject, e);
+            } else {
+                document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
+                document.getMetaData().setSampleHeader(headers.raw());
             }
-            IOUtils.closeQuietly(reader);
-            matcher.reset();
+        } catch (IOException e) {
+            throw new RatHeaderAnalysisException("Cannot read header for " + document, e);
+        } finally {
+            licenses.forEach(ILicense::reset);
         }
-        finished = true;
-    }
-
-    boolean readLine(StringBuilder headers) throws IOException, RatHeaderAnalysisException {
-        String line = reader.readLine();
-        boolean result = line != null;
-        if (result) {
-            if (headerLinesToRead-- > 0) {
-                headers.append(line);
-                headers.append('\n');
-            }
-            match = matcher.match(subject, line);
-            result = !match;
-        }
-        return result;
     }
 }

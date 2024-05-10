@@ -15,33 +15,31 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.claim.util;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.rat.analysis.UnknownLicense;
 import org.apache.rat.annotation.AbstractLicenseAppender;
 import org.apache.rat.annotation.ApacheV2LicenseAppender;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.api.MetaData.Datum;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
-
+import org.apache.rat.utils.Log;
 
 public class LicenseAddingReport extends AbstractReport {
     private final AbstractLicenseAppender appender;
 
-    public LicenseAddingReport(String pCopyrightMsg, boolean pForced) {
-        appender = pCopyrightMsg == null ? new ApacheV2LicenseAppender() : new ApacheV2LicenseAppender(pCopyrightMsg);
+    public LicenseAddingReport(final Log log, String pCopyrightMsg, boolean pForced) {
+        appender = pCopyrightMsg == null ? new ApacheV2LicenseAppender(log)
+                : new ApacheV2LicenseAppender(log, pCopyrightMsg);
         appender.setForce(pForced);
     }
 
     @Override
     public void report(org.apache.rat.api.Document document) throws RatException {
-        final Datum licenseHeader = document.getMetaData().get(MetaData.RAT_URL_HEADER_CATEGORY);
-        if (licenseHeader == null
-                ||  MetaData.RAT_LICENSE_FAMILY_CATEGORY_DATUM_UNKNOWN.getValue().equals(licenseHeader.getValue())) {
+        if (document.getMetaData().licenses().anyMatch(lic -> lic.equals(UnknownLicense.INSTANCE))) {
             final File file = new File(document.getName());
             if (file.isFile()) {
                 try {

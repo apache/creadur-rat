@@ -21,7 +21,7 @@ Usage
 
   To use the plugin, you've got two options: First of all, it can
   create a simple text file, called <<<target/rat.txt>>>, with the
-  plugins output. This is done by invoking the <<<apache-rat:check>>> goal.
+  plugin's output. This is done by invoking the <<<apache-rat:check>>> goal.
 
   You may also add a report to the generated site. This is your
   second option.

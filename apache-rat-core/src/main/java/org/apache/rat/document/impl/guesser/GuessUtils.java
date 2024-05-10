@@ -31,7 +31,7 @@ public class GuessUtils {
      * @param name not null
      * @return not null
      */
-    public static final String normalise(final String name) {
+    public static String normalise(final String name) {
         String result = name.toUpperCase(Locale.US);
         final int lastSeparatorIndex = StringUtils.lastIndexOfAny(result, SEPARATORS);
         final int length = result.length();

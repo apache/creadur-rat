@@ -63,7 +63,7 @@ pipeline {
         stage('Cleanup') {
             steps {
                 echo 'Cleaning up the workspace'
-                deleteDir()
+                cleanWs()
             }
         }
 
@@ -78,14 +78,14 @@ pipeline {
         stage('Build Parent-pom') {
             steps {
                 echo 'Building parent pom only'
-                sh 'mvn clean install -N -e -B'
+                sh './mvnw clean install -N -e -B'
             }
         }
 
         stage('Print available updates') {
             steps {
                 echo 'Show available plugin and dependency updates'
-                sh 'mvn clean versions:display-dependency-updates versions:display-plugin-updates enforcer:display-info -U -B'
+                sh './mvnw clean versions:display-dependency-updates versions:display-plugin-updates -U -B'
             }
         }
 
@@ -93,7 +93,7 @@ pipeline {
             steps {
                 echo 'Building the whole project'
                 // clean package -B -U -e -fae -V for making sure it just builds
-                sh 'mvn -B -U -V clean deploy'
+                sh './mvnw -B -U -V clean deploy'
             }
             post {
                 always {
@@ -106,7 +106,7 @@ pipeline {
         stage('Ensure site build works') {
             steps {
                 echo 'Verify site build is okay ....'
-                sh 'mvn site:site'
+                sh './mvnw site:site'
             }
         }
     }

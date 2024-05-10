@@ -15,45 +15,29 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.apache.rat.report.claim.impl.xml.MockClaimReporter;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.params.provider.Arguments;
 
-public class W3CLicenseTest {
+public class W3CLicenseTest extends AbstractLicenseTest {
 
-    public static final String COPYRIGHT_URL 
-    = "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231";
-    
-    public static final String COPYRIGHT_URL_COMMENTED
-    = "# http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 #";
-    
-    public static final String COPYRIGHT_URL_XML
-    = "<!-- http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 -->";
-    
-    private W3CLicense license;
-    private MockClaimReporter reporter;
+    private static String W3C_note = "Note that W3C requires a NOTICE.\n" + "All modifications require notes.\n"
+            + "See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.";
+    private static Arguments W3C = Arguments.of("W3C", "W3C", "W3C Software Copyright", W3C_note,
+            new String[][] { { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231" },
+                    { "spdx-tab", "SPDX-License-Identifier:\tW3C" },
+                    { "spdx-space", "SPDX-License-Identifier: W3C" }, });
 
-    @Before
-    public void setUp() throws Exception {
-        license = new W3CLicense();
-        reporter = new MockClaimReporter();
-    }
+    private static String W3CD_note = "Note that W3CD does not allow modifications.\n"
+            + "See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.";
+    private static Arguments W3CD = Arguments.of("W3CD", "W3CD", "W3C Document Copyright", W3CD_note,
+            new String[][] { { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231" }, });
 
-    @Test
-    public void match() throws Exception {
-        final Document subject = new MockLocation("subject");
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL));
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_COMMENTED));
-        assertTrue("Expected matcher to return license", license.match(subject, COPYRIGHT_URL_XML));
-        assertFalse("Return null if the license isn't matched", license.match(subject, "Bogus"));
+    public static Stream<Arguments> parameterProvider() {
+        return Stream.of(W3C, W3CD);
     }
 
 }

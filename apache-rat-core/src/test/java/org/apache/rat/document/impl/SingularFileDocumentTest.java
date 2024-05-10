@@ -20,21 +20,21 @@ package org.apache.rat.document.impl;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.test.utils.Resources;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.Reader;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SingularFileDocumentTest {
     private Document document;
     private File file;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         file = Resources.getResourceFile("elements/Source.java");
         document = new MonolithicFileDocument(file);
@@ -43,15 +43,15 @@ public class SingularFileDocumentTest {
     @Test
     public void reader() throws Exception {
         Reader reader = document.reader();
-        assertNotNull("Reader should be returned", reader);
-        assertEquals("First file line expected", "package elements;", 
-                 new BufferedReader(reader).readLine());
+        assertNotNull(reader, "Reader should be returned");
+        assertEquals("package elements;", 
+                 new BufferedReader(reader).readLine(), "First file line expected");
     }
 
     @Test
     public void getName() {
         final String name = document.getName();
         assertNotNull("Name is set", name);
-        assertEquals("Name is filename", DocumentImplUtils.toName(file), name);
+        assertEquals(DocumentImplUtils.toName(file), name, "Name is filename");
     }
 }

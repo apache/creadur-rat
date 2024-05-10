@@ -1,5 +1,3 @@
-package org.apache.rat.mp;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,93 +16,39 @@ package org.apache.rat.mp;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
-import org.apache.rat.document.impl.DocumentImplUtils;
-import org.apache.rat.report.IReportable;
-import org.apache.rat.report.RatReport;
+package org.apache.rat.mp;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
+import org.apache.rat.api.RatException;
+import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.report.IReportable;
+import org.apache.rat.report.RatReport;
 
 /**
  * Implementation of IReportable that traverses over a set of files.
  */
-class FilesReportable implements IReportable
-{
+class FilesReportable implements IReportable {
     private final File basedir;
 
     private final String[] files;
 
-    FilesReportable( File basedir, String[] files )
-            throws IOException
-    {
-        final File currentDir = new File( System.getProperty( "user.dir" ) ).getCanonicalFile();
+    FilesReportable(File basedir, String[] files) throws IOException {
+        final File currentDir = new File(System.getProperty("user.dir")).getCanonicalFile();
         final File f = basedir.getCanonicalFile();
-        if ( currentDir.equals( f ) )
-        {
+        if (currentDir.equals(f)) {
             this.basedir = null;
-        }
-        else
-        {
+        } else {
             this.basedir = basedir;
         }
         this.files = files;
     }
 
-    public void run( RatReport report ) throws RatException
-    {
-        FileDocument document = new FileDocument();
+    @Override
+    public void run(RatReport report) throws RatException {
         for (String file : files) {
-            document.setFile(new File(basedir, file));
-            document.getMetaData().clear();
-            report.report(document);
-        }
-    }
-
-    private class FileDocument implements Document
-    {
-        private File file;
-        private final MetaData metaData = new MetaData();
-        
-        void setFile( File file )
-        {
-            this.file = file;
-        }
-
-        public boolean isComposite() {
-            return DocumentImplUtils.isZip(file);
-        }
-
-        public Reader reader() throws IOException
-        {
-            final InputStream in = new FileInputStream( file );
-            return new InputStreamReader( in );
-        }
-
-        public String getName()
-        {
-            return DocumentImplUtils.toName( file );
-        }
-
-        public MetaData getMetaData() {
-            return metaData;
-        }
-        
-        public InputStream inputStream() throws IOException {
-            return new FileInputStream(file);
-        }
-        
-        @Override
-        public String toString() {
-            return "File:" + file.getAbsolutePath();
+            report.report(new FileDocument(new File(basedir, file)));
         }
     }
 }

@@ -15,51 +15,78 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.analysis;
 
+import java.util.Collection;
+
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.document.impl.guesser.ArchiveGuesser;
-import org.apache.rat.document.impl.guesser.BinaryGuesser;
-import org.apache.rat.document.impl.guesser.NoteGuesser;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.utils.Log;
 
 /**
  * Creates default analysers.
- *
  */
 public class DefaultAnalyserFactory {
-  
-    public static final IDocumentAnalyser createDefaultAnalyser(final IHeaderMatcher matcher) {
-        
-        return new DefaultAnalyser(matcher);
+
+    /**
+     * Creates a DocumentAnalyser from a collection of ILicenses.
+     * 
+     * @param log The Log to use for logging.
+     * @param licenses The licenses to use in the Analyser.
+     * @return A document analyser that uses the provides licenses.
+     */
+    public static IDocumentAnalyser createDefaultAnalyser(Log log, Collection<ILicense> licenses) {
+        if (licenses.isEmpty()) {
+            throw new ConfigurationException("At least one license must be defined");
+        }
+        log.debug("Licenses in Test");
+        licenses.forEach(log::debug);
+        return new DefaultAnalyser(log, licenses);
     }
-    
+
+    /**
+     * A DocumentAnalyser for the license
+     */
     private final static class DefaultAnalyser implements IDocumentAnalyser {
 
-        private final IHeaderMatcher matcher;
-        
-        public DefaultAnalyser(final IHeaderMatcher matcher) {
-            super();
-            this.matcher = matcher;
+        /** The licenses to analyze */
+        private final Collection<ILicense> licenses;
+        /** The log to use */
+        private final Log log;
+
+        /**
+         * Constructs a DocumentAnalyser for the specified license.
+         * @param log the Log to use
+         * @param licenses The licenses to analyse
+         */
+        public DefaultAnalyser(final Log log, final Collection<ILicense> licenses) {
+            this.licenses = licenses;
+            this.log = log;
         }
 
-        public void analyse(Document subject) throws RatDocumentAnalysisException {
-            final MetaData.Datum documentCategory;
-            if (NoteGuesser.isNote(subject)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_NOTICE;
-            } else if (ArchiveGuesser.isArchive(subject)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_ARCHIVE;
-            } else if (BinaryGuesser.isBinary(subject)) {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_BINARY;
-            } else {
-                documentCategory = MetaData.RAT_DOCUMENT_CATEGORY_DATUM_STANDARD;
-                final DocumentHeaderAnalyser headerAnalyser = new DocumentHeaderAnalyser(matcher);
-                headerAnalyser.analyse(subject);
+        @Override
+        public void analyse(Document document) throws RatDocumentAnalysisException {
+
+            TikaProcessor.process(log, document);
+
+            switch (document.getMetaData().getDocumentType()) {
+            case STANDARD:
+                DocumentHeaderAnalyser analyser = new DocumentHeaderAnalyser(log, licenses);
+                analyser.analyse(document);
+            case NOTICE:
+            case ARCHIVE:
+            case BINARY:
+            case UNKNOWN:
+            default:
+                break;
             }
-            subject.getMetaData().set(documentCategory);
-        }        
+
+
+
+        }
     }
 }

@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.apache.rat.api.Document;
 
@@ -67,6 +68,6 @@ public class MonolithicFileDocument extends AbstractMonolithicDocument {
     }
 
      public InputStream inputStream() throws IOException {
-        return new FileInputStream(file);
+        return Files.newInputStream(file.toPath());
     }
 }

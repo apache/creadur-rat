@@ -1,0 +1,323 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                   --------------------------
+                   How to define new Matchers
+                   --------------------------
+
+How to define matchers in Apache Rat
+
+ Matchers in Apache Rat are paired with builders.  A matcher must implement the {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/IHeaderMatcher.java}IHeaderMatcher}}
+ interface and its associated builder must implement the IHeaderMatcher.Builder interface.
+
+* A simple example
+
+** The Matcher implementation
+
+ For our example we will implement a Matcher that implements the phrase "Quality, speed and cost, pick any two” by looking for the occurrence of all three words anywhere in the header.  
+ In most cases is it simplest to extend the {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AbstractHeaderMatcher.java}AbstractHeaderMatcher}}
+ class as this class will handle setting of the unique id for instances that do not otherwise have a unique id.
+
+
+ So lets start by creating our matcher class and implementing the matches method.  The matches method takes an 
+ {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/IHeaders.java}IHeaders}} argument.  IHeaders is an object that contains the header text in two formats:
+ 
+  * raw - just as read from the file.
+  
+  * pruned - containing only letters and digits, and with all letters lowercased.
+  
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+
+@ConfigComponent(type = Component.Type.MATCHER, name = "QSC", desc = "Reports if the 'Quality, speed and cost, pick any two' rule is violated")
+public class QSCMatcher extends AbstractHeaderMatcher {
+
+    public QSCMatcher(String id) {
+        super(id);
+    }
+
+    @Override
+    public boolean matches(IHeaders headers) {
+        String text = headers.prune()
+        return text.contains("quality") && text.contains("speed") && text.contains("cost");
+    }
+}
++------------------------------------------+
+
+ In the above example we use the {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/config/parameters/ConfigComponent.java}ConfigComponent}} annotation to 
+ identify that this is a MATCHER component, that it has the name 'QSC' and a description of what it does.  
+ If the "name" was not specified the name would have been extracted from the class name by removing the "Matcher" from "QSCMatcher" and making the first character lowercase: "qSC".
+
+ The Constructor calls the AbstractHeaderMatcher constructor with an id value.  A null argument passed to AbstractHeaderMatcher will generate a UUID based id.
+
+ The matcher uses the pruned text to check for the strings.  There is an issue with this matcher in that it would match the string: 
+ "The quality of Dennis Hopper's acting, as Keanu Reeves costar in 'Speed', is outstanding."
+ 
+ The correction of that is left as an exercise for the reader.  Hint: matching the pruned text can be a quick gating check for a set of more expensive regular expression checks against the raw text. 
+
+** The Matcher.Builder implementation
+
+  The builder must implement the IHeaderMatcher.Builder interface.
+
+  The work of handling the id and some other tasks is handled by the 
+  {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/configuration/builders/AbstractBuilder.java}AbstractBuilder}}.
+  
+  So we have:
+
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.rat.configuration.builders.AbstractBuilder;
+
+public class QSCBuilder extends AbstractBuilder. {
+    QSCMatcher build() {
+        return new QSCMatcher(getId());
+    }
+}
++------------------------------------------+
+
+** Registering the builder for use in XML configuration 
+
+  In order to use the matcher in a Rat configuration it has to be registered with the system.  This can be done by creating an XML configuration file with the builder specified and passing it
+  to the command line runner as a license ( "--licenses" option) file.  The name of the matcher is "QSC" so "QSC" is also the xml element that the parser will accept in license definitions. 
+  Since this is a joke license we should create a "Joke" family to contain any such licenses and a QSC license that uses the QSC matcher.  The new configuration file now looks like:
+
++------------------------------------------+
+<rat-config>
+    <families>
+        <family id="Joke" name="A joke license" />
+    </families>
+    <licenses>
+        <!-- the family attribute below references the family id specified above -->
+        <license family="Joke" id="QSC" name="The QSC license">
+            <!-- the QSC below is the name specified in the QSCMatcher ConfigComponent annotation -->
+            <QSC/>
+        </license>
+    </licenses>
+    <matchers>
+        <!-- establishes QSC as a matcher -->
+        <matcher class="com.example.ratMatcher.QSCBuilder" />
+    </matchers>
+</rat-config>
++------------------------------------------+
+
+  If the license entry did not have an "id" attribute its id would be the same as the family.  If it did not have a name attribute the name would be the same as the family.
+
+* A more complex example
+
+ In many cases it is necessary to set properties on the matcher.  So let's write a generalized version of the QSC matcher that accepts any 3 strings and triggers if all 3 are found
+ in the header.
+
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.commons.lang3.StringUtils;
+
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+
+@ConfigComponent(type = Component.Type.MATCHER, name = "TPM", desc = "Checks that the three string are found in the header")
+public class TPMatcher extends AbstractHeaderMatcher {
+
+    @ConfigComponent(type = Component.Type.PARAMETER, desc = "The first parameter" required = "true")
+    private final String one;
+    
+    @ConfigComponent(type = Component.Type.PARAMETER, desc = "The second parameter" required = "true")
+    private final String two;
+    
+    @ConfigComponent(type = Component.Type.PARAMETER, desc = "The third parameter" required = "true")
+    private final String three;
+
+    public TPMatcher(String id, String one, String two, String three) { 
+        super(id);
+        if (StringUtils.isEmpthy(one) || StringUtils.isEmpty(two) || StringUtils.isEmpty(three) {
+            throw new ConfigurationException( "None of the three properties (one, two, or three) may be empty");
+        }
+        this.one = one;
+        this.two = two;
+        this.three = three;
+    }
+    
+    public String getOne() { return one; }
+
+    public String getThree() { return two; }
+
+    public String getTwo() { return three; }
+
+    @Override
+    public boolean matches(IHeaders headers) {
+        String text = headers.prune()
+        return text.contains(one) && text.contains(two) && text.contains(three);
+    }
+}
++------------------------------------------+
+
+ The ConfigComponents with the PARAMETER type indicate that the members specify properties of the component.  The matcher must have a "get" method for each parameter and the builder
+ must have a corresponding "set" method.  The names of the methods and the attributes in the XML parser can be changed by adding a 'name' attribute to the ConfigComponent.
+
+ The builder now looks like:
+
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.rat.configuration.builders.AbstractBuilder;
+
+public class TPBuilder extends AbstractBuilder {
+
+    private String one;
+    
+    private String two;
+    
+    private String three;
+
+    TPMatcher build() {
+        return new TPMatcher(one, two, three);
+    }
+    
+    public TPBuilder setOne(String one) { this.one = one; }
+
+    public TPBuilder setTwo(String two) { this.two = two; }
+
+    public TPBuilder setThree(String three) { this.three = three; }
+}
++------------------------------------------+
+
+ And the new configuration file looks like:
+
++------------------------------------------+
+<rat-config>
+    <families>
+        <family id="Joke" name="A joke license" />
+    </families>
+    <licenses>
+        <license family="Joke" id="QSC" name="The QSC license">
+            <QSC/>
+        </license>
+        <license family="Joke" id="TPM" name="The TPM Check">
+            <TPM one="once" two="upon" three="time">
+        </license>
+    </licenses>
+    <matchers>
+        <matcher class="com.example.ratMatcher.QSCBuilder" />
+        <matcher class="com.example.ratMatcher.TPBuilder" />
+    </matchers>
+</rat-config>
++------------------------------------------+
+
+* Embedded matchers.
+
+ It is possible to create matchers that embed other matchers.  The examples in the codebase are the 
+ {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AndMatcher.java}All}}, 
+ {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/OrMatcher.java}Any}} and 
+ {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/NotMatcher.java}Not}} matchers and their associated builders.  As an 
+ example we will build a "Highlander" matcher that will be true if one and only one enclosed matcher is true; there can be only one.  The Highlander matcher will extend 
+ {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AbstractMatcherContainer}AbstractMatcherContainer}} which will handle the
+ enclosed resources and the option of reading text matchers from a file.
+ 
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.commons.lang3.StringUtils;
+
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.config.parameters.Component;
+import org.apache.rat.config.parameters.ConfigComponent;
+
+@ConfigComponent(type = Component.Type.MATCHER, desc = "Checks that there can be only one matching enclosed matcher")
+public class HighlanderMatcher extends AbstractMatcherContainer {
+
+    public HighlanderMatcher(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) { 
+        super(id, enclosed, resource);
+    }
+
+    @Override
+    public boolean matches(IHeaders headers) {
+    	boolean foundOne = false;
+        for (IHeaderMatcher matcher : getEnclosed()) {
+            if (matcher.matches(headers)) {
+                if (foundOne) {
+                    return false;
+                }
+                foundOne = true;
+            }
+        }
+        return foundOne;
+    }
+}
++------------------------------------------+  
+ 
+ We create a simple builder that extends 
+ {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/configuration/builders/ChildContainerBuilder.java}ChildContainerBuilder}}
+ which will handle setting the id, enclosed matchers, and the resource.
+ 
++------------------------------------------+
+package com.example.ratMatcher;
+
+import org.apache.rat.configuration.builders.AbstractBuilder;
+
+public class HighlanderBuilder extends ChildContainerBuilder {
+
+    @Override
+    public Highlander build() {
+        return new Highlander(getId(), getEnclosed(), resource);
+    }
++------------------------------------------+ 
+
+Add the above to the configuration and we have:
+
++------------------------------------------+
+<rat-config>
+    <families>
+        <family id="Joke" name="A joke license" />
+    </families>
+    <licenses>
+        <license family="Joke" id="QSC" name="The QSC license">
+            <QSC/>
+        </license>
+        <license family="Joke" id="TPM" name="The TPM Check">
+            <TPM one="once" two="upon" three="time">
+        </license>
+        <license family="Joke">
+            <highlander>
+                <QSC/>
+                <TPM one="once" two="upon" three="time">
+            </highlander>
+        </license>
+    </licenses>
+    <matchers>
+        <matcher class="com.example.ratMatcher.HighlanderBuilder" />
+        <matcher class="com.example.ratMatcher.QSCBuilder" />
+        <matcher class="com.example.ratMatcher.TPBuilder" />
+    </matchers>
+</rat-config>
++------------------------------------------+
+
+ The HighlanderBuilder builds a Highlander object.  The Highlander object is annotated with a ConfigComponent that does not specify the name, the system strips the "Matcher" fom the simple class name and lowercases
+ the first character, so the Highlander matcher has the name "highlander".
+ The last "license" entry does not have an id or name set so it will have the id of "Joke" and the name of "A joke license" inherited from the family.
+ 
+ Since there is no "approved" section of the rat-conf all the licenses are assumed to be approved.
+
+

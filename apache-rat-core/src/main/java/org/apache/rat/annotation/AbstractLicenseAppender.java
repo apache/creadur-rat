@@ -19,6 +19,7 @@
 package org.apache.rat.annotation;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.utils.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,6 +30,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,12 +74,16 @@ public abstract class AbstractLicenseAppender {
     private static final int TYPE_JSP = 24;
     private static final int TYPE_FML = 25;
     private static final int TYPE_GO = 26;
-    private static final int TYPE_PM = 27;    
+    private static final int TYPE_PM = 27;
+    private static final int TYPE_MD = 28;
+    private static final int TYPE_YAML = 29;
+    
+    
 
     /**
      * the line separator for this OS
      */
-    private static final String LINE_SEP = System.getProperty("line.separator");
+    private static final String LINE_SEP = System.lineSeparator();
 
     private static final int[] FAMILY_C = new int[]{
             TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
@@ -81,11 +91,11 @@ public abstract class AbstractLicenseAppender {
             TYPE_BEANSHELL, TYPE_GO,
     };
     private static final int[] FAMILY_SGML = new int[]{
-            TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML,
+            TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML, TYPE_MD,
     };
     private static final int[] FAMILY_SH = new int[]{
             TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
-            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION, TYPE_PM,
+            TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION, TYPE_PM, TYPE_YAML,
     };
     private static final int[] FAMILY_BAT = new int[]{
             TYPE_BAT,
@@ -160,6 +170,7 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("java", TYPE_JAVA);
         EXT2TYPE.put("js", TYPE_JAVASCRIPT);
         EXT2TYPE.put("jsp", TYPE_JSP);
+        EXT2TYPE.put("md", TYPE_MD);
         EXT2TYPE.put("ndoc", TYPE_XML);
         EXT2TYPE.put("nunit", TYPE_XML);
         EXT2TYPE.put("php", TYPE_PHP);
@@ -186,12 +197,21 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("xml", TYPE_XML);
         EXT2TYPE.put("xproj", TYPE_XML);
         EXT2TYPE.put("xsl", TYPE_XML);
+        EXT2TYPE.put("yaml", TYPE_YAML);
+        EXT2TYPE.put("yml", TYPE_YAML);
     }
 
     private boolean isForced;
+    /** The log to use */
+    private final Log log;
 
-    public AbstractLicenseAppender() {
+    /**
+     * Constructor
+     * @param log The log to use.
+     */
+    public AbstractLicenseAppender(final Log log) {
         super();
+        this.log = log;
     }
 
     /**
@@ -214,8 +234,7 @@ public abstract class AbstractLicenseAppender {
         boolean expectsMSVSSF = expectsMSVisualStudioSolutionFileHeader(type);
 
         File newDocument = new File(document.getAbsolutePath() + ".new");
-        FileWriter writer = new FileWriter(newDocument);
-        try {
+        try (FileWriter writer = new FileWriter(newDocument)){
             if (!attachLicense(writer, document,
                     expectsHashPling, expectsAtEcho, expectsPackage,
                     expectsXMLDecl, expectsPhpPI, expectsMSVSSF)) {
@@ -224,27 +243,28 @@ public abstract class AbstractLicenseAppender {
                 // for Java just place the license at the front, for XML add
                 // an XML decl first - don't know how to handle PHP
                 if (expectsPackage || expectsXMLDecl) {
-                    writer = new FileWriter(newDocument);
-                    if (expectsXMLDecl) {
-                        writer.write("<?xml version='1.0'?>");
-                        writer.write(LINE_SEP);
+                    try (FileWriter writer2  = new FileWriter(newDocument)) {
+                        if (expectsXMLDecl) {
+                            writer2.write("<?xml version='1.0'?>");
+                            writer2.write(LINE_SEP);
+                        }
+                        attachLicense(writer2, document,
+                                false, false, false, false, false, false);
                     }
-                    attachLicense(writer, document,
-                            false, false, false, false, false, false);
                 }
             }
-        } finally {
-            IOUtils.closeQuietly(writer);
-        }
+        } 
 
         if (isForced) {
-            boolean deleted = document.delete();
-            if (!deleted) {
-                System.err.println("Could not delete original file to prepare renaming.");
-            }
-            boolean renamed = newDocument.renameTo(document.getAbsoluteFile());
-            if (!renamed) {
-                System.err.println("Failed to rename new file, original file remains unchanged.");
+            try {
+                Path docPath = document.toPath();
+                boolean isExecutable = Files.isExecutable(docPath);
+                Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
+                if (isExecutable && !document.setExecutable(true)) {
+                    log.warn(String.format("Could not set %s as executable.", document));
+                }
+            } catch (InvalidPathException | IOException e) {
+                log.error(String.format("Failed to rename new file to %s, Original file is unchanged.", document), e);
             }
         }
     }
@@ -268,7 +288,7 @@ public abstract class AbstractLicenseAppender {
         BufferedReader br = null;
         try {
             fis = new FileInputStream(document);
-            br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis)));
+            br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis), StandardCharsets.UTF_8));
 
             if (!expectsHashPling
                     && !expectsAtEcho
@@ -292,7 +312,7 @@ public abstract class AbstractLicenseAppender {
                     doFirstLine(document, writer, line, "@echo");
                 } else if (first && expectsMSVSSF) {
                     written = true;
-                    if ("".equals(line)) {
+                    if (line.isEmpty()) {
                         line = passThroughReadNext(writer, line, br);
                     }
                     if (line.startsWith("Microsoft Visual Studio Solution"

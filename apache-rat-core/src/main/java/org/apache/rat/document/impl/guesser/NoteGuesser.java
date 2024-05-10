@@ -58,7 +58,7 @@ public class NoteGuesser {
      * @return Is a file by that name a note file?
      * @param name file name.
      */
-    public static final boolean isNote(final String name) {
+    public static boolean isNote(final String name) {
         if (name == null) {return false;}
 
         List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
@@ -77,7 +77,7 @@ public class NoteGuesser {
         return false;
     }
 
-    public static final boolean isNote(final Document document) {
+    public static boolean isNote(final Document document) {
         return isNote(document.getName());
     }
 

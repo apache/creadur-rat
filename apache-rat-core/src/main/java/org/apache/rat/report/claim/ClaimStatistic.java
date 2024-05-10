@@ -19,142 +19,151 @@
 
 package org.apache.rat.report.claim;
 
-import java.util.Map;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.rat.api.Document;
 
 /**
  * This class provides a numerical overview about
  * the report.
  */
 public class ClaimStatistic {
-    private Map<String, Integer> documentCategoryMap, licenseFamilyCodeMap, licenseFamilyNameMap;
-    private int numApproved, numUnApproved, numGenerated, numUnknown;
+    /** The counter types */
+    public enum Counter { 
+        /** count of approved files */
+        APPROVED, 
+        /** count of unapproved files */
+        UNAPPROVED, 
+        /** count of generated files */
+        GENERATED, 
+        /** count of unknown files */
+        UNKNOWN }
+    
+    private final ConcurrentHashMap<String, IntCounter> licenseFamilyNameMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, IntCounter> licenseFamilyCategoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Document.Type, IntCounter> documentCategoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
-    /**
-     * @return Returns the number of files with approved licenses.
+    /** converts null counter to 0.
+     *
+     * @param counter the Counter to retrieve the value from.
+     * @return 0 if counter is {@code null} or counter value otherwise.
      */
-    public int getNumApproved() {
-        return numApproved;
+    private int getValue(IntCounter counter) {
+        return counter == null ? 0 : counter.value();
+    }
+    /**
+     * Returns the counts for the counter.
+     * @param counter the counter to get the value for.
+     * @return Returns the number times the Counter type was seen.
+     */
+    public int getCounter(Counter counter) {
+        return getValue(counterMap.get(counter));
     }
 
     /**
-     * Sets the number of files with approved licenses.
-     * @param pNumApproved number of files with approved licenses.
+     * Increments the counts for hte counter.
+     * @param counter the counter to increment.
+     * @param value the value to increment the counter by.
      */
-    public void setNumApproved(int pNumApproved) {
-        numApproved = pNumApproved;
+    public void incCounter(Counter counter, int value) {
+        counterMap.compute(counter, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
     }
 
     /**
-     * @return Returns the number of files with unapproved licenses.
-     * <em>Note:</em> This might include files with unknown
-     * licenses.
-     * @see #getNumUnknown()
+     * Gets the counts for the Document.Type.
+     * @param documentType the Document.Type to get the counter for.
+     * @return Returns the number times the Document.Type was seen
      */
-    public int getNumUnApproved() {
-        return numUnApproved;
+    public int getCounter(Document.Type documentType) {
+        return getValue(documentCategoryMap.get(documentType));
     }
 
     /**
-     * Sets the number of files with unapproved licenses.
-     * @param pNumUnApproved number of files with unapproved licenses.
+     * Increments the number of times the Document.Type was seen.
+     * @param documentType the Document.Type to increment.
+     * @param value the vlaue to increment the counter by.
      */
-    public void setNumUnApproved(int pNumUnApproved) {
-        numUnApproved = pNumUnApproved;
+    public void incCounter(Document.Type documentType, int value) {
+        documentCategoryMap.compute(documentType, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
     }
 
     /**
-     * @return Returns the number of generated files.
+     * Gets the counts for hte license category.
+     * @param licenseFamilyCategory the license family category to get the count for.
+     * @return the number of times the license family category was seen.
      */
-    public int getNumGenerated() {
-        return numGenerated;
+    public int getLicenseCategoryCount(String licenseFamilyCategory) {
+        return getValue(licenseFamilyCategoryMap.get(licenseFamilyCategory));
     }
 
     /**
-     * Sets the number of generated files.
-     * @param pNumGenerated the number of generated files.
+     * Increments the number of times a license family category was seen.
+     * @param licenseFamilyCategory the License family category to incmrement.
+     * @param value the value to increment the count by.
      */
-    public void setNumGenerated(int pNumGenerated) {
-        numGenerated = pNumGenerated;
+    public void incLicenseCategoryCount(String licenseFamilyCategory, int value) {
+        licenseFamilyCategoryMap.compute(licenseFamilyCategory, (k, v)-> v == null? new IntCounter().increment(value) : v.increment(value));
     }
 
     /**
-     * @return Returns the number of files, which are neither
-     * generated nor have a known license header.
+     * Gets the set of license family categories that were seen.
+     * @return A set of license family categories.
      */
-    public int getNumUnknown() {
-        return numUnknown;
+    public Set<String> getLicenseFamilyCategories() {
+        return Collections.unmodifiableSet(licenseFamilyCategoryMap.keySet());
     }
 
     /**
-     * Sets the number of files, which are neither
-     * generated nor have a known license header.
-     * @param pNumUnknown set number of files. 
+     * Gets the set of license family names that were seen.
+     * @return a Set of license family names that were seen.
      */
-    public void setNumUnknown(int pNumUnknown) {
-        numUnknown = pNumUnknown;
+    public Set<String> getLicenseFamilyNames() {
+        return Collections.unmodifiableSet(licenseFamilyNameMap.keySet());
     }
 
     /**
-     * Sets a map with the file types. The map keys
-     * are file type names and the map values
-     * are integers with the number of resources matching
-     * the file type.
-     * @param pDocumentCategoryMap doc-category map.
+     * Retrieves the number of times a license family name was seen.
+     * @param licenseFilename the license family name to look for.
+     * @return the number of times the license family name was seen.
      */
-    public void setDocumentCategoryMap(Map<String, Integer> pDocumentCategoryMap) {
-        documentCategoryMap = pDocumentCategoryMap;
+    public int getLicenseFamilyNameCount(String licenseFilename) {
+        return getValue(licenseFamilyNameMap.get(licenseFilename));
     }
 
     /**
-     * @return Returns a map with the file types. The map keys
-     * are file type names and the map values
-     * are integers with the number of resources matching
-     * the file type.
+     * Increments the license family name count.
+     * @param licenseFamilyName the license family name to increment.
+     * @param value the value to increment the count by.
      */
-    public Map<String, Integer> getDocumentCategoryMap() {
-        return documentCategoryMap;
+    public void incLicenseFamilyNameCount(String licenseFamilyName, int value) {
+        licenseFamilyNameMap.compute(licenseFamilyName, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
     }
 
     /**
-     * @return Returns a map with the license family codes. The map
-     * keys are license family category names,
-     * the map values are integers with the number of resources
-     * matching the license family code.
+     * A class that wraps and int and allows easy increment and retrieval.
      */
-    public Map<String, Integer> getLicenseFileCodeMap() {
-        return licenseFamilyCodeMap;
-    }
+    static class IntCounter {
+        int value = 0;
 
-    /**
-     * Sets a map with the license family codes. The map
-     * keys are instances of license family category names and
-     * the map values are integers with the number of resources
-     * matching the license family code.
-     * @param pLicenseFamilyCodeMap license family map.
-     */
-    public void setLicenseFileCodeMap(Map<String, Integer> pLicenseFamilyCodeMap) {
-        licenseFamilyCodeMap = pLicenseFamilyCodeMap;
-    }
+        /**
+         * Increment the count.
+         * @param count the count to increment by (may be negative)
+         * @return this.
+         */
+        public IntCounter increment(int count) {
+            value += count;
+            return this;
+        }
 
-    /**
-     * @return Returns a map with the license family codes. The map
-     * keys are the names of the license families and
-     * the map values are integers with the number of resources
-     * matching the license family name.
-     */
-    public Map<String, Integer> getLicenseFileNameMap() {
-        return licenseFamilyNameMap;
-    }
-
-    /**
-     * Sets map with the license family codes. The map
-     * keys are the name of the license families and
-     * the map values are integers with the number of resources
-     * matching the license family name.
-     * @param pLicenseFamilyNameMap license family-name map.
-     */
-    public void setLicenseFileNameMap(Map<String, Integer> pLicenseFamilyNameMap) {
-        licenseFamilyNameMap = pLicenseFamilyNameMap;
+        /**
+         * Retrieves the count.
+         * @return the count contained by this counter.
+         */
+        public int value() {
+            return value;
+        }
     }
 }

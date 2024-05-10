@@ -16,22 +16,19 @@
  */
 package org.example;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.analysis.license.BaseLicense;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData;
+import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.config.parameters.ComponentType;
+import org.apache.rat.config.parameters.ConfigComponent;
 
-
-public class Matcher extends BaseLicense implements IHeaderMatcher {
+@ConfigComponent(type = ComponentType.MATCHER, name = "myCustomMatcher", desc = "Custom matcher example")
+public class Matcher extends AbstractHeaderMatcher {
     public Matcher() {
-        super(new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_CATEGORY, "EXMPL"),
-                new MetaData.Datum(MetaData.RAT_URL_LICENSE_FAMILY_NAME, "Example License"), "");
+        super("MyCustomMatcher");
     }
-    public void reset() {}
-    
-    public boolean match(Document subject, String line) throws RatHeaderAnalysisException {
-        reportOnLicense(subject);
+
+    @Override
+    public boolean matches(IHeaders headers) {
         return true;
     }
 }

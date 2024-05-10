@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.api;
 
 import java.io.IOException;
@@ -24,34 +24,61 @@ import java.io.Reader;
 
 import org.apache.rat.document.CompositeDocumentException;
 
+/**
+ * The representation of a document being scanned.
+ */
 public interface Document {
-
-    String getName();
-    
     /**
-     * Reads the content of this document.
+     * An enumeraton of document types.
+     */
+    enum Type {
+        /** A generated document. */
+        GENERATED,
+        /** An unknown document type. */
+        UNKNOWN,
+        /** An archive type document. */
+        ARCHIVE,
+        /** A notice document (e.g. LICENSE file) */
+        NOTICE,
+        /** A binary file */
+        BINARY,
+        /** A standard document */
+        STANDARD;;
+    }
+
+    /**
+     * @return the name of the current document.
+     */
+    String getName();
+
+    /**
+     * Reads the contents of this document.
+     * 
      * @return <code>Reader</code> not null
      * @throws IOException if this document cannot be read
-     * @throws CompositeDocumentException if this document can only be read as
-     * a composite archive
+     * @throws CompositeDocumentException if this document can only be read as a
+     * composite archive
      */
     Reader reader() throws IOException;
-    
+
     /**
      * Streams the document's contents.
-     * @return not null
+     * 
+     * @return a non null input stream of the document.
      * @throws IOException when stream could not be opened
      */
     InputStream inputStream() throws IOException;
 
     /**
      * Gets data describing this resource.
-     * @return not null
+     * 
+     * @return a non null MetaData object.
      */
     MetaData getMetaData();
-    
+
     /**
-     * Is this a composite document?
+     * Tests if this a composite document.
+     * 
      * @return true if composite, false otherwise
      */
     boolean isComposite();

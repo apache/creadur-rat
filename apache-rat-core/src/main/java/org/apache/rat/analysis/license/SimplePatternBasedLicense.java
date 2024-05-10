@@ -18,26 +18,27 @@
  */ 
 package org.apache.rat.analysis.license;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.RatHeaderAnalysisException;
-import org.apache.rat.api.Document;
-import org.apache.rat.api.MetaData.Datum;
+import java.util.Arrays;
+
+import org.apache.rat.configuration.builders.AbstractBuilder;
+import org.apache.rat.configuration.builders.AnyBuilder;
+import org.apache.rat.configuration.builders.TextBuilder;
+import org.apache.rat.license.ILicense;
 
 
 /**
  * @since Rat 0.8
+ * @deprecated Use new configuration options
  */
-public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMatcher {
+@Deprecated // Since 0.16
+public class SimplePatternBasedLicense  extends BaseLicense {
     private String[] patterns;
 
+
     public SimplePatternBasedLicense() {
+        
     }
 
-    protected SimplePatternBasedLicense(Datum pLicenseFamilyCategory, Datum pLicenseFamilyName,
-            String pNotes, String[] pPatterns) {
-        super(pLicenseFamilyCategory, pLicenseFamilyName, pNotes);
-        setPatterns(pPatterns);
-    }
     
     public String[] getPatterns() {
         return patterns;
@@ -47,29 +48,22 @@ public class SimplePatternBasedLicense extends BaseLicense implements IHeaderMat
         patterns = pPatterns;
     }
 
-    protected boolean matches(String pLine) {
-        if (pLine != null) {
-            final String[] pttrns = getPatterns();
-            if (pttrns != null) {
-                for (String pttrn : pttrns) {
-                    if (pLine.contains(pttrn)) {
-                        return true;
-                    }
-                }
-            }
+    private AbstractBuilder getMatcher() {
+        if (patterns.length == 1) {
+            return new TextBuilder().setSimpleText(patterns[0]);
+        } else {
+            AnyBuilder any = new AnyBuilder();
+            Arrays.stream(patterns).map(s -> new TextBuilder().setSimpleText(s)).forEach(b-> any.addEnclosed(b));
+            return any;
         }
-        return false;
-    }
-    
-    public void reset() {
-        // Nothing to do
     }
 
-    public boolean match(Document pSubject, String pLine) throws RatHeaderAnalysisException {
-        final boolean result = matches(pLine);
-        if (result) {
-            reportOnLicense(pSubject);
-        }
-        return result;
+    @Override
+    public ILicense.Builder getLicense() {
+        return ILicense.builder()
+        .setFamily(getLicenseFamilyCategory())
+        .setName(getLicenseFamilyName())
+        .setMatcher( getMatcher() )
+        .setNote(getNotes());
     }
 }

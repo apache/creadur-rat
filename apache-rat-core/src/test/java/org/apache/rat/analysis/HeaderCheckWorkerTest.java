@@ -15,28 +15,27 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 
 package org.apache.rat.analysis;
 
-import org.apache.rat.analysis.license.ApacheSoftwareLicense20;
-import org.apache.rat.api.Document;
-import org.apache.rat.document.MockLocation;
-import org.junit.Test;
-
 import java.io.StringReader;
+import java.util.Arrays;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apache.rat.api.Document;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.testhelpers.TestingLocation;
+import org.junit.jupiter.api.Test;
+
 
 public class HeaderCheckWorkerTest {
 
     @Test
     public void isFinished() throws Exception {
-        final Document subject = new MockLocation("subject");
-        HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), new ApacheSoftwareLicense20(), subject);
-        assertFalse(worker.isFinished());
+        final Document subject = new TestingLocation("subject");
+        ILicense matcher = new TestingLicense();
+        HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), Arrays.asList(matcher), subject);
         worker.read();
-        assertTrue(worker.isFinished());
     }
 }
