@@ -160,7 +160,7 @@ public class Report {
      * Name of File to exclude from report consideration.
      */
     static final Option EXCLUDE_CLI = Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
-            .desc("Excludes files matching wildcard <expression>. May be followed by multiple arguments. "
+            .desc("Excludes files matching wildcard <Expression>. May be followed by multiple arguments. "
                     + "Note that '--' or a following option is required when using this parameter.")
             .build();
     /**
@@ -188,7 +188,8 @@ public class Report {
      * @since 0.16.0
      */
     static final Option LICENSES = Option.builder().longOpt("licenses").hasArgs().argName("FileOrURI")
-            .desc("File names or URLs for license definitions")
+            .desc("File names or URLs for license definitions.  May be followed by multiple arguments. " +
+                    "Note that '--' or a following option is required when using this parameter.")
             .build();
     /**
      * Do not use the default files.
@@ -224,7 +225,7 @@ public class Report {
      * @since 0.16.0
      */
     static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
-            .hasArgs().argName("LogLevel")
+            .hasArg().argName("LogLevel")
             .desc("sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build();
