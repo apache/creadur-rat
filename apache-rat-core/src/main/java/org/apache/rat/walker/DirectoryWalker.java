@@ -57,7 +57,7 @@ public class DirectoryWalker extends Walker {
      * Process a directory, restricted directories will be ignored.
      *
      * @param report The report to process the directory with
-     * @param document  the document to process.
+     * @param document the document to process.
      * @throws RatException on error.
      */
     private void processDirectory(final RatReport report, Document document) throws RatException {
@@ -102,7 +102,7 @@ public class DirectoryWalker extends Walker {
      * Process all directories in a set of file objects, ignoring any directories set to be ignored.
      *
      * @param report the report to use in processing
-     * @param documents  the documentss to process (only directories will be processed)
+     * @param documents the documents to process (only directories will be processed)
      * @throws RatException on error
      */
     private void processDirectories(final RatReport report, final SortedSet<Document> documents) throws RatException {
@@ -117,7 +117,7 @@ public class DirectoryWalker extends Walker {
      * Process all files in a set of file objects, ignoring any files set to be ignored.
      *
      * @param report the report to use in processing
-     * @param documents  the documents to process (only files will be processed)
+     * @param documents the documents to process (only files will be processed)
      * @throws RatException on error
      */
     private void processNonDirectories(final RatReport report, final SortedSet<Document> documents) throws RatException {
