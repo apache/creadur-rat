@@ -57,10 +57,10 @@ public abstract class Walker implements IReportable {
 
     /**
      * Tests if the specified path should be ignored.
-     * @param pth the Path to test
+     * @param path the Path to test
      * @return {@code true} if the file should not be ignored.
      */
-    protected final boolean isNotIgnored(Path pth) {
-        return !filesToIgnore.accept(pth.getParent().toFile(), pth.toString());
+    protected final boolean isNotIgnored(Path path) {
+        return !filesToIgnore.accept(path.getParent().toFile(), path.toString());
     }
 }
