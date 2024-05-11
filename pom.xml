@@ -320,7 +320,8 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.5.0</version>
           <configuration>
-            <maxAllowedViolations>63</maxAllowedViolations>
+            <!-- RAT-369: JDK21 finds 67 errors, while older releases find 63 -->
+            <maxAllowedViolations>67</maxAllowedViolations>
             <failOnError>true</failOnError>
             <!-- we only want to see our own problems and in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
