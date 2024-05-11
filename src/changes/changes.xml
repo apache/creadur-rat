@@ -84,6 +84,10 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
         Javascript (.js) files not processed as text.
         Fixed as part of the Tika change.
       </action>
+      <action issue="RAT-256" type="fix" dev="claudenw">
+        Fixed the filter compilation so that illegal regex do not cause other filters to be ignored.
+        Updated the logging to only log a warning when at least one filter was skipped.
+      </action>
       <action issue="RAT-372" type="add" dev="claudenw">
         Added ability to process archive files within a project to look for license files.  This necessitated an addition
         of a command line option "archive" to limit specify the level of detail in the archive report.  See command line

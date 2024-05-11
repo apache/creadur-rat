@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Converter;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
@@ -130,9 +131,14 @@ public class Report {
     /**
      * Adds license headers to files missing headers.
      */
-    private static final OptionGroup ADD = new OptionGroup()
-            .addOption(new Option("a", false,
-                    "(deprecated) Add the default license header to any file with an unknown license.  Use '-A' or ---addLicense instead."))
+    private static final DeprecatedAttributes addAttributes = DeprecatedAttributes.builder().setForRemoval(true).setSince("1.17.0")
+                                    .setDescription("Use '-A' or --addLicense instead.").get();
+    static final OptionGroup ADD = new OptionGroup()
+            .addOption(Option.builder("a").hasArg(false)
+                    .desc(format( "[%s]", addAttributes))
+                    .deprecated( addAttributes )
+                    .build())
+
             .addOption(new Option("A", "addLicense", false,
                     "Add the default license header to any file with an unknown license that is not in the exclusion list. "
                             + "By default new files will be created with the license header, "
@@ -147,19 +153,24 @@ public class Report {
             .desc("Define the output file where to write a report to (default is System.out).")
             .converter(Converter.FILE).build();
 
+    static final DeprecatedAttributes dirAttributes = DeprecatedAttributes.builder().setForRemoval(true).setSince("1.17.0")
+            .setDescription("Use '--'").get();
     static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
-            .desc("(deprecated, use '--') Used to indicate source when using --exclude.").argName("DirOrArchive").build();
+            .desc(format( "[%s] %s", dirAttributes, "Used to indicate end of list when using --exclude.")).argName("DirOrArchive")
+            .deprecated( dirAttributes).build();
 
     /**
      * Forces changes to be written to new files.
      */
     static final Option FORCE = new Option("f", "force", false,
-            "Forces any changes in files to be written directly to the source files (i.e. new files are not created).");
+            format("Forces any changes in files to be written directly to the source files (i.e. new files are not created).  Only valid with --%s",
+                    ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()));
     /**
      * Defines the copyright header to add to the file.
      */
     static final Option COPYRIGHT = Option.builder().option("c").longOpt("copyright").hasArg()
-            .desc("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\"")
+            .desc(format("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\".  Only valid with --%s",
+                    ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()))
             .build();
     /**
      * Name of File to exclude from report consideration.
@@ -309,8 +320,10 @@ public class Report {
     public static ReportConfiguration parseCommands(String[] args, Consumer<Options> helpCmd, boolean noArgs) throws IOException {
         Options opts = buildOptions();
         CommandLine cl;
+        Consumer<Option> logDeprecated = o -> DefaultLog.INSTANCE.warn( format("Deprecated option %s used.  %s", o.getOpt(), o.getDeprecated().toString()));
         try {
-            cl = new DefaultParser().parse(opts, args);
+            //DefaultParser.builder().setDeprecatedHandler()
+            cl = DefaultParser.builder().setDeprecatedHandler(logDeprecated).build().parse(opts, args);
         } catch (ParseException e) {
             DefaultLog.INSTANCE.error(e.getMessage());
             DefaultLog.INSTANCE.error("Please use the \"--help\" option to see a list of valid commands and options");
@@ -462,24 +475,29 @@ public class Report {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
         for (String exclude : excludes) {
-            try {
-                // skip comments
-                if (exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
-                    ignoredLines++;
-                    continue;
-                }
 
-                String exclusion = exclude.trim();
-                // interpret given patterns as regular expression, direct file names or
-                // wildcards to give users more choices to configure exclusions
+            // skip comments
+            if (exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
+                ignoredLines++;
+                continue;
+            }
+
+            String exclusion = exclude.trim();
+            // interpret given patterns as regular expression, direct file names or
+            // wildcards to give users more choices to configure exclusions
+            try {
                 orFilter.addFileFilter(new RegexFileFilter(exclusion));
-                orFilter.addFileFilter(new NameFileFilter(exclusion));
-                orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
             } catch (PatternSyntaxException e) {
-                DefaultLog.INSTANCE.error("Will skip given exclusion '" + exclude + "' due to " + e);
+                DefaultLog.INSTANCE.info("Will skip given exclusion '" + exclude + "' due to " + e.getMessage());
+            }
+            orFilter.addFileFilter(new NameFileFilter(exclusion));
+            if (exclude.contains("?") || exclude.contains("*")) {
+                orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
             }
         }
-        DefaultLog.INSTANCE.error("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
+        if (ignoredLines > 0) {
+            DefaultLog.INSTANCE.info("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
+        }
         return new NotFileFilter(orFilter);
     }
 
@@ -521,7 +539,7 @@ public class Report {
    }
     static void printUsage(PrintWriter writer, Options opts) {
 
-        HelpFormatter helpFormatter = new HelpFormatter();
+        HelpFormatter helpFormatter = new HelpFormatter.Builder().get();
         helpFormatter.setWidth(130);
         helpFormatter.setOptionComparator(new OptionComparator());
         String syntax = "java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]";

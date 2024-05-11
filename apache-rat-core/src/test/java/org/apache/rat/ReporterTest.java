@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Predicate;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -46,6 +47,8 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
