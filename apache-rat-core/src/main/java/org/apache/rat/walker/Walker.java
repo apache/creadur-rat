@@ -23,7 +23,6 @@ import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.api.Document;
 import org.apache.rat.report.IReportable;
 
-import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Path;
 
@@ -60,7 +59,7 @@ public abstract class Walker implements IReportable {
      * @param path the Path to test
      * @return {@code true} if the file should not be ignored.
      */
-    protected final boolean isNotIgnored(Path path) {
+    protected final boolean isNotIgnored(final Path path) {
         return !filesToIgnore.accept(path.getParent().toFile(), path.toString());
     }
 }

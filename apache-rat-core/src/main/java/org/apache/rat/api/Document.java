@@ -25,8 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.SortedSet;
 
-import org.apache.rat.document.CompositeDocumentException;
-
 /**
  * The representation of a document being scanned.
  */
@@ -80,16 +78,16 @@ public abstract class Document implements Comparable<Document> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null || ! (obj instanceof Document)) {
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof Document)) {
             return false;
         }
-        return getPath().equals(((Document)obj).getPath());
+        return getPath().equals(((Document) obj).getPath());
     }
 
     /**
      * Get the path that identifies the document.
-     * @return
+     * @return the path for the document.
      */
     public Path getPath() {
         return Paths.get(getName());
@@ -100,7 +98,6 @@ public abstract class Document implements Comparable<Document> {
      * 
      * @return <code>Reader</code> not null
      * @throws IOException if this document cannot be read
-     * @throws CompositeDocumentException if this document can only be read as a
      * composite archive
      */
     public abstract Reader reader() throws IOException;
@@ -128,8 +125,7 @@ public abstract class Document implements Comparable<Document> {
      * of this object.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format("%s( name = %s metaData = %s )", this.getClass().getSimpleName(), getName(), getMetaData());
     }
 

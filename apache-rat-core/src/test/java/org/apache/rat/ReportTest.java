@@ -72,13 +72,13 @@ public class ReportTest {
 
     private ReportConfiguration createConfig(String... args) throws IOException, ParseException {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), args);
-        return Report.createConfiguration("target/test-classes/elements", cl);
+        return Report.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
     }
 
     @Test
     public void parseExclusionsForCLIUsage() {
         final FilenameFilter filter = Report
-                .parseExclusions(Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
+                .parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertNotNull(filter);
     }
 
@@ -86,7 +86,7 @@ public class ReportTest {
     public void testDefaultConfiguration() throws ParseException, IOException {
         String[] empty = {};
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), empty);
-        ReportConfiguration config = Report.createConfiguration("", cl);
+        ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "", cl);
         ReportConfigurationTest.validateDefault(config);
     }
 
@@ -94,7 +94,7 @@ public class ReportTest {
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{"-o", output.getCanonicalPath()});
-        ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
+        ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
         new Reporter(config).output();
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);

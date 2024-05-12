@@ -1,7 +1,26 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ */
 package org.apache.rat;
 
 import org.apache.commons.cli.Option;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,28 +33,35 @@ import static java.lang.String.format;
 /**
  * Reporting methods for deprecated objects.
  */
-public class DeprecationReporter {
+public final class DeprecationReporter {
+
+    private DeprecationReporter() {
+        // DO NOT INSTANTIATE
+    }
     /**
      * Deprecated Command line option consumer.
      */
-    public static Consumer<Option> LOG_DEPRECATED = o -> {
-        StringBuilder buff = new StringBuilder();
-        if (o.getOpt() != null) {
-            buff.append("-").append(o.getOpt());
-            if (o.getLongOpt() != null) {
-                buff.append(", --").append(o.getLongOpt());
+
+    public static Consumer<Option> getLogReporter(Log log) {
+        return  o -> {
+            StringBuilder buff = new StringBuilder();
+            if (o.getOpt() != null) {
+                buff.append("-").append(o.getOpt());
+                if (o.getLongOpt() != null) {
+                    buff.append(", --").append(o.getLongOpt());
+                }
+            } else {
+                buff.append("--").append(o.getLongOpt());
             }
-        } else {
-            buff.append("--").append(o.getLongOpt());
-        }
-        DefaultLog.getInstance().warn(format("Option [%s] used.  %s", buff, o.getDeprecated().toString()));
-    };
+            log.warn(format("Option [%s] used.  %s", buff, o.getDeprecated().toString()));
+        };
+    }
 
     /**
      * Log Deprecated class use.
      * @param clazz the Deprecated class to log
      */
-    public static void logDeprecated(Class<?> clazz) {
+    public static void logDeprecated(final Class<?> clazz) {
         if (clazz.getAnnotation(Deprecated.class) != null) {
             StringBuilder sb = new StringBuilder(format("Deprecated class used: %s ", clazz));
             Info info = clazz.getAnnotation(Info.class);
@@ -43,7 +69,7 @@ public class DeprecationReporter {
                 if (info.forRemoval()) {
                     sb.append("  Scheduled for removal");
                     if (!info.since().isEmpty()) {
-                        sb.append( " since ").append(info.since());
+                        sb.append(" since ").append(info.since());
                     }
                     sb.append(".");
                 } else if (!info.since().isEmpty()) {
@@ -54,6 +80,18 @@ public class DeprecationReporter {
                 }
             }
             DefaultLog.getInstance().warn(sb.toString());
+        }
+    }
+
+    /**
+     * Log deprecated options
+     * @param log The log to write to.
+     * @param option potentially deprecated option to log.
+     */
+    // TODO remove this when commons-cli 1.7.1 or higher is available
+    public static void logDeprecated(final Log log, final Option option) {
+        if (option.isDeprecated()) {
+            getLogReporter(log).accept(option);
         }
     }
 

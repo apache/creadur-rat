@@ -19,7 +19,6 @@
 package org.apache.rat.license;
 
 import org.apache.rat.DeprecationReporter;
-import org.apache.rat.utils.DefaultLog;
 
 /**
  * An implementation of the ILicenseFamily.
