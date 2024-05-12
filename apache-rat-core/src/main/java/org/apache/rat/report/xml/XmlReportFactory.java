@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -42,23 +42,26 @@ import java.util.List;
 
 /**
  * A factory to create reports from a writer and a configuration.
- *
  */
-public class XmlReportFactory {
+public final class XmlReportFactory {
     private static final String RAT_REPORT = "rat-report";
     private static final String TIMESTAMP = "timestamp";
+
+    private XmlReportFactory() {
+        // Do not instantiate
+    }
 
     /**
      * Creates a RatReport from the arguments.
      * The {@code statistic} is used to create a ClaimAggregator.
      * If the {@code configuration} indicates that licenses should be added a LicenseAddingReport is added.
-     * @param writer The XML writer to send output to.
-     * @param statistic the ClaimStatistics for the report. may be null.
+     *
+     * @param writer        The XML writer to send output to.
+     * @param statistic     the ClaimStatistics for the report. may be null.
      * @param configuration The report configuration.
      * @return a RatReport instance.
      */
-    public static RatReport createStandardReport(IXmlWriter writer,
-                                                 final ClaimStatistic statistic, ReportConfiguration configuration) {
+    public static RatReport createStandardReport(final IXmlWriter writer, final ClaimStatistic statistic, final ReportConfiguration configuration) {
         final List<RatReport> reporters = new ArrayList<>();
         if (statistic != null) {
             reporters.add(new ClaimAggregator(statistic));
@@ -66,12 +69,12 @@ public class XmlReportFactory {
         if (configuration.isAddingLicenses() && !configuration.isDryRun()) {
             reporters.add(new LicenseAddingReport(configuration.getLog(), configuration.getCopyrightMessage(), configuration.isAddingLicensesForced()));
         }
-        
+
         if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
-            
+
             reporters.add(new ConfigurationReport(writer, configuration));
         }
-        
+
         reporters.add(new SimpleXmlClaimReporter(writer));
 
         final IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(configuration);
@@ -82,22 +85,30 @@ public class XmlReportFactory {
         return new ClaimReporterMultiplexer(writer, configuration.isDryRun(), analysisMultiplexer, reporters);
     }
 
-
-    public static void startReport(IXmlWriter writer) throws RatException {
+    /**
+     * Starts the XML report by writing the standard header into the writer.
+     * @param writer The writer to write into
+     * @throws RatException on error
+     */
+    public static void startReport(final IXmlWriter writer) throws RatException {
         try {
-            writer.openElement(RAT_REPORT).attribute(TIMESTAMP,
-                    DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
+            writer.openElement(RAT_REPORT).attribute(TIMESTAMP, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
         } catch (IOException e) {
             throw new RatException("Cannot open start element", e);
         }
     }
 
-
-    public static void endReport(IXmlWriter writer) throws RatException {
+    /**
+     * Ends the XML reprot by closing the element that startReport opened.
+     * @param writer the write to write into.
+     * @throws RatException on error
+     * @see #startReport(IXmlWriter)
+     */
+    public static void endReport(final IXmlWriter writer) throws RatException {
         try {
             writer.closeElement();
         } catch (IOException e) {
-            throw new RatException("Cannot close start element: "+RAT_REPORT, e);
+            throw new RatException("Cannot close start element: " + RAT_REPORT, e);
         }
     }
 }

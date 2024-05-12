@@ -74,6 +74,11 @@ import static java.lang.String.format;
  */
 public class Report {
 
+    /*
+    If there are changes to Options the example output should be regenerated and placed in
+    apache-rat/src/site/apt/index.apt.vm
+    Be careful of formatting as some editors get confused.
+     */
     private static final String[] NOTES = {
             "Rat highlights possible issues.",
             "Rat reports require interpretation.",
