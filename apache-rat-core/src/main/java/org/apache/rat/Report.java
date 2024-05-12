@@ -74,6 +74,11 @@ import static java.lang.String.format;
  */
 public class Report {
 
+    /*
+    If there are changes to Options the example output should be regenerated and placed in
+    apache-rat/src/site/apt/index.apt.vm
+    Be careful of formatting as some editors get confused.
+     */
     private static final String[] NOTES = {
             "Rat highlights possible issues.",
             "Rat reports require interpretation.",
@@ -160,7 +165,7 @@ public class Report {
      * Name of File to exclude from report consideration.
      */
     static final Option EXCLUDE_CLI = Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
-            .desc("Excludes files matching wildcard <expression>. May be followed by multiple arguments. "
+            .desc("Excludes files matching wildcard <Expression>. May be followed by multiple arguments. "
                     + "Note that '--' or a following option is required when using this parameter.")
             .build();
     /**
@@ -188,7 +193,8 @@ public class Report {
      * @since 0.16.0
      */
     static final Option LICENSES = Option.builder().longOpt("licenses").hasArgs().argName("FileOrURI")
-            .desc("File names or URLs for license definitions")
+            .desc("File names or URLs for license definitions.  May be followed by multiple arguments. " +
+                    "Note that '--' or a following option is required when using this parameter.")
             .build();
     /**
      * Do not use the default files.
@@ -224,7 +230,7 @@ public class Report {
      * @since 0.16.0
      */
     static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
-            .hasArgs().argName("LogLevel")
+            .hasArg().argName("LogLevel")
             .desc("sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build();
@@ -347,7 +353,7 @@ public class Report {
 
         if (cl.hasOption(LIST_LICENSES)) {
             try {
-                configuration.listFamilies(cl.getParsedOptionValue(LIST_LICENSES));
+                configuration.listLicenses(cl.getParsedOptionValue(LIST_LICENSES));
             } catch (ParseException e) {
                 logParseException(e, LIST_LICENSES, cl, Defaults.LIST_LICENSES);
             }
@@ -424,7 +430,7 @@ public class Report {
         }
         Defaults defaults = defaultBuilder.build(DefaultLog.INSTANCE);
         configuration.setFrom(defaults);
-        if (baseDirectory != null) {
+        if (StringUtils.isNotBlank(baseDirectory)) {
             configuration.setReportable(getDirectory(baseDirectory, configuration));
         }
         return configuration;
@@ -553,9 +559,7 @@ public class Report {
      * This class implements the {@code Comparator} interface for comparing Options.
      */
     public static class OptionComparator implements Comparator<Option>, Serializable {
-        /**
-         * The serial version UID.
-         */
+        /** The serial version UID.  */
         private static final long serialVersionUID = 5305467873966684014L;
 
         private String getKey(Option opt) {

@@ -25,6 +25,8 @@ import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.report.xml.XmlReportFactory;
+import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
  * Executes a RatReport that multiplexes the running of multiple RatReports
@@ -35,17 +37,20 @@ public class ClaimReporterMultiplexer implements RatReport {
     private final List<? extends RatReport> reporters;
     private final boolean dryRun;
 
+    private final IXmlWriter writer;
+
     /**
      * A multiplexer to run multiple claim reports.
      * @param dryRun true if this is a dry run.
      * @param analyser the analyser to use.
      * @param reporters the reports to execute.
      */
-    public ClaimReporterMultiplexer(final boolean dryRun, final IDocumentAnalyser analyser,
-            final List<? extends RatReport> reporters) {
+    public ClaimReporterMultiplexer(final IXmlWriter writer, final boolean dryRun, final IDocumentAnalyser analyser,
+                                    final List<? extends RatReport> reporters) {
         this.analyser  = analyser;
         this.reporters = reporters;
         this.dryRun = dryRun;
+        this.writer = writer;
     }
 
     @Override
@@ -66,6 +71,7 @@ public class ClaimReporterMultiplexer implements RatReport {
 
     @Override
     public void startReport() throws RatException {
+        XmlReportFactory.startReport(writer);
         for (RatReport report : reporters) {
             report.startReport();
         }
@@ -76,5 +82,6 @@ public class ClaimReporterMultiplexer implements RatReport {
         for (RatReport report : reporters) {
             report.endReport();
         }
+        XmlReportFactory.endReport(writer);
     }
 }

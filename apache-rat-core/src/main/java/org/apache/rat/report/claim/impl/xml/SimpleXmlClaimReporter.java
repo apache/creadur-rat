@@ -32,8 +32,6 @@ import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 public class SimpleXmlClaimReporter extends AbstractReport {
-    private static final String RAT_REPORT = "rat-report";
-    private static final String TIMESTAMP = "timestamp";
     private static final String RESOURCE = "resource";
     private static final String LICENSE = "license";
     private static final String APPROVAL = "approval";
@@ -89,20 +87,9 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 
     @Override
     public void startReport() throws RatException {
-        try {
-            writer.openElement(RAT_REPORT).attribute(TIMESTAMP,
-                    DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
-        } catch (IOException e) {
-            throw new RatException("Cannot open start element", e);
-        }
     }
 
     @Override
     public void endReport() throws RatException {
-        try {
-            writer.closeElement();
-        } catch (IOException e) {
-            throw new RatException("Cannot close start element: "+RAT_REPORT, e);
-        }
     }
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.rat;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,6 +30,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.SortedSet;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -36,6 +38,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -125,5 +129,24 @@ public class ReportTest {
 
         config = createConfig(longOpt(Report.XML));
         assertFalse(config.isStyleReport());
+    }
+
+    @Test
+    public void LicensesOptionTest() throws Exception {
+        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] {"-licenses", "target/test-classes/report/LicenseOne.xml"});
+        ReportConfiguration config = Report.createConfiguration("", cl);
+        SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+        ILicense found = LicenseSetFactory.search("LiOne", set);
+        assertNotNull(found);
+    }
+
+    @Test
+    public void LicensesOptionNoDefaultsTest() throws Exception {
+        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] {"--no-default", "--licenses", "target/test-classes/report/LicenseOne.xml", "--licenses", "target/test-classes/report/LicenseTwo.xml"});
+        ReportConfiguration config = Report.createConfiguration("", cl);
+        SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+        assertEquals(2, set.size());
+        assertNotNull(LicenseSetFactory.search("LiOne", set), "LiOne");
+        assertNotNull(LicenseSetFactory.search("LiTwo", set), "LiTwo");
     }
 }
