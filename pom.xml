@@ -320,8 +320,9 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.5.0</version>
           <configuration>
-            <!-- RAT-369: as spotbugs does not allow setting a global (numeric) threshold of currently accepted errors/bugs we do not fail the build -->
-            <failOnError>false</failOnError>
+            <!-- RAT-369: JDK21 finds 67 errors, while older releases find 63 -->
+            <maxAllowedViolations>67</maxAllowedViolations>
+            <failOnError>true</failOnError>
             <!-- we only want to see our own problems and in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
             <!-- in order to have a global spotbugs configuration an exclusion file needs to exist in all submodules -->
