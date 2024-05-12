@@ -265,6 +265,7 @@ public class ReportTest {
         args = new String[]{"--" + Report.LICENSES.getLongOpt(), cfgFile.getPath(), "--"  + Report.NO_DEFAULTS};
         test = c -> {
             assertEquals(1, c.getLicenses(LicenseSetFactory.LicenseFilter.ALL).size());
+            cfgFile.delete();
             return true;
         };
 
