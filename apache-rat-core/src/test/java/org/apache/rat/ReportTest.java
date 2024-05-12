@@ -60,6 +60,7 @@ import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -69,6 +70,22 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ReportTest {
     @TempDir
     static File tempDirectory;
+
+    @BeforeAll
+    public static void setUpClass() throws Exception {
+        File cfgFile = new File( tempDirectory, "test.xml");
+        try (IXmlWriter writer = new XmlWriter(new FileWriter(cfgFile))) {
+            writer.openElement("rat-config").openElement("families").openElement("family")
+                    .attribute("id","TEST").attribute("name", "Test license family")
+                    .closeElement().closeElement() // closed families
+                    .openElement("licenses").openElement("license")
+                    .attribute("id", "TEST-1").attribute("name", "Test license")
+                    .openElement("text").content("Hello world").closeElement()
+                    .closeDocument();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private ReportConfiguration createConfig(String... args) throws IOException, ParseException {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), args);
@@ -250,19 +267,7 @@ public class ReportTest {
         lst.add(Arguments.of(args, test));
 
 //        Report.LICENSES;
-        File cfgFile = new File( tempDirectory, "test.xml");
-        try (IXmlWriter writer = new XmlWriter(new FileWriter(cfgFile))) {
-            writer.openElement("rat-config").openElement("families").openElement("family")
-                    .attribute("id","TEST").attribute("name", "Test license family")
-                    .closeElement().closeElement() // closed families
-                    .openElement("licenses").openElement("license")
-                    .attribute("id", "TEST-1").attribute("name", "Test license")
-                    .openElement("text").content("Hello world").closeElement()
-                    .closeDocument();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        args = new String[]{"--" + Report.LICENSES.getLongOpt(), cfgFile.getPath(), "--"  + Report.NO_DEFAULTS};
+        args = new String[]{"--" + Report.LICENSES.getLongOpt(), new File( tempDirectory, "test.xml").getPath(), "--"  + Report.NO_DEFAULTS};
         test = c -> {
             assertEquals(1, c.getLicenses(LicenseSetFactory.LicenseFilter.ALL).size());
             return true;

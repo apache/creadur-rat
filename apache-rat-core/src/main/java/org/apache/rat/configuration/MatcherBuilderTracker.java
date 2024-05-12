@@ -63,7 +63,7 @@ public final class MatcherBuilderTracker {
     /**
      * Get the matching builder for the name.
      * @param name The name of the builder.
-     * @return the builder for that name.
+     * @return the builder for that name. (not null)
      */
     public static AbstractBuilder getMatcherBuilder(final String name) {
         Class<? extends AbstractBuilder> clazz = instance().matcherBuilders.get(name);

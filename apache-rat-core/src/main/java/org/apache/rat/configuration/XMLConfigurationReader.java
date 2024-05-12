@@ -330,26 +330,18 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                 processChildren(description, children, childProcessor);
             }
         }
-        return new ImmutablePair<Boolean, List<Node>>(foundChildren, children);
+        return new ImmutablePair<>(foundChildren, children);
     }
 
     private AbstractBuilder parseMatcher(Node matcherNode) {
         final AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(matcherNode.getNodeName());
-        if (builder == null) {
-            throw new ConfigurationException(String.format("No builder found for: %s", matcherNode.getNodeName()));
-        }
+
         try {
             final Description description = DescriptionBuilder.buildMap(builder.builtClass());
-
+            if (description == null) {
+                throw new ConfigurationException(String.format("Unable to build description for %s", builder.builtClass()));
+            }
             processBuilderParams(description, builder);
-//            for (Description desc : description.childrenOfType(Component.Type.BuilderParam)) {
-//                Method m = builderParams.get(desc.getCommonName());
-//                try {
-//                    callSetter(desc, builder, m.invoke(builderParams));
-//                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-//                    ImplementationException.makeInstance(e);
-//                }
-//            }
 
             // process the attributes
             description.setChildren(getLog(), builder, attributes(matcherNode));
@@ -449,11 +441,8 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         for (Description childDescription : childDescriptions) {
             Iterator<Node> iter = children.iterator();
             while (iter.hasNext()) {
-                Node child = iter.next();
-                if (MatcherBuilderTracker.getMatcherBuilder(child.getNodeName()) != null) {
-                    callSetter(childDescription, builder, parseMatcher(child));
-                    iter.remove();
-                }
+                callSetter(childDescription, builder, parseMatcher(iter.next()));
+                iter.remove();
             }
         }
 
