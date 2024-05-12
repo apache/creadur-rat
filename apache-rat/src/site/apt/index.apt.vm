@@ -104,7 +104,7 @@ usage: java -jar apache-rat/target/apache-rat-${project.version}.jar [options] [
                                       external xsl file may be specified or one of the internal named sheets: plain-rat (default),
                                       missing-headers, or unapproved-licenses
     --scan-hidden-directories         Scan hidden directories
-    --standard <ProcessingType>       Specifies the level of detail in STANDARD file reporting.. (default is ABSENCE)
+    --standard <ProcessingType>       Specifies the level of detail in STANDARD file reporting. (default is ABSENCE)
  -x,--xml                             Output the report in raw XML format.  Not compatible with -s
 
 ====== Argument Types ======

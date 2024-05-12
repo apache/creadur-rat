@@ -79,7 +79,7 @@ public class DefaultAnalyserFactory {
         }
 
         /**
-         * Generates a predicateo to filter out licnses that should not be reported.
+         * Generates a predicate to filter out licenses that should not be reported.
          * @param proc the processing status to filter.
          * @return a Predicate to do the filtering.
          */
@@ -94,8 +94,8 @@ public class DefaultAnalyserFactory {
                         return false;
                 }
             };
-
         }
+
         @Override
         public void analyse(Document document) throws RatDocumentAnalysisException {
 

@@ -261,7 +261,7 @@ public class Report {
      * Specify the processing of STANDARD files.
      */
     static final Option STANDARD = Option.builder().longOpt("standard").hasArg().argName("ProcessingType")
-            .desc(format("Specifies the level of detail in STANDARD file reporting.. (default is %s)",
+            .desc(format("Specifies the level of detail in STANDARD file reporting. (default is %s)",
                     Defaults.STANDARD_PROCESSING))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();
