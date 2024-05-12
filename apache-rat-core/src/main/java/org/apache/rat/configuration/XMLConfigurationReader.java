@@ -19,6 +19,7 @@
 package org.apache.rat.configuration;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -169,8 +170,8 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
             throw new ConfigurationException("Unable to create DOM builder", e);
         }
         for (URL url : urls) {
-            try {
-                add(builder.parse(url.openStream()));
+            try (InputStream inputStream = url.openStream()){
+                add(builder.parse(inputStream));
             } catch (SAXException | IOException e) {
                 throw new ConfigurationException("Unable to read url: " + url, e);
             }
