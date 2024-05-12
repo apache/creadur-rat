@@ -18,6 +18,7 @@
  */
 package org.apache.rat;
 
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,11 +40,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -53,6 +56,7 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -183,6 +187,7 @@ public class ReportTest {
         List<Arguments> lst = new ArrayList<>();
         String[] args;
         Predicate<ReportConfiguration> test;
+
 //        Report.ARCHIVE
         for (ReportConfiguration.Processing processing : ReportConfiguration.Processing.values()) {
             args = new String[]{"--" + Report.ARCHIVE.getLongOpt(), processing.name().toLowerCase()};
@@ -199,6 +204,7 @@ public class ReportTest {
         lst.add(Arguments.of(args, test));
 
 //        Report.DIR;
+
 //        Report.DRY_RUN;
         args = new String[]{"--" + Report.DRY_RUN.getLongOpt()};
         test = ReportConfiguration::isDryRun;
@@ -277,9 +283,10 @@ public class ReportTest {
         }
 
 //        Report LOG_LEVEL
+        DefaultLog log = (DefaultLog) DefaultLog.getInstance();
         for (Log.Level l : Log.Level.values()) {
             args = new String[]{"--" + Report.LOG_LEVEL.getLongOpt(), l.name().toLowerCase()};
-            test = c -> DefaultLog.INSTANCE.getLevel() == l;
+            test = c -> log.getLevel() == l;
             lst.add(Arguments.of(args, test));
         }
 //        Report.NO_DEFAULTS
@@ -327,5 +334,21 @@ public class ReportTest {
         test = ReportConfiguration::isStyleReport;
         lst.add(Arguments.of(args, test.negate()));
         return lst.stream();
+    }
+
+    @Test
+    public void testDeprecatedUseLogged() throws IOException {
+        TestingLog log = new TestingLog();
+        try {
+            DefaultLog.setInstance(log);
+            String[] args = {longOpt(Report.DIR), "foo", "-a"};
+            ReportConfiguration config = Report.parseCommands(args, (o) -> {
+            }, true);
+
+        } finally {
+            DefaultLog.setInstance(null);
+        }
+        log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17.0: Use '--'");
+        log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17.0: Use '-A or --addLicense'");
     }
 }

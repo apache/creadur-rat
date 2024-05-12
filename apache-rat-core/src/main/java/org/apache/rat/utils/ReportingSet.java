@@ -37,7 +37,7 @@ public class ReportingSet<T> implements SortedSet<T> {
     private final SortedSet<T> delegate;
     private Options duplicateOption = Options.IGNORE;
     private Log.Level duplicateLogLevel = Log.Level.WARN;
-    private Log log = DefaultLog.INSTANCE;
+    private Log log = DefaultLog.getInstance();
     private Function<T,String> duplicateFmt = (t) -> String.format("Duplicate %s (%s) detected %s", t.getClass(), t);
 
     public enum Options { OVERWRITE, IGNORE, FAIL }

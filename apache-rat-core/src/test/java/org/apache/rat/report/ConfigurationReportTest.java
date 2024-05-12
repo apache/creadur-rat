@@ -52,10 +52,10 @@ public class ConfigurationReportTest {
 
     @BeforeEach
     public void setup() {
-        reportConfiguration = new ReportConfiguration(DefaultLog.INSTANCE);
+        reportConfiguration = new ReportConfiguration(DefaultLog.getInstance());
         reportConfiguration.listFamilies(LicenseFilter.ALL);
         reportConfiguration.listLicenses(LicenseFilter.ALL);
-        reportConfiguration.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
+        reportConfiguration.setFrom(Defaults.builder().build(DefaultLog.getInstance()));
 
         sw = new StringWriter();
         writer = new XmlWriter(sw);

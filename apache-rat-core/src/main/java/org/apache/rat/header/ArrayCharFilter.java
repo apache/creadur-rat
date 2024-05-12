@@ -17,7 +17,11 @@
  * under the License.                                           *
  */ 
 package org.apache.rat.header;
+
+import org.apache.rat.DeprecationReporter;
+
 @Deprecated // since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true)
 class ArrayCharFilter implements CharFilter {
 
     private final char[] filtered;
@@ -25,6 +29,7 @@ class ArrayCharFilter implements CharFilter {
     
     protected ArrayCharFilter(final char[] filtered) {
         super();
+        DeprecationReporter.logDeprecated(this.getClass());
         this.filtered = filtered;
         length = filtered.length;
     }

@@ -18,10 +18,13 @@
  */ 
 package org.apache.rat.header;
 
+import org.apache.rat.DeprecationReporter;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
 @Deprecated // since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true)
 class FilteringSequenceFactory {
     
     private static final int BUFFER_CAPACITY = 5000;
@@ -34,6 +37,7 @@ class FilteringSequenceFactory {
     }
     
     public FilteringSequenceFactory(final int capacity, final CharFilter filter) {
+        DeprecationReporter.logDeprecated(this.getClass());
         this.buffer = CharBuffer.allocate(capacity);
         this.filter = filter;
     }

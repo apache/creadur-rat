@@ -48,7 +48,7 @@ public class DefaultAnalyserFactoryTest {
     public void setUp() throws Exception {
         out = new StringWriter();
         reporter = new SimpleXmlClaimReporter(new XmlWriter(out));
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
         config.addLicense(UnknownLicense.INSTANCE);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
     }
@@ -107,8 +107,8 @@ public class DefaultAnalyserFactoryTest {
     public void archiveTypeAnalyserTest() throws Exception {
         final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
         config.setFrom(defaults);
         config.setFilesToIgnore(FalseFileFilter.FALSE);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
@@ -121,8 +121,8 @@ public class DefaultAnalyserFactoryTest {
     public void archivesAbsenceTest() throws Exception {
         final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
         config.setFrom(defaults);
         config.setFilesToIgnore(FalseFileFilter.FALSE);
         config.setArchiveProcessing(ReportConfiguration.Processing.ABSENCE);
@@ -139,8 +139,8 @@ public class DefaultAnalyserFactoryTest {
     public void archivesPresenceTest() throws Exception {
         final Document document = new FileDocument(
                 Resources.getResourceFile("/elements/dummy.jar"));
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
         config.setFrom(defaults);
         config.setFilesToIgnore(FalseFileFilter.FALSE);
         config.setArchiveProcessing(ReportConfiguration.Processing.PRESENCE);

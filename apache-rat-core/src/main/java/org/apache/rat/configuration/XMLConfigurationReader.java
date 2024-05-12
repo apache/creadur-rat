@@ -127,7 +127,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
     }
 
     public Log getLog() {
-        return log == null ? DefaultLog.INSTANCE : log;
+        return log == null ? DefaultLog.getInstance() : log;
     }
 
     @Override

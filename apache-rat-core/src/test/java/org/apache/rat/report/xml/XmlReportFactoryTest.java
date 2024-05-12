@@ -72,9 +72,9 @@ public class XmlReportFactoryTest {
     @Test
     public void standardReport() throws Exception {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.getInstance());
         final TestingLicense testingLicense = new TestingLicense("TEST", new TestingMatcher(true), family);
-        configuration.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
+        configuration.setFrom(Defaults.builder().build(DefaultLog.getInstance()));
         configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
         DirectoryWalker directory = new DirectoryWalker(configuration, new FileDocument(new File(elementsPath)));
         final ClaimStatistic statistic = new ClaimStatistic();

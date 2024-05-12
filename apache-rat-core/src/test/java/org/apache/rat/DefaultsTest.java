@@ -39,7 +39,7 @@ public class DefaultsTest {
 
     @Test
     public void defaultConfigTest() {
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
 
         Set<ILicense> licenses = defaults.getLicenses(LicenseFilter.ALL);
 

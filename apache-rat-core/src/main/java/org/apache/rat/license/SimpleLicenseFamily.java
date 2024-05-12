@@ -18,15 +18,21 @@
  */
 package org.apache.rat.license;
 
+import org.apache.rat.DeprecationReporter;
+import org.apache.rat.utils.DefaultLog;
+
 /**
  * An implementation of the ILicenseFamily.
  */
 @Deprecated // remove in v1.0
+@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "ILicenseFamilyBuilder")
 public class SimpleLicenseFamily  {
     private String familyName;
     private String familyCategory;
 
-    public SimpleLicenseFamily() {}
+    public SimpleLicenseFamily() {
+        DeprecationReporter.logDeprecated(SimpleLicenseFamily.class);
+    }
 
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
