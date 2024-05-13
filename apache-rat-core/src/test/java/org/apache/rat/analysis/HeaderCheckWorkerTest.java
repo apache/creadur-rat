@@ -34,7 +34,7 @@ public class HeaderCheckWorkerTest {
     @Test
     public void isFinished() throws Exception {
         final Document subject = new TestingDocument("subject");
-        ILicense matcher = new TestingLicense();
+        ILicense matcher = new TestingLicense("test", "test");
         HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), Arrays.asList(matcher), subject);
         worker.read();
     }

@@ -97,8 +97,13 @@ public class SimpleLicense implements ILicense {
     }
 
     @Override
-    public int compareTo(ILicense other) {
-        return ILicense.getComparator().compare(this, other);
+    public boolean equals(Object o) {
+        return ILicense.equals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return ILicense.hash(this);
     }
 
     @Override

@@ -19,8 +19,10 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,16 +62,19 @@ public class SPDXMatcherFactory {
     private static Pattern groupSelector = Pattern.compile(".*SPDX-License-Identifier:\\s([A-Za-z0-9\\.\\-]+)");
 
     /**
-     * the last line that this factory scanned.
-     */
-    private String lastLine;
-    /**
      * The last matcer to match the line.
      */
-    private Match lastMatch;
+    private Set<String> lastMatch;
+
+    private boolean checked;
 
     private SPDXMatcherFactory() {
-        lastLine = null;
+        lastMatch = new HashSet<>();
+    }
+
+    private void reset() {
+        lastMatch.clear();
+        checked = false;
     }
 
     /**
@@ -103,16 +108,17 @@ public class SPDXMatcherFactory {
         // if so then see if that name has been registered. If so then we have a match
         // and set
         // lastMatch.
-        if ((lastLine == null || !lastLine.equals(line)) && line.contains("SPDX-License-Identifier")) {
-            Matcher matcher = groupSelector.matcher(line);
-            if (matcher.find()) {
-                lastMatch = matchers.get(matcher.group(1));
-            } else {
-                lastMatch = null;
+        if (!checked) {
+            checked = true;
+            if (line.contains("SPDX-License-Identifier")) {
+                Matcher matcher = groupSelector.matcher(line);
+                while (matcher.find()) {
+                    lastMatch.add(matcher.group(1));
+                }
             }
         }
         // see if the caller matches lastMatch.
-        return (lastMatch != null) && caller.spdxId.equals(lastMatch.spdxId);
+        return lastMatch.contains(caller.spdxId);
     }
 
     @ConfigComponent(type = ComponentType.MATCHER, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
@@ -144,7 +150,7 @@ public class SPDXMatcherFactory {
         @Override
         public void reset() {
             super.reset();
-            SPDXMatcherFactory.this.lastMatch = null;
+            SPDXMatcherFactory.this.reset();
         }
     }
 }

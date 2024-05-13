@@ -531,7 +531,7 @@ public class Report {
 
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + 5);
         for (Map.Entry<String, Supplier<String>> argInfo : ARGUMENT_TYPES.entrySet()) {
-            writer.format("\n<%s>\n", argInfo.getKey());
+            writer.format("%n<%s>%n", argInfo.getKey());
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + 10,
                     argumentPadding + argInfo.getValue().get());
         }

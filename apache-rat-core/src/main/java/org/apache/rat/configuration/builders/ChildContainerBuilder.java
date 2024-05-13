@@ -59,8 +59,8 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
      */
     public AbstractBuilder setResource(String resourceName) {
         URL url = this.getClass().getResource(resourceName);
-        try (final InputStream in = url.openStream()) {
-            BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        try (final InputStream in = url.openStream();
+             BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));) {
             String txt;
             while (null != (txt = buffer.readLine())) {
                 txt = txt.trim();

@@ -22,22 +22,32 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.analysis.IHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SPDXMatcherTest {
 
-    IHeaderMatcher target = SPDXMatcherFactory.INSTANCE.create("hello");
+    IHeaderMatcher target1 = SPDXMatcherFactory.INSTANCE.create("hello");
+    IHeaderMatcher target2 = SPDXMatcherFactory.INSTANCE.create("world");
+    IHeaderMatcher target3 = SPDXMatcherFactory.INSTANCE.create("goodbye");
 
     @BeforeEach
     public void setup() {
-        target.reset();
+        target1.reset();
     }
 
     @Test
     public void testMatch() {
-        assertFalse(target.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: Apache-2", null)));
-        assertTrue(target.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: hello", null)));
-        target.reset();
+        StringBuilder sb = new StringBuilder()
+                .append("SPDX-License-Identifier: world").append(System.lineSeparator())
+                .append("SPDX-License-Identifier: hello").append(System.lineSeparator());
+
+        IHeaders headers =  AbstractMatcherTest.makeHeaders(sb.toString(),null);
+
+        assertTrue(target1.matches(headers));
+        assertTrue(target2.matches(headers));
+        assertFalse(target3.matches(headers));
+        target1.reset();
     }
 }

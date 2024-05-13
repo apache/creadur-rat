@@ -22,6 +22,8 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.ILicenseFamilyBuilder;
 
+import java.util.Objects;
+
 /**
  * An ILicense implementation that represents an unknown license.
  * <p>
@@ -29,7 +31,7 @@ import org.apache.rat.license.ILicenseFamilyBuilder;
  * license can not be determined.
  * </p>
  */
-public class UnknownLicense implements ILicense {
+public final class UnknownLicense implements ILicense {
 
     /**
      * The single instance of this class.
@@ -57,13 +59,18 @@ public class UnknownLicense implements ILicense {
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
+    public boolean matches(final IHeaders headers) {
         return false;
     }
 
     @Override
-    public int compareTo(ILicense arg0) {
-        return getLicenseFamily().compareTo(arg0.getLicenseFamily());
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(ILicenseFamily.UNKNOWN_CATEGORY);
     }
 
     @Override

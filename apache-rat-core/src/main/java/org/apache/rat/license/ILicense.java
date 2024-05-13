@@ -19,8 +19,10 @@
 package org.apache.rat.license;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.SortedSet;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.rat.analysis.IHeaderMatcher;
 
 /**
@@ -65,6 +67,34 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
      */
     IHeaderMatcher getMatcher();
 
+    @Override
+    default int compareTo(ILicense other) {
+        int result = getLicenseFamily().compareTo(other.getLicenseFamily());
+            return result == 0 ? getId().compareTo(other.getId()) : result;
+    }
+
+    /**
+     * A default implementatin of a License hash
+     * @param license the license to hash
+     * @return the license hash value
+     */
+    static int hash(ILicense license) {
+        return Objects.hash(license.getLicenseFamily(), license.getId());
+    }
+
+    /**
+     * A default implementation of equals.
+     * @param license1 The license to check for equality.
+     * @param o the object to check for equality to.
+     * @return true if the object is equal to the license1.
+     */
+    static boolean equals(ILicense license1, Object o) {
+        if (license1 == o) return true;
+        if (!(o instanceof ILicense)) return false;
+        ILicense that = (ILicense) o;
+        return license1.compareTo(that) == 0;
+    }
+
     /**
      * Gets a builder for licenses.
      * 
@@ -72,15 +102,6 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
      */
     static ILicense.Builder builder() {
         return new SimpleLicense.Builder();
-    }
-
-    /**
-     * Gets the comparator for comparing licenses.
-     * 
-     * @return The comparator for used for sorting Licenses.
-     */
-    static Comparator<ILicense> getComparator() {
-        return Comparator.comparing(IHeaderMatcher::getId);
     }
 
     /**

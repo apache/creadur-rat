@@ -47,8 +47,8 @@ public class XMLConfigurationReaderTest {
     public static final String[] EXPECTED_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3", "MIT", "OASIS",
             "W3C", "W3CD" };
 
-    public static final String[] EXPECTED_LICENSES = { "AL", "ASL", "BSD-3", "CDDL1", "DOJO", "GEN", "GPL1", "GPL2",
-            "GPL3", "ILLUMOS", "MIT", "OASIS", "TMF", "W3C", "W3CD" };
+    public static final String[] EXPECTED_LICENSES = { "AL", "ASL", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GEN", "GPL1", "GPL2",
+            "GPL3", "MIT", "OASIS", "W3C", "W3CD" };
 
     @Test
     public void approvedLicenseIdTest() {

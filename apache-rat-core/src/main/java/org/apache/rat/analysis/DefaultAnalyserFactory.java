@@ -114,8 +114,6 @@ public class DefaultAnalyserFactory {
                 licensePredicate = licenseFilter(configuration.getArchiveProcessing());
                 if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
                     ArchiveWalker archiveWalker = new ArchiveWalker(configuration, document);
-                    Predicate<ILicense> filter = configuration.getArchiveProcessing() == ReportConfiguration.Processing.ABSENCE ?
-                            l -> Boolean.TRUE : lic -> !lic.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
                     try {
                         for (Document doc : archiveWalker.getDocuments(configuration.getLog())) {
                             analyse(doc);
