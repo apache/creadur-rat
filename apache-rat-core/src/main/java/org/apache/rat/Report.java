@@ -252,8 +252,17 @@ public class Report {
      * @since 0.17.0
      */
     static final Option ARCHIVE = Option.builder().longOpt("archive").hasArg().argName("ProcessingType")
-            .desc(format("Specifies the level of detail in ARCHIVE reporting. (default is %s)",
+            .desc(format("Specifies the level of detail in ARCHIVE file reporting. (default is %s)",
                     ReportConfiguration.Processing.NOTIFICATION))
+            .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
+            .build();
+
+    /**
+     * Specify the processing of STANDARD files.
+     */
+    static final Option STANDARD = Option.builder().longOpt("standard").hasArg().argName("ProcessingType")
+            .desc(format("Specifies the level of detail in STANDARD file reporting. (default is %s)",
+                    Defaults.STANDARD_PROCESSING))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();
 
@@ -367,6 +376,14 @@ public class Report {
             }
         }
 
+        if (cl.hasOption(STANDARD)) {
+            try {
+                configuration.setStandardProcessing(cl.getParsedOptionValue(STANDARD));
+            } catch (ParseException e) {
+                logParseException(e, STANDARD, cl, Defaults.STANDARD_PROCESSING);
+            }
+        }
+
         if (cl.hasOption(OUT)) {
             try {
                 configuration.setOut((File) cl.getParsedOptionValue(OUT));
@@ -411,7 +428,6 @@ public class Report {
                 }
 
                 URL url = Report.class.getClassLoader().getResource(String.format("org/apache/rat/%s.xsl", style[0]));
-
                 IOSupplier<InputStream> ioSupplier = (url == null) ?
                         () -> Files.newInputStream(Paths.get(style[0])) :
                         url::openStream;
@@ -470,6 +486,7 @@ public class Report {
     static Options buildOptions() {
         return new Options()
                 .addOption(ARCHIVE)
+                .addOption(STANDARD)
                 .addOption(DRY_RUN)
                 .addOption(LIST_FAMILIES)
                 .addOption(LIST_LICENSES)
@@ -514,7 +531,7 @@ public class Report {
 
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + 5);
         for (Map.Entry<String, Supplier<String>> argInfo : ARGUMENT_TYPES.entrySet()) {
-            writer.format("\n<%s>\n", argInfo.getKey());
+            writer.format("%n<%s>%n", argInfo.getKey());
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + 10,
                     argumentPadding + argInfo.getValue().get());
         }

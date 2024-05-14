@@ -62,4 +62,6 @@ public class SimpleLicenseTest {
         assertEquals(ComponentType.MATCHER, matcherDesc.getType());
         assertEquals("TestingMatcher", matcherDesc.getCommonName());
     }
+
+
 }

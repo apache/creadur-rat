@@ -20,6 +20,8 @@ package org.apache.rat.license;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -75,7 +77,7 @@ public class LicenseSetFactory {
      * @return An empty sorted set of ILicense objects.
      */
     public static SortedSet<ILicense> emptyLicenseSet() {
-        return new TreeSet<>(ILicense.getComparator());
+        return new TreeSet<>();
     }
 
     /**
@@ -161,8 +163,8 @@ public class LicenseSetFactory {
      * @param licenses the SortedSet of licenses to search.
      * @return the matching license or {@code null} if not found.
      */
-    public static ILicense search(String licenseId, SortedSet<ILicense> licenses) {
-        ILicenseFamily searchFamily = ILicenseFamily.builder().setLicenseFamilyCategory(licenseId)
+    public static Optional<ILicense> search(String familyId, String licenseId, SortedSet<ILicense> licenses) {
+        ILicenseFamily searchFamily = ILicenseFamily.builder().setLicenseFamilyCategory(familyId)
                 .setLicenseFamilyName("searching proxy").build();
         ILicense target = new ILicense() {
 
@@ -182,8 +184,13 @@ public class LicenseSetFactory {
             }
 
             @Override
-            public int compareTo(ILicense arg0) {
-                return searchFamily.compareTo(arg0.getLicenseFamily());
+            public boolean equals(Object o) {
+                return ILicense.equals(this, o);
+            }
+
+            @Override
+            public int hashCode() {
+                return ILicense.hash(this);
             }
 
             @Override
@@ -212,13 +219,14 @@ public class LicenseSetFactory {
 
     /**
      * Search a SortedSet of licenses for the matching license.
+     * License must mach both family code, and license id.
      *
      * @param target the license to search for. Must not be null.
      * @param licenses the SortedSet of licenses to search.
      * @return the matching license or {@code null} if not found.
      */
-    public static ILicense search(ILicense target, SortedSet<ILicense> licenses) {
+    public static Optional<ILicense> search(ILicense target, SortedSet<ILicense> licenses) {
         SortedSet<ILicense> part = licenses.tailSet(target);
-        return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
+        return Optional.ofNullable((!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null);
     }
 }

@@ -200,7 +200,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         assertNotNull(LicenseFamilySetFactory.search("YAL", config.getLicenseFamilies(LicenseFilter.ALL)));
         ReportConfigurationTest.validateDefaultLicenses(config, "MyLicense", "CpyrT", "RegxT", "SpdxT", "TextT", 
                 "Not", "All", "Any");
-        assertNotNull(LicenseSetFactory.search("MyLicense", config.getLicenses(LicenseFilter.ALL)));
+        assertTrue(LicenseSetFactory.search("YAL", "MyLicense", config.getLicenses(LicenseFilter.ALL)).isPresent());
         assertNotNull("Should have filesToIgnore", config.getFilesToIgnore());
         assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         assertNotNull("Should have directoriesToIgnore", config.getDirectoriesToIgnore());

@@ -24,6 +24,8 @@ import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
+import java.util.Objects;
+
 /**
  * A class to quickly build testing licenses.
  */
@@ -33,16 +35,7 @@ public class TestingLicense implements ILicense {
     private IHeaderMatcher matcher;
     private String note;
     private String name;
-    private String id;
-
-    /**
-     * Creates a testing license named "DfltTst" with category of "DfltT" and a
-     * default TestingMatcher.
-     * @see TestingMatcher
-     */
-    public TestingLicense() {
-        this("DfltTst", new TestingMatcher());
-    }
+    private final String id;
 
     /**
      * Creates a testing license with the specified id and a default TestingMatcher
@@ -50,7 +43,17 @@ public class TestingLicense implements ILicense {
      * @see TestingMatcher
      */
     public TestingLicense(String id) {
-        this(id, new TestingMatcher());
+        this(id, id, new TestingMatcher());
+    }
+
+    /**
+     * Creates a testing license with the specified id and a default TestingMatcher
+     * @param family the Fmaily id
+     * @param id The ID to use.
+     * @see TestingMatcher
+     */
+    public TestingLicense(String family, String id) {
+        this(family, id, new TestingMatcher());
     }
 
     /**
@@ -58,35 +61,22 @@ public class TestingLicense implements ILicense {
      * @param id the ID to use
      * @param matcher the matcher to execute.
      */
-    public TestingLicense(String id, IHeaderMatcher matcher) {
-        this(matcher, ILicenseFamily.builder().setLicenseFamilyCategory(id)
-                .setLicenseFamilyName("TestingLicense: " + id).build());
+    public TestingLicense(String family, String id, IHeaderMatcher matcher) {
+        this(id, matcher, ILicenseFamily.builder().setLicenseFamilyCategory(family)
+                .setLicenseFamilyName("TestingLicense: " + family).build());
     }
 
     /**
      * Creates a testing license with the specified matcher and family.
+     * @param id the license id
      * @param matcher the matcher to use.
      * @param family the family for this license.
      */
-    public TestingLicense(IHeaderMatcher matcher, ILicenseFamily family) {
+    public TestingLicense(String id, IHeaderMatcher matcher, ILicenseFamily family) {
         this.family = family;
         this.matcher = matcher;
         this.note = null;
-    }
-
-    /**
-     * Create a testing license for the specified family using a default
-     * TestingMatcher
-     * @param family the family for the license.
-     * @see TestingMatcher
-     */
-    public TestingLicense(ILicenseFamily family) {
-        this(new TestingMatcher(), family);
-    }
-
-    @Override
-    public String toString() {
-        return family.toString();
+        this.id = id;
     }
 
     /**
@@ -114,13 +104,9 @@ public class TestingLicense implements ILicense {
         this.name = name;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(id, family.getFamilyCategory().trim());
+        return id;
     }
 
     @Override
@@ -139,11 +125,6 @@ public class TestingLicense implements ILicense {
     }
 
     @Override
-    public int compareTo(ILicense other) {
-        return ILicense.getComparator().compare(this, other);
-    }
-
-    @Override
     public String getNote() {
         return note;
     }
@@ -151,5 +132,15 @@ public class TestingLicense implements ILicense {
     @Override
     public String getName() {
         return StringUtils.defaultIfBlank(name, family.getFamilyName());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return ILicense.equals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return ILicense.hash(this);
     }
 }

@@ -19,8 +19,10 @@
 package org.apache.rat.analysis.matchers;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,23 +55,28 @@ public class SPDXMatcherFactory {
      */
     public static final SPDXMatcherFactory INSTANCE = new SPDXMatcherFactory();
 
+    static final String LICENSE_IDENTIFIER = "SPDX-License-Identifier:";
+
     /**
      * The regular expression to locate the SPDX license identifier in the text
      * stream
      */
-    private static Pattern groupSelector = Pattern.compile(".*SPDX-License-Identifier:\\s([A-Za-z0-9\\.\\-]+)");
+    private static Pattern groupSelector = Pattern.compile(".*"+LICENSE_IDENTIFIER+"\\s([A-Za-z0-9\\.\\-]+)");
 
-    /**
-     * the last line that this factory scanned.
-     */
-    private String lastLine;
     /**
      * The last matcer to match the line.
      */
-    private Match lastMatch;
+    private Set<String> lastMatch;
+
+    private boolean checked;
 
     private SPDXMatcherFactory() {
-        lastLine = null;
+        lastMatch = new HashSet<>();
+    }
+
+    private void reset() {
+        lastMatch.clear();
+        checked = false;
     }
 
     /**
@@ -98,21 +105,21 @@ public class SPDXMatcherFactory {
      * @return true if the caller matches the text.
      */
     private boolean check(String line, Match caller) {
-        // if the line has not been seen yet see if we can extract the SPDX id from the
-        // line.
-        // if so then see if that name has been registered. If so then we have a match
-        // and set
-        // lastMatch.
-        if ((lastLine == null || !lastLine.equals(line)) && line.contains("SPDX-License-Identifier")) {
-            Matcher matcher = groupSelector.matcher(line);
-            if (matcher.find()) {
-                lastMatch = matchers.get(matcher.group(1));
-            } else {
-                lastMatch = null;
+        /*
+        If the line has not been seen yet see if we can extract the SPDX id from the line.
+        If so then see for each match extract and add the name to lastMatch
+        */
+        if (!checked) {
+            checked = true;
+            if (line.contains(LICENSE_IDENTIFIER)) {
+                Matcher matcher = groupSelector.matcher(line);
+                while (matcher.find()) {
+                    lastMatch.add(matcher.group(1));
+                }
             }
         }
-        // see if the caller matches lastMatch.
-        return (lastMatch != null) && caller.spdxId.equals(lastMatch.spdxId);
+        // see if the caller is in the lastMatch.
+        return lastMatch.contains(caller.spdxId);
     }
 
     @ConfigComponent(type = ComponentType.MATCHER, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
@@ -144,7 +151,7 @@ public class SPDXMatcherFactory {
         @Override
         public void reset() {
             super.reset();
-            SPDXMatcherFactory.this.lastMatch = null;
+            SPDXMatcherFactory.this.reset();
         }
     }
 }

@@ -57,6 +57,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.utils.Log.Level;
@@ -157,7 +158,7 @@ public class ReportConfigurationTest {
     private ILicense testingLicense(String category, String name) {
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory(category).setLicenseFamilyName(name)
                 .build();
-        return new TestingLicense( family );
+        return new TestingLicense( category, new TestingMatcher(), family );
     }
 
     @Test

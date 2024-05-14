@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.SortedSet;
 
 import org.apache.commons.cli.CommandLine;
@@ -133,11 +134,12 @@ public class ReportTest {
 
     @Test
     public void LicensesOptionTest() throws Exception {
-        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] {"-licenses", "target/test-classes/report/LicenseOne.xml"});
+        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{"-licenses", "target/test-classes/report/LicenseOne.xml"});
         ReportConfiguration config = Report.createConfiguration("", cl);
         SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
-        ILicense found = LicenseSetFactory.search("LiOne", set);
-        assertNotNull(found);
+        assertTrue(LicenseSetFactory.search("LiOne", "LiOne", set).isPresent());
+        assertFalse(LicenseSetFactory.search("LiOne", "LiTwo", set).isPresent(),"LiOne/LiTwo");
+        assertFalse(LicenseSetFactory.search("LiTwo", "LiTwo", set).isPresent(), "LiTwo");
     }
 
     @Test
@@ -146,7 +148,8 @@ public class ReportTest {
         ReportConfiguration config = Report.createConfiguration("", cl);
         SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         assertEquals(2, set.size());
-        assertNotNull(LicenseSetFactory.search("LiOne", set), "LiOne");
-        assertNotNull(LicenseSetFactory.search("LiTwo", set), "LiTwo");
+        assertTrue(LicenseSetFactory.search("LiOne", "LiOne", set).isPresent(), "LiOne");
+        assertFalse(LicenseSetFactory.search("LiOne", "LiTwo", set).isPresent(), "LiOne/LiTwo");
+        assertTrue(LicenseSetFactory.search("LiTwo", "LiTwo", set).isPresent(), "LiTwo");
     }
 }

@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Optional;
 
 import org.apache.rat.Defaults;
 import org.apache.rat.analysis.HeaderCheckWorker;
@@ -59,21 +60,19 @@ abstract public class AbstractLicenseTest {
         defaults = Defaults.builder().build(DefaultLog.INSTANCE);
     }
 
-    protected ILicense extractCategory(String id) {
-        TestingLicense testingLicense = new TestingLicense();
-        testingLicense.setId(id);
-        ILicense result = LicenseSetFactory.search(testingLicense, defaults.getLicenses(LicenseFilter.ALL));
-        if (result == null) {
-            fail("No licenses for id: " + id);
+    protected ILicense extractCategory(String famId, String id) {
+        Optional<ILicense> result = LicenseSetFactory.search(famId, id, defaults.getLicenses(LicenseFilter.ALL));
+        if (!result.isPresent()) {
+            fail(String.format("No licenses for id: f:%s l:%s", famId, id));
         }
-        return result;
+        return result.get();
     }
 
     @ParameterizedTest
     @MethodSource("parameterProvider")
     public void testMatchProcessing(String id, String familyPattern, String name, String notes, String[][] targets)
             throws IOException {
-        ILicense license = extractCategory(id);
+        ILicense license = extractCategory(familyPattern, id);
         try {
             for (String[] target : targets) {
                 if (processText(license, target[TEXT])) {
@@ -105,7 +104,7 @@ abstract public class AbstractLicenseTest {
         String formats[] = { "%s", "now is not the time %s for copyright", "#%s", "##%s", "## %s", "##%s##", "## %s ##",
                 "/*%s*/", "/* %s */" };
 
-        ILicense license = extractCategory(id);
+        ILicense license = extractCategory(family, id);
         try {
             for (String[] target : targets) {
                 for (String fmt : formats) {

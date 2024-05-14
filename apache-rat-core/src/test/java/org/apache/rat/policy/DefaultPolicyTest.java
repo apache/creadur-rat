@@ -31,6 +31,7 @@ import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingDocument;
+import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,7 @@ public class DefaultPolicyTest {
     }
 
     private void setMetadata(ILicenseFamily family) {
-        document.getMetaData().reportOnLicense(new TestingLicense(family));
+        document.getMetaData().reportOnLicense(new TestingLicense(family.getFamilyCategory().trim(), new TestingMatcher(), family));
     }
 
     private static ILicenseFamily makeFamily(String category, String name) {

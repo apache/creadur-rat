@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.configuration.builders.AbstractBuilder;
@@ -34,7 +35,7 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
  * A class to track the Matcher Builders as they are defined.  Matchers may be defined in multiple configuration files
  * this method tracks them so that they can be referenced across the configuration files.
  */
-public class MatcherBuilderTracker {
+public final class MatcherBuilderTracker {
 
     /** The instance of the BuildTracker. */
     public static MatcherBuilderTracker INSTANCE;
@@ -55,7 +56,7 @@ public class MatcherBuilderTracker {
      * @param className the Class name for the builder.
      * @param name the short name for the builder. 
      */
-    public static void addBuilder(String className, String name) {
+    public static void addBuilder(final String className, final String name) {
         instance().addBuilderImpl(className, name);
     }
 
@@ -64,7 +65,7 @@ public class MatcherBuilderTracker {
      * @param name The name of the builder.
      * @return the builder for that name.
      */
-    public static AbstractBuilder getMatcherBuilder(String name) {
+    public static AbstractBuilder getMatcherBuilder(final String name) {
         Class<? extends AbstractBuilder> clazz = instance().matcherBuilders.get(name);
         if (clazz == null) {
             StringBuilder sb = new StringBuilder(System.lineSeparator()).append("Valid builders").append(System.lineSeparator());
@@ -94,7 +95,7 @@ public class MatcherBuilderTracker {
         return Collections.unmodifiableCollection(matcherBuilders.values());
     }
 
-    private void addBuilderImpl(String className, String name) {
+    private void addBuilderImpl(final String className, String name) {
         Objects.requireNonNull(className, "className may not be null");
         Class<?> clazz;
         try {
@@ -116,7 +117,7 @@ public class MatcherBuilderTracker {
                     throw new ConfigurationException("Last segment of " + candidate.getName()
                             + " may not be 'Builder', but must end in 'Builder'");
                 }
-                name = name.replaceFirst(".", StringUtils.lowerCase(name.substring(0, 1)));
+                name = WordUtils.uncapitalize(name);
             }
             matcherBuilders.put(name, candidate);
         } else {
