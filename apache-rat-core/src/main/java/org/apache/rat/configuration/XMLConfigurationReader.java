@@ -425,12 +425,13 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     private ILicense parseLicense(Node licenseNode) {
         ILicense.Builder builder = ILicense.builder();
+        // get the description for the builder
         Description description = builder.getDescription();
-
+        // set the BUILDER_PARAM options from the description
         processBuilderParams(description, builder);
-
+        // set the children from attributes.
         description.setChildren(getLog(), builder, attributes(licenseNode));
-
+        // set children from the child nodes
         Pair<Boolean, List<Node>> pair = processChildNodes(description, licenseNode,
                 licenseChildNodeProcessor(builder, description));
         List<Node> children = pair.getRight();

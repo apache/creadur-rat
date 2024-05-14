@@ -19,6 +19,7 @@
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -94,7 +95,31 @@ public class LicenseFamilySetFactory {
         return result;
     }
 
-    
+    /**
+     * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
+     * @param familyId The instance to search for.
+     * @param licenseFamilies the license families to search
+     * @return the matching instance of the target given.
+     */
+    public static boolean hasFamily(String familyId, SortedSet<ILicenseFamily> licenseFamilies) {
+        String familyCat = ILicenseFamily.makeCategory(familyId);
+        SortedSet<String> result = new TreeSet<>();
+        return licenseFamilies.stream().map(ILicenseFamily::getFamilyCategory).filter( f ->  f.equals(familyCat)).findFirst().isPresent();
+    }
+
+    /**
+     * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
+     * @param familyId The instance to search for.
+     * @param licenseFamilies the license families to search
+     * @return the matching instance of the target given.
+     */
+    public static Optional<ILicenseFamily> findFamily(String familyId, SortedSet<ILicenseFamily> licenseFamilies) {
+        String familyCat = ILicenseFamily.makeCategory(familyId);
+        SortedSet<String> result = new TreeSet<>();
+        return licenseFamilies.stream().filter( f ->  f.getFamilyCategory().equals(familyCat)).findFirst();
+    }
+
+
     /**
      * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
      * @param target The instance to search for.

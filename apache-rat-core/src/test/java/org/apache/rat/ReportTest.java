@@ -18,7 +18,6 @@
  */
 package org.apache.rat;
 
-import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,13 +39,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -60,7 +57,6 @@ import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -70,22 +66,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ReportTest {
     @TempDir
     static File tempDirectory;
-
-    @BeforeAll
-    public static void setUpClass() throws Exception {
-        File cfgFile = new File( tempDirectory, "test.xml");
-        try (IXmlWriter writer = new XmlWriter(new FileWriter(cfgFile))) {
-            writer.openElement("rat-config").openElement("families").openElement("family")
-                    .attribute("id","TEST").attribute("name", "Test license family")
-                    .closeElement().closeElement() // closed families
-                    .openElement("licenses").openElement("license")
-                    .attribute("id", "TEST-1").attribute("name", "Test license")
-                    .openElement("text").content("Hello world").closeElement()
-                    .closeDocument();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private ReportConfiguration createConfig(String... args) throws IOException, ParseException {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), args);
@@ -207,15 +187,15 @@ public class ReportTest {
 
 //        Report.ARCHIVE
         for (ReportConfiguration.Processing processing : ReportConfiguration.Processing.values()) {
-            args = new String[]{"--" + Report.ARCHIVE.getLongOpt(), processing.name().toLowerCase()};
+            args = new String[]{longOpt(Report.ARCHIVE), processing.name().toLowerCase()};
             test = c -> c.getArchiveProcessing() == processing;
             lst.add(Arguments.of(args, test));
         }
 //        Report.COPYRIGHT
-        args = new String[]{"--" + Report.COPYRIGHT.getLongOpt(), "My copyright statement"};
+        args = new String[]{longOpt(Report.COPYRIGHT), "My copyright statement"};
         test = c -> c.getCopyrightMessage() == null;
         lst.add(Arguments.of(args, test));
-        args = new String[]{"--" + Report.COPYRIGHT.getLongOpt(), "My copyright statement",
+        args = new String[]{longOpt(Report.COPYRIGHT), "My copyright statement",
                 "--" + Report.ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()};
         test = c -> "My copyright statement".equals(c.getCopyrightMessage());
         lst.add(Arguments.of(args, test));
@@ -258,20 +238,15 @@ public class ReportTest {
         lst.add(Arguments.of(args, test));
 
 //        Report.FORCE
-        args = new String[]{"--" + Report.FORCE.getLongOpt()};
+        args = new String[]{longOpt(Report.FORCE)};
         test = ReportConfiguration::isAddingLicensesForced;
         lst.add(Arguments.of(args, test.negate()));
 
-        args = new String[]{"--" + Report.FORCE.getLongOpt(),
+        args = new String[]{longOpt(Report.FORCE),
                 "--" + Report.ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()};
         lst.add(Arguments.of(args, test));
 
-//        Report.LICENSES;
-        args = new String[]{"--" + Report.LICENSES.getLongOpt(), new File( tempDirectory, "test.xml").getPath(), "--"  + Report.NO_DEFAULTS};
-        test = c -> {
-            assertEquals(1, c.getLicenses(LicenseSetFactory.LicenseFilter.ALL).size());
-            return true;
-        };
+//        Report.LICENSES -- tested in standalone test: testLicenseOption()
 
 //        Report.LIST_LICENSES;
         for (LicenseSetFactory.LicenseFilter f : LicenseSetFactory.LicenseFilter.values()) {
@@ -335,7 +310,7 @@ public class ReportTest {
         lst.add(Arguments.of(args, test));
 
 //        Report.XML;
-        args = new String[]{"--" + Report.XML.getLongOpt()};
+        args = new String[]{longOpt(Report.XML)};
         test = ReportConfiguration::isStyleReport;
         lst.add(Arguments.of(args, test.negate()));
         return lst.stream();
@@ -355,5 +330,26 @@ public class ReportTest {
         }
         log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17.0: Use '--'");
         log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17.0: Use '-A or --addLicense'");
+    }
+
+    @Test
+    public void testLicenseOption() throws IOException {
+        File cfgFile = new File( tempDirectory, "test.xml");
+        try (IXmlWriter writer = new XmlWriter(new FileWriter(cfgFile))) {
+            writer.openElement("rat-config").openElement("families").openElement("family")
+                    .attribute("id","TEST").attribute("name", "Test license family")
+                    .closeElement().closeElement() // closed families
+                    .openElement("licenses").openElement("license")
+                    .attribute("family", "TEST")
+                    .attribute("id", "TEST-1").attribute("name", "Test license")
+                    .openElement("text").content("Hello world").closeElement()
+                    .closeDocument();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        String[] args = new String[]{longOpt(Report.LICENSES), new File( tempDirectory, "test.xml").getPath(), longOpt(Report.NO_DEFAULTS)};
+        ReportConfiguration config = Report.parseCommands(args, (o)-> {}, true);
+        assertNotNull(config, "Did not create ReportConfiguraiton");
+        assertEquals(1, config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).size());
     }
 }

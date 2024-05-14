@@ -21,6 +21,7 @@ package org.apache.rat.license;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
@@ -229,12 +230,12 @@ public class SimpleLicense implements ILicense {
             if (licenseFamilies == null) {
                 throw new ImplementationException("'licenseFamilies' must not be null");
             }
-            ILicenseFamily family = LicenseFamilySetFactory.search(familyCategory, licenseFamilies);
-            if (family == null) {
+            Optional<ILicenseFamily> family = LicenseFamilySetFactory.findFamily(familyCategory, licenseFamilies);
+            if (!family.isPresent()) {
                 throw new ConfigurationException(String.format("License family '%s' not found.", familyCategory));
             }
 
-            return new SimpleLicense(family, matcher.build(), String.join(System.lineSeparator(), notes), name, id);
+            return new SimpleLicense(family.get(), matcher.build(), String.join(System.lineSeparator(), notes), name, id);
         }
     }
 }
