@@ -40,8 +40,8 @@ public class SPDXMatcherTest {
     @Test
     public void testMatch() {
         StringBuilder sb = new StringBuilder()
-                .append("SPDX-License-Identifier: world").append(System.lineSeparator())
-                .append("SPDX-License-Identifier: hello").append(System.lineSeparator());
+                .append(SPDXMatcherFactory.LICENSE_IDENTIFIER).append(" world").append(System.lineSeparator())
+                .append(SPDXMatcherFactory.LICENSE_IDENTIFIER).append(" hello").append(System.lineSeparator());
 
         IHeaders headers =  AbstractMatcherTest.makeHeaders(sb.toString(),null);
 

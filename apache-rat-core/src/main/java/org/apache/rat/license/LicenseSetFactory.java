@@ -77,7 +77,6 @@ public class LicenseSetFactory {
      * @return An empty sorted set of ILicense objects.
      */
     public static SortedSet<ILicense> emptyLicenseSet() {
-        //return new TreeSet<>((a,b) -> a.getLicenseFamily().compareTo(b.getLicenseFamily()));
         return new TreeSet<>();
     }
 
@@ -165,7 +164,6 @@ public class LicenseSetFactory {
      * @return the matching license or {@code null} if not found.
      */
     public static Optional<ILicense> search(String familyId, String licenseId, SortedSet<ILicense> licenses) {
-       // return licenses.stream().filter( l -> l.getId().equals(licenseId)).findFirst();
         ILicenseFamily searchFamily = ILicenseFamily.builder().setLicenseFamilyCategory(familyId)
                 .setLicenseFamilyName("searching proxy").build();
         ILicense target = new ILicense() {
