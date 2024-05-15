@@ -57,7 +57,10 @@ import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -66,6 +69,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ReportTest {
     @TempDir
     static File tempDirectory;
+
+    @AfterEach
+    @EnabledOnOs(OS.WINDOWS)
+    void cleanUp() {
+        System.gc();
+    }
 
     private ReportConfiguration createConfig(String... args) throws IOException, ParseException {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), args);
