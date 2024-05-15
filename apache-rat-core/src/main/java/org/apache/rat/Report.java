@@ -213,8 +213,8 @@ public final class Report {
      * @since 0.16.0
      */
     static final Option LICENSES = Option.builder().longOpt("licenses").hasArgs().argName("FileOrURI")
-            .desc("File names or URLs for license definitions.  May be followed by multiple arguments. " +
-                    "Note that '--' or a following option is required when using this parameter.")
+            .desc("File names or URLs for license definitions.  May be followed by multiple arguments. "
+                    + "Note that '--' or a following option is required when using this parameter.")
             .build();
     /**
      * Do not use the default files.
@@ -285,13 +285,6 @@ public final class Report {
                     Defaults.STANDARD_PROCESSING))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();
-
-
-    private static void logDeprecated(final Option option) {
-        if (option.isDeprecated()) {
-            DeprecationReporter.LOG_DEPRECATED.accept(option);
-        }
-    }
 
     private static String asString(final Object[] args) {
         return Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "));
@@ -428,7 +421,7 @@ public final class Report {
             try {
                 configuration.setStandardProcessing(cl.getParsedOptionValue(STANDARD));
             } catch (ParseException e) {
-                logParseException(e, STANDARD, cl, Defaults.STANDARD_PROCESSING);
+                logParseException(log, e, STANDARD, cl, Defaults.STANDARD_PROCESSING);
             }
         }
 

@@ -27,7 +27,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.ConfigurationException;
@@ -97,14 +96,14 @@ public class XmlReportFactoryTest {
     }
 
     @Test
-    public void testNoLicense() throws Exception {
+    public void testNoLicense()  {
 
         final ILicense mockLicense = mock(ILicense.class);
         when(mockLicense.matches(any())).thenReturn(true);
         when(mockLicense.getLicenseFamily()).thenReturn(family);
 
         final ClaimStatistic statistic = new ClaimStatistic();
-        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.getInstance());
         // configuration.addLicense(mockLicense);
         try {
             XmlReportFactory.createStandardReport(writer, statistic, configuration);
@@ -112,6 +111,5 @@ public class XmlReportFactoryTest {
         } catch (ConfigurationException e) {
             // expected;
         }
-
     }
 }

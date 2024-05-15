@@ -153,7 +153,7 @@ public class ReportTest {
     @Test
     public void LicensesOptionTest() throws Exception {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[]{"-licenses", "target/test-classes/report/LicenseOne.xml"});
-        ReportConfiguration config = Report.createConfiguration("", cl);
+        ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(),"", cl);
         SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         assertTrue(LicenseSetFactory.search("LiOne", "LiOne", set).isPresent());
         assertFalse(LicenseSetFactory.search("LiOne", "LiTwo", set).isPresent(),"LiOne/LiTwo");
@@ -163,7 +163,7 @@ public class ReportTest {
     @Test
     public void LicensesOptionNoDefaultsTest() throws Exception {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] {"--no-default", "--licenses", "target/test-classes/report/LicenseOne.xml", "--licenses", "target/test-classes/report/LicenseTwo.xml"});
-        ReportConfiguration config = Report.createConfiguration("", cl);
+        ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "", cl);
         SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         assertEquals(2, set.size());
         assertTrue(LicenseSetFactory.search("LiOne", "LiOne", set).isPresent(), "LiOne");
@@ -175,7 +175,7 @@ public class ReportTest {
     @MethodSource("optionsProvider")
     public void testOptionsUpdateConfig(String[] args, Predicate<ReportConfiguration> test) throws Exception {
         ReportConfiguration config = Report.parseCommands(args, (o)-> {}, true);
-        assertNotNull(config, "Did not create ReportConfiguraiton");
+        assertNotNull(config, "Did not create ReportConfiguration");
         assertTrue(test.test(config));
     }
 

@@ -217,8 +217,8 @@ public class DefaultAnalyserFactoryTest {
     @Test
     public void standardNotificationTest() throws Exception {
 
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
         config.setFrom(defaults);
         config.setFilesToIgnore(FalseFileFilter.FALSE);
         config.setStandardProcessing(ReportConfiguration.Processing.NOTIFICATION);
@@ -238,8 +238,8 @@ public class DefaultAnalyserFactoryTest {
     @Test
     public void standardAbsenceTest() throws Exception {
 
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
         config.setFrom(defaults);
         config.setFilesToIgnore(FalseFileFilter.FALSE);
         config.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
@@ -258,8 +258,8 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void standardPresenceTest() throws Exception {
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
         config.setFrom(defaults);
         config.setFilesToIgnore(FalseFileFilter.FALSE);
         config.setStandardProcessing(ReportConfiguration.Processing.PRESENCE);

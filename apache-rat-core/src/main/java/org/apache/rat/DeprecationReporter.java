@@ -42,7 +42,7 @@ public final class DeprecationReporter {
      * Deprecated Command line option consumer.
      */
 
-    public static Consumer<Option> getLogReporter(Log log) {
+    public static Consumer<Option> getLogReporter(final Log log) {
         return  o -> {
             StringBuilder buff = new StringBuilder();
             if (o.getOpt() != null) {
