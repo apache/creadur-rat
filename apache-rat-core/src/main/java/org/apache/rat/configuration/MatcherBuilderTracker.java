@@ -95,7 +95,7 @@ public final class MatcherBuilderTracker {
         return Collections.unmodifiableCollection(matcherBuilders.values());
     }
 
-    private void addBuilderImpl(final String className, String name) {
+    private void addBuilderImpl(final String className, final String name) {
         Objects.requireNonNull(className, "className may not be null");
         Class<?> clazz;
         try {
@@ -106,20 +106,21 @@ public final class MatcherBuilderTracker {
         if (AbstractBuilder.class.isAssignableFrom(clazz)) {
             @SuppressWarnings("unchecked")
             Class<? extends AbstractBuilder> candidate = (Class<? extends AbstractBuilder>) clazz;
-            if (StringUtils.isBlank(name)) {
-                name = candidate.getSimpleName();
-                if (!name.endsWith("Builder")) {
+            String workingName = name;
+            if (StringUtils.isBlank(workingName)) {
+                workingName = candidate.getSimpleName();
+                if (!workingName.endsWith("Builder")) {
                     throw new ConfigurationException(
                             "name is required, or " + candidate.getName() + " must end with 'Builder'");
                 }
-                name = name.substring(0, name.lastIndexOf("Builder"));
-                if (StringUtils.isBlank(name)) {
+                workingName = workingName.substring(0, workingName.lastIndexOf("Builder"));
+                if (StringUtils.isBlank(workingName)) {
                     throw new ConfigurationException("Last segment of " + candidate.getName()
                             + " may not be 'Builder', but must end in 'Builder'");
                 }
-                name = WordUtils.uncapitalize(name);
+                workingName = WordUtils.uncapitalize(workingName);
             }
-            matcherBuilders.put(name, candidate);
+            matcherBuilders.put(workingName, candidate);
         } else {
             throw new ConfigurationException("Class " + clazz.getName() + " does not extend " + AbstractBuilder.class);
         }

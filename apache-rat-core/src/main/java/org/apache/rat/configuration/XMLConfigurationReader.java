@@ -69,7 +69,7 @@ import org.xml.sax.SAXException;
 /**
  * A class that reads the XML configuration file format.
  */
-public class XMLConfigurationReader implements LicenseReader, MatcherReader {
+public final class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     private Log log;
     private Document document;
@@ -127,6 +127,10 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         this.log = log;
     }
 
+    /**
+     * Returns the log the reader.
+     * @return the log if set, if not set {@code DefaultLog.getInstance()} is returned.
+     */
     public Log getLog() {
         return log == null ? DefaultLog.getInstance() : log;
     }
@@ -138,7 +142,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     /**
      * Read xml from a reader.
-     * 
+     *
      * @param reader the reader to read XML from.
      */
     public void read(Reader reader) {
