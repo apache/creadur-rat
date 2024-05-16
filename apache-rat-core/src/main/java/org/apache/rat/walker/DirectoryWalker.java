@@ -19,7 +19,6 @@
 
 package org.apache.rat.walker;
 
-import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.util.Arrays;

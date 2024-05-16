@@ -19,3 +19,4 @@
 /target/
 **/.gitignore
 **/lib/
+**/bin

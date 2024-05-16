@@ -23,7 +23,6 @@ import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.api.Document;
 import org.apache.rat.report.IReportable;
 
-import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Path;
 
