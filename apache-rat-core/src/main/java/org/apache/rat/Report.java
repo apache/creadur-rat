@@ -534,7 +534,7 @@ public final class Report {
             try {
                 orFilter.addFileFilter(new RegexFileFilter(exclusion));
             } catch (PatternSyntaxException e) {
-                log.info("Will skip given exclusion '" + exclude + "' due to " + e.getMessage());
+                // report nothing, an acceptable outcome.
             }
             orFilter.addFileFilter(new NameFileFilter(exclusion));
             if (exclude.contains("?") || exclude.contains("*")) {
