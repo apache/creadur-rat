@@ -137,7 +137,7 @@ public final class Report {
      * Adds license headers to files missing headers.
      */
     // TODO rework when Commons-CLI version 1.7.1 or higher is available.
-    private static final DeprecatedAttributes ADD_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17.0")
+    private static final DeprecatedAttributes ADD_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
             .setDescription("Use '-A' or --addLicense instead.").get();
     static final OptionGroup ADD = new OptionGroup()
             .addOption(Option.builder("a").hasArg(false)
@@ -161,7 +161,7 @@ public final class Report {
             .converter(Converter.FILE).build();
 
     // TODO rework when commons-cli 1.7.1 or higher is available.
-    static final DeprecatedAttributes DIR_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17.0")
+    static final DeprecatedAttributes DIR_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
             .setDescription("Use '--'").get();
     static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
             .desc(format("[%s] %s", DIR_ATTRIBUTES, "Used to indicate end of list when using --exclude.")).argName("DirOrArchive")
@@ -269,7 +269,7 @@ public final class Report {
 
     /**
      * Specify the processing of ARCHIVE files.
-     * @since 0.17.0
+     * @since 0.17
      */
     static final Option ARCHIVE = Option.builder().longOpt("archive").hasArg().argName("ProcessingType")
             .desc(format("Specifies the level of detail in ARCHIVE file reporting. (default is %s)",

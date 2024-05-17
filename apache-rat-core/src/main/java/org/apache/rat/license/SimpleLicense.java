@@ -231,7 +231,7 @@ public class SimpleLicense implements ILicense {
                 throw new ImplementationException("'licenseFamilies' must not be null");
             }
             if (StringUtils.isBlank(familyCategory)) {
-                throw new ImplementationException("License 'family'  must be specified");
+                throw new ImplementationException("License 'family' must be specified");
             }
 
             Optional<ILicenseFamily> family = LicenseFamilySetFactory.findFamily(familyCategory, licenseFamilies);

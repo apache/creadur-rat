@@ -341,8 +341,8 @@ public class ReportTest {
         } finally {
             DefaultLog.setInstance(null);
         }
-        log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17.0: Use '--'");
-        log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17.0: Use '-A or --addLicense'");
+        log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
+        log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '-A or --addLicense'");
     }
 
     @Test
