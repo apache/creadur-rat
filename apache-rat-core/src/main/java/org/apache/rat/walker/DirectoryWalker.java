@@ -19,6 +19,10 @@
 
 package org.apache.rat.walker;
 
+<<<<<<< RAT-324_tests_to_validate_that_UI_options
+=======
+import java.io.FilenameFilter;
+>>>>>>> master
 import java.nio.file.Path;
 import java.util.SortedSet;
 
