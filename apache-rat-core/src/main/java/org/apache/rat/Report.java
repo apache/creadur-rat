@@ -76,7 +76,7 @@ import static java.lang.String.format;
  */
 public final class Report {
 
-    private static final int HELP_WIDTH = 130;
+    private static final int HELP_WIDTH = 120;
     private static final int HELP_PADDING = 5;
 
     /*
