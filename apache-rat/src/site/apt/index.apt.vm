@@ -74,7 +74,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar
 * Command Line Options
 
 +------------------------------------------+
-#include( "../../../target/site/cli_help.txt" )
+#include( "cli_help.txt" )
 +------------------------------------------+
 
 ** Styling output

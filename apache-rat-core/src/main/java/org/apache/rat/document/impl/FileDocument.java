@@ -50,11 +50,11 @@ public class FileDocument extends Document {
     }
 
     /**
-     * Normalizes a file name.  Accounts for Windows to Unix conversion.
-     * @param file
-     * @return
+     * Normalizes a file name to linux style.  Accounts for Windows to Unix conversion.
+     * @param file The file to normalize
+     * @return the String for the file name.
      */
-    public final static String normalizeFileName(File file) {
+    public final static String normalizeFileName(final File file) {
         String path = file.getPath();
         return path.replace('\\', '/');
     }
