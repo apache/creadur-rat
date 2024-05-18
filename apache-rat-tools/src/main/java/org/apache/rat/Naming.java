@@ -2,14 +2,20 @@ package org.apache.rat;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.text.WordUtils;
+import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * A simple tool to convert CLI options  to Maven and Ant format
+ */
 public class Naming {
 
     private Naming() {}
@@ -21,11 +27,13 @@ public class Naming {
      */
     public static void main(String[] args) throws IOException {
         Options options = Report.buildOptions();
-
-        for (Option option: options.getOptions()) {
-            if (option.getLongOpt() != null) {
-                CasedString opt = new CasedString(StringCase.Kebab, option.getLongOpt());
-                System.out.format("%s,%s,%s%n", opt, opt.toCase(StringCase.Camel), option.getDescription());
+        try (CSVPrinter printer = new CSVPrinter(new FileWriter("nameMap.csv"), CSVFormat.DEFAULT)) {
+            printer.printRecord("CLI", "Maven", "Ant", "Description");
+            for (Option option : options.getOptions()) {
+                if (option.getLongOpt() != null) {
+                    CasedString opt = new CasedString(StringCase.Kebab, option.getLongOpt());
+                    printer.printRecord(opt, opt.toCase(StringCase.Camel), opt.toCase(StringCase.Camel), option.getDescription());
+                }
             }
         }
     }
