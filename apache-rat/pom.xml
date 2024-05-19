@@ -134,7 +134,7 @@
           <outputFile>${project.basedir}/src/site/apt/cli_help.txt</outputFile>
           <arguments>
             <argument>-cp</argument>
-            <argument>target/apache-rat-0.17-SNAPSHOT.jar</argument>
+            <argument>target/apache-rat-${project.version}.jar</argument>
             <argument>org.apache.rat.Report</argument>
             <argument>--help</argument>
           </arguments>
