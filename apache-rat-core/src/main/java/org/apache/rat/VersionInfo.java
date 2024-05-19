@@ -22,12 +22,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class Version {
-    public static final String VERSION;
+/**
+ * A container for information provided by the build.
+ */
+public final class VersionInfo {
+    /**
+     * The version info string.
+     */
+    private static final String VERSION;
 
     static {
         Properties p = new Properties();
-        try (InputStream input = Version.class.getResourceAsStream("/org/apache/rat/Version.properties")) {
+        try (InputStream input = VersionInfo.class.getResourceAsStream("/org/apache/rat/Version.properties")) {
             if (input != null) {
                 p.load(input);
             }
@@ -37,10 +43,14 @@ public class Version {
         VERSION = p.getProperty("version", "CURRENT-VERSION");
     }
 
-    private Version() {
+    private VersionInfo() {
     }
 
-    String version() {
+    /**
+     * Gets the version string.
+     * @return the version string.
+     */
+    public static String version() {
         return VERSION;
     }
 }

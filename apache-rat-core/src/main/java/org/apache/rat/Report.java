@@ -51,7 +51,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -587,7 +586,7 @@ public final class Report {
         HelpFormatter helpFormatter = new HelpFormatter.Builder().get();
         helpFormatter.setWidth(HELP_WIDTH);
         helpFormatter.setOptionComparator(new OptionComparator());
-        String syntax = format("java -jar apache-rat/target/apache-rat-%s.jar [options] [DIR|ARCHIVE]", Version.VERSION);
+        String syntax = format("java -jar apache-rat/target/apache-rat-%s.jar [options] [DIR|ARCHIVE]", VersionInfo.version());
         helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header("Available options"), opts,
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(),
                 header("Argument Types"), false);

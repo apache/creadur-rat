@@ -22,9 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class VersionTest {
+public class VersionInfoTest {
     @Test
     public void testVersion() {
-        assertNotEquals( "CURRENT-VERSION", Version.VERSION);
+        assertNotEquals( "CURRENT-VERSION", VersionInfo.version());
     }
 }
