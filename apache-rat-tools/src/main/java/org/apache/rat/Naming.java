@@ -3,6 +3,7 @@ package org.apache.rat;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -32,10 +33,48 @@ public class Naming {
             for (Option option : options.getOptions()) {
                 if (option.getLongOpt() != null) {
                     CasedString opt = new CasedString(StringCase.Kebab, option.getLongOpt());
-                    printer.printRecord(opt, opt.toCase(StringCase.Camel), opt.toCase(StringCase.Camel), option.getDescription());
+                    printer.printRecord(opt, mavenName(option, opt), antName(option, opt), option.getDescription());
                 }
             }
         }
+    }
+
+    private static String quote(String s) {
+        return String.format("\"%s\"", s);
+    }
+    private static String mavenName(Option option, CasedString name) {
+        StringBuilder sb = new StringBuilder();
+        if (option.isDeprecated()) {
+            sb.append("@Deprecated").append(System.lineSeparator());
+        }
+        sb.append("@Parameter(property = ")
+        .append(quote("rat."+WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
+             if (option.isRequired()) {
+                sb.append(" required = true");
+            }
+        sb.append(")").append(System.lineSeparator())
+                .append("public void ")
+        .append(option.hasArgs() ? "add" : "set" )
+                .append(WordUtils.capitalize(name.toCase(StringCase.Camel)))
+                .append("(")
+                .append(option.hasArg() ? "String " : "boolean ")
+                .append(WordUtils.uncapitalize(name.toCase(StringCase.Camel)))
+                .append(")");
+        return sb.toString();
+    }
+
+    private static String antName(Option option, CasedString name) {
+        StringBuilder sb = new StringBuilder();
+        if (option.isDeprecated()) {
+            sb.append("@Deprecated").append(System.lineSeparator());
+        }
+        sb.append(option.hasArgs() ? "add" : "set" )
+        .append(WordUtils.capitalize(name.toCase(StringCase.Camel)))
+        .append("(")
+        .append(option.hasArg() ? "String " : "boolean ")
+        .append(WordUtils.uncapitalize(name.toCase(StringCase.Camel)))
+        .append(")");
+        return sb.toString();
     }
 
     static Function<String[],String> camelJoiner = a -> {
