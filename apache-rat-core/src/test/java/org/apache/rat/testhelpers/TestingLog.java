@@ -43,11 +43,11 @@ public class TestingLog implements Log {
     }
 
     public void assertContains(String expected) {
-        TextUtils.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", captured.toString());
+        TextUtils.assertContains(expected, captured.toString());
     }
 
     public void assertNotContains(String expected) {
-        TextUtils.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", captured.toString());
+        TextUtils.assertNotContains(expected, captured.toString());
     }
 
     public void assertContainsPattern(String pattern) {
@@ -63,4 +63,7 @@ public class TestingLog implements Log {
         captured.append(String.format("%s: %s%n", level, msg));
     }
 
+    public boolean isEmpty() {
+        return captured.length() == 0;
+    }
 }

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -138,7 +139,7 @@ public final class Report {
      */
     // TODO rework when Commons-CLI version 1.7.1 or higher is available.
     private static final DeprecatedAttributes ADD_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-            .setDescription("Use '-A' or --addLicense instead.").get();
+            .setDescription("Use '-A' or '--addLicense' instead.").get();
     static final OptionGroup ADD = new OptionGroup()
             .addOption(Option.builder("a").hasArg(false)
                     .desc(format("[%s]", ADD_ATTRIBUTES))
@@ -457,16 +458,14 @@ public final class Report {
             DeprecationReporter.logDeprecated(log, EXCLUDE_CLI);
             String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
             if (excludes != null) {
-                final FilenameFilter filter = parseExclusions(log, Arrays.asList(excludes));
-                configuration.setFilesToIgnore(filter);
+                parseExclusions(log, Arrays.asList(excludes)).ifPresent(configuration::setFilesToIgnore);
             }
         } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
             DeprecationReporter.logDeprecated(log, EXCLUDE_FILE_CLI);
             String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
             if (excludeFileName != null) {
-                final FilenameFilter filter = parseExclusions(log,
-                        FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8));
-                configuration.setFilesToIgnore(filter);
+                parseExclusions(log,FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8))
+                        .ifPresent(configuration::setFilesToIgnore);
             }
         }
 
@@ -515,9 +514,9 @@ public final class Report {
      *
      * @param log the Logger to use.
      * @param excludes the list of patterns to exclude.
-     * @return the FilenameFilter tht excludes the patterns
+     * @return the FilenameFilter tht excludes the patterns or an empty optional.
      */
-    static FilenameFilter parseExclusions(final Log log, final List<String> excludes) {
+    static Optional<FilenameFilter> parseExclusions(final Log log, final List<String> excludes) {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
         for (String exclude : excludes) {
@@ -544,7 +543,7 @@ public final class Report {
         if (ignoredLines > 0) {
             log.info("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
         }
-        return new NotFileFilter(orFilter);
+        return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter.negate());
     }
 
     static Options buildOptions() {

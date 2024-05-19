@@ -18,8 +18,11 @@
  */
 package org.apache.rat;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,6 +40,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.List;
 import java.util.function.Predicate;
@@ -48,6 +53,12 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.commons.io.filefilter.FalseFileFilter;
@@ -87,9 +98,9 @@ public class ReportTest {
 
     @Test
     public void parseExclusionsForCLIUsage() {
-        final FilenameFilter filter = Report
+        final Optional<FilenameFilter> filter = Report
                 .parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
-        assertNotNull(filter);
+        assertThat(filter).isPresent();
     }
 
     @Test
@@ -174,7 +185,7 @@ public class ReportTest {
     }
 
     @Test
-    public void LicensesOptionNoDefaultsTest() throws Exception {
+    public void testLicensesOptionNoDefaults() throws Exception {
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] {"--no-default", "--licenses", "target/test-classes/report/LicenseOne.xml", "--licenses", "target/test-classes/report/LicenseTwo.xml"});
         ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "", cl);
         SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
@@ -342,7 +353,7 @@ public class ReportTest {
             DefaultLog.setInstance(null);
         }
         log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
-        log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '-A or --addLicense'");
+        log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '-A' or '--addLicense'");
     }
 
     @Test
@@ -364,5 +375,85 @@ public class ReportTest {
         ReportConfiguration config = Report.parseCommands(args, (o)-> {}, true);
         assertNotNull(config, "Did not create ReportConfiguraiton");
         assertEquals(1, config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).size());
+    }
+
+    @ParameterizedTest
+    @MethodSource("exclusionsProvider")
+    public void testParseExclusions(String pattern, List<IOFileFilter> expectedPatterns, List<String> logEntries) {
+        TestingLog log = new TestingLog();
+        Optional<FilenameFilter> filter = Report.parseExclusions(log, Collections.singletonList(pattern));
+        if (expectedPatterns.isEmpty()) {
+            assertThat(filter).isEmpty();
+        } else {
+            assertInstanceOf(NotFileFilter.class, filter.get());
+            String result = filter.toString();
+            for (IOFileFilter expectedFilter : expectedPatterns) {
+                TextUtils.assertContains(expectedFilter.toString(), result);
+            }
+        }
+        assertEquals(log.isEmpty(), logEntries.isEmpty());
+        for (String logEntry : logEntries) {
+            log.assertContains(logEntry);
+        }
+    }
+
+    public static Stream<Arguments> exclusionsProvider() {
+        List<Arguments> lst = new ArrayList<>();
+
+        lst.add(Arguments.of( "", Collections.emptyList(), Collections.singletonList("INFO: Ignored 1 lines in your exclusion files as comments or empty lines.")));
+
+        lst.add(Arguments.of( "# a comment", Collections.emptyList(), Collections.singletonList("INFO: Ignored 1 lines in your exclusion files as comments or empty lines.")));
+
+        List<IOFileFilter> expected = new ArrayList<>();
+        String pattern = "hello.world";
+        expected.add(new RegexFileFilter(pattern));
+        expected.add(new NameFileFilter(pattern));
+        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
+
+        expected = new ArrayList<>();
+        pattern = "[Hh]ello.[Ww]orld";
+        expected.add(new RegexFileFilter(pattern));
+        expected.add(new NameFileFilter(pattern));
+        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
+
+        expected = new ArrayList<>();
+        pattern = "hell*.world";
+        expected.add(new RegexFileFilter(pattern));
+        expected.add(new NameFileFilter(pattern));
+        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
+        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
+
+        expected = new ArrayList<>();
+        pattern = "*.world";
+        expected.add(new NameFileFilter(pattern));
+        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
+        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
+
+        expected = new ArrayList<>();
+        pattern = "hello.*";
+        expected.add(new NameFileFilter(pattern));
+        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
+        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
+
+        expected = new ArrayList<>();
+        pattern = "?ello.world";
+        expected.add(new NameFileFilter(pattern));
+        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
+        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
+
+        expected = new ArrayList<>();
+        pattern = "hell?.world";
+        expected.add(new RegexFileFilter(pattern));
+        expected.add(new NameFileFilter(pattern));
+        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
+        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
+
+        expected = new ArrayList<>();
+        pattern = "hello.worl?";
+        expected.add(new NameFileFilter(pattern));
+        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
+        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
+
+        return lst.stream();
     }
 }
