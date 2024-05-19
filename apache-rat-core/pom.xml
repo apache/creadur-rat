@@ -53,6 +53,7 @@
             <excludes>
               <!-- These files have bad license headers because they are used to test bad license headers -->
               <exclude>src/test/resources/**</exclude>
+              <exclude>src/main/filtered-resources/org/apache/rat/Version.properties</exclude>
             </excludes>
           </configuration>
         </plugin>

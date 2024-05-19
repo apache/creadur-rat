@@ -587,7 +587,7 @@ public final class Report {
         HelpFormatter helpFormatter = new HelpFormatter.Builder().get();
         helpFormatter.setWidth(HELP_WIDTH);
         helpFormatter.setOptionComparator(new OptionComparator());
-        String syntax = "java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]";
+        String syntax = format("java -jar apache-rat/target/apache-rat-%s.jar [options] [DIR|ARCHIVE]", Version.VERSION);
         helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header("Available options"), opts,
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(),
                 header("Argument Types"), false);
