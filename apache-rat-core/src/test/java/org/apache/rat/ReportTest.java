@@ -19,7 +19,6 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -56,7 +55,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.license.ILicense;
@@ -423,6 +421,7 @@ public class ReportTest {
         expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
         lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
 
+        // see RAT-265 for issue
         expected = new ArrayList<>();
         pattern = "*.world";
         expected.add(new NameFileFilter(pattern));
