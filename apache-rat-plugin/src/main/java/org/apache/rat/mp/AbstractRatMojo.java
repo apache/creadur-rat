@@ -45,6 +45,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.cli.DeprecatedAttributes;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -53,6 +56,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
+import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.license.DeprecatedConfig;
 import org.apache.rat.config.SourceCodeManagementSystems;
@@ -68,12 +72,30 @@ import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoringDirectoryScanner;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.utils.DefaultLog;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
  * Abstract base class for Mojos, which are running Rat.
  */
-public abstract class AbstractRatMojo extends AbstractMojo {
+public abstract class AbstractRatMojo extends BaseRatMojo {
+
+    private static DeprecatedAttributes deprecate(String msg) {
+        return new DeprecatedAttributes.Builder().setDescription(msg).setForRemoval(true).setSince("0.17").get();
+    }
+
+    private static String use(Option option) {
+        return String.format("Use '--%s'", option.getLongOpt());
+    }
+
+    private static Option addDefaultLicenses = Option.builder().longOpt("addDefaultLicenses")
+            .deprecated(deprecate("No longer necessary")).build();
+
+    private static Option addDefaultLicenseMatchers = Option.builder().longOpt("addDefaultLicenseMatchers")
+            .deprecated(deprecate(use(Report.NO_DEFAULTS))).build();
+
+    private static Options options = new Options()
+            .addOption(addDefaultLicenses);
 
     /**
      * The base directory, in which to search for files.
@@ -96,8 +118,11 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     /**
      * Whether to add the default list of licenses.
      */
+    @Deprecated
     @Parameter(property = "rat.addDefaultLicenses", defaultValue = "true")
-    private boolean addDefaultLicenses;
+    public void setAddDefaultLicenses(boolean addDefaultLicenses) {
+        setNoDefaultLicenses(!addDefaultLicenses);
+    }
 
     /**
      * Whether to add the default list of license matchers.
@@ -339,79 +364,86 @@ public abstract class AbstractRatMojo extends AbstractMojo {
     }
     
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
-        ReportConfiguration config = new ReportConfiguration(makeLog());
-        reportDeprecatedProcessing();
-        Defaults defaults = getDefaultsBuilder().build(config.getLog());
-        if (addDefaultLicenses) {
-            config.setFrom(defaults);
-        } else {
-            config.setStyleSheet(Defaults.getPlainStyleSheet());
-        }
+        DefaultLog.setInstance(makeLog());
+        try {
+            ReportConfiguration config = Report.parseCommands(args().toArray(new String[0]),
+                    o -> getLog().warn("Help option not supported"),
+                    true);
+            reportDeprecatedProcessing();
+            Defaults defaults = getDefaultsBuilder().build(config.getLog());
+            if (addDefaultLicenses) {
+                config.setFrom(defaults);
+            } else {
+                config.setStyleSheet(Defaults.getPlainStyleSheet());
+            }
 
-        if (additionalLicenseFiles != null) {
-            for (String licenseFile : additionalLicenseFiles) {
-                try {
-                    URL url = new File(licenseFile).toURI().toURL();
-                    Format fmt = Format.fromName(licenseFile);
-                    MatcherReader mReader = fmt.matcherReader();
-                    if (mReader != null) {
-                        mReader.addMatchers(url);
-                    }
-                    LicenseReader lReader = fmt.licenseReader();
-                    if (lReader != null) {
+            if (additionalLicenseFiles != null) {
+                for (String licenseFile : additionalLicenseFiles) {
+                    try {
+                        URL url = new File(licenseFile).toURI().toURL();
+                        Format fmt = Format.fromName(licenseFile);
+                        MatcherReader mReader = fmt.matcherReader();
+                        if (mReader != null) {
+                            mReader.addMatchers(url);
+                        }
+                        LicenseReader lReader = fmt.licenseReader();
+                        if (lReader != null) {
                             lReader.addLicenses(url);
-                    config.addLicenses(lReader.readLicenses());
-                    config.addApprovedLicenseCategories(lReader.approvedLicenseId());
+                            config.addLicenses(lReader.readLicenses());
+                            config.addApprovedLicenseCategories(lReader.approvedLicenseId());
+                        }
+                    } catch (MalformedURLException e) {
+                        throw new ConfigurationException(licenseFile + " is not a valid license file", e);
                     }
-                } catch (MalformedURLException e) {
-                    throw new ConfigurationException(licenseFile + " is not a valid license file", e);
                 }
             }
-        }
-        if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
-            Log log = getLog();
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("%s license families loaded from pom", families.length));
+            if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
+                Log log = getLog();
+                if (log.isDebugEnabled()) {
+                    log.debug(String.format("%s license families loaded from pom", families.length));
+                }
+                Consumer<ILicenseFamily> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("Family: %s", l))
+                        : (l) -> {
+                };
+
+                Consumer<ILicenseFamily> process = logger.andThen(config::addFamily);
+                getDeprecatedConfigs().map(DeprecatedConfig::getLicenseFamily).filter(Objects::nonNull).forEach(process);
+                if (families != null) { // TODO remove if check in v1.0
+                    Arrays.stream(families).map(Family::build).forEach(process);
+                }
             }
-            Consumer<ILicenseFamily> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("Family: %s", l))
-                    : (l) -> {
-                    };
 
-            Consumer<ILicenseFamily> process = logger.andThen(config::addFamily);
-            getDeprecatedConfigs().map(DeprecatedConfig::getLicenseFamily).filter(Objects::nonNull).forEach(process);
-            if (families != null)  { // TODO remove if check in v1.0
-                Arrays.stream(families).map(Family::build).forEach(process);
+            processLicenseFamilies(config);
+
+            if (approvedLicenses != null && approvedLicenses.length > 0) {
+                Arrays.stream(approvedLicenses).forEach(config::addApprovedLicenseCategory);
             }
-        }
 
-        processLicenseFamilies(config);
-        
-        if (approvedLicenses != null && approvedLicenses.length > 0) {
-            Arrays.stream(approvedLicenses).forEach(config::addApprovedLicenseCategory);
-        }
+            if (licenses != null) {
+                Log log = getLog();
+                if (log.isDebugEnabled()) {
+                    log.debug(String.format("%s licenses loaded from pom", licenses.length));
+                }
+                Consumer<ILicense> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("License: %s", l))
+                        : (l) -> {
+                };
+                Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)
+                        ? (l) -> config.addApprovedLicenseCategory(l.getLicenseFamily())
+                        : (l) -> {
+                };
 
-        if (licenses != null) {
-            Log log = getLog();
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("%s licenses loaded from pom", licenses.length));
+                Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
+                SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.ALL);
+                getDeprecatedConfigs().map(DeprecatedConfig::getLicense).filter(Objects::nonNull)
+                        .map(x -> x.setLicenseFamilies(families).build()).forEach(process);
+                getLicenses().map(x -> x.build(families)).forEach(process);
             }
-            Consumer<ILicense> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("License: %s", l))
-                    : (l) -> {
-                    };
-            Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)
-                    ? (l) -> config.addApprovedLicenseCategory(l.getLicenseFamily())
-                    : (l) -> {
-                    };
 
-            Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
-            SortedSet<ILicenseFamily> families = config.getLicenseFamilies(LicenseFilter.ALL);
-            getDeprecatedConfigs().map(DeprecatedConfig::getLicense).filter(Objects::nonNull)
-            .map(x -> x.setLicenseFamilies(families).build()).forEach(process);
-            getLicenses().map(x -> x.build(families)).forEach(process);
+            config.setReportable(getReportable());
+            return config;
+        } catch (IOException e) {
+            throw new MojoExecutionException(e);
         }
-
-        config.setReportable(getReportable());
-        return config;
     }
 
     protected void logLicenses(Collection<ILicense> licenses) {

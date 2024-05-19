@@ -220,7 +220,7 @@ public final class Report {
      * Do not use the default files.
      * @since 0.16
      */
-    static final Option NO_DEFAULTS = new Option(null, "no-default-licenses", false, "Ignore default configuration. By default all approved default licenses are used");
+    public static final Option NO_DEFAULTS = new Option(null, "no-default-licenses", false, "Ignore default configuration. By default all approved default licenses are used");
 
     /**
      * Scan hidden directories.

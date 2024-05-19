@@ -30,6 +30,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
+import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.config.AddLicenseHeaders;
@@ -169,6 +170,7 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     @Override
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
+
         final ReportConfiguration configuration = super.getConfiguration();
         if (StringUtils.isNotBlank(addLicenseHeaders)) {
             configuration.setAddLicenseHeaders(AddLicenseHeaders.valueOf(addLicenseHeaders.toUpperCase()));
