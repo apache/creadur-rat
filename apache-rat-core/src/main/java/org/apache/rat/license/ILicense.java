@@ -18,11 +18,9 @@
  */
 package org.apache.rat.license;
 
-import java.util.Comparator;
 import java.util.Objects;
 import java.util.SortedSet;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.rat.analysis.IHeaderMatcher;
 
 /**

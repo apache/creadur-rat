@@ -18,9 +18,12 @@
  */ 
 package org.apache.rat.header;
 
+import org.apache.rat.DeprecationReporter;
+
 import java.util.regex.Pattern;
 
 @Deprecated // since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true)
 public class HeaderBean {
 
     private Pattern headerPattern;
@@ -32,6 +35,7 @@ public class HeaderBean {
     
     public HeaderBean(Pattern headerPattern, boolean match) {
         super();
+        DeprecationReporter.logDeprecated(this.getClass());
         this.headerPattern = headerPattern;
         this.match = match;
     }

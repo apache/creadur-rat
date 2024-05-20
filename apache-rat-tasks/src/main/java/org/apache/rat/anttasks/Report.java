@@ -21,7 +21,6 @@ package org.apache.rat.anttasks;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
+import org.apache.rat.ImplementationException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.configuration.Format;
@@ -205,14 +205,18 @@ public class Report extends Task {
     }
 
     public ReportConfiguration getConfiguration() {
-        Defaults defaults = defaultsBuilder.build(configuration.getLog());
+        try {
+            Defaults defaults = defaultsBuilder.build(configuration.getLog());
 
-        configuration.setFrom(defaults);
-        configuration.setReportable(new ResourceCollectionContainer(nestedResources));
-        families.stream().map(Family::build).forEach(configuration::addFamily);
-        licenses.stream().map(License::asBuilder)
-                .forEach(l -> configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily()));
-        return configuration;
+            configuration.setFrom(defaults);
+            configuration.setReportable(new ResourceCollectionContainer(nestedResources));
+            families.stream().map(Family::build).forEach(configuration::addFamily);
+            licenses.stream().map(License::asBuilder)
+                    .forEach(l -> configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily()));
+            return configuration;
+        } catch (ImplementationException e) {
+            throw new BuildException(e.getMessage(), e);
+        }
     }
 
     /**

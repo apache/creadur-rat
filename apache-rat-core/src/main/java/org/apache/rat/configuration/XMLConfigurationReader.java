@@ -19,6 +19,7 @@
 package org.apache.rat.configuration;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -68,7 +69,7 @@ import org.xml.sax.SAXException;
 /**
  * A class that reads the XML configuration file format.
  */
-public class XMLConfigurationReader implements LicenseReader, MatcherReader {
+public final class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     private Log log;
     private Document document;
@@ -126,8 +127,12 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         this.log = log;
     }
 
+    /**
+     * Returns the log the reader.
+     * @return the log if set, if not set {@code DefaultLog.getInstance()} is returned.
+     */
     public Log getLog() {
-        return log == null ? DefaultLog.INSTANCE : log;
+        return log == null ? DefaultLog.getInstance() : log;
     }
 
     @Override
@@ -137,7 +142,7 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     /**
      * Read xml from a reader.
-     * 
+     *
      * @param reader the reader to read XML from.
      */
     public void read(Reader reader) {
@@ -169,8 +174,8 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
             throw new ConfigurationException("Unable to create DOM builder", e);
         }
         for (URL url : urls) {
-            try {
-                add(builder.parse(url.openStream()));
+            try (InputStream inputStream = url.openStream()){
+                add(builder.parse(inputStream));
             } catch (SAXException | IOException e) {
                 throw new ConfigurationException("Unable to read url: " + url, e);
             }
@@ -329,26 +334,18 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
                 processChildren(description, children, childProcessor);
             }
         }
-        return new ImmutablePair<Boolean, List<Node>>(foundChildren, children);
+        return new ImmutablePair<>(foundChildren, children);
     }
 
     private AbstractBuilder parseMatcher(Node matcherNode) {
         final AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(matcherNode.getNodeName());
-        if (builder == null) {
-            throw new ConfigurationException(String.format("No builder found for: %s", matcherNode.getNodeName()));
-        }
+
         try {
             final Description description = DescriptionBuilder.buildMap(builder.builtClass());
-
+            if (description == null) {
+                throw new ConfigurationException(String.format("Unable to build description for %s", builder.builtClass()));
+            }
             processBuilderParams(description, builder);
-//            for (Description desc : description.childrenOfType(Component.Type.BuilderParam)) {
-//                Method m = builderParams.get(desc.getCommonName());
-//                try {
-//                    callSetter(desc, builder, m.invoke(builderParams));
-//                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-//                    ImplementationException.makeInstance(e);
-//                }
-//            }
 
             // process the attributes
             description.setChildren(getLog(), builder, attributes(matcherNode));
@@ -432,12 +429,13 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
 
     private ILicense parseLicense(Node licenseNode) {
         ILicense.Builder builder = ILicense.builder();
+        // get the description for the builder
         Description description = builder.getDescription();
-
+        // set the BUILDER_PARAM options from the description
         processBuilderParams(description, builder);
-
+        // set the children from attributes.
         description.setChildren(getLog(), builder, attributes(licenseNode));
-
+        // set children from the child nodes
         Pair<Boolean, List<Node>> pair = processChildNodes(description, licenseNode,
                 licenseChildNodeProcessor(builder, description));
         List<Node> children = pair.getRight();
@@ -448,11 +446,8 @@ public class XMLConfigurationReader implements LicenseReader, MatcherReader {
         for (Description childDescription : childDescriptions) {
             Iterator<Node> iter = children.iterator();
             while (iter.hasNext()) {
-                Node child = iter.next();
-                if (MatcherBuilderTracker.getMatcherBuilder(child.getNodeName()) != null) {
-                    callSetter(childDescription, builder, parseMatcher(child));
-                    iter.remove();
-                }
+                callSetter(childDescription, builder, parseMatcher(iter.next()));
+                iter.remove();
             }
         }
 

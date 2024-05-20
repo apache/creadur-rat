@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Converter;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
@@ -72,7 +74,10 @@ import static java.lang.String.format;
 /**
  * The CLI based configuration object for report generation.
  */
-public class Report {
+public final class Report {
+
+    private static final int HELP_WIDTH = 130;
+    private static final int HELP_PADDING = 5;
 
     /*
     If there are changes to Options the example output should be regenerated and placed in
@@ -86,12 +91,14 @@ public class Report {
             "Rat relies on heuristics: it may miss issues"
     };
 
-    private enum StyleSheets { PLAIN("plain-rat", "The default style"),
+    private enum StyleSheets {
+        PLAIN("plain-rat", "The default style"),
         MISSING_HEADERS("missing-headers", "Produces a report of files that are missing headers"),
         UNAPPROVED_LICENSES("unapproved-licenses", "Produces a report of the files with unapproved licenses");
         private final String arg;
         private final String desc;
-        StyleSheets(String arg, String description) {
+
+        StyleSheets(final String arg, final String description) {
             this.arg = arg;
             this.desc = description;
         }
@@ -130,9 +137,15 @@ public class Report {
     /**
      * Adds license headers to files missing headers.
      */
-    private static final OptionGroup ADD = new OptionGroup()
-            .addOption(new Option("a", false,
-                    "(deprecated) Add the default license header to any file with an unknown license.  Use '-A' or ---addLicense instead."))
+    // TODO rework when Commons-CLI version 1.7.1 or higher is available.
+    private static final DeprecatedAttributes ADD_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+            .setDescription("Use '-A' or '--addLicense' instead.").get();
+    static final OptionGroup ADD = new OptionGroup()
+            .addOption(Option.builder("a").hasArg(false)
+                    .desc(format("[%s]", ADD_ATTRIBUTES))
+                    .deprecated(ADD_ATTRIBUTES)
+                    .build())
+
             .addOption(new Option("A", "addLicense", false,
                     "Add the default license header to any file with an unknown license that is not in the exclusion list. "
                             + "By default new files will be created with the license header, "
@@ -141,25 +154,32 @@ public class Report {
 
     /**
      * Defines the output for the file.
-     * @since 0.16.0
+     *
+     * @since 0.16
      */
     static final Option OUT = Option.builder().option("o").longOpt("out").hasArg()
             .desc("Define the output file where to write a report to (default is System.out).")
             .converter(Converter.FILE).build();
 
+    // TODO rework when commons-cli 1.7.1 or higher is available.
+    static final DeprecatedAttributes DIR_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+            .setDescription("Use '--'").get();
     static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
-            .desc("(deprecated, use '--') Used to indicate source when using --exclude.").argName("DirOrArchive").build();
+            .desc(format("[%s] %s", DIR_ATTRIBUTES, "Used to indicate end of list when using --exclude.")).argName("DirOrArchive")
+            .deprecated(DIR_ATTRIBUTES).build();
 
     /**
      * Forces changes to be written to new files.
      */
     static final Option FORCE = new Option("f", "force", false,
-            "Forces any changes in files to be written directly to the source files (i.e. new files are not created).");
+            format("Forces any changes in files to be written directly to the source files (i.e. new files are not created).  Only valid with --%s",
+                    ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()));
     /**
      * Defines the copyright header to add to the file.
      */
     static final Option COPYRIGHT = Option.builder().option("c").longOpt("copyright").hasArg()
-            .desc("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\"")
+            .desc(format("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\".  Only valid with --%s",
+                    ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()))
             .build();
     /**
      * Name of File to exclude from report consideration.
@@ -181,8 +201,8 @@ public class Report {
      * The stylesheet to use to style the XML output.
      */
     static final Option STYLESHEET_CLI = Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
-            .desc("XSLT stylesheet to use when creating the report.  Not compatible with -x.  " +
-                    "Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses")
+            .desc("XSLT stylesheet to use when creating the report.  Not compatible with -x. "
+                    + "Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses")
             .build();
     /**
      * Produce help
@@ -190,15 +210,16 @@ public class Report {
     static final Option HELP = new Option("h", "help", false, "Print help for the RAT command line interface and exit.");
     /**
      * Flag to identify a file with license definitions.
-     * @since 0.16.0
+     *
+     * @since 0.16
      */
     static final Option LICENSES = Option.builder().longOpt("licenses").hasArgs().argName("FileOrURI")
-            .desc("File names or URLs for license definitions.  May be followed by multiple arguments. " +
-                    "Note that '--' or a following option is required when using this parameter.")
+            .desc("File names or URLs for license definitions.  May be followed by multiple arguments. "
+                    + "Note that '--' or a following option is required when using this parameter.")
             .build();
     /**
      * Do not use the default files.
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option NO_DEFAULTS = new Option(null, "no-default-licenses", false, "Ignore default configuration. By default all approved default licenses are used");
 
@@ -209,7 +230,7 @@ public class Report {
 
     /**
      * List the licenses that were used for the run.
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option LIST_LICENSES = Option.builder().longOpt("list-licenses").hasArg().argName("LicenseFilter")
             .desc("List the defined licenses (default is NONE). Valid options are: " + asString(LicenseFilter.values()))
@@ -218,7 +239,7 @@ public class Report {
 
     /**
      * List the all families for the run.
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option LIST_FAMILIES = Option.builder().longOpt("list-families").hasArg().argName("LicenseFilter")
             .desc("List the defined license families (default is NONE). Valid options are: " + asString(LicenseFilter.values()))
@@ -227,7 +248,7 @@ public class Report {
 
     /**
      * Specify the log level for output
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
@@ -237,7 +258,7 @@ public class Report {
 
     /**
      * Do not update files.
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option DRY_RUN = Option.builder().longOpt("dry-run")
             .desc("If set do not update the files but generate the reports.")
@@ -249,7 +270,7 @@ public class Report {
 
     /**
      * Specify the processing of ARCHIVE files.
-     * @since 0.17.0
+     * @since 0.17
      */
     static final Option ARCHIVE = Option.builder().longOpt("archive").hasArg().argName("ProcessingType")
             .desc(format("Specifies the level of detail in ARCHIVE file reporting. (default is %s)",
@@ -266,7 +287,7 @@ public class Report {
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();
 
-    private static String asString(Object[] args) {
+    private static String asString(final Object[] args) {
         return Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "));
     }
 
@@ -277,23 +298,23 @@ public class Report {
      * @param args the arguments.
      * @throws Exception on error.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         ReportConfiguration configuration = parseCommands(args, Report::printUsage);
         if (configuration != null) {
-            configuration.validate(DefaultLog.INSTANCE::error);
+            configuration.validate(DefaultLog.getInstance()::error);
             new Reporter(configuration).output();
         }
     }
 
     /**
-     * Parses the standard options to create a ReportConfiguraton.
+     * Parses the standard options to create a ReportConfiguration.
      *
      * @param args    the arguments to parse
      * @param helpCmd the help command to run when necessary.
      * @return a ReportConfiguration or null if Help was printed.
      * @throws IOException on error.
      */
-    public static ReportConfiguration parseCommands(String[] args, Consumer<Options> helpCmd) throws IOException {
+    public static ReportConfiguration parseCommands(final String[] args, final Consumer<Options> helpCmd) throws IOException {
         return parseCommands(args, helpCmd, false);
     }
 
@@ -306,24 +327,31 @@ public class Report {
      * @return a ReportConfiguration or null if Help was printed.
      * @throws IOException on error.
      */
-    public static ReportConfiguration parseCommands(String[] args, Consumer<Options> helpCmd, boolean noArgs) throws IOException {
+    public static ReportConfiguration parseCommands(final String[] args, final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
         Options opts = buildOptions();
         CommandLine cl;
+        Log log = DefaultLog.getInstance();
         try {
-            cl = new DefaultParser().parse(opts, args);
+            cl = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter(log)).build().parse(opts, args);
         } catch (ParseException e) {
-            DefaultLog.INSTANCE.error(e.getMessage());
-            DefaultLog.INSTANCE.error("Please use the \"--help\" option to see a list of valid commands and options");
+            log.error(e.getMessage());
+            log.error("Please use the \"--help\" option to see a list of valid commands and options");
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "cl"
         }
 
         if (cl.hasOption(LOG_LEVEL)) {
-            try {
-                DefaultLog.INSTANCE.setLevel(cl.getParsedOptionValue(LOG_LEVEL));
-            } catch (ParseException e) {
-                logParseException(e, LOG_LEVEL, cl, DefaultLog.INSTANCE.getLevel());
+            DeprecationReporter.logDeprecated(log, LOG_LEVEL);
+            if (log instanceof DefaultLog) {
+                DefaultLog dLog = (DefaultLog) log;
+                try {
+                    dLog.setLevel(cl.getParsedOptionValue(LOG_LEVEL));
+                } catch (ParseException e) {
+                    logParseException(log, e, LOG_LEVEL, cl, dLog.getLevel());
+                }
+            } else {
+                log.error("log was not a DefaultLog instance.  LogLevel not set.");
             }
         }
         if (cl.hasOption(HELP)) {
@@ -331,120 +359,149 @@ public class Report {
             return null;
         }
 
+        String[] clArgs;
         if (!noArgs) {
-            args = cl.getArgs();
-            if (args == null || args.length != 1) {
+            clArgs = cl.getArgs();
+            if (clArgs == null || clArgs.length != 1) {
                 helpCmd.accept(opts);
                 return null;
             }
         } else {
-            args = new String[]{null};
+            clArgs = new String[]{null};
         }
-        return createConfiguration(args[0], cl);
+        return createConfiguration(log, clArgs[0], cl);
     }
 
-    private static void logParseException(ParseException e, Option opt, CommandLine cl, Object dflt) {
-        DefaultLog.INSTANCE.warn(format("Invalid %s specified: %s ", opt.getOpt(), cl.getOptionValue(opt)));
-        DefaultLog.INSTANCE.warn(format("%s set to: %s", opt.getOpt(), dflt));
+    private static void logParseException(final Log log, final ParseException e, final Option opt, final CommandLine cl, final Object dflt) {
+        log.warn(format("Invalid %s specified: %s ", opt.getOpt(), cl.getOptionValue(opt)));
+        log.warn(format("%s set to: %s", opt.getOpt(), dflt));
+        log.debug(e);
     }
 
-    static ReportConfiguration createConfiguration(String baseDirectory, CommandLine cl) throws IOException {
-        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+    static ReportConfiguration createConfiguration(final Log log, final String baseDirectory, final CommandLine cl) throws IOException {
+        final ReportConfiguration configuration = new ReportConfiguration(log);
 
-        configuration.setDryRun(cl.hasOption(DRY_RUN));
+        if (cl.hasOption(DIR)) {
+            DeprecationReporter.logDeprecated(log, DIR);
+        }
+
+        if (cl.hasOption(DRY_RUN)) {
+            DeprecationReporter.logDeprecated(log, DRY_RUN);
+            configuration.setDryRun(cl.hasOption(DRY_RUN));
+        }
+
         if (cl.hasOption(LIST_FAMILIES)) {
+            DeprecationReporter.logDeprecated(log, LIST_FAMILIES);
             try {
                 configuration.listFamilies(cl.getParsedOptionValue(LIST_FAMILIES));
             } catch (ParseException e) {
-                logParseException(e, LIST_FAMILIES, cl, Defaults.LIST_FAMILIES);
+                logParseException(log, e, LIST_FAMILIES, cl, Defaults.LIST_FAMILIES);
             }
         }
 
         if (cl.hasOption(LIST_LICENSES)) {
+            DeprecationReporter.logDeprecated(log, LIST_LICENSES);
             try {
                 configuration.listLicenses(cl.getParsedOptionValue(LIST_LICENSES));
             } catch (ParseException e) {
-                logParseException(e, LIST_LICENSES, cl, Defaults.LIST_LICENSES);
+                logParseException(log, e, LIST_LICENSES, cl, Defaults.LIST_LICENSES);
             }
         }
 
         if (cl.hasOption(ARCHIVE)) {
+            DeprecationReporter.logDeprecated(log, ARCHIVE);
             try {
                 configuration.setArchiveProcessing(cl.getParsedOptionValue(ARCHIVE));
             } catch (ParseException e) {
-                logParseException(e, ARCHIVE, cl, Defaults.ARCHIVE_PROCESSING);
+                logParseException(log, e, ARCHIVE, cl, Defaults.ARCHIVE_PROCESSING);
             }
         }
 
         if (cl.hasOption(STANDARD)) {
+            DeprecationReporter.logDeprecated(log, STANDARD);
             try {
                 configuration.setStandardProcessing(cl.getParsedOptionValue(STANDARD));
             } catch (ParseException e) {
-                logParseException(e, STANDARD, cl, Defaults.STANDARD_PROCESSING);
+                logParseException(log, e, STANDARD, cl, Defaults.STANDARD_PROCESSING);
             }
         }
 
         if (cl.hasOption(OUT)) {
+            DeprecationReporter.logDeprecated(log, OUT);
             try {
                 configuration.setOut((File) cl.getParsedOptionValue(OUT));
             } catch (ParseException e) {
-                logParseException(e, OUT, cl, "System.out");
+                logParseException(log, e, OUT, cl, "System.out");
             }
         }
 
         if (cl.hasOption(SCAN_HIDDEN_DIRECTORIES)) {
+            DeprecationReporter.logDeprecated(log, SCAN_HIDDEN_DIRECTORIES);
             configuration.setDirectoriesToIgnore(FalseFileFilter.FALSE);
         }
 
         if (ADD.getSelected() != null) {
+            // @TODO remove this block when Commons-cli version 1.7.1 or higher is used
+            Arrays.stream(cl.getOptions()).filter(o -> o.getOpt().equals("a")).forEach(o -> cl.hasOption(o.getOpt()));
+            if (cl.hasOption(FORCE)) {
+                DeprecationReporter.logDeprecated(log, FORCE);
+            }
+            if (cl.hasOption(COPYRIGHT)) {
+                DeprecationReporter.logDeprecated(log, COPYRIGHT);
+            }
+            // remove that block ---^
             configuration.setAddLicenseHeaders(cl.hasOption(FORCE) ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
             configuration.setCopyrightMessage(cl.getOptionValue(COPYRIGHT));
         }
 
         if (cl.hasOption(EXCLUDE_CLI)) {
+            DeprecationReporter.logDeprecated(log, EXCLUDE_CLI);
             String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
             if (excludes != null) {
-                final FilenameFilter filter = parseExclusions(Arrays.asList(excludes));
-                configuration.setFilesToIgnore(filter);
+                parseExclusions(log, Arrays.asList(excludes)).ifPresent(configuration::setFilesToIgnore);
             }
         } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
+            DeprecationReporter.logDeprecated(log, EXCLUDE_FILE_CLI);
             String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
             if (excludeFileName != null) {
-                final FilenameFilter filter = parseExclusions(
-                        FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8));
-                configuration.setFilesToIgnore(filter);
+                parseExclusions(log,FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8))
+                        .ifPresent(configuration::setFilesToIgnore);
             }
         }
 
         if (cl.hasOption(XML)) {
+            DeprecationReporter.logDeprecated(log, XML);
             configuration.setStyleReport(false);
         } else {
             configuration.setStyleReport(true);
             if (cl.hasOption(STYLESHEET_CLI)) {
+                DeprecationReporter.logDeprecated(log, STYLESHEET_CLI);
                 String[] style = cl.getOptionValues(STYLESHEET_CLI);
                 if (style.length != 1) {
-                    DefaultLog.INSTANCE.error("Please specify a single stylesheet");
+                    log.error("Please specify a single stylesheet");
                     System.exit(1);
                 }
 
                 URL url = Report.class.getClassLoader().getResource(String.format("org/apache/rat/%s.xsl", style[0]));
-                IOSupplier<InputStream> ioSupplier = (url == null) ?
-                        () -> Files.newInputStream(Paths.get(style[0])) :
-                        url::openStream;
+                IOSupplier<InputStream> ioSupplier = url == null
+                        ? () -> Files.newInputStream(Paths.get(style[0]))
+                        : url::openStream;
                 configuration.setStyleSheet(ioSupplier);
             }
         }
 
         Defaults.Builder defaultBuilder = Defaults.builder();
         if (cl.hasOption(NO_DEFAULTS)) {
+            DeprecationReporter.logDeprecated(log, NO_DEFAULTS);
             defaultBuilder.noDefault();
         }
         if (cl.hasOption(LICENSES)) {
+            DeprecationReporter.logDeprecated(log, LICENSES);
             for (String fn : cl.getOptionValues(LICENSES)) {
                 defaultBuilder.add(fn);
             }
         }
-        Defaults defaults = defaultBuilder.build(DefaultLog.INSTANCE);
+        Defaults defaults = defaultBuilder.build(log);
         configuration.setFrom(defaults);
         if (StringUtils.isNotBlank(baseDirectory)) {
             configuration.setReportable(getDirectory(baseDirectory, configuration));
@@ -455,32 +512,38 @@ public class Report {
     /**
      * Creates a filename filter from patterns to exclude.
      *
+     * @param log the Logger to use.
      * @param excludes the list of patterns to exclude.
-     * @return the FilenameFilter tht excludes the patterns
+     * @return the FilenameFilter tht excludes the patterns or an empty optional.
      */
-    static FilenameFilter parseExclusions(List<String> excludes) {
+    static Optional<FilenameFilter> parseExclusions(final Log log, final List<String> excludes) {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
         for (String exclude : excludes) {
-            try {
-                // skip comments
-                if (exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
-                    ignoredLines++;
-                    continue;
-                }
 
-                String exclusion = exclude.trim();
-                // interpret given patterns as regular expression, direct file names or
-                // wildcards to give users more choices to configure exclusions
+            // skip comments
+            if (exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
+                ignoredLines++;
+                continue;
+            }
+
+            String exclusion = exclude.trim();
+            // interpret given patterns as regular expression, direct file names or
+            // wildcards to give users more choices to configure exclusions
+            try {
                 orFilter.addFileFilter(new RegexFileFilter(exclusion));
-                orFilter.addFileFilter(new NameFileFilter(exclusion));
-                orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
             } catch (PatternSyntaxException e) {
-                DefaultLog.INSTANCE.error("Will skip given exclusion '" + exclude + "' due to " + e);
+                // report nothing, an acceptable outcome.
+            }
+            orFilter.addFileFilter(new NameFileFilter(exclusion));
+            if (exclude.contains("?") || exclude.contains("*")) {
+                orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
             }
         }
-        DefaultLog.INSTANCE.error("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
-        return new NotFileFilter(orFilter);
+        if (ignoredLines > 0) {
+            log.info("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
+        }
+        return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter.negate());
     }
 
     static Options buildOptions() {
@@ -506,33 +569,33 @@ public class Report {
                         .addOption(XML).addOption(STYLESHEET_CLI));
     }
 
-    private static void printUsage(Options opts) {
+    private static void printUsage(final Options opts) {
         printUsage(new PrintWriter(System.out), opts);
     }
 
-    protected static String createPadding(int len) {
+    private static String createPadding(final int len) {
         char[] padding = new char[len];
         Arrays.fill(padding, ' ');
         return new String(padding);
     }
 
-   static String header(String txt) {
+    static String header(final String txt) {
         return String.format("%n====== %s ======%n", WordUtils.capitalizeFully(txt));
-   }
-    static void printUsage(PrintWriter writer, Options opts) {
+    }
 
-        HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.setWidth(130);
+    static void printUsage(final PrintWriter writer, final Options opts) {
+        HelpFormatter helpFormatter = new HelpFormatter.Builder().get();
+        helpFormatter.setWidth(HELP_WIDTH);
         helpFormatter.setOptionComparator(new OptionComparator());
         String syntax = "java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar [options] [DIR|TARBALL]";
         helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header("Available options"), opts,
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(),
                 header("Argument Types"), false);
 
-        String argumentPadding = createPadding(helpFormatter.getLeftPadding() + 5);
+        String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);
         for (Map.Entry<String, Supplier<String>> argInfo : ARGUMENT_TYPES.entrySet()) {
             writer.format("%n<%s>%n", argInfo.getKey());
-            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + 10,
+            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                     argumentPadding + argInfo.getValue().get());
         }
         writer.println(header("Notes"));
@@ -556,7 +619,7 @@ public class Report {
      * @param config        the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    private static IReportable getDirectory(String baseDirectory, ReportConfiguration config) {
+    private static IReportable getDirectory(final String baseDirectory, final ReportConfiguration config) {
         File base = new File(baseDirectory);
 
         if (!base.exists()) {
@@ -579,7 +642,7 @@ public class Report {
         /** The serial version UID.  */
         private static final long serialVersionUID = 5305467873966684014L;
 
-        private String getKey(Option opt) {
+        private String getKey(final Option opt) {
             String key = opt.getOpt();
             key = key == null ? opt.getLongOpt() : key;
             return key;

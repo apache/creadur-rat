@@ -61,7 +61,7 @@ public class DefaultPolicyTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        defaults = Defaults.builder().build(DefaultLog.getInstance());
         policy = new DefaultPolicy(defaults.getLicenseFamilies(LicenseFilter.APPROVED));
         document = new TestingDocument("subject");
     }

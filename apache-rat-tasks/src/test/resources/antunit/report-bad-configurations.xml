@@ -89,7 +89,7 @@
 
   <target name="testLicenseRequiresFamilyCategory">
     <au:expectfailure
-        expectedMessage="LicenseFamily Category must be specified">
+        expectedMessage="License 'family' must be specified">
       <rat:report>
         <file file="${ant.file}"/>
         <rat:license

@@ -19,18 +19,13 @@
 
 package org.apache.rat.walker;
 
-import java.io.FilenameFilter;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.SortedSet;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.RatReport;
 
 /**
@@ -47,7 +42,7 @@ public class DirectoryWalker extends Walker {
      * @param config the report configuration for this run.
      * @param document the document to process.
      */
-    public DirectoryWalker(final ReportConfiguration config, Document document) {
+    public DirectoryWalker(final ReportConfiguration config, final Document document) {
         super(document, config.getFilesToIgnore());
         this.directoriesToIgnore = config.getDirectoriesToIgnore();
     }
@@ -59,7 +54,7 @@ public class DirectoryWalker extends Walker {
      * @param document the document to process.
      * @throws RatException on error.
      */
-    private void processDirectory(final RatReport report, Document document) throws RatException {
+    private void processDirectory(final RatReport report, final Document document) throws RatException {
         if (isNotIgnoredDirectory(document.getPath())) {
             process(report, document);
         }
@@ -83,7 +78,7 @@ public class DirectoryWalker extends Walker {
      * @param document the document to run the report against
      * @throws RatException on error
      */
-    protected void process(final RatReport report, Document document) throws RatException {
+    protected void process(final RatReport report, final Document document) throws RatException {
         final SortedSet<Document> documents = document.listChildren();
         if (documents != null) {
             // breadth first traversal
@@ -93,7 +88,7 @@ public class DirectoryWalker extends Walker {
     }
 
     /** test for directory that is not ignored */
-    private boolean isNotIgnoredDirectory(Path path) {
+    private boolean isNotIgnoredDirectory(final Path path) {
         return !directoriesToIgnore.accept(path.getParent().toFile(), path.toString());
     }
 

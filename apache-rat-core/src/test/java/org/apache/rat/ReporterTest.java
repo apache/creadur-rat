@@ -60,7 +60,7 @@ public class ReporterTest {
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] { "-o", output.getCanonicalPath()});
-        ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
+        ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
         new Reporter(config).output();
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
@@ -77,7 +77,7 @@ public class ReporterTest {
         try (PrintStream out = new PrintStream(output)){
             System.setOut(out);
             CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] {});
-            ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
+            ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
             new Reporter(config).output();
         } finally {
             System.setOut(origin);
@@ -114,7 +114,7 @@ public class ReporterTest {
         try (PrintStream out = new PrintStream(output)){
             System.setOut(out);
             CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] { "-x" });
-            ReportConfiguration config = Report.createConfiguration("target/test-classes/elements", cl);
+            ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
             new Reporter(config).output();
         } finally {
             System.setOut(origin);
@@ -206,11 +206,11 @@ public class ReporterTest {
 
     @Test
     public void xmlReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.getInstance());
         configuration.setStyleReport(false);
         configuration.setFrom(defaults);
         configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
@@ -270,11 +270,11 @@ public class ReporterTest {
 
     @Test
     public void plainReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.getInstance());
         configuration.setFrom(defaults);
         configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
         configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));
@@ -328,11 +328,11 @@ public class ReporterTest {
 
     @Test
     public void UnapprovedLicensesReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build(DefaultLog.INSTANCE);
+        Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.INSTANCE);
+        final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.getInstance());
         configuration.setFrom(defaults);
         configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
         configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));

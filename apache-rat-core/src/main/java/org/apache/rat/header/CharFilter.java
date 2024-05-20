@@ -17,7 +17,11 @@
  * under the License.                                           *
  */ 
 package org.apache.rat.header;
+
+import org.apache.rat.DeprecationReporter;
+
 @Deprecated // since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true)
 interface CharFilter {
 
     /**

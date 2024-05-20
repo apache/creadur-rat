@@ -26,7 +26,24 @@ public class DefaultLog implements Log {
     /**
      * The instance of the default log.
      */
-    public static final DefaultLog INSTANCE = new DefaultLog();
+    private static Log INSTANCE = new DefaultLog();
+
+    /**
+     * Retrieves teh DefaultLog instance.
+     * @return the Default log instance.
+     */
+    public static Log getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * Sets the default log instance.
+     * If not set an instance of DefaultLog will be returned
+     * @param instance a Log to use as the defult.
+     */
+    public static void setInstance(final Log instance) {
+        INSTANCE = instance == null ? new DefaultLog() : instance;
+    }
     
     private Level level;
 

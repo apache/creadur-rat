@@ -46,8 +46,8 @@ public class XMLConfigurationWriterTest {
 
     @Test
     public void roundTrip() throws RatException {
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
-        config.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
+        config.setFrom(Defaults.builder().build(DefaultLog.getInstance()));
         config.listFamilies(LicenseFilter.ALL);
         config.listLicenses(LicenseFilter.ALL);
         XMLConfigurationWriter underTest = new XMLConfigurationWriter(config);
@@ -63,8 +63,8 @@ public class XMLConfigurationWriterTest {
     
     @Test
     public void testGen() throws Exception {
-        ReportConfiguration config = new ReportConfiguration(DefaultLog.INSTANCE);
-        config.setFrom(Defaults.builder().build(DefaultLog.INSTANCE));
+        ReportConfiguration config = new ReportConfiguration(DefaultLog.getInstance());
+        config.setFrom(Defaults.builder().build(DefaultLog.getInstance()));
         config.listFamilies(LicenseFilter.ALL);
         config.listLicenses(LicenseFilter.ALL);
         XMLConfigurationWriter underTest = new XMLConfigurationWriter(config);

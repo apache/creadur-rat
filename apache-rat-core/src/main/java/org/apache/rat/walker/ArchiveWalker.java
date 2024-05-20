@@ -21,10 +21,8 @@ package org.apache.rat.walker;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +37,6 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.ArchiveEntryDocument;
-import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.Log;
 
@@ -54,7 +51,7 @@ public class ArchiveWalker extends Walker {
      * @param config the report configuration for this run.
      * @param document the document to process.
      */
-    public ArchiveWalker(final ReportConfiguration config, Document document) {
+    public ArchiveWalker(final ReportConfiguration config, final Document document) {
         super(document, config.getFilesToIgnore());
         this.log = config.getLog();
     }
@@ -86,22 +83,21 @@ public class ArchiveWalker extends Walker {
      * @return A collection of documents that pass the file filter.
      * @throws RatException on error.
      */
-    public Collection<Document> getDocuments(Log log) throws RatException {
+    public Collection<Document> getDocuments(final Log log) throws RatException {
         List<Document> result = new ArrayList<>();
         try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
             ArchiveEntry entry = null;
             while ((entry = input.getNextEntry()) != null) {
-                Path path = this.getDocument().getPath().resolve("#"+entry.getName());
+                Path path = this.getDocument().getPath().resolve("#" + entry.getName());
                 if (!entry.isDirectory() && this.isNotIgnored(path) && input.canReadEntryData(entry)) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    IOUtils.copy(input,baos);
+                    IOUtils.copy(input, baos);
                     result.add(new ArchiveEntryDocument(path, baos.toByteArray()));
                 }
             }
         } catch (ArchiveException e) {
             log.warn(String.format("Unable to process %s: %s", getDocument().getName(), e.getMessage()));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw RatException.asRatException(e);
         }
         return result;

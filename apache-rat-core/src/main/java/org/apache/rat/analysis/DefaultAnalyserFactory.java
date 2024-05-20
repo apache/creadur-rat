@@ -24,7 +24,6 @@ import java.util.function.Predicate;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
-import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
@@ -32,8 +31,6 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.report.ConfigurationReport;
-import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 
 /**

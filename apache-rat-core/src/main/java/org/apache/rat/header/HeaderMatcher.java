@@ -18,6 +18,8 @@
  */ 
 package org.apache.rat.header;
 
+import org.apache.rat.DeprecationReporter;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.regex.Matcher;
@@ -34,6 +36,7 @@ import java.util.regex.Pattern;
  *
  */
 @Deprecated // since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true)
 public class HeaderMatcher {
 
     private final FilteringSequenceFactory factory;
@@ -46,6 +49,7 @@ public class HeaderMatcher {
     }
     
     public HeaderMatcher(final CharFilter filter, final int capacity, final HeaderBean[] headers) {
+        DeprecationReporter.logDeprecated(this.getClass());
         factory = new FilteringSequenceFactory(capacity, filter);
         read = null;
         this.headers = headers;

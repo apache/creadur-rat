@@ -18,6 +18,8 @@
  */ 
 package org.apache.rat.header;
 
+import org.apache.rat.DeprecationReporter;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -30,12 +32,14 @@ import java.io.Reader;
  * thus providing upwards compatibility for RAT.
  */
 @Deprecated // since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true)
 public class LineNumberReader {
 	private final Reader parent;
 	private boolean previousCharWasCR = false;
 	private int lineNumber = 0;
 
 	public LineNumberReader(Reader pReader) {
+		DeprecationReporter.logDeprecated(this.getClass());
 		parent = pReader;
 	}
 
