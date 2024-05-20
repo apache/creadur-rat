@@ -154,7 +154,7 @@ public final class Report {
     /**
      * Defines the output for the file.
      *
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option OUT = Option.builder().option("o").longOpt("out").hasArg()
             .desc("Define the output file where to write a report to (default is System.out).")
@@ -210,7 +210,7 @@ public final class Report {
     /**
      * Flag to identify a file with license definitions.
      *
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option LICENSES = Option.builder().longOpt("licenses").hasArgs().argName("FileOrURI")
             .desc("File names or URLs for license definitions.  May be followed by multiple arguments. "
@@ -218,7 +218,7 @@ public final class Report {
             .build();
     /**
      * Do not use the default files.
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option NO_DEFAULTS = new Option(null, "no-default-licenses", false, "Ignore default configuration. By default all approved default licenses are used");
 
@@ -229,7 +229,7 @@ public final class Report {
 
     /**
      * List the licenses that were used for the run.
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option LIST_LICENSES = Option.builder().longOpt("list-licenses").hasArg().argName("LicenseFilter")
             .desc("List the defined licenses (default is NONE). Valid options are: " + asString(LicenseFilter.values()))
@@ -238,7 +238,7 @@ public final class Report {
 
     /**
      * List the all families for the run.
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option LIST_FAMILIES = Option.builder().longOpt("list-families").hasArg().argName("LicenseFilter")
             .desc("List the defined license families (default is NONE). Valid options are: " + asString(LicenseFilter.values()))
@@ -247,7 +247,7 @@ public final class Report {
 
     /**
      * Specify the log level for output
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
@@ -257,7 +257,7 @@ public final class Report {
 
     /**
      * Do not update files.
-     * @since 0.16.0
+     * @since 0.16
      */
     static final Option DRY_RUN = Option.builder().longOpt("dry-run")
             .desc("If set do not update the files but generate the reports.")
