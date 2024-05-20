@@ -35,9 +35,9 @@ import java.io.InputStreamReader;
 /**
  * A simple tool to convert CLI options  to Maven and Ant format
  */
-public class MavenGenerator {
+public class AntGenerator {
 
-    private MavenGenerator() {}
+    private AntGenerator() {}
 
     private static final String INDENT="    ";
 
@@ -51,16 +51,16 @@ public class MavenGenerator {
         String className = args[1];
         String destDir = args[2];
         Options options = new Options();
+        Report.buildOptions().getOptions().stream().filter(Naming.optionFilter(Naming.antFilterList)).forEach(options::addOption);
 
-        Report.buildOptions().getOptions().stream().filter(Naming.optionFilter(Naming.mavenFilterList)).forEach(options::addOption);
 
         File file = new File(new File(new File(destDir), packageName.replaceAll("\\.", File.separator)),className+".java");
         System.out.println("Creating "+file);
         file.getParentFile().mkdirs();
-        try (InputStream template = MavenGenerator.class.getResourceAsStream("/Maven.tpl");
+        try (InputStream template = AntGenerator.class.getResourceAsStream("/Ant.tpl");
              FileWriter writer = new FileWriter(file)) {
             if (template == null) {
-                throw new RuntimeException("Template /Maven.tpl not found");
+                throw new RuntimeException("Template /Ant.tpl not found");
             }
             LineIterator iter = IOUtils.lineIterator(new InputStreamReader(template));
             while (iter.hasNext()) {
@@ -76,7 +76,7 @@ public class MavenGenerator {
                         writer.append(INDENT).append("protected ").append(className).append("() {}").append(System.lineSeparator());
                         break;
                     case "${class}":
-                        writer.append("public abstract class ").append(className).append(" extends AbstractMojo {").append(System.lineSeparator());
+                        writer.append("public abstract class ").append(className).append(" extends Task {").append(System.lineSeparator());
                         break;
                     default:
                         writer.append(line).append(System.lineSeparator());
@@ -91,13 +91,18 @@ public class MavenGenerator {
             if (option.getLongOpt() != null) {
                 CasedString name = new CasedString(StringCase.Kebab, option.getLongOpt());
                 writeComment(writer, option);
-                writer.append(Naming.mavenName(INDENT, option, name)).append(" {").append(System.lineSeparator());
+                writer.append(Naming.antName(INDENT, option, name)).append(" {").append(System.lineSeparator());
                 writeBody(writer, option, name);
                 writer.append(INDENT).append("}").append(System.lineSeparator()).append(System.lineSeparator());
+                if (option.getType() == File.class) {
+                    writeComment(writer, option);
+                    writer.append(Naming.antName(INDENT, option, (Class<?>) option.getType(), name)).append(" {").append(System.lineSeparator());
+                    writeFileBody(writer, option, name);
+                    writer.append(INDENT).append("}").append(System.lineSeparator()).append(System.lineSeparator());
+                }
             }
         }
     }
-
 
     private static void writeComment(FileWriter writer, Option option) throws IOException {
         writer.append(INDENT).append("/** ").append(System.lineSeparator())
@@ -112,8 +117,9 @@ public class MavenGenerator {
         String varName = WordUtils.uncapitalize(name.toCase(StringCase.Camel));
         String longArg = Naming.asLongArg(option);
         if (option.hasArg()) {
-            writer.append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
-            .append(INDENT).append(INDENT).append("args.add(").append(varName).append(");").append(System.lineSeparator());
+            String method = option.hasArgs() ? "addArg(" : "setArg(";
+            writer.append(INDENT).append(INDENT).append(method).append(longArg).append(", ")
+                .append(varName).append(");").append(System.lineSeparator());
         } else {
             writer.append(INDENT).append(INDENT).append("if (").append(varName).append(") {").append(System.lineSeparator())
             .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
@@ -121,5 +127,17 @@ public class MavenGenerator {
                     .append(INDENT).append(INDENT).append(INDENT).append("args.remove(").append(longArg).append(");").append(System.lineSeparator())
                     .append(INDENT).append(INDENT).append("}").append(System.lineSeparator());
         }
+    }
+
+    private static void writeFileBody(FileWriter writer, Option option, CasedString name) throws IOException {
+        String varName = WordUtils.uncapitalize(name.toCase(StringCase.Camel));
+        String longArg = Naming.asLongArg(option);
+
+        writer.append(INDENT).append(INDENT).append( "try {").append(System.lineSeparator())
+                .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
+                .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(varName).append(".getCanonicalPath());").append(System.lineSeparator())
+                .append(INDENT).append(INDENT).append( "} catch (IOException e) {").append(System.lineSeparator())
+                .append(INDENT).append(INDENT).append(INDENT).append("throw new BuildException(e.getMessage(), e);").append(System.lineSeparator())
+                .append(INDENT).append(INDENT).append( "}").append(System.lineSeparator());
     }
 }

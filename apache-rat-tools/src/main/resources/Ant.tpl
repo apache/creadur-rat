@@ -19,16 +19,19 @@
 
 ${package}
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugins.annotations.Parameter;
+import java.io.File;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.cli.Option;
 
 /* DO NOT EDIT - GENERATED FILE */
 
 /**
- * Generated class to provide Maven support for standard Rat command line options
+ * Generated class to provide Ant support for standard Rat command line options
  */
 ${class}
     private final List<String> args = new ArrayList<>();
@@ -36,6 +39,20 @@ ${class}
 ${constructor}
 
     protected List<String> args() { return this.args; }
+
+    protected void setArg(String key, String value) {
+        int idx = args.indexOf(key);
+        if (idx == -1) {
+            addArg(key, value);
+        } else {
+            args.set(idx + 1, value);
+        }
+    }
+
+    protected void addArg(String key, String value) {
+        args.add(key);
+        args.add(value);
+    }
 
 ${methods}
 }

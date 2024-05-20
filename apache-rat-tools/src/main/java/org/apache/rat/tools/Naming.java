@@ -26,6 +26,9 @@ import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
 import java.io.FileWriter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.rat.Report;
 import org.apache.rat.tools.CasedString.StringCase;
@@ -39,6 +42,14 @@ public class Naming {
 
     private static final String INDENT="    ";
 
+    public  static final List<String> mavenFilterList = Arrays.asList("help");
+
+    public  static final List<String> antFilterList = Arrays.asList("help");
+
+    public static Predicate<Option> optionFilter(List<String> filterList) {
+        return option -> !filterList.contains(option.getLongOpt());
+    }
+
     /**
      * Creates the documentation.  Writes to the output specified by the -o or --out option.  Defaults to System.out.
      * @param args the arguments.  Try --help for help.
@@ -46,13 +57,16 @@ public class Naming {
      */
     public static void main(String[] args) throws IOException {
         Options options = Report.buildOptions();
-
+        Predicate<Option> mavenFilter = optionFilter(mavenFilterList);
+        Predicate<Option> antFilter = optionFilter(antFilterList);
         try (CSVPrinter printer = new CSVPrinter(new FileWriter("nameMap.csv"), CSVFormat.DEFAULT)) {
             printer.printRecord("CLI", "Maven", "Ant", "Description");
             for (Option option : options.getOptions()) {
                 if (option.getLongOpt() != null) {
                     CasedString opt = new CasedString(StringCase.Kebab, option.getLongOpt());
-                    printer.printRecord(opt, mavenName("", option, opt), antName(option, opt), option.getDescription());
+                    String mavenCell = mavenFilter.test(option) ? mavenName("", option, opt) : "-- not supported --";
+                    String antCell = antFilter.test(option) ? antName("", option, opt) : "-- not supported --";
+                    printer.printRecord(opt, mavenCell, antCell, option.getDescription());
                 }
             }
         }
@@ -90,17 +104,21 @@ public class Naming {
         return sb.toString();
     }
 
-    public static String antName(Option option, CasedString name) {
+    public static String antName(String indent, Option option, CasedString name) {
+        return antName(indent, option, String.class, name);
+    }
+
+    public static String antName(String indent, Option option, Class<?> type, CasedString name) {
         StringBuilder sb = new StringBuilder();
         if (option.isDeprecated()) {
-            sb.append("@Deprecated").append(System.lineSeparator());
+            sb.append(indent).append("@Deprecated").append(System.lineSeparator());
         }
-        sb.append(option.hasArgs() ? "add" : "set" )
-        .append(WordUtils.capitalize(name.toCase(StringCase.Camel)))
-        .append("(")
-        .append(option.hasArg() ? "String " : "boolean ")
-        .append(WordUtils.uncapitalize(name.toCase(StringCase.Camel)))
-        .append(")");
+        sb.append(indent).append("public void ").append(option.hasArgs() ? "add" : "set" )
+                .append(WordUtils.capitalize(name.toCase(StringCase.Camel)))
+                .append("(")
+                .append(option.hasArg() ? type.getSimpleName() : "boolean").append(" ")
+                .append(WordUtils.uncapitalize(name.toCase(StringCase.Camel)))
+                .append(")");
         return sb.toString();
     }
 }

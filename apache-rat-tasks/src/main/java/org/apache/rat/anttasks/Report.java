@@ -19,26 +19,24 @@
 package org.apache.rat.anttasks;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.Defaults;
 import org.apache.rat.ImplementationException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
-import org.apache.rat.configuration.Format;
-import org.apache.rat.configuration.LicenseReader;
-import org.apache.rat.configuration.MatcherReader;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Resource;
@@ -64,21 +62,27 @@ import org.apache.tools.ant.types.resources.Union;
  * default.</li>
  * </ul>
  */
-public class Report extends Task {
+public class Report extends BaseAntTask {
 
-    private final Defaults.Builder defaultsBuilder;
-    private final ReportConfiguration configuration;
     private final List<License> licenses = new ArrayList<>();
     private final List<Family> families = new ArrayList<>();
+    private final DeprecatedConfig deprecatedConfig = new DeprecatedConfig();
     /**
      * will hold any nested resource collection
      */
     private Union nestedResources;
 
+    private static class DeprecatedConfig {
+        FilenameFilter inputFileFilter;
+        Resource styleSheet;
+        Set<String> approvedLicenseCategories = new HashSet<>();
+        Set<String> removedLicenseCategories = new HashSet<>();
+        org.apache.rat.config.AddLicenseHeaders addLicenseHeaders = null;
+    }
+
     public Report() {
-        configuration = new ReportConfiguration(new Logger());
-        configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
-        defaultsBuilder = Defaults.builder();
+        Logger log = new Logger();
+        DefaultLog.setInstance(log);
     }
 
     /**
@@ -93,12 +97,19 @@ public class Report extends Task {
         nestedResources.add(rc);
     }
 
+
     public void setInputFileFilter(FilenameFilter inputFileFilter) {
-        configuration.setFilesToIgnore(inputFileFilter);
+        deprecatedConfig.inputFileFilter = inputFileFilter;
     }
 
+    /**
+     *
+     * @param reportFile
+     * @deprecated use setOut
+     */
+    @Deprecated
     public void setReportFile(File reportFile) {
-        configuration.setOut(reportFile);
+        setOut(reportFile.getAbsolutePath());
     }
 
     public void addLicense(License lic) {
@@ -116,7 +127,7 @@ public class Report extends Task {
      */
     @Deprecated
     public void addStylesheet(Resource styleSheet) {
-        addStyleSheet(styleSheet);
+        deprecatedConfig.styleSheet = styleSheet;
     }
 
     /**
@@ -124,40 +135,32 @@ public class Report extends Task {
      * @param styleSheet style sheet to use in this report.
      */
     public void addStyleSheet(Resource styleSheet) {
-        configuration.setStyleSheet(styleSheet::getInputStream);
-        configuration.setStyleReport(true);
+        deprecatedConfig.styleSheet = styleSheet;
     }
 
+    /**
+     * @param styleReport
+     * @deprecated use setXml
+     */
+    @Deprecated
     public void setStyleReport(boolean styleReport) {
-        configuration.setStyleReport(styleReport);
+        setXml(!styleReport);
     }
 
     /**
      * 
      * @param style
-     * @deprecated use #setStyleReport
+     * @deprecated use setXml
      */
     @Deprecated
     public void setFormat(String style) {
         setStyleReport("styled".equalsIgnoreCase(style));
-
     }
 
     public void setLicenses(File fileName) {
         try {
-            URL url = fileName.toURI().toURL();
-            Format fmt = Format.fromFile(fileName);
-            MatcherReader mReader = fmt.matcherReader();
-            if (mReader != null) {
-                mReader.addMatchers(url);
-            }
-            LicenseReader lReader = fmt.licenseReader();
-            if (lReader != null) {
-                lReader.addLicenses(url);
-                configuration.addLicenses(lReader.readLicenses());
-                configuration.addApprovedLicenseCategories(lReader.approvedLicenseId());
-            }
-        } catch (MalformedURLException e) {
+            addLicenses(fileName.getCanonicalPath());
+        } catch (IOException e) {
             throw new BuildException("Can not read license file " + fileName, e);
         }
     }
@@ -165,56 +168,78 @@ public class Report extends Task {
     /**
      * @param useDefaultLicenses Whether to add the default list of license
      * matchers.
+     * @deprecated  use setNoDefaultLicenses
      */
+    @Deprecated
     public void setUseDefaultLicenses(boolean useDefaultLicenses) {
-        if (!useDefaultLicenses) {
-            defaultsBuilder.noDefault();
-        }
+        setNoDefaultLicenses(!useDefaultLicenses);
     }
 
+    /**
+     *
+     * @param familyCategory
+     */
     public void setAddApprovedLicense(String familyCategory) {
-        configuration.addApprovedLicenseCategory(familyCategory);
+        deprecatedConfig.approvedLicenseCategories.add(familyCategory);
     }
 
     public void addAddApprovedLicense(String familyCategory) {
-        configuration.addApprovedLicenseCategory(familyCategory);
+        deprecatedConfig.approvedLicenseCategories.add(familyCategory);
     }
 
     public void setRemoveApprovedLicense(String familyCategory) {
-        configuration.removeApprovedLicenseCategory(familyCategory);
+        deprecatedConfig.removedLicenseCategories.add(familyCategory);
     }
 
     public void setRemoveApprovedLicense(String[] familyCategory) {
-        configuration.removeApprovedLicenseCategories(Arrays.asList(familyCategory));
+        deprecatedConfig.removedLicenseCategories.addAll(Arrays.asList(familyCategory));
     }
 
+    /**
+     *
+     * @param copyrightMessage
+     * @deprecated use setCopyright
+     */
+    @Deprecated
     public void setCopyrightMessage(String copyrightMessage) {
-        configuration.setCopyrightMessage(copyrightMessage);
+       super.setCopyright(copyrightMessage);
     }
 
     public void setAddLicenseHeaders(AddLicenseHeaders setting) {
-        configuration.setAddLicenseHeaders(setting.getNative());
+       deprecatedConfig.addLicenseHeaders = setting.getNative();
     }
 
     public void setAddDefaultDefinitions(File fileName) {
         try {
-            defaultsBuilder.add(fileName);
-        } catch (MalformedURLException e) {
-            throw new BuildException("Can not open additional default definitions: " + fileName.toString(), e);
+            addLicenses(fileName.getCanonicalPath());
+        } catch (IOException e) {
+            throw new BuildException("Can not read license file " + fileName, e);
         }
     }
 
     public ReportConfiguration getConfiguration() {
-        try {
-            Defaults defaults = defaultsBuilder.build(configuration.getLog());
 
-            configuration.setFrom(defaults);
+        try {
+
+            final ReportConfiguration configuration = org.apache.rat.Report.parseCommands(args().toArray(new String[0]),
+                    o -> DefaultLog.getInstance().warn("Help option not supported"),
+                    true);
+            if (!args().contains("--out")) {
+                configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
+            }
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
+            configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
+            configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
+            if (configuration.getFilesToIgnore() != null)
+            {
+                configuration.setFilesToIgnore(new OrFileFilter().addFileFilter(configuration.getFilesToIgnore())
+                        .addFileFilter(deprecatedConfig.inputFileFilter));
+            }
             families.stream().map(Family::build).forEach(configuration::addFamily);
             licenses.stream().map(License::asBuilder)
                     .forEach(l -> configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily()));
             return configuration;
-        } catch (ImplementationException e) {
+        } catch (IOException | ImplementationException e) {
             throw new BuildException(e.getMessage(), e);
         }
     }

@@ -37,6 +37,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-tools</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
       <version>${project.parent.version}</version>
       <type>test-jar</type>
@@ -104,6 +109,45 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated/src/main/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Create BaseRatMojo</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <phase>generate-sources</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>org.apache.rat.tools.AntGenerator</mainClass>
+          <arguments>
+            <argument>org.apache.rat.anttasks</argument>
+            <argument>BaseAntTask</argument>
+            <argument>${project.build.directory}/generated/src/main/java</argument>
+          </arguments>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

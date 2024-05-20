@@ -141,7 +141,7 @@
         <configuration>
           <mainClass>org.apache.rat.tools.MavenGenerator</mainClass>
           <arguments>
-            <argument>org.apache.rat.ui.lib</argument>
+            <argument>org.apache.rat.plugin</argument>
             <argument>BaseRatMojo</argument>
             <argument>${project.build.directory}/generated/src/main/java</argument>
           </arguments>

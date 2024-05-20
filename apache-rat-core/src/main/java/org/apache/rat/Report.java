@@ -158,6 +158,7 @@ public final class Report {
      */
     static final Option OUT = Option.builder().option("o").longOpt("out").hasArg()
             .desc("Define the output file where to write a report to (default is System.out).")
+            .type(File.class)
             .converter(Converter.FILE).build();
 
     // TODO rework when commons-cli 1.7.1 or higher is available.
@@ -265,7 +266,7 @@ public final class Report {
     /**
      * Set unstyled XML output
      */
-    static final Option XML = new Option("x", "xml", false, "Output the report in raw XML format.  Not compatible with -s");
+    public static final Option XML = new Option("x", "xml", false, "Output the report in raw XML format.  Not compatible with -s");
 
     /**
      * Specify the processing of ARCHIVE files.
