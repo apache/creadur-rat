@@ -315,13 +315,13 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
         return result;
     }
-
+    
     @Deprecated // remove this for version 1.0
     private Stream<License> getLicenses() {
         if (licenses == null) {
             return Stream.empty();
         }
-        return Arrays.stream(licenses).filter(s -> s instanceof License).map(License.class::cast);
+        return Arrays.stream(licenses).filter( s -> {return s instanceof License;}).map(License.class::cast);
     }
 
     @Deprecated // remove this for version 1.0
@@ -329,24 +329,25 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         if (licenses == null) {
             return Stream.empty();
         }
-        return Arrays.stream(licenses).filter(s -> s instanceof DeprecatedConfig).map(DeprecatedConfig.class::cast);
+        return Arrays.stream(licenses).filter( s -> {return s instanceof DeprecatedConfig;}).map(DeprecatedConfig.class::cast);
     }
-
+    
     @Deprecated // remove this for version 1.0
-    private void reportDeprecatedProcessing() {
+    private void reportDeprecatedProcessing()
+    {
         if (getDeprecatedConfigs().findAny().isPresent()) {
             Log log = getLog();
             log.warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
         }
     }
-
+    
     @Deprecated // remove this for version 1.0
-    private void processLicenseFamilies(final ReportConfiguration config) {
+    private void processLicenseFamilies(ReportConfiguration config) {
         List<ILicenseFamily> families = getDeprecatedConfigs().map(DeprecatedConfig::getLicenseFamily).filter(Objects::nonNull).collect(Collectors.toList());
         if (licenseFamilies != null) {
             for (SimpleLicenseFamily slf : licenseFamilies) {
                 if (StringUtils.isBlank(slf.getFamilyCategory())) {
-                    families.stream().filter(f -> f.getFamilyName().equalsIgnoreCase(slf.getFamilyName())).findFirst()
+                    families.stream().filter( f -> f.getFamilyName().equalsIgnoreCase(slf.getFamilyName())).findFirst()
                     .ifPresent(config::addApprovedLicenseCategory);
                 } else {
                     config.addApprovedLicenseCategory(ILicenseFamily.builder().setLicenseFamilyCategory(slf.getFamilyCategory())
@@ -356,61 +357,45 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
         }
     }
-
+    
     private org.apache.rat.utils.Log makeLog() {
         return new org.apache.rat.utils.Log() {
-            private final Log log = getLog();
-
+            final Log log = getLog();
             @Override
-            public void log(final Level level, final String msg) {
-                switch (level) {
-                    case DEBUG:
-                        log.debug(msg);
-                        break;
-                    case INFO:
-                        log.info(msg);
-                        break;
-                    case WARN:
-                        log.warn(msg);
-                        break;
-                    case ERROR:
-                        log.error(msg);
-                        break;
-                    case OFF:
-                        break;
-                }
+            public void log(Level level, String msg) {
+                switch (level)
+                {
+                case DEBUG:
+                    log.debug(msg);
+                    break;
+                case INFO:
+                    log.info(msg);;
+                    break;
+                case WARN:
+                    log.warn(msg);
+                    break;
+                case ERROR:
+                    log.error(msg);
+                    break;
+                case OFF:
+                    break;
             }
-        };
+            }};
     }
-
+    
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         DefaultLog.setInstance(makeLog());
         try {
-            Log log = getLog();
-            if (log.isDebugEnabled()) {
-                log.debug("Start BaseRatMojo Configuration options");
-                for (Map.Entry<String, List<String>> entry : args.entrySet()) {
-                    log.debug(String.format(" * %s %s", entry.getKey(), String.join(", ", entry.getValue())));
-                }
-                log.debug("End BaseRatMojo Configuration options");
-            }
-
-            String key = "--" + createName(OptionCollection.EXCLUDE_CLI.getLongOpt());
-            List<String> argList = args.get(key);
-            if (argList != null) {
-                excludesList.addAll(argList);
-            }
-            args.remove(key);
-            key = "--" + createName(OptionCollection.EXCLUDE_FILE_CLI.getLongOpt());
-            argList = args.get(key);
-            if (argList != null) {
-                excludesFileList.addAll(argList);
-            }
-            args.remove(key);
-            ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
+            ReportConfiguration config = Report.parseCommands(args().toArray(new String[0]),
                     o -> getLog().warn("Help option not supported"),
                     true);
             reportDeprecatedProcessing();
+            Defaults defaults = getDefaultsBuilder().build(config.getLog());
+            if (addDefaultLicenses) {
+                config.setFrom(defaults);
+            } else {
+                config.setStyleSheet(Defaults.getPlainStyleSheet());
+            }
 
             if (additionalLicenseFiles != null) {
                 for (String licenseFile : additionalLicenseFiles) {
@@ -433,11 +418,12 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
             if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
+                Log log = getLog();
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("%s license families loaded from pom", families.length));
                 }
-                Consumer<ILicenseFamily> logger = log.isDebugEnabled() ? l -> log.debug(String.format("Family: %s", l))
-                        : l -> {
+                Consumer<ILicenseFamily> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("Family: %s", l))
+                        : (l) -> {
                 };
 
                 Consumer<ILicenseFamily> process = logger.andThen(config::addFamily);
@@ -454,15 +440,16 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
 
             if (licenses != null) {
+                Log log = getLog();
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("%s licenses loaded from pom", licenses.length));
                 }
-                Consumer<ILicense> logger = log.isDebugEnabled() ? l -> log.debug(String.format("License: %s", l))
-                        : l -> {
+                Consumer<ILicense> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("License: %s", l))
+                        : (l) -> {
                 };
                 Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)
-                        ? l -> config.addApprovedLicenseCategory(l.getLicenseFamily())
-                        : l -> {
+                        ? (l) -> config.addApprovedLicenseCategory(l.getLicenseFamily())
+                        : (l) -> {
                 };
 
                 Consumer<ILicense> process = logger.andThen(config::addLicense).andThen(addApproved);
@@ -479,7 +466,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
     }
 
-    protected void logLicenses(final Collection<ILicense> licenses) {
+    protected void logLicenses(Collection<ILicense> licenses) {
         if (getLog().isDebugEnabled()) {
             getLog().debug("The following " + licenses.size() + " licenses are activated:");
             for (ILicense license : licenses) {
@@ -538,14 +525,14 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
     }
 
-    private void setIncludes(final DirectoryScanner ds) throws MojoExecutionException {
-        if (includes != null && includes.length > 0 || includesFile != null) {
+    private void setIncludes(DirectoryScanner ds) throws MojoExecutionException {
+        if ((includes != null && includes.length > 0) || includesFile != null) {
             final List<String> includeList = new ArrayList<>();
             if (includes != null) {
                 includeList.addAll(Arrays.asList(includes));
             }
             if (includesFile != null) {
-                final String charset = includesFileCharset == null ? "UTF-8" : includesFileCharset;
+                final String charset = includesFileCharset == null ? "UTF8" : includesFileCharset;
                 final File f = new File(includesFile);
                 if (!f.isFile()) {
                     getLog().error("IncludesFile not found: " + f.getAbsolutePath());
@@ -558,20 +545,74 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
     }
 
-    private List<String> getPatternsFromFile(final File file, final String charset) throws MojoExecutionException {
+    private List<String> getPatternsFromFile(File pFile, String pCharset) throws MojoExecutionException {
+        InputStream is = null;
+        BufferedInputStream bis = null;
+        Reader r = null;
+        BufferedReader br = null;
+        Throwable th = null;
         final List<String> patterns = new ArrayList<>();
-        try (InputStream inputStream = Files.newInputStream(file.toPath());
-             BufferedInputStream bis = new BufferedInputStream(inputStream);
-            Reader reader = new InputStreamReader(bis, charset);
-            BufferedReader bufferedReader = new BufferedReader(reader)) {
+        try {
+            is = Files.newInputStream(pFile.toPath());
+            bis = new BufferedInputStream(is);
+            r = new InputStreamReader(bis, pCharset);
+            br = new BufferedReader(r);
             for (;;) {
-                final String s = bufferedReader.readLine();
+                final String s = br.readLine();
                 if (s == null) {
                     break;
                 }
                 patterns.add(s);
             }
-        } catch (Throwable th) {
+            br.close();
+            br = null;
+            r.close();
+            r = null;
+            bis.close();
+            bis = null;
+            is.close();
+            is = null;
+        } catch (Throwable t) {
+            th = t;
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Throwable t) {
+                    if (th == null) {
+                        th = t;
+                    }
+                }
+            }
+            if (r != null) {
+                try {
+                    r.close();
+                } catch (Throwable t) {
+                    if (th == null) {
+                        th = t;
+                    }
+                }
+            }
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (Throwable t) {
+                    if (th == null) {
+                        th = t;
+                    }
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Throwable t) {
+                    if (th == null) {
+                        th = t;
+                    }
+                }
+            }
+        }
+        if (th != null) {
             if (th instanceof RuntimeException) {
                 throw (RuntimeException) th;
             }
@@ -583,13 +624,13 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         return patterns;
     }
 
-    private void setExcludes(final IgnoringDirectoryScanner ds) throws MojoExecutionException {
+    private void setExcludes(IgnoringDirectoryScanner ds) throws MojoExecutionException {
         final List<IgnoreMatcher> ignoreMatchers = mergeDefaultExclusions();
-        if (!excludesList.isEmpty()) {
+        if (excludes == null || excludes.length == 0) {
             getLog().debug("No excludes explicitly specified.");
         } else {
-            getLog().debug(excludesList.size() + " explicit excludes.");
-            for (final String exclude : excludesList) {
+            getLog().debug(excludes.length + " explicit excludes.");
+            for (final String exclude : excludes) {
                 getLog().debug("Exclude: " + exclude);
             }
         }
@@ -605,7 +646,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
         }
 
-        globExcludes.addAll(excludesList);
+        if (excludes != null) {
+            Collections.addAll(globExcludes, excludes);
+        }
         if (!globExcludes.isEmpty()) {
             final String[] allExcludes = globExcludes.toArray(new String[globExcludes.size()]);
             ds.setExcludes(allExcludes);
@@ -664,19 +707,17 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
         }
-        if (!excludesFileList.isEmpty()) {
-            for (String fileName : excludesFileList) {
-                final File f = new File(fileName);
-                if (!f.isFile()) {
-                    getLog().error("Excludes file not found: " + f.getAbsolutePath());
-                }
-                if (!f.canRead()) {
-                    getLog().error("Excludes file not readable: " + f.getAbsolutePath());
-                }
-                final String charset = excludesFileCharset == null ? "UTF-8" : excludesFileCharset;
-                getLog().debug("Loading excludes from file " + f + ", using character set " + charset);
-                basicRules.addRules(getPatternsFromFile(f, charset));
+        if (excludesFile != null) {
+            final File f = new File(excludesFile);
+            if (!f.isFile()) {
+                getLog().error("Excludes file not found: " + f.getAbsolutePath());
             }
+            if (!f.canRead()) {
+                getLog().error("Excludes file not readable: " + f.getAbsolutePath());
+            }
+            final String charset = excludesFileCharset == null ? "UTF8" : excludesFileCharset;
+            getLog().debug("Loading excludes from file " + f + ", using character set " + charset);
+            basicRules.addRules(getPatternsFromFile(f, charset));
         }
 
         if (!basicRules.isEmpty()) {

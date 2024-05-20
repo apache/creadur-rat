@@ -20,6 +20,16 @@
 package org.apache.rat.tools;
 
 import static java.lang.String.format;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.apache.commons.text.WordUtils;
+import org.apache.rat.OptionCollection;
+import org.apache.rat.Report;
+import org.apache.rat.tools.CasedString.StringCase;
+import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.CasedString.StringCase;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,13 +45,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.OptionCollection;
-import org.apache.rat.utils.CasedString;
-import org.apache.rat.utils.CasedString.StringCase;
+
 
 
 /**
