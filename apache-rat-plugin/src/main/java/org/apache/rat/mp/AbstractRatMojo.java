@@ -45,11 +45,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.cli.DeprecatedAttributes;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -73,29 +70,13 @@ import org.apache.rat.mp.util.ignore.IgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoringDirectoryScanner;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.ui.lib.BaseRatMojo;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
  * Abstract base class for Mojos, which are running Rat.
  */
 public abstract class AbstractRatMojo extends BaseRatMojo {
-
-    private static DeprecatedAttributes deprecate(String msg) {
-        return new DeprecatedAttributes.Builder().setDescription(msg).setForRemoval(true).setSince("0.17").get();
-    }
-
-    private static String use(Option option) {
-        return String.format("Use '--%s'", option.getLongOpt());
-    }
-
-    private static Option addDefaultLicenses = Option.builder().longOpt("addDefaultLicenses")
-            .deprecated(deprecate("No longer necessary")).build();
-
-    private static Option addDefaultLicenseMatchers = Option.builder().longOpt("addDefaultLicenseMatchers")
-            .deprecated(deprecate(use(Report.NO_DEFAULTS))).build();
-
-    private static Options options = new Options()
-            .addOption(addDefaultLicenses);
 
     /**
      * The base directory, in which to search for files.
@@ -120,13 +101,12 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      */
     @Deprecated
     @Parameter(property = "rat.addDefaultLicenses", defaultValue = "true")
-    public void setAddDefaultLicenses(boolean addDefaultLicenses) {
-        setNoDefaultLicenses(!addDefaultLicenses);
-    }
+    private boolean addDefaultLicenses;
 
     /**
      * Whether to add the default list of license matchers.
      */
+    @Deprecated
     @Parameter(property = "rat.addDefaultLicenseMatchers", defaultValue = "true")
     private boolean addDefaultLicenseMatchers;
 

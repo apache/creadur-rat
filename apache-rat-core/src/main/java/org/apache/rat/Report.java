@@ -546,7 +546,7 @@ public final class Report {
         return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter.negate());
     }
 
-    static Options buildOptions() {
+    public static Options buildOptions() {
         return new Options()
                 .addOption(ARCHIVE)
                 .addOption(STANDARD)

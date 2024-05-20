@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat;
+package org.apache.rat.tools;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -25,6 +25,9 @@ import java.util.Map;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.Report;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.MatcherBuilderTracker;
