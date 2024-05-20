@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.tools;
+package org.apache.rat;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -37,15 +37,15 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 
 /**
- * Generates text based documentation for Licenses, LicenceFamilies, and Matchers.
+ * Generates text based documentation for Licenses, LicenceFamilies, and Matchers. 
+ * 
  * Utilizes the same command line as the CLI based Report client so that additional licenses, etc. can be added.
+ *
  */
-public final class Documentation {
+public class Documentation {
 
-    /** The standard indentation to use for formatting */
     private static final String INDENT = "   ";
-    /** The width of the display in characters */
-    private static final int WIDTH = 120;
+
     private Documentation() {
     }
 
@@ -55,14 +55,14 @@ public final class Documentation {
      * @param writer the writer to write to.
      * @throws IOException on error.
      */
-    public static void output(final ReportConfiguration cfg, final Writer writer) throws IOException {
+    public static void output(ReportConfiguration cfg, Writer writer) throws IOException {
         writer.write(String.format("%n>>>> LICENSES <<<<%n%n"));
         for (ILicense l : cfg.getLicenses(LicenseFilter.ALL)) {
             printLicense(l, writer);
         }
 
         writer.write(String.format("%n>>>> MATCHERS (Datatype IHeaderMatcher) <<<<%n%n"));
-        for (Class<? extends AbstractBuilder> mClazz : MatcherBuilderTracker.instance().getClasses()) {
+        for (Class<? extends AbstractBuilder> mClazz : MatcherBuilderTracker.INSTANCE.getClasses()) {
             try {
                 AbstractBuilder builder = mClazz.getConstructor().newInstance();
                 printMatcher(DescriptionBuilder.buildMap(builder.builtClass()), writer);
@@ -79,29 +79,29 @@ public final class Documentation {
         }
     }
 
-    private static void printFamily(final ILicenseFamily family, final Writer writer) throws IOException {
+    private static void printFamily(ILicenseFamily family, Writer writer) throws IOException {
         writer.write(String.format("'%s' - %s%n", family.getFamilyCategory().trim(), family.getFamilyName()));
     }
 
-    private static void printMatcher(final Description matcher, final Writer writer) throws IOException {
+    private static void printMatcher(Description matcher, Writer writer) throws IOException {
         writer.write(String.format("'%s' - %s%n", matcher.getCommonName(), matcher.getDescription()));
         printChildren(1, matcher.getChildren(), writer);
 
     }
 
-    private static void printLicense(final ILicense license, final Writer writer) throws IOException {
+    private static void printLicense(ILicense license, Writer writer) throws IOException {
         Description dLicense = license.getDescription();
         writer.write(String.format("'%s' - %s %n", dLicense.getCommonName(), dLicense.getDescription()));
         printChildren(1, dLicense.getChildren(), writer);
     }
 
-    private static void writeIndent(final int indent, final Writer writer) throws IOException {
+    private static void writeIndent(int indent, Writer writer) throws IOException {
         for (int i = 0; i < indent; i++) {
             writer.write(INDENT);
         }
     }
 
-    private static void printChildren(final int indent, final Map<String, Description> children, final Writer writer) throws IOException {
+    private static void printChildren(int indent, Map<String, Description> children, Writer writer) throws IOException {
         for (Description d : children.values()) {
             writeIndent(indent, writer);
             switch (d.getType()) {
@@ -128,8 +128,8 @@ public final class Documentation {
      * @param args the arguments.  Try --help for help.
      * @throws IOException on error
      */
-    public static void main(final String[] args) throws IOException {
-        ReportConfiguration config = OptionCollection.parseCommands(args, Documentation::printUsage, true);
+    public static void main(String[] args) throws IOException {
+        ReportConfiguration config = Report.parseCommands(args, Documentation::printUsage, true);
         if (config != null) {
             try (Writer writer = config.getWriter().get()) {
                 Documentation.output(config, writer);
@@ -137,10 +137,10 @@ public final class Documentation {
         }
     }
 
-    private static void printUsage(final Options opts) {
+    private static void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
-        f.setOptionComparator(new OptionCollection.OptionComparator());
-        f.setWidth(WIDTH);
+        f.setOptionComparator(new Report.OptionComparator());
+        f.setWidth(120);
         String header = "\nAvailable options";
         String footer = "";
         String cmdLine = String.format("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar %s [options]",

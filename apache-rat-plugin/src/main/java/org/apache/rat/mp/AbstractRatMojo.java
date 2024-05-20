@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -110,7 +111,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     /**
      * Whether to add the default list of license matchers.
      */
-    @Parameter(property = "rat.addDefaultLicenseMatchers")
+    @Deprecated
+    @Parameter(property = "rat.addDefaultLicenseMatchers", defaultValue = "true")
     private boolean addDefaultLicenseMatchers;
 
     /** a list of approved licenses */
@@ -385,26 +387,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         DefaultLog.setInstance(makeLog());
         try {
             Log log = getLog();
-            if (log.isDebugEnabled()) {
-                log.debug("Start BaseRatMojo Configuration options");
-                for (Map.Entry<String, List<String>> entry : args.entrySet()) {
-                    log.debug(String.format(" * %s %s", entry.getKey(), String.join(", ", entry.getValue())));
-                }
-                log.debug("End BaseRatMojo Configuration options");
-            }
-
-            String key = "--" + createName(OptionCollection.EXCLUDE_CLI.getLongOpt());
-            List<String> argList = args.get(key);
-            if (argList != null) {
-                excludesList.addAll(argList);
-            }
-            args.remove(key);
-            key = "--" + createName(OptionCollection.EXCLUDE_FILE_CLI.getLongOpt());
-            argList = args.get(key);
-            if (argList != null) {
-                excludesFileList.addAll(argList);
-            }
-            args.remove(key);
             ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
                     o -> getLog().warn("Help option not supported"),
                     true);
@@ -537,7 +519,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     }
 
     private void setIncludes(final DirectoryScanner ds) throws MojoExecutionException {
-        if (includes != null && includes.length > 0 || includesFile != null) {
+        if ((includes != null && includes.length > 0) || includesFile != null) {
             final List<String> includeList = new ArrayList<>();
             if (includes != null) {
                 includeList.addAll(Arrays.asList(includes));
