@@ -67,7 +67,7 @@ public class SimpleLicense implements ILicense {
         return String.format("%s:%s", getId(), getName());
     }
 
-    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The license family cagetory for this license.", required = true)
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The license family category for this license.", required = true)
     public String getFamily() {
         return family.getFamilyCategory();
     }
