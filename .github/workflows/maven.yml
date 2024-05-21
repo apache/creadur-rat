@@ -59,15 +59,15 @@ jobs:
 
       - name: Build with Maven
         run: ./mvnw -e -B -V -ntp clean install
-        
-      - name: Build site
-        run: ./mvnw -e -B -V -ntp site:site
 
       - name: Generate javadoc
-        run: ./mvnw -e -B -V -ntp javadoc:javadoc 
+        run: ./mvnw -e -B -V -ntp javadoc:javadoc
+
+      - name: Build site
+        run: ./mvnw -e -B -V -ntp site
+
 
 # as of 20220505:  Invalid workflow file
 # The workflow is not valid. .github/workflows/maven.yml (Line: 55, Col: 1): Unexpected value 'notifications'
 #notifications:
 #   jobs: commits@creadur.apache.org
-

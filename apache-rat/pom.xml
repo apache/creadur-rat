@@ -117,6 +117,46 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>CLI help generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>java</executable>
+          <outputFile>${project.basedir}/src/site/apt/cli_help.txt</outputFile>
+          <arguments>
+            <argument>-cp</argument>
+            <argument>target/apache-rat-${project.version}.jar</argument>
+            <argument>org.apache.rat.Report</argument>
+            <argument>--help</argument>
+          </arguments>
+          <environmentVariables>
+            <LANG>en_US</LANG>
+          </environmentVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>src/site/apt/</directory>
+              <includes>
+                <include>*.txt</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -131,6 +171,7 @@
               <exclude>README-CLI.txt</exclude>
               <!-- files that are examples of output from the tool -->
               <exclude>src/site/examples/**</exclude>
+              <exclude>src/site/apt/cli_help.txt</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -157,6 +198,10 @@
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
         </plugin>
       </plugins>
     </pluginManagement>

@@ -72,19 +72,22 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-        <action issue="RAT-377" type="add" dev="claudenw">
-            Added ability to specify the level of reporting on STANDARD files within a project.  This necessitated an addition
-            of a command line option "standard" to limit specify the level of detail in the STANDARD file reporting.  See command line
-            help for more details.  By default, there is no change in the reporting and only the presence of archives are reported.
+      <action issue="RAT-374, RAT-381" type="add" dev="claudenw">
+        Automatically generate commandline options/CLI help during the build and include it into the project webpage. Adapt READMEs.
+      </action>
+      <action issue="RAT-377" type="add" dev="claudenw">
+          Added ability to specify the level of reporting on STANDARD files within a project.  This necessitated an addition
+          of a command line option "standard" to limit specify the level of detail in the STANDARD file reporting.  See command line
+          help for more details.  By default, there is no change in the reporting and only the presence of archives are reported.
 
-            Change also fixed a major issue in license sorting.  Resulting in a change in order and expanding the name space for licenses.
-            Licenses now must have a unique id within the family name space. (e.g. family1/one is different from family2/one).
-        </action>
-        <action issue="RAT-190" type="fix" dev="claudenw">
-            Javascript (.js) files not processed as text.
-            Fixed as part of the Tika change.
-        </action>
-        <action issue="RAT-265" type="fix" dev="claudenw">
+          Change also fixed a major issue in license sorting.  Resulting in a change in order and expanding the name space for licenses.
+          Licenses now must have a unique id within the family name space. (e.g. family1/one is different from family2/one).
+      </action>
+      <action issue="RAT-190" type="fix" dev="claudenw">
+          Javascript (.js) files not processed as text.
+          Fixed as part of the Tika change.
+      </action>
+      <action issue="RAT-265" type="fix" dev="claudenw">
         Fixed the filter compilation so that illegal regex do not cause other filters to be ignored.
         Updated the logging to only log a warning when at least one filter was skipped.
       </action>
@@ -116,7 +119,6 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       <action issue="RAT-147" type="fix" dev="claudenw">
         Change to detect non UTF-8 text files as text not binary.
       </action>
-
       <action issue="RAT-150" type="fix" dev="claudenw">
         Switch to Tika to detect file types.  This will result in more file types being properly categorized and may
         result in some failures where the scans previously did not fail because we now properly check all text files.
