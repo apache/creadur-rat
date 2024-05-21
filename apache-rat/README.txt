@@ -2,7 +2,7 @@ README file for Apache Creadur RAT
 ==================================
 
 The jar in this archive can be used both:
- * stand-alone (CLI)
+ * stand-alone command line (CLI)
  * with Ant as an Ant task
 
 Stand-alone (CLI) usage
@@ -10,8 +10,13 @@ Stand-alone (CLI) usage
 
 java -jar apache-rat-${project.version}.jar --help
 
-For more details, please see the file README-CLI.txt or the website:
+Command Line Options
+====================
 
+Available CLI options are documented at
+https://creadur.apache.org/rat/apache-rat/index.html#Command_Line_Options
+
+For further details, please see the the website:
 https://creadur.apache.org/rat/apache-rat/index.html
 
 Apache Rat Ant Task Library
