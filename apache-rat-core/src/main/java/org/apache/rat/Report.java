@@ -298,6 +298,7 @@ public final class Report {
      * @throws Exception on error.
      */
     public static void main(final String[] args) throws Exception {
+        DefaultLog.getInstance().info(new VersionInfo().toString());
         ReportConfiguration configuration = parseCommands(args, Report::printUsage);
         if (configuration != null) {
             configuration.validate(DefaultLog.getInstance()::error);
@@ -586,7 +587,8 @@ public final class Report {
         HelpFormatter helpFormatter = new HelpFormatter.Builder().get();
         helpFormatter.setWidth(HELP_WIDTH);
         helpFormatter.setOptionComparator(new OptionComparator());
-        String syntax = format("java -jar apache-rat/target/apache-rat-%s.jar [options] [DIR|ARCHIVE]", VersionInfo.version());
+        VersionInfo versionInfo = new VersionInfo();
+        String syntax = format("java -jar apache-rat/target/apache-rat-%s.jar [options] [DIR|ARCHIVE]", versionInfo.getVersion());
         helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header("Available options"), opts,
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(),
                 header("Argument Types"), false);
