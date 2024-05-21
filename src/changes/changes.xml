@@ -119,7 +119,6 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
       <action issue="RAT-147" type="fix" dev="claudenw">
         Change to detect non UTF-8 text files as text not binary.
       </action>
-
       <action issue="RAT-150" type="fix" dev="claudenw">
         Switch to Tika to detect file types.  This will result in more file types being properly categorized and may
         result in some failures where the scans previously did not fail because we now properly check all text files.
