@@ -43,8 +43,8 @@ public final class VersionInfo {
         System.out.println("spec vendor: " + versionInfo.getSpecVendor());
     }
 
-    private String orDefault(final String value, final String default) {
-        return value == null ? default : value;
+    private String orDefault(final String value, final String defaultValue) {
+        return value == null ? defaultValue : value;
     }
 
     /**
