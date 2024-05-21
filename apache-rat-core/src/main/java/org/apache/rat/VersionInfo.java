@@ -19,7 +19,7 @@
 package org.apache.rat;
 
 /**
- * A formatter for Packge information about a class.
+ * A formatter for Package information about a class.
  * @see Package
  */
 public final class VersionInfo {
@@ -43,8 +43,8 @@ public final class VersionInfo {
         System.out.println("spec vendor: " + versionInfo.getSpecVendor());
     }
 
-    private String orDefault(final String value, final String dflt) {
-        return value == null ? dflt : value;
+    private String orDefault(final String value, final String default) {
+        return value == null ? default : value;
     }
 
     /**
