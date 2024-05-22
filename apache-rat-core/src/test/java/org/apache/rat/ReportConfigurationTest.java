@@ -46,6 +46,7 @@ import java.util.function.Function;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
@@ -195,7 +196,7 @@ public class ReportConfigurationTest {
         underTest.setFrom(Defaults.builder().build(DefaultLog.getInstance()));
         assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
 
-        FilenameFilter filter = mock(FilenameFilter.class);
+        IOFileFilter filter = mock(IOFileFilter.class);
         underTest.setFilesToIgnore(filter);
         assertThat(underTest.getFilesToIgnore()).isEqualTo(filter);
     }

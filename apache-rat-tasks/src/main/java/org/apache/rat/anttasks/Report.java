@@ -73,11 +73,10 @@ public class Report extends BaseAntTask {
     private Union nestedResources;
 
     private static class DeprecatedConfig {
-        FilenameFilter inputFileFilter;
+        IOFileFilter inputFileFilter;
         Resource styleSheet;
         Set<String> approvedLicenseCategories = new HashSet<>();
         Set<String> removedLicenseCategories = new HashSet<>();
-        org.apache.rat.config.AddLicenseHeaders addLicenseHeaders = null;
     }
 
     public Report() {
@@ -98,7 +97,7 @@ public class Report extends BaseAntTask {
     }
 
 
-    public void setInputFileFilter(FilenameFilter inputFileFilter) {
+    public void setInputFileFilter(IOFileFilter inputFileFilter) {
         deprecatedConfig.inputFileFilter = inputFileFilter;
     }
 
@@ -205,8 +204,25 @@ public class Report extends BaseAntTask {
        super.setCopyright(copyrightMessage);
     }
 
+    /**
+     *
+     * @param setting
+     * @deprecated use addLicense and force
+     */
+    @Deprecated
     public void setAddLicenseHeaders(AddLicenseHeaders setting) {
-       deprecatedConfig.addLicenseHeaders = setting.getNative();
+        switch (setting.getNative()) {
+            case TRUE:
+                setAddLicense(true);
+                break;
+            case FALSE:
+                setAddLicense(false);
+                break;
+            case FORCED:
+                setAddLicense(true);
+                setForce(true);
+                break;
+        }
     }
 
     public void setAddDefaultDefinitions(File fileName) {
@@ -217,10 +233,12 @@ public class Report extends BaseAntTask {
         }
     }
 
+    /**
+     * Creates the ReportConfiguration from the ant options.
+     * @return
+     */
     public ReportConfiguration getConfiguration() {
-
         try {
-
             final ReportConfiguration configuration = org.apache.rat.Report.parseCommands(args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
@@ -230,10 +248,12 @@ public class Report extends BaseAntTask {
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
-            if (configuration.getFilesToIgnore() != null)
-            {
-                configuration.setFilesToIgnore(new OrFileFilter().addFileFilter(configuration.getFilesToIgnore())
-                        .addFileFilter(deprecatedConfig.inputFileFilter));
+            if (deprecatedConfig.inputFileFilter != null) {
+                if (configuration.getFilesToIgnore() != null) {
+                    configuration.setFilesToIgnore(new OrFileFilter(configuration.getFilesToIgnore(), deprecatedConfig.inputFileFilter));
+                } else {
+                    configuration.setFilesToIgnore(deprecatedConfig.inputFileFilter);
+                }
             }
             families.stream().map(Family::build).forEach(configuration::addFamily);
             licenses.stream().map(License::asBuilder)
@@ -263,7 +283,7 @@ public class Report extends BaseAntTask {
     /**
      * validates the task's configuration.
      */
-    private ReportConfiguration validate(ReportConfiguration cfg) {
+    protected ReportConfiguration validate(ReportConfiguration cfg) {
         try {
             cfg.validate(s -> log(s, Project.MSG_WARN));
         } catch (ConfigurationException e) {

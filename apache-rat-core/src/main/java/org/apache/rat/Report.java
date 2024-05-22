@@ -50,6 +50,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
@@ -136,6 +137,12 @@ public final class Report {
     /**
      * Adds license headers to files missing headers.
      */
+
+    public static final Option ADD_LICENSE = new Option("A", "addLicense", false,
+                       "Add the default license header to any file with an unknown license that is not in the exclusion list. "
+                       + "By default new files will be created with the license header, "
+                       + "to force the modification of existing files use the --force option.");
+
     // TODO rework when Commons-CLI version 1.7.1 or higher is available.
     private static final DeprecatedAttributes ADD_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
             .setDescription("Use '-A' or '--addLicense' instead.").get();
@@ -145,18 +152,14 @@ public final class Report {
                     .deprecated(ADD_ATTRIBUTES)
                     .build())
 
-            .addOption(new Option("A", "addLicense", false,
-                    "Add the default license header to any file with an unknown license that is not in the exclusion list. "
-                            + "By default new files will be created with the license header, "
-                            + "to force the modification of existing files use the --force option.")
-            );
+            .addOption(ADD_LICENSE);
 
     /**
      * Defines the output for the file.
      *
      * @since 0.16
      */
-    static final Option OUT = Option.builder().option("o").longOpt("out").hasArg()
+    public static final Option OUT = Option.builder().option("o").longOpt("out").hasArg()
             .desc("Define the output file where to write a report to (default is System.out).")
             .type(File.class)
             .converter(Converter.FILE).build();
@@ -164,27 +167,27 @@ public final class Report {
     // TODO rework when commons-cli 1.7.1 or higher is available.
     static final DeprecatedAttributes DIR_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
             .setDescription("Use '--'").get();
-    static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
+    public static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
             .desc(format("[%s] %s", DIR_ATTRIBUTES, "Used to indicate end of list when using --exclude.")).argName("DirOrArchive")
             .deprecated(DIR_ATTRIBUTES).build();
 
     /**
      * Forces changes to be written to new files.
      */
-    static final Option FORCE = new Option("f", "force", false,
+    public static final Option FORCE = new Option("f", "force", false,
             format("Forces any changes in files to be written directly to the source files (i.e. new files are not created).  Only valid with --%s",
                     ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()));
     /**
      * Defines the copyright header to add to the file.
      */
-    static final Option COPYRIGHT = Option.builder().option("c").longOpt("copyright").hasArg()
+    public static final Option COPYRIGHT = Option.builder().option("c").longOpt("copyright").hasArg()
             .desc(format("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\".  Only valid with --%s",
                     ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()))
             .build();
     /**
      * Name of File to exclude from report consideration.
      */
-    static final Option EXCLUDE_CLI = Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
+    public static final Option EXCLUDE_CLI = Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
             .desc("Excludes files matching wildcard <Expression>. May be followed by multiple arguments. "
                     + "Note that '--' or a following option is required when using this parameter.")
             .build();
@@ -192,7 +195,7 @@ public final class Report {
      * Name of file that contains a list of files to exclude from report
      * consideration.
      */
-    static final Option EXCLUDE_FILE_CLI = Option.builder("E").longOpt("exclude-file")
+    public static final Option EXCLUDE_FILE_CLI = Option.builder("E").longOpt("exclude-file")
             .argName("FileOrURI")
             .hasArg().desc("Excludes files matching regular expression in the input file.")
             .build();
@@ -200,20 +203,20 @@ public final class Report {
     /**
      * The stylesheet to use to style the XML output.
      */
-    static final Option STYLESHEET_CLI = Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
+    public static final Option STYLESHEET_CLI = Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
             .desc("XSLT stylesheet to use when creating the report.  Not compatible with -x. "
                     + "Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses")
             .build();
     /**
      * Produce help
      */
-    static final Option HELP = new Option("h", "help", false, "Print help for the RAT command line interface and exit.");
+    public static final Option HELP = new Option("h", "help", false, "Print help for the RAT command line interface and exit.");
     /**
      * Flag to identify a file with license definitions.
      *
      * @since 0.16
      */
-    static final Option LICENSES = Option.builder().longOpt("licenses").hasArgs().argName("FileOrURI")
+    public static final Option LICENSES = Option.builder().longOpt("licenses").hasArgs().argName("FileOrURI")
             .desc("File names or URLs for license definitions.  May be followed by multiple arguments. "
                     + "Note that '--' or a following option is required when using this parameter.")
             .build();
@@ -226,13 +229,13 @@ public final class Report {
     /**
      * Scan hidden directories.
      */
-    static final Option SCAN_HIDDEN_DIRECTORIES = new Option(null, "scan-hidden-directories", false, "Scan hidden directories");
+    public static final Option SCAN_HIDDEN_DIRECTORIES = new Option(null, "scan-hidden-directories", false, "Scan hidden directories");
 
     /**
      * List the licenses that were used for the run.
      * @since 0.16
      */
-    static final Option LIST_LICENSES = Option.builder().longOpt("list-licenses").hasArg().argName("LicenseFilter")
+    public static final Option LIST_LICENSES = Option.builder().longOpt("list-licenses").hasArg().argName("LicenseFilter")
             .desc("List the defined licenses (default is NONE). Valid options are: " + asString(LicenseFilter.values()))
             .converter(s -> LicenseFilter.valueOf(s.toUpperCase()))
             .build();
@@ -241,7 +244,7 @@ public final class Report {
      * List the all families for the run.
      * @since 0.16
      */
-    static final Option LIST_FAMILIES = Option.builder().longOpt("list-families").hasArg().argName("LicenseFilter")
+    public static final Option LIST_FAMILIES = Option.builder().longOpt("list-families").hasArg().argName("LicenseFilter")
             .desc("List the defined license families (default is NONE). Valid options are: " + asString(LicenseFilter.values()))
             .converter(s -> LicenseFilter.valueOf(s.toUpperCase()))
             .build();
@@ -250,7 +253,7 @@ public final class Report {
      * Specify the log level for output
      * @since 0.16
      */
-    static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
+    public static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
             .desc("sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
@@ -260,7 +263,7 @@ public final class Report {
      * Do not update files.
      * @since 0.16
      */
-    static final Option DRY_RUN = Option.builder().longOpt("dry-run")
+    public static final Option DRY_RUN = Option.builder().longOpt("dry-run")
             .desc("If set do not update the files but generate the reports.")
             .build();
     /**
@@ -272,7 +275,7 @@ public final class Report {
      * Specify the processing of ARCHIVE files.
      * @since 0.17
      */
-    static final Option ARCHIVE = Option.builder().longOpt("archive").hasArg().argName("ProcessingType")
+    public static final Option ARCHIVE = Option.builder().longOpt("archive").hasArg().argName("ProcessingType")
             .desc(format("Specifies the level of detail in ARCHIVE file reporting. (default is %s)",
                     ReportConfiguration.Processing.NOTIFICATION))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
@@ -281,13 +284,13 @@ public final class Report {
     /**
      * Specify the processing of STANDARD files.
      */
-    static final Option STANDARD = Option.builder().longOpt("standard").hasArg().argName("ProcessingType")
+    public static final Option STANDARD = Option.builder().longOpt("standard").hasArg().argName("ProcessingType")
             .desc(format("Specifies the level of detail in STANDARD file reporting. (default is %s)",
                     Defaults.STANDARD_PROCESSING))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();
 
-    private static String asString(final Object[] args) {
+    public static String asString(final Object[] args) {
         return Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "));
     }
 
@@ -517,7 +520,7 @@ public final class Report {
      * @param excludes the list of patterns to exclude.
      * @return the FilenameFilter tht excludes the patterns or an empty optional.
      */
-    static Optional<FilenameFilter> parseExclusions(final Log log, final List<String> excludes) {
+    static Optional<IOFileFilter> parseExclusions(final Log log, final List<String> excludes) {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
         for (String exclude : excludes) {

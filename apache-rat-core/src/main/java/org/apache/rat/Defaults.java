@@ -62,7 +62,7 @@ public final class Defaults {
      */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
-    public static final FilenameFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
+    public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
 
     public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
 

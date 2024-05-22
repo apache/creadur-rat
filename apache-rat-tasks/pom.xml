@@ -49,6 +49,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-tools</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
@@ -62,16 +68,16 @@
       <artifactId>ant-antunit</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant-testutil</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant-testutil</artifactId>
     </dependency>
   </dependencies>
   <build>
@@ -133,7 +139,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>Create BaseRatMojo</id>
+            <id>Create BaseAntTask</id>
             <goals>
               <goal>java</goal>
             </goals>

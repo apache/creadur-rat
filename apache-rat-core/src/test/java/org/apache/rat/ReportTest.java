@@ -96,7 +96,7 @@ public class ReportTest {
 
     @Test
     public void parseExclusionsForCLIUsage() {
-        final Optional<FilenameFilter> filter = Report
+        final Optional<IOFileFilter> filter = Report
                 .parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertThat(filter).isPresent();
     }
@@ -379,7 +379,7 @@ public class ReportTest {
     @MethodSource("exclusionsProvider")
     public void testParseExclusions(String pattern, List<IOFileFilter> expectedPatterns, List<String> logEntries) {
         TestingLog log = new TestingLog();
-        Optional<FilenameFilter> filter = Report.parseExclusions(log, Collections.singletonList(pattern));
+        Optional<IOFileFilter> filter = Report.parseExclusions(log, Collections.singletonList(pattern));
         if (expectedPatterns.isEmpty()) {
             assertThat(filter).isEmpty();
         } else {

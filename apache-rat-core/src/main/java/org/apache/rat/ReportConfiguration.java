@@ -85,7 +85,7 @@ public class ReportConfiguration {
     private boolean styleReport;
     private IOSupplier<InputStream> styleSheet;
     private IReportable reportable;
-    private FilenameFilter filesToIgnore;
+    private IOFileFilter filesToIgnore;
     private IOFileFilter directoriesToIgnore;
     private final Log log;
     private LicenseFilter listFamilies;
@@ -227,7 +227,7 @@ public class ReportConfiguration {
      * Gets the file name filter for files to ignore.
      * @return The filename filter that identifies files to ignore.
      */
-    public FilenameFilter getFilesToIgnore() {
+    public IOFileFilter getFilesToIgnore() {
         return filesToIgnore == null ? Defaults.FILES_TO_IGNORE : filesToIgnore;
     }
 
@@ -237,7 +237,7 @@ public class ReportConfiguration {
      * @param filesToIgnore the filename filter to filter the input files.
      * @see Defaults#FILES_TO_IGNORE
      */
-    public void setFilesToIgnore(FilenameFilter filesToIgnore) {
+    public void setFilesToIgnore(IOFileFilter filesToIgnore) {
         this.filesToIgnore = filesToIgnore;
     }
 
