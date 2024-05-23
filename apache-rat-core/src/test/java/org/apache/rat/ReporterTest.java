@@ -59,8 +59,8 @@ public class ReporterTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] { "-o", output.getCanonicalPath()});
-        ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
+        CommandLine cl = new DefaultParser().parse(OptionTools.buildOptions(), new String[] { "-o", output.getCanonicalPath()});
+        ReportConfiguration config = OptionTools.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
         new Reporter(config).output();
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
@@ -76,8 +76,8 @@ public class ReporterTest {
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)){
             System.setOut(out);
-            CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] {});
-            ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
+            CommandLine cl = new DefaultParser().parse(OptionTools.buildOptions(), new String[] {});
+            ReportConfiguration config = OptionTools.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
             new Reporter(config).output();
         } finally {
             System.setOut(origin);
@@ -113,8 +113,8 @@ public class ReporterTest {
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)){
             System.setOut(out);
-            CommandLine cl = new DefaultParser().parse(Report.buildOptions(), new String[] { "-x" });
-            ReportConfiguration config = Report.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
+            CommandLine cl = new DefaultParser().parse(OptionTools.buildOptions(), new String[] { "-x" });
+            ReportConfiguration config = OptionTools.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
             new Reporter(config).output();
         } finally {
             System.setOut(origin);

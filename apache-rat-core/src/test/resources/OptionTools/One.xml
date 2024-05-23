@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rat-config>
+    <families>
+        <family id="ONE" name="from One.xml" />
+    </families>
+    <licenses>
+        <license family="ONE">
+            <text>one</text>
+        </license>
+    </licenses>
+</rat-config>

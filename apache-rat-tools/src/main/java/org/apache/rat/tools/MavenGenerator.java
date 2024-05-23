@@ -23,7 +23,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.Report;
+import org.apache.rat.OptionTools;
 import org.apache.rat.tools.CasedString.StringCase;
 
 import java.io.File;
@@ -52,7 +52,7 @@ public class MavenGenerator {
         String destDir = args[2];
         Options options = new Options();
 
-        Report.buildOptions().getOptions().stream().filter(Naming.optionFilter(Naming.mavenFilterList)).forEach(options::addOption);
+        OptionTools.buildOptions().getOptions().stream().filter(Naming.optionFilter(Naming.mavenFilterList)).forEach(options::addOption);
 
         File file = new File(new File(new File(destDir), packageName.replaceAll("\\.", File.separator)),className+".java");
         System.out.println("Creating "+file);

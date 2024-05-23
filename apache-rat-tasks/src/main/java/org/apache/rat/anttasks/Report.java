@@ -30,6 +30,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ImplementationException;
+import org.apache.rat.OptionTools;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.license.LicenseSetFactory;
@@ -239,7 +240,7 @@ public class Report extends BaseAntTask {
      */
     public ReportConfiguration getConfiguration() {
         try {
-            final ReportConfiguration configuration = org.apache.rat.Report.parseCommands(args().toArray(new String[0]),
+            final ReportConfiguration configuration = OptionTools.parseCommands(args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
             if (!args().contains("--out")) {

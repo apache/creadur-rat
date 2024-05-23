@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.apache.rat.Report;
+import org.apache.rat.OptionTools;
 import org.apache.rat.tools.CasedString.StringCase;
 
 /**
@@ -56,7 +56,7 @@ public class Naming {
      * @throws IOException on error
      */
     public static void main(String[] args) throws IOException {
-        Options options = Report.buildOptions();
+        Options options = OptionTools.buildOptions();
         Predicate<Option> mavenFilter = optionFilter(mavenFilterList);
         Predicate<Option> antFilter = optionFilter(antFilterList);
         try (CSVPrinter printer = new CSVPrinter(new FileWriter("nameMap.csv"), CSVFormat.DEFAULT)) {

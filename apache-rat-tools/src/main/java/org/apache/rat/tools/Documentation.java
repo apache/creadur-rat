@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.OptionTools;
 import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.parameters.Description;
@@ -129,7 +130,7 @@ public class Documentation {
      * @throws IOException on error
      */
     public static void main(String[] args) throws IOException {
-        ReportConfiguration config = Report.parseCommands(args, Documentation::printUsage, true);
+        ReportConfiguration config = OptionTools.parseCommands(args, Documentation::printUsage, true);
         if (config != null) {
             try (Writer writer = config.getWriter().get()) {
                 Documentation.output(config, writer);
