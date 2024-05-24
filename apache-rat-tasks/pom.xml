@@ -147,6 +147,7 @@
           </execution>
         </executions>
         <configuration>
+          <classpathScope>test</classpathScope>
           <mainClass>org.apache.rat.tools.AntGenerator</mainClass>
           <arguments>
             <argument>org.apache.rat.anttasks</argument>
@@ -193,9 +194,8 @@
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
             <excludes>
-              <!-- This file does not have license header because it is used to test license headers -->
-              <exclude>src/test/resources/antunit/index.apt</exclude>
-              <exclude>src/test/resources/org/example/*.html</exclude>
+              <!-- These files do not have license headers -->
+              <exclude>src/test/resources/</exclude>
             </excludes>
           </configuration>
         </plugin>

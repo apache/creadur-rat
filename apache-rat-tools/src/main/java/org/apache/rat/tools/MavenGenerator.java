@@ -95,8 +95,8 @@ public class MavenGenerator {
                 if (option.isDeprecated()) {
                     writer.append(format("     * %s%n     * @deprecated", option.getDeprecated()));
                 }
-                writer.append(format("     */%n    public void set%1$s(String %2$s) {%n",
-                        WordUtils.capitalize(name), name))
+                writer.append(format("     */%n    @Parameter(property = \"rat.%2$s\")%n    public void set%1$s(%3$s %2$s) {%n",
+                        WordUtils.capitalize(name), name, option.hasArg() ? "String" : "boolean"))
                 .append(getBody(option, name))
                 .append(format("    }%n"));
             }
@@ -104,13 +104,12 @@ public class MavenGenerator {
     }
 
     private static String getBody(Option option, String name) throws IOException {
-        String longArg = Naming.asLongArg(option);
         if (option.hasArg()) {
-            return format( "        args.add(\"%s\");%n        args.add(%s);%n", Naming.asLongArg(option), name);
+            return format( "        args.add(\"--%s\");%n        args.add(%s);%n", option.getLongOpt(), name);
         } else {
-            return format( "        if (%1$s) {%n            args.add(\"%2$s\");%n" +
-                            "        } else {%n            args.remove(\"%2$s\");%n        }%n        }n",
-            name, Naming.asLongArg(option));
+            return format( "        if (%1$s) {%n            args.add(\"--%2$s\");%n" +
+                            "        } else {%n            args.remove(\"--%2$s\");%n        }%n",
+            name, option.getLongOpt());
         }
     }
 }
