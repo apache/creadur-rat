@@ -33,14 +33,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import static java.lang.String.format;
+
 /**
- * A simple tool to convert CLI options  to Maven and Ant format
+ * A simple tool to convert CLI options to Maven format
  */
 public class MavenGenerator {
 
     private MavenGenerator() {}
-
-    private static final String INDENT="    ";
 
     /**
      * Creates the documentation.  Writes to the output specified by the -o or --out option.  Defaults to System.out.
@@ -71,13 +71,13 @@ public class MavenGenerator {
                         writeMethods(writer, options);
                         break;
                     case "${package}":
-                        writer.append("package ").append(packageName).append(";").append(System.lineSeparator());
+                        writer.append(format("package %s;%n", packageName));
                         break;
                     case "${constructor}":
-                        writer.append(INDENT).append("protected ").append(className).append("() {}").append(System.lineSeparator());
+                        writer.append(format("    protected %s() {}%n", className));
                         break;
                     case "${class}":
-                        writer.append("public abstract class ").append(className).append(" extends AbstractMojo {").append(System.lineSeparator());
+                        writer.append(format("public abstract class %s extends AbstractMojo {%n",className));
                         break;
                     default:
                         writer.append(line).append(System.lineSeparator());
@@ -90,37 +90,27 @@ public class MavenGenerator {
     private static void writeMethods(FileWriter writer, Options options) throws IOException {
         for (Option option : options.getOptions()) {
             if (option.getLongOpt() != null) {
-                CasedString name = new CasedString(StringCase.Kebab, option.getLongOpt());
-                writeComment(writer, option);
-                writer.append(Naming.mavenFunctionName(INDENT, option, name)).append(" {").append(System.lineSeparator());
-                writeBody(writer, option, name);
-                writer.append(INDENT).append("}").append(System.lineSeparator()).append(System.lineSeparator());
+                String name = WordUtils.uncapitalize(new CasedString(StringCase.Kebab, option.getLongOpt()).toCase(StringCase.Camel));
+                writer.append(format("    /**%n     * %s%n", option.getDescription()));
+                if (option.isDeprecated()) {
+                    writer.append(format("     * %s%n     * @deprecated", option.getDeprecated()));
+                }
+                writer.append(format("     */%n    public void set%1$s(String %2$s) {%n",
+                        WordUtils.capitalize(name), name))
+                .append(getBody(option, name))
+                .append(format("    }%n"));
             }
         }
     }
 
-
-    private static void writeComment(FileWriter writer, Option option) throws IOException {
-        writer.append(INDENT).append("/** ").append(System.lineSeparator())
-                .append(INDENT).append(" * ").append(option.getDescription()).append(System.lineSeparator());
-        if (option.isDeprecated()) {
-            writer.append(INDENT).append(" * ").append(option.getDeprecated().toString()).append(System.lineSeparator());
-        }
-        writer.append(INDENT).append(" */").append(System.lineSeparator());
-    }
-
-    private static void writeBody(FileWriter writer, Option option, CasedString name) throws IOException {
-        String varName = WordUtils.uncapitalize(name.toCase(StringCase.Camel));
+    private static String getBody(Option option, String name) throws IOException {
         String longArg = Naming.asLongArg(option);
         if (option.hasArg()) {
-            writer.append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
-            .append(INDENT).append(INDENT).append("args.add(").append(varName).append(");").append(System.lineSeparator());
+            return format( "        args.add(\"%s\");%n        args.add(%s);%n", Naming.asLongArg(option), name);
         } else {
-            writer.append(INDENT).append(INDENT).append("if (").append(varName).append(") {").append(System.lineSeparator())
-            .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
-                    .append(INDENT).append(INDENT).append("} else {").append(System.lineSeparator())
-                    .append(INDENT).append(INDENT).append(INDENT).append("args.remove(").append(longArg).append(");").append(System.lineSeparator())
-                    .append(INDENT).append(INDENT).append("}").append(System.lineSeparator());
+            return format( "        if (%1$s) {%n            args.add(\"%2$s\");%n" +
+                            "        } else {%n            args.remove(\"%2$s\");%n        }%n        }n",
+            name, Naming.asLongArg(option));
         }
     }
 }

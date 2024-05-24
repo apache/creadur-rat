@@ -34,6 +34,8 @@ import org.apache.rat.OptionTools;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
+import static java.lang.String.format;
+
 /**
  * A simple tool to convert CLI options  to Maven and Ant format
  */
@@ -65,8 +67,8 @@ public class Naming {
             for (Option option : options.getOptions()) {
                 if (option.getLongOpt() != null) {
                     CasedString opt = new CasedString(StringCase.Kebab, option.getLongOpt());
-                    String mavenCell = mavenFilter.test(option) ? mavenFunctionName("", option, opt) : "-- not supported --";
-                    String antCell = antFilter.test(option) ? antFunctionName("", option, opt) : "-- not supported --";
+                    String mavenCell = mavenFilter.test(option) ? mavenFunctionName(option, opt) : "-- not supported --";
+                    String antCell = antFilter.test(option) ? antFunctionName(option, opt) : "-- not supported --";
                     printer.printRecord(opt, mavenCell, antCell, option.getDescription());
                 }
             }
@@ -74,7 +76,7 @@ public class Naming {
     }
 
     public static String quote(String s) {
-        return String.format("\"%s\"", s);
+        return format("\"%s\"", s);
     }
 
 
@@ -82,41 +84,30 @@ public class Naming {
         return quote("--"+option.getLongOpt());
     }
 
-
-    public static String mavenFunctionName(String indent, Option option, CasedString name) {
+    public static String mavenFunctionName(Option option, CasedString name) {
         StringBuilder sb = new StringBuilder();
         if (option.isDeprecated()) {
-            sb.append(indent).append("@Deprecated").append(System.lineSeparator());
+            sb.append("@Deprecated").append(System.lineSeparator());
         }
-        sb.append(indent).append("@Parameter(property = ")
-        .append(quote("rat."+WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
-             if (option.isRequired()) {
-                sb.append(" required = true");
-            }
-        sb.append(")").append(System.lineSeparator())
-                .append(indent)
-                .append("public void ")
-        .append(option.hasArgs() ? "add" : "set" )
-                .append(WordUtils.capitalize(name.toCase(StringCase.Camel)))
-                .append("(")
-                .append(option.hasArg() ? "String " : "boolean ")
-                .append(WordUtils.uncapitalize(name.toCase(StringCase.Camel)))
-                .append(")");
+        sb.append(format("@Parameter(property = 'rat.%s'", WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
+        if (option.isRequired()) {
+            sb.append(" required = true");
+        }
+        sb.append(format(")%n public void %s%s(%s %s)", option.hasArgs() ? "add" : "set",
+                WordUtils.capitalize(name.toCase(StringCase.Camel)), option.hasArg() ? "String " : "boolean ",
+                WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
         return sb.toString();
     }
 
-    private static String antFunctionName(String indent, Option option, CasedString name) {
+    private static String antFunctionName(Option option, CasedString name) {
         StringBuilder sb = new StringBuilder();
         if (option.isDeprecated()) {
-            sb.append(indent).append("@Deprecated").append(System.lineSeparator());
+            sb.append("@Deprecated").append(System.lineSeparator());
         }
         if (option.hasArgs()) {
-            sb.append(indent).append("<").append(WordUtils.capitalize(name.toCase(StringCase.Camel))).append("s>").append(System.lineSeparator())
-                    .append(indent).append(indent).append("<").append(WordUtils.uncapitalize(name.toCase(StringCase.Camel))).append("/>").append(System.lineSeparator())
-                    .append(indent).append("</").append(WordUtils.uncapitalize(name.toCase(StringCase.Camel))).append("s>").append(System.lineSeparator());
+            sb.append(format("<rat:report>%n  <%1$s>text</%1$s>%n</rat:report>", WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
         } else {
-            sb.append(indent).append("<rat:report ").append(WordUtils.uncapitalize(name.toCase(StringCase.Camel))).append("='text'>").append(System.lineSeparator())
-                    .append(indent).append("</rat:report>").append(System.lineSeparator());
+            sb.append(format("<rat:report %s = 'text'/>", WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
         }
         return sb.toString();
     }
