@@ -19,40 +19,107 @@
 
 ${package}
 
-import java.io.File;
+import org.apache.commons.cli.Option;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-/* DO NOT EDIT - GENERATED FILE */
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * Generated class to provide Ant support for standard Rat command line options
+ * Generated class to provide Ant support for standard Rat command line options.
+ *
+ * DO NOT EDIT - GENERATED FILE
  */
 ${class}
-    private final List<String> args = new ArrayList<>();
+    protected final Map<String, List<String>> args = new HashMap<>();
+
+    public static String asKey(Option option) {
+        return "--" + option.getLongOpt();
+    }
 
 ${constructor}
 
-    protected List<String> args() { return this.args; }
+    protected List<String> args() {
+        List<String> result = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : args.entrySet()) {
+            result.add(entry.getKey());
+            result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        }
+        return result;
+    }
 
     protected void setArg(String key, String value) {
-        int idx = args.indexOf(key);
-        if (idx == -1) {
-            addArg(key, value);
-        } else {
-            args.set(idx + 1, value);
-        }
+        List<String> values = new ArrayList<>();
+        values.add(value);
+        args.put(key, values);
     }
 
     protected void addArg(String key, String value) {
-        args.add(key);
-        args.add(value);
+        List<String> values = args.get(key);
+        if (values == null) {
+            setArg(key, value);
+        } else {
+            values.add(value);
+        }
     }
 
+    protected class Child {
+        final String key;
+
+        protected Child(String key) {
+            this.key = key;
+        }
+
+        public void addText(String arg) {
+            addArg(key, arg);
+        }
+    }
+
+    /**
+     * A wrapper on Option to provide access to Option info with Ant nomenclature and formatting.
+     */
+    public  static class AntOption {
+        final Option option;
+        final String name;
+
+        AntOption(Option option, String name) {
+            this.option = option;
+            this.name = name;
+        }
+
+        public boolean isAttribute() {
+            return (!option.hasArgs());
+        }
+
+        public boolean isElement() {
+            return !isAttribute() || option.getType() != String.class;
+        }
+
+        public String getType() {
+            return ((Class<?>) option.getType()).getSimpleName();
+        }
+
+        public boolean hasArg() {
+            return option.hasArg();
+        }
+
+        public String longValue() {
+            return "--" + option.getLongOpt();
+        }
+    }
+
+    /*  GENERATED METHODS */
+
 ${methods}
+
+
+    /*  GENERATED CLASSES */
+
+${classes}
+
 }

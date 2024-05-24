@@ -31,7 +31,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.apache.rat.OptionTools;
-import org.apache.rat.tools.CasedString.StringCase;
+import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.CasedString.StringCase;
 
 /**
  * A simple tool to convert CLI options  to Maven and Ant format
@@ -42,12 +43,12 @@ public class Naming {
 
     private static final String INDENT="    ";
 
-    public  static final List<String> mavenFilterList = Arrays.asList("help");
+    public  static final List<String> mavenFilterList = Arrays.asList(OptionTools.HELP.getLongOpt(), OptionTools.DIR.getLongOpt());
 
-    public  static final List<String> antFilterList = Arrays.asList("help");
+    public static Predicate<Option> mavenFilter = optionFilter(mavenFilterList);
 
     public static Predicate<Option> optionFilter(List<String> filterList) {
-        return option -> !filterList.contains(option.getLongOpt());
+        return option -> !(filterList.contains(option.getLongOpt()) || option.getLongOpt() == null);
     }
 
     /**
@@ -58,14 +59,14 @@ public class Naming {
     public static void main(String[] args) throws IOException {
         Options options = OptionTools.buildOptions();
         Predicate<Option> mavenFilter = optionFilter(mavenFilterList);
-        Predicate<Option> antFilter = optionFilter(antFilterList);
+        Predicate<Option> antFilter = optionFilter(AntGenerator.antFilterList);
         try (CSVPrinter printer = new CSVPrinter(new FileWriter("nameMap.csv"), CSVFormat.DEFAULT)) {
             printer.printRecord("CLI", "Maven", "Ant", "Description");
             for (Option option : options.getOptions()) {
                 if (option.getLongOpt() != null) {
                     CasedString opt = new CasedString(StringCase.Kebab, option.getLongOpt());
-                    String mavenCell = mavenFilter.test(option) ? mavenName("", option, opt) : "-- not supported --";
-                    String antCell = antFilter.test(option) ? antName("", option, opt) : "-- not supported --";
+                    String mavenCell = mavenFilter.test(option) ? mavenFunctionName("", option, opt) : "-- not supported --";
+                    String antCell = antFilter.test(option) ? antFunctionName("", option, opt) : "-- not supported --";
                     printer.printRecord(opt, mavenCell, antCell, option.getDescription());
                 }
             }
@@ -82,7 +83,7 @@ public class Naming {
     }
 
 
-    public static String mavenName(String indent, Option option, CasedString name) {
+    public static String mavenFunctionName(String indent, Option option, CasedString name) {
         StringBuilder sb = new StringBuilder();
         if (option.isDeprecated()) {
             sb.append(indent).append("@Deprecated").append(System.lineSeparator());
@@ -104,21 +105,19 @@ public class Naming {
         return sb.toString();
     }
 
-    public static String antName(String indent, Option option, CasedString name) {
-        return antName(indent, option, String.class, name);
-    }
-
-    public static String antName(String indent, Option option, Class<?> type, CasedString name) {
+    private static String antFunctionName(String indent, Option option, CasedString name) {
         StringBuilder sb = new StringBuilder();
         if (option.isDeprecated()) {
             sb.append(indent).append("@Deprecated").append(System.lineSeparator());
         }
-        sb.append(indent).append("public void ").append(option.hasArgs() ? "add" : "set" )
-                .append(WordUtils.capitalize(name.toCase(StringCase.Camel)))
-                .append("(")
-                .append(option.hasArg() ? type.getSimpleName() : "boolean").append(" ")
-                .append(WordUtils.uncapitalize(name.toCase(StringCase.Camel)))
-                .append(")");
+        if (option.hasArgs()) {
+            sb.append(indent).append("<").append(WordUtils.capitalize(name.toCase(StringCase.Camel))).append("s>").append(System.lineSeparator())
+                    .append(indent).append(indent).append("<").append(WordUtils.uncapitalize(name.toCase(StringCase.Camel))).append("/>").append(System.lineSeparator())
+                    .append(indent).append("</").append(WordUtils.uncapitalize(name.toCase(StringCase.Camel))).append("s>").append(System.lineSeparator());
+        } else {
+            sb.append(indent).append("<rat:report ").append(WordUtils.uncapitalize(name.toCase(StringCase.Camel))).append("='text'>").append(System.lineSeparator())
+                    .append(indent).append("</rat:report>").append(System.lineSeparator());
+        }
         return sb.toString();
     }
 }

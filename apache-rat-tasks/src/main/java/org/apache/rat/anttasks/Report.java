@@ -159,7 +159,7 @@ public class Report extends BaseAntTask {
 
     public void setLicenses(File fileName) {
         try {
-            addLicenses(fileName.getCanonicalPath());
+            setArg(asKey(OptionTools.LICENSES), fileName.getCanonicalPath());
         } catch (IOException e) {
             throw new BuildException("Can not read license file " + fileName, e);
         }
@@ -228,7 +228,7 @@ public class Report extends BaseAntTask {
 
     public void setAddDefaultDefinitions(File fileName) {
         try {
-            addLicenses(fileName.getCanonicalPath());
+            addArg(asKey(OptionTools.LICENSES), fileName.getCanonicalPath());
         } catch (IOException e) {
             throw new BuildException("Can not read license file " + fileName, e);
         }
@@ -243,7 +243,7 @@ public class Report extends BaseAntTask {
             final ReportConfiguration configuration = OptionTools.parseCommands(args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
-            if (!args().contains("--out")) {
+            if (!args().contains(asKey(OptionTools.OUT))) {
                 configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
             }
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
@@ -373,6 +373,5 @@ public class Report extends BaseAntTask {
                 break;
             }
         }
-        
     }
 }

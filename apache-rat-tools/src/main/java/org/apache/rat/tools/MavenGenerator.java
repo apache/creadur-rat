@@ -24,7 +24,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionTools;
-import org.apache.rat.tools.CasedString.StringCase;
+import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.CasedString.StringCase;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -91,7 +92,7 @@ public class MavenGenerator {
             if (option.getLongOpt() != null) {
                 CasedString name = new CasedString(StringCase.Kebab, option.getLongOpt());
                 writeComment(writer, option);
-                writer.append(Naming.mavenName(INDENT, option, name)).append(" {").append(System.lineSeparator());
+                writer.append(Naming.mavenFunctionName(INDENT, option, name)).append(" {").append(System.lineSeparator());
                 writeBody(writer, option, name);
                 writer.append(INDENT).append("}").append(System.lineSeparator()).append(System.lineSeparator());
             }

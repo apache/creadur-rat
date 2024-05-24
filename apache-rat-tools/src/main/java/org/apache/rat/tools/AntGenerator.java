@@ -19,23 +19,37 @@
 package org.apache.rat.tools;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionTools;
-import org.apache.rat.tools.CasedString.StringCase;
+import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.CasedString.StringCase;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.Writer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 /**
  * A simple tool to convert CLI options  to Maven and Ant format
  */
 public class AntGenerator {
+
+    public  static final List<String> antFilterList = Arrays.asList(OptionTools.HELP.getLongOpt(), OptionTools.LOG_LEVEL.getLongOpt(),
+            OptionTools.DIR.getLongOpt());
+
+    public static Predicate<Option> antFilter = Naming.optionFilter(antFilterList);
 
     private AntGenerator() {}
 
@@ -50,15 +64,18 @@ public class AntGenerator {
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
-        Options options = new Options();
-        OptionTools.buildOptions().getOptions().stream().filter(Naming.optionFilter(Naming.antFilterList)).forEach(options::addOption);
 
+        List<AntOption> options = OptionTools.buildOptions().getOptions().stream().filter(antFilter).map(AntOption::new)
+                .collect(Collectors.toList());
 
         File file = new File(new File(new File(destDir), packageName.replaceAll("\\.", File.separator)),className+".java");
         System.out.println("Creating "+file);
         file.getParentFile().mkdirs();
         try (InputStream template = AntGenerator.class.getResourceAsStream("/Ant.tpl");
-             FileWriter writer = new FileWriter(file)) {
+             FileWriter writer = new FileWriter(file);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             OutputStreamWriter customClasses = new OutputStreamWriter(bos);
+        ) {
             if (template == null) {
                 throw new RuntimeException("Template /Ant.tpl not found");
             }
@@ -67,16 +84,21 @@ public class AntGenerator {
                 String line = iter.next();
                 switch (line.trim()) {
                     case "${methods}":
-                        writeMethods(writer, options);
+                        writeMethods(writer, options, customClasses);
                         break;
                     case "${package}":
-                        writer.append("package ").append(packageName).append(";").append(System.lineSeparator());
+                        writer.append(format("package %s;%n",packageName));
                         break;
                     case "${constructor}":
-                        writer.append(INDENT).append("protected ").append(className).append("() {}").append(System.lineSeparator());
+                        writer.append(format("    protected %s() {}%n",className));
                         break;
                     case "${class}":
-                        writer.append("public abstract class ").append(className).append(" extends Task {").append(System.lineSeparator());
+                        writer.append(format("public abstract class %s extends Task {%n",className));
+                        break;
+                    case "${classes}":
+                        customClasses.flush();
+                        customClasses.close();
+                        writer.write(bos.toString());
                         break;
                     default:
                         writer.append(line).append(System.lineSeparator());
@@ -86,58 +108,98 @@ public class AntGenerator {
         }
     }
 
-    private static void writeMethods(FileWriter writer, Options options) throws IOException {
-        for (Option option : options.getOptions()) {
-            if (option.getLongOpt() != null) {
-                CasedString name = new CasedString(StringCase.Kebab, option.getLongOpt());
-                writeComment(writer, option);
-                writer.append(Naming.antName(INDENT, option, name)).append(" {").append(System.lineSeparator());
-                writeBody(writer, option, name);
-                writer.append(INDENT).append("}").append(System.lineSeparator()).append(System.lineSeparator());
-                if (option.getType() == File.class) {
-                    writeComment(writer, option);
-                    writer.append(Naming.antName(INDENT, option, (Class<?>) option.getType(), name)).append(" {").append(System.lineSeparator());
-                    writeFileBody(writer, option, name);
-                    writer.append(INDENT).append("}").append(System.lineSeparator()).append(System.lineSeparator());
-                }
+    private static void writeMethods(FileWriter writer, List<AntOption> options, Writer customClasses) throws IOException {
+        for (AntOption option : options) {
+
+            if (option.isAttribute()) {
+                writer.append(option.getComment(true));
+                writer.append(format("    public void %s {%n%s%n    }%n%n", option.getAttributeFunctionName(), getAttributeBody(option)));
+            }
+
+            if (option.isElement()) {
+                customClasses.append(option.getComment(false));
+                customClasses.append(format("    public %1$s create%1$s() {%n        return new %1$s();%n    }%n%n", WordUtils.capitalize(option.name)));
+                customClasses.append(getElementClass(option));
             }
         }
     }
 
-    private static void writeComment(FileWriter writer, Option option) throws IOException {
-        writer.append(INDENT).append("/** ").append(System.lineSeparator())
-                .append(INDENT).append(" * ").append(option.getDescription()).append(System.lineSeparator());
-        if (option.isDeprecated()) {
-            writer.append(INDENT).append(" * ").append(option.getDeprecated().toString()).append(System.lineSeparator());
-        }
-        writer.append(INDENT).append(" */").append(System.lineSeparator());
+    private static String getAttributeBody(AntOption option) throws IOException {
+        return option.hasArg() ? format("        setArg(\"%s\", %s);%n", option.longValue(), option.name)
+            : format("        if (%s) {%n            setArg(\"%s\", null);%n        }%n", option.name, option.longValue());
     }
 
-    private static void writeBody(FileWriter writer, Option option, CasedString name) throws IOException {
-        String varName = WordUtils.uncapitalize(name.toCase(StringCase.Camel));
-        String longArg = Naming.asLongArg(option);
-        if (option.hasArg()) {
-            String method = option.hasArgs() ? "addArg(" : "setArg(";
-            writer.append(INDENT).append(INDENT).append(method).append(longArg).append(", ")
-                .append(varName).append(");").append(System.lineSeparator());
-        } else {
-            writer.append(INDENT).append(INDENT).append("if (").append(varName).append(") {").append(System.lineSeparator())
-            .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
-                    .append(INDENT).append(INDENT).append("} else {").append(System.lineSeparator())
-                    .append(INDENT).append(INDENT).append(INDENT).append("args.remove(").append(longArg).append(");").append(System.lineSeparator())
-                    .append(INDENT).append(INDENT).append("}").append(System.lineSeparator());
-        }
+    private static String getElementClass(AntOption option) throws IOException {
+        return format("    public class %1$s extends Child { %1$s() {super(\"%2$s\");}}%n%n", WordUtils.capitalize(option.name), option.longValue());
     }
 
-    private static void writeFileBody(FileWriter writer, Option option, CasedString name) throws IOException {
-        String varName = WordUtils.uncapitalize(name.toCase(StringCase.Camel));
-        String longArg = Naming.asLongArg(option);
 
-        writer.append(INDENT).append(INDENT).append( "try {").append(System.lineSeparator())
-                .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
-                .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(varName).append(".getCanonicalPath());").append(System.lineSeparator())
-                .append(INDENT).append(INDENT).append( "} catch (IOException e) {").append(System.lineSeparator())
-                .append(INDENT).append(INDENT).append(INDENT).append("throw new BuildException(e.getMessage(), e);").append(System.lineSeparator())
-                .append(INDENT).append(INDENT).append( "}").append(System.lineSeparator());
+//    private static void writeFileBody(FileWriter writer, Option option, CasedString name) throws IOException {
+//        String varName = WordUtils.uncapitalize(name.toCase(StringCase.Camel));
+//        String longArg = Naming.asLongArg(option);
+//
+//        writer.append(INDENT).append(INDENT).append( "try {").append(System.lineSeparator())
+//                .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
+//                .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(varName).append(".getCanonicalPath());").append(System.lineSeparator())
+//                .append(INDENT).append(INDENT).append( "} catch (IOException e) {").append(System.lineSeparator())
+//                .append(INDENT).append(INDENT).append(INDENT).append("throw new BuildException(e.getMessage(), e);").append(System.lineSeparator())
+//                .append(INDENT).append(INDENT).append( "}").append(System.lineSeparator());
+//    }
+
+    private static class AntOption {
+        final Option option;
+        /** An uncapitalized name */
+        final String name;
+
+        AntOption(Option option) {
+            this.option = option;
+            name = WordUtils.uncapitalize(new CasedString(StringCase.Kebab, option.getLongOpt()).toCase(StringCase.Camel));
+        }
+
+        public boolean isAttribute() {
+            return (!option.hasArgs());
+        }
+
+        public boolean isElement() {
+            return !isAttribute() || option.getType() != String.class;
+        }
+
+        public String getType() {
+            return ((Class<?>) option.getType()).getSimpleName();
+        }
+
+        public boolean hasArg() {
+            return option.hasArg();
+        }
+
+        public String longValue() {
+            return "--" + option.getLongOpt();
+        }
+
+        public String getComment(boolean addParam) {
+            StringBuilder sb = new StringBuilder()
+            .append(format("    /**%n     * %s%n", option.getDescription()));
+            if (option.isDeprecated()) {
+                sb.append(format("     * %s%n     * @deprecated%n",option.getDeprecated()));
+            }
+            if (addParam && option.hasArg()) {
+                sb.append(format("     * @param %s The value to set%n", name));
+            }
+            return sb.append(format("     */%n")).toString();
+        }
+
+        public String getAttributeFunctionName() {
+            return "set" +
+                    WordUtils.capitalize(name) +
+                    (option.hasArg() ?"(String " : "(boolean ") +
+                    name +
+                    ")";
+        }
+
+        public String getElementFunctionName() {
+            return "create" +
+                    WordUtils.capitalize(name) +
+                    "()";
+        }
     }
 }
