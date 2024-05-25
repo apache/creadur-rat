@@ -36,14 +36,23 @@ import java.util.stream.Collectors;
  * DO NOT EDIT - GENERATED FILE
  */
 ${class}
+    /**
+     * A map of CLI based arguments to values.
+     */
     protected final Map<String, List<String>> args = new HashMap<>();
 
+    /**
+     * Get the name of the option as the key to the argument map.
+     */
     public static String asKey(Option option) {
         return "--" + option.getLongOpt();
     }
 
 ${constructor}
 
+    /**
+     * Gets the list of arguments prepared for the CLI code to parse.
+     */
     protected List<String> args() {
         List<String> result = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : args.entrySet()) {
@@ -53,12 +62,20 @@ ${constructor}
         return result;
     }
 
+    /**
+     * Set a key and value into the argument list.
+     * Replaces any existing value
+     */
     protected void setArg(String key, String value) {
         List<String> values = new ArrayList<>();
         values.add(value);
         args.put(key, values);
     }
 
+    /**
+     * Add an value to the key in the argument list.
+     * If the key does not exist, adds it.
+     */
     protected void addArg(String key, String value) {
         List<String> values = args.get(key);
         if (values == null) {
@@ -68,6 +85,9 @@ ${constructor}
         }
     }
 
+    /**
+     * A child element
+     */
     protected class Child {
         final String key;
 
@@ -83,32 +103,53 @@ ${constructor}
     /**
      * A wrapper on Option to provide access to Option info with Ant nomenclature and formatting.
      */
-    public  static class AntOption {
+    public static class AntOption {
         final Option option;
         final String name;
 
+        /**
+         * Constructor.
+         * @param option The CLI option
+         * @param name The Ant based name for the option.
+         */
         AntOption(Option option, String name) {
             this.option = option;
             this.name = name;
         }
 
+        /**
+         * Returns true if the option should be an attribute.
+         */
         public boolean isAttribute() {
             return (!option.hasArgs());
         }
 
+        /**
+         * Returns true if the option should be an element.
+         */
         public boolean isElement() {
             return !isAttribute() || option.getType() != String.class;
         }
 
+        /**
+         * Gets the simple class name for the data type for this option.
+         * Normally "String".
+         */
         public String getType() {
             return ((Class<?>) option.getType()).getSimpleName();
         }
 
+        /**
+         * returns true if the enclosed option has an argument
+         */
         public boolean hasArg() {
             return option.hasArg();
         }
 
-        public String longValue() {
+        /**
+         * the key value for the option.
+         */
+        public String keyValue() {
             return "--" + option.getLongOpt();
         }
     }

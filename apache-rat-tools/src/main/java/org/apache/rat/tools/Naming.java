@@ -24,45 +24,38 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.text.WordUtils;
 import org.apache.commons.csv.CSVPrinter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.apache.rat.OptionTools;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
 import static java.lang.String.format;
 
 /**
- * A simple tool to convert CLI options  to Maven and Ant format
+ * A simple tool to convert CLI options to Maven and Ant format and produce a CSV file.
  */
 public class Naming {
 
     public Naming() {}
 
-    private static final String INDENT="    ";
-
-    public  static final List<String> mavenFilterList = Arrays.asList(OptionTools.HELP.getLongOpt(), OptionTools.DIR.getLongOpt());
-
-    public static Predicate<Option> mavenFilter = optionFilter(mavenFilterList);
-
-    public static Predicate<Option> optionFilter(List<String> filterList) {
-        return option -> !(filterList.contains(option.getLongOpt()) || option.getLongOpt() == null);
-    }
-
     /**
-     * Creates the documentation.  Writes to the output specified by the -o or --out option.  Defaults to System.out.
-     * @param args the arguments.  Try --help for help.
+     * Creates the CSV file.
+     * Requires 1 argument:
+     * <ol>
+     *    <li>the name of the output file with path if desired</li>
+     * </ol>
      * @throws IOException on error
      */
     public static void main(String[] args) throws IOException {
-        Options options = OptionTools.buildOptions();
-        Predicate<Option> mavenFilter = optionFilter(mavenFilterList);
-        Predicate<Option> antFilter = optionFilter(AntGenerator.antFilterList);
-        try (CSVPrinter printer = new CSVPrinter(new FileWriter("nameMap.csv"), CSVFormat.DEFAULT)) {
+        Options options = OptionCollection.buildOptions();
+        Predicate<Option> mavenFilter = MavenGenerator.MAVEN_FILTER;
+        Predicate<Option> antFilter = AntGenerator.ANT_FILTER;
+        try (CSVPrinter printer = new CSVPrinter(new FileWriter(args[0]), CSVFormat.DEFAULT)) {
             printer.printRecord("CLI", "Maven", "Ant", "Description");
             for (Option option : options.getOptions()) {
                 if (option.getLongOpt() != null) {
@@ -73,15 +66,6 @@ public class Naming {
                 }
             }
         }
-    }
-
-    public static String quote(String s) {
-        return format("\"%s\"", s);
-    }
-
-
-    public static String asLongArg(Option option) {
-        return quote("--"+option.getLongOpt());
     }
 
     public static String mavenFunctionName(Option option, CasedString name) {

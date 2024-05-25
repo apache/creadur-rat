@@ -22,7 +22,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.OptionTools;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -42,22 +42,33 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 /**
- * A simple tool to convert CLI options  to Maven and Ant format
+ * A simple tool to convert CLI options Ant report base class .
  */
 public class AntGenerator {
 
-    public  static final List<String> antFilterList = Arrays.asList(OptionTools.HELP.getLongOpt(), OptionTools.LOG_LEVEL.getLongOpt(),
-            OptionTools.DIR.getLongOpt());
+    /**
+     * The list of Options that are not supported by Ant.
+     */
+    private static final List<Option> ANT_FILTER_LIST = Arrays.asList(OptionCollection.HELP, OptionCollection.LOG_LEVEL,
+            OptionCollection.DIR);
 
-    public static Predicate<Option> antFilter = Naming.optionFilter(antFilterList);
+    /**
+     * the filter to filter out CLI options that Ant does not support.
+     */
+    public static Predicate<Option> ANT_FILTER = option -> !(ANT_FILTER_LIST.contains(option) || option.getLongOpt() == null);
+
 
     private AntGenerator() {}
 
-    private static final String INDENT="    ";
-
     /**
-     * Creates the documentation.  Writes to the output specified by the -o or --out option.  Defaults to System.out.
-     * @param args the arguments.  Try --help for help.
+     * Creates a base class for an Ant task.
+     * Requires 3 arguments:
+     * <ol>
+     *     <li>the package name for the class</li>
+     *     <li>the simple class name</li>
+     *     <li>the directory in which to write the class file.</li>
+     * </ol>
+     * @param args the arguments.
      * @throws IOException on error
      */
     public static void main(String[] args) throws IOException {
@@ -65,7 +76,7 @@ public class AntGenerator {
         String className = args[1];
         String destDir = args[2];
 
-        List<AntOption> options = OptionTools.buildOptions().getOptions().stream().filter(antFilter).map(AntOption::new)
+        List<AntOption> options = OptionCollection.buildOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
                 .collect(Collectors.toList());
 
         File file = new File(new File(new File(destDir), packageName.replaceAll("\\.", File.separator)),className+".java");
@@ -125,27 +136,17 @@ public class AntGenerator {
     }
 
     private static String getAttributeBody(AntOption option) throws IOException {
-        return option.hasArg() ? format("        setArg(\"%s\", %s);%n", option.longValue(), option.name)
-            : format("        if (%s) {%n            setArg(\"%s\", null);%n        }%n", option.name, option.longValue());
+        return option.hasArg() ? format("        setArg(%s, %s);%n", option.keyValue(), option.name)
+            : format("        if (%s) {%n            setArg(%s, null);%n        }%n", option.name, option.keyValue());
     }
 
     private static String getElementClass(AntOption option) throws IOException {
-        return format("    public class %1$s extends Child { %1$s() {super(\"%2$s\");}}%n%n", WordUtils.capitalize(option.name), option.longValue());
+        return format("    public class %1$s extends Child { %1$s() {super(%2$s);}}%n%n", WordUtils.capitalize(option.name), option.keyValue());
     }
 
-
-//    private static void writeFileBody(FileWriter writer, Option option, CasedString name) throws IOException {
-//        String varName = WordUtils.uncapitalize(name.toCase(StringCase.Camel));
-//        String longArg = Naming.asLongArg(option);
-//
-//        writer.append(INDENT).append(INDENT).append( "try {").append(System.lineSeparator())
-//                .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(longArg).append(");").append(System.lineSeparator())
-//                .append(INDENT).append(INDENT).append(INDENT).append("args.add(").append(varName).append(".getCanonicalPath());").append(System.lineSeparator())
-//                .append(INDENT).append(INDENT).append( "} catch (IOException e) {").append(System.lineSeparator())
-//                .append(INDENT).append(INDENT).append(INDENT).append("throw new BuildException(e.getMessage(), e);").append(System.lineSeparator())
-//                .append(INDENT).append(INDENT).append( "}").append(System.lineSeparator());
-//    }
-
+    /**
+     * A class that wraps the CLI option and provides Ant specific values.
+     */
     private static class AntOption {
         final Option option;
         /** An uncapitalized name */
@@ -156,26 +157,42 @@ public class AntGenerator {
             name = WordUtils.uncapitalize(new CasedString(StringCase.Kebab, option.getLongOpt()).toCase(StringCase.Camel));
         }
 
+        /**
+         * Returns {@code true} if the option should be an attribute of the &lt;rat:report> element.
+         * @return {@code true} if the option should be an attribute of the &lt;rat:report> element.
+         */
         public boolean isAttribute() {
             return (!option.hasArgs());
         }
-
+        /**
+         * Returns {@code true} if the option should be a child element of the &lt;rat:report> element.
+         * @return {@code true} if the option should be a child element of the &lt;rat:report> element.
+         */
         public boolean isElement() {
             return !isAttribute() || option.getType() != String.class;
         }
 
-        public String getType() {
-            return ((Class<?>) option.getType()).getSimpleName();
-        }
-
+        /**
+         * Returns {@code true} if the enclosed option has one or more arguments.
+         * @return {@code true} if the enclosed option has one or more arguments.
+         */
         public boolean hasArg() {
             return option.hasArg();
         }
 
-        public String longValue() {
-            return "--" + option.getLongOpt();
+        /**
+         * Returns The key value for the option.   This is the long opt enclosed in quotes and with leading dashes.
+         * @return The key value for the option.
+         */
+        public String keyValue() {
+            return format("\"--%s\"", option.getLongOpt());
         }
 
+        /**
+         * Get the method comment for this option.
+         * @param addParam if {@code true} the param annotation is added.
+         * @return the Comment block for the function.
+         */
         public String getComment(boolean addParam) {
             StringBuilder sb = new StringBuilder()
             .append(format("    /**%n     * %s%n", option.getDescription()));
@@ -188,6 +205,10 @@ public class AntGenerator {
             return sb.append(format("     */%n")).toString();
         }
 
+        /**
+         * Get the signature of th eattribute function.
+         * @return the signature of the attribue function.
+         */
         public String getAttributeFunctionName() {
             return "set" +
                     WordUtils.capitalize(name) +
@@ -196,10 +217,5 @@ public class AntGenerator {
                     ")";
         }
 
-        public String getElementFunctionName() {
-            return "create" +
-                    WordUtils.capitalize(name) +
-                    "()";
-        }
     }
 }

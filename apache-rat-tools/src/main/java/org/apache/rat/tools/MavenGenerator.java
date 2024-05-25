@@ -23,7 +23,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.OptionTools;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -32,19 +32,38 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 
 /**
- * A simple tool to convert CLI options to Maven format
+ * A simple tool to convert CLI options to Maven Mojo base class
  */
 public class MavenGenerator {
+
+    /**
+     * List of CLI Options that are not supported by Maven.
+     */
+    private static final List<Option> MAVEN_FILTER_LIST = Arrays.asList(OptionCollection.HELP, OptionCollection.DIR);
+
+    /**
+     * Filter to remove Options not supported by Maven.
+     */
+    public static Predicate<Option> MAVEN_FILTER = option -> !(MAVEN_FILTER_LIST.contains(option) || option.getLongOpt() == null);;
 
     private MavenGenerator() {}
 
     /**
-     * Creates the documentation.  Writes to the output specified by the -o or --out option.  Defaults to System.out.
-     * @param args the arguments.  Try --help for help.
+     * Creates the Maven MojoClass
+     * Requires 3 arguments:
+     * <ol>
+     *     <li>the package name for the class</li>
+     *     <li>the simple class name</li>
+     *     <li>the directory in which to write the class file.</li>
+     * </ol>
+     * @param args the arguments
      * @throws IOException on error
      */
     public static void main(String[] args) throws IOException {
@@ -53,7 +72,7 @@ public class MavenGenerator {
         String destDir = args[2];
         Options options = new Options();
 
-        OptionTools.buildOptions().getOptions().stream().filter(Naming.optionFilter(Naming.mavenFilterList)).forEach(options::addOption);
+        OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER).forEach(options::addOption);
 
         File file = new File(new File(new File(destDir), packageName.replaceAll("\\.", File.separator)),className+".java");
         System.out.println("Creating "+file);

@@ -48,11 +48,14 @@ import org.apache.rat.walker.DirectoryWalker;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,11 +67,19 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-public class OptionTools {
+/**
+ * The collection of standard options for the CLI as well as utility methods to manage them and methods to create the
+ * ReportConfiguration from the options and an array of arguments.
+ */
+public class OptionCollection {
+
+    /*
+                    START OF OPTION LIST
+     */
+
     /**
      * Adds license headers to files missing headers.
      */
-
     public static final Option ADD_LICENSE = new Option("A", "addLicense", false,
                        "Add the default license header to any file with an unknown license that is not in the exclusion list. "
                        + "By default new files will be created with the license header, "
@@ -122,10 +133,12 @@ public class OptionTools {
      * @since 0.16
      */
     public static final Option NO_DEFAULTS = new Option(null, "no-default-licenses", false, "Ignore default configuration. By default all approved default licenses are used");
+
     /**
      * Scan hidden directories.
      */
     public static final Option SCAN_HIDDEN_DIRECTORIES = new Option(null, "scan-hidden-directories", false, "Scan hidden directories");
+
     /**
      * List the licenses that were used for the run.
      * @since 0.16
@@ -134,6 +147,7 @@ public class OptionTools {
             .desc("List the defined licenses (default is NONE). Valid options are: " + asString(LicenseSetFactory.LicenseFilter.values()))
             .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
             .build();
+
     /**
      * List the all families for the run.
      * @since 0.16
@@ -142,6 +156,7 @@ public class OptionTools {
             .desc("List the defined license families (default is NONE). Valid options are: " + asString(LicenseSetFactory.LicenseFilter.values()))
             .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
             .build();
+
     /**
      * Specify the log level for output
      * @since 0.16
@@ -151,6 +166,7 @@ public class OptionTools {
             .desc("sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build();
+
     /**
      * Do not update files.
      * @since 0.16
@@ -162,6 +178,7 @@ public class OptionTools {
      * Set unstyled XML output
      */
     public static final Option XML = new Option("x", "xml", false, "Output the report in raw XML format.  Not compatible with -s");
+
     /**
      * Specify the processing of ARCHIVE files.
      * @since 0.17
@@ -171,6 +188,7 @@ public class OptionTools {
                     ReportConfiguration.Processing.NOTIFICATION))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();
+
     /**
      * Specify the processing of STANDARD files.
      */
@@ -179,13 +197,20 @@ public class OptionTools {
                     Defaults.STANDARD_PROCESSING))
             .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
             .build();
-    static final Map<String, Supplier<String>> ARGUMENT_TYPES;
+
+    /**
+     * Ths option to signal the end of an argument list and the start of the directory/archive arguments.
+     */
     // TODO rework when commons-cli 1.7.1 or higher is available.
     static final DeprecatedAttributes DIR_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
             .setDescription("Use '--'").get();
     public static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
             .desc(format("[%s] %s", DIR_ATTRIBUTES, "Used to indicate end of list when using --exclude.")).argName("DirOrArchive")
             .deprecated(DIR_ATTRIBUTES).build();
+
+    /**
+     * Option to signal that license text should be added to the files.
+     */
     // TODO rework when Commons-CLI version 1.7.1 or higher is available.
     private static final DeprecatedAttributes ADD_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
             .setDescription("Use '-A' or '--addLicense' instead.").get();
@@ -194,8 +219,8 @@ public class OptionTools {
                     .desc(format("[%s]", ADD_ATTRIBUTES))
                     .deprecated(ADD_ATTRIBUTES)
                     .build())
-
             .addOption(ADD_LICENSE);
+
     /**
      * Defines the copyright header to add to the file.
      */
@@ -203,6 +228,7 @@ public class OptionTools {
             .desc(format("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\".  Only valid with --%s",
                     ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()))
             .build();
+
     /**
      * Forces changes to be written to new files.
      */
@@ -210,6 +236,14 @@ public class OptionTools {
             format("Forces any changes in files to be written directly to the source files (i.e. new files are not created).  Only valid with --%s",
                     ADD.getOptions().stream().filter(o -> !o.isDeprecated()).findAny().get().getLongOpt()));
 
+
+    /*
+                    END OF OPTION LIST
+     */
+
+    /**
+     * The enumeration of system defined stylesheets.
+     */
     private enum StyleSheets {
         PLAIN("plain-rat", "The default style"),
         MISSING_HEADERS("missing-headers", "Produces a report of files that are missing headers"),
@@ -231,6 +265,10 @@ public class OptionTools {
         }
     }
 
+    /**
+     * A mapping of {@code argName(value)} values to a description of those values.
+     */
+    private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
     static {
         ARGUMENT_TYPES = new TreeMap<>();
         ARGUMENT_TYPES.put("FileOrURI", () -> "A file name or URI");
@@ -249,7 +287,20 @@ public class OptionTools {
                         .collect(Collectors.joining(""))));
     }
 
-    public static String asString(final Object[] args) {
+    /**
+     * Gets the mapping of {@code argName(value)} values to a description of those values.
+     * @return the mapping of {@code argName(value)} values to a description of those values.
+     */
+    public static Map<String, Supplier<String>> getArgumentTypes() {
+        return Collections.unmodifiableMap(ARGUMENT_TYPES);
+    }
+
+    /**
+     * Join a collection of objects together as a comma separated list of their string values.
+     * @param args the objects to join together.
+     * @return the comma separated string.
+     */
+    private static String asString(final Object[] args) {
         return Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "));
     }
 
@@ -266,7 +317,7 @@ public class OptionTools {
     }
 
     /**
-     * Parses the standard options to create a ReportConfiguraton.
+     * Parses the standard options to create a ReportConfiguration.
      *
      * @param args    the arguments to parse
      * @param helpCmd the help command to run when necessary.
@@ -319,12 +370,24 @@ public class OptionTools {
         return createConfiguration(log, clArgs[0], cl);
     }
 
+
     private static void logParseException(final Log log, final ParseException e, final Option opt, final CommandLine cl, final Object dflt) {
         log.warn(format("Invalid %s specified: %s ", opt.getOpt(), cl.getOptionValue(opt)));
         log.warn(format("%s set to: %s", opt.getOpt(), dflt));
         log.debug(e);
     }
 
+    /**
+     * Create the report configuration.
+     * Note: this method is package private for testing.  You probably want one of the {@code PprseCommands} methods.
+     * @param log The log to log errors to.
+     * @param baseDirectory the base directory where files will be found.
+     * @param cl the parsed command line.
+     * @return a ReportConfiguration
+     * @throws IOException on error.
+     * @see #parseCommands(String[], Consumer)
+     * @see #parseCommands(String[], Consumer, boolean)
+     */
     static ReportConfiguration createConfiguration(final Log log, final String baseDirectory, final CommandLine cl) throws IOException {
         final ReportConfiguration configuration = new ReportConfiguration(log);
 
@@ -458,7 +521,7 @@ public class OptionTools {
 
     /**
      * Creates a filename filter from patterns to exclude.
-     *
+     * Package provide for use in testing.
      * @param log the Logger to use.
      * @param excludes the list of patterns to exclude.
      * @return the FilenameFilter tht excludes the patterns or an empty optional.
@@ -493,6 +556,10 @@ public class OptionTools {
         return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter.negate());
     }
 
+    /**
+     * Create an {@code Options} object from the list of defined Options.
+     * @return the Options comprised of the Options defined in this class.
+     */
     public static Options buildOptions() {
         return new Options()
                 .addOption(ARCHIVE)
@@ -538,5 +605,34 @@ public class OptionTools {
         }
 
         return new ArchiveWalker(config, doc);
+    }
+
+    /**
+     * This class implements the {@code Comparator} interface for comparing Options.
+     */
+    public static class OptionComparator implements Comparator<Option>, Serializable {
+        /** The serial version UID.  */
+        private static final long serialVersionUID = 5305467873966684014L;
+
+        private String getKey(final Option opt) {
+            String key = opt.getOpt();
+            key = key == null ? opt.getLongOpt() : key;
+            return key;
+        }
+
+        /**
+         * Compares its two arguments for order. Returns a negative integer, zero, or a
+         * positive integer as the first argument is less than, equal to, or greater
+         * than the second.
+         *
+         * @param opt1 The first Option to be compared.
+         * @param opt2 The second Option to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument
+         * is less than, equal to, or greater than the second.
+         */
+        @Override
+        public int compare(final Option opt1, final Option opt2) {
+            return getKey(opt1).compareToIgnoreCase(getKey(opt2));
+        }
     }
 }

@@ -25,11 +25,17 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Handles converting from one string case to another (e.g. camel case to snake case).
+ */
 public class CasedString {
     private String string;
     private StringCase stringCase;
 
-    static Function<String[],String> camelJoiner = a -> {
+    /**
+     * A method to join camel string fragments together.
+     */
+    private final static Function<String[],String> camelJoiner = a -> {
         StringBuilder sb = new StringBuilder(a[0]);
 
         for (int i=1;i<a.length;i++) {
@@ -38,14 +44,38 @@ public class CasedString {
         return sb.toString();
     };
 
-    public enum StringCase {Camel(Character::isUpperCase, true,  camelJoiner),
+    /**
+     * An enumeration of supported string cases.
+     */
+    public enum StringCase {
+        /**
+         * Camel case identifies strings like 'CamelCase'.
+         */
+        Camel(Character::isUpperCase, true,  camelJoiner),
+        /**
+         * Snake case identifies strings like 'Snake_Case'
+         */
         Snake(c -> c =='_', false, a -> String.join("_", a)),
-        Kebab(c -> c == '-', false ,a -> String.join("-", a));
+        /**
+         * Kebab case identifies strings like 'kebab-case'
+         */
+        Kebab(c -> c == '-', false, a -> String.join("-", a)),
+
+        /**
+         * Phrase case identifies phrases of words like 'phrase case'
+         */
+        Phrase(c -> c == ' ', false, a -> String.join(" ", a));
 
         private final Predicate<Character> splitter;
         private final boolean preserveSplit;
         private final Function<String[],String> joiner;
 
+        /**
+         * Defines a String Case
+         * @param splitter The predicate that determines when a new word in the cased string begins.
+         * @param preserveSplit if {@code true} the character that the splitter detected is preserved as the first character of the new word.
+         * @param joiner The function to merge a list of strings into the cased String.
+         */
         StringCase(final Predicate<Character> splitter, final boolean preserveSplit, final Function<String[],String> joiner) {
             this.splitter = splitter;
             this.preserveSplit = preserveSplit;
@@ -53,6 +83,11 @@ public class CasedString {
         }
     }
 
+    /**
+     * A representation of a cased string and the identified case of that string.
+     * @param stringCase The {@code StringCase} that the {@code string} argument is in.
+     * @param string The string.
+     */
     public CasedString(StringCase stringCase, String string) {
         this.string = string;
         this.stringCase = stringCase;
@@ -78,9 +113,15 @@ public class CasedString {
         if (sb.length() > 0) {
             lst.add(sb.toString());
         }
-        return lst.toArray(new String[lst.size()]);
+        return lst.toArray(new String[0]);
     }
 
+    /**
+     * Converts this cased string into a {@code String} of another format.
+     * The upper/lower case of the characters within the string are not modified.
+     * @param stringCase THe fomrat to convert to.
+     * @return the String current string represented in the new format.
+     */
     public String toCase(StringCase stringCase) {
         if (stringCase == this.stringCase) {
             return string;
@@ -88,6 +129,10 @@ public class CasedString {
         return stringCase.joiner.apply(split());
     }
 
+    /**
+     * Returns the string representation provided in the constructor.
+     * @return the string representation.
+     */
     @Override
     public String toString() {
         return string;

@@ -53,7 +53,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
-import org.apache.rat.OptionTools;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.license.DeprecatedConfig;
 import org.apache.rat.config.SourceCodeManagementSystems;
@@ -346,7 +346,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         DefaultLog.setInstance(makeLog());
         try {
-            ReportConfiguration config = OptionTools.parseCommands(args().toArray(new String[0]),
+            ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
                     o -> getLog().warn("Help option not supported"),
                     true);
             reportDeprecatedProcessing();

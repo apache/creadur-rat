@@ -51,8 +51,8 @@ public class ReportTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine cl = new DefaultParser().parse(OptionTools.buildOptions(), new String[]{"-o", output.getCanonicalPath()});
-        ReportConfiguration config = OptionTools.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath()});
+        ReportConfiguration config = OptionCollection.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
         new Reporter(config).output();
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
@@ -63,7 +63,7 @@ public class ReportTest {
 
     @Test
     public void helpTest() {
-        Options opts = OptionTools.buildOptions();
+        Options opts = OptionCollection.buildOptions();
         StringWriter out = new StringWriter();
         Report.printUsage(new PrintWriter(out), opts);
 

@@ -24,8 +24,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.IOptionsProvider;
-import org.apache.rat.OptionTools;
-import org.apache.rat.OptionToolsTest;
+import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportTest;
 import org.apache.rat.anttasks.BaseAntTask.AntOption;
@@ -62,12 +62,13 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-
+/**
+ * Tests to ensure the option setting works correctly.
+ */
 public class ReportOptionTest  {
 
     static File baseDir = new File("target/optionTest");
@@ -81,7 +82,7 @@ public class ReportOptionTest  {
 
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionToolsTest.OptionTest test) throws Exception {
+    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) throws Exception {
         test.test();
     }
 
@@ -99,29 +100,29 @@ public class ReportOptionTest  {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
-        final Map<Option, OptionToolsTest.OptionTest> testMap = new HashMap<>();
+        final Map<Option, OptionCollectionTest.OptionTest> testMap = new HashMap<>();
 
         File baseDir;
 
         public OptionsProvider() {
             baseDir = new File("target/optionTools");
             baseDir.mkdirs();
-            testMap.put(OptionTools.ADD_LICENSE, this::addLicenseTest);
-            testMap.put(OptionTools.ARCHIVE, this::archiveTest);
-            testMap.put(OptionTools.STANDARD, this::standardTest);
-            testMap.put(OptionTools.COPYRIGHT, this::copyrightTest);
-            testMap.put(OptionTools.DRY_RUN, this::dryRunTest);
-            testMap.put(OptionTools.EXCLUDE_CLI, this::excludeCliTest);
-            testMap.put(OptionTools.EXCLUDE_FILE_CLI,this::excludeCliFileTest);
-            testMap.put(OptionTools.FORCE, this::forceTest);
-            testMap.put(OptionTools.LICENSES, this::licensesTest);
-            testMap.put(OptionTools.LIST_LICENSES, this::listLicensesTest);
-            testMap.put(OptionTools.LIST_FAMILIES, this::listFamiliesTest);
-            testMap.put(OptionTools.NO_DEFAULTS, this::noDefaultsTest);
-            testMap.put(OptionTools.OUT, this::outTest);
-            testMap.put(OptionTools.SCAN_HIDDEN_DIRECTORIES, this::scanHiddenDirectoriesTest);
-            testMap.put(OptionTools.STYLESHEET_CLI, this::styleSheetTest);
-            testMap.put(OptionTools.XML, this::xmlTest);
+            testMap.put(OptionCollection.ADD_LICENSE, this::addLicenseTest);
+            testMap.put(OptionCollection.ARCHIVE, this::archiveTest);
+            testMap.put(OptionCollection.STANDARD, this::standardTest);
+            testMap.put(OptionCollection.COPYRIGHT, this::copyrightTest);
+            testMap.put(OptionCollection.DRY_RUN, this::dryRunTest);
+            testMap.put(OptionCollection.EXCLUDE_CLI, this::excludeCliTest);
+            testMap.put(OptionCollection.EXCLUDE_FILE_CLI,this::excludeCliFileTest);
+            testMap.put(OptionCollection.FORCE, this::forceTest);
+            testMap.put(OptionCollection.LICENSES, this::licensesTest);
+            testMap.put(OptionCollection.LIST_LICENSES, this::listLicensesTest);
+            testMap.put(OptionCollection.LIST_FAMILIES, this::listFamiliesTest);
+            testMap.put(OptionCollection.NO_DEFAULTS, this::noDefaultsTest);
+            testMap.put(OptionCollection.OUT, this::outTest);
+            testMap.put(OptionCollection.SCAN_HIDDEN_DIRECTORIES, this::scanHiddenDirectoriesTest);
+            testMap.put(OptionCollection.STYLESHEET_CLI, this::styleSheetTest);
+            testMap.put(OptionCollection.XML, this::xmlTest);
         }
 
         private ReportConfiguration generateConfig(Option option, String... args) {
@@ -142,53 +143,53 @@ public class ReportOptionTest  {
 
         @Override
         public void addLicenseTest() {
-            String name = antName(OptionTools.ADD_LICENSE);
-            ReportConfiguration config = generateConfig(OptionTools.ADD_LICENSE, name,"true");
+            String name = antName(OptionCollection.ADD_LICENSE);
+            ReportConfiguration config = generateConfig(OptionCollection.ADD_LICENSE, name,"true");
             assertTrue(config.isAddingLicenses());
-            config = generateConfig(OptionTools.ADD_LICENSE,name, "false");
+            config = generateConfig(OptionCollection.ADD_LICENSE,name, "false");
             assertFalse(config.isAddingLicenses());
         }
 
         @Override
         public void archiveTest() {
-            String name = antName(OptionTools.ARCHIVE);
+            String name = antName(OptionCollection.ARCHIVE);
             for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
-                ReportConfiguration config = generateConfig(OptionTools.ARCHIVE, name, proc.name());
+                ReportConfiguration config = generateConfig(OptionCollection.ARCHIVE, name, proc.name());
                 assertEquals(proc, config.getArchiveProcessing());
             }
         }
 
         @Override
         public void standardTest() {
-            String name = antName(OptionTools.STANDARD);
+            String name = antName(OptionCollection.STANDARD);
             for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
-                ReportConfiguration config = generateConfig(OptionTools.STANDARD, name, proc.name());
+                ReportConfiguration config = generateConfig(OptionCollection.STANDARD, name, proc.name());
                 assertEquals(proc, config.getStandardProcessing());
             }
         }
 
         @Override
         public void copyrightTest() {
-            String name = antName(OptionTools.COPYRIGHT);
-            ReportConfiguration config = generateConfig(OptionTools.COPYRIGHT, name, "MyCopyright" );
+            String name = antName(OptionCollection.COPYRIGHT);
+            ReportConfiguration config = generateConfig(OptionCollection.COPYRIGHT, name, "MyCopyright" );
             assertNull(config.getCopyrightMessage(), "Copyright without ADD_LICENCE should not work");
-            config = generateConfig(OptionTools.COPYRIGHT, name, "MyCopyright", antName(OptionTools.ADD_LICENSE), "true" );
+            config = generateConfig(OptionCollection.COPYRIGHT, name, "MyCopyright", antName(OptionCollection.ADD_LICENSE), "true" );
             assertEquals("MyCopyright", config.getCopyrightMessage());
         }
 
         @Override
         public void dryRunTest() {
-                String name = antName(OptionTools.DRY_RUN);
-                ReportConfiguration config = generateConfig(OptionTools.DRY_RUN, name, "true" );
+                String name = antName(OptionCollection.DRY_RUN);
+                ReportConfiguration config = generateConfig(OptionCollection.DRY_RUN, name, "true" );
                 assertTrue(config.isDryRun());
-                config = generateConfig(OptionTools.DRY_RUN,name, "false" );
+                config = generateConfig(OptionCollection.DRY_RUN,name, "false" );
                 assertFalse(config.isDryRun());
         }
 
         @Override
         public void excludeCliTest() {
-            String name = antName(OptionTools.EXCLUDE_CLI);
-            ReportConfiguration config = generateConfig(OptionTools.EXCLUDE_CLI, name, "*.foo", name, "[A-Z]\\.bar", name, "justbaz");
+            String name = antName(OptionCollection.EXCLUDE_CLI);
+            ReportConfiguration config = generateConfig(OptionCollection.EXCLUDE_CLI, name, "*.foo", name, "[A-Z]\\.bar", name, "justbaz");
             execCliTest(config);
         }
 
@@ -214,32 +215,32 @@ public class ReportOptionTest  {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            String name = antName(OptionTools.EXCLUDE_FILE_CLI);
-            ReportConfiguration config = generateConfig(OptionTools.EXCLUDE_FILE_CLI, name, outputFile.getPath());
+            String name = antName(OptionCollection.EXCLUDE_FILE_CLI);
+            ReportConfiguration config = generateConfig(OptionCollection.EXCLUDE_FILE_CLI, name, outputFile.getPath());
             execCliTest(config);
         }
 
         @Override
         public void forceTest() {
-            String name = antName(OptionTools.FORCE);
-                ReportConfiguration config = generateConfig(OptionTools.FORCE, name, "true");
+            String name = antName(OptionCollection.FORCE);
+                ReportConfiguration config = generateConfig(OptionCollection.FORCE, name, "true");
                 assertFalse(config.isAddingLicensesForced());
-                config = generateConfig(OptionTools.FORCE, name, "true", antName(OptionTools.ADD_LICENSE), "true");
+                config = generateConfig(OptionCollection.FORCE, name, "true", antName(OptionCollection.ADD_LICENSE), "true");
                 assertTrue(config.isAddingLicensesForced());
         }
 
 
         @Override
         public void licensesTest() {
-            String name = antName(OptionTools.LICENSES);
-            ReportConfiguration config = generateConfig(OptionTools.LICENSES, name, "src/test/resources/OptionTools/One.xml", name, "src/test/resources/OptionTools/Two.xml");
+            String name = antName(OptionCollection.LICENSES);
+            ReportConfiguration config = generateConfig(OptionCollection.LICENSES, name, "src/test/resources/OptionTools/One.xml", name, "src/test/resources/OptionTools/Two.xml");
 
                 SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
                 assertTrue(set.size() > 2);
                 assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
                 assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
 
-            config = generateConfig(OptionTools.LICENSES, name, "src/test/resources/OptionTools/One.xml", name, "src/test/resources/OptionTools/Two.xml", antName(OptionTools.NO_DEFAULTS), "true");
+            config = generateConfig(OptionCollection.LICENSES, name, "src/test/resources/OptionTools/One.xml", name, "src/test/resources/OptionTools/Two.xml", antName(OptionCollection.NO_DEFAULTS), "true");
 
                 set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
                 assertEquals(2, set.size());
@@ -250,36 +251,36 @@ public class ReportOptionTest  {
 
         @Override
         public void listLicensesTest() {
-            String name = antName(OptionTools.LIST_LICENSES);
+            String name = antName(OptionCollection.LIST_LICENSES);
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-                    ReportConfiguration config = generateConfig(OptionTools.LIST_LICENSES, name, filter.name());
+                    ReportConfiguration config = generateConfig(OptionCollection.LIST_LICENSES, name, filter.name());
                     assertEquals(filter, config.listLicenses());
             }
         }
 
         @Override
         public void listFamiliesTest() {
-            String name = antName(OptionTools.LIST_FAMILIES);
+            String name = antName(OptionCollection.LIST_FAMILIES);
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-                ReportConfiguration config = generateConfig(OptionTools.LIST_FAMILIES, name, filter.name());
+                ReportConfiguration config = generateConfig(OptionCollection.LIST_FAMILIES, name, filter.name());
                 assertEquals(filter, config.listFamilies());
             }
         }
 
         @Override
         public void noDefaultsTest() {
-            String name = antName(OptionTools.NO_DEFAULTS);
-                ReportConfiguration config = generateConfig(OptionTools.NO_DEFAULTS,name, "true");
+            String name = antName(OptionCollection.NO_DEFAULTS);
+                ReportConfiguration config = generateConfig(OptionCollection.NO_DEFAULTS,name, "true");
                 assertTrue(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
-                config = generateConfig(OptionTools.NO_DEFAULTS,name, "false");
+                config = generateConfig(OptionCollection.NO_DEFAULTS,name, "false");
                 assertFalse(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
         }
 
         @Override
         public void outTest() {
             File outFile = new File( baseDir, "outexample");
-            String name = antName(OptionTools.OUT);
-            ReportConfiguration config = generateConfig(OptionTools.OUT, name, outFile.getAbsolutePath() );
+            String name = antName(OptionCollection.OUT);
+            ReportConfiguration config = generateConfig(OptionCollection.OUT, name, outFile.getAbsolutePath() );
             try (OutputStream os = config.getOutput().get()) {
                 os.write("Hello world".getBytes());
             } catch (IOException e) {
@@ -294,28 +295,28 @@ public class ReportOptionTest  {
 
         @Override
         public void scanHiddenDirectoriesTest() {
-            String name = antName(OptionTools.SCAN_HIDDEN_DIRECTORIES);
-            ReportConfiguration config = generateConfig(OptionTools.SCAN_HIDDEN_DIRECTORIES, name, "true");
+            String name = antName(OptionCollection.SCAN_HIDDEN_DIRECTORIES);
+            ReportConfiguration config = generateConfig(OptionCollection.SCAN_HIDDEN_DIRECTORIES, name, "true");
             assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         }
 
         @Override
         public void styleSheetTest() {
-            String name = antName(OptionTools.STYLESHEET_CLI);
+            String name = antName(OptionCollection.STYLESHEET_CLI);
             URL url = ReportTest.class.getResource("MatcherContainerResource.txt");
             if (url == null) {
                 fail("Could not locate 'MatcherContainerResource.txt'");
             }
             for (String sheet : new String[]{"target/optionTools/stylesheet.xlt", "plain-rat", "missing-headers", "unapproved-licenses", url.getFile()}) {
-                ReportConfiguration config = generateConfig(OptionTools.STYLESHEET_CLI, name, sheet);
+                ReportConfiguration config = generateConfig(OptionCollection.STYLESHEET_CLI, name, sheet);
                 assertTrue(config.isStyleReport());
             }
         }
 
         @Override
         public void xmlTest() {
-            String name = antName(OptionTools.XML);
-            ReportConfiguration config = generateConfig(OptionTools.XML, name, "true");
+            String name = antName(OptionCollection.XML);
+            ReportConfiguration config = generateConfig(OptionCollection.XML, name, "true");
             assertFalse(config.isStyleReport());
         }
 
@@ -323,11 +324,11 @@ public class ReportOptionTest  {
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
             List<Arguments> lst = new ArrayList<>();
 
-            List<Option> opt =  OptionTools.buildOptions().getOptions().stream().filter(AntGenerator.antFilter).collect(Collectors.toList());
+            List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.ANT_FILTER).collect(Collectors.toList());
             for (Option option : opt) {
                 if (option.getLongOpt() != null) {
                     String name = antName(option);
-                    OptionToolsTest.OptionTest test = testMap.get(option);
+                    OptionCollectionTest.OptionTest test = testMap.get(option);
                     if (test == null) {
                         fail("Option "+name+" is not defined in testMap");
                     }
@@ -383,14 +384,6 @@ public class ReportOptionTest  {
 
             protected File getAntFile() {
                 return antFile;
-            }
-
-            private String logLine(String id) {
-                return logLine(true, getAntFileName(), id);
-            }
-
-            private String logLine(String antFile, String id) {
-                return logLine(true, antFile, id);
             }
 
             private String logLine(boolean approved, String antFile, String id) {

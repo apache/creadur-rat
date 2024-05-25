@@ -19,21 +19,14 @@
 package org.apache.rat;
 
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
@@ -57,12 +50,6 @@ public final class Report {
             "Rat relies on heuristics: it may miss issues"
     };
 
-
-
-
-    // RAT-85/RAT-203: Deprecated! added only for convenience and for backwards
-    // compatibility
-
     /**
      * Processes the command line and builds a configuration and executes the
      * report.
@@ -72,7 +59,7 @@ public final class Report {
      */
     public static void main(final String[] args) throws Exception {
         DefaultLog.getInstance().info(new VersionInfo().toString());
-        ReportConfiguration configuration = OptionTools.parseCommands(args, Report::printUsage);
+        ReportConfiguration configuration = OptionCollection.parseCommands(args, Report::printUsage);
         if (configuration != null) {
             configuration.validate(DefaultLog.getInstance()::error);
             new Reporter(configuration).output();
@@ -96,7 +83,7 @@ public final class Report {
     static void printUsage(final PrintWriter writer, final Options opts) {
         HelpFormatter helpFormatter = new HelpFormatter.Builder().get();
         helpFormatter.setWidth(HELP_WIDTH);
-        helpFormatter.setOptionComparator(new OptionComparator());
+        helpFormatter.setOptionComparator(new OptionCollection.OptionComparator());
         VersionInfo versionInfo = new VersionInfo();
         String syntax = format("java -jar apache-rat/target/apache-rat-%s.jar [options] [DIR|ARCHIVE]", versionInfo.getVersion());
         helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header("Available options"), opts,
@@ -104,7 +91,7 @@ public final class Report {
                 header("Argument Types"), false);
 
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);
-        for (Map.Entry<String, Supplier<String>> argInfo : OptionTools.ARGUMENT_TYPES.entrySet()) {
+        for (Map.Entry<String, Supplier<String>> argInfo : OptionCollection.getArgumentTypes().entrySet()) {
             writer.format("%n<%s>%n", argInfo.getKey());
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                     argumentPadding + argInfo.getValue().get());
@@ -120,34 +107,5 @@ public final class Report {
 
     private Report() {
         // do not instantiate
-    }
-
-    /**
-     * This class implements the {@code Comparator} interface for comparing Options.
-     */
-    public static class OptionComparator implements Comparator<Option>, Serializable {
-        /** The serial version UID.  */
-        private static final long serialVersionUID = 5305467873966684014L;
-
-        private String getKey(final Option opt) {
-            String key = opt.getOpt();
-            key = key == null ? opt.getLongOpt() : key;
-            return key;
-        }
-
-        /**
-         * Compares its two arguments for order. Returns a negative integer, zero, or a
-         * positive integer as the first argument is less than, equal to, or greater
-         * than the second.
-         *
-         * @param opt1 The first Option to be compared.
-         * @param opt2 The second Option to be compared.
-         * @return a negative integer, zero, or a positive integer as the first argument
-         * is less than, equal to, or greater than the second.
-         */
-        @Override
-        public int compare(final Option opt1, final Option opt2) {
-            return getKey(opt1).compareToIgnoreCase(getKey(opt2));
-        }
     }
 }

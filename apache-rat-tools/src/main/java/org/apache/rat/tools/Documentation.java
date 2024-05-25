@@ -26,8 +26,7 @@ import java.util.Map;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.OptionTools;
-import org.apache.rat.Report;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
@@ -130,7 +129,7 @@ public class Documentation {
      * @throws IOException on error
      */
     public static void main(String[] args) throws IOException {
-        ReportConfiguration config = OptionTools.parseCommands(args, Documentation::printUsage, true);
+        ReportConfiguration config = OptionCollection.parseCommands(args, Documentation::printUsage, true);
         if (config != null) {
             try (Writer writer = config.getWriter().get()) {
                 Documentation.output(config, writer);
@@ -140,7 +139,7 @@ public class Documentation {
 
     private static void printUsage(Options opts) {
         HelpFormatter f = new HelpFormatter();
-        f.setOptionComparator(new Report.OptionComparator());
+        f.setOptionComparator(new OptionCollection.OptionComparator());
         f.setWidth(120);
         String header = "\nAvailable options";
         String footer = "";

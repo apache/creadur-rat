@@ -18,6 +18,11 @@
  */
 package org.apache.rat;
 
+/**
+ * A list of methods that an OptionsProvider in a test case must support.
+ * Use of this interface can ensures consistent testing across the UIs.  Each method
+ * tests an Option from OptionCollection that must be implemented in the UI.
+ */
 public interface IOptionsProvider {
     void addLicenseTest();
 

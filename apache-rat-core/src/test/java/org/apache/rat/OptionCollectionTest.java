@@ -72,11 +72,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class OptionToolsTest {
+public class OptionCollectionTest {
 
     File baseDir;
 
-    public OptionToolsTest() {
+    public OptionCollectionTest() {
         baseDir = new File("target/optionTools");
         baseDir.mkdirs();
     }
@@ -89,8 +89,8 @@ public class OptionToolsTest {
 
 
     /**
-     * This method is a known workaround for junit 5 issue #2811
-     * {@link  https://github.com/junit-team/junit5/issues/2811 }
+     * This method is a known workaround for
+     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
      */
     @AfterEach
     @EnabledOnOs(OS.WINDOWS)
@@ -107,8 +107,8 @@ public class OptionToolsTest {
         TestingLog log = new TestingLog();
         try {
             DefaultLog.setInstance(log);
-            String[] args = {longOpt(OptionTools.DIR), "foo", "-a"};
-            ReportConfiguration config = OptionTools.parseCommands(args, (o) -> {
+            String[] args = {longOpt(OptionCollection.DIR), "foo", "-a"};
+            ReportConfiguration config = OptionCollection.parseCommands(args, (o) -> {
             }, true);
 
         } finally {
@@ -120,7 +120,7 @@ public class OptionToolsTest {
 
     @Test
     public void parseExclusionsTest() {
-        final Optional<IOFileFilter> filter = OptionTools
+        final Optional<IOFileFilter> filter = OptionCollection
                 .parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertThat(filter).isPresent();
         assertThat(filter.get()).isExactlyInstanceOf(NotFileFilter.class);
@@ -133,8 +133,8 @@ public class OptionToolsTest {
     @Test
     public void testDefaultConfiguration() throws ParseException, IOException {
         String[] empty = {};
-        CommandLine cl = new DefaultParser().parse(OptionTools.buildOptions(), empty);
-        ReportConfiguration config = OptionTools.createConfiguration(DefaultLog.getInstance(), "", cl);
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
+        ReportConfiguration config = OptionCollection.createConfiguration(DefaultLog.getInstance(), "", cl);
         ReportConfigurationTest.validateDefault(config);
     }
 
@@ -142,7 +142,7 @@ public class OptionToolsTest {
     @MethodSource("exclusionsProvider")
     public void testParseExclusions(String pattern, List<IOFileFilter> expectedPatterns, List<String> logEntries) {
         TestingLog log = new TestingLog();
-        Optional<IOFileFilter> filter = OptionTools.parseExclusions(log, Collections.singletonList(pattern));
+        Optional<IOFileFilter> filter = OptionCollection.parseExclusions(log, Collections.singletonList(pattern));
         if (expectedPatterns.isEmpty()) {
             assertThat(filter).isEmpty();
         } else {
@@ -236,46 +236,46 @@ public class OptionToolsTest {
         public OptionsProvider() {
             baseDir = new File("target/optionTools");
             baseDir.mkdirs();
-            testMap.put(OptionTools.ADD_LICENSE, this::addLicenseTest);
-            testMap.put(OptionTools.ARCHIVE, this::archiveTest);
-            testMap.put(OptionTools.STANDARD, this::standardTest);
-            testMap.put(OptionTools.COPYRIGHT, this::copyrightTest);
-            testMap.put(OptionTools.DIR, () -> {DefaultLog.getInstance().info(longOpt(OptionTools.DIR)+" has no valid test");});
-            testMap.put(OptionTools.DRY_RUN, this::dryRunTest);
-            testMap.put(OptionTools.EXCLUDE_CLI, this::excludeCliTest);
-            testMap.put(OptionTools.EXCLUDE_FILE_CLI,this::excludeCliFileTest);
-            testMap.put(OptionTools.FORCE, this::forceTest);
-            testMap.put(OptionTools.HELP, () -> {
-                String[] args = {longOpt(OptionTools.HELP)};
+            testMap.put(OptionCollection.ADD_LICENSE, this::addLicenseTest);
+            testMap.put(OptionCollection.ARCHIVE, this::archiveTest);
+            testMap.put(OptionCollection.STANDARD, this::standardTest);
+            testMap.put(OptionCollection.COPYRIGHT, this::copyrightTest);
+            testMap.put(OptionCollection.DIR, () -> {DefaultLog.getInstance().info(longOpt(OptionCollection.DIR)+" has no valid test");});
+            testMap.put(OptionCollection.DRY_RUN, this::dryRunTest);
+            testMap.put(OptionCollection.EXCLUDE_CLI, this::excludeCliTest);
+            testMap.put(OptionCollection.EXCLUDE_FILE_CLI,this::excludeCliFileTest);
+            testMap.put(OptionCollection.FORCE, this::forceTest);
+            testMap.put(OptionCollection.HELP, () -> {
+                String[] args = {longOpt(OptionCollection.HELP)};
                 try {
-                    ReportConfiguration config = OptionTools.parseCommands(args, o -> helpCalled.set(true), true);
+                    ReportConfiguration config = OptionCollection.parseCommands(args, o -> helpCalled.set(true), true);
                     assertNull(config, "Should not have config");
                     assertTrue(helpCalled.get(), "Help was not called");
                 } catch (IOException e) {
                     fail(e.getMessage());
                 }
             });
-            testMap.put(OptionTools.LICENSES, this::licensesTest);
-            testMap.put(OptionTools.LIST_LICENSES, this::listLicensesTest);
-            testMap.put(OptionTools.LIST_FAMILIES, this::listFamiliesTest);
-            testMap.put(OptionTools.LOG_LEVEL, this::logLevelTest);
-            testMap.put(OptionTools.NO_DEFAULTS, this::noDefaultsTest);
-            testMap.put(OptionTools.OUT, this::outTest);
-            testMap.put(OptionTools.SCAN_HIDDEN_DIRECTORIES, this::scanHiddenDirectoriesTest);
-            testMap.put(OptionTools.STYLESHEET_CLI, this::styleSheetTest);
-            testMap.put(OptionTools.XML, this::xmlTest);
+            testMap.put(OptionCollection.LICENSES, this::licensesTest);
+            testMap.put(OptionCollection.LIST_LICENSES, this::listLicensesTest);
+            testMap.put(OptionCollection.LIST_FAMILIES, this::listFamiliesTest);
+            testMap.put(OptionCollection.LOG_LEVEL, this::logLevelTest);
+            testMap.put(OptionCollection.NO_DEFAULTS, this::noDefaultsTest);
+            testMap.put(OptionCollection.OUT, this::outTest);
+            testMap.put(OptionCollection.SCAN_HIDDEN_DIRECTORIES, this::scanHiddenDirectoriesTest);
+            testMap.put(OptionCollection.STYLESHEET_CLI, this::styleSheetTest);
+            testMap.put(OptionCollection.XML, this::xmlTest);
         }
 
         private ReportConfiguration generateConfig(String[] args) throws IOException {
             helpCalled.set(false);
-            ReportConfiguration config = OptionTools.parseCommands(args, o -> helpCalled.set(true), true);
+            ReportConfiguration config = OptionCollection.parseCommands(args, o -> helpCalled.set(true), true);
             assertFalse(helpCalled.get(), "Help was called");
             return config;
         }
 
         @Override
         public void addLicenseTest() {
-                String[] args = {longOpt(OptionTools.ADD_LICENSE)};
+                String[] args = {longOpt(OptionCollection.ADD_LICENSE)};
                 try {
                     ReportConfiguration config =generateConfig(args);
                     assertTrue(config.isAddingLicenses());
@@ -287,7 +287,7 @@ public class OptionToolsTest {
         }
         @Override
         public void archiveTest() {
-                String[] args = {longOpt(OptionTools.ARCHIVE), null};
+                String[] args = {longOpt(OptionCollection.ARCHIVE), null};
                 try {
                     for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
                         args[1] = proc.name();
@@ -300,7 +300,7 @@ public class OptionToolsTest {
         }
         @Override
         public void standardTest() {
-            String[] args = {longOpt(OptionTools.STANDARD), null};
+            String[] args = {longOpt(OptionCollection.STANDARD), null};
             try {
                 for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
                     args[1] = proc.name();
@@ -314,10 +314,10 @@ public class OptionToolsTest {
         @Override
         public void copyrightTest() {
             try {
-                String[] args = {longOpt(OptionTools.COPYRIGHT), "MyCopyright"};
+                String[] args = {longOpt(OptionCollection.COPYRIGHT), "MyCopyright"};
                 ReportConfiguration config =generateConfig(args);
                 assertNull(config.getCopyrightMessage(), "Copyright without ADD_LICENCE should not work");
-                args = new String[]{longOpt(OptionTools.COPYRIGHT), "MyCopyright", longOpt(OptionTools.ADD_LICENSE)};
+                args = new String[]{longOpt(OptionCollection.COPYRIGHT), "MyCopyright", longOpt(OptionCollection.ADD_LICENSE)};
                 config = generateConfig(args);
                 assertEquals("MyCopyright", config.getCopyrightMessage());
             } catch (IOException e) {
@@ -327,7 +327,7 @@ public class OptionToolsTest {
         @Override
         public void dryRunTest() {
             try {
-                String[] args = {longOpt(OptionTools.DRY_RUN)};
+                String[] args = {longOpt(OptionCollection.DRY_RUN)};
                 ReportConfiguration config = generateConfig(args);
                 assertTrue(config.isDryRun());
                 args = new String[0];
@@ -340,7 +340,7 @@ public class OptionToolsTest {
 
         @Override
         public void excludeCliTest() {
-            String[] args = {longOpt(OptionTools.EXCLUDE_CLI), "*.foo", "[A-Z]\\.bar", "justbaz"};
+            String[] args = {longOpt(OptionCollection.EXCLUDE_CLI), "*.foo", "[A-Z]\\.bar", "justbaz"};
             execCliTest(args);
         }
 
@@ -372,17 +372,17 @@ public class OptionToolsTest {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            String[] args = {longOpt(OptionTools.EXCLUDE_FILE_CLI), outputFile.getPath()};
+            String[] args = {longOpt(OptionCollection.EXCLUDE_FILE_CLI), outputFile.getPath()};
             execCliTest(args);
         }
 
         @Override
         public void forceTest() {
-                String [] args =  new String[] {longOpt(OptionTools.FORCE)};
+                String [] args =  new String[] {longOpt(OptionCollection.FORCE)};
                 try {
                     ReportConfiguration config = generateConfig(args);
                     assertFalse(config.isAddingLicensesForced());
-                    args = new String[]{longOpt(OptionTools.FORCE), longOpt(OptionTools.ADD_LICENSE)};
+                    args = new String[]{longOpt(OptionCollection.FORCE), longOpt(OptionCollection.ADD_LICENSE)};
                     config = generateConfig(args);
                     assertTrue(config.isAddingLicensesForced());
                 } catch (IOException e) {
@@ -392,7 +392,7 @@ public class OptionToolsTest {
 
         @Override
         public void licensesTest() {
-            String[] args = {longOpt(OptionTools.LICENSES), "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml"};
+            String[] args = {longOpt(OptionCollection.LICENSES), "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml"};
             try {
                 ReportConfiguration config = generateConfig(args);
                 SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
@@ -400,7 +400,7 @@ public class OptionToolsTest {
                 assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
                 assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
 
-                args = new String[]{longOpt(OptionTools.LICENSES), "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml", longOpt(OptionTools.NO_DEFAULTS)};
+                args = new String[]{longOpt(OptionCollection.LICENSES), "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml", longOpt(OptionCollection.NO_DEFAULTS)};
                 config = generateConfig(args);
                 set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
                 assertEquals(2, set.size());
@@ -413,7 +413,7 @@ public class OptionToolsTest {
 
         @Override
         public void listLicensesTest() {
-            String[] args = {longOpt(OptionTools.LIST_LICENSES), null};
+            String[] args = {longOpt(OptionCollection.LIST_LICENSES), null};
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                 try {
                     args[1] = filter.name();
@@ -427,7 +427,7 @@ public class OptionToolsTest {
 
         @Override
         public void listFamiliesTest() {
-            String[] args = {longOpt(OptionTools.LIST_FAMILIES), null};
+            String[] args = {longOpt(OptionCollection.LIST_FAMILIES), null};
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                 try {
                     args[1] = filter.name();
@@ -440,7 +440,7 @@ public class OptionToolsTest {
         }
 
         public void logLevelTest() {
-            String[] args = {longOpt(OptionTools.LOG_LEVEL), null};
+            String[] args = {longOpt(OptionCollection.LOG_LEVEL), null};
             Log.Level logLevel = ((DefaultLog) DefaultLog.getInstance()).getLevel();
             try {
                 for (Log.Level level : Log.Level.values()) {
@@ -459,7 +459,7 @@ public class OptionToolsTest {
 
         @Override
         public void noDefaultsTest() {
-            String[] args = {longOpt(OptionTools.NO_DEFAULTS)};
+            String[] args = {longOpt(OptionCollection.NO_DEFAULTS)};
             try {
                 ReportConfiguration config = generateConfig(args);
                 assertTrue(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
@@ -473,7 +473,7 @@ public class OptionToolsTest {
         @Override
         public void outTest() {
             File outFile = new File( baseDir, "outexample");
-            String[] args = new String[] {longOpt(OptionTools.OUT), outFile.getAbsolutePath()};
+            String[] args = new String[] {longOpt(OptionCollection.OUT), outFile.getAbsolutePath()};
             try {
                 ReportConfiguration config = generateConfig(args);
                 try (OutputStream os = config.getOutput().get()) {
@@ -493,7 +493,7 @@ public class OptionToolsTest {
 
         @Override
         public void scanHiddenDirectoriesTest() {
-            String[] args = {longOpt(OptionTools.SCAN_HIDDEN_DIRECTORIES)};
+            String[] args = {longOpt(OptionCollection.SCAN_HIDDEN_DIRECTORIES)};
             try {
                 ReportConfiguration config = generateConfig(args);
                 assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
@@ -504,7 +504,7 @@ public class OptionToolsTest {
 
         @Override
         public void styleSheetTest() {
-            String[] args = {longOpt(OptionTools.STYLESHEET_CLI), null};
+            String[] args = {longOpt(OptionCollection.STYLESHEET_CLI), null};
             try {
                 URL url = ReportTest.class.getResource("MatcherContainerResource.txt");
                 if (url == null) {
@@ -522,7 +522,7 @@ public class OptionToolsTest {
 
         @Override
         public void xmlTest() {
-            String[] args = {longOpt(OptionTools.XML)};
+            String[] args = {longOpt(OptionCollection.XML)};
             try {
                 ReportConfiguration config = generateConfig(args);
                 assertFalse(config.isStyleReport());
@@ -535,7 +535,7 @@ public class OptionToolsTest {
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
             List<Arguments> lst = new ArrayList<>();
 
-            for (Option option : OptionTools.buildOptions().getOptions()) {
+            for (Option option : OptionCollection.buildOptions().getOptions()) {
                 if (option.getLongOpt() != null) {
                     String name = longOpt(option);
                     OptionTest test = testMap.get(option);

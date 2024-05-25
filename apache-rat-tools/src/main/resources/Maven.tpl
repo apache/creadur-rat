@@ -31,10 +31,16 @@ import org.apache.commons.cli.Option;
  * Generated class to provide Maven support for standard Rat command line options
  */
 ${class}
+    /**
+     * A list of arguments for the CLI code to process
+     */
     private final List<String> args = new ArrayList<>();
 
 ${constructor}
 
+    /**
+     * The list of arguments for the CLI code to process
+     */
     protected List<String> args() { return this.args; }
 
 ${methods}
