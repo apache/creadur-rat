@@ -195,7 +195,7 @@ public class AntGenerator {
          */
         public String getComment(boolean addParam) {
             StringBuilder sb = new StringBuilder()
-            .append(format("    /**%n     * %s%n", option.getDescription()));
+            .append(format("    /**%n     * %s%n", option.getDescription().replaceAll("<", "&lt;").replaceAll(">", "&gt;")));
             if (option.isDeprecated()) {
                 sb.append(format("     * %s%n     * @deprecated%n",option.getDeprecated()));
             }
@@ -216,6 +216,5 @@ public class AntGenerator {
                     name +
                     ")";
         }
-
     }
 }

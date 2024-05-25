@@ -43,6 +43,8 @@ ${class}
 
     /**
      * Get the name of the option as the key to the argument map.
+     * @param option The option to process.
+     * @return The key for the map.
      */
     public static String asKey(Option option) {
         return "--" + option.getLongOpt();
@@ -52,6 +54,7 @@ ${constructor}
 
     /**
      * Gets the list of arguments prepared for the CLI code to parse.
+     * @return the List of arguments for the CLI command line.
      */
     protected List<String> args() {
         List<String> result = new ArrayList<>();
@@ -64,7 +67,9 @@ ${constructor}
 
     /**
      * Set a key and value into the argument list.
-     * Replaces any existing value
+     * Replaces any existing value.
+     * @param key the key for the map.
+     * @param value the value to set.
      */
     protected void setArg(String key, String value) {
         List<String> values = new ArrayList<>();
@@ -75,6 +80,8 @@ ${constructor}
     /**
      * Add an value to the key in the argument list.
      * If the key does not exist, adds it.
+     * @param key the key for the map.
+     * @param value the value to set.
      */
     protected void addArg(String key, String value) {
         List<String> values = args.get(key);
@@ -86,15 +93,23 @@ ${constructor}
     }
 
     /**
-     * A child element
+     * A child element.
      */
     protected class Child {
         final String key;
 
+        /**
+         * Constructor.
+         * @param key The key for this child in the CLI map.
+         */
         protected Child(String key) {
             this.key = key;
         }
 
+        /**
+         * Sets the text enclosed in the child element.
+         * @param arg The text enclosed in the child element.
+         */
         public void addText(String arg) {
             addArg(key, arg);
         }
@@ -119,6 +134,7 @@ ${constructor}
 
         /**
          * Returns true if the option should be an attribute.
+         * @return {@code true} if the option should be an attribute
          */
         public boolean isAttribute() {
             return (!option.hasArgs());
@@ -126,6 +142,7 @@ ${constructor}
 
         /**
          * Returns true if the option should be an element.
+         * @return {@code true} if the option should be an element.
          */
         public boolean isElement() {
             return !isAttribute() || option.getType() != String.class;
@@ -134,13 +151,15 @@ ${constructor}
         /**
          * Gets the simple class name for the data type for this option.
          * Normally "String".
+         * @return the simple class name for the type.
          */
         public String getType() {
             return ((Class<?>) option.getType()).getSimpleName();
         }
 
         /**
-         * returns true if the enclosed option has an argument
+         * Determine if true if the enclosed option expects an argument.
+         * @return {@code true} if the enclosed option expects at least one argument.
          */
         public boolean hasArg() {
             return option.hasArg();
@@ -148,6 +167,7 @@ ${constructor}
 
         /**
          * the key value for the option.
+         * @return the key value for the CLI argument map.
          */
         public String keyValue() {
             return "--" + option.getLongOpt();

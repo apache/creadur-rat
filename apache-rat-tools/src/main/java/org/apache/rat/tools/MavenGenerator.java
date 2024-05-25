@@ -110,7 +110,8 @@ public class MavenGenerator {
         for (Option option : options.getOptions()) {
             if (option.getLongOpt() != null) {
                 String name = WordUtils.uncapitalize(new CasedString(StringCase.Kebab, option.getLongOpt()).toCase(StringCase.Camel));
-                writer.append(format("    /**%n     * %s%n", option.getDescription()));
+                String desc = option.getDescription().replace("<","&lt;").replace(">","&gt;");
+                writer.append(format("    /**%n     * %s%n     * @param %s the argument.%n", desc, name));
                 if (option.isDeprecated()) {
                     writer.append(format("     * %s%n     * @deprecated", option.getDeprecated()));
                 }

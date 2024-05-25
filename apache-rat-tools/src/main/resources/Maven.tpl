@@ -39,7 +39,8 @@ ${class}
 ${constructor}
 
     /**
-     * The list of arguments for the CLI code to process
+     * Gets list of arguments for the CLI code to process.
+     * @return A list of CLI based command line arguments.
      */
     protected List<String> args() { return this.args; }
 
