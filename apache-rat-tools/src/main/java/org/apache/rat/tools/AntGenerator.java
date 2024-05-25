@@ -79,8 +79,8 @@ public class AntGenerator {
         List<AntOption> options = OptionCollection.buildOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
                 .collect(Collectors.toList());
 
-        File file = new File(new File(new File(destDir), packageName.replaceAll("\\.", File.separator)),className+".java");
-        System.out.println("Creating "+file);
+        String pkgName = String.join(File.separator,new CasedString(StringCase.DOT, packageName).getSegments());
+        File file = new File(new File(new File(destDir), pkgName),className+".java");
         file.getParentFile().mkdirs();
         try (InputStream template = AntGenerator.class.getResourceAsStream("/Ant.tpl");
              FileWriter writer = new FileWriter(file);
