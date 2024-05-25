@@ -137,7 +137,7 @@ public class AntGenerator {
 
     private static String getAttributeBody(AntOption option) throws IOException {
         return option.hasArg() ? format("        setArg(%s, %s);%n", option.keyValue(), option.name)
-            : format("        if (%s) {%n            setArg(%s, null);%n        }%n", option.name, option.keyValue());
+            : format("        if (%1$s) { setArg(%2$s, null); } else { removeArg(%2$s); }", option.name, option.keyValue());
     }
 
     private static String getElementClass(AntOption option) throws IOException {
@@ -154,7 +154,7 @@ public class AntGenerator {
 
         AntOption(Option option) {
             this.option = option;
-            name = WordUtils.uncapitalize(new CasedString(StringCase.Kebab, option.getLongOpt()).toCase(StringCase.Camel));
+            name = new CasedString(StringCase.KEBAB, option.getLongOpt()).toCase(StringCase.CAMEL);
         }
 
         /**

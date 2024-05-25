@@ -93,6 +93,14 @@ ${constructor}
     }
 
     /**
+     * remove a key from the argument list.
+     * @param key the key to remvoe from the map.
+     */
+    protected void removeArg(String key) {
+        args.remove(key);
+    }
+
+    /**
      * A child element.
      */
     protected class Child {

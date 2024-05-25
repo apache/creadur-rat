@@ -24,10 +24,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.text.WordUtils;
 import org.apache.commons.csv.CSVPrinter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
-import java.util.List;
 import java.util.function.Predicate;
 
 import org.apache.rat.OptionCollection;
@@ -59,7 +57,7 @@ public class Naming {
             printer.printRecord("CLI", "Maven", "Ant", "Description");
             for (Option option : options.getOptions()) {
                 if (option.getLongOpt() != null) {
-                    CasedString opt = new CasedString(StringCase.Kebab, option.getLongOpt());
+                    CasedString opt = new CasedString(StringCase.KEBAB, option.getLongOpt());
                     String mavenCell = mavenFilter.test(option) ? mavenFunctionName(option, opt) : "-- not supported --";
                     String antCell = antFilter.test(option) ? antFunctionName(option, opt) : "-- not supported --";
                     printer.printRecord(opt, mavenCell, antCell, option.getDescription());
@@ -73,13 +71,13 @@ public class Naming {
         if (option.isDeprecated()) {
             sb.append("@Deprecated").append(System.lineSeparator());
         }
-        sb.append(format("@Parameter(property = 'rat.%s'", WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
+        sb.append(format("@Parameter(property = 'rat.%s'", name.toCase(StringCase.CAMEL)));
         if (option.isRequired()) {
             sb.append(" required = true");
         }
         sb.append(format(")%n public void %s%s(%s %s)", option.hasArgs() ? "add" : "set",
-                WordUtils.capitalize(name.toCase(StringCase.Camel)), option.hasArg() ? "String " : "boolean ",
-                WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
+                WordUtils.capitalize(name.toCase(StringCase.CAMEL)), option.hasArg() ? "String " : "boolean ",
+               name.toCase(StringCase.CAMEL)));
         return sb.toString();
     }
 
@@ -89,9 +87,9 @@ public class Naming {
             sb.append("@Deprecated").append(System.lineSeparator());
         }
         if (option.hasArgs()) {
-            sb.append(format("<rat:report>%n  <%1$s>text</%1$s>%n</rat:report>", WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
+            sb.append(format("<rat:report>%n  <%1$s>text</%1$s>%n</rat:report>", name.toCase(StringCase.CAMEL)));
         } else {
-            sb.append(format("<rat:report %s = 'text'/>", WordUtils.uncapitalize(name.toCase(StringCase.Camel))));
+            sb.append(format("<rat:report %s = 'text'/>", name.toCase(StringCase.CAMEL)));
         }
         return sb.toString();
     }

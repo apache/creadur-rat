@@ -273,13 +273,13 @@ public class Report extends BaseAntTask {
     public void setAddLicenseHeaders(AddLicenseHeaders setting) {
         switch (setting.getNative()) {
             case TRUE:
-                setAddLicense(true);
+                setAddlicense(true);
                 break;
             case FALSE:
-                setAddLicense(false);
+                setAddlicense(false);
                 break;
             case FORCED:
-                setAddLicense(true);
+                setAddlicense(true);
                 setForce(true);
                 break;
         }

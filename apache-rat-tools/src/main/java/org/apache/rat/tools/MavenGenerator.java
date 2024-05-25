@@ -73,8 +73,8 @@ public class MavenGenerator {
         Options options = new Options();
 
         OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER).forEach(options::addOption);
-
-        File file = new File(new File(new File(destDir), packageName.replaceAll("\\.", File.separator)),className+".java");
+        String pkgName = String.join(File.separator,new CasedString(StringCase.DOT, packageName).getSegments());
+        File file = new File(new File(new File(destDir), pkgName),className+".java");
         System.out.println("Creating "+file);
         file.getParentFile().mkdirs();
         try (InputStream template = MavenGenerator.class.getResourceAsStream("/Maven.tpl");
@@ -109,7 +109,7 @@ public class MavenGenerator {
     private static void writeMethods(FileWriter writer, Options options) throws IOException {
         for (Option option : options.getOptions()) {
             if (option.getLongOpt() != null) {
-                String name = WordUtils.uncapitalize(new CasedString(StringCase.Kebab, option.getLongOpt()).toCase(StringCase.Camel));
+                String name = new CasedString(StringCase.KEBAB, option.getLongOpt()).toCase(StringCase.CAMEL);
                 String desc = option.getDescription().replace("<","&lt;").replace(">","&gt;");
                 writer.append(format("    /**%n     * %s%n     * @param %s the argument.%n", desc, name));
                 if (option.isDeprecated()) {

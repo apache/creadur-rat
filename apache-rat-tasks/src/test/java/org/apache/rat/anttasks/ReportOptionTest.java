@@ -137,8 +137,8 @@ public class ReportOptionTest  {
         }
 
         private String antName(Option option) {
-            CasedString name = new CasedString(CasedString.StringCase.Kebab, option.getLongOpt());
-            return WordUtils.uncapitalize(name.toCase(CasedString.StringCase.Camel));
+            CasedString name = new CasedString(CasedString.StringCase.KEBAB, option.getLongOpt());
+            return WordUtils.uncapitalize(name.toCase(CasedString.StringCase.CAMEL));
         }
 
         @Override
@@ -354,10 +354,10 @@ public class ReportOptionTest  {
                 StringBuilder childElements = new StringBuilder();
                 StringBuilder attributes = new StringBuilder();
                 for (Pair<String,String> pair : lst) {
-                    CasedString name = new CasedString(CasedString.StringCase.Camel, pair.getKey());
+                    CasedString name = new CasedString(CasedString.StringCase.CAMEL, pair.getKey());
                     AntOption workingOption = option;
                     if (!name.toString().equals(option.name)) {
-                        String optionName = name.toCase(CasedString.StringCase.Kebab).toLowerCase();
+                        String optionName = name.toCase(CasedString.StringCase.KEBAB).toLowerCase();
                         Optional<Option> opt = testMap.keySet().stream().filter(o -> o.getLongOpt().equals(optionName)).findFirst();
                         if (opt.isPresent()) {
                             workingOption = new AntOption(opt.get(), optionName);
