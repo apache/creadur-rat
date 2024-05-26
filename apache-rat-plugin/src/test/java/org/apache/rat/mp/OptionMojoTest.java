@@ -33,12 +33,15 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
+import org.apache.rat.tools.AntGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -52,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -72,9 +76,10 @@ public class OptionMojoTest   {
         POM_FMT = IOUtils.resourceToString("/optionTest/pom.tpl", StandardCharsets.UTF_8);
     }
 
-    @Test
-    public void x() throws Exception {
-        new OptionsProvider().dryRunTest();
+    @ParameterizedTest
+    @ArgumentsSource(OptionsProvider.class)
+    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) throws Exception {
+        test.test();
     }
 
     public static class OptionsProvider  implements ArgumentsProvider, IOptionsProvider {
@@ -216,7 +221,20 @@ public class OptionMojoTest   {
 
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
-            return Stream.empty();
+            List<Arguments> lst = new ArrayList<>();
+
+            List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.ANT_FILTER).collect(Collectors.toList());
+            for (Option option : opt) {
+                if (option.getLongOpt() != null) {
+                    String name = MavenOption.createName(option);
+                    OptionCollectionTest.OptionTest test = testMap.get(option);
+                    if (test == null) {
+                        fail("Option "+name+" is not defined in testMap");
+                    }
+                    lst.add(Arguments.of(name, test));
+                }
+            }
+            return lst.stream();
         }
     }
 
