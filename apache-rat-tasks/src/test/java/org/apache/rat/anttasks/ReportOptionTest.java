@@ -28,7 +28,6 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportTest;
-import org.apache.rat.anttasks.BaseAntTask.AntOption;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.tools.AntGenerator;

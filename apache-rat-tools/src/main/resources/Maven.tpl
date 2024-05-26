@@ -22,8 +22,11 @@ ${package}
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.apache.commons.cli.Option;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /* DO NOT EDIT - GENERATED FILE */
 
@@ -31,18 +34,64 @@ import org.apache.commons.cli.Option;
  * Generated class to provide Maven support for standard Rat command line options
  */
 ${class}
-    /**
-     * A list of arguments for the CLI code to process
-     */
-    private final List<String> args = new ArrayList<>();
+     /**
+      * A map of CLI based arguments to values.
+      */
+     protected final Map<String, List<String>> args = new HashMap<>();
 
 ${constructor}
 
     /**
-     * Gets list of arguments for the CLI code to process.
-     * @return A list of CLI based command line arguments.
+     * Gets the list of arguments prepared for the CLI code to parse.
+     * @return the List of arguments for the CLI command line.
      */
-    protected List<String> args() { return this.args; }
+    protected List<String> args() {
+        List<String> result = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : args.entrySet()) {
+            result.add(entry.getKey());
+            result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        }
+        return result;
+    }
+
+    /**
+     * Set a key and value into the argument list.
+     * Replaces any existing value.
+     * @param key the key for the map.
+     * @param value the value to set.
+     */
+    protected void setArg(String key, String value) {
+        List<String> values = new ArrayList<>();
+        values.add(value);
+        args.put(key, values);
+    }
+
+    /**
+     * Add an value to the key in the argument list.
+     * If the key does not exist, adds it.
+     * @param key the key for the map.
+     * @param value the value to set.
+     */
+    protected void addArg(String key, String value) {
+        List<String> values = args.get(key);
+        if (values == null) {
+            setArg(key, value);
+        } else {
+            values.add(value);
+        }
+    }
+
+    /**
+     * remove a key from the argument list.
+     * @param key the key to remove from the map.
+     */
+    protected void removeArg(String key) {
+        args.remove(key);
+    }
+
+
+    /*  GENERATED METHODS */
+
 
 ${methods}
 }

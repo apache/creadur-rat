@@ -94,7 +94,7 @@ ${constructor}
 
     /**
      * remove a key from the argument list.
-     * @param key the key to remvoe from the map.
+     * @param key the key to remove from the map.
      */
     protected void removeArg(String key) {
         args.remove(key);
@@ -120,65 +120,6 @@ ${constructor}
          */
         public void addText(String arg) {
             addArg(key, arg);
-        }
-    }
-
-    /**
-     * A wrapper on Option to provide access to Option info with Ant nomenclature and formatting.
-     */
-    public static class AntOption {
-        final Option option;
-        final String name;
-
-        /**
-         * Constructor.
-         * @param option The CLI option
-         * @param name The Ant based name for the option.
-         */
-        AntOption(Option option, String name) {
-            this.option = option;
-            this.name = name;
-        }
-
-        /**
-         * Returns true if the option should be an attribute.
-         * @return {@code true} if the option should be an attribute
-         */
-        public boolean isAttribute() {
-            return (!option.hasArgs());
-        }
-
-        /**
-         * Returns true if the option should be an element.
-         * @return {@code true} if the option should be an element.
-         */
-        public boolean isElement() {
-            return !isAttribute() || option.getType() != String.class;
-        }
-
-        /**
-         * Gets the simple class name for the data type for this option.
-         * Normally "String".
-         * @return the simple class name for the type.
-         */
-        public String getType() {
-            return ((Class<?>) option.getType()).getSimpleName();
-        }
-
-        /**
-         * Determine if true if the enclosed option expects an argument.
-         * @return {@code true} if the enclosed option expects at least one argument.
-         */
-        public boolean hasArg() {
-            return option.hasArg();
-        }
-
-        /**
-         * the key value for the option.
-         * @return the key value for the CLI argument map.
-         */
-        public String keyValue() {
-            return "--" + option.getLongOpt();
         }
     }
 
