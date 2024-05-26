@@ -72,6 +72,9 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-345" type="add" dev="pottlinger">
+        Update build scripts and Maven wrapper in the RAT repo to Maven 3.9.7.
+      </action>
       <action issue="RAT-374, RAT-381" type="add" dev="claudenw">
         Automatically generate commandline options/CLI help during the build and include it into the project webpage. Adapt READMEs.
       </action>
