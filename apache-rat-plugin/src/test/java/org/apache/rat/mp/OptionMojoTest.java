@@ -20,6 +20,9 @@ package org.apache.rat.mp;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.plugin.Mojo;
@@ -33,7 +36,11 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
+import org.apache.rat.ReportTest;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.tools.AntGenerator;
+import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -43,23 +50,33 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -107,11 +124,10 @@ public class OptionMojoTest   {
             testMap.put(OptionCollection.XML, this::xmlTest);
         }
 
-
-        private ReportConfiguration generateConfig(List<Pair<Option,Object>> args) {
-            MavenOption mavenOption = new MavenOption(args.get(0).getKey());
+       private ReportConfiguration generateConfig(Pair<Option,Object>... args) {
+            MavenOption mavenOption = new MavenOption(args[0].getKey());
             StringBuilder sb = new StringBuilder();
-            args.stream().map(p -> new MavenOption(p.getKey()).xmlNode(p.getValue().toString())).forEach(sb::append);
+            Arrays.stream(args).map(p -> new MavenOption(p.getKey()).xmlNode(p.getValue().toString())).forEach(sb::append);
             Path pomPath = testPath.resolve(mavenOption.name).resolve("pom.xml");
             File pomFile = pomPath.toFile();
             pomFile.getParentFile().mkdirs();
@@ -126,97 +142,177 @@ public class OptionMojoTest   {
                 Assertions.assertNotNull(mojo);
                 return mojo.getConfiguration();
             } catch (Exception e) {
-                throw new RuntimeException("Unable to generate config", e);
+                throw new RuntimeException(format("Unable to generate config for %s (%s)", mavenOption.name, mavenOption.keyValue()), e);
             }
         }
 
         @Override
         public void addLicenseTest() {
-            fail("not implemented");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.ADD_LICENSE, true));
+            assertTrue(config.isAddingLicenses());
+            config = generateConfig(ImmutablePair.of(OptionCollection.ADD_LICENSE, false));
+            assertFalse(config.isAddingLicenses());
         }
 
         @Override
         public void archiveTest() {
-            fail("not implemented");
+            for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
+                ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.ARCHIVE, proc.name()));
+                assertEquals(proc, config.getArchiveProcessing());
+            }
         }
 
         @Override
         public void standardTest() {
-            fail("not implemented");
+            for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
+                ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.STANDARD, proc.name()));
+                assertEquals(proc, config.getStandardProcessing());
+            }
         }
 
         @Override
         public void copyrightTest() {
-            fail("not implemented");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.COPYRIGHT, "MyCopyright"));
+            assertNull(config.getCopyrightMessage(), "Copyright without ADD_LICENCE should not work");
+            config = generateConfig(ImmutablePair.of(OptionCollection.COPYRIGHT, "MyCopyright"),
+                    ImmutablePair.of(OptionCollection.ADD_LICENSE, true));
+            assertEquals("MyCopyright", config.getCopyrightMessage());
         }
 
         @Override
         public void dryRunTest() {
-            List<Pair<Option,Object>> args = new ArrayList<>();
-            ImmutablePair<Option,Object> pair= ImmutablePair.of(OptionCollection.DRY_RUN, false);
-            args.add(pair);
-            ReportConfiguration config = generateConfig(args);
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.DRY_RUN, false));
             assertFalse(config.isDryRun());
 
-            pair= ImmutablePair.of(OptionCollection.DRY_RUN, true);
-            args.add(pair);
-            config = generateConfig(args);
+            config = generateConfig(ImmutablePair.of(OptionCollection.DRY_RUN, true));
             assertTrue(config.isDryRun());
         }
 
         @Override
         public void excludeCliTest() {
-            fail("not implemented");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.EXCLUDE_CLI, "*.foo"),
+                    ImmutablePair.of(OptionCollection.EXCLUDE_CLI, "[A-Z]\\.bar"),
+                    ImmutablePair.of(OptionCollection.EXCLUDE_CLI, "justbaz"));
+            execCliTest(config);
+        }
+
+        private void execCliTest(ReportConfiguration config) {
+            IOFileFilter filter = config.getFilesToIgnore();
+            assertThat(filter).isExactlyInstanceOf(NotFileFilter.class);
+            assertFalse(filter.accept(testPath.toFile(), "some.foo" ), "some.foo");
+            assertFalse(filter.accept(testPath.toFile(), "B.bar"), "B.bar");
+            assertFalse(filter.accept(testPath.toFile(), "justbaz" ), "justbaz");
+            assertTrue(filter.accept(testPath.toFile(), "notbaz"), "notbaz");
         }
 
         @Override
         public void excludeCliFileTest() {
-            fail("not implemented");
+            File outputFile = new File(testPath.toFile(), "exclude.txt");
+            try (FileWriter fw = new FileWriter(outputFile)) {
+                fw.write("*.foo");
+                fw.write(System.lineSeparator());
+                fw.write("[A-Z]\\.bar");
+                fw.write(System.lineSeparator());
+                fw.write("justbaz");
+                fw.write(System.lineSeparator());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.EXCLUDE_FILE_CLI, outputFile.getPath()));
+            execCliTest(config);
         }
 
         @Override
         public void forceTest() {
-            fail("not implemented");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.FORCE, true));
+            assertFalse(config.isAddingLicensesForced());
+            config = generateConfig(ImmutablePair.of(OptionCollection.FORCE, true),
+                    ImmutablePair.of(OptionCollection.ADD_LICENSE, true));
+            assertTrue(config.isAddingLicensesForced());
         }
 
         @Override
         public void licensesTest() {
-            fail("not implemented");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.LICENSES, "src/test/resources/OptionTools/One.xml"),
+                    ImmutablePair.of(OptionCollection.LICENSES, "src/test/resources/OptionTools/Two.xml"));
+
+            SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+            assertTrue(set.size() > 2);
+            assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
+            assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
+
+            config = generateConfig(ImmutablePair.of(OptionCollection.LICENSES, "src/test/resources/OptionTools/One.xml"),
+                    ImmutablePair.of(OptionCollection.LICENSES, "src/test/resources/OptionTools/Two.xml"),
+                    ImmutablePair.of(OptionCollection.NO_DEFAULTS, true));
+
+            set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+            assertEquals(2, set.size());
+            assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
+            assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
         }
 
         @Override
         public void listLicensesTest() {
-            fail("not implemented");
+            for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
+                ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.LIST_LICENSES, filter.name()));
+                assertEquals(filter, config.listLicenses());
+            }
         }
 
         @Override
         public void listFamiliesTest() {
-            fail("not implemented");
+            for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
+                ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.LIST_FAMILIES, filter.name()));
+                assertEquals(filter, config.listFamilies());
+            }
         }
 
         @Override
         public void noDefaultsTest() {
-            fail("not implemented");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.NO_DEFAULTS, true));
+            assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
+            config = generateConfig(ImmutablePair.of(OptionCollection.NO_DEFAULTS, false));
+            assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isNotEmpty();
         }
 
         @Override
         public void outTest() {
-            fail("not implemented");
+            File outFile = new File( testPath.toFile(), "outexample");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.OUT, outFile.getAbsolutePath()));
+            try (OutputStream os = config.getOutput().get()) {
+                os.write("Hello world".getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(outFile.toPath())))) {
+                assertEquals("Hello world",reader.readLine());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
         public void scanHiddenDirectoriesTest() {
-            fail("not implemented");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.SCAN_HIDDEN_DIRECTORIES, true));
+            assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         }
 
         @Override
         public void styleSheetTest() {
-            fail("not implemented");
+            URL url = ReportTest.class.getResource("MatcherContainerResource.txt");
+            if (url == null) {
+                fail("Could not locate 'MatcherContainerResource.txt'");
+            }
+            for (String sheet : new String[]{"target/optionTools/stylesheet.xlt", "plain-rat", "missing-headers", "unapproved-licenses", url.getFile()}) {
+                ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.STYLESHEET_CLI, sheet));
+                assertTrue(config.isStyleReport());
+            }
         }
 
         @Override
         public void xmlTest() {
-            fail("not implemented");
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.XML, true ));
+            assertFalse(config.isStyleReport());
         }
 
         @Override
@@ -245,9 +341,14 @@ public class OptionMojoTest   {
             ProjectBuildingRequest buildingRequest = newMavenSession().getProjectBuildingRequest();
             ProjectBuilder projectBuilder = lookup(ProjectBuilder.class);
             MavenProject project = projectBuilder.build(pomFile, buildingRequest).getProject();
-
-            return (RatCheckMojo) lookupConfiguredMojo(project, "check");
-
+            try {
+                return (RatCheckMojo) lookupConfiguredMojo(project, "check");
+            } catch (ComponentConfigurationException e) {
+                for (Method m : RatCheckMojo.class.getMethods()) {
+                    System.out.println( m );
+                }
+                throw e;
+            }
         }
     }
 }

@@ -56,6 +56,7 @@ import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
+import org.apache.rat.VersionInfo;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.codehaus.plexus.util.ReaderFactory;
 
@@ -350,23 +351,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     }
 
     /**
-     * Searches for a Rat artifact in the dependency list and returns its version.
-     *
-     * @return Version number, if found, or null.
-     */
-    // TODO The canonical way is to read the pom.properties for the artifact desired
-    // in META-INF/maven
-    private String getRatVersion() {
-        // noinspection unchecked
-        for (Artifact a : getProject().getDependencyArtifacts()) {
-            if ("rat-lib".equals(a.getArtifactId())) {
-                return a.getVersion();
-            }
-        }
-        return null;
-    }
-
-    /**
      * Writes the report to the Doxia sink.
      *
      * @param locale The locale to use for writing the report.
@@ -393,7 +377,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.link(bundle.getString("report.rat.url"));
         sink.text(bundle.getString("report.rat.fullName"));
         sink.link_();
-        final String ratVersion = getRatVersion();
+        final String ratVersion = new VersionInfo(RatReportMojo.class).toString();
         if (ratVersion != null) {
             sink.text(" " + ratVersion);
         }
