@@ -439,7 +439,11 @@ public class OptionCollection {
         if (cl.hasOption(OUT)) {
             DeprecationReporter.logDeprecated(log, OUT);
             try {
-                configuration.setOut((File) cl.getParsedOptionValue(OUT));
+                File f = cl.getParsedOptionValue(OUT);
+                if (f.getParentFile().mkdirs() && !f.isDirectory()) {
+                    log.error( "Could not create report parent directory " + f);
+                }
+                configuration.setOut(f);
             } catch (ParseException e) {
                 logParseException(log, e, OUT, cl, "System.out");
             }

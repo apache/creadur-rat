@@ -39,6 +39,7 @@ import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.ReportTest;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.plugin.BaseRatMojo;
 import org.apache.rat.tools.AntGenerator;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.junit.jupiter.api.Assertions;
@@ -322,7 +323,7 @@ public class OptionMojoTest   {
             List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.ANT_FILTER).collect(Collectors.toList());
             for (Option option : opt) {
                 if (option.getLongOpt() != null) {
-                    String name = MavenOption.createName(option);
+                    String name = BaseRatMojo.createName(option.getLongOpt());
                     OptionCollectionTest.OptionTest test = testMap.get(option);
                     if (test == null) {
                         fail("Option "+name+" is not defined in testMap");

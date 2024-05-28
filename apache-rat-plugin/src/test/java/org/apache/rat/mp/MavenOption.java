@@ -20,6 +20,7 @@ package org.apache.rat.mp;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.plugin.BaseRatMojo;
 import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
@@ -31,17 +32,13 @@ public class MavenOption {
     final Option option;
     final String name;
 
-    public static String createName(Option option) {
-        return new CasedString(CasedString.StringCase.KEBAB, option.getLongOpt()).toCase(CasedString.StringCase.CAMEL);
-    }
-
     /**
      * Constructor.
      * @param option The CLI option
      */
     MavenOption(Option option) {
         this.option = option;
-        this.name = createName(option);
+        this.name = BaseRatMojo.createName(option.getLongOpt());
     }
 
     /**

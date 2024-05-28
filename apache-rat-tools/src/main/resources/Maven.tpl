@@ -21,6 +21,7 @@ ${package}
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.rat.utils.CasedString;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +35,21 @@ import java.util.stream.Collectors;
  * Generated class to provide Maven support for standard Rat command line options
  */
 ${class}
-     /**
-      * A map of CLI based arguments to values.
-      */
-     protected final Map<String, List<String>> args = new HashMap<>();
+    /**
+     * A map of CLI based arguments to values.
+     */
+    protected final Map<String, List<String>> args = new HashMap<>();
+
+    private final static Map<String,String> xlateName = new HashMap<>();;
+
+    static {
+${static}
+    }
+
+    public static String createName(String longOpt) {
+        String name = xlateName.get(longOpt);
+        return name != null ? name : new CasedString(CasedString.StringCase.KEBAB, longOpt).toCase(CasedString.StringCase.CAMEL);
+    }
 
 ${constructor}
 
@@ -64,6 +76,15 @@ ${constructor}
         List<String> values = new ArrayList<>();
         values.add(value);
         args.put(key, values);
+    }
+
+    /**
+     * Get the list of values for a key.
+     * @param key the key for the map.
+     * @return the list of values for the key or {@code null} if not set.
+     */
+    public List<String> getArg(String key) {
+        return args.get(key);
     }
 
     /**

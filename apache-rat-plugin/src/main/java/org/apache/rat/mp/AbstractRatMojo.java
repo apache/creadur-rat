@@ -163,7 +163,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      */
     @Deprecated
     @Parameter(name = "excludes")
-    public void setExcludes(String... excludes) {
+    public void setExcludes(String[] excludes) {
         for (String exclude : excludes) {
             setExclude(exclude);
         }

@@ -21,6 +21,7 @@ package org.apache.rat.tools;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.utils.CasedString;
@@ -32,7 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -43,6 +46,12 @@ import static java.lang.String.format;
  */
 public class MavenGenerator {
 
+    /** A mapping of external name to internal name if not standard */
+    private static Map<String,String> RENAME_MAP = new HashMap<>();
+
+    static {
+        RENAME_MAP.put("licenses", "configuration");
+    }
     /**
      * List of CLI Options that are not supported by Maven.
      */
@@ -52,6 +61,8 @@ public class MavenGenerator {
      * Filter to remove Options not supported by Maven.
      */
     public static Predicate<Option> MAVEN_FILTER = option -> !(MAVEN_FILTER_LIST.contains(option) || option.getLongOpt() == null);
+
+
 
     private MavenGenerator() {
     }
@@ -69,12 +80,11 @@ public class MavenGenerator {
      * @throws IOException on error
      */
     public static void main(String[] args) throws IOException {
-
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
         List<MavenOption> options = OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER).map(MavenOption::new).collect(Collectors.toList());
-
+        Map<String,String> renameMap = new HashMap<>();
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         System.out.println("Creating " + file);
@@ -88,11 +98,13 @@ public class MavenGenerator {
             while (iter.hasNext()) {
                 String line = iter.next();
                 switch (line.trim()) {
-//                    case "${imports}":
-//                        writer.append(getImports(options));
-//                        break;
+                    case "${static}":
+                        for (Map.Entry<String,String> entry : RENAME_MAP.entrySet()) {
+                            writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
+                        }
+                        break;
                     case "${methods}":
-                        writeMethods(writer, options);
+                        writeMethods(writer, options, renameMap);
                         break;
                     case "${package}":
                         writer.append(format("package %s;%n", packageName));
@@ -111,7 +123,7 @@ public class MavenGenerator {
         }
     }
 
-    private static void writeMethods(FileWriter writer, List<MavenOption> options) throws IOException {
+    private static void writeMethods(FileWriter writer, List<MavenOption> options, Map<String,String> renameMap) throws IOException {
         for (MavenOption option : options) {
             String desc = option.getDescription().replace("<", "&lt;").replace(">", "&gt;");
 
@@ -151,7 +163,9 @@ public class MavenGenerator {
         final String name;
 
         public static String createName(Option option) {
-            return new CasedString(CasedString.StringCase.KEBAB, option.getLongOpt()).toCase(CasedString.StringCase.CAMEL);
+            String name = option.getLongOpt();
+            name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name);
+            return new CasedString(CasedString.StringCase.KEBAB, name).toCase(CasedString.StringCase.CAMEL);
         }
 
         /**
