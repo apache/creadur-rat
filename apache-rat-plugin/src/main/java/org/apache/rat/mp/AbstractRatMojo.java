@@ -130,7 +130,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     
 
     @Parameter
-    private License[] licenses;
+    private Object[] licenses;
     
     @Parameter
     private Family[] families;
@@ -156,17 +156,33 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String includesFileCharset;
 
+    private List<String> excludesList = new ArrayList<>();
+
+    // for testing
+    List<String> getExcludes() {
+        return excludesList;
+    }
     /**
      * Specifies files, which are excluded in the report. By default, no files are
      * excluded.
      * @deprecated use exclude
      */
     @Deprecated
-    @Parameter(name = "excludes")
+    @Parameter
     public void setExcludes(String[] excludes) {
-        for (String exclude : excludes) {
-            setExclude(exclude);
-        }
+        this.excludesList.addAll(Arrays.asList(excludes));
+    }
+
+    @Override
+    @Parameter(property = "rat.exclude")
+    public void setExclude(String exclude) {
+        excludesList.add(exclude);
+    }
+
+    private List<String> excludesFileList = new ArrayList<>();
+    // for testing
+    List<String> getExcludesFile() {
+        return excludesFileList;
     }
 
     /**
@@ -178,7 +194,12 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Deprecated
     @Parameter(property = "rat.excludesFile")
     public void setExcludesFile(String excludeFile) {
-        setExcludeFile(excludeFile);
+        excludesFileList.add(excludeFile);
+    }
+
+    @Override
+    public void setExcludeFile(String file) {
+        excludesFileList.add(file);
     }
 
     /**
@@ -355,6 +376,18 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         DefaultLog.setInstance(makeLog());
         try {
+            String key = "--"+createName(OptionCollection.EXCLUDE_CLI.getLongOpt());
+            List<String> argList = args.get(key);
+            if (argList != null) {
+                excludesList.addAll(argList);
+            }
+            args.remove(key);
+            key = "--"+createName(OptionCollection.EXCLUDE_FILE_CLI.getLongOpt());
+            argList = args.get(key);
+            if (argList != null) {
+                excludesFileList.addAll(argList);
+            }
+            args.remove(key);
             ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
                     o -> getLog().warn("Help option not supported"),
                     true);
@@ -589,14 +622,14 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     private void setExcludes(IgnoringDirectoryScanner ds) throws MojoExecutionException {
         final List<IgnoreMatcher> ignoreMatchers = mergeDefaultExclusions();
-//        if (excludes == null || excludes.length == 0) {
-//            getLog().debug("No excludes explicitly specified.");
-//        } else {
-//            getLog().debug(excludes.length + " explicit excludes.");
-//            for (final String exclude : excludes) {
-//                getLog().debug("Exclude: " + exclude);
-//            }
-//        }
+        if (!excludesList.isEmpty()) {
+            getLog().debug("No excludes explicitly specified.");
+        } else {
+            getLog().debug(excludesList.size() + " explicit excludes.");
+            for (final String exclude : excludesList) {
+                getLog().debug("Exclude: " + exclude);
+            }
+        }
 
         final List<String> globExcludes = new ArrayList<>();
         for (IgnoreMatcher ignoreMatcher : ignoreMatchers) {
@@ -609,9 +642,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
         }
 
-//        if (excludes != null) {
-//            Collections.addAll(globExcludes, excludes);
-//        }
+        globExcludes.addAll(excludesList);
         if (!globExcludes.isEmpty()) {
             final String[] allExcludes = globExcludes.toArray(new String[globExcludes.size()]);
             ds.setExcludes(allExcludes);
@@ -670,18 +701,20 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
         }
-//        if (excludesFile != null) {
-//            final File f = new File(excludesFile);
-//            if (!f.isFile()) {
-//                getLog().error("Excludes file not found: " + f.getAbsolutePath());
-//            }
-//            if (!f.canRead()) {
-//                getLog().error("Excludes file not readable: " + f.getAbsolutePath());
-//            }
-//            final String charset = excludesFileCharset == null ? "UTF8" : excludesFileCharset;
-//            getLog().debug("Loading excludes from file " + f + ", using character set " + charset);
-//            basicRules.addRules(getPatternsFromFile(f, charset));
-//        }
+        if (!excludesFileList.isEmpty()) {
+            for (String fileName : excludesFileList) {
+                final File f = new File(fileName);
+                if (!f.isFile()) {
+                    getLog().error("Excludes file not found: " + f.getAbsolutePath());
+                }
+                if (!f.canRead()) {
+                    getLog().error("Excludes file not readable: " + f.getAbsolutePath());
+                }
+                final String charset = excludesFileCharset == null ? "UTF8" : excludesFileCharset;
+                getLog().debug("Loading excludes from file " + f + ", using character set " + charset);
+                basicRules.addRules(getPatternsFromFile(f, charset));
+            }
+        }
 
         if (!basicRules.isEmpty()) {
             ignoreMatchers.add(basicRules);

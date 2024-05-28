@@ -125,7 +125,7 @@ public class OptionMojoTest   {
             testMap.put(OptionCollection.XML, this::xmlTest);
         }
 
-       private ReportConfiguration generateConfig(Pair<Option,Object>... args) {
+       private RatCheckMojo generateMojo(Pair<Option,Object>... args) {
             MavenOption mavenOption = new MavenOption(args[0].getKey());
             StringBuilder sb = new StringBuilder();
             Arrays.stream(args).map(p -> new MavenOption(p.getKey()).xmlNode(p.getValue().toString())).forEach(sb::append);
@@ -141,9 +141,18 @@ public class OptionMojoTest   {
             try {
                 final RatCheckMojo mojo = new SimpleMojoTestcase().getMojo(pomFile);
                 Assertions.assertNotNull(mojo);
-                return mojo.getConfiguration();
+                return mojo;
             } catch (Exception e) {
-                throw new RuntimeException(format("Unable to generate config for %s (%s)", mavenOption.name, mavenOption.keyValue()), e);
+                throw new RuntimeException(format("Unable to generate mojo for %s (%s)", mavenOption.name, mavenOption.keyValue()), e);
+            }
+        }
+
+        private ReportConfiguration generateConfig(Pair<Option,Object>... args) {
+            try {
+                return generateMojo(args).getConfiguration();
+            } catch (Exception e) {
+                MavenOption mavenOption = new MavenOption(args[0].getKey());
+                throw new RuntimeException(format("Unable to generate mojo for %s (%s)", mavenOption.name, mavenOption.keyValue()), e);
             }
         }
 
@@ -191,19 +200,14 @@ public class OptionMojoTest   {
 
         @Override
         public void excludeCliTest() {
-            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.EXCLUDE_CLI, "*.foo"),
+            // AbstractRatMojo handles exclusion by removing them from the initial producer so check that the
+            // configuration was properly set for the generation.
+            RatCheckMojo mojo = generateMojo(ImmutablePair.of(OptionCollection.EXCLUDE_CLI, "*.foo"),
                     ImmutablePair.of(OptionCollection.EXCLUDE_CLI, "[A-Z]\\.bar"),
                     ImmutablePair.of(OptionCollection.EXCLUDE_CLI, "justbaz"));
-            execCliTest(config);
-        }
-
-        private void execCliTest(ReportConfiguration config) {
-            IOFileFilter filter = config.getFilesToIgnore();
-            assertThat(filter).isExactlyInstanceOf(NotFileFilter.class);
-            assertFalse(filter.accept(testPath.toFile(), "some.foo" ), "some.foo");
-            assertFalse(filter.accept(testPath.toFile(), "B.bar"), "B.bar");
-            assertFalse(filter.accept(testPath.toFile(), "justbaz" ), "justbaz");
-            assertTrue(filter.accept(testPath.toFile(), "notbaz"), "notbaz");
+            List<String> lst = mojo.getExcludes();
+            assertThat(lst).contains( "*.foo", "[A-Z]\\.bar", "justbaz");
+            assertEquals(3, lst.size());
         }
 
         @Override
@@ -219,8 +223,10 @@ public class OptionMojoTest   {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.EXCLUDE_FILE_CLI, outputFile.getPath()));
-            execCliTest(config);
+            RatCheckMojo mojo = generateMojo(ImmutablePair.of(OptionCollection.EXCLUDE_FILE_CLI, outputFile.getPath()));
+            List<String> lst = mojo.getExcludesFile();
+            assertThat(lst).contains(outputFile.getPath());
+            assertEquals(1, lst.size());
         }
 
         @Override
