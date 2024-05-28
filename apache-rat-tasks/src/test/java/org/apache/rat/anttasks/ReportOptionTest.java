@@ -20,6 +20,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.WordUtils;
@@ -195,11 +196,11 @@ public class ReportOptionTest  {
 
         private void execCliTest(ReportConfiguration config) {
                 IOFileFilter filter = config.getFilesToIgnore();
-                assertThat(filter).isExactlyInstanceOf(NotFileFilter.class);
-                assertFalse(filter.accept(baseDir, "some.foo" ), "some.foo");
-                assertFalse(filter.accept(baseDir, "B.bar"), "B.bar");
-                assertFalse(filter.accept(baseDir, "justbaz" ), "justbaz");
-                assertTrue(filter.accept(baseDir, "notbaz"), "notbaz");
+                assertThat(filter).isExactlyInstanceOf(OrFileFilter.class);
+                assertTrue(filter.accept(baseDir, "some.foo" ), "some.foo");
+                assertTrue(filter.accept(baseDir, "B.bar"), "B.bar");
+                assertTrue(filter.accept(baseDir, "justbaz" ), "justbaz");
+                assertFalse(filter.accept(baseDir, "notbaz"), "notbaz");
         }
 
         @Override
