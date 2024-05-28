@@ -44,6 +44,10 @@ import org.apache.rat.report.claim.ClaimStatistic;
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
+
+    @Parameter(property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
+    private File defaultReportFile;
+
     /**
      * Where to store the report.
      * @deprecated use 'out' property.
@@ -150,7 +154,12 @@ public class RatCheckMojo extends AbstractRatMojo {
             getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
             return;
         }
+
+        if (args.get("--"+OptionCollection.OUT.getLongOpt()) == null) {
+            setArg("--"+OptionCollection.OUT.getLongOpt(), defaultReportFile.getPath());
+        }
         ReportConfiguration config = getConfiguration();
+
         logLicenses(config.getLicenses(LicenseFilter.ALL));
         try {
             this.reporter = new Reporter(config);

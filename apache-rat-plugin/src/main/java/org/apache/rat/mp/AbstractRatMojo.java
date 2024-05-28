@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
@@ -376,6 +377,15 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         DefaultLog.setInstance(makeLog());
         try {
+            Log log = getLog();
+            if (log.isDebugEnabled()) {
+                log.debug("Start BaseRatMojo Configuration options");
+                for (Map.Entry<String,List<String>> entry : args.entrySet()) {
+                    log.debug(String.format(" * %s %s", entry.getKey(), String.join(", ", entry.getValue())));
+                }
+                log.debug("End BaseRatMojo Configuration options");
+            }
+
             String key = "--"+createName(OptionCollection.EXCLUDE_CLI.getLongOpt());
             List<String> argList = args.get(key);
             if (argList != null) {
@@ -414,7 +424,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
             if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
-                Log log = getLog();
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("%s license families loaded from pom", families.length));
                 }
@@ -436,7 +445,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
 
             if (licenses != null) {
-                Log log = getLog();
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("%s licenses loaded from pom", licenses.length));
                 }
