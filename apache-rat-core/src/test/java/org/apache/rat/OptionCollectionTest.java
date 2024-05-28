@@ -154,11 +154,11 @@ public class OptionCollectionTest {
         final Optional<IOFileFilter> filter = OptionCollection
                 .parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertThat(filter).isPresent();
-        assertThat(filter.get()).isExactlyInstanceOf(NotFileFilter.class);
-        assertFalse(filter.get().accept(baseDir, "./foo/bar" ), "./foo/bar");
-        assertTrue(filter.get().accept(baseDir, "B.bar"), "B.bar");
-        assertFalse(filter.get().accept(baseDir, "foo" ), "foo");
-        assertTrue(filter.get().accept(baseDir, "notfoo"), "notfoo");
+        assertThat(filter.get()).isExactlyInstanceOf(OrFileFilter.class);
+        assertTrue(filter.get().accept(baseDir, "./foo/bar" ), "./foo/bar");
+        assertFalse(filter.get().accept(baseDir, "B.bar"), "B.bar");
+        assertTrue(filter.get().accept(baseDir, "foo" ), "foo");
+        assertFalse(filter.get().accept(baseDir, "notfoo"), "notfoo");
     }
 
     @Test
@@ -183,7 +183,7 @@ public class OptionCollectionTest {
         if (expectedPatterns.isEmpty()) {
             assertThat(filter).isEmpty();
         } else {
-            assertInstanceOf(NotFileFilter.class, filter.get());
+            assertInstanceOf(OrFileFilter.class, filter.get());
             String result = filter.toString();
             for (IOFileFilter expectedFilter : expectedPatterns) {
                 TextUtils.assertContains(expectedFilter.toString(), result);
@@ -413,11 +413,11 @@ public class OptionCollectionTest {
                 try {
                     ReportConfiguration config = generateConfig(args);
                     IOFileFilter filter = config.getFilesToIgnore();
-                    assertThat(filter).isExactlyInstanceOf(NotFileFilter.class);
-                    assertFalse(filter.accept(baseDir, "some.foo" ), "some.foo");
-                    assertFalse(filter.accept(baseDir, "B.bar"), "B.bar");
-                    assertFalse(filter.accept(baseDir, "justbaz" ), "justbaz");
-                    assertTrue(filter.accept(baseDir, "notbaz"), "notbaz");
+                    assertThat(filter).isExactlyInstanceOf(OrFileFilter.class);
+                    assertTrue(filter.accept(baseDir, "some.foo" ), "some.foo");
+                    assertTrue(filter.accept(baseDir, "B.bar"), "B.bar");
+                    assertTrue(filter.accept(baseDir, "justbaz" ), "justbaz");
+                    assertFalse(filter.accept(baseDir, "notbaz"), "notbaz");
                 } catch (IOException e) {
                     fail(e.getMessage());
                 }

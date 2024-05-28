@@ -121,8 +121,7 @@ public final class OptionCollection {
      */
     public static final Option STYLESHEET_CLI = Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
             .desc("XSLT stylesheet to use when creating the report.  Not compatible with -x. "
-                    + "Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), " +
-                    "missing-headers, or unapproved-licenses")
+                    + "Either an external xsl file may be specified or one of the internal named sheets: plain-rat (default), missing-headers, or unapproved-licenses")
             .build();
     /**
      * Produce help
@@ -141,14 +140,12 @@ public final class OptionCollection {
      * Do not use the default files.
      * @since 0.16
      */
-    public static final Option NO_DEFAULTS = new Option(null, "no-default-licenses", false,
-            "Ignore default configuration. By default all approved default licenses are used");
+    public static final Option NO_DEFAULTS = new Option(null, "no-default-licenses", false, "Ignore default configuration. By default all approved default licenses are used");
 
     /**
      * Scan hidden directories.
      */
-    public static final Option SCAN_HIDDEN_DIRECTORIES = new Option(null, "scan-hidden-directories", false,
-            "Scan hidden directories");
+    public static final Option SCAN_HIDDEN_DIRECTORIES = new Option(null, "scan-hidden-directories", false, "Scan hidden directories");
 
     /**
      * List the licenses that were used for the run.
