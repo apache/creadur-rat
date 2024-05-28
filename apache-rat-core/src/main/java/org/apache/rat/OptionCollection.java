@@ -557,7 +557,7 @@ public class OptionCollection {
         if (ignoredLines > 0) {
             log.info("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
         }
-        return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter.negate());
+        return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter);
     }
 
     /**
