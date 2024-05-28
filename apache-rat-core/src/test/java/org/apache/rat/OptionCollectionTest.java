@@ -74,25 +74,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {
 
-    /** The base directory for the test.  We do not use TempFile because we want the evidence of the run to exist after
-     * a failure.*/
     File baseDir;
 
-    /**
-     * Constructor.
-     */
     public OptionCollectionTest() {
         baseDir = new File("target/optionTools");
         baseDir.mkdirs();
     }
 
-    /**
-     * Defines the Test method that is stored in a map.
-     */
     @FunctionalInterface
     public interface OptionTest {
         void test();
     }
+
+
 
     /**
      * This method is a known workaround for
@@ -104,11 +98,6 @@ public class OptionCollectionTest {
         System.gc();
     }
 
-    /**
-     * Returns the command line format (with '--' prefix) for the Option.
-     * @param opt the option to process.
-     * @return the command line option..
-     */
     private static String longOpt(Option opt) {
         return "--" + opt.getLongOpt();
     }
@@ -134,11 +123,11 @@ public class OptionCollectionTest {
         final Optional<IOFileFilter> filter = OptionCollection
                 .parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertThat(filter).isPresent();
-        assertThat(filter.get()).isExactlyInstanceOf(OrFileFilter.class);
-        assertTrue(filter.get().accept(baseDir, "./foo/bar" ), "./foo/bar");
-        assertFalse(filter.get().accept(baseDir, "B.bar"), "B.bar");
-        assertTrue(filter.get().accept(baseDir, "foo" ), "foo");
-        assertFalse(filter.get().accept(baseDir, "notfoo"), "notfoo");
+        assertThat(filter.get()).isExactlyInstanceOf(NotFileFilter.class);
+        assertFalse(filter.get().accept(baseDir, "./foo/bar" ), "./foo/bar");
+        assertTrue(filter.get().accept(baseDir, "B.bar"), "B.bar");
+        assertFalse(filter.get().accept(baseDir, "foo" ), "foo");
+        assertTrue(filter.get().accept(baseDir, "notfoo"), "notfoo");
     }
 
     @Test
@@ -149,12 +138,6 @@ public class OptionCollectionTest {
         ReportConfigurationTest.validateDefault(config);
     }
 
-    /**
-     * A parameterized test for file exclusions.
-     * @param pattern The pattern to exclude
-     * @param expectedPatterns The file filters that are expected to be generated from the pattern
-     * @param logEntries the list of expected log entries.
-     */
     @ParameterizedTest
     @MethodSource("exclusionsProvider")
     public void testParseExclusions(String pattern, List<IOFileFilter> expectedPatterns, List<String> logEntries) {
@@ -163,7 +146,7 @@ public class OptionCollectionTest {
         if (expectedPatterns.isEmpty()) {
             assertThat(filter).isEmpty();
         } else {
-            assertInstanceOf(OrFileFilter.class, filter.get());
+            assertInstanceOf(NotFileFilter.class, filter.get());
             String result = filter.toString();
             for (IOFileFilter expectedFilter : expectedPatterns) {
                 TextUtils.assertContains(expectedFilter.toString(), result);
@@ -175,7 +158,6 @@ public class OptionCollectionTest {
         }
     }
 
-    /** Provider for the testParseExclusions */
     public static Stream<Arguments> exclusionsProvider() {
         List<Arguments> lst = new ArrayList<>();
 
@@ -237,36 +219,20 @@ public class OptionCollectionTest {
         return lst.stream();
     }
 
-    /**
-     * A paramaterized test for the options.
-     * @param name The name of the test.
-     * @param test the option testt to execute.
-     * @throws Exception on unexpected error.
-     */
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionTest test) throws Exception {
         test.test();
     }
 
-    /**
-     * A class to provide the Options and tests to the testOptionsUpdateConfig.
-     */
     static class OptionsProvider implements ArgumentsProvider, IOptionsProvider {
 
-        /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
-        /** A mp of tests Options to tests */
+
         final Map<Option,OptionTest> testMap = new HashMap<>();
 
-        /**
-         * The directory to place test data in.  We do not use temp file here as we want the evidence to survive failure.
-         */
         File baseDir;
 
-        /**
-         * Constructor.  sets the baseDir and loads the testMap.
-         */
         public OptionsProvider() {
             baseDir = new File("target/optionTools");
             baseDir.mkdirs();
@@ -300,13 +266,6 @@ public class OptionCollectionTest {
             testMap.put(OptionCollection.XML, this::xmlTest);
         }
 
-        /**
-         * Generate a ReportConfiguration from a set of arguments.
-         * Forces the {@code helpCalled} flag to be reset.
-         * @param args the arguments.
-         * @return A ReportConfiguration
-         * @throws IOException on critical error.
-         */
         private ReportConfiguration generateConfig(String[] args) throws IOException {
             helpCalled.set(false);
             ReportConfiguration config = OptionCollection.parseCommands(args, o -> helpCalled.set(true), true);
@@ -385,19 +344,16 @@ public class OptionCollectionTest {
             execCliTest(args);
         }
 
-        /**
-         * execute an "exclude" test.
-         * @param args
-         */
+
         private void execCliTest(String[] args) {
                 try {
                     ReportConfiguration config = generateConfig(args);
                     IOFileFilter filter = config.getFilesToIgnore();
-                    assertThat(filter).isExactlyInstanceOf(OrFileFilter.class);
-                    assertTrue(filter.accept(baseDir, "some.foo" ), "some.foo");
-                    assertTrue(filter.accept(baseDir, "B.bar"), "B.bar");
-                    assertTrue(filter.accept(baseDir, "justbaz" ), "justbaz");
-                    assertFalse(filter.accept(baseDir, "notbaz"), "notbaz");
+                    assertThat(filter).isExactlyInstanceOf(NotFileFilter.class);
+                    assertFalse(filter.accept(baseDir, "some.foo" ), "some.foo");
+                    assertFalse(filter.accept(baseDir, "B.bar"), "B.bar");
+                    assertFalse(filter.accept(baseDir, "justbaz" ), "justbaz");
+                    assertTrue(filter.accept(baseDir, "notbaz"), "notbaz");
                 } catch (IOException e) {
                     fail(e.getMessage());
                 }

@@ -195,11 +195,11 @@ public class ReportOptionTest  {
 
         private void execCliTest(ReportConfiguration config) {
                 IOFileFilter filter = config.getFilesToIgnore();
-                assertThat(filter).isExactlyInstanceOf(OrFileFilter.class);
-                assertTrue(filter.accept(baseDir, "some.foo" ), "some.foo");
-                assertTrue(filter.accept(baseDir, "B.bar"), "B.bar");
-                assertTrue(filter.accept(baseDir, "justbaz" ), "justbaz");
-                assertFalse(filter.accept(baseDir, "notbaz"), "notbaz");
+                assertThat(filter).isExactlyInstanceOf(NotFileFilter.class);
+                assertFalse(filter.accept(baseDir, "some.foo" ), "some.foo");
+                assertFalse(filter.accept(baseDir, "B.bar"), "B.bar");
+                assertFalse(filter.accept(baseDir, "justbaz" ), "justbaz");
+                assertTrue(filter.accept(baseDir, "notbaz"), "notbaz");
         }
 
         @Override
@@ -324,7 +324,7 @@ public class ReportOptionTest  {
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
             List<Arguments> lst = new ArrayList<>();
 
-            List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.getFilter()).collect(Collectors.toList());
+            List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.ANT_FILTER).collect(Collectors.toList());
             for (Option option : opt) {
                 if (option.getLongOpt() != null) {
                     String name = antName(option);
