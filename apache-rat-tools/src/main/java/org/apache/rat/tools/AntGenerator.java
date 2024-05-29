@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 /**
- * A simple tool to convert CLI options Ant report base class .
+ * A simple tool to convert CLI options into Ant report base class .
  */
 public class AntGenerator {
 
