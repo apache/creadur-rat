@@ -57,39 +57,33 @@ public class Naming {
             printer.printRecord("CLI", "Maven", "Ant", "Description");
             for (Option option : options.getOptions()) {
                 if (option.getLongOpt() != null) {
-                    CasedString opt = new CasedString(StringCase.KEBAB, option.getLongOpt());
-                    String mavenCell = mavenFilter.test(option) ? mavenFunctionName(option, opt) : "-- not supported --";
-                    String antCell = antFilter.test(option) ? antFunctionName(option, opt) : "-- not supported --";
-                    printer.printRecord(opt, mavenCell, antCell, option.getDescription());
+                    String mavenCell = mavenFilter.test(option) ? mavenFunctionName(option) : "-- not supported --";
+                    String antCell = antFilter.test(option) ? antFunctionName(option) : "-- not supported --";
+                    printer.printRecord("--"+option.getLongOpt(), mavenCell, antCell, option.getDescription());
                 }
             }
         }
     }
 
-    public static String mavenFunctionName(Option option, CasedString name) {
+    public static String mavenFunctionName(Option option) {
+        MavenOption mavenOption = new MavenOption(option);
         StringBuilder sb = new StringBuilder();
-        if (option.isDeprecated()) {
+        if (mavenOption.isDeprecated()) {
             sb.append("@Deprecated").append(System.lineSeparator());
         }
-        sb.append(format("@Parameter(property = 'rat.%s'", name.toCase(StringCase.CAMEL)));
-        if (option.isRequired()) {
-            sb.append(" required = true");
-        }
-        sb.append(format(")%n public void %s%s(%s %s)", option.hasArgs() ? "add" : "set",
-                WordUtils.capitalize(name.toCase(StringCase.CAMEL)), option.hasArg() ? "String " : "boolean ",
-               name.toCase(StringCase.CAMEL)));
-        return sb.toString();
+        return sb.append(format("<%s>", mavenOption.name)).toString();
     }
 
-    private static String antFunctionName(Option option, CasedString name) {
+    private static String antFunctionName(Option option) {
         StringBuilder sb = new StringBuilder();
+        AntOption antOption = new AntOption(option);
         if (option.isDeprecated()) {
             sb.append("@Deprecated").append(System.lineSeparator());
         }
         if (option.hasArgs()) {
-            sb.append(format("<rat:report>%n  <%1$s>text</%1$s>%n</rat:report>", name.toCase(StringCase.CAMEL)));
+            sb.append(format("<rat:report>%n  <%1$s>text</%1$s>%n</rat:report>", antOption.name));
         } else {
-            sb.append(format("<rat:report %s = 'text'/>", name.toCase(StringCase.CAMEL)));
+            sb.append(format("<rat:report %s = 'text'/>", antOption.name));
         }
         return sb.toString();
     }

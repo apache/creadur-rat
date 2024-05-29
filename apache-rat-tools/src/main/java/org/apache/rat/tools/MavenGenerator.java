@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -50,7 +51,8 @@ public class MavenGenerator {
     private static Map<String,String> RENAME_MAP = new HashMap<>();
 
     static {
-        RENAME_MAP.put("licenses", "configuration");
+        RENAME_MAP.put("licenses", "config");
+        RENAME_MAP.put("addLicense", "add-license");
     }
     /**
      * List of CLI Options that are not supported by Maven.
@@ -84,7 +86,6 @@ public class MavenGenerator {
         String className = args[1];
         String destDir = args[2];
         List<MavenOption> options = OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER).map(MavenOption::new).collect(Collectors.toList());
-        Map<String,String> renameMap = new HashMap<>();
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         System.out.println("Creating " + file);
@@ -104,7 +105,7 @@ public class MavenGenerator {
                         }
                         break;
                     case "${methods}":
-                        writeMethods(writer, options, renameMap);
+                        writeMethods(writer, options);
                         break;
                     case "${package}":
                         writer.append(format("package %s;%n", packageName));
@@ -123,22 +124,26 @@ public class MavenGenerator {
         }
     }
 
-    private static void writeMethods(FileWriter writer, List<MavenOption> options, Map<String,String> renameMap) throws IOException {
-        for (MavenOption option : options) {
-            String desc = option.getDescription().replace("<", "&lt;").replace(">", "&gt;");
+    private static String getComment(MavenOption option) {
+        String desc = option.getDescription().replace("<", "&lt;").replace(">", "&gt;");
+        StringBuilder sb = new StringBuilder()
+            .append(format("    /**%n     * %s%n     * @param %s the argument.%n", desc, option.name));
+        if (option.isDeprecated()) {
+            sb.append(format("     * %s%n     * @deprecated%n", option.getDeprecated()));
+        }
+        return sb.append(format("     */%n")).toString();
+    }
 
-            writer.append(format("    /**%n     * %s%n     * @param %s the argument.%n", desc, option.name));
-            if (option.isDeprecated()) {
-                writer.append(format("     * %s%n     * @deprecated", option.getDeprecated()));
-            }
-            writer.append(format("     */%n    @Parameter(property = \"rat.%2$s\")%n    public void set%1$s(%3$s %2$s) {%n",
-                            WordUtils.capitalize(option.name), option.name, option.hasArg() ? "String" : "boolean"))
+    private static void writeMethods(FileWriter writer, List<MavenOption> options) throws IOException {
+        for (MavenOption option : options) {
+            writer.append(getComment(option))
+                    .append(option.getMethodSignature("    ")).append(" {").append(System.lineSeparator())
                     .append(getBody(option))
-                    .append(format("    }%n"));
+                    .append("    }").append(System.lineSeparator());
         }
     }
 
-    private static String getBody(MavenOption option) throws IOException {
+    private static String getBody(MavenOption option) {
         if (option.hasArg()) {
             return format("        %sArg(%s, %s);%n", option.option.hasArgs() ? "add" : "set" , option.keyValue(), option.name);
         } else {
@@ -148,89 +153,10 @@ public class MavenGenerator {
         }
     }
 
-//    private static String getImports(List<MavenOption> options) {
-//        Set<Class<?>> includes = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
-//        includes.add(java.util.ArrayList.class);
-//        includes.add(java.util.List.class);
-//        options.stream().map(o -> ((Class<?>)o.option.getType())).filter(t -> !t.getName().startsWith("java.lang.")).forEach(includes::add);
-//        StringBuilder sb = new StringBuilder();
-//        includes.stream().map(t -> format("import %s;%n", t.getName())).forEach(sb::append);
-//        return sb.toString();
-//    }
-
-    private static class MavenOption {
-        final Option option;
-        final String name;
-
-        public static String createName(Option option) {
-            String name = option.getLongOpt();
-            name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name);
-            return new CasedString(CasedString.StringCase.KEBAB, name).toCase(CasedString.StringCase.CAMEL);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param option The CLI option
-         */
-        MavenOption(Option option) {
-            this.option = option;
-            this.name = createName(option);
-        }
-
-        /**
-         * Get the description escaped for XML format.
-         *
-         * @return the description.
-         */
-        public String getDescription() {
-            return option.getDescription().replace("<", "&lt;").replace(">", "&gt;");
-        }
-
-        /**
-         * Returns the value as an POM xml node.
-         *
-         * @param value the value
-         * @return the pom xml node.
-         */
-        public String xmlNode(String value) {
-            return format("<%1$s>%2$s</%1$s>%n", name, value == null ? "false" : value);//: format("<%s>%n", name);
-        }
-
-        /**
-         * Gets the simple class name for the data type for this option.
-         * Normally "String".
-         *
-         * @return the simple class name for the type.
-         */
-        public Class<?> getType() {
-            return option.hasArg() ? ((Class<?>) option.getType()) : boolean.class;
-        }
-
-        public boolean isDeprecated() {
-            return option.isDeprecated();
-        }
-
-        /**
-         * Determine if true if the enclosed option expects an argument.
-         *
-         * @return {@code true} if the enclosed option expects at least one argument.
-         */
-        public boolean hasArg() {
-            return option.hasArg();
-        }
-
-        /**
-         * the key value for the option.
-         *
-         * @return the key value for the CLI argument map.
-         */
-        public String keyValue() {
-            return "\"--" + option.getLongOpt() + "\"";
-        }
-
-        public String getDeprecated() {
-            return option.getDeprecated().toString();
-        }
+    static String createName(Option option) {
+        String name = option.getLongOpt();
+        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
+        return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
     }
+
 }
