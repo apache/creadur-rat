@@ -157,6 +157,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.2.0</version>
           <executions>
             <execution>
               <phase>generate-sources</phase>
@@ -195,50 +196,28 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <failsOnError>false</failsOnError>
-          <failOnViolation>false</failOnViolation>
-          <configLocation>../src/conf/checkstyle.xml</configLocation>
-          <suppressionsLocation>../src/conf/checkstyle-suppressions.xml</suppressionsLocation>
-          <excludeGeneratedSources>true</excludeGeneratedSources>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <phase>compile</phase>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
+      <version>${project.version}</version>
     </dependency>
-      <dependency>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-core</artifactId>
-          <type>test-jar</type>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-tools</artifactId>
-      </dependency>
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tools</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-
-
+    <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>

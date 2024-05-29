@@ -18,13 +18,13 @@
  */
 package org.apache.rat.utils;
 
+import org.apache.commons.text.WordUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import org.apache.commons.text.WordUtils;
 
 /**
  * Handles converting from one string case to another (e.g. camel case to snake case).
@@ -114,21 +114,21 @@ public class CasedString {
          * @param segments the segments to create the CasedString from.
          * @return a CasedString
          */
-        public String assemble(final String[] segments) {
+        public String assemble(String[] segments) {
             return segments.length == 0 ? null : this.joiner.apply(segments);
         }
 
         /**
          * Returns an array of each of the segments in this CasedString.  Segments are defined as the strings between
-         * the separators in the CasedString. For the CAMEL case the segments are determined by the presence of a capital letter.
+         * the separators in the CasedString.  for the CAMEL case the segments are determined by the presence of a capital letter.
          * @return the array of Strings that are segments of the cased string.
          */
-        public String[] getSegments(final String string) {
+        public String[] getSegments(String string) {
             if (string == null) {
-                return NULL_SEGMENT;
+                return new String[0];
             }
             if (string.isEmpty()) {
-                return EMPTY_SEGMENT;
+                return new String[]{""};
             }
             List<String> lst = new ArrayList<>();
             StringBuilder sb = new StringBuilder();
@@ -157,14 +157,14 @@ public class CasedString {
      * @param stringCase The {@code StringCase} that the {@code string} argument is in.
      * @param string The string.
      */
-    public CasedString(final StringCase stringCase, final String string) {
+    public CasedString(StringCase stringCase, String string) {
         this.string = string == null ? null : stringCase.assemble(stringCase.getSegments(string.trim()));
         this.stringCase = stringCase;
     }
 
     /**
      * Returns an array of each of the segments in this CasedString.  Segments are defined as the strings between
-     * the separators in the CasedString.  For the CAMEL case the segments are determined by the presence of a capital letter.
+     * the separators in the CasedString.  for the CAMEL case the segments are determined by the presence of a capital letter.
      * @return the array of Strings that are segments of the cased string.
      */
     public String[] getSegments() {
@@ -174,10 +174,10 @@ public class CasedString {
     /**
      * Converts this cased string into a {@code String} of another format.
      * The upper/lower case of the characters within the string are not modified.
-     * @param stringCase The format to convert to.
+     * @param stringCase THe fomrat to convert to.
      * @return the String current string represented in the new format.
      */
-    public String toCase(final StringCase stringCase) {
+    public String toCase(StringCase stringCase) {
         if (stringCase == this.stringCase) {
             return string;
         }

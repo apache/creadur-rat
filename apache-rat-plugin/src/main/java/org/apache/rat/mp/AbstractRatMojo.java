@@ -68,9 +68,9 @@ import org.apache.rat.mp.util.ScmIgnoreParser;
 import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoringDirectoryScanner;
-import org.apache.rat.plugin.BaseRatMojo;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.plugin.BaseRatMojo;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
@@ -93,7 +93,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter
     private String[] defaultLicenseFiles;
 
-    /** Additional license files to add. */
     @Parameter
     private String[] additionalLicenseFiles;
 
@@ -102,8 +101,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * @deprecated use noDefaultLicenses (note the change of state)
      */
     @Deprecated
-    @Parameter(property = "rat.addDefaultLicenses", name = "addDefaultLicenses")
-    public void setAddDefaultLicenses(final boolean addDefaultLicenses) {
+    @Parameter(property = "rat.addDefaultLicenses", name="addDefaultLicenses")
+    public void setAddDefaultLicenses(boolean addDefaultLicenses) {
         setNoDefaultLicenses(!addDefaultLicenses);
     }
 
@@ -113,14 +112,13 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter(property = "rat.addDefaultLicenseMatchers")
     private boolean addDefaultLicenseMatchers;
 
-    /** a list of approved licenses */
+
     @Parameter(required = false)
     private String[] approvedLicenses;
 
-    /** A file containing a list of approved licenses */
     @Parameter(property = "rat.approvedFile")
     private String approvedLicenseFile;
-
+    
     /**
      * Specifies the license families to accept.
      *
@@ -130,8 +128,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Deprecated // remove in v1.0
     @Parameter
     private SimpleLicenseFamily[] licenseFamilies;
+    
 
-    /** The list of licenses defined in the pom */
     @Parameter
     private Object[] licenses;
 
@@ -155,40 +153,34 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the include files character set. Defaults
-     * to @code{${project.build.sourceEncoding}), or @code{UTF-8}.
+     * to @code{${project.build.sourceEncoding}), or @code{UTF8}.
      */
     @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String includesFileCharset;
 
-    /** A list of files to exclude */
     private List<String> excludesList = new ArrayList<>();
 
-    /**
-     * Used for testing only.
-     * @return The list of excluded files.
-     */
+    // for testing
     List<String> getExcludes() {
         return excludesList;
     }
     /**
      * Specifies files, which are excluded in the report. By default, no files are
      * excluded.
-     * @param excludes the files to be excluded.
      * @deprecated use exclude
      */
     @Deprecated
     @Parameter
-    public void setExcludes(final String[] excludes) {
+    public void setExcludes(String[] excludes) {
         this.excludesList.addAll(Arrays.asList(excludes));
     }
 
     @Override
     @Parameter(property = "rat.exclude")
-    public void setExclude(final String exclude) {
+    public void setExclude(String exclude) {
         excludesList.add(exclude);
     }
 
-    /** The list of files to exclude */
     private List<String> excludesFileList = new ArrayList<>();
     // for testing
     List<String> getExcludesFile() {
@@ -203,18 +195,18 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      */
     @Deprecated
     @Parameter(property = "rat.excludesFile")
-    public void setExcludesFile(final String excludeFile) {
+    public void setExcludesFile(String excludeFile) {
         excludesFileList.add(excludeFile);
     }
 
     @Override
-    public void setExcludeFile(final String file) {
+    public void setExcludeFile(String file) {
         excludesFileList.add(file);
     }
 
     /**
      * Specifies the include files character set. Defaults
-     * to @code{${project.build.sourceEncoding}), or @code{UTF-8}.
+     * to @code{${project.build.sourceEncoding}), or @code{UTF8}.
      */
     @Parameter(property = "rat.excludesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String excludesFileCharset;
@@ -390,12 +382,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                     o -> getLog().warn("Help option not supported"),
                     true);
             reportDeprecatedProcessing();
-            Defaults defaults = getDefaultsBuilder().build(config.getLog());
-            if (addDefaultLicenses) {
-                config.setFrom(defaults);
-            } else {
-                config.setStyleSheet(Defaults.getPlainStyleSheet());
-            }
 
             if (additionalLicenseFiles != null) {
                 for (String licenseFile : additionalLicenseFiles) {
@@ -418,7 +404,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
             if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
-                Log log = getLog();
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("%s license families loaded from pom", families.length));
                 }
@@ -440,7 +425,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
 
             if (licenses != null) {
-                Log log = getLog();
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("%s licenses loaded from pom", licenses.length));
                 }
@@ -626,11 +610,11 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     private void setExcludes(IgnoringDirectoryScanner ds) throws MojoExecutionException {
         final List<IgnoreMatcher> ignoreMatchers = mergeDefaultExclusions();
-        if (excludes == null || excludes.length == 0) {
+        if (!excludesList.isEmpty()) {
             getLog().debug("No excludes explicitly specified.");
         } else {
-            getLog().debug(excludes.length + " explicit excludes.");
-            for (final String exclude : excludes) {
+            getLog().debug(excludesList.size() + " explicit excludes.");
+            for (final String exclude : excludesList) {
                 getLog().debug("Exclude: " + exclude);
             }
         }
@@ -646,9 +630,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
         }
 
-        if (excludes != null) {
-            Collections.addAll(globExcludes, excludes);
-        }
+        globExcludes.addAll(excludesList);
         if (!globExcludes.isEmpty()) {
             final String[] allExcludes = globExcludes.toArray(new String[globExcludes.size()]);
             ds.setExcludes(allExcludes);
@@ -707,17 +689,19 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
         }
-        if (excludesFile != null) {
-            final File f = new File(excludesFile);
-            if (!f.isFile()) {
-                getLog().error("Excludes file not found: " + f.getAbsolutePath());
+        if (!excludesFileList.isEmpty()) {
+            for (String fileName : excludesFileList) {
+                final File f = new File(fileName);
+                if (!f.isFile()) {
+                    getLog().error("Excludes file not found: " + f.getAbsolutePath());
+                }
+                if (!f.canRead()) {
+                    getLog().error("Excludes file not readable: " + f.getAbsolutePath());
+                }
+                final String charset = excludesFileCharset == null ? "UTF8" : excludesFileCharset;
+                getLog().debug("Loading excludes from file " + f + ", using character set " + charset);
+                basicRules.addRules(getPatternsFromFile(f, charset));
             }
-            if (!f.canRead()) {
-                getLog().error("Excludes file not readable: " + f.getAbsolutePath());
-            }
-            final String charset = excludesFileCharset == null ? "UTF8" : excludesFileCharset;
-            getLog().debug("Loading excludes from file " + f + ", using character set " + charset);
-            basicRules.addRules(getPatternsFromFile(f, charset));
         }
 
         if (!basicRules.isEmpty()) {

@@ -320,6 +320,9 @@ public class Report extends BaseAntTask {
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
+            if (deprecatedConfig.styleSheet != null) {
+                configuration.setStyleSheet(() -> deprecatedConfig.styleSheet.getInputStream());
+            }
             if (deprecatedConfig.inputFileFilter != null) {
                 if (configuration.getFilesToIgnore() != null) {
                     configuration.setFilesToIgnore(new OrFileFilter(configuration.getFilesToIgnore(), deprecatedConfig.inputFileFilter));

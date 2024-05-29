@@ -20,88 +20,40 @@ package org.apache.rat;
 
 /**
  * A list of methods that an OptionsProvider in a test case must support.
- * Use of this interface ensures consistent testing across the UIs.  Each method
+ * Use of this interface can ensures consistent testing across the UIs.  Each method
  * tests an Option from OptionCollection that must be implemented in the UI.
  * Each method in this interface tests an Option in OptionCollection.
  */
 public interface IOptionsProvider {
-    /**
-     * @see OptionCollection#ADD_LICENSE
-     */
     void addLicenseTest();
 
-    /**
-     * @see OptionCollection#ARCHIVE
-     */
     void archiveTest();
 
-    /**
-     * @see OptionCollection#STANDARD
-     */
     void standardTest();
 
-    /**
-     * @see OptionCollection#COPYRIGHT
-     */
     void copyrightTest();
 
-    /**
-     * @see OptionCollection#DRY_RUN
-     */
     void dryRunTest();
 
-    /**
-     * @see OptionCollection#EXCLUDE_CLI
-     */
     void excludeCliTest();
 
-    /**
-     * @see OptionCollection#EXCLUDE_FILE_CLI
-     */
     void excludeCliFileTest();
 
-    /**
-     * @see OptionCollection#FORCE
-     */
     void forceTest();
 
-    /**
-     * @see OptionCollection#LICENSES
-     */
     void licensesTest();
 
-    /**
-     * @see OptionCollection#LIST_LICENSES
-     */
     void listLicensesTest();
 
-    /**
-     * @see OptionCollection#LIST_FAMILIES
-     */
     void listFamiliesTest();
 
-    /**
-     * @see OptionCollection#NO_DEFAULTS
-     */
     void noDefaultsTest();
 
-    /**
-     * @see OptionCollection#OUT
-     */
     void outTest();
 
-    /**
-     * @see OptionCollection#SCAN_HIDDEN_DIRECTORIES
-     */
     void scanHiddenDirectoriesTest();
 
-    /**
-     * @see OptionCollection#STYLESHEET_CLI
-     */
     void styleSheetTest();
 
-    /**
-     * @see OptionCollection#XML
-     */
     void xmlTest();
 }
