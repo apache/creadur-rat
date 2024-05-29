@@ -73,8 +73,15 @@ import static java.lang.String.format;
  */
 public class OptionCollection {
 
+    private OptionCollection() {
+        // do not instantiate
+    }
+
     /*
                     START OF OPTION LIST
+
+    Options must have a longOption defined if they are to be used in client processing.  Deprecated short options may
+    be listed by themselves.
      */
 
     /**
@@ -370,11 +377,18 @@ public class OptionCollection {
         return createConfiguration(log, clArgs[0], cl);
     }
 
-
-    private static void logParseException(final Log log, final ParseException e, final Option opt, final CommandLine cl, final Object dflt) {
+    /**
+     * Logs a ParseException as a warning.
+     * @param log the Log to write to
+     * @param exception the parse exception to log
+     * @param opt the option being processed
+     * @param cl the command line being processed
+     * @param dflt The default value the option is being set to.
+     */
+    private static void logParseException(final Log log, final ParseException exception, final Option opt, final CommandLine cl, final Object dflt) {
         log.warn(format("Invalid %s specified: %s ", opt.getOpt(), cl.getOptionValue(opt)));
         log.warn(format("%s set to: %s", opt.getOpt(), dflt));
-        log.debug(e);
+        log.debug(exception);
     }
 
     /**
@@ -441,7 +455,7 @@ public class OptionCollection {
             try {
                 File f = cl.getParsedOptionValue(OUT);
                 if (f.getParentFile().mkdirs() && !f.isDirectory()) {
-                    log.error( "Could not create report parent directory " + f);
+                    log.error("Could not create report parent directory " + f);
                 }
                 configuration.setOut(f);
             } catch (ParseException e) {
@@ -562,6 +576,7 @@ public class OptionCollection {
 
     /**
      * Create an {@code Options} object from the list of defined Options.
+     * Mutually exclusive options must be listed in an OptionGroup.
      * @return the Options comprised of the Options defined in this class.
      */
     public static Options buildOptions() {

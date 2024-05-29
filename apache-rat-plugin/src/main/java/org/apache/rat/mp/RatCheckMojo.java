@@ -20,10 +20,8 @@ package org.apache.rat.mp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -31,12 +29,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
-import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.ConfigurationReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 /**
@@ -55,8 +50,10 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Deprecated
     @Parameter(property = "rat.outputFile")
     public void setReportFile(File reportFile) {
-        if (!reportFile.exists()) {
-            reportFile.getParentFile().mkdirs();
+        if (!reportFile.getParentFile().exists()) {
+            if (!reportFile.getParentFile().mkdirs()) {
+                getLog().error("Unable to create directory " + reportFile.getParentFile());
+            }
         }
         setOut(reportFile.getAbsolutePath());
     }
@@ -114,6 +111,7 @@ public class RatCheckMojo extends AbstractRatMojo {
      * {@code addLicenseHeaders} is set to {@code true}, or {@code forced}.
      * @deprecated use copyright
      */
+    @Deprecated
     @Parameter(property = "rat.copyrightMessage")
     public void setCopyrightMessage(String copyrightMessage) {
         setCopyright(copyrightMessage);
@@ -191,7 +189,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     reporter.output(Defaults.getUnapprovedLicensesStyleSheet(), () -> baos);
-                    getLog().warn(baos.toString());
+                    getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
                 } catch (Exception e) {
                     getLog().warn("Unable to print the files with unapproved licenses to the console.");
                 }

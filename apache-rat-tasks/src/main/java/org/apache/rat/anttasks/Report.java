@@ -131,7 +131,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Add an inline license family defintion to the system.
+     * Add an inline license family definition to the system.
      * @param family the license family to add.
      */
     public void addFamily(Family family) {
@@ -187,7 +187,7 @@ public class Report extends BaseAntTask {
         try {
             createLicenses().addText(fileName.getCanonicalPath());
         } catch (IOException e) {
-            throw new BuildException("Can not read license file " + fileName, e);
+            throw new BuildException("Unable to read license file " + fileName, e);
         }
     }
 
@@ -315,6 +315,9 @@ public class Report extends BaseAntTask {
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
+            if (deprecatedConfig.styleSheet != null) {
+                configuration.setStyleSheet(() -> deprecatedConfig.styleSheet.getInputStream());
+            }
             if (deprecatedConfig.inputFileFilter != null) {
                 if (configuration.getFilesToIgnore() != null) {
                     configuration.setFilesToIgnore(new OrFileFilter(configuration.getFilesToIgnore(), deprecatedConfig.inputFileFilter));

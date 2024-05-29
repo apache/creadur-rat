@@ -38,16 +38,6 @@ public class ReportTest {
     @TempDir
     static File tempDirectory;
 
-    /**
-     * This method is a known workaround for junit 5 issue #2811
-     * {@link  https://github.com/junit-team/junit5/issues/2811 }
-     */
-//    @AfterEach
-//    @EnabledOnOs(OS.WINDOWS)
-//    void cleanUp() {
-//        System.gc();
-//    }
-
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");

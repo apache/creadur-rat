@@ -101,8 +101,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * @deprecated use noDefaultLicenses (note the change of state)
      */
     @Deprecated
-    @Parameter(property = "rat.addDefaultLicenses", name="addDefaultLicenses")
-    public void setAddDefaultLicenses(boolean addDefaultLicenses) {
+    @Parameter(property = "rat.addDefaultLicenses", name = "addDefaultLicenses")
+    public void setAddDefaultLicenses(final boolean addDefaultLicenses) {
         setNoDefaultLicenses(!addDefaultLicenses);
     }
 
@@ -118,7 +118,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     @Parameter(property = "rat.approvedFile")
     private String approvedLicenseFile;
-    
+
     /**
      * Specifies the license families to accept.
      *
@@ -128,11 +128,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Deprecated // remove in v1.0
     @Parameter
     private SimpleLicenseFamily[] licenseFamilies;
-    
 
     @Parameter
     private Object[] licenses;
-    
+
     @Parameter
     private Family[] families;
 
@@ -159,18 +158,22 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     private List<String> excludesList = new ArrayList<>();
 
-    // for testing
+    /**
+     * Used for testing only.
+     * @return The list of excluded files.
+     */
     List<String> getExcludes() {
         return excludesList;
     }
     /**
      * Specifies files, which are excluded in the report. By default, no files are
      * excluded.
+     * @param excludes the files to be excluded.
      * @deprecated use exclude
      */
     @Deprecated
     @Parameter
-    public void setExcludes(String[] excludes) {
+    public void setExcludes(final String[] excludes) {
         this.excludesList.addAll(Arrays.asList(excludes));
     }
 
@@ -380,19 +383,19 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             Log log = getLog();
             if (log.isDebugEnabled()) {
                 log.debug("Start BaseRatMojo Configuration options");
-                for (Map.Entry<String,List<String>> entry : args.entrySet()) {
+                for (Map.Entry<String, List<String>> entry : args.entrySet()) {
                     log.debug(String.format(" * %s %s", entry.getKey(), String.join(", ", entry.getValue())));
                 }
                 log.debug("End BaseRatMojo Configuration options");
             }
 
-            String key = "--"+createName(OptionCollection.EXCLUDE_CLI.getLongOpt());
+            String key = "--" + createName(OptionCollection.EXCLUDE_CLI.getLongOpt());
             List<String> argList = args.get(key);
             if (argList != null) {
                 excludesList.addAll(argList);
             }
             args.remove(key);
-            key = "--"+createName(OptionCollection.EXCLUDE_FILE_CLI.getLongOpt());
+            key = "--" + createName(OptionCollection.EXCLUDE_FILE_CLI.getLongOpt());
             argList = args.get(key);
             if (argList != null) {
                 excludesFileList.addAll(argList);
@@ -583,36 +586,28 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 try {
                     br.close();
                 } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
+                    th = t;
                 }
             }
             if (r != null) {
                 try {
                     r.close();
                 } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
+                    th = t;
                 }
             }
             if (bis != null) {
                 try {
                     bis.close();
                 } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
+                    th = t;
                 }
             }
             if (is != null) {
                 try {
                     is.close();
                 } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
+                    th = t;
                 }
             }
         }

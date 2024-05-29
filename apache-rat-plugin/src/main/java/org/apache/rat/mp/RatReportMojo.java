@@ -160,7 +160,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
 
             // MSHARED-204: only render Doxia sink if not an external report
             if (!isExternalReport()) {
-                outputDirectory.mkdirs();
+                if (!outputDirectory.exists()) {
+                    if (!outputDirectory.mkdirs()) {
+                        getLog().error("Unable to create output directory: " + outputDirectory);
+                    }
+                }
 
                 try (Writer writer = new OutputStreamWriter(
                         Files.newOutputStream(new File(outputDirectory, filename).toPath()), getOutputEncoding())) {
@@ -249,7 +253,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @throws MavenReportException if any
      */
     @Override
-    public void generate(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
+    public void generate(final Sink sink, final SinkFactory sinkFactory, Locale locale) throws MavenReportException {
         if (!canGenerateReport()) {
             getLog().info("This report cannot be generated as part of the current build. "
                     + "The report name should be referenced in this line of output.");
@@ -319,14 +323,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * Actions when closing the report.
      */
     protected void closeReport() {
-        getSink().close();
-    }
-
-    /**
-     * @return the sink used
-     */
-    public Sink getSink() {
-        return sink;
+        sink.close();
     }
 
     /**
@@ -393,7 +390,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             config.setOut(() -> baos);
             new Reporter(config).output();
-            sink.text(baos.toString());
+            sink.text(baos.toString(StandardCharsets.UTF_8.name()));
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }

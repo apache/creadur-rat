@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -398,18 +397,18 @@ public class ReportConfigurationTest {
     @Test
     public void testSetOut() throws IOException {
         ReportConfiguration config = new ReportConfiguration(log);
-        try (OutputStreamIntercepter osi = new OutputStreamIntercepter()) {
-			config.setOut(() -> osi);
-			assertThat(osi.closeCount).isEqualTo(0);
-			try (OutputStream os = config.getOutput().get()) {
-			    assertThat(osi.closeCount).isEqualTo(0);
-			}
-			assertThat(osi.closeCount).isEqualTo(1);
-			try (OutputStream os = config.getOutput().get()) {
-			    assertThat(osi.closeCount).isEqualTo(1);
-			}
-			assertThat(osi.closeCount).isEqualTo(2);
-		}
+        try (OutputStreamInterceptor osi = new OutputStreamInterceptor()) {
+            config.setOut(() -> osi);
+            assertThat(osi.closeCount).isEqualTo(0);
+            try (OutputStream os = config.getOutput().get()) {
+                assertThat(osi.closeCount).isEqualTo(0);
+            }
+            assertThat(osi.closeCount).isEqualTo(1);
+            try (OutputStream os = config.getOutput().get()) {
+                assertThat(osi.closeCount).isEqualTo(1);
+            }
+            assertThat(osi.closeCount).isEqualTo(2);
+        }
     }
     
     @Test
@@ -587,7 +586,10 @@ public class ReportConfigurationTest {
         validateDefaultLicenses(config);
     }
 
-    static class OutputStreamIntercepter extends OutputStream {
+    /**
+     * A class to act as an output stream an count the number of close operations.
+     */
+    static class OutputStreamInterceptor extends OutputStream {
         
         int closeCount = 0;
 

@@ -19,9 +19,7 @@
 package org.apache.rat.mp;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.text.WordUtils;
 import org.apache.rat.plugin.BaseRatMojo;
-import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
@@ -47,7 +45,7 @@ public class MavenOption {
      * @return the pom xml node.
      */
     public String xmlNode(String  value) {
-        return format("<%1$s>%2$s</%1$s>%n", name, value==null ? "false" : value) ;//: format("<%s>%n", name);
+        return format("<%1$s>%2$s</%1$s>%n", name, value==null ? "false" : value);
     }
 
     /**

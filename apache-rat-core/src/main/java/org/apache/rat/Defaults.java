@@ -43,6 +43,8 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
+import static java.lang.String.format;
+
 /**
  * A class that provides the standard system defaults for the ReportConfiguration.
  * Properties in this class may be overridden or added to by configuration options in the various UIs.
@@ -54,6 +56,12 @@ public final class Defaults {
      * The default configuration file from the package.
      */
     private static final URI DEFAULT_CONFIG_URI;
+
+    /**
+     * The path to the default config resource.
+     */
+    private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
+
     /**
      * The default XSLT stylesheet to produce a text output file.
      */
@@ -63,25 +71,47 @@ public final class Defaults {
      */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
+    /**
+     * The default files to ignore if none are specified.
+     */
     public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
 
+    /**
+     * The default directories to ignore if none are specified.
+     */
     public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
 
+    /**
+     * The default ARCHIVE processing style.
+     */
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
 
+    /**
+     * The default STANDARD processing style.
+     */
     public static final ReportConfiguration.Processing STANDARD_PROCESSING = ReportConfiguration.Processing.ABSENCE;
 
+    /**
+     * The default license families to list.
+     */
     public static final LicenseFilter LIST_FAMILIES = LicenseFilter.NONE;
 
+    /**
+     * The default licenses to list.
+     */
     public static final LicenseFilter LIST_LICENSES = LicenseFilter.NONE;
 
+    /**
+     * The License set factory.
+     */
     private final LicenseSetFactory setFactory;
 
+    // TODO look at this static block with respect to the init() static method and figure out if we need both.
     static {
-         URL url = Defaults.class.getResource("/org/apache/rat/default.xml");
+         URL url = Defaults.class.getResource(DEFAULT_CONFIG_PATH);
          URI uri = null;
          if (url == null) {
-             DefaultLog.getInstance().error("Unable to read '/org/apache/rat/default.xml'");
+             DefaultLog.getInstance().error(format("Unable to read '%s'", DEFAULT_CONFIG_PATH));
          } else {
              try {
                  uri = url.toURI();
@@ -112,9 +142,11 @@ public final class Defaults {
 
     /**
      * Builder constructs instances.
+     * @param log The log to write messages to.
+     * @param uris The set of URIs to read.
      */
-    private Defaults(final Log log, final Set<URI> urls) {
-        this.setFactory = Defaults.readConfigFiles(log, urls);
+    private Defaults(final Log log, final Set<URI> uris) {
+        this.setFactory = Defaults.readConfigFiles(log, uris);
     }
 
     /**
@@ -203,11 +235,11 @@ public final class Defaults {
     public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
         return setFactory.getLicenseFamilyIds(filter);
     }
-    
+
     /**
      * The Defaults builder.
      */
-    public final static class Builder {
+    public static final class Builder {
         private final Set<URI> fileNames = new TreeSet<>();
 
         private Builder() {
@@ -220,7 +252,6 @@ public final class Defaults {
 
         /**
          * Adds a URL to a configuration file to be read.
-         * 
          * @param uri the URI to add
          * @return this Builder for chaining
          */
@@ -231,7 +262,6 @@ public final class Defaults {
 
         /**
          * Adds the name of a configuration file to be read.
-         * 
          * @param fileName the name of the file to add.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the fileName cannot be found.
@@ -242,7 +272,6 @@ public final class Defaults {
 
         /**
          * Adds a configuration file to be read.
-         * 
          * @param file the File to add.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the file cannot be found.
@@ -253,7 +282,6 @@ public final class Defaults {
 
         /**
          * Removes a file from the list of configuration files to process.
-         * 
          * @param uri the URI of the file to remove.
          * @return this Builder for chaining
          */
@@ -264,7 +292,6 @@ public final class Defaults {
 
         /**
          * Removes a file name from the list of configuration files to process.
-         * 
          * @param fileName the fileName of the file to remove.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the fileName cannot be found.
@@ -275,7 +302,6 @@ public final class Defaults {
 
         /**
          * Removes a file from the list of configuration files to process.
-         * 
          * @param file the File of the file to remove.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the file cannot be found.
@@ -286,7 +312,6 @@ public final class Defaults {
 
         /**
          * Removes the default definitions from the list of files to process.
-         * 
          * @return this Builder for chaining
          */
         public Builder noDefault() {

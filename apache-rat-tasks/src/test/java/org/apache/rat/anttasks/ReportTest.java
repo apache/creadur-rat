@@ -261,9 +261,4 @@ public class ReportTest extends AbstractRatAntTaskTest {
         }
         assertTrue("Report file could not be parsed as XML", documentParsed);
     }
-
-    public void testReportOptions(String antFileContents, Predicate<ReportConfiguration> test) {
-
-
-    }
 }
