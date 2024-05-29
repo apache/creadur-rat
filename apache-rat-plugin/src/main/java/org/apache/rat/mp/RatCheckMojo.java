@@ -99,10 +99,10 @@ public class RatCheckMojo extends AbstractRatMojo {
                 // do nothing;
                 break;
             case "TRUE":
-                setAddlicense(true);
+                setAddLicense(true);
                 break;
             case "FORCED":
-                setAddlicense(true);
+                setAddLicense(true);
                 setForce(true);
             default:
                 throw new IllegalArgumentException("Unknown addlicense header: " + addLicenseHeaders);
