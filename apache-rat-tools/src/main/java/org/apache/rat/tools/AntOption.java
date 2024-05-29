@@ -40,18 +40,18 @@ public class AntOption {
     }
 
     /**
-     * Returns {@code true} if the option should be an attribute of the &lt;rat:report> element.
+     * Returns {@code true} if the option should be an attribute of the &lt;rat:report&gt; element.
      *
-     * @return {@code true} if the option should be an attribute of the &lt;rat:report> element.
+     * @return {@code true} if the option should be an attribute of the &lt;rat:report&gt; element.
      */
     public boolean isAttribute() {
         return (!option.hasArgs());
     }
 
     /**
-     * Returns {@code true} if the option should be a child element of the &lt;rat:report> element.
+     * Returns {@code true} if the option should be a child element of the &lt;rat:report&gt; element.
      *
-     * @return {@code true} if the option should be a child element of the &lt;rat:report> element.
+     * @return {@code true} if the option should be a child element of the &lt;rat:report&gt; element.
      */
     public boolean isElement() {
         return !isAttribute() || option.getType() != String.class;
