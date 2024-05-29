@@ -151,7 +151,6 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.2.0</version>
           <executions>
             <execution>
               <phase>generate-sources</phase>
@@ -189,6 +188,14 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>../src/conf/checkstyle.xml</configLocation>
+          <suppressionsLocation>../src/conf/checkstyle-suppressions.xml</suppressionsLocation>
+        </configuration>
       </plugin>
     </plugins>
   </build>
