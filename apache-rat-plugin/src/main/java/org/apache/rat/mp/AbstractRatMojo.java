@@ -413,6 +413,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
             if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
+                Log log = getLog();
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("%s license families loaded from pom", families.length));
                 }
