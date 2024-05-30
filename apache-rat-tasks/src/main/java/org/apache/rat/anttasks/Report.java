@@ -18,7 +18,9 @@
 */
 package org.apache.rat.anttasks;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -64,9 +66,11 @@ import org.apache.tools.ant.types.resources.Union;
  * </ul>
  */
 public class Report extends BaseAntTask {
-
+    /** The list of licenses */
     private final List<License> licenses = new ArrayList<>();
+    /** The list of license families */
     private final List<Family> families = new ArrayList<>();
+    /** the options that are deprecated.  TODO remove this. */
     private final DeprecatedConfig deprecatedConfig = new DeprecatedConfig();
     /**
      * will hold any nested resource collection
@@ -77,10 +81,12 @@ public class Report extends BaseAntTask {
      * Collection of objects that support Ant specific deprecated options
      */
     private static class DeprecatedConfig {
-        IOFileFilter inputFileFilter;
-        Resource styleSheet;
-        Set<String> approvedLicenseCategories = new HashSet<>();
-        Set<String> removedLicenseCategories = new HashSet<>();
+        /** The input file filter */
+        private IOFileFilter inputFileFilter;
+        /** the set of approved licence categories */
+        private final Set<String> approvedLicenseCategories = new HashSet<>();
+        /** the set of removed (unapproved) license categories */
+        private final Set<String> removedLicenseCategories = new HashSet<>();
     }
 
     /**
@@ -93,10 +99,9 @@ public class Report extends BaseAntTask {
 
     /**
      * Adds resources that will be checked.
-     * 
      * @param rc resource to check.
      */
-    public void add(ResourceCollection rc) {
+    public void add(final ResourceCollection rc) {
         if (nestedResources == null) {
             nestedResources = new Union();
         }
@@ -108,7 +113,7 @@ public class Report extends BaseAntTask {
      * @param inputFileFilter The input file filter to add.
      */
     @Deprecated
-    public void setInputFileFilter(IOFileFilter inputFileFilter) {
+    public void setInputFileFilter(final IOFileFilter inputFileFilter) {
         deprecatedConfig.inputFileFilter = inputFileFilter;
     }
 
@@ -118,7 +123,7 @@ public class Report extends BaseAntTask {
      * @deprecated use {@link #setOut(String)}
      */
     @Deprecated
-    public void setReportFile(File reportFile) {
+    public void setReportFile(final File reportFile) {
         setOut(reportFile.getAbsolutePath());
     }
 
@@ -126,7 +131,7 @@ public class Report extends BaseAntTask {
      * Adds an inline License definition to the system.
      * @param license the license to add.
      */
-    public void addLicense(License license) {
+    public void addLicense(final License license) {
         licenses.add(license);
     }
 
@@ -134,7 +139,7 @@ public class Report extends BaseAntTask {
      * Add an inline license family definition to the system.
      * @param family the license family to add.
      */
-    public void addFamily(Family family) {
+    public void addFamily(final Family family) {
         families.add(family);
     }
 
@@ -144,8 +149,8 @@ public class Report extends BaseAntTask {
      * @deprecated use {@link #setStylesheet(String)}
      */
     @Deprecated
-    public void addStylesheet(Resource styleSheet) {
-        deprecatedConfig.styleSheet = styleSheet;
+    public void addStylesheet(final Resource styleSheet) {
+        setStylesheet(styleSheet.getName());
     }
 
     /**
@@ -154,8 +159,8 @@ public class Report extends BaseAntTask {
      * @deprecated use {@link #setStylesheet(String)}
      */
     @Deprecated
-    public void addStyleSheet(Resource styleSheet) {
-        deprecatedConfig.styleSheet = styleSheet;
+    public void addStyleSheet(final Resource styleSheet) {
+        setStylesheet(styleSheet.getName());
     }
 
     /**
@@ -164,7 +169,7 @@ public class Report extends BaseAntTask {
      * @deprecated use {@link #setXml(boolean)}.  Note reversal of boolean value
      */
     @Deprecated
-    public void setStyleReport(boolean styleReport) {
+    public void setStyleReport(final boolean styleReport) {
         setXml(!styleReport);
     }
 
@@ -174,7 +179,7 @@ public class Report extends BaseAntTask {
      * @deprecated use {@link #setStylesheet(String)} or {@link #setXml(boolean)}
      */
     @Deprecated
-    public void setFormat(String style) {
+    public void setFormat(final String style) {
         setStyleReport("styled".equalsIgnoreCase(style));
     }
 
@@ -183,7 +188,7 @@ public class Report extends BaseAntTask {
      * @param fileName the file to add.
      * @deprecated use licenses child element.
      */
-    public void setLicenses(File fileName) {
+    public void setLicenses(final File fileName) {
         try {
             createLicenses().addText(fileName.getCanonicalPath());
         } catch (IOException e) {
@@ -197,7 +202,7 @@ public class Report extends BaseAntTask {
      * @deprecated  use noDefaultLicenses attribute
      */
     @Deprecated
-    public void setUseDefaultLicenses(boolean useDefaultLicenses) {
+    public void setUseDefaultLicenses(final boolean useDefaultLicenses) {
         setNoDefaultLicenses(!useDefaultLicenses);
     }
 
@@ -207,7 +212,7 @@ public class Report extends BaseAntTask {
      * @deprecated use addApprovedLicense child element.
      */
     @Deprecated
-    public void setAddApprovedLicense(String familyCategory) {
+    public void setAddApprovedLicense(final String familyCategory) {
         deprecatedConfig.approvedLicenseCategories.add(familyCategory);
     }
 
@@ -215,7 +220,7 @@ public class Report extends BaseAntTask {
      * Adds a family category to the list of approved licenses.
      * @param familyCategory the category to add
      */
-    public void addAddApprovedLicense(String familyCategory) {
+    public void addAddApprovedLicense(final String familyCategory) {
         deprecatedConfig.approvedLicenseCategories.add(familyCategory);
     }
 
@@ -225,7 +230,7 @@ public class Report extends BaseAntTask {
      * @deprecated use removeApprovedLicense child element}
      */
     @Deprecated
-    public void setRemoveApprovedLicense(String familyCategory) {
+    public void setRemoveApprovedLicense(final String familyCategory) {
         deprecatedConfig.removedLicenseCategories.add(familyCategory);
     }
 
@@ -233,7 +238,7 @@ public class Report extends BaseAntTask {
      * Removes a family category to the list of approved licenses.
      * @param familyCategory the category to add.
      */
-    public void addRemoveApprovedLicense(String familyCategory) {
+    public void addRemoveApprovedLicense(final String familyCategory) {
         deprecatedConfig.removedLicenseCategories.add(familyCategory);
     }
 
@@ -243,7 +248,7 @@ public class Report extends BaseAntTask {
      * @deprecated use removeApprovedLicense element
      */
     @Deprecated
-    public void setRemoveApprovedLicense(String[] familyCategory) {
+    public void setRemoveApprovedLicense(final String[] familyCategory) {
         deprecatedConfig.removedLicenseCategories.addAll(Arrays.asList(familyCategory));
     }
 
@@ -251,7 +256,7 @@ public class Report extends BaseAntTask {
      * Removes a family category to the list of approved licenses.
      * @param familyCategory the category to add.
      */
-    public void addRemoveApprovedLicense(String[] familyCategory) {
+    public void addRemoveApprovedLicense(final String[] familyCategory) {
         deprecatedConfig.removedLicenseCategories.addAll(Arrays.asList(familyCategory));
     }
     /**
@@ -260,7 +265,7 @@ public class Report extends BaseAntTask {
      * @deprecated use copyright attribute
      */
     @Deprecated
-    public void setCopyrightMessage(String copyrightMessage) {
+    public void setCopyrightMessage(final String copyrightMessage) {
        setCopyright(copyrightMessage);
     }
 
@@ -270,7 +275,7 @@ public class Report extends BaseAntTask {
      * @deprecated use addLicense and force attributes
      */
     @Deprecated
-    public void setAddLicenseHeaders(AddLicenseHeaders setting) {
+    public void setAddLicenseHeaders(final AddLicenseHeaders setting) {
         switch (setting.getNative()) {
             case TRUE:
                 setAddLicense(true);
@@ -291,7 +296,7 @@ public class Report extends BaseAntTask {
      * @deprecated Use {@link #addLicense}
      */
     @Deprecated
-    public void setAddDefaultDefinitions(File fileName) {
+    public void setAddDefaultDefinitions(final File fileName) {
         try {
             Licenses lic = createLicenses();
             lic.addText(fileName.getCanonicalPath());
@@ -315,9 +320,6 @@ public class Report extends BaseAntTask {
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
-            if (deprecatedConfig.styleSheet != null) {
-                configuration.setStyleSheet(() -> deprecatedConfig.styleSheet.getInputStream());
-            }
             if (deprecatedConfig.inputFileFilter != null) {
                 if (configuration.getFilesToIgnore() != null) {
                     configuration.setFilesToIgnore(new OrFileFilter(configuration.getFilesToIgnore(), deprecatedConfig.inputFileFilter));
@@ -353,7 +355,7 @@ public class Report extends BaseAntTask {
     /**
      * validates the task's configuration.
      */
-    protected ReportConfiguration validate(ReportConfiguration cfg) {
+    protected ReportConfiguration validate(final ReportConfiguration cfg) {
         try {
             cfg.validate(s -> log(s, Project.MSG_WARN));
         } catch (ConfigurationException e) {
@@ -371,14 +373,17 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public static class AddLicenseHeaders extends EnumeratedAttribute {
+        /** add license headers and create *.new file */
         static final String TRUE = "true";
+        /** do not add license headers */
         static final String FALSE = "false";
+        /** add license headers and overwrite existing files */
         static final String FORCED = "forced";
 
         public AddLicenseHeaders() {
         }
 
-        public AddLicenseHeaders(String s) {
+        public AddLicenseHeaders(final String s) {
             setValue(s);
         }
 
@@ -402,7 +407,7 @@ public class Report extends BaseAntTask {
         public ApprovalFilter() {
         }
 
-        public ApprovalFilter(String s) {
+        public ApprovalFilter(final String s) {
             setValue(s);
         }
 
@@ -422,15 +427,14 @@ public class Report extends BaseAntTask {
      */
     private class Logger implements Log {
 
-        private void write(int level, String msg) {
-            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level)))
-            {
+        private void write(final int level, final String msg) {
+            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level))) {
                pw.write(msg);
             }
         }
 
         @Override
-        public void log(Level level, String msg) {
+        public void log(final Level level, final String msg) {
             switch (level) {
             case DEBUG:
                 write(Project.MSG_DEBUG, msg);

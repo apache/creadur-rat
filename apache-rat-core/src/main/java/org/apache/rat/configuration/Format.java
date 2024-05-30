@@ -37,9 +37,12 @@ public enum Format {
     /** A plain text file */
     TXT(null, "txt", "text");
 
+    /** The list of file suffix that this format applies to*/
     private final String[] suffix;
 
+    /** The constructor for the MatcherReader for this Format */
     private Constructor<MatcherReader> matcherReader;
+    /** The constructor for the LicenseReader for this Format */
     private Constructor<LicenseReader> licenseReader;
 
     @SuppressWarnings("unchecked")

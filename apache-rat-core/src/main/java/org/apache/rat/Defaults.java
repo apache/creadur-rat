@@ -18,6 +18,8 @@
  */
 package org.apache.rat;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -42,8 +44,6 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
-
-import static java.lang.String.format;
 
 /**
  * A class that provides the standard system defaults for the ReportConfiguration.
@@ -240,6 +240,7 @@ public final class Defaults {
      * The Defaults builder.
      */
     public static final class Builder {
+        /** The list of URIs that we wil read to configure the Defaults */
         private final Set<URI> fileNames = new TreeSet<>();
 
         private Builder() {

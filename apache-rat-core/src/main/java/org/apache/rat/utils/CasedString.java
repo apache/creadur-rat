@@ -18,13 +18,13 @@
  */
 package org.apache.rat.utils;
 
-import org.apache.commons.text.WordUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import org.apache.commons.text.WordUtils;
 
 /**
  * Handles converting from one string case to another (e.g. camel case to snake case).
@@ -85,7 +85,9 @@ public class CasedString {
          */
         DOT(c -> c == '.', false, a -> String.join(".", a));
 
+        /** The segment value for a null string */
         private static final String[] NULL_SEGMENT = new String[0];
+        /** The segment value for an empty string */
         private static final String[] EMPTY_SEGMENT = {""};
 
         /** test for split position character. */

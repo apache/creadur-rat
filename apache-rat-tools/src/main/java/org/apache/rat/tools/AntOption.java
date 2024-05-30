@@ -18,25 +18,35 @@
  */
 package org.apache.rat.tools;
 
+import static java.lang.String.format;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.utils.CasedString;
-
-import static java.lang.String.format;
 
 /**
  * A class that wraps the CLI option and provides Ant specific values.
  */
 public class AntOption {
-    final Option option;
-    /**
-     * An uncapitalized name
-     */
-    final String name;
+    /** The CLI option we are wrapping */
+    private final Option option;
+    /** An uncapitalized name */
+    private final String name;
 
-    AntOption(Option option) {
+    /**
+     * Constructor.
+     * @param option the option to wrap.
+     */
+    AntOption(final Option option) {
         this.option = option;
         name = AntGenerator.createName(option);
+    }
+
+    /**
+     * Gets the Ant name for the option.
+     * @return the Ant name for the option.
+     */
+    public String getName() {
+        return name;
     }
 
     /**
@@ -45,7 +55,7 @@ public class AntOption {
      * @return {@code true} if the option should be an attribute of the &lt;rat:report&gt; element.
      */
     public boolean isAttribute() {
-        return (!option.hasArgs());
+        return !option.hasArgs();
     }
 
     /**
@@ -81,7 +91,7 @@ public class AntOption {
      * @param addParam if {@code true} the param annotation is added.
      * @return the Comment block for the function.
      */
-    public String getComment(boolean addParam) {
+    public String getComment(final boolean addParam) {
         StringBuilder sb = new StringBuilder()
                 .append(format("    /**%n     * %s%n", option.getDescription().replaceAll("<", "&lt;").replaceAll(">", "&gt;")));
         if (option.isDeprecated()) {

@@ -18,23 +18,36 @@
  */
 package org.apache.rat.tools;
 
+import static java.lang.String.format;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.text.WordUtils;
 
-import static java.lang.String.format;
-
+/**
+ * A representation of a CLI option as a Maven option
+ */
 public class MavenOption {
-    final Option option;
-    final String name;
+    /** The CLI that the Maven option is wrapping */
+    private final Option option;
+    /** The Maven name for the option */
+    private final String name;
 
     /**
      * Constructor.
      *
      * @param option The CLI option
      */
-    MavenOption(Option option) {
+    MavenOption(final Option option) {
         this.option = option;
         this.name = MavenGenerator.createName(option);
+    }
+
+    /**
+     * Gets the Maven name for the CLI option.
+     * @return The Maven name for the CLI option.
+     */
+    public String getName() {
+        return name;
     }
 
     /**
@@ -52,8 +65,8 @@ public class MavenOption {
      * @param value the value
      * @return the pom xml node.
      */
-    public String xmlNode(String value) {
-        return format("<%1$s>%2$s</%1$s>%n", name, value == null ? "false" : value);//: format("<%s>%n", name);
+    public String xmlNode(final String value) {
+        return format("<%1$s>%2$s</%1$s>%n", name, value == null ? "false" : value);
     }
 
     /**
@@ -92,7 +105,7 @@ public class MavenOption {
         return option.getDeprecated().toString();
     }
 
-    public String getMethodSignature(String indent) {
+    public String getMethodSignature(final String indent) {
         StringBuilder sb = new StringBuilder();
         if (isDeprecated()) {
             sb.append(format("%s@Deprecated%n", indent));
@@ -100,5 +113,13 @@ public class MavenOption {
         return sb.append(format("%1$s@Parameter(property = \"rat.%2$s\")%n%1$spublic void set%3$s(%4$s %2$s)",
                         indent, name, WordUtils.capitalize(name), option.hasArg() ? "String" : "boolean"))
                 .toString();
+    }
+
+    /**
+     * Returns {@code true} if the option has multiple arguments.
+     * @return {@code true} if the option has multiple arguments.
+     */
+    public boolean hasArgs() {
+        return option.hasArgs();
     }
 }

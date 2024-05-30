@@ -18,6 +18,8 @@
  */
 package org.apache.rat;
 
+import static java.lang.String.format;
+
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
@@ -27,8 +29,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.utils.DefaultLog;
-
-import static java.lang.String.format;
 
 /**
  * The CLI based configuration object for report generation.

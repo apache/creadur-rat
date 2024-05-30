@@ -326,7 +326,7 @@ public class OptionMojoTest   {
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
             List<Arguments> lst = new ArrayList<>();
 
-            List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.ANT_FILTER).collect(Collectors.toList());
+            List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.getFilter()).collect(Collectors.toList());
             for (Option option : opt) {
                 if (option.getLongOpt() != null) {
                     String name = BaseRatMojo.createName(option.getLongOpt());

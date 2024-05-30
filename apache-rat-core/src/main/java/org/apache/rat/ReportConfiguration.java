@@ -473,7 +473,7 @@ public class ReportConfiguration {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
-                log.warn("Unable to delete file:"+file);
+                log.warn("Unable to delete file:" + file);
             }
         }
         setOut(() -> new FileOutputStream(file, true));
@@ -543,7 +543,7 @@ public class ReportConfiguration {
         this.licenses.addAllIfNotPresent(licenses);
         licenses.stream().map(ILicense::getLicenseFamily).forEach(families::addIfNotPresent);
     }
-    
+
     /**
      * Adds a license family to the list of families. Does not add the family to the
      * list of approved licenses.
@@ -761,12 +761,12 @@ public class ReportConfiguration {
          * Constructor.
          * @param delegate the output stream to wrap.
          */
-        public NoCloseOutputStream(OutputStream delegate) {
+        public NoCloseOutputStream(final OutputStream delegate) {
             this.delegate = delegate;
         }
 
         @Override
-        public void write(int arg0) throws IOException {
+        public void write(final int arg0) throws IOException {
             delegate.write(arg0);
         }
 
@@ -780,7 +780,7 @@ public class ReportConfiguration {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             return delegate.equals(obj);
         }
 
@@ -800,12 +800,12 @@ public class ReportConfiguration {
         }
 
         @Override
-        public void write(byte[] arg0, int arg1, int arg2) throws IOException {
+        public void write(final byte[] arg0, final int arg1, final int arg2) throws IOException {
             delegate.write(arg0, arg1, arg2);
         }
 
         @Override
-        public void write(byte[] b) throws IOException {
+        public void write(final byte[] b) throws IOException {
             delegate.write(b);
         }
     }
