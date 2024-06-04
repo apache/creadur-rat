@@ -20,4 +20,4 @@
 **/.gitignore
 **/lib/
 **/bin
-*/.mvn/.develocity
+**/.mvn/.develocity*
