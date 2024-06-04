@@ -23,6 +23,9 @@ on:
 #      - dependabot/**
   pull_request:
 
+env:
+  DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_ACCESS_TOKEN }}
+
 jobs:
   build:
 
