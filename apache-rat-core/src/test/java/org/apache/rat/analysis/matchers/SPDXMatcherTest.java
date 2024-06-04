@@ -18,8 +18,7 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
@@ -45,9 +44,9 @@ public class SPDXMatcherTest {
 
         IHeaders headers =  AbstractMatcherTest.makeHeaders(sb.toString(),null);
 
-        assertTrue(target1.matches(headers));
-        assertTrue(target2.matches(headers));
-        assertFalse(target3.matches(headers));
+        assertThat(target1.matches(headers)).isTrue();
+        assertThat(target2.matches(headers)).isTrue();
+        assertThat(target3.matches(headers)).isFalse();
         target1.reset();
     }
 }

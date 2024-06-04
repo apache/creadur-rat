@@ -82,7 +82,7 @@ public class DefaultAnalyserFactoryTest {
         reporter.report(document);
         String result = out.toString();
         for (String exp : expected) {
-            assertThat(result.contains(exp)).isTrue();
+            assertThat(result).contains(exp);
         }
     }
 
@@ -92,7 +92,7 @@ public class DefaultAnalyserFactoryTest {
                 Resources.getResourceFile("/elements/LICENSE"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/LICENSE' type='NOTICE'/>", out.toString());
+        assertThat(out.toString()).isEqualTo("<resource name='src/test/resources/elements/LICENSE' type='NOTICE'/>");
     }
 
     @Test
@@ -101,7 +101,7 @@ public class DefaultAnalyserFactoryTest {
                 Resources.getResourceFile("/elements/Image.png"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/Image.png' type='BINARY'/>", out.toString());
+        assertThat(out.toString()).isEqualTo("<resource name='src/test/resources/elements/Image.png' type='BINARY'/>");
     }
 
     @Test
@@ -115,7 +115,7 @@ public class DefaultAnalyserFactoryTest {
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString());
+        assertThat(out.toString()).isEqualTo("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>");
     }
 
     @Test
@@ -131,9 +131,9 @@ public class DefaultAnalyserFactoryTest {
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        TextUtils.assertContains("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'>", out.toString());
-        TextUtils.assertContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", out.toString());
-        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", out.toString());
+        TextUtils.assertContains("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'>", result);
+        TextUtils.assertContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", result);
+        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", result);
     }
 
     @Test
@@ -149,9 +149,9 @@ public class DefaultAnalyserFactoryTest {
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        TextUtils.assertContains("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'>", out.toString());
-        TextUtils.assertNotContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", out.toString());
-        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", out.toString());
+        TextUtils.assertContains("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'>", result);
+        TextUtils.assertNotContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", result);
+        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", result);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class DefaultAnalyserFactoryTest {
                 Resources.getResourceFile("/elements/dummy.jar"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString());
+        assertThat(out.toString()).isEqualTo("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>");
     }
 
     @Test
@@ -169,7 +169,7 @@ public class DefaultAnalyserFactoryTest {
                 Resources.getResourceFile("/jira/RAT211/side_left.bmp"));
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/jira/RAT211/side_left.bmp' type='BINARY'/>", out.toString());
+        assertThat(out.toString()).isEqualTo("<resource name='src/test/resources/jira/RAT211/side_left.bmp' type='BINARY'/>");
     }
 
     @Test
