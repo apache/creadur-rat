@@ -34,7 +34,6 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +41,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test to see if short form license information will be recognized correctly.
- *
  */
 abstract public class AbstractLicenseTest {
     private static int NAME = 0;
