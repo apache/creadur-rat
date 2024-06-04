@@ -18,8 +18,7 @@
  */
 package org.apache.rat.analysis.license;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
@@ -75,8 +74,8 @@ abstract public class AbstractLicenseTest {
             for (String[] target : targets) {
                 if (processText(license, target[TEXT])) {
                     data.reportOnLicense(license);
-                    assertEquals(1, data.licenses().count());
-                    assertEquals(license, data.licenses().findFirst().get());
+                    assertThat(data.licenses()).hasSize(1);
+                    assertThat(data.licenses().findFirst()).isPresent().hasValue(license);
                 } else {
                     fail(license + " was not matched by " + target[NAME]);
                 }
@@ -108,8 +107,7 @@ abstract public class AbstractLicenseTest {
                 for (String fmt : formats) {
                     boolean found = processText(license, String.format(fmt, target[TEXT]));
                     license.reset();
-                    assertTrue(found, () -> String.format("%s %s did not match pattern '%s' for target string %s", id,
-                            name, fmt, target[NAME]));
+                    assertThat(found).isTrue();
                 }
             }
         } finally {

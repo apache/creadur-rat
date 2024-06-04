@@ -18,6 +18,7 @@
  */
 package org.apache.rat.analysis;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -81,7 +82,7 @@ public class DefaultAnalyserFactoryTest {
         reporter.report(document);
         String result = out.toString();
         for (String exp : expected) {
-            assertTrue(result.contains(exp), () -> exp);
+            assertThat(result.contains(exp)).isTrue();
         }
     }
 
