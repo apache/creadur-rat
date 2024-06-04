@@ -106,7 +106,7 @@ pipeline {
         stage('Ensure site build works') {
             steps {
                 echo 'Verify site build is okay ....'
-                sh './mvnw site:site'
+                sh './mvnw site'
             }
         }
     }
