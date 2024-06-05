@@ -4,6 +4,8 @@ ASF Jenkins: [![ASF Jenkins Build Status](https://ci-builds.apache.org/buildStat
 
 GA: [![Github Action master branch status](https://github.com/apache/creadur-rat/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/apache/creadur-rat/actions)
 
+[![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.apache.org/scans?search.buildToolType=maven&search.rootProjectNames=Apache%20Creadur%20Rat)
+
 ## What is RAT?
 
 Apache Rat is developed by the Apache Creadur project of the Apache Software
