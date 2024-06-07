@@ -159,15 +159,15 @@ public final class Defaults {
 
     /**
      * Reads the configuration files.
-     * @param urls the URIs to read.
+     * @param uris the URIs to read.
      */
-    private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URI> urls) {
+    private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URI> uris) {
 
         SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
 
         SortedSet<String> approvedLicenseIds = new TreeSet<>();
 
-        for (URI uri : urls) {
+        for (URI uri : uris) {
             try {
                 URL url = uri.toURL();
                 Format fmt = Format.fromURL(url);

@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -103,7 +104,7 @@ public final class MavenGenerator {
             if (template == null) {
                 throw new RuntimeException("Template /Maven.tpl not found");
             }
-            LineIterator iter = IOUtils.lineIterator(new InputStreamReader(template));
+            LineIterator iter = IOUtils.lineIterator(new InputStreamReader(template, StandardCharsets.UTF_8));
             while (iter.hasNext()) {
                 String line = iter.next();
                 switch (line.trim()) {

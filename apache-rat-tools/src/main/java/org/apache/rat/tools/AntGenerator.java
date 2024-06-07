@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,7 @@ import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
 /**
- * A simple tool to convert CLI options into Ant report base class .
+ * A simple tool to convert CLI options into an Ant report base class .
  */
 public final class AntGenerator {
 
@@ -107,7 +108,7 @@ public final class AntGenerator {
             if (template == null) {
                 throw new RuntimeException("Template /Ant.tpl not found");
             }
-            LineIterator iter = IOUtils.lineIterator(new InputStreamReader(template));
+            LineIterator iter = IOUtils.lineIterator(new InputStreamReader(template, StandardCharsets.UTF_8));
             while (iter.hasNext()) {
                 String line = iter.next();
                 switch (line.trim()) {

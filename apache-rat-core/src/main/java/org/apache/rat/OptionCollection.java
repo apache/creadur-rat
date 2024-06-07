@@ -366,7 +366,7 @@ public final class OptionCollection {
                     logParseException(log, e, LOG_LEVEL, cl, dLog.getLevel());
                 }
             } else {
-                log.error("log was not a DefaultLog instance.  LogLevel not set.");
+                log.error("log was not a DefaultLog instance. LogLevel not set.");
             }
         }
         if (cl.hasOption(HELP)) {
@@ -403,7 +403,7 @@ public final class OptionCollection {
 
     /**
      * Create the report configuration.
-     * Note: this method is package private for testing.  You probably want one of the {@code PprseCommands} methods.
+     * Note: this method is package private for testing.  You probably want one of the {@code ParseCommands} methods.
      * @param log The log to log errors to.
      * @param baseDirectory the base directory where files will be found.
      * @param cl the parsed command line.

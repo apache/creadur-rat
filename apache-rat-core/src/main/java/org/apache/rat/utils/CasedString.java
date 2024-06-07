@@ -120,7 +120,7 @@ public class CasedString {
 
         /**
          * Returns an array of each of the segments in this CasedString.  Segments are defined as the strings between
-         * the separators in the CasedString.  for the CAMEL case the segments are determined by the presence of a capital letter.
+         * the separators in the CasedString.  For the CAMEL case the segments are determined by the presence of a capital letter.
          * @return the array of Strings that are segments of the cased string.
          */
         public String[] getSegments(final String string) {
@@ -164,7 +164,7 @@ public class CasedString {
 
     /**
      * Returns an array of each of the segments in this CasedString.  Segments are defined as the strings between
-     * the separators in the CasedString.  for the CAMEL case the segments are determined by the presence of a capital letter.
+     * the separators in the CasedString.  For the CAMEL case the segments are determined by the presence of a capital letter.
      * @return the array of Strings that are segments of the cased string.
      */
     public String[] getSegments() {
@@ -174,7 +174,7 @@ public class CasedString {
     /**
      * Converts this cased string into a {@code String} of another format.
      * The upper/lower case of the characters within the string are not modified.
-     * @param stringCase THe fomrat to convert to.
+     * @param stringCase The format to convert to.
      * @return the String current string represented in the new format.
      */
     public String toCase(final StringCase stringCase) {
