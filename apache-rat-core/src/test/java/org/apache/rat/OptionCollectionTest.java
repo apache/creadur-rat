@@ -21,6 +21,7 @@ package org.apache.rat;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -62,6 +63,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -118,15 +120,32 @@ public class OptionCollectionTest {
         TestingLog log = new TestingLog();
         try {
             DefaultLog.setInstance(log);
-            String[] args = {longOpt(OptionCollection.DIR), "foo", "-a"};
-            ReportConfiguration config = OptionCollection.parseCommands(args, (o) -> {
-            }, true);
-
+            String[] args = {longOpt(OptionCollection.DIR), "target", "-a"};
+            ReportConfiguration config = OptionCollection.parseCommands(args, o -> fail("Help printed"), true);
         } finally {
             DefaultLog.setInstance(null);
         }
         log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
+        log.assertNotContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", 1);
         log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '-A' or '--addLicense'");
+        log.assertNotContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '-A' or '--addLicense'", 1);
+    }
+
+    @Test
+    public void testDirOptionCapturesDirectoryToScan() throws IOException {
+        TestingLog log = new TestingLog();
+        ReportConfiguration config = null;
+        try {
+            DefaultLog.setInstance(log);
+            String[] args = {longOpt(OptionCollection.DIR), "foo"};
+            config = OptionCollection.parseCommands(args, (o) -> {
+            });
+        } finally {
+            DefaultLog.setInstance(null);
+        }
+        assertThat(config).isNotNull();
+        log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
+        log.assertNotContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", 1);
     }
 
     @Test

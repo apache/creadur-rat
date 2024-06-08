@@ -18,57 +18,22 @@
  */
 package org.apache.rat;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
+import static java.lang.String.format;
+
 import java.io.PrintWriter;
-import java.io.Serializable;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Converter;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.commons.io.function.IOSupplier;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.api.Document;
-import org.apache.rat.config.AddLicenseHeaders;
-import org.apache.rat.document.impl.FileDocument;
-import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
-import org.apache.rat.utils.Log.Level;
-import org.apache.rat.walker.ArchiveWalker;
-import org.apache.rat.walker.DirectoryWalker;
-
-import static java.lang.String.format;
 
 /**
  * The CLI based configuration object for report generation.

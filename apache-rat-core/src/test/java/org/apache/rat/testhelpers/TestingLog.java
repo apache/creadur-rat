@@ -50,6 +50,10 @@ public class TestingLog implements Log {
         TextUtils.assertNotContains(expected, captured.toString());
     }
 
+    public void assertNotContains(String expected, int repetition) {
+        TextUtils.assertNotContains(expected, captured.toString(), repetition);
+    }
+
     public void assertContainsPattern(String pattern) {
         TextUtils.assertPatternInTarget(pattern, captured.toString());
     }
