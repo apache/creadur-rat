@@ -469,6 +469,8 @@ public final class OptionCollection {
             configuration.setCopyrightMessage(cl.getOptionValue(COPYRIGHT));
         }
 
+        // TODO when include/exclude processing is updated check calling methods to ensure that all specified
+        // directories are handled in the list of directories.
         if (cl.hasOption(EXCLUDE_CLI)) {
             DeprecationReporter.logDeprecated(log, EXCLUDE_CLI);
             String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
