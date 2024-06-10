@@ -325,33 +325,18 @@ public class ReportConfigurationTest {
     public void testFlags() {
         assertThat(underTest.isAddingLicenses()).isFalse();
         assertThat(underTest.isAddingLicensesForced()).isFalse();
-        assertThat(underTest.isStyleReport()).isTrue();
 
         underTest.setAddLicenseHeaders(AddLicenseHeaders.TRUE);
         assertThat(underTest.isAddingLicenses()).isTrue();
         assertThat(underTest.isAddingLicensesForced()).isFalse();
-        assertThat(underTest.isStyleReport()).isTrue();
 
         underTest.setAddLicenseHeaders(AddLicenseHeaders.FALSE);
         assertThat(underTest.isAddingLicenses()).isFalse();
         assertThat(underTest.isAddingLicensesForced()).isFalse();
-        assertThat(underTest.isStyleReport()).isTrue();
 
         underTest.setAddLicenseHeaders(AddLicenseHeaders.FORCED);
         assertThat(underTest.isAddingLicenses()).isTrue();
         assertThat(underTest.isAddingLicensesForced()).isTrue();
-        assertThat(underTest.isStyleReport()).isTrue();
-
-        underTest.setAddLicenseHeaders(AddLicenseHeaders.FALSE);
-        underTest.setStyleReport(false);
-        assertThat(underTest.isAddingLicenses()).isFalse();
-        assertThat(underTest.isAddingLicensesForced()).isFalse();
-        assertThat(underTest.isStyleReport()).isFalse();
-
-        underTest.setStyleReport(true);
-        assertThat(underTest.isAddingLicenses()).isFalse();
-        assertThat(underTest.isAddingLicensesForced()).isFalse();
-        assertThat(underTest.isStyleReport()).isTrue();
     }
 
     @Test
@@ -375,21 +360,7 @@ public class ReportConfigurationTest {
         }
 
         underTest.addLicense(testingLicense("valid", "Validation testing license"));
-        try {
-            underTest.validate(sb::append);
-            fail("should have thrown ConfigurationException");
-        } catch (ConfigurationException e) {
-            assertThat(e.getMessage()).isEqualTo("Stylesheet must be specified if report styling is selected");
-            assertThat(sb.length()).isEqualTo(0);
-        }
-
-        underTest.setStyleSheet(()->mock(InputStream.class));
-        underTest.setStyleReport(false);
-        underTest.validate(sb::append);
-        assertThat(sb.toString()).isEqualTo("Ignoring stylesheet because styling is not selected");
-
         final StringBuilder sb2 = new StringBuilder();
-        underTest.setStyleReport(true);
         underTest.validate(sb2::append);
         assertThat(sb2.length()).isEqualTo(0);
     }
@@ -576,7 +547,6 @@ public class ReportConfigurationTest {
         assertThat(config.isAddingLicensesForced()).isFalse();
         assertThat(config.getCopyrightMessage()).isNull();
         assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
-        assertThat(config.isStyleReport()).isTrue();
         assertThat(config.getStyleSheet()).withFailMessage("Stylesheet should not be null").isNotNull();
         assertThat(config.getDirectoriesToIgnore()).withFailMessage("Directory filter should not be null").isNotNull();
         assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);

@@ -21,22 +21,17 @@ package org.apache.rat.mp;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.rat.IOptionsProvider;
+import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.ReportTest;
+import org.apache.rat.commandline.OutputArgs;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.plugin.BaseRatMojo;
@@ -44,7 +39,6 @@ import org.apache.rat.tools.AntGenerator;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -100,7 +94,7 @@ public class OptionMojoTest   {
         test.test();
     }
 
-    public static class OptionsProvider  implements ArgumentsProvider, IOptionsProvider {
+    public static class OptionsProvider  implements ArgumentsProvider, AbstractOptionsProvider {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
@@ -116,13 +110,13 @@ public class OptionMojoTest   {
             testMap.put(OptionCollection.EXCLUDE_FILE_CLI, this::excludeCliFileTest);
             testMap.put(OptionCollection.FORCE, this::forceTest);
             testMap.put(OptionCollection.LICENSES, this::licensesTest);
-            testMap.put(OptionCollection.LIST_LICENSES, this::listLicensesTest);
-            testMap.put(OptionCollection.LIST_FAMILIES, this::listFamiliesTest);
+            testMap.put(OutputArgs.LIST_LICENSES, this::listLicensesTest);
+            testMap.put(OutputArgs.OUTPUT_FAMILIES, this::listFamiliesTest);
             testMap.put(OptionCollection.NO_DEFAULTS, this::noDefaultsTest);
-            testMap.put(OptionCollection.OUT, this::outTest);
+            testMap.put(OutputArgs.OUT, this::outTest);
             testMap.put(OptionCollection.SCAN_HIDDEN_DIRECTORIES, this::scanHiddenDirectoriesTest);
-            testMap.put(OptionCollection.STYLESHEET_CLI, this::styleSheetTest);
-            testMap.put(OptionCollection.XML, this::xmlTest);
+            testMap.put(OutputArgs.STYLESHEET_CLI, this::styleSheetTest);
+            testMap.put(OutputArgs.XML, this::xmlTest);
         }
 
        private RatCheckMojo generateMojo(Pair<Option,Object>... args) {
@@ -261,7 +255,7 @@ public class OptionMojoTest   {
         @Override
         public void listLicensesTest() {
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-                ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.LIST_LICENSES, filter.name()));
+                ReportConfiguration config = generateConfig(ImmutablePair.of(OutputArgs.LIST_LICENSES, filter.name()));
                 assertEquals(filter, config.listLicenses());
             }
         }
@@ -269,7 +263,7 @@ public class OptionMojoTest   {
         @Override
         public void listFamiliesTest() {
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-                ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.LIST_FAMILIES, filter.name()));
+                ReportConfiguration config = generateConfig(ImmutablePair.of(OutputArgs.OUTPUT_FAMILIES, filter.name()));
                 assertEquals(filter, config.listFamilies());
             }
         }
@@ -285,7 +279,7 @@ public class OptionMojoTest   {
         @Override
         public void outTest() {
             File outFile = new File( testPath.toFile(), "outexample");
-            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.OUT, outFile.getAbsolutePath()));
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OutputArgs.OUT, outFile.getAbsolutePath()));
             try (OutputStream os = config.getOutput().get()) {
                 os.write("Hello world".getBytes());
             } catch (IOException e) {
@@ -311,14 +305,14 @@ public class OptionMojoTest   {
                 fail("Could not locate 'MatcherContainerResource.txt'");
             }
             for (String sheet : new String[]{"target/optionTools/stylesheet.xlt", "plain-rat", "missing-headers", "unapproved-licenses", url.getFile()}) {
-                ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.STYLESHEET_CLI, sheet));
+                ReportConfiguration config = generateConfig(ImmutablePair.of(OutputArgs.STYLESHEET_CLI, sheet));
                 assertTrue(config.isStyleReport());
             }
         }
 
         @Override
         public void xmlTest() {
-            ReportConfiguration config = generateConfig(ImmutablePair.of(OptionCollection.XML, true ));
+            ReportConfiguration config = generateConfig(ImmutablePair.of(OutputArgs.XML, true ));
             assertFalse(config.isStyleReport());
         }
 

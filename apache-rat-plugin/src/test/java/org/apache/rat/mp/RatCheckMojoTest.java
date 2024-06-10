@@ -31,10 +31,10 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.api.Document;
+import org.apache.rat.commandline.OutputArgs;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
@@ -99,7 +99,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      * @throws Exception An error occurred while reading the property.
      */
     private File getRatTxtFile(RatCheckMojo pMojo) throws Exception {
-        MavenOption mavenOption = new MavenOption(OptionCollection.OUT);
+        MavenOption mavenOption = new MavenOption(OutputArgs.OUT);
         List<String> args = pMojo.getArg(mavenOption.keyValue());
         return new File(args.get(0));
     }

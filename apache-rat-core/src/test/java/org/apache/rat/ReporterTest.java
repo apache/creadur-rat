@@ -37,6 +37,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.api.Document.Type;
+import org.apache.rat.commandline.OutputArgs;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.test.utils.Resources;
@@ -111,14 +113,11 @@ public class ReporterTest {
         File output = new File(tempDirectory,"sysout");
         output.delete();
         PrintStream origin = System.out;
-        try (PrintStream out = new PrintStream(output)){
-            System.setOut(out);
-            CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[] { "-x" });
-            ReportConfiguration config = OptionCollection.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
-            new Reporter(config).output();
-        } finally {
-            System.setOut(origin);
-        }
+
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[] { "--output-style", "xml", "--output-file", output.getPath() });
+        ReportConfiguration config = OptionCollection.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
+        new Reporter(config).output();
+
         assertTrue(output.exists());
         Document doc = XmlUtils.toDom(new FileInputStream(output));
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -211,7 +210,7 @@ public class ReporterTest {
 
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.getInstance());
-        configuration.setStyleReport(false);
+        configuration.setStyleSheet(OutputArgs.getStyleSheet(StyleSheets.XML));
         configuration.setFrom(defaults);
         configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
         configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));
@@ -284,6 +283,7 @@ public class ReporterTest {
         out.flush();
         String document = out.toString();
 
+        TextUtils.assertNotContains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", document);
         assertTrue(document.startsWith(HEADER), "'Generated at' is not present in " + document);
 
         TextUtils.assertPatternInTarget("^Notes: 2$", document);

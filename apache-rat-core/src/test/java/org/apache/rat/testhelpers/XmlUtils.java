@@ -47,6 +47,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.utils.DefaultLog;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -63,27 +64,27 @@ public final class XmlUtils {
         // Does nothing
     }
 
-    public static final XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
+    public static XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
         final SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setValidating(false);
         spf.setNamespaceAware(true);
         return spf.newSAXParser().getXMLReader();
     }
 
-    public static final boolean isWellFormedXml(final String string) throws Exception {
+    public static boolean isWellFormedXml(final String string) throws Exception {
         return isWellFormedXml(new InputSource(new StringReader(string)));
     }
 
-    public static final boolean isWellFormedXml(final InputStream in) throws Exception {
+    public static boolean isWellFormedXml(final InputStream in) throws Exception {
         return isWellFormedXml(new InputSource(in));
     }
 
-    public static final boolean isWellFormedXml(final InputSource isource) {
+    public static boolean isWellFormedXml(final InputSource isource) {
         try {
             newXMLReader().parse(isource);
             return true;
         } catch (SAXException e) {
-            e.printStackTrace();
+            DefaultLog.getInstance().error(e.getMessage(), e);
             return false;
         } catch (IOException | ParserConfigurationException e) {
             throw new UndeclaredThrowableException(e);
@@ -113,7 +114,7 @@ public final class XmlUtils {
         return nodeList.item(0);
     }
 
-    public static final String printNodeList(NodeList nodeList) {
+    public static String printNodeList(NodeList nodeList) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node n = nodeList.item(0);
@@ -128,7 +129,7 @@ public final class XmlUtils {
         return sb.toString();
     }
 
-    public static final Document toDom(final InputStream in)
+    public static Document toDom(final InputStream in)
             throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
         final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document result;
@@ -136,7 +137,7 @@ public final class XmlUtils {
         return result;
     }
 
-    public static final void writeAttribute(final IXmlWriter writer, final String name, final boolean booleanValue)
+    public static void writeAttribute(final IXmlWriter writer, final String name, final boolean booleanValue)
             throws IOException {
         final String value = Boolean.toString(booleanValue);
         writer.attribute(name, value);
