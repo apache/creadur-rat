@@ -70,7 +70,7 @@ public class ReportTest {
         TextUtils.assertContains("-E,--exclude-file <FileOrURI> ", result);
         TextUtils.assertContains("-f,--force ", result);
         TextUtils.assertContains("-h,--help ", result);
-        TextUtils.assertContains("--licenses <FileOrURI> ", result);
+        TextUtils.assertContains("--licenses <File> ", result);
         TextUtils.assertContains("--list-families <LicenseFilter> ", result);
         TextUtils.assertContains("--list-licenses <LicenseFilter> ", result);
         TextUtils.assertContains("--log-level <LogLevel> ", result);

@@ -31,6 +31,7 @@ import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
+import org.apache.rat.commandline.OutputArgs;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 
@@ -156,7 +157,7 @@ public class RatCheckMojo extends AbstractRatMojo {
             return;
         }
 
-        String outKey = "--" + OptionCollection.OUT.getLongOpt();
+        String outKey = "--" + OutputArgs.OUT.getLongOpt();
         if (args.get(outKey) == null) {
             setArg(outKey, defaultReportFile.getPath());
         }

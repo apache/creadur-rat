@@ -24,11 +24,12 @@ import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.IOptionsProvider;
+import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportTest;
+import org.apache.rat.commandline.OutputArgs;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.tools.AntGenerator;
@@ -97,7 +98,7 @@ public class ReportOptionTest  {
         }
     }
 
-    static class OptionsProvider implements ArgumentsProvider, IOptionsProvider {
+    static class OptionsProvider implements ArgumentsProvider, AbstractOptionsProvider {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
@@ -117,13 +118,13 @@ public class ReportOptionTest  {
             testMap.put(OptionCollection.EXCLUDE_FILE_CLI,this::excludeCliFileTest);
             testMap.put(OptionCollection.FORCE, this::forceTest);
             testMap.put(OptionCollection.LICENSES, this::licensesTest);
-            testMap.put(OptionCollection.LIST_LICENSES, this::listLicensesTest);
-            testMap.put(OptionCollection.LIST_FAMILIES, this::listFamiliesTest);
+            testMap.put(OutputArgs.LIST_LICENSES, this::listLicensesTest);
+            testMap.put(OutputArgs.OUTPUT_FAMILIES, this::listFamiliesTest);
             testMap.put(OptionCollection.NO_DEFAULTS, this::noDefaultsTest);
-            testMap.put(OptionCollection.OUT, this::outTest);
+            testMap.put(OutputArgs.OUT, this::outTest);
             testMap.put(OptionCollection.SCAN_HIDDEN_DIRECTORIES, this::scanHiddenDirectoriesTest);
-            testMap.put(OptionCollection.STYLESHEET_CLI, this::styleSheetTest);
-            testMap.put(OptionCollection.XML, this::xmlTest);
+            testMap.put(OutputArgs.STYLESHEET_CLI, this::styleSheetTest);
+            testMap.put(OutputArgs.XML, this::xmlTest);
         }
 
         private ReportConfiguration generateConfig(Option option, String... args) {
@@ -252,18 +253,18 @@ public class ReportOptionTest  {
 
         @Override
         public void listLicensesTest() {
-            String name = antName(OptionCollection.LIST_LICENSES);
+            String name = antName(OutputArgs.LIST_LICENSES);
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-                    ReportConfiguration config = generateConfig(OptionCollection.LIST_LICENSES, name, filter.name());
+                    ReportConfiguration config = generateConfig(OutputArgs.LIST_LICENSES, name, filter.name());
                     assertEquals(filter, config.listLicenses());
             }
         }
 
         @Override
         public void listFamiliesTest() {
-            String name = antName(OptionCollection.LIST_FAMILIES);
+            String name = antName(OutputArgs.OUTPUT_FAMILIES);
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-                ReportConfiguration config = generateConfig(OptionCollection.LIST_FAMILIES, name, filter.name());
+                ReportConfiguration config = generateConfig(OutputArgs.OUTPUT_FAMILIES, name, filter.name());
                 assertEquals(filter, config.listFamilies());
             }
         }
@@ -280,8 +281,8 @@ public class ReportOptionTest  {
         @Override
         public void outTest() {
             File outFile = new File( baseDir, "outexample");
-            String name = antName(OptionCollection.OUT);
-            ReportConfiguration config = generateConfig(OptionCollection.OUT, name, outFile.getAbsolutePath() );
+            String name = antName(OutputArgs.OUT);
+            ReportConfiguration config = generateConfig(OutputArgs.OUT, name, outFile.getAbsolutePath() );
             try (OutputStream os = config.getOutput().get()) {
                 os.write("Hello world".getBytes());
             } catch (IOException e) {
@@ -303,21 +304,21 @@ public class ReportOptionTest  {
 
         @Override
         public void styleSheetTest() {
-            String name = antName(OptionCollection.STYLESHEET_CLI);
+            String name = antName(OutputArgs.STYLESHEET_CLI);
             URL url = ReportTest.class.getResource("MatcherContainerResource.txt");
             if (url == null) {
                 fail("Could not locate 'MatcherContainerResource.txt'");
             }
             for (String sheet : new String[]{"target/optionTools/stylesheet.xlt", "plain-rat", "missing-headers", "unapproved-licenses", url.getFile()}) {
-                ReportConfiguration config = generateConfig(OptionCollection.STYLESHEET_CLI, name, sheet);
+                ReportConfiguration config = generateConfig(OutputArgs.STYLESHEET_CLI, name, sheet);
                 assertTrue(config.isStyleReport());
             }
         }
 
         @Override
         public void xmlTest() {
-            String name = antName(OptionCollection.XML);
-            ReportConfiguration config = generateConfig(OptionCollection.XML, name, "true");
+            String name = antName(OutputArgs.XML);
+            ReportConfiguration config = generateConfig(OutputArgs.XML, name, "true");
             assertFalse(config.isStyleReport());
         }
 
