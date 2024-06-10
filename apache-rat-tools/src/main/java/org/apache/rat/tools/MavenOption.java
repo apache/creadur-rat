@@ -21,6 +21,7 @@ package org.apache.rat.tools;
 import static java.lang.String.format;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 
 /**
@@ -53,10 +54,12 @@ public class MavenOption {
     /**
      * Get the description escaped for XML format.
      *
-     * @return the description.
+     * @return the description or an empty string.
      */
     public String getDescription() {
-        return option.getDescription().replace("<", "&lt;").replace(">", "&gt;");
+        return StringUtils.defaultIfEmpty(option.getDescription(), "")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 
     /**

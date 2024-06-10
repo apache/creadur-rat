@@ -128,9 +128,8 @@ public final class MavenGenerator {
     }
 
     private static String getComment(final MavenOption option) {
-        String desc = option.getDescription().replace("<", "&lt;").replace(">", "&gt;");
         StringBuilder sb = new StringBuilder()
-            .append(format("    /**%n     * %s%n     * @param %s the argument.%n", desc, option.getName()));
+            .append(format("    /**%n     * %s%n     * @param %s the argument.%n", option.getDescription(), option.getName()));
         if (option.isDeprecated()) {
             sb.append(format("     * %s%n     * @deprecated%n", option.getDeprecated()));
         }
