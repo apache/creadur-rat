@@ -53,49 +53,49 @@ public final class ConfigurationArgs {
             .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --configuration-no-defaults").get())
             .build());
 
-    /** Option that add approved licenses to the list */
-    private static final Option LICENSES_APPROVED = Option.builder().longOpt("licenses-approved").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
-                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
-            .build();
-
-    /** Option that add approved licenses from a file */
-    private static final Option LICENSES_APPROVED_FILE = Option.builder().longOpt("licenses-approved-file").hasArg().argName("FileOrURI")
-            .desc("File name or URI containing the approved license IDs.")
-            .build();
-
-    /** Option that specifies approved license families */
-    private static final Option LICENSES_FAMILIES = Option.builder().longOpt("license-families").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
-                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
-            .build();
-
-    /** Option that specifies apporoved license families from a file */
-    private static final Option LICENSES_FAMILIES_FILE = Option.builder().longOpt("license-families-file").hasArg().argName("FileOrURI")
-            .desc("File name or URI containing the approved license IDs.")
-            .build();
-
-    /** Option to remove licenses from the approved list */
-    private static final Option LICENSES_REMOVE_APPROVED = Option.builder().longOpt("licenses-remove-approved").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
-                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
-            .build();
-
-    /** Option to read a file licenses to be removed from the approved list */
-    private static final Option LICENSES_REMOVE_APPROVED_FILE = Option.builder().longOpt("licenses-remove-approved-file").hasArg().argName("FileOrURI")
-            .desc("File name or URI containing the approved license IDs.")
-            .build();
-
-    /** Option to list license families to remove from the approved list */
-    private static final Option LICENSES_REMOVE_FAMILIES = Option.builder().longOpt("licenses-remove-families").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
-                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
-            .build();
-
-    /** Option to read a list of license families to remove from the approved list */
-    private static final Option LICENSES_REMOVE_FAMILIES_FILE = Option.builder().longOpt("licenses-remove-families-file").hasArg().argName("FileOrURI")
-            .desc("File name or URI containing the approved license IDs.")
-            .build();
+//    /** Option that add approved licenses to the list */
+//    private static final Option LICENSES_APPROVED = Option.builder().longOpt("licenses-approved").hasArgs().argName("LicenseID")
+//            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
+//                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+//            .build();
+//
+//    /** Option that add approved licenses from a file */
+//    private static final Option LICENSES_APPROVED_FILE = Option.builder().longOpt("licenses-approved-file").hasArg().argName("FileOrURI")
+//            .desc("File name or URI containing the approved license IDs.")
+//            .build();
+//
+//    /** Option that specifies approved license families */
+//    private static final Option LICENSES_FAMILIES = Option.builder().longOpt("license-families").hasArgs().argName("LicenseID")
+//            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
+//                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+//            .build();
+//
+//    /** Option that specifies apporoved license families from a file */
+//    private static final Option LICENSES_FAMILIES_FILE = Option.builder().longOpt("license-families-file").hasArg().argName("FileOrURI")
+//            .desc("File name or URI containing the approved license IDs.")
+//            .build();
+//
+//    /** Option to remove licenses from the approved list */
+//    private static final Option LICENSES_REMOVE_APPROVED = Option.builder().longOpt("licenses-remove-approved").hasArgs().argName("LicenseID")
+//            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
+//                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+//            .build();
+//
+//    /** Option to read a file licenses to be removed from the approved list */
+//    private static final Option LICENSES_REMOVE_APPROVED_FILE = Option.builder().longOpt("licenses-remove-approved-file").hasArg().argName("FileOrURI")
+//            .desc("File name or URI containing the approved license IDs.")
+//            .build();
+//
+//    /** Option to list license families to remove from the approved list */
+//    private static final Option LICENSES_REMOVE_FAMILIES = Option.builder().longOpt("licenses-remove-families").hasArgs().argName("LicenseID")
+//            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
+//                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+//            .build();
+//
+//    /** Option to read a list of license families to remove from the approved list */
+//    private static final Option LICENSES_REMOVE_FAMILIES_FILE = Option.builder().longOpt("licenses-remove-families-file").hasArg().argName("FileOrURI")
+//            .desc("File name or URI containing the approved license IDs.")
+//            .build();
 
     private ConfigurationArgs() {
         // do not instantiate
@@ -108,14 +108,15 @@ public final class ConfigurationArgs {
     public static void addOptions(final Options options) {
         options.addOptionGroup(CONFIGURATION)
                 .addOptionGroup(CONFIGURATION_NO_DEFAULTS)
-                .addOption(LICENSES_APPROVED)
-                .addOption(LICENSES_APPROVED_FILE)
-                .addOption(LICENSES_FAMILIES)
-                .addOption(LICENSES_FAMILIES_FILE)
-                .addOption(LICENSES_REMOVE_APPROVED)
-                .addOption(LICENSES_REMOVE_APPROVED_FILE)
-                .addOption(LICENSES_REMOVE_FAMILIES)
-                .addOption(LICENSES_REMOVE_FAMILIES_FILE);
+//                .addOption(LICENSES_APPROVED)
+//                .addOption(LICENSES_APPROVED_FILE)
+//                .addOption(LICENSES_FAMILIES)
+//                .addOption(LICENSES_FAMILIES_FILE)
+//                .addOption(LICENSES_REMOVE_APPROVED)
+//                .addOption(LICENSES_REMOVE_APPROVED_FILE)
+//                .addOption(LICENSES_REMOVE_FAMILIES)
+//                .addOption(LICENSES_REMOVE_FAMILIES_FILE)
+               ;
     }
 
     /**

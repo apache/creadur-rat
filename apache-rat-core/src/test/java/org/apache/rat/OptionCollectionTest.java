@@ -23,16 +23,16 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.rat.commandline.OutputArgs;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.test.AbstractOptionsProvider;
+import org.apache.rat.test.OptionsList;
 import org.apache.rat.testhelpers.TestingLog;
-import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterEach;
@@ -44,26 +44,20 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -269,17 +263,122 @@ public class OptionCollectionTest {
     /**
      * A class to provide the Options and tests to the testOptionsUpdateConfig.
      */
-    static class OptionsProvider implements ArgumentsProvider, IOptionsProvider {
+    static class OptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
         /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
-        /** A mp of tests Options to tests */
-        final Map<Option,OptionTest> testMap = new HashMap<>();
 
         /**
          * The directory to place test data in.  We do not use temp file here as we want the evidence to survive failure.
          */
         File baseDir;
+
+        @Override
+        public void helpTest() {
+            String[] args = {longOpt(OptionCollection.HELP)};
+            try {
+                ReportConfiguration config = OptionCollection.parseCommands(args, o -> helpCalled.set(true), true);
+                assertNull(config, "Should not have config");
+                assertTrue(helpCalled.get(), "Help was not called");
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
+
+        /**
+         * execute an "exclude" test.
+         * @param args
+         */
+        private void execExcludeTest(String[] args) {
+            try {
+                ReportConfiguration config = generateConfig(args);
+                IOFileFilter filter = config.getFilesToIgnore();
+                assertThat(filter).isExactlyInstanceOf(OrFileFilter.class);
+                assertTrue(filter.accept(baseDir, "some.foo" ), "some.foo");
+                assertTrue(filter.accept(baseDir, "B.bar"), "B.bar");
+                assertTrue(filter.accept(baseDir, "justbaz" ), "justbaz");
+                assertFalse(filter.accept(baseDir, "notbaz"), "notbaz");
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
+
+        private void excludeFileTest(String arg) {
+            File outputFile = new File(baseDir, "exclude.txt");
+            try (FileWriter fw = new FileWriter(outputFile)) {
+                fw.write("*.foo");
+                fw.write(System.lineSeparator());
+                fw.write("[A-Z]\\.bar");
+                fw.write(System.lineSeparator());
+                fw.write("justbaz");
+                fw.write(System.lineSeparator());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String[] args = {arg, outputFile.getPath()};
+            execExcludeTest(args);
+        }
+
+        @Override
+        public void excludeFileTest() {
+            excludeFileTest("--exclude-file");
+        }
+
+        @Override
+        protected void inputExcludeFileTest() {
+            excludeFileTest("--input-exclude-file");
+        }
+
+        @Override
+        public void excludeTest() {
+            String[] args = {"--exclude", "*.foo", "[A-Z]\\.bar", "justbaz"};
+            execExcludeTest(args);
+        }
+
+        @Override
+        protected void inputExcludeTest() {
+            String[] args = {"--input-exclude", "*.foo", "[A-Z]\\.bar", "justbaz"};
+        }
+
+//        @Override
+//        protected void licenseFamiliesFileTest() {
+//            fail("not implemented");
+//        }
+//
+//        @Override
+//        protected void licenseFamiliesTest() {
+//            fail("not implemented");
+//        }
+//
+//        @Override
+//        protected void licensesApprovedFileTest() {
+//            fail("not implemented");
+//        }
+//
+//        @Override
+//        protected void licensesApprovedTest() {
+//            fail("not implemented");
+//        }
+//
+//        @Override
+//        protected void licensesRemoveApprovedFileTest() {
+//            fail("not implemented");
+//        }
+//
+//        @Override
+//        protected void licensesRemoveApprovedTest() {
+//            fail("not implemented");
+//        }
+//
+//        @Override
+//        protected void licensesRemoveFamiliesFileTest() {
+//            fail("not implemented");
+//        }
+//
+//        @Override
+//        protected void licensesRemoveFamiliesTest() {
+//            fail("not implemented");
+//        }
 
         /**
          * Constructor.  sets the baseDir and loads the testMap.
@@ -287,34 +386,6 @@ public class OptionCollectionTest {
         public OptionsProvider() {
             baseDir = new File("target/optionTools");
             baseDir.mkdirs();
-            testMap.put(OptionCollection.ADD_LICENSE, this::addLicenseTest);
-            testMap.put(OptionCollection.ARCHIVE, this::archiveTest);
-            testMap.put(OptionCollection.STANDARD, this::standardTest);
-            testMap.put(OptionCollection.COPYRIGHT, this::copyrightTest);
-            testMap.put(OptionCollection.DIR, () -> {DefaultLog.getInstance().info(longOpt(OptionCollection.DIR)+" has no valid test");});
-            testMap.put(OptionCollection.DRY_RUN, this::dryRunTest);
-            testMap.put(OptionCollection.EXCLUDE_CLI, this::excludeCliTest);
-            testMap.put(OptionCollection.EXCLUDE_FILE_CLI,this::excludeCliFileTest);
-            testMap.put(OptionCollection.FORCE, this::forceTest);
-            testMap.put(OptionCollection.HELP, () -> {
-                String[] args = {longOpt(OptionCollection.HELP)};
-                try {
-                    ReportConfiguration config = OptionCollection.parseCommands(args, o -> helpCalled.set(true), true);
-                    assertNull(config, "Should not have config");
-                    assertTrue(helpCalled.get(), "Help was not called");
-                } catch (IOException e) {
-                    fail(e.getMessage());
-                }
-            });
-            testMap.put(OptionCollection.LICENSES, this::licensesTest);
-            testMap.put(OptionCollection.LIST_LICENSES, this::listLicensesTest);
-            testMap.put(OptionCollection.LIST_FAMILIES, this::listFamiliesTest);
-            testMap.put(OptionCollection.LOG_LEVEL, this::logLevelTest);
-            testMap.put(OptionCollection.NO_DEFAULTS, this::noDefaultsTest);
-            testMap.put(OptionCollection.OUT, this::outTest);
-            testMap.put(OptionCollection.SCAN_HIDDEN_DIRECTORIES, this::scanHiddenDirectoriesTest);
-            testMap.put(OptionCollection.STYLESHEET_CLI, this::styleSheetTest);
-            testMap.put(OptionCollection.XML, this::xmlTest);
         }
 
         /**
@@ -331,57 +402,59 @@ public class OptionCollectionTest {
             return config;
         }
 
-        @Override
-        public void addLicenseTest() {
-                String[] args = {longOpt(OptionCollection.ADD_LICENSE)};
-                try {
-                    ReportConfiguration config =generateConfig(args);
-                    assertTrue(config.isAddingLicenses());
-                    config = generateConfig(new String[0]);
-                    assertFalse(config.isAddingLicenses());
-                } catch (IOException e) {
-                    fail(e.getMessage());
-                }
-        }
-        @Override
-        public void archiveTest() {
-                String[] args = {longOpt(OptionCollection.ARCHIVE), null};
-                try {
-                    for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
-                        args[1] = proc.name();
-                        ReportConfiguration config = generateConfig(args);
-                        assertEquals(proc, config.getArchiveProcessing());
-                    }
-                } catch (IOException e) {
-                    fail(e.getMessage());
-                }
-        }
-        @Override
-        public void standardTest() {
-            String[] args = {longOpt(OptionCollection.STANDARD), null};
+        private void configTest(String arg) {
+            String[] args = {arg, "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml"};
             try {
-                for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
-                    args[1] = proc.name();
-                    ReportConfiguration config = generateConfig(args);
-                    assertEquals(proc, config.getStandardProcessing());
-                }
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-        @Override
-        public void copyrightTest() {
-            try {
-                String[] args = {longOpt(OptionCollection.COPYRIGHT), "MyCopyright"};
-                ReportConfiguration config =generateConfig(args);
-                assertNull(config.getCopyrightMessage(), "Copyright without ADD_LICENCE should not work");
-                args = new String[]{longOpt(OptionCollection.COPYRIGHT), "MyCopyright", longOpt(OptionCollection.ADD_LICENSE)};
+                ReportConfiguration config = generateConfig(args);
+                SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+                assertTrue(set.size() > 2);
+                assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
+                assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
+
+                args = new String[]{arg, "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml",
+                        "--configuration-no-defaults"};
                 config = generateConfig(args);
-                assertEquals("MyCopyright", config.getCopyrightMessage());
+                set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+                assertEquals(2, set.size());
+                assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
+                assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
             } catch (IOException e) {
                 fail(e.getMessage());
             }
         }
+
+        @Override
+        public void licensesTest() {
+            configTest("--licenses");
+        }
+        @Override
+        protected void configTest() {
+            configTest("--config");
+        }
+
+        private void noDefaultsTest(String arg) {
+            String[] args = {arg};
+            try {
+                ReportConfiguration config = generateConfig(args);
+                assertTrue(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
+                config = generateConfig(new String[0]);
+                assertFalse(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
+
+        @Override
+        public void noDefaultsTest() {
+            noDefaultsTest("--no-default-licenses");
+        }
+
+
+        @Override
+        protected void configurationNoDefaultsTest() {
+           noDefaultsTest("--configuration-no-defaults");
+        }
+
         @Override
         public void dryRunTest() {
             try {
