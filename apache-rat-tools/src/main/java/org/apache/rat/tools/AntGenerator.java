@@ -43,6 +43,8 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.commandline.InputArgs;
+import org.apache.rat.commandline.OutputArgs;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -54,8 +56,8 @@ public final class AntGenerator {
     /**
      * The list of Options that are not supported by Ant.
      */
-    private static final List<Option> ANT_FILTER_LIST = Arrays.asList(OptionCollection.HELP, OptionCollection.LOG_LEVEL,
-            OptionCollection.DIR);
+    private static final List<Option> ANT_FILTER_LIST = Arrays.asList(OptionCollection.HELP, OutputArgs.LOG_LEVEL,
+            InputArgs.DIR);
 
     /**
      * the filter to filter out CLI options that Ant does not support.
