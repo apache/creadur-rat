@@ -89,7 +89,7 @@ public final class OutputArgs {
             .build());
 
     /** Specifies the log level to log messages at. */
-    private static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
+    public static final Option LOG_LEVEL = Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
             .desc("sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))

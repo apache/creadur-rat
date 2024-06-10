@@ -78,7 +78,7 @@ public final class InputArgs {
             "Scan hidden directories");
 
     /** Stop processing an input stream and declare an input file */
-    private static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
+    public static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
             .desc("Used to indicate end of list when using --exclude.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                     .setDescription("Use '--'").get()).build();
