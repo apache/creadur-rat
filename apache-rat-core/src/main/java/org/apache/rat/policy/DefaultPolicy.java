@@ -21,11 +21,11 @@ package org.apache.rat.policy;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseFamilySetFactory;
 
 /**
  * A default Document Analyser that determines if the matched license is in the
@@ -40,7 +40,7 @@ public class DefaultPolicy implements IDocumentAnalyser {
      * @param approvedLicenseFamilies the approved license families.
      */
     public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseFamilies) {
-        this.approvedLicenseFamilies = LicenseFamilySetFactory.emptyLicenseFamilySet();
+        this.approvedLicenseFamilies = new TreeSet<>();
         this.approvedLicenseFamilies.addAll(approvedLicenseFamilies);
     }
 

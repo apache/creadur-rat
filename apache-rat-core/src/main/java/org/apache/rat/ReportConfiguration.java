@@ -170,9 +170,7 @@ public class ReportConfiguration {
                 .setMsgFormat(s -> String.format("Duplicate LicenseFamily category: %s", s.getFamilyCategory()));
         licenses = new ReportingSet<>(LicenseSetFactory.emptyLicenseSet()).setLog(log)
                 .setMsgFormat(s -> String.format("Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
-        approvedLicenseCategories = new TreeSet<>();
-        removedLicenseCategories = new TreeSet<>();
-        styleReport = true;
+        licenseSetFactory = new LicenseSetFactory(families, licenses);
         listFamilies = Defaults.LIST_FAMILIES;
         listLicenses = Defaults.LIST_LICENSES;
         dryRun = false;
@@ -222,15 +220,15 @@ public class ReportConfiguration {
      * <p>NOTE: should be set before licenses or license families are added.</p>
      * @param level The log level to use.
      */
-    public void logFamilyCollisions(Log.Level level) {
+    public void logFamilyCollisions(final Log.Level level) {
         families.setLogLevel(level);
     }
-    
+
     /**
      * Sets the reporting option for duplicate license families.
      * @param state The ReportingSet.Option to use for reporting.
      */
-    public void familyDuplicateOption(ReportingSet.Options state) {
+    public void familyDuplicateOption(final ReportingSet.Options state) {
         families.setDuplicateOption(state);
     }
 
@@ -238,50 +236,54 @@ public class ReportConfiguration {
      * Sets the log level for reporting license collisions.
      * @param level The log level.
      */
-    public void logLicenseCollisions(Log.Level level) {
+    public void logLicenseCollisions(final Log.Level level) {
         licenses.setLogLevel(level);
     }
-    
+
     /**
      * Sets the reporting option for duplicate licenses.
      * @param state the ReportingSt.Option to use for reporting.
      */
-    public void licenseDuplicateOption(ReportingSet.Options state) {
+    public void licenseDuplicateOption(final ReportingSet.Options state) {
         licenses.setDuplicateOption(state);
     }
-    
+
     /**
      * Set the level of license families that should be output in the XML document.
      * @param filter the license families to list.
      */
-    public void listFamilies(LicenseFilter filter) {
+    public void listFamilies(final LicenseFilter filter) {
         listFamilies = filter;
     }
-    
+
     public LicenseFilter listFamilies() {
         return listFamilies;
     }
-    
+
     /**
      * Set the level of licenses that should be output in the XML document.
      * @param filter the licenses to list.
      */
-    public void listLicenses(LicenseFilter filter) {
+    public void listLicenses(final LicenseFilter filter) {
         listLicenses = filter;
     }
-    
+
+    /**
+     * Gets the selected license filter.
+     * @return the filter to limit license display.
+     */
     public LicenseFilter listLicenses() {
         return listLicenses;
     }
-    
+
     /**
      * Sets the dry run flag.
      * @param state the state for the dry run flag.
      */
-    public void setDryRun(boolean state) {
+    public void setDryRun(final boolean state) {
         dryRun = state;
     }
-    
+
     /**
      * Returns the state of the dry run flag.
      * @return the state of the dry run flag.
@@ -289,7 +291,7 @@ public class ReportConfiguration {
     public boolean isDryRun() {
         return dryRun;
     }
-    
+
     /**
      * Gets the file name filter for files to ignore.
      * @return The filename filter that identifies files to ignore.
@@ -304,7 +306,7 @@ public class ReportConfiguration {
      * @param filesToIgnore the filename filter to filter the input files.
      * @see Defaults#FILES_TO_IGNORE
      */
-    public void setFilesToIgnore(IOFileFilter filesToIgnore) {
+    public void setFilesToIgnore(final IOFileFilter filesToIgnore) {
         this.filesToIgnore = filesToIgnore;
     }
 
@@ -323,7 +325,7 @@ public class ReportConfiguration {
      * @param directoriesToIgnore the filter that defines the directories to ignore.
      * @see Defaults#DIRECTORIES_TO_IGNORE
      */
-    public void setDirectoriesToIgnore(IOFileFilter directoriesToIgnore) {
+    public void setDirectoriesToIgnore(final IOFileFilter directoriesToIgnore) {
         this.directoriesToIgnore = directoriesToIgnore == null ? FalseFileFilter.FALSE : directoriesToIgnore;
     }
 
@@ -331,11 +333,12 @@ public class ReportConfiguration {
      * Adds a directory filter to the directories to ignore.
      * @param directoryToIgnore the directory filter to add.
      */
-    public void addDirectoryToIgnore(IOFileFilter directoryToIgnore) {
+    public void addDirectoryToIgnore(final IOFileFilter directoryToIgnore) {
         this.directoriesToIgnore = this.directoriesToIgnore.or(directoryToIgnore);
     }
 
     /**
+     * Gets the reportable object.
      * @return the thing being reported on.
      */
     public IReportable getReportable() {
@@ -343,13 +346,15 @@ public class ReportConfiguration {
     }
 
     /**
+     * Sets the reportable object.
      * @param reportable the thing being reported on.
      */
-    public void setReportable(IReportable reportable) {
+    public void setReportable(final IReportable reportable) {
         this.reportable = reportable;
     }
 
     /**
+     * Gets the IOSupplier with the style sheet.
      * @return the Supplier of the InputStream that is the XSLT style sheet to style
      * the report with.
      */
@@ -361,10 +366,9 @@ public class ReportConfiguration {
      * Sets the style sheet for custom processing. The IOSupplier may be called
      * multiple times, so the input stream must be able to be opened and closed
      * multiple times.
-     * 
      * @param styleSheet the XSLT style sheet to style the report with.
      */
-    public void setStyleSheet(IOSupplier<InputStream> styleSheet) {
+    public void setStyleSheet(final IOSupplier<InputStream> styleSheet) {
         this.styleSheet = styleSheet;
     }
 
@@ -372,22 +376,20 @@ public class ReportConfiguration {
      * Adds the licenses and approved licenses from the defaults object to the
      * configuration. <em>Side effect: </em> if the report should be styled and no
      * style sheet has been set the plain stylesheet from the defaults will be used.
-     * 
      * @param defaults The defaults to set.
      */
-    public void setFrom(Defaults defaults) {
-        addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.ALL));
-        addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.APPROVED));
-        if (isStyleReport() && getStyleSheet() == null) {
+    public void setFrom(final Defaults defaults) {
+        licenseSetFactory.add(defaults.getLicenseSetFactory());
+        if (getStyleSheet() == null) {
             setStyleSheet(Defaults.getPlainStyleSheet());
         }
     }
 
     /**
-     * 
-     * @param styleSheet the XSLT style sheet to style the report with.
+     * Sets the style sheet.
+     * @param styleSheet the XSLT style sheet file to style the report with.
      */
-    public void setStyleSheet(File styleSheet) {
+    public void setStyleSheet(final File styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
         setStyleSheet(styleSheet.toURI());
     }
@@ -395,10 +397,9 @@ public class ReportConfiguration {
     /**
      * Sets the style sheet for custom processing. The stylesheet may be opened
      * multiple times so the URI must be capable of being opened multiple times.
-     * 
      * @param styleSheet the URI of the XSLT style sheet to style the report with.
      */
-    public void setStyleSheet(URI styleSheet) {
+    public void setStyleSheet(final URI styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
         try {
             setStyleSheet(styleSheet.toURL());
@@ -410,10 +411,9 @@ public class ReportConfiguration {
     /**
      * Sets the style sheet for custom processing. The stylesheet may be opened
      * multiple times so the URL must be capable of being opened multiple times.
-     * 
      * @param styleSheet the URL of the XSLT style sheet to style the report with.
      */
-    public void setStyleSheet(URL styleSheet) {
+    public void setStyleSheet(final URL styleSheet) {
         Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
         setStyleSheet(styleSheet::openStream);
     }
@@ -423,12 +423,11 @@ public class ReportConfiguration {
      * times to provide the stream. Suppliers should prepare streams that are
      * appended to and that can be closed. If an {@code OutputStream} should not be
      * closed consider wrapping it in a {@code NoCloseOutputStream}
-     * 
      * @param out The OutputStream supplier that provides the output stream to write
      * the report to. A null value will use System.out.
      * @see NoCloseOutputStream
      */
-    public void setOut(IOSupplier<OutputStream> out) {
+    public void setOut(final IOSupplier<OutputStream> out) {
         this.out = out;
     }
 
@@ -436,17 +435,16 @@ public class ReportConfiguration {
      * Sets the OutputStream supplier to use the specified file. The file may be
      * opened and closed several times. File is deleted first and then may be
      * repeatedly opened in append mode.
-     * 
      * @see #setOut(IOSupplier)
      * @param file The file to create the supplier with.
      */
-    public void setOut(File file) {
+    public void setOut(final File file) {
         Objects.requireNonNull(file, "output file should not be null");
         if (file.exists()) {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
-                log.warn("Unable to delete file:"+file);
+                log.warn("Unable to delete file:" + file);
             }
         }
         setOut(() -> new FileOutputStream(file, true));
@@ -455,7 +453,6 @@ public class ReportConfiguration {
     /**
      * Returns the output stream supplier. If no stream has been set returns a
      * supplier for System.out.
-     * 
      * @return The supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
@@ -463,6 +460,7 @@ public class ReportConfiguration {
     }
 
     /**
+     * Gets a PrintWriter that wraps the output stream.
      * @return A supplier for a PrintWriter that wraps the output stream.
      * @see #getOutput()
      */
@@ -473,10 +471,9 @@ public class ReportConfiguration {
     /**
      * Adds a license to the list of licenses. Does not add the license to the list
      * of approved licenses.
-     * 
      * @param license The license to add to the list of licenses.
      */
-    public void addLicense(ILicense license) {
+    public void addLicense(final ILicense license) {
         if (license != null) {
             this.licenses.add(license);
             this.families.addIfNotPresent(license.getLicenseFamily());
@@ -486,11 +483,10 @@ public class ReportConfiguration {
     /**
      * Adds a license to the list of licenses. Does not add the license to the list
      * of approved licenses.
-     * 
      * @param builder The license builder to build and add to the list of licenses.
      * @return The ILicense implementation that was added.
      */
-    public ILicense addLicense(ILicense.Builder builder) {
+    public ILicense addLicense(final ILicense.Builder builder) {
         if (builder != null) {
             ILicense license = builder.setLicenseFamilies(families).build();
             this.licenses.add(license);
@@ -502,10 +498,9 @@ public class ReportConfiguration {
     /**
      * Adds multiple licenses to the list of licenses. Does not add the licenses to
      * the list of approved licenses.
-     *
      * @param licenses The licenses to add.
      */
-    public void addLicenses(Collection<ILicense> licenses) {
+    public void addLicenses(final Collection<ILicense> licenses) {
         this.licenses.addAll(licenses);
         licenses.stream().map(ILicense::getLicenseFamily).forEach(families::add);
     }
@@ -513,21 +508,19 @@ public class ReportConfiguration {
     /**
      * Adds multiple licenses to the list of licenses. Does not add the licenses to
      * the list of approved licenses.
-     *
      * @param licenses The licenses to add.
      */
-    public void addLicensesIfNotPresent(Collection<ILicense> licenses) {
+    public void addLicensesIfNotPresent(final Collection<ILicense> licenses) {
         this.licenses.addAllIfNotPresent(licenses);
         licenses.stream().map(ILicense::getLicenseFamily).forEach(families::addIfNotPresent);
     }
-    
+
     /**
      * Adds a license family to the list of families. Does not add the family to the
      * list of approved licenses.
-     * 
      * @param family The license family to add to the list of license families.
      */
-    public void addFamily(ILicenseFamily family) {
+    public void addFamily(final ILicenseFamily family) {
         if (family != null) {
             this.families.add(family);
         }
@@ -536,11 +529,10 @@ public class ReportConfiguration {
     /**
      * Adds a license family to the list of families. Does not add the family to the
      * list of approved licenses.
-     * 
      * @param builder The licenseFamily.Builder to build and add to the list of
      * licenses.
      */
-    public void addFamily(ILicenseFamily.Builder builder) {
+    public void addFamily(final ILicenseFamily.Builder builder) {
         if (builder != null) {
             this.families.add(builder.build());
         }
@@ -549,48 +541,43 @@ public class ReportConfiguration {
     /**
      * Adds multiple families to the list of license families. Does not add the
      * licenses to the list of approved licenses.
-     *
      * @param families The license families to add.
      */
-    public void addFamilies(Collection<ILicenseFamily> families) {
+    public void addFamilies(final Collection<ILicenseFamily> families) {
         this.families.addAll(families);
     }
 
     /**
      * Adds an ILicenseFamily to the list of approved licenses.
-     *
      * @param approvedILicenseFamily the LicenseFamily to add.
      */
-    public void addApprovedLicenseCategory(ILicenseFamily approvedILicenseFamily) {
+    public void addApprovedLicenseCategory(final ILicenseFamily approvedILicenseFamily) {
         approvedLicenseCategories.add(approvedILicenseFamily.getFamilyCategory());
     }
 
     /**
      * Adds a license family category (id) to the list of approved licenses
-     * 
      * @param familyCategory the category to add.
      */
-    public void addApprovedLicenseCategory(String familyCategory) {
+    public void addApprovedLicenseCategory(final String familyCategory) {
         approvedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
     }
 
     /**
      * Adds a collection of license family categories to the set of approved license
      * names.
-     *
      * @param approvedLicenseCategories set of approved license categories.
      */
-    public void addApprovedLicenseCategories(Collection<String> approvedLicenseCategories) {
+    public void addApprovedLicenseCategories(final Collection<String> approvedLicenseCategories) {
         approvedLicenseCategories.forEach(this::addApprovedLicenseCategory);
     }
 
     /**
      * Adds a license family category to the list of approved licenses. <em>Once a
      * license has been removed from the approved list it cannot be re-added</em>
-     * 
      * @param familyCategory the category to add.
      */
-    public void removeApprovedLicenseCategory(String familyCategory) {
+    public void removeApprovedLicenseCategory(final String familyCategory) {
         removedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
     }
 
@@ -598,17 +585,15 @@ public class ReportConfiguration {
      * Removes a license family category from the list of approved licenses.
      * <em>Once a license has been removed from the approved list it cannot be
      * re-added</em>
-     * 
      * @param familyCategory the family category to remove.
      */
-    public void removeApprovedLicenseCategories(Collection<String> familyCategory) {
+    public void removeApprovedLicenseCategories(final Collection<String> familyCategory) {
         familyCategory.forEach(this::removeApprovedLicenseCategory);
     }
 
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
      * been removed from the approved list it cannot be re-added</em>
-     * 
      * @return the Sorted set of approved license categories.
      */
     public SortedSet<String> getApprovedLicenseCategories() {
@@ -620,7 +605,6 @@ public class ReportConfiguration {
     /**
      * Returns the optional license copyright being added if RAT is adding headers.
      * This value is ignored, if no license headers are added.
-     * 
      * @return the optional copyright message.
      * @see #isAddingLicenses()
      */
@@ -631,17 +615,15 @@ public class ReportConfiguration {
     /**
      * Sets the optional copyright message used if RAT is adding license headers.
      * This value is ignored, if no license headers are added.
-     *
      * @param copyrightMessage message to set.
      * @see #isAddingLicenses()
      */
-    public void setCopyrightMessage(String copyrightMessage) {
+    public void setCopyrightMessage(final String copyrightMessage) {
         this.copyrightMessage = copyrightMessage;
     }
 
     /**
      * This value is ignored if RAT is not adding licenses.
-     * 
      * @return {@code true} if RAT is forcing the adding license headers.
      * @see #isAddingLicenses()
      */
@@ -661,13 +643,12 @@ public class ReportConfiguration {
     /**
      * Sets whether RAT should enable, disable, or force the adding of license
      * headers.
-     * 
      * @param addLicenseHeaders enables/disables or forces adding of licenses
      * headers.
      * @see #isAddingLicenses()
      * @see #setCopyrightMessage(String)
      */
-    public void setAddLicenseHeaders(AddLicenseHeaders addLicenseHeaders) {
+    public void setAddLicenseHeaders(final AddLicenseHeaders addLicenseHeaders) {
         addingLicenses = false;
         addingLicensesForced = false;
         switch (addLicenseHeaders) {
@@ -676,7 +657,8 @@ public class ReportConfiguration {
             break;
         case FORCED:
             addingLicensesForced = true;
-            // fall through
+            addingLicenses = true;
+            break;
         case TRUE:
             addingLicenses = true;
             break;
@@ -690,11 +672,10 @@ public class ReportConfiguration {
      * <li>{@code approved} - Only approved licenses will be returned</li>
      * <li>{@code none} - No licenses will be returned</li>
      * </ul>
-     * 
      * @param filter The license filter.
      * @return The set of defined licenses.
      */
-    public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
+    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
         switch (filter) {
         case ALL:
             return Collections.unmodifiableSortedSet(licenses);
@@ -714,31 +695,23 @@ public class ReportConfiguration {
      * <li>{@code approved} - Only approved license families will be returned</li>
      * <li>{@code none} - No license families will be returned</li>
      * </ul>
-     * 
      * @param filter The license filter.
      * @return The set of defined licenses.
      */
-    public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
+    public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
         return new LicenseFamilySetFactory(families, getApprovedLicenseCategories()).getFamilies(filter);
     }
 
     /**
      * Validates that the configuration is valid.
-     * 
      * @param logger String consumer to log warning messages to.
      */
-    public void validate(Consumer<String> logger) {
+    public void validate(final Consumer<String> logger) {
         if (reportable == null) {
             throw new ConfigurationException("Reportable may not be null");
         }
         if (licenses.isEmpty()) {
             throw new ConfigurationException("You must specify at least one license");
-        }
-        if (styleSheet != null && !isStyleReport()) {
-            logger.accept("Ignoring stylesheet because styling is not selected");
-        }
-        if (styleSheet == null && isStyleReport()) {
-            throw new ConfigurationException("Stylesheet must be specified if report styling is selected");
         }
     }
 
@@ -746,6 +719,7 @@ public class ReportConfiguration {
      * A wrapper around an output stream that does not close the output stream.
      */
     public static class NoCloseOutputStream extends OutputStream {
+        /** the output stream this stream wraps */
         private final OutputStream delegate;
 
         /**
@@ -757,17 +731,21 @@ public class ReportConfiguration {
         }
 
         @Override
-        public void write(int arg0) throws IOException {
+        public void write(final int arg0) throws IOException {
             delegate.write(arg0);
         }
 
+        /**
+         * Does not actually close the delegate.  But does perform a flush.
+         * @throws IOException on Error.
+         */
         @Override
         public void close() throws IOException {
             this.delegate.flush();
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             return delegate.equals(obj);
         }
 
@@ -787,12 +765,12 @@ public class ReportConfiguration {
         }
 
         @Override
-        public void write(byte[] arg0, int arg1, int arg2) throws IOException {
+        public void write(final byte[] arg0, final int arg1, final int arg2) throws IOException {
             delegate.write(arg0, arg1, arg2);
         }
 
         @Override
-        public void write(byte[] b) throws IOException {
+        public void write(final byte[] b) throws IOException {
             delegate.write(b);
         }
     }

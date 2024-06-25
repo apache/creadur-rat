@@ -119,7 +119,7 @@ public class XMLConfigurationWriter {
 
                 // write approved section
                 writer.openElement(XMLConfig.APPROVED);
-                for (String family : configuration.getApprovedLicenseCategories()) {
+                for (String family : configuration.getLicenseCategories(LicenseFilter.APPROVED)) {
                     writer.openElement(XMLConfig.APPROVED).attribute(XMLConfig.ATT_LICENSE_REF, family.trim())
                             .closeElement();
                 }

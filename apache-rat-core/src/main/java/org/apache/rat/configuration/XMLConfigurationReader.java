@@ -53,7 +53,6 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -105,8 +104,8 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         rootElement.appendChild(approvedElement);
         matchersElement = document.createElement(XMLConfig.MATCHERS);
         rootElement.appendChild(matchersElement);
-        licenses = LicenseSetFactory.emptyLicenseSet();
-        licenseFamilies = LicenseFamilySetFactory.emptyLicenseFamilySet();
+        licenses = new TreeSet<>();
+        licenseFamilies = new TreeSet<>();
         approvedFamilies = new TreeSet<>();
         matchers = new HashMap<>();
         builderParams = new BuilderParams() {

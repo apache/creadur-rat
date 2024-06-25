@@ -28,6 +28,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.rat.commandline.OutputArgs;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.test.OptionsList;
@@ -242,47 +243,162 @@ public class OptionCollectionTest {
         @Override
         protected void inputExcludeTest() {
             String[] args = {"--input-exclude", "*.foo", "[A-Z]\\.bar", "justbaz"};
+            execExcludeTest(args);
         }
 
-//        @Override
-//        protected void licenseFamiliesFileTest() {
-//            fail("not implemented");
-//        }
-//
-//        @Override
-//        protected void licenseFamiliesTest() {
-//            fail("not implemented");
-//        }
-//
-//        @Override
-//        protected void licensesApprovedFileTest() {
-//            fail("not implemented");
-//        }
-//
-//        @Override
-//        protected void licensesApprovedTest() {
-//            fail("not implemented");
-//        }
-//
-//        @Override
-//        protected void licensesRemoveApprovedFileTest() {
-//            fail("not implemented");
-//        }
-//
-//        @Override
-//        protected void licensesRemoveApprovedTest() {
-//            fail("not implemented");
-//        }
-//
-//        @Override
-//        protected void licensesRemoveFamiliesFileTest() {
-//            fail("not implemented");
-//        }
-//
-//        @Override
-//        protected void licensesRemoveFamiliesTest() {
-//            fail("not implemented");
-//        }
+        /*
+        testMap.put("license-families-approved", this::licenseFamiliesApprovedTest);
+        testMap.put("license-families-approved-file", this::licenseFamiliesApprovedFileTest);
+        testMap.put("license-families-denied", this::licenseFamiliesDeniedTest);
+        testMap.put("license-families-denied-file", this::licenseFamiliesDeniedFileTest);
+        testMap.put("licenses", this::licensesTest);
+        testMap.put("licenses-approved", this::licensesApprovedTest);
+        testMap.put("licenses-approved-file", this::licensesApprovedFileTest);
+        testMap.put("licenses-denied", this::licensesDeniedTest);
+        testMap.put("licenses-denied-file", this::licensesDeniedFileTest);
+         */
+
+        private void execLicensesApprovedTest(String[] args) {
+            try {
+                ReportConfiguration config = generateConfig(args);
+                SortedSet<String> result = config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
+                assertThat(result).contains("one", "two");
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+
+            String[] arg2 = new String[args.length+1];
+            System.arraycopy(args, 0, arg2, 0, args.length);
+            arg2[args.length] = "--configuration-no-defaults";
+            try {
+                ReportConfiguration config = generateConfig(arg2);
+                SortedSet<String> result = config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
+                assertThat(result).containsExactly("one", "two");
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
+
+        @Override
+        protected void licensesApprovedFileTest() {
+            File outputFile = new File(baseDir, "licensesApproved.txt");
+            try (FileWriter fw = new FileWriter(outputFile)) {
+                fw.write("one");
+                fw.write(System.lineSeparator());
+                fw.write("two");
+                fw.write(System.lineSeparator());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String[] args = {"--licenses-approved-file", outputFile.getPath()};
+            execLicensesApprovedTest(args);
+        }
+
+        @Override
+        protected void licensesApprovedTest() {
+            String[] args = {"--licenses-approved", "one", "two"};
+            execLicensesApprovedTest(args);
+        }
+
+        private void execLicensesDeniedTest(String[] args) {
+            try {
+                ReportConfiguration config = generateConfig(args);
+                assertThat(config.getLicenseIds(LicenseSetFactory.LicenseFilter.ALL)).contains("ILLUMOS");
+                SortedSet<String> result = config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
+                assertThat(result).doesNotContain("ILLUMOS");
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
+        @Override
+        protected void licensesDeniedTest() {
+            String[] args = {"--licenses-denied", "ILLUMOS"};
+            execLicensesDeniedTest(args);
+        }
+
+        @Override
+        protected void licensesDeniedFileTest() {
+            File outputFile = new File(baseDir, "licensesDenied.txt");
+            try (FileWriter fw = new FileWriter(outputFile)) {
+                fw.write("ILLUMOS");
+                fw.write(System.lineSeparator());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String[] args = {"--licenses-denied-file", outputFile.getPath()};
+            execLicensesDeniedTest(args);
+        }
+
+        private void execLicenseFamiliesApprovedTest(String[] args) {
+            String catz = ILicenseFamily.makeCategory("catz");
+            try {
+                ReportConfiguration config = generateConfig(args);
+                SortedSet<String> result = config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
+                assertThat(result).contains(catz);
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+
+            String[] arg2 = new String[3];
+            System.arraycopy(args, 0, arg2, 0, 2);
+            arg2[2] = "--configuration-no-defaults";
+            try {
+                ReportConfiguration config = generateConfig(arg2);
+                SortedSet<String> result = config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
+                assertThat(result).containsExactly(catz);
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
+
+        @Override
+        protected void licenseFamiliesApprovedFileTest() {
+            File outputFile = new File(baseDir, "familiesApproved.txt");
+            try (FileWriter fw = new FileWriter(outputFile)) {
+                fw.write("catz");
+                fw.write(System.lineSeparator());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String[] args = {"--license-families-approved-file", outputFile.getPath()};
+            execLicenseFamiliesApprovedTest(args);
+        }
+
+        @Override
+        protected void licenseFamiliesApprovedTest() {
+            String[] args = {"--license-families-approved", "catz"};
+            execLicenseFamiliesApprovedTest(args);
+        }
+
+        private void execLicenseFamiliesDeniedTest(String[] args) {
+            String gpl = ILicenseFamily.makeCategory("GPL");
+            try {
+                ReportConfiguration config = generateConfig(args);
+                assertThat(config.getLicenseCategories(LicenseSetFactory.LicenseFilter.ALL)).contains(gpl);
+                SortedSet<String> result = config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
+                assertThat(result).doesNotContain(gpl);
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
+        @Override
+        protected void licenseFamiliesDeniedFileTest() {
+            File outputFile = new File(baseDir, "familiesApproved.txt");
+            try (FileWriter fw = new FileWriter(outputFile)) {
+                fw.write("GPL");
+                fw.write(System.lineSeparator());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String[] args = {"--license-families-denied-file", outputFile.getPath()};
+            execLicenseFamiliesDeniedTest(args);
+        }
+
+        @Override
+        protected void licenseFamiliesDeniedTest() {
+            String[] args = {"--license-families-denied", "GPL"};
+            execLicenseFamiliesDeniedTest(args);
+        }
 
         /**
          * Constructor.  sets the baseDir and loads the testMap.

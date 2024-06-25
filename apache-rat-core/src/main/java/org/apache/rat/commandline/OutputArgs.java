@@ -55,13 +55,10 @@ public final class OutputArgs {
                     + "Either an external xsl file may be specified or one of the internal named sheets.")
             .build())
             .addOption(Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
-            .desc("XSLT stylesheet to use when creating the report.  Not compatible with -x. "
-                    + "Either an external xsl file may be specified or one of the internal named sheets.")
             .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-style").get())
             .build())
             .addOption(Option.builder("x").longOpt("xml")
-            .desc("Output the report in raw XML format.  Not compatible with -s")
-            .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-style xml").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-style xml").get())
             .build());
 
     /** Specifies that  license definitions that should be included in the output */
@@ -103,24 +100,16 @@ public final class OutputArgs {
 
     /** Specifies where the output should be written.  */
     private static final OptionGroup OUTPUT_FILE = new OptionGroup()
-            .addOption(Option.builder().option("o").longOpt("out").hasArg()
+            .addOption(Option.builder().option("o").longOpt("out").hasArg().argName("File")
             .desc("Define the output file where to write a report to (default is System.out).")
             .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-file").get())
-            .type(File.class)
-            .converter(Converter.FILE).build())
-            .addOption(Option.builder().longOpt("output-file").hasArg()
+            .type(File.class).build())
+            .addOption(Option.builder().longOpt("output-file").hasArg().argName("File")
             .desc("Define the output file where to write a report to (default is System.out).")
-            .type(File.class)
-            .converter(Converter.FILE).build());
+            .type(File.class).build());
 
     /** Specifies the level of reporting detail for archive files. */
     private static final OptionGroup OUTPUT_ARCHIVE = new OptionGroup()
-            .addOption(Option.builder().longOpt("archive").hasArg().argName("ProcessingType")
-            .desc(format("Specifies the level of detail in ARCHIVE file reporting. (default is %s)",
-                    Defaults.ARCHIVE_PROCESSING))
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-archive").get())
-                    .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
-            .build())
             .addOption(Option.builder().longOpt("output-archive").hasArg().argName("ProcessingType")
                     .desc(format("Specifies the level of detail in ARCHIVE file reporting. (default is %s)",
                             Defaults.ARCHIVE_PROCESSING))
@@ -129,12 +118,6 @@ public final class OutputArgs {
 
     /** Specifies the level or reporting detail for standard files. */
     private static final OptionGroup OUTPUT_STANDARD = new OptionGroup()
-            .addOption(Option.builder().longOpt("standard").hasArg().argName("ProcessingType")
-            .desc(format("Specifies the level of detail in STANDARD file reporting. (default is %s)",
-                    Defaults.STANDARD_PROCESSING))
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-standard").get())
-            .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
-            .build())
             .addOption(Option.builder().longOpt("output-standard").hasArg().argName("ProcessingType")
                     .desc(format("Specifies the level of detail in STANDARD file reporting. (default is %s)",
                             Defaults.STANDARD_PROCESSING))

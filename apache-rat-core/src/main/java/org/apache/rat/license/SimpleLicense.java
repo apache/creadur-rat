@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
@@ -234,7 +235,8 @@ public class SimpleLicense implements ILicense {
                 throw new ImplementationException("License 'family' must be specified");
             }
 
-            Optional<ILicenseFamily> family = LicenseFamilySetFactory.findFamily(familyCategory, licenseFamilies);
+            String familyCat = ILicenseFamily.makeCategory(familyCategory);
+            Optional<ILicenseFamily> family = licenseFamilies.stream().filter( f ->  f.getFamilyCategory().equals(familyCat)).findFirst();
             if (!family.isPresent()) {
                 throw new ConfigurationException(String.format("License family '%s' not found.", familyCategory));
             }

@@ -61,7 +61,7 @@ abstract public class AbstractLicenseTest {
     }
 
     protected ILicense extractCategory(String famId, String id) {
-        Optional<ILicense> result = LicenseSetFactory.search(famId, id, defaults.getLicenses(LicenseFilter.ALL));
+        Optional<ILicense> result = LicenseSetFactory.search(famId, id, defaults.getLicenseSetFactory().getLicenses(LicenseFilter.ALL));
         if (!result.isPresent()) {
             fail(String.format("No licenses for id: f:%s l:%s", famId, id));
         }

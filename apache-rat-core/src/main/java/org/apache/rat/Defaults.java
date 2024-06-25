@@ -143,9 +143,9 @@ public final class Defaults {
      */
     private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URI> uris) {
 
-        SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
+        SortedSet<ILicense> licenses = new TreeSet<>();
 
-        SortedSet<String> approvedLicenseIds = new TreeSet<>();
+        SortedSet<String> approvedLicenseCategories = new TreeSet<>();
 
         for (URI uri : uris) {
             try {
@@ -162,14 +162,16 @@ public final class Defaults {
                     lReader.setLog(log);
                     lReader.addLicenses(url);
                     licenses.addAll(lReader.readLicenses());
-                    lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
+                    lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseCategories::add);
                 }
             } catch (MalformedURLException e) {
                 DefaultLog.getInstance().error("Invalid URL: " + uri.toString(), e);
             }
         }
 
-        return new LicenseSetFactory(licenses, approvedLicenseIds);
+        LicenseSetFactory result = new LicenseSetFactory(licenses);
+        approvedLicenseCategories.forEach(result::addLicenseCategory);
+        return result;
     }
 
     /**
@@ -188,32 +190,8 @@ public final class Defaults {
         return () -> Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
     }
 
-    /**
-     * Gets the sorted set of approved licenses for a given filter condition.
-     * @param filter define which type of licenses to return.
-     * @return sorted set of licenses.
-     */
-    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
-        return setFactory.getLicenses(filter);
-    }
-
-    /**
-     * Gets the sorted set of approved licenses for a given filter condition.
-     * @param filter define which type of licenses to return.
-     * @return sorted set of license families.
-     */
-    public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
-        return setFactory.getLicenseFamilies(filter);
-    }
-
-    /**
-     * Gets the sorted set of approved license ids for a given filter condition.
-     * If no licenses have been explicitly listed as approved, all licenses are assumed to be approved.
-     * @param filter define which type of licenses to return.
-     * @return The sorted set of approved licenseIds.
-     */
-    public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
-        return setFactory.getLicenseFamilyIds(filter);
+    public LicenseSetFactory getLicenseSetFactory() {
+        return setFactory;
     }
     
     /**

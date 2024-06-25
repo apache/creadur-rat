@@ -93,8 +93,8 @@ public final class OptionCollection {
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
     static {
         ARGUMENT_TYPES = new TreeMap<>();
-        ARGUMENT_TYPES.put("FileOrURI", () -> "A file name or URI");
-        ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan");
+        ARGUMENT_TYPES.put("File", () -> "A file name.");
+        ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan.");
         ARGUMENT_TYPES.put("Expression", () -> "A wildcard file matching pattern. example: *-test-*.txt");
         ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include.  Valid values: %s.",
                 asString(LicenseSetFactory.LicenseFilter.values())));
@@ -107,6 +107,8 @@ public final class OptionCollection {
                 Arrays.stream(StyleSheets.values())
                         .map(v -> format("\t%s: %s", v.arg(), v.desc()))
                         .collect(Collectors.joining(""))));
+        ARGUMENT_TYPES.put("LicenseID", () -> "The ID for a license.");
+        ARGUMENT_TYPES.put("FamilyID", () -> "The ID for a license family.");
     }
 
     /**
@@ -206,7 +208,6 @@ public final class OptionCollection {
         EditArgs.processArgs(ctxt);
 
         InputArgs.processArgs(ctxt);
-
 
         ConfigurationArgs.processArgs(ctxt);
 
