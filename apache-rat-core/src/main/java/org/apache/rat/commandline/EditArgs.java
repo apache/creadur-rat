@@ -49,7 +49,6 @@ public final class EditArgs {
     /** Defines options to add copyright to files */
     private static final OptionGroup COPYRIGHT = new OptionGroup()
             .addOption(Option.builder("c").longOpt("copyright").hasArg()
-                    .desc("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\".  Only valid with --edit-license")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription("Use '--edit-copyright' instead.").get())
                     .build())
@@ -60,8 +59,6 @@ public final class EditArgs {
     /** Causes file updates to overwrite existing files. */
     private static final OptionGroup OVERWRITE = new OptionGroup()
             .addOption(Option.builder("f").longOpt("force")
-                    .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created).  " +
-                            "Only valid with --edit-license")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription("Use '--edit-overwrite' instead.").get())
                     .build())

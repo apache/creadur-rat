@@ -34,6 +34,7 @@ public abstract class AbstractOptionsProvider {
     /** A map of tests Options to tests */
     protected final Map<String, OptionCollectionTest.OptionTest> testMap = new HashMap<>();
 
+
     protected AbstractOptionsProvider() {
         testMap.put("addLicense", this::addLicenseTest);
         testMap.put("archive", this::archiveTest);
@@ -52,15 +53,15 @@ public abstract class AbstractOptionsProvider {
         testMap.put("help", this::helpTest);
         testMap.put("input-exclude", this::inputExcludeTest);
         testMap.put("input-exclude-file", this::inputExcludeFileTest);
-//        testMap.put("license-families", this::licenseFamiliesTest);
-//        testMap.put("license-families-file", this::licenseFamiliesFileTest);
+        testMap.put("license-families-approved", this::licenseFamiliesApprovedTest);
+        testMap.put("license-families-approved-file", this::licenseFamiliesApprovedFileTest);
+        testMap.put("license-families-denied", this::licenseFamiliesDeniedTest);
+        testMap.put("license-families-denied-file", this::licenseFamiliesDeniedFileTest);
         testMap.put("licenses", this::licensesTest);
-//        testMap.put("licenses-approved", this::licensesApprovedTest);
-//        testMap.put("licenses-approved-file", this::licensesApprovedFileTest);
-//        testMap.put("licenses-remove-approved", this::licensesRemoveApprovedTest);
-//        testMap.put("licenses-remove-approved-file", this::licensesRemoveApprovedFileTest);
-//        testMap.put("licenses-remove-families", this::licensesRemoveFamiliesTest);
-//        testMap.put("licenses-remove-families-file", this::licensesRemoveFamiliesFileTest);
+        testMap.put("licenses-approved", this::licensesApprovedTest);
+        testMap.put("licenses-approved-file", this::licensesApprovedFileTest);
+        testMap.put("licenses-denied", this::licensesDeniedTest);
+        testMap.put("licenses-denied-file", this::licensesDeniedFileTest);
         testMap.put("list-families", this::listFamiliesTest);
         testMap.put("list-licenses", this::listLicensesTest);
         testMap.put("log-level", this::logLevelTest);
@@ -94,14 +95,14 @@ public abstract class AbstractOptionsProvider {
     protected abstract void helpTest();
     protected abstract void inputExcludeFileTest();
     protected abstract void inputExcludeTest();
-//    protected abstract void licenseFamiliesFileTest();
-//    protected abstract void licenseFamiliesTest();
-//    protected abstract void licensesApprovedFileTest();
-//    protected abstract void licensesApprovedTest();
-//    protected abstract void licensesRemoveApprovedFileTest();
-//    protected abstract void licensesRemoveApprovedTest();
-//    protected abstract void licensesRemoveFamiliesFileTest();
-//    protected abstract void licensesRemoveFamiliesTest();
+    protected abstract void licenseFamiliesApprovedFileTest();
+    protected abstract void licenseFamiliesApprovedTest();
+    protected abstract void licenseFamiliesDeniedFileTest();
+    protected abstract void licenseFamiliesDeniedTest();
+    protected abstract void licensesApprovedFileTest();
+    protected abstract void licensesApprovedTest();
+    protected abstract void licensesDeniedFileTest();
+    protected abstract void licensesDeniedTest();
     protected abstract void licensesTest();
     protected abstract void listFamiliesTest();
     protected abstract void listLicensesTest();

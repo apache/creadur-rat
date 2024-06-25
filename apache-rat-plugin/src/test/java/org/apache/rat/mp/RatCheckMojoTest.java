@@ -36,7 +36,6 @@ import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.api.Document;
 import org.apache.rat.commandline.OutputArgs;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TextUtils;
@@ -201,7 +200,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
         assertTrue(config.getApprovedLicenseCategories().contains(ILicenseFamily.makeCategory("YAL")));
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL");
-        assertNotNull(LicenseFamilySetFactory.search("YAL", config.getLicenseFamilies(LicenseFilter.ALL)));
+        assertNotNull(LicenseSetFactory.familySearch("YAL", config.getLicenseFamilies(LicenseFilter.ALL)));
         ReportConfigurationTest.validateDefaultLicenses(config, "MyLicense", "CpyrT", "RegxT", "SpdxT", "TextT", 
                 "Not", "All", "Any");
         assertTrue(LicenseSetFactory.search("YAL", "MyLicense", config.getLicenses(LicenseFilter.ALL)).isPresent());

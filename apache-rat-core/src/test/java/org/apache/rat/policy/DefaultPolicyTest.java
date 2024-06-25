@@ -23,11 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseFamilySetFactory;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingDocument;
@@ -62,7 +63,7 @@ public class DefaultPolicyTest {
     @BeforeEach
     public void setUp() throws Exception {
         defaults = Defaults.builder().build(DefaultLog.getInstance());
-        policy = new DefaultPolicy(defaults.getLicenseFamilies(LicenseFilter.APPROVED));
+        policy = new DefaultPolicy(defaults.getLicenseSetFactory().getLicenseFamilies(LicenseFilter.APPROVED));
         document = new TestingDocument("subject");
     }
 
@@ -97,10 +98,10 @@ public class DefaultPolicyTest {
 
     @Test
     public void testUnApprovedLicenses() {
-        SortedSet<ILicenseFamily> all = defaults.getLicenseFamilies(LicenseFilter.ALL);
-        SortedSet<ILicenseFamily> unapproved = LicenseFamilySetFactory.emptyLicenseFamilySet();
+        SortedSet<ILicenseFamily> all = defaults.getLicenseSetFactory().getLicenseFamilies(LicenseFilter.ALL);
+        SortedSet<ILicenseFamily> unapproved = new TreeSet<>();
         unapproved.addAll(all);
-        unapproved.removeAll(defaults.getLicenseFamilies(LicenseFilter.APPROVED));
+        unapproved.removeAll(defaults.getLicenseSetFactory().getLicenseFamilies(LicenseFilter.APPROVED));
 
         assertEquals(all.size() - NUMBER_OF_DEFAULT_ACCEPTED_LICENSES, unapproved.size(),
                 "Unapproved license count mismatch");
@@ -126,7 +127,7 @@ public class DefaultPolicyTest {
         assertApproval(false);
 
         policy.add(testingFamily);
-        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseFamilies()),
+        assertNotNull(LicenseSetFactory.familySearch(testingFamily, policy.getApprovedLicenseFamilies()),
                 "Did not properly add ILicenseFamily");
         policy.analyse(document);
         assertApproval(true);
@@ -143,7 +144,7 @@ public class DefaultPolicyTest {
 
         policy.add(testingFamily);
         assertEquals(1, policy.getApprovedLicenseFamilies().size());
-        assertNotNull(LicenseFamilySetFactory.search(testingFamily, policy.getApprovedLicenseFamilies()),
+        assertNotNull(LicenseSetFactory.familySearch(testingFamily, policy.getApprovedLicenseFamilies()),
                 "Did not properly add ILicenseFamily");
         policy.analyse(document);
         assertApproval(true);

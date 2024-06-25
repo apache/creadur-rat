@@ -50,8 +50,6 @@ public final class InputArgs {
     /** Excludes files by expression */
     private static final OptionGroup EXCLUDE = new OptionGroup()
             .addOption(Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
-            .desc("Excludes files matching wildcard <Expression>. May be followed by multiple arguments. "
-                    + "Note that '--' or a following option is required when using this parameter.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription("Use '--input-exclude' instead.").get())
             .build())
@@ -63,13 +61,13 @@ public final class InputArgs {
     /** Excludes files based on content of file */
     private static final OptionGroup EXCLUDE_FILE = new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
-            .argName("FileOrURI")
-            .hasArg().desc("Excludes files matching regular expression in the input file.")
+            .argName("File")
+            .hasArg()
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription("Use '--input-exclude-file' instead.").get())
             .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
-                    .argName("FileOrURI")
+                    .argName("File")
                     .hasArg().desc("Excludes files matching regular expression in the input file.")
                     .build());
 

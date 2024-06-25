@@ -81,15 +81,15 @@ public class ReportConfigurationTest {
     @Test
     public void testAddAndRemoveApproveLicenseCategories() {
         List<String> expected = new ArrayList<>();
-        underTest.addLicense( new TestingLicense("Unapproved"));
+        underTest.addLicense(new TestingLicense("Unapproved"));
 
-        assertThat(underTest.getApprovedLicenseCategories()).isEmpty();
+        assertThat(underTest.getLicenseCategories(LicenseFilter.APPROVED)).isEmpty();
 
         TestingLicense license = new TestingLicense("TheCat");
         underTest.addLicense(license);
         underTest.addApprovedLicenseCategory(license.getFamily());
         expected.add("TheCa");
-        SortedSet<String> result = underTest.getApprovedLicenseCategories();
+        SortedSet<String> result = underTest.getLicenseCategories(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(result.size()).containsAll(result);
         SortedSet<ILicenseFamily> families = underTest.getLicenseFamilies(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(families.size());
@@ -99,28 +99,28 @@ public class ReportConfigurationTest {
         underTest.addLicense(new TestingLicense("ACat"));
         underTest.addApprovedLicenseCategory("ACat");
         expected.add("ACat ");
-        result = underTest.getApprovedLicenseCategories();
+        result = underTest.getLicenseCategories(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(result.size()).containsAll(result);
         families = underTest.getLicenseFamilies(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(families.size());
         licenses = underTest.getLicenses(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(licenses.size());
 
-        String[] cats = { "Spot ", "Felix" };
+        String[] cats = {"Spot ", "Felix"};
         underTest.addLicense(new TestingLicense("Spot"));
         underTest.addLicense(new TestingLicense("Felix"));
         underTest.addApprovedLicenseCategories(Arrays.asList(cats));
         expected.addAll(Arrays.asList(cats));
-        result = underTest.getApprovedLicenseCategories();
+        result = underTest.getLicenseCategories(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(result.size()).containsAll(result);
         families = underTest.getLicenseFamilies(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(families.size());
         licenses = underTest.getLicenses(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(licenses.size());
-        
+
         underTest.removeApprovedLicenseCategory("Spot ");
         expected.remove("Spot ");
-        result = underTest.getApprovedLicenseCategories();
+        result = underTest.getLicenseCategories(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(result.size()).containsAll(result);
         families = underTest.getLicenseFamilies(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(families.size());
@@ -130,28 +130,166 @@ public class ReportConfigurationTest {
         cats[0] = "TheCa";
         underTest.removeApprovedLicenseCategories(Arrays.asList(cats));
         expected.removeAll(Arrays.asList(cats));
-        result = underTest.getApprovedLicenseCategories();
+        result = underTest.getLicenseCategories(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(result.size()).containsAll(result);
         families = underTest.getLicenseFamilies(LicenseFilter.APPROVED);
         assertThat(expected).hasSize(families.size());
         licenses = underTest.getLicenses(LicenseFilter.APPROVED);
-        assertThat(expected).hasSize(licenses.size());    }
+        assertThat(expected).hasSize(licenses.size());
+    }
 
     @Test
     public void testRemoveBeforeAddApproveLicenseCategories() {
         underTest.addLicense( new TestingLicense("TheCat"));
-        assertThat(underTest.getApprovedLicenseCategories()).isEmpty();
+        assertThat(underTest.getLicenseCategories(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenseFamilies(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
         
         underTest.removeApprovedLicenseCategory("TheCat");
-        assertThat(underTest.getApprovedLicenseCategories()).isEmpty();
+        assertThat(underTest.getLicenseCategories(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenseFamilies(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
 
         underTest.addApprovedLicenseCategory("TheCat");
-        assertThat(underTest.getApprovedLicenseCategories()).isEmpty();
+        assertThat(underTest.getLicenseCategories(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenseFamilies(LicenseFilter.APPROVED)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
+    }
+
+    @Test
+    public void testAddAndRemoveApproveLicenseIds() {
+        List<String> expected = new ArrayList<>();
+        underTest.addLicense(new TestingLicense("Unapproved"));
+
+        assertThat(underTest.getLicenseIds(LicenseFilter.APPROVED)).isEmpty();
+
+        TestingLicense license = new TestingLicense("TheCat");
+        underTest.addLicense(license);
+        underTest.addApprovedLicenseId(license.getId());
+        expected.add("TheCat");
+        SortedSet<String> result = underTest.getLicenseIds(LicenseFilter.APPROVED);
+        assertThat(result).hasSize(expected.size()).containsAll(expected);
+        SortedSet<ILicense> licenses = underTest.getLicenses(LicenseFilter.APPROVED);
+        assertThat(licenses).hasSize(expected.size());
+
+        underTest.addLicense(new TestingLicense("ACat"));
+        underTest.addApprovedLicenseId("ACat");
+        expected.add("ACat");
+        result = underTest.getLicenseIds(LicenseFilter.APPROVED);
+        assertThat(result).hasSize(expected.size()).containsAll(expected);
+        licenses = underTest.getLicenses(LicenseFilter.APPROVED);
+        assertThat(licenses).hasSize(expected.size());
+
+        String[] cats = {"Spot", "Felix"};
+        underTest.addLicense(new TestingLicense("Spot"));
+        underTest.addLicense(new TestingLicense("Felix"));
+        underTest.addApprovedLicenseIds(Arrays.asList(cats));
+        expected.addAll(Arrays.asList(cats));
+        result = underTest.getLicenseIds(LicenseFilter.APPROVED);
+        assertThat(result).hasSize(expected.size()).containsAll(expected);
+        licenses = underTest.getLicenses(LicenseFilter.APPROVED);
+        assertThat(licenses).hasSize(expected.size());
+
+        underTest.removeApprovedLicenseId("Spot");
+        expected.remove("Spot");
+        result = underTest.getLicenseIds(LicenseFilter.APPROVED);
+        assertThat(result).hasSize(expected.size()).containsAll(expected);
+        licenses = underTest.getLicenses(LicenseFilter.APPROVED);
+        assertThat(licenses).hasSize(expected.size());
+
+        cats[0] = "TheCat";
+        underTest.removeApprovedLicenseIds(Arrays.asList(cats));
+        expected.removeAll(Arrays.asList(cats));
+        result = underTest.getLicenseIds(LicenseFilter.APPROVED);
+        assertThat(result).hasSize(expected.size()).containsAll(expected);
+        licenses = underTest.getLicenses(LicenseFilter.APPROVED);
+        assertThat(licenses).hasSize(expected.size());
+    }
+
+    /**
+     * Sets up underTest to have a set of licenses named after cartoon cats.
+     * {@link https://en.wikipedia.org/wiki/List_of_fictional_cats_in_comics}
+     * all in the license family catz
+     */
+    private void addCatz() {
+        underTest.addLicense(new TestingLicense("catz", "Garfield"));
+        underTest.addLicense(new TestingLicense("catz", "Felix"));
+        underTest.addLicense(new TestingLicense("catz", "Arlene"));
+        underTest.addLicense(new TestingLicense("catz", "Nermal"));
+        underTest.addLicense(new TestingLicense("catz", "Hobbes"));
+        underTest.addLicense(new TestingLicense("catz", "Heathcliff"));
+        underTest.addLicense(new TestingLicense("catz", "Catbert"));
+    }
+
+    /**
+     * Sets up underTest to have a set of licenses named after cartoon dogs.
+     * {@link https://en.wikipedia.org/wiki/List_of_fictional_dogs_in_comics}
+     * all in the license family dogz
+     */
+    private void addDogz() {
+        underTest.addLicense(new TestingLicense("dogz", "Odie"));
+        underTest.addLicense(new TestingLicense("dogz", "Snoopy"));
+        underTest.addLicense(new TestingLicense("dogz", "Scamp"));
+        underTest.addLicense(new TestingLicense("dogz", "Marmaduke"));
+        underTest.addLicense(new TestingLicense("dogz", "Rosebud"));
+        underTest.addLicense(new TestingLicense("dogz", "Spike"));
+        underTest.addLicense(new TestingLicense("dogz", "Dogbert"));
+    }
+
+    @Test
+    public void removeFamilyAddLicense() {
+        addCatz();
+        underTest.addApprovedLicenseCategory("catz");
+        underTest.removeApprovedLicenseCategory("catz");
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
+        underTest.addApprovedLicenseId("Garfield");
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(1);
+    }
+
+    @Test
+    public void addFamilyRemoveLicense() {
+        addCatz();
+        underTest.addApprovedLicenseCategory("catz");
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(7);
+        underTest.removeApprovedLicenseId("Catbert");
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(6);
+    }
+
+    @Test
+    public void removeFamilyRemoveLicense() {
+        addCatz();
+        addDogz();
+        underTest.addApprovedLicenseCategory("catz");
+        underTest.addApprovedLicenseCategory("dogz");
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(14);
+        underTest.removeApprovedLicenseCategory("dogz");
+        underTest.removeApprovedLicenseId("Catbert");
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(6);
+    }
+
+    @Test
+    public void addFamilyAddLicense() {
+        addCatz();
+        addDogz();
+        underTest.addApprovedLicenseCategory("catz");
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(7);
+        underTest.addApprovedLicenseId("Dogbert");
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(8);
+    }
+
+
+    @Test
+    public void testRemoveBeforeAddApproveLicenseIds() {
+        underTest.addLicense( new TestingLicense("TheCat"));
+        assertThat(underTest.getLicenseIds(LicenseFilter.APPROVED)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
+
+        underTest.removeApprovedLicenseId("TheCat");
+        assertThat(underTest.getLicenseIds(LicenseFilter.APPROVED)).isEmpty();
+        assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
+
+        underTest.addApprovedLicenseId("TheCat");
+        assertThat(underTest.getLicenseIds(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
     }
 
@@ -503,9 +641,9 @@ public class ReportConfigurationTest {
      * @param config The configuration to test.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
-        assertThat(config.getApprovedLicenseCategories()).hasSize(XMLConfigurationReaderTest.EXPECTED_IDS.length + additionalIdCount);
+        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.EXPECTED_IDS.length + additionalIdCount);
         for (String s : XMLConfigurationReaderTest.EXPECTED_IDS) {
-            assertThat(config.getApprovedLicenseCategories()).contains(ILicenseFamily.makeCategory(s));
+            assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).contains(ILicenseFamily.makeCategory(s));
         }
     }
     
