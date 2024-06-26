@@ -102,32 +102,12 @@ public class ReportOptionTest  {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
-        final Map<Option, OptionCollectionTest.OptionTest> testMap = new HashMap<>();
-
-        File baseDir;
 
         public OptionsProvider() {
-            baseDir = new File("target/optionTools");
-            baseDir.mkdirs();
-            testMap.put(OptionCollection.ADD_LICENSE, this::addLicenseTest);
-            testMap.put(OptionCollection.ARCHIVE, this::archiveTest);
-            testMap.put(OptionCollection.STANDARD, this::standardTest);
-            testMap.put(OptionCollection.COPYRIGHT, this::copyrightTest);
-            testMap.put(OptionCollection.DRY_RUN, this::dryRunTest);
-            testMap.put(OptionCollection.EXCLUDE_CLI, this::excludeCliTest);
-            testMap.put(OptionCollection.EXCLUDE_FILE_CLI,this::excludeCliFileTest);
-            testMap.put(OptionCollection.FORCE, this::forceTest);
-            testMap.put(OptionCollection.LICENSES, this::licensesTest);
-            testMap.put(OutputArgs.LIST_LICENSES, this::listLicensesTest);
-            testMap.put(OutputArgs.OUTPUT_FAMILIES, this::listFamiliesTest);
-            testMap.put(OptionCollection.NO_DEFAULTS, this::noDefaultsTest);
-            testMap.put(OutputArgs.OUT, this::outTest);
-            testMap.put(OptionCollection.SCAN_HIDDEN_DIRECTORIES, this::scanHiddenDirectoriesTest);
-            testMap.put(OutputArgs.STYLESHEET_CLI, this::styleSheetTest);
-            testMap.put(OutputArgs.XML, this::xmlTest);
+            super();
         }
 
-        private ReportConfiguration generateConfig(Option option, String... args) {
+        private ReportConfiguration generateConfig(Pair<Option,String[]>... args) {
             List<Pair<String,String>> lst = new ArrayList<>();
             for (int i=0;i<args.length;i+=2) {
                 lst.add(ImmutablePair.of(args[i], args[i+1]));

@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,9 +42,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.InputArgs;
-import org.apache.rat.commandline.OutputArgs;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -56,8 +54,12 @@ public final class AntGenerator {
     /**
      * The list of Options that are not supported by Ant.
      */
-    private static final List<Option> ANT_FILTER_LIST = Arrays.asList(OptionCollection.HELP, OutputArgs.LOG_LEVEL,
-            InputArgs.DIR);
+    private static final List<Option> ANT_FILTER_LIST = new ArrayList<>();
+
+    static {
+        ANT_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
+        ANT_FILTER_LIST.addAll(Arg.DIR.group().getOptions());
+    }
 
     /**
      * the filter to filter out CLI options that Ant does not support.
@@ -96,7 +98,7 @@ public final class AntGenerator {
         String className = args[1];
         String destDir = args[2];
 
-        List<AntOption> options = OptionCollection.buildOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
+        List<AntOption> options = Arg.getOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
                 .collect(Collectors.toList());
 
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());

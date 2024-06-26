@@ -55,7 +55,7 @@ public class InputArgsTest {
 
     @Test
     public void parseExclusionsTest() {
-        final Optional<IOFileFilter> filter = InputArgs.parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
+        final Optional<IOFileFilter> filter = Arg.parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertThat(filter).isPresent();
         assertThat(filter.get()).isExactlyInstanceOf(OrFileFilter.class);
         assertTrue(filter.get().accept(baseDir, "./foo/bar" ), "./foo/bar");
@@ -74,7 +74,7 @@ public class InputArgsTest {
     @MethodSource("exclusionsProvider")
     public void testParseExclusions(String pattern, List<IOFileFilter> expectedPatterns, List<String> logEntries) {
         TestingLog log = new TestingLog();
-        Optional<IOFileFilter> filter = InputArgs.parseExclusions(log, Collections.singletonList(pattern));
+        Optional<IOFileFilter> filter = Arg.parseExclusions(log, Collections.singletonList(pattern));
         if (expectedPatterns.isEmpty()) {
             assertThat(filter).isEmpty();
         } else {

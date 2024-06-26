@@ -58,7 +58,13 @@ public final class MavenGenerator {
     /**
      * List of CLI Options that are not supported by Maven.
      */
-    private static final List<Option> MAVEN_FILTER_LIST = Arrays.asList(OptionCollection.HELP, OptionCollection.DIR);
+    private static final List<Option> MAVEN_FILTER_LIST = new ArrayList<>();
+
+    static {
+        MAVEN_FILTER_LIST.addAll(Arg.DIR.group().getOptions());
+        MAVEN_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
+        MAVEN_FILTER_LIST.add(OptionCollection.HELP);
+    }
 
     /**
      * Filter to remove Options not supported by Maven.
