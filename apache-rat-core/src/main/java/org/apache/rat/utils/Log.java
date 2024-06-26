@@ -29,28 +29,28 @@ public interface Log {
     /**
      * The log levels supported by logging.
      */
-    public enum Level {
+    enum Level {
         // these must be listed in order of decreasing noisiness.
-    	/**
-    	 * Log debug only.
-    	 */
-    	DEBUG, 
-    	/**
-    	 * Log info only.
-    	 */
-    	INFO, 
-    	/**
-    	 * Log warn only.
-    	 */
-    	WARN, 
-    	/**
-    	 * Log error only.
-    	 */
-    	ERROR,
         /**
-         * Log nothing.
+         * Log debug only.
          */
-        OFF};
+        DEBUG,
+        /**
+         * Log info only.
+         */
+        INFO,
+        /**
+         * Log warn only.
+         */
+        WARN,
+        /**
+         * Log error only.
+         */
+        ERROR,
+       /**
+        * Log nothing.
+        */
+       OFF};
 
     /**
      * Writes a message at a specific log level.

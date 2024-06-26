@@ -56,11 +56,9 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.commandline.ConfigurationArgs;
-import org.apache.rat.commandline.EditArgs;
-import org.apache.rat.commandline.InputArgs;
-import org.apache.rat.commandline.OutputArgs;
+
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.LicenseSetFactory;
@@ -157,13 +155,13 @@ public final class OptionCollection {
             commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter(log)).build().parse(opts, args);
         } catch (ParseException e) {
             log.error(e.getMessage());
-            log.error("Please use the \"--help\" option to see a list of valid commands and options");
+            log.error("Please use the \"--help\" option to see a list of valid commands and options", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
         }
 
-        OutputArgs.processLogLevel(commandLine, log);
+        Arg.processLogLevel(commandLine, log);
 
         if (commandLine.hasOption(HELP)) {
             helpCmd.accept(opts);
@@ -173,7 +171,7 @@ public final class OptionCollection {
         // DIR or end of command line can provide args.
         String[] clArgs = {null};
         List<String> lst = new ArrayList<>();
-        String dirValue = InputArgs.getDirValue(commandLine);
+        String dirValue = commandLine.getOptionValue(Arg.DIR.getSelected());
         if (dirValue != null) {
             lst.add(dirValue);
         }
@@ -201,16 +199,7 @@ public final class OptionCollection {
      */
     static ReportConfiguration createConfiguration(final Log log, final String baseDirectory, final CommandLine cl) throws IOException {
         final ReportConfiguration configuration = new ReportConfiguration(log);
-        ArgumentContext ctxt = new ArgumentContext(configuration, cl);
-
-        OutputArgs.processArgs(ctxt);
-
-        EditArgs.processArgs(ctxt);
-
-        InputArgs.processArgs(ctxt);
-
-        ConfigurationArgs.processArgs(ctxt);
-
+        new ArgumentContext(configuration, cl).processArgs();
         if (StringUtils.isNotBlank(baseDirectory)) {
             configuration.setReportable(getDirectory(baseDirectory, configuration));
         }
@@ -224,13 +213,7 @@ public final class OptionCollection {
      * @return the Options comprised of the Options defined in this class.
      */
     public static Options buildOptions() {
-        Options options = new Options()
-                .addOption(HELP);
-        InputArgs.addOptions(options);
-        OutputArgs.addOptions(options);
-        ConfigurationArgs.addOptions(options);
-        EditArgs.addOptions(options);
-        return options;
+        return Arg.getOptions().addOption(HELP);
     }
 
     /**

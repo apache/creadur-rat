@@ -37,7 +37,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.api.Document.Type;
-import org.apache.rat.commandline.OutputArgs;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.ILicenseFamily;
@@ -210,7 +210,7 @@ public class ReporterTest {
 
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration(DefaultLog.getInstance());
-        configuration.setStyleSheet(OutputArgs.getStyleSheet(StyleSheets.XML));
+        configuration.setStyleSheet(Arg.getStyleSheet(StyleSheets.XML));
         configuration.setFrom(defaults);
         configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
         configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));

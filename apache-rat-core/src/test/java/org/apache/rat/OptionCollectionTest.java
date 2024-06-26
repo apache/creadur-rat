@@ -71,6 +71,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {
 
+
     /** The base directory for the test.  We do not use TempFile because we want the evidence of the run to exist after
      * a failure.*/
     File baseDir;
@@ -115,13 +116,15 @@ public class OptionCollectionTest {
         TestingLog log = new TestingLog();
         try {
             DefaultLog.setInstance(log);
-            String[] args = {longOpt(OptionCollection.DIR), "target", "-a"};
+            String[] args = {"--dir", "target", "-a"};
             ReportConfiguration config = OptionCollection.parseCommands(args, o -> fail("Help printed"), true);
         } finally {
             DefaultLog.setInstance(null);
         }
-        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
-        log.assertContainsExactly(1, "WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '-A' or '--addLicense'");
+        log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
+        log.assertNotContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", 1);
+        log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '--edit-license'");
+        log.assertNotContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '--edit-license'", 1);
     }
 
     @Test
@@ -130,27 +133,18 @@ public class OptionCollectionTest {
         ReportConfiguration config = null;
         try {
             DefaultLog.setInstance(log);
-            String[] args = {longOpt(OptionCollection.DIR), "foo"};
+            String[] args = {"--dir", "foo"};
             config = OptionCollection.parseCommands(args, (o) -> {
-            }, true);
+            });
         } finally {
             DefaultLog.setInstance(null);
         }
         assertThat(config).isNotNull();
-        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
+        log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
+        log.assertNotContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", 1);
     }
 
-    @Test
-    public void parseExclusionsTest() {
-        final Optional<IOFileFilter> filter = OptionCollection
-                .parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
-        assertThat(filter).isPresent();
-        assertThat(filter.get()).isExactlyInstanceOf(OrFileFilter.class);
-        assertTrue(filter.get().accept(baseDir, "./foo/bar" ), "./foo/bar");
-        assertFalse(filter.get().accept(baseDir, "B.bar"), "B.bar");
-        assertTrue(filter.get().accept(baseDir, "foo" ), "foo");
-        assertFalse(filter.get().accept(baseDir, "notfoo"), "notfoo");
-    }
+
 
     @Test
     public void testDefaultConfiguration() throws ParseException, IOException {
@@ -158,95 +152,6 @@ public class OptionCollectionTest {
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
         ReportConfiguration config = OptionCollection.createConfiguration(DefaultLog.getInstance(), "", cl);
         ReportConfigurationTest.validateDefault(config);
-    }
-
-    /**
-     * A parameterized test for file exclusions.
-     * @param pattern The pattern to exclude
-     * @param expectedPatterns The file filters that are expected to be generated from the pattern
-     * @param logEntries the list of expected log entries.
-     */
-    @ParameterizedTest
-    @MethodSource("exclusionsProvider")
-    public void testParseExclusions(String pattern, List<IOFileFilter> expectedPatterns, List<String> logEntries) {
-        TestingLog log = new TestingLog();
-        Optional<IOFileFilter> filter = OptionCollection.parseExclusions(log, Collections.singletonList(pattern));
-        if (expectedPatterns.isEmpty()) {
-            assertThat(filter).isEmpty();
-        } else {
-            assertThat(filter).isNotEmpty();
-            assertInstanceOf(OrFileFilter.class, filter.get());
-            String result = filter.toString();
-            for (IOFileFilter expectedFilter : expectedPatterns) {
-                TextUtils.assertContains(expectedFilter.toString(), result);
-            }
-        }
-        assertEquals(log.isEmpty(), logEntries.isEmpty());
-        for (String logEntry : logEntries) {
-            log.assertContains(logEntry);
-        }
-    }
-
-    /** Provider for the testParseExclusions */
-    public static Stream<Arguments> exclusionsProvider() {
-        List<Arguments> lst = new ArrayList<>();
-
-        lst.add(Arguments.of( "", Collections.emptyList(), Collections.singletonList("INFO: Ignored 1 lines in your exclusion files as comments or empty lines.")));
-
-        lst.add(Arguments.of( "# a comment", Collections.emptyList(), Collections.singletonList("INFO: Ignored 1 lines in your exclusion files as comments or empty lines.")));
-
-        List<IOFileFilter> expected = new ArrayList<>();
-        String pattern = "hello.world";
-        expected.add(new RegexFileFilter(pattern));
-        expected.add(new NameFileFilter(pattern));
-        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
-
-        expected = new ArrayList<>();
-        pattern = "[Hh]ello.[Ww]orld";
-        expected.add(new RegexFileFilter(pattern));
-        expected.add(new NameFileFilter(pattern));
-        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
-
-        expected = new ArrayList<>();
-        pattern = "hell*.world";
-        expected.add(new RegexFileFilter(pattern));
-        expected.add(new NameFileFilter(pattern));
-        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
-        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
-
-        // see RAT-265 for issue
-        expected = new ArrayList<>();
-        pattern = "*.world";
-        expected.add(new NameFileFilter(pattern));
-        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
-        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
-
-        expected = new ArrayList<>();
-        pattern = "hello.*";
-        expected.add(new NameFileFilter(pattern));
-        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
-        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
-
-        expected = new ArrayList<>();
-        pattern = "?ello.world";
-        expected.add(new NameFileFilter(pattern));
-        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
-        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
-
-        expected = new ArrayList<>();
-        pattern = "hell?.world";
-        expected.add(new RegexFileFilter(pattern));
-        expected.add(new NameFileFilter(pattern));
-        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
-        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
-
-        expected = new ArrayList<>();
-        pattern = "hello.worl?";
-        expected.add(new NameFileFilter(pattern));
-        expected.add(WildcardFileFilter.builder().setWildcards(pattern).get());
-        lst.add(Arguments.of( pattern, expected, Collections.emptyList()));
-
-        return lst.stream();
     }
 
     /**
@@ -516,286 +421,6 @@ public class OptionCollectionTest {
             ReportConfiguration config = OptionCollection.parseCommands(args, o -> helpCalled.set(true), true);
             assertFalse(helpCalled.get(), "Help was called");
             return config;
-        }
-
-        private void configTest(String arg) {
-            String[] args = {arg, "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml"};
-            try {
-                ReportConfiguration config = generateConfig(args);
-                SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
-                assertTrue(set.size() > 2);
-                assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
-                assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
-
-                args = new String[]{arg, "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml",
-                        "--configuration-no-defaults"};
-                config = generateConfig(args);
-                set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
-                assertEquals(2, set.size());
-                assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
-                assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public void licensesTest() {
-            configTest("--licenses");
-        }
-        @Override
-        protected void configTest() {
-            configTest("--config");
-        }
-
-        private void noDefaultsTest(String arg) {
-            String[] args = {arg};
-            try {
-                ReportConfiguration config = generateConfig(args);
-                assertTrue(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
-                config = generateConfig(new String[0]);
-                assertFalse(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public void noDefaultsTest() {
-            noDefaultsTest("--no-default-licenses");
-        }
-
-
-        @Override
-        protected void configurationNoDefaultsTest() {
-           noDefaultsTest("--configuration-no-defaults");
-        }
-
-        @Override
-        public void dryRunTest() {
-            try {
-                String[] args = {longOpt(OptionCollection.DRY_RUN)};
-                ReportConfiguration config = generateConfig(args);
-                assertTrue(config.isDryRun());
-                args = new String[0];
-                config = generateConfig(args);
-                assertFalse(config.isDryRun());
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public void excludeCliTest() {
-            String[] args = {longOpt(OptionCollection.EXCLUDE_CLI), "*.foo", "[A-Z]\\.bar", "justbaz"};
-            execCliTest(args);
-        }
-
-        /**
-         * execute an "exclude" test.
-         * @param args
-         */
-        private void execCliTest(String[] args) {
-                try {
-                    ReportConfiguration config = generateConfig(args);
-                    IOFileFilter filter = config.getFilesToIgnore();
-                    assertThat(filter).isExactlyInstanceOf(OrFileFilter.class);
-                    assertTrue(filter.accept(baseDir, "some.foo" ), "some.foo");
-                    assertTrue(filter.accept(baseDir, "B.bar"), "B.bar");
-                    assertTrue(filter.accept(baseDir, "justbaz" ), "justbaz");
-                    assertFalse(filter.accept(baseDir, "notbaz"), "notbaz");
-                } catch (IOException e) {
-                    fail(e.getMessage());
-                }
-        }
-
-        @Override
-        public void excludeCliFileTest() {
-            File outputFile = new File(baseDir, "exclude.txt");
-            try (FileWriter fw = new FileWriter(outputFile)) {
-                fw.write("*.foo");
-                fw.write(System.lineSeparator());
-                fw.write("[A-Z]\\.bar");
-                fw.write(System.lineSeparator());
-                fw.write("justbaz");
-                fw.write(System.lineSeparator());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            String[] args = {longOpt(OptionCollection.EXCLUDE_FILE_CLI), outputFile.getPath()};
-            execCliTest(args);
-        }
-
-        @Override
-        public void forceTest() {
-                String [] args =  new String[] {longOpt(OptionCollection.FORCE)};
-                try {
-                    ReportConfiguration config = generateConfig(args);
-                    assertFalse(config.isAddingLicensesForced());
-                    args = new String[]{longOpt(OptionCollection.FORCE), longOpt(OptionCollection.ADD_LICENSE)};
-                    config = generateConfig(args);
-                    assertTrue(config.isAddingLicensesForced());
-                } catch (IOException e) {
-                    fail(e.getMessage());
-                }
-        }
-
-        @Override
-        public void licensesTest() {
-            String[] args = {longOpt(OptionCollection.LICENSES), "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml"};
-            try {
-                ReportConfiguration config = generateConfig(args);
-                SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
-                assertTrue(set.size() > 2);
-                assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
-                assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
-
-                args = new String[]{longOpt(OptionCollection.LICENSES), "src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml", longOpt(OptionCollection.NO_DEFAULTS)};
-                config = generateConfig(args);
-                set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
-                assertEquals(2, set.size());
-                assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
-                assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public void listLicensesTest() {
-            String[] args = {longOpt(OptionCollection.LIST_LICENSES), null};
-            for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-                try {
-                    args[1] = filter.name();
-                    ReportConfiguration config = generateConfig(args);
-                    assertEquals(filter, config.listLicenses());
-                } catch (IOException e) {
-                    fail(e.getMessage());
-                }
-            }
-        }
-
-        @Override
-        public void listFamiliesTest() {
-            String[] args = {longOpt(OptionCollection.LIST_FAMILIES), null};
-            for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-                try {
-                    args[1] = filter.name();
-                    ReportConfiguration config = generateConfig(args);
-                    assertEquals(filter, config.listFamilies());
-                } catch (IOException e) {
-                    fail(e.getMessage());
-                }
-            }
-        }
-
-        public void logLevelTest() {
-            String[] args = {longOpt(OptionCollection.LOG_LEVEL), null};
-            Log.Level logLevel = ((DefaultLog) DefaultLog.getInstance()).getLevel();
-            try {
-                for (Log.Level level : Log.Level.values()) {
-                    try {
-                        args[1] = level.name();
-                        ReportConfiguration config = generateConfig(args);
-                        assertEquals(level, ((DefaultLog) DefaultLog.getInstance()).getLevel());
-                    } catch (IOException e) {
-                        fail(e.getMessage());
-                    }
-                }
-            } finally {
-                ((DefaultLog) DefaultLog.getInstance()).setLevel(logLevel);
-            }
-        }
-
-        @Override
-        public void noDefaultsTest() {
-            String[] args = {longOpt(OptionCollection.NO_DEFAULTS)};
-            try {
-                ReportConfiguration config = generateConfig(args);
-                assertTrue(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
-                config = generateConfig(new String[0]);
-                assertFalse(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public void outTest() {
-            File outFile = new File( baseDir, "outexample");
-            String[] args = new String[] {longOpt(OptionCollection.OUT), outFile.getAbsolutePath()};
-            try {
-                ReportConfiguration config = generateConfig(args);
-                try (OutputStream os = config.getOutput().get()) {
-                    os.write("Hello world".getBytes());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                try (BufferedReader reader = new BufferedReader( new InputStreamReader(Files.newInputStream(outFile.toPath())))) {
-                    assertEquals("Hello world",reader.readLine());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public void scanHiddenDirectoriesTest() {
-            String[] args = {longOpt(OptionCollection.SCAN_HIDDEN_DIRECTORIES)};
-            try {
-                ReportConfiguration config = generateConfig(args);
-                assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public void styleSheetTest() {
-            String[] args = {longOpt(OptionCollection.STYLESHEET_CLI), null};
-            try {
-                URL url = ReportTest.class.getResource("MatcherContainerResource.txt");
-                if (url == null) {
-                    fail("Could not locate 'MatcherContainerResource.txt'");
-                }
-                for (String sheet : new String[]{"target/optionTools/stylesheet.xlt", "plain-rat", "missing-headers", "unapproved-licenses", url.getFile()}) {
-                    args[1] = sheet;
-                    ReportConfiguration config = generateConfig(args);
-                    assertTrue(config.isStyleReport());
-                }
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public void xmlTest() {
-            String[] args = {longOpt(OptionCollection.XML)};
-            try {
-                ReportConfiguration config = generateConfig(args);
-                assertFalse(config.isStyleReport());
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        }
-
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
-            List<Arguments> lst = new ArrayList<>();
-
-            for (Option option : OptionCollection.buildOptions().getOptions()) {
-                if (option.getLongOpt() != null) {
-                    String name = longOpt(option);
-                    OptionTest test = testMap.get(option);
-                    if (test == null) {
-                        fail("Option "+name+" is not defined in testMap");
-                    }
-                    lst.add(Arguments.of(name, test));
-                }
-            }
-            return lst.stream();
         }
     }
 }

@@ -101,20 +101,31 @@ public class MavenOption {
      * @return the key value for the CLI argument map.
      */
     public String keyValue() {
-        return "\"--" + option.getLongOpt() + "\"";
+        return "\"" + option.getLongOpt() + "\"";
     }
 
     public String getDeprecated() {
         return option.getDeprecated().toString();
     }
 
-    public String getMethodSignature(final String indent) {
+    public String getMethodSignature(final String indent, final boolean multiple) {
         StringBuilder sb = new StringBuilder();
         if (isDeprecated()) {
             sb.append(format("%s@Deprecated%n", indent));
         }
-        return sb.append(format("%1$s@Parameter(property = \"rat.%2$s\")%n%1$spublic void set%3$s(%4$s %2$s)",
-                        indent, name, WordUtils.capitalize(name), option.hasArg() ? "String" : "boolean"))
+        String fname = WordUtils.capitalize(name);
+        String args = option.hasArg() ? "String" : "boolean";
+        String parmArgs = "";
+        if (multiple) {
+            fname = fname + "s";
+            args = args + "[]";
+        } else {
+            parmArgs = format("(property = \"rat.%s\")", name);
+        }
+
+
+        return sb.append(format("%1$s@Parameter%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
+                        indent, name, fname, args, parmArgs))
                 .toString();
     }
 

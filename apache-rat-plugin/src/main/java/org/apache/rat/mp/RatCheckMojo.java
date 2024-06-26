@@ -200,7 +200,6 @@ public class RatCheckMojo extends AbstractRatMojo {
                 }
             }
 
-            final String seeReport = " See RAT report in: " + args.get("--" + OptionCollection.OUT.getLongOpt());
             if (!ignoreErrors) {
                 throw new RatCheckException("Too many files with unapproved license: "
                         + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED) + seeReport);
