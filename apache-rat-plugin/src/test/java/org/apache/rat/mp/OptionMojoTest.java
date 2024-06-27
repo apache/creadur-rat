@@ -159,10 +159,10 @@ public class OptionMojoTest   {
                 mojo.setExcludes(ds);
                 mojo.setIncludes(ds);
                 ds.scan();
-                assertTrue(ds.getFoundList().contains("some.foo" ), "some.foo");
-                assertTrue(ds.getFoundList().contains("B.bar"), "B.bar");
-                assertTrue(ds.getFoundList().contains("justbaz" ), "justbaz");
-                assertFalse(ds.getFoundList().contains("notbaz"), "notbaz");
+                assertThat(ds.getExcludedList()).contains("some.foo");
+                assertThat(ds.getExcludedList()).contains("B.bar");
+                assertThat(ds.getExcludedList()).contains("justbaz");
+                assertThat(ds.getIncludedList()).contains("notbaz");
             } catch (IOException | MojoExecutionException e) {
                 fail(e.getMessage());
             }
@@ -170,12 +170,12 @@ public class OptionMojoTest   {
 
         @Override
         protected void excludeTest() {
-            String[] args = { "*.foo", "[A-Z]\\.bar", "justbaz"};
+            String[] args = { "*.foo", "*.bar", "justbaz"};
             execExcludeTest(Arg.EXCLUDE.find("exclude"), args);
         }
         @Override
         protected void inputExcludeTest() {
-            String[] args = { "*.foo", "[A-Z]\\.bar", "justbaz"};
+            String[] args = { "*.foo", "*.bar", "justbaz"};
             execExcludeTest(Arg.EXCLUDE.find("input-exclude"), args);
         }
 
@@ -184,7 +184,7 @@ public class OptionMojoTest   {
             try (FileWriter fw = new FileWriter(outputFile)) {
                 fw.write("*.foo");
                 fw.write(System.lineSeparator());
-                fw.write("[A-Z]\\.bar");
+                fw.write("*.bar");
                 fw.write(System.lineSeparator());
                 fw.write("justbaz");
                 fw.write(System.lineSeparator());
@@ -202,11 +202,9 @@ public class OptionMojoTest   {
         protected void inputExcludeFileTest() {
             excludeFileTest(Arg.EXCLUDE_FILE.find("input-exclude-file"));
         }
-
     }
 
     public static class SimpleMojoTestcase extends BetterAbstractMojoTestCase {
-
         public RatCheckMojo getMojo(File pomFile) throws Exception {
             setUp();
             ProjectBuildingRequest buildingRequest = newMavenSession().getProjectBuildingRequest();
@@ -229,11 +227,11 @@ public class OptionMojoTest   {
 
         }
 
-        List<String> getIgnoreList() {
+        List<String> getExcludedList() {
             return this.filesExcluded;
         }
 
-        List<String> getFoundList() {
+        List<String> getIncludedList() {
             return this.filesIncluded;
         }
     }
