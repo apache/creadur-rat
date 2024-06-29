@@ -393,11 +393,11 @@ public final class OptionCollection {
      * @param exception the parse exception to log
      * @param opt the option being processed
      * @param cl the command line being processed
-     * @param dflt The default value the option is being set to.
+     * @param defaultValue The default value the option is being set to.
      */
-    private static void logParseException(final Log log, final ParseException exception, final Option opt, final CommandLine cl, final Object dflt) {
+    private static void logParseException(final Log log, final ParseException exception, final Option opt, final CommandLine cl, final Object defaultValue) {
         log.warn(format("Invalid %s specified: %s ", opt.getOpt(), cl.getOptionValue(opt)));
-        log.warn(format("%s set to: %s", opt.getOpt(), dflt));
+        log.warn(format("%s set to: %s", opt.getOpt(), defaultValue));
         log.debug(exception);
     }
 
@@ -479,7 +479,7 @@ public final class OptionCollection {
         }
 
         if (ADD.getSelected() != null) {
-            // @TODO remove this block when Commons-cli version 1.7.1 or higher is used
+            // TODO remove this block when Commons-cli version 1.7.1 or higher is used
             Arrays.stream(cl.getOptions()).filter(o -> o.getOpt().equals("a")).forEach(o -> cl.hasOption(o.getOpt()));
             if (cl.hasOption(FORCE)) {
                 DeprecationReporter.logDeprecated(log, FORCE);

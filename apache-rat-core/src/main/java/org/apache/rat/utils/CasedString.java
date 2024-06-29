@@ -60,27 +60,27 @@ public class CasedString {
         CAMEL(Character::isUpperCase, true, CAMEL_JOINER),
         /**
          * Snake case tags strings like 'Snake_Case'.  This conversion does not change the capitalization of any characters
-         * in the string.  If specific capitalization is required use {@code String.toUpperCase}, {@code String.toLowerCase},
+         * in the string.  If specific capitalization is required use {@code String.toUpperCase()}, {@code String.toLowerCase()},
          * or the commons-text methods {@code WordUtils.capitalize()}, or {@code WordUtils.uncapitalize()} as required.
          */
         SNAKE(c -> c == '_', false, a -> String.join("_", a)),
         /**
          * Kebab case tags strings like 'kebab-case'.  This conversion does not change the capitalization of any characters
-         * in the string.  If specific capitalization is required use {@code String.toUpperCase}, {@code String.toLowerCase},
+         * in the string.  If specific capitalization is required use {@code String.toUpperCase()}, {@code String.toLowerCase()},
          * or the commons-text methods {@code WordUtils.capitalize()}, or {@code WordUtils.uncapitalize()} as required.
          */
         KEBAB(c -> c == '-', false, a -> String.join("-", a)),
 
         /**
          * Phrase case tags phrases of words like 'phrase case'. This conversion does not change the capitalization of any characters
-         * in the string.  If specific capitalization is required use {@code String.toUpperCase}, {@code String.toLowerCase},
+         * in the string.  If specific capitalization is required use {@code String.toUpperCase()}, {@code String.toLowerCase()},
          * or the commons-text methods {@code WordUtils.capitalize()}, or {@code WordUtils.uncapitalize()} as required.
          */
         PHRASE(Character::isWhitespace, false, a -> String.join(" ", a)),
 
         /**
          * Dot case tags phrases of words like 'phrase.case'. This conversion does not change the capitalization of any characters
-         * in the string.  If specific capitalization is required use {@code String.toUpperCase}, {@code String.toLowerCase},
+         * in the string.  If specific capitalization is required use {@code String.toUpperCase()}, {@code String.toLowerCase()},
          * or the commons-text methods {@code WordUtils.capitalize()}, or {@code WordUtils.uncapitalize()} as required.
          */
         DOT(c -> c == '.', false, a -> String.join(".", a));
