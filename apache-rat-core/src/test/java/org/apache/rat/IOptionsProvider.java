@@ -22,7 +22,7 @@ package org.apache.rat;
  * A list of methods that an OptionsProvider in a test case must support.
  * Use of this interface ensures consistent testing across the UIs.  Each method
  * tests an Option from OptionCollection that must be implemented in the UI.
- * Each method in this interface tests an Optoin in OptionCollection.
+ * Each method in this interface tests an Option in OptionCollection.
  */
 public interface IOptionsProvider {
     /**
