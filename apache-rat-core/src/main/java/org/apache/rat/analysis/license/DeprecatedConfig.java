@@ -26,7 +26,7 @@ import org.apache.rat.license.ILicenseFamily;
  * A temporary interface for deprecated configuration options.
  */
 @Deprecated // remove in v1.0
-@DeprecationReporter.Info(since = "0.16.0", forRemoval = true, use = "new configuration options")
+@DeprecationReporter.Info(since = "0.16", forRemoval = true, use = "new configuration options")
 public interface DeprecatedConfig {
     /**
      * @return the license definition.

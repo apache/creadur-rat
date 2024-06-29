@@ -33,7 +33,7 @@ import org.apache.rat.license.ILicense;
  * @deprecated Use new configuration options
  */
 @Deprecated // Since 0.16
-@DeprecationReporter.Info(since = "0.16.0", forRemoval = true, use = "new configuration options")
+@DeprecationReporter.Info(since = "0.16", forRemoval = true, use = "new configuration options")
 public class FullTextMatchingLicense extends BaseLicense {
 
     private String text;

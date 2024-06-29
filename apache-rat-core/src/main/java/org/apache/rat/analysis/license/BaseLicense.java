@@ -22,7 +22,7 @@ import org.apache.rat.DeprecationReporter;
 import org.apache.rat.license.ILicenseFamily;
 
 @Deprecated // remove in v1.0
-@DeprecationReporter.Info(since = "0.16.0", forRemoval = true, use = "new configuration options")
+@DeprecationReporter.Info(since = "0.16", forRemoval = true, use = "new configuration options")
 public abstract class BaseLicense implements DeprecatedConfig {
     private String licenseFamilyCategory;
     private String licenseFamilyName;
