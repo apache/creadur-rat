@@ -155,7 +155,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the include files character set. Defaults
-     * to @code{${project.build.sourceEncoding}), or @code{UTF8}.
+     * to @code{${project.build.sourceEncoding}), or @code{UTF-8}.
      */
     @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String includesFileCharset;
@@ -214,7 +214,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the include files character set. Defaults
-     * to @code{${project.build.sourceEncoding}), or @code{UTF8}.
+     * to @code{${project.build.sourceEncoding}), or @code{UTF-8}.
      */
     @Parameter(property = "rat.excludesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String excludesFileCharset;
@@ -545,7 +545,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 includeList.addAll(Arrays.asList(includes));
             }
             if (includesFile != null) {
-                final String charset = includesFileCharset == null ? "UTF8" : includesFileCharset;
+                final String charset = includesFileCharset == null ? "UTF-8" : includesFileCharset;
                 final File f = new File(includesFile);
                 if (!f.isFile()) {
                     getLog().error("IncludesFile not found: " + f.getAbsolutePath());
@@ -673,7 +673,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 if (!f.canRead()) {
                     getLog().error("Excludes file not readable: " + f.getAbsolutePath());
                 }
-                final String charset = excludesFileCharset == null ? "UTF8" : excludesFileCharset;
+                final String charset = excludesFileCharset == null ? "UTF-8" : excludesFileCharset;
                 getLog().debug("Loading excludes from file " + f + ", using character set " + charset);
                 basicRules.addRules(getPatternsFromFile(f, charset));
             }
