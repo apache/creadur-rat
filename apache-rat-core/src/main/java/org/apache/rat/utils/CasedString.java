@@ -28,7 +28,7 @@ import org.apache.commons.text.WordUtils;
 
 /**
  * Handles converting from one string case to another (e.g. camel case to snake case).
- * @since 0.17.0
+ * @since 0.17
  */
 public class CasedString {
     /** the string of the cased format. */
@@ -120,7 +120,7 @@ public class CasedString {
 
         /**
          * Returns an array of each of the segments in this CasedString.  Segments are defined as the strings between
-         * the separators in the CasedString.  For the CAMEL case the segments are determined by the presence of a capital letter.
+         * the separators in the CasedString. For the CAMEL case the segments are determined by the presence of a capital letter.
          * @return the array of Strings that are segments of the cased string.
          */
         public String[] getSegments(final String string) {
