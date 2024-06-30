@@ -18,8 +18,7 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,8 +34,8 @@ public class FullTextMatcherTest {
 
     @Test
     public void testMatch() {
-        assertFalse(target.matches(AbstractMatcherTest.makeHeaders(null, "what in the world")));
-        assertTrue(target.matches(AbstractMatcherTest.makeHeaders(null, "hello world")));
-        assertTrue(target.matches(AbstractMatcherTest.makeHeaders(null, "HELLO world")));
+        assertThat(target.matches(AbstractMatcherTest.makeHeaders(null, "what in the world"))).isFalse();
+        assertThat(target.matches(AbstractMatcherTest.makeHeaders(null, "hello world"))).isTrue();
+        assertThat(target.matches(AbstractMatcherTest.makeHeaders(null, "HELLO world"))).isTrue();
     }
 }

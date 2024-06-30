@@ -20,6 +20,8 @@ package org.apache.rat.analysis.license;
 
 import java.util.stream.Stream;
 
+import org.apache.rat.license.ILicense;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.Arguments;
 
 public class OASISLicenseTest extends AbstractLicenseTest {
@@ -36,15 +38,17 @@ public class OASISLicenseTest extends AbstractLicenseTest {
     public static Stream<Arguments> parameterProvider() {
         return Stream.of(Arguments.of(id, id, name, notes, targets));
     }
-    /*
-    @Test(timeout = 2000) // may need to be adjusted if many more files are added
+
+    /* TODO
+    private static ILicense license = ILicense.builder().setId(id).build();
+    @Test // may need to be adjusted if many more files are added
     public void goodFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("oasis/good", license, true);
+        DirectoryScanner.runTestsOnFilesInDir("oasis/good", license, true);
     }
     
-    @Test(timeout = 2000) // may need to be adjusted if many more files are added
-    public void baddFiles() throws Exception {
-        DirectoryScanner.testFilesInDir("oasis/bad", license, false);
+    @Test // may need to be adjusted if many more files are added
+    public void badFiles() throws Exception {
+        DirectoryScanner.runTestsOnFilesInDir("oasis/bad", license, false);
     }
     */
 }

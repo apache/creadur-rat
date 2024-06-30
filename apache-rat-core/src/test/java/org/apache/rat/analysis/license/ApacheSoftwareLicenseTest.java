@@ -24,7 +24,6 @@ import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Apache Software License detection tests.
- *
  */
 public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
