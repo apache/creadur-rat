@@ -20,16 +20,6 @@
 package org.apache.rat.tools;
 
 import static java.lang.String.format;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-import org.apache.commons.text.WordUtils;
-import org.apache.rat.OptionCollection;
-import org.apache.rat.Report;
-import org.apache.rat.tools.CasedString.StringCase;
-import org.apache.rat.utils.CasedString;
-import org.apache.rat.utils.CasedString.StringCase;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -45,8 +35,13 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-
-
+import org.apache.commons.cli.Option;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.OptionCollection;
+import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.CasedString.StringCase;
 
 /**
  * A simple tool to convert CLI options to Maven Mojo base class
@@ -99,7 +94,7 @@ public final class MavenGenerator {
         String destDir = args[2];
         List<MavenOption> options = OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER)
                 .map(MavenOption::new).collect(Collectors.toList());
-        String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
+        String pkgName = String.join(File.separator, new CasedString(CasedString.StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         System.out.println("Creating " + file);
         file.getParentFile().mkdirs();
@@ -169,7 +164,7 @@ public final class MavenGenerator {
     static String createName(final Option option) {
         String name = option.getLongOpt();
         name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
-        return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
+        return new CasedString(CasedString.StringCase.KEBAB, name).toCase(StringCase.CAMEL);
     }
 
 }

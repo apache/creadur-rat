@@ -18,6 +18,28 @@
  */
 package org.apache.rat;
 
+import static java.lang.String.format;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Converter;
 import org.apache.commons.cli.DefaultParser;
@@ -30,6 +52,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -44,7 +67,6 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
-
 
 /**
  * The collection of standard options for the CLI as well as utility methods to manage them and methods to create the
@@ -334,7 +356,6 @@ public final class OptionCollection {
         }
 
         if (cl.hasOption(LOG_LEVEL)) {
-            DeprecationReporter.logDeprecated(log, LOG_LEVEL);
             if (log instanceof DefaultLog) {
                 DefaultLog dLog = (DefaultLog) log;
                 try {
@@ -351,14 +372,18 @@ public final class OptionCollection {
             return null;
         }
 
-        String[] clArgs;
-        if (!noArgs) {
+        String[] clArgs = cl.getOptionValues(DIR);
+        if (clArgs == null) {
+            // getArgs() can not be null.
             clArgs = cl.getArgs();
-            if (clArgs == null || clArgs.length != 1) {
+        }
+        if (!noArgs) {
+            if (clArgs.length != 1) {
                 helpCmd.accept(opts);
                 return null;
             }
-        } else {
+        }
+        if (clArgs.length == 0) {
             clArgs = new String[]{null};
         }
         return createConfiguration(log, clArgs[0], cl);
@@ -392,17 +417,11 @@ public final class OptionCollection {
     static ReportConfiguration createConfiguration(final Log log, final String baseDirectory, final CommandLine cl) throws IOException {
         final ReportConfiguration configuration = new ReportConfiguration(log);
 
-        if (cl.hasOption(DIR)) {
-            DeprecationReporter.logDeprecated(log, DIR);
-        }
-
         if (cl.hasOption(DRY_RUN)) {
-            DeprecationReporter.logDeprecated(log, DRY_RUN);
             configuration.setDryRun(cl.hasOption(DRY_RUN));
         }
 
         if (cl.hasOption(LIST_FAMILIES)) {
-            DeprecationReporter.logDeprecated(log, LIST_FAMILIES);
             try {
                 configuration.listFamilies(cl.getParsedOptionValue(LIST_FAMILIES));
             } catch (ParseException e) {
@@ -411,7 +430,6 @@ public final class OptionCollection {
         }
 
         if (cl.hasOption(LIST_LICENSES)) {
-            DeprecationReporter.logDeprecated(log, LIST_LICENSES);
             try {
                 configuration.listLicenses(cl.getParsedOptionValue(LIST_LICENSES));
             } catch (ParseException e) {
@@ -420,7 +438,6 @@ public final class OptionCollection {
         }
 
         if (cl.hasOption(ARCHIVE)) {
-            DeprecationReporter.logDeprecated(log, ARCHIVE);
             try {
                 configuration.setArchiveProcessing(cl.getParsedOptionValue(ARCHIVE));
             } catch (ParseException e) {
@@ -429,7 +446,6 @@ public final class OptionCollection {
         }
 
         if (cl.hasOption(STANDARD)) {
-            DeprecationReporter.logDeprecated(log, STANDARD);
             try {
                 configuration.setStandardProcessing(cl.getParsedOptionValue(STANDARD));
             } catch (ParseException e) {
@@ -438,7 +454,6 @@ public final class OptionCollection {
         }
 
         if (cl.hasOption(OUT)) {
-            DeprecationReporter.logDeprecated(log, OUT);
             try {
                 File f = cl.getParsedOptionValue(OUT);
                 if (f.getParentFile().mkdirs() && !f.isDirectory()) {
@@ -451,20 +466,11 @@ public final class OptionCollection {
         }
 
         if (cl.hasOption(SCAN_HIDDEN_DIRECTORIES)) {
-            DeprecationReporter.logDeprecated(log, SCAN_HIDDEN_DIRECTORIES);
             configuration.setDirectoriesToIgnore(FalseFileFilter.FALSE);
         }
 
         if (ADD.getSelected() != null) {
-            // @TODO remove this block when Commons-cli version 1.7.1 or higher is used
-            Arrays.stream(cl.getOptions()).filter(o -> o.getOpt().equals("a")).forEach(o -> cl.hasOption(o.getOpt()));
-            if (cl.hasOption(FORCE)) {
-                DeprecationReporter.logDeprecated(log, FORCE);
-            }
-            if (cl.hasOption(COPYRIGHT)) {
-                DeprecationReporter.logDeprecated(log, COPYRIGHT);
-            }
-            // remove that block ---^
+            cl.hasOption(ADD.getSelected()); // causes reporting of deprecated -a flag TODO remove this when -a is removed.
             configuration.setAddLicenseHeaders(cl.hasOption(FORCE) ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
             configuration.setCopyrightMessage(cl.getOptionValue(COPYRIGHT));
         }
@@ -472,13 +478,11 @@ public final class OptionCollection {
         // TODO when include/exclude processing is updated check calling methods to ensure that all specified
         // directories are handled in the list of directories.
         if (cl.hasOption(EXCLUDE_CLI)) {
-            DeprecationReporter.logDeprecated(log, EXCLUDE_CLI);
             String[] excludes = cl.getOptionValues(EXCLUDE_CLI);
             if (excludes != null) {
                 parseExclusions(log, Arrays.asList(excludes)).ifPresent(configuration::setFilesToIgnore);
             }
         } else if (cl.hasOption(EXCLUDE_FILE_CLI)) {
-            DeprecationReporter.logDeprecated(log, EXCLUDE_FILE_CLI);
             String excludeFileName = cl.getOptionValue(EXCLUDE_FILE_CLI);
             if (excludeFileName != null) {
                 parseExclusions(log, FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8))
@@ -487,12 +491,10 @@ public final class OptionCollection {
         }
 
         if (cl.hasOption(XML)) {
-            DeprecationReporter.logDeprecated(log, XML);
             configuration.setStyleReport(false);
         } else {
             configuration.setStyleReport(true);
             if (cl.hasOption(STYLESHEET_CLI)) {
-                DeprecationReporter.logDeprecated(log, STYLESHEET_CLI);
                 String[] style = cl.getOptionValues(STYLESHEET_CLI);
                 if (style.length != 1) {
                     log.error("Please specify a single stylesheet");
@@ -509,11 +511,9 @@ public final class OptionCollection {
 
         Defaults.Builder defaultBuilder = Defaults.builder();
         if (cl.hasOption(NO_DEFAULTS)) {
-            DeprecationReporter.logDeprecated(log, NO_DEFAULTS);
             defaultBuilder.noDefault();
         }
         if (cl.hasOption(LICENSES)) {
-            DeprecationReporter.logDeprecated(log, LICENSES);
             for (String fn : cl.getOptionValues(LICENSES)) {
                 defaultBuilder.add(fn);
             }
@@ -560,7 +560,7 @@ public final class OptionCollection {
         if (ignoredLines > 0) {
             log.info("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
         }
-        return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter);
+        return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(new NotFileFilter(orFilter));
     }
 
     /**

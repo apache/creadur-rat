@@ -19,7 +19,7 @@ package org.apache.rat.anttasks;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.WordUtils;
@@ -324,7 +324,7 @@ public class ReportOptionTest  {
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
             List<Arguments> lst = new ArrayList<>();
 
-            List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.ANT_FILTER).collect(Collectors.toList());
+            List<Option> opt =  OptionCollection.buildOptions().getOptions().stream().filter(AntGenerator.getFilter()).collect(Collectors.toList());
             for (Option option : opt) {
                 if (option.getLongOpt() != null) {
                     String name = antName(option);

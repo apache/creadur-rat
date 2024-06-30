@@ -27,11 +27,8 @@ import java.util.function.Predicate;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.text.WordUtils;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.Report;
-import org.apache.rat.tools.CasedString.StringCase;
 
 /**
  * A simple tool to convert CLI options to Maven and Ant format and produce a CSV file.

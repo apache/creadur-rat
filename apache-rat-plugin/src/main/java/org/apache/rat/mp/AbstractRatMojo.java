@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
@@ -328,8 +328,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     private void reportDeprecatedProcessing()
     {
         if (getDeprecatedConfigs().findAny().isPresent()) {
-            Log log = getLog();
-            log.warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
+            getLog().warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
         }
     }
     
@@ -378,7 +377,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         DefaultLog.setInstance(makeLog());
         try {
-            ReportConfiguration config = Report.parseCommands(args().toArray(new String[0]),
+            ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
                     o -> getLog().warn("Help option not supported"),
                     true);
             reportDeprecatedProcessing();
@@ -404,10 +403,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
             if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
-                if (log.isDebugEnabled()) {
-                    log.debug(String.format("%s license families loaded from pom", families.length));
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(String.format("%s license families loaded from pom", families.length));
                 }
-                Consumer<ILicenseFamily> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("Family: %s", l))
+                Consumer<ILicenseFamily> logger = getLog().isDebugEnabled() ? (l) -> getLog().debug(String.format("Family: %s", l))
                         : (l) -> {
                 };
 
@@ -425,10 +424,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
 
             if (licenses != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug(String.format("%s licenses loaded from pom", licenses.length));
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(String.format("%s licenses loaded from pom", licenses.length));
                 }
-                Consumer<ILicense> logger = log.isDebugEnabled() ? (l) -> log.debug(String.format("License: %s", l))
+                Consumer<ILicense> logger = getLog().isDebugEnabled() ? (l) -> getLog().debug(String.format("License: %s", l))
                         : (l) -> {
                 };
                 Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)
@@ -530,17 +529,13 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     }
 
     private List<String> getPatternsFromFile(File pFile, String pCharset) throws MojoExecutionException {
-        InputStream is = null;
-        BufferedInputStream bis = null;
-        Reader r = null;
-        BufferedReader br = null;
         Throwable th = null;
         final List<String> patterns = new ArrayList<>();
-        try {
-            is = Files.newInputStream(pFile.toPath());
-            bis = new BufferedInputStream(is);
-            r = new InputStreamReader(bis, pCharset);
-            br = new BufferedReader(r);
+        try (
+            InputStream is = Files.newInputStream(pFile.toPath());
+            BufferedInputStream bis = new BufferedInputStream(is);
+            Reader r = new InputStreamReader(bis, pCharset);
+            BufferedReader br = new BufferedReader(r);) {
             for (;;) {
                 final String s = br.readLine();
                 if (s == null) {
@@ -548,62 +543,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
                 patterns.add(s);
             }
-            br.close();
-            br = null;
-            r.close();
-            r = null;
-            bis.close();
-            bis = null;
-            is.close();
-            is = null;
-        } catch (Throwable t) {
-            th = t;
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
-                }
-            }
-            if (r != null) {
-                try {
-                    r.close();
-                } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
-                }
-            }
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
-                }
-            }
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
-                }
-            }
-        }
-        if (th != null) {
-            if (th instanceof RuntimeException) {
-                throw (RuntimeException) th;
-            }
-            if (th instanceof Error) {
-                throw (Error) th;
-            }
-            throw new MojoExecutionException(th.getMessage(), th);
+        } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
         return patterns;
     }
