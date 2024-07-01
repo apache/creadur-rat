@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.configuration.builders.TextBuilder;
 import org.apache.rat.license.ILicense;
 
@@ -32,12 +33,14 @@ import org.apache.rat.license.ILicense;
  * @deprecated Use new configuration options
  */
 @Deprecated // Since 0.16
+@DeprecationReporter.Info(since = "0.16", forRemoval = true, use = "new configuration options")
 public class FullTextMatchingLicense extends BaseLicense {
 
     private String text;
 
     /** constructor */
     public FullTextMatchingLicense() {
+        DeprecationReporter.logDeprecated(FullTextMatchingLicense.class);
     }
 
     /**

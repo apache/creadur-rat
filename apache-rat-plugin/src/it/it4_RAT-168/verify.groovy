@@ -21,10 +21,9 @@ assert content.contains( 'BUILD SUCCESS' )
 /*
  * [WARNING] No resources included
  */
-assert ! content.contains( '[WARNING]' )
+assert ! content.contains( '[WARNING] No resources' )
 
 report = new File( basedir, 'target/site/rat-report.html' ).text
 
 assert report.contains( ' S pom.xml' )
 assert report.contains( '   AL       AL            Apache License Version 2.0' )
-

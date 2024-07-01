@@ -70,6 +70,22 @@ public class TextUtils {
     }
 
     /**
+     * Asserts that a string is contained a specified number of times within another string.
+     * @param find The string to find.
+     * @param target The string to search.
+     * @param repetition the number of times to find the string.
+     */
+    public static void assertContains(final String find, final String target, int repetition) {
+        String t = target;
+        for (int i=0; i<repetition; i++) {
+            final int j = i + 1;
+            assertTrue(
+                    t.contains(find), () -> "Target does not contain " + j + " copies of: " + find + "\n" + target);
+            t = t.substring(t.indexOf(find) + find.length());
+        }
+    }
+
+    /**
      * Asserts that a string is not contained within another string.
      * @param find The string to find.
      * @param target The string to search.
@@ -77,5 +93,24 @@ public class TextUtils {
     public static void assertNotContains(final String find, final String target) {
         assertFalse(
                 target.contains(find), () -> "Target does contain the text: " + find + "\n" + target);
+    }
+
+    /**
+     * Asserts that a string is not contained a specified number of times within another string.
+     * @param find The string to find.
+     * @param target The string to search.
+     * @param repetition the maximum number of times to find the string.
+     */
+    public static void assertNotContains(final String find, final String target, int repetition) {
+        String t = target;
+        for (int i=0; i<repetition; i++) {
+            if (t.contains(find)) {
+                t = t.substring(t.indexOf(find) + find.length());
+            } else {
+                return;
+            }
+        }
+        assertFalse(
+                t.contains(find), () -> "Target contain the text "+(repetition+1)+" times: " + find + "\n" + target);
     }
 }

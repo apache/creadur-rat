@@ -76,6 +76,8 @@ Apache Rat
 
    * Write a new {{{./xslt_def.html}output report}}.  Requires XSLT knowledge.
 
+   * Write a new {{{./ui_def.html}user interface}}.  Requires Java expertise, but there are tools to help.
+
 ** Who Develops Rat?
 
   Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
