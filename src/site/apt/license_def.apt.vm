@@ -131,13 +131,12 @@ How to define licenses in Apache Rat
  tool.  Download the apache-rat-tools-${project.version}.jar and run the tool execute:
 
 +------------------------------------------+
-java -cp apache-rat-${project.version}.jar:apache-rat-tools-${project.version} org.apache.rat.Documentation
+java -cp apache-rat-${project.version}.jar:apache-rat-tools-${project.version} org.apache.rat.tools.Documentation
 +------------------------------------------+
 
  The tool take the same arguments as the standard Rat CLI, so additional license files can be defined.
  To display help for the tool execute 
 
 +------------------------------------------+
-java -cp apache-rat-${project.version}.jar:apache-rat-tools-${project.version} org.apache.rat.Documentation --help
+java -cp apache-rat-${project.version}.jar:apache-rat-tools-${project.version} org.apache.rat.tools.Documentation --help
 +------------------------------------------+ 
-

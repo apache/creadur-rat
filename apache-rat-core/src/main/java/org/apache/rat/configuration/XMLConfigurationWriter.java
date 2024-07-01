@@ -126,7 +126,7 @@ public class XMLConfigurationWriter {
                 writer.closeElement(); // APPROVED
 
                 // write matchers section
-                MatcherBuilderTracker tracker = MatcherBuilderTracker.INSTANCE;
+                MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
                 writer.openElement(XMLConfig.MATCHERS);
                 for (Class<?> clazz : tracker.getClasses()) {
                     writer.openElement(XMLConfig.MATCHER).attribute(XMLConfig.ATT_CLASS_NAME, clazz.getCanonicalName())
