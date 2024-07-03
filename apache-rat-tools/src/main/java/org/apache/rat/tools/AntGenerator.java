@@ -47,7 +47,7 @@ import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
 /**
- * A simple tool to convert CLI options into an Ant report base class .
+ * A simple tool to convert CLI options into an Ant report base class.
  */
 public final class AntGenerator {
 
