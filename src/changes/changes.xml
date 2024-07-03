@@ -72,6 +72,9 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-369" type="fix" dev="claudenw">
+        Centralize RAT's checkstyle configuration for all submodules under src/conf.
+      </action>
       <action issue="RAT-391" type="add" dev="pottlinger">
         Integrate develocity service from Gradle and link to current results from badge in README.md.
       </action>
