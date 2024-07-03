@@ -301,7 +301,7 @@ public class Report extends BaseAntTask {
             Licenses lic = createLicenses();
             lic.addText(fileName.getCanonicalPath());
         } catch (IOException e) {
-            throw new BuildException("Can not read license file " + fileName, e);
+            throw new BuildException("Unable to read license file " + fileName, e);
         }
     }
 

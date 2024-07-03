@@ -70,6 +70,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class ReportOptionTest  {
 
+    // devhint: we do want to keep data in case of test failures, thus do not use TempDir here
     static File baseDir = new File("target/optionTest");
     static ReportConfiguration reportConfiguration;
 
