@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -14,4 +15,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<body><p>Key abstractions. A good place to start.</p></body>
+<rat-config>
+    <families>
+        <family id="ONE" name="from One.xml" />
+    </families>
+    <licenses>
+        <license family="ONE">
+            <text>one</text>
+        </license>
+    </licenses>
+</rat-config>

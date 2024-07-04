@@ -37,13 +37,16 @@ public enum Format {
     /** A plain text file */
     TXT(null, "txt", "text");
 
+    /** The list of file suffix that this format applies to*/
     private final String[] suffix;
 
+    /** The constructor for the MatcherReader for this Format */
     private Constructor<MatcherReader> matcherReader;
+    /** The constructor for the LicenseReader for this Format */
     private Constructor<LicenseReader> licenseReader;
 
     @SuppressWarnings("unchecked")
-    Format(Class<?> reader, String... suffix) {
+    Format(final Class<?> reader, final String... suffix) {
         if (reader != null) {
             try {
                 matcherReader = MatcherReader.class.isAssignableFrom(reader)
@@ -88,7 +91,7 @@ public enum Format {
      * @param name the file name to check.
      * @return the Format
      */
-    public static Format fromName(String name) {
+    public static Format fromName(final String name) {
         String[] parts = name.split("\\.");
         String suffix = parts[parts.length - 1];
         for (Format f : Format.values()) {
@@ -104,7 +107,7 @@ public enum Format {
     * @param url the URL to check.
     * @return the Format
     */
-   public static Format fromURL(URL url) {
+   public static Format fromURL(final URL url) {
         return Format.fromName(url.getFile());
     }
 
@@ -114,7 +117,7 @@ public enum Format {
     * @return the Format
     * @throws MalformedURLException in case the file cannot be found.
     */
-   public static Format fromFile(File file) throws MalformedURLException {
+   public static Format fromFile(final File file) throws MalformedURLException {
         return Format.fromURL(file.toURI().toURL());
     }
 }

@@ -20,6 +20,7 @@ package org.apache.rat.analysis.license;
 
 import java.util.Arrays;
 
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
@@ -31,12 +32,13 @@ import org.apache.rat.license.ILicense;
  * @deprecated Use new configuration options
  */
 @Deprecated // Since 0.16
+@DeprecationReporter.Info(since = "0.16", forRemoval = true, use = "new configuration options")
 public class SimplePatternBasedLicense  extends BaseLicense {
     private String[] patterns;
 
 
     public SimplePatternBasedLicense() {
-        
+        DeprecationReporter.logDeprecated(SimplePatternBasedLicense.class);
     }
 
     

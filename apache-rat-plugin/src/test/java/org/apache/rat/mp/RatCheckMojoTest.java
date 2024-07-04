@@ -27,9 +27,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.api.Document;
@@ -84,7 +86,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         } else if (mojo instanceof RatCheckMojo) {
             final File ratTxtFile = new File(buildDirectory, "rat.txt");
             FileUtils.write(ratTxtFile, "", UTF_8); // Ensure the output file exists and is empty (rerunning the test will append)
-            setVariableValueToObject(mojo, "reportFile", ratTxtFile);
+            mojo.setOut(ratTxtFile.getAbsolutePath());
         }
         return mojo;
     }
@@ -97,7 +99,9 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      * @throws Exception An error occurred while reading the property.
      */
     private File getRatTxtFile(RatCheckMojo pMojo) throws Exception {
-        return (File) getVariableValueFromObject(pMojo, "reportFile");
+        MavenOption mavenOption = new MavenOption(OptionCollection.OUT);
+        List<String> args = pMojo.getArg(mavenOption.keyValue());
+        return new File(args.get(0));
     }
 
     private String getDir(RatCheckMojo mojo) {

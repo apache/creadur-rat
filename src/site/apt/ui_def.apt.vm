@@ -1,0 +1,58 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                        ----------------------------------
+                        How to define a new User Interface
+                        ----------------------------------
+
+How to define a new User Interface
+
+ Rat uses a CLI first strategy.  All functional options are defined in the command line client first and then extended
+ to other user interfaces.  As of this writing Rat supports three user interfaces: command line, Ant, and Maven.  The
+ Ant and Maven UIs are generated using classes in the apache-rat-tools module.  This code takes the option definitions
+ for the command line and converts them to options that Ant and Maven understand.
+
+ To execute the options the UIs populate a ReportConfiguration object.  For the Ant and Maven interfaces the code
+ generators create methods that build the command line arguments and then uses the OptionCollection class from the
+ core module to create a populated ReportConfiguration.  Additional UI specific command options are then
+ used to modify the ReportConfiguration.  When the configuration is complete it is passed as an argument to the core
+ Reporter class that does all the work to process the files and generate the reports.
+
+ To create a new UI, the developer should first add a new definition to the tools module Naming program.  This program
+ produces a report of every command line option and how it is supported in the alternative UIs.  There are some commands
+ that are not supported in various UIs.  For example the command line option --help is not implemented in Maven because Maven
+ generates its own help file.  The Naming program will give provide a consistent documented approach to the name
+ translation from the command line to the UI. Developers should then create a code generation utility using the tools
+ MavenGenerator and AntGenerator as examples.  This code generator should  generate a base class that the UI will use
+ to ensure that the translated commands are implemented using the command line arguments, or some similar strategy.
+ The test code should have a class that implements the core test interface IOptionsProvider and a test class that
+ retrieves the Options from the core OptionsCollection class, filters out the unsupported options, and demonstrates
+ that the remaining options are properly executed.  The plugin module OptionMojoTest and the tasks module ReportOptionTest
+ are examples of this strategy.
+
+ There are tools that help with the recoding of names.  For example the CasedString class can take the command line
+ client longOption, which is in kebab format, and convert it to camel case, snake case, or several other formats.  See
+ the tools module AntGenerator.createName() and MavenGenerator.createName() for examples.  In some cases an existing
+ command line option may, when recoded, conflict with a standard option in the target UI framework.  In this case the
+ opion should be renamed.  Examples of this are found in AntGenerator and MavenGenerator and are reflected in the
+ Naming application. Additional support is available on the Rat developers mailing list.
+
+ If the new UI does not have a standard help module, it is advisable to create a documentation program that generate the
+ help information from the command line options as well as the hard coded options in the new UI.  This output can then
+ be captured and inserted into an online help page.  The core does this by using the command line help option and
+ outputting the result to a file that is then included in the apache-rat documentation.  See the apache-rat pom.xml
+ file for an example of how this is done.

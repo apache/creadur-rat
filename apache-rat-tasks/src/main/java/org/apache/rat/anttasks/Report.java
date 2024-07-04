@@ -18,27 +18,28 @@
 */
 package org.apache.rat.anttasks;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.Defaults;
 import org.apache.rat.ImplementationException;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
-import org.apache.rat.configuration.Format;
-import org.apache.rat.configuration.LicenseReader;
-import org.apache.rat.configuration.MatcherReader;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Resource;
@@ -64,157 +65,273 @@ import org.apache.tools.ant.types.resources.Union;
  * default.</li>
  * </ul>
  */
-public class Report extends Task {
-
-    private final Defaults.Builder defaultsBuilder;
-    private final ReportConfiguration configuration;
+public class Report extends BaseAntTask {
+    /** The list of licenses */
     private final List<License> licenses = new ArrayList<>();
+    /** The list of license families */
     private final List<Family> families = new ArrayList<>();
+    /** the options that are deprecated.  TODO remove this. */
+    private final DeprecatedConfig deprecatedConfig = new DeprecatedConfig();
     /**
      * will hold any nested resource collection
      */
     private Union nestedResources;
 
+    /**
+     * Collection of objects that support Ant specific deprecated options
+     */
+    private static class DeprecatedConfig {
+        /** The input file filter */
+        private IOFileFilter inputFileFilter;
+        /** the set of approved licence categories */
+        private final Set<String> approvedLicenseCategories = new HashSet<>();
+        /** the set of removed (unapproved) license categories */
+        private final Set<String> removedLicenseCategories = new HashSet<>();
+    }
+
+    /**
+     * Constructor.
+     */
     public Report() {
-        configuration = new ReportConfiguration(new Logger());
-        configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
-        defaultsBuilder = Defaults.builder();
+        Logger log = new Logger();
+        DefaultLog.setInstance(log);
     }
 
     /**
      * Adds resources that will be checked.
-     * 
      * @param rc resource to check.
      */
-    public void add(ResourceCollection rc) {
+    public void add(final ResourceCollection rc) {
         if (nestedResources == null) {
             nestedResources = new Union();
         }
         nestedResources.add(rc);
     }
 
-    public void setInputFileFilter(FilenameFilter inputFileFilter) {
-        configuration.setFilesToIgnore(inputFileFilter);
+    /**
+     * Adds an input file filter.
+     * @param inputFileFilter The input file filter to add.
+     */
+    @Deprecated
+    public void setInputFileFilter(final IOFileFilter inputFileFilter) {
+        deprecatedConfig.inputFileFilter = inputFileFilter;
     }
 
-    public void setReportFile(File reportFile) {
-        configuration.setOut(reportFile);
+    /**
+     * Sets the report file.
+     * @param reportFile the report file.
+     * @deprecated use {@link #setOut(String)}
+     */
+    @Deprecated
+    public void setReportFile(final File reportFile) {
+        setOut(reportFile.getAbsolutePath());
     }
 
-    public void addLicense(License lic) {
-        licenses.add(lic);
+    /**
+     * Adds an inline License definition to the system.
+     * @param license the license to add.
+     */
+    public void addLicense(final License license) {
+        licenses.add(license);
     }
 
-    public void addFamily(Family family) {
+    /**
+     * Add an inline license family definition to the system.
+     * @param family the license family to add.
+     */
+    public void addFamily(final Family family) {
         families.add(family);
     }
 
     /**
-     * 
+     * Adds a style sheet to the system.
      * @param styleSheet
-     * @deprecated use {@link #addStyleSheet(Resource)}
+     * @deprecated use {@link #setStylesheet(String)}
      */
     @Deprecated
-    public void addStylesheet(Resource styleSheet) {
-        addStyleSheet(styleSheet);
+    public void addStylesheet(final Resource styleSheet) {
+        setStylesheet(styleSheet.getName());
     }
 
     /**
      * Adds a given style sheet to the report.
      * @param styleSheet style sheet to use in this report.
-     */
-    public void addStyleSheet(Resource styleSheet) {
-        configuration.setStyleSheet(styleSheet::getInputStream);
-        configuration.setStyleReport(true);
-    }
-
-    public void setStyleReport(boolean styleReport) {
-        configuration.setStyleReport(styleReport);
-    }
-
-    /**
-     * 
-     * @param style
-     * @deprecated use #setStyleReport
+     * @deprecated use {@link #setStylesheet(String)}
      */
     @Deprecated
-    public void setFormat(String style) {
-        setStyleReport("styled".equalsIgnoreCase(style));
-
+    public void addStyleSheet(final Resource styleSheet) {
+        setStylesheet(styleSheet.getName());
     }
 
-    public void setLicenses(File fileName) {
+    /**
+     * Sets a stylesheet for the report.
+     * @param styleReport
+     * @deprecated use {@link #setXml(boolean)}.  Note reversal of boolean value
+     */
+    @Deprecated
+    public void setStyleReport(final boolean styleReport) {
+        setXml(!styleReport);
+    }
+
+    /**
+     * Determines if the output should be styled.
+     * @param style
+     * @deprecated use {@link #setStylesheet(String)} or {@link #setXml(boolean)}
+     */
+    @Deprecated
+    public void setFormat(final String style) {
+        setStyleReport("styled".equalsIgnoreCase(style));
+    }
+
+    /**
+     * Adds as a file containing the definitions of licenses to the system.
+     * @param fileName the file to add.
+     * @deprecated use licenses child element.
+     */
+    public void setLicenses(final File fileName) {
         try {
-            URL url = fileName.toURI().toURL();
-            Format fmt = Format.fromFile(fileName);
-            MatcherReader mReader = fmt.matcherReader();
-            if (mReader != null) {
-                mReader.addMatchers(url);
-            }
-            LicenseReader lReader = fmt.licenseReader();
-            if (lReader != null) {
-                lReader.addLicenses(url);
-                configuration.addLicenses(lReader.readLicenses());
-                configuration.addApprovedLicenseCategories(lReader.approvedLicenseId());
-            }
-        } catch (MalformedURLException e) {
-            throw new BuildException("Can not read license file " + fileName, e);
+            createLicenses().addText(fileName.getCanonicalPath());
+        } catch (IOException e) {
+            throw new BuildException("Unable to read license file " + fileName, e);
         }
     }
 
     /**
-     * @param useDefaultLicenses Whether to add the default list of license
-     * matchers.
+     * Specifies whether to add the default list of license matchers.
+     * @param useDefaultLicenses if {@code true} use the default licenses.
+     * @deprecated  use noDefaultLicenses attribute
      */
-    public void setUseDefaultLicenses(boolean useDefaultLicenses) {
-        if (!useDefaultLicenses) {
-            defaultsBuilder.noDefault();
+    @Deprecated
+    public void setUseDefaultLicenses(final boolean useDefaultLicenses) {
+        setNoDefaultLicenses(!useDefaultLicenses);
+    }
+
+    /**
+     * Adds a family category to the list of approved licenses.
+     * @param familyCategory the category to add.
+     * @deprecated use addApprovedLicense child element.
+     */
+    @Deprecated
+    public void setAddApprovedLicense(final String familyCategory) {
+        deprecatedConfig.approvedLicenseCategories.add(familyCategory);
+    }
+
+    /**
+     * Adds a family category to the list of approved licenses.
+     * @param familyCategory the category to add
+     */
+    public void addAddApprovedLicense(final String familyCategory) {
+        deprecatedConfig.approvedLicenseCategories.add(familyCategory);
+    }
+
+    /**
+     * Removes a family category to the list of approved licenses.
+     * @param familyCategory the category to add.
+     * @deprecated use removeApprovedLicense child element}
+     */
+    @Deprecated
+    public void setRemoveApprovedLicense(final String familyCategory) {
+        deprecatedConfig.removedLicenseCategories.add(familyCategory);
+    }
+
+    /**
+     * Removes a family category to the list of approved licenses.
+     * @param familyCategory the category to add.
+     */
+    public void addRemoveApprovedLicense(final String familyCategory) {
+        deprecatedConfig.removedLicenseCategories.add(familyCategory);
+    }
+
+    /**
+     * Removes a family category to the list of approved licenses.
+     * @param familyCategory the category to add.
+     * @deprecated use removeApprovedLicense element
+     */
+    @Deprecated
+    public void setRemoveApprovedLicense(final String[] familyCategory) {
+        deprecatedConfig.removedLicenseCategories.addAll(Arrays.asList(familyCategory));
+    }
+
+    /**
+     * Removes a family category to the list of approved licenses.
+     * @param familyCategory the category to add.
+     */
+    public void addRemoveApprovedLicense(final String[] familyCategory) {
+        deprecatedConfig.removedLicenseCategories.addAll(Arrays.asList(familyCategory));
+    }
+    /**
+     * Sets the copyright message
+     * @param copyrightMessage the copyright message
+     * @deprecated use copyright attribute
+     */
+    @Deprecated
+    public void setCopyrightMessage(final String copyrightMessage) {
+       setCopyright(copyrightMessage);
+    }
+
+    /**
+     * Determines if license headers should be added.
+     * @param setting the setting.
+     * @deprecated use addLicense and force attributes
+     */
+    @Deprecated
+    public void setAddLicenseHeaders(final AddLicenseHeaders setting) {
+        switch (setting.getNative()) {
+            case TRUE:
+                setAddLicense(true);
+                break;
+            case FALSE:
+                setAddLicense(false);
+                break;
+            case FORCED:
+                setAddLicense(true);
+                setForce(true);
+                break;
         }
     }
 
-    public void setAddApprovedLicense(String familyCategory) {
-        configuration.addApprovedLicenseCategory(familyCategory);
-    }
-
-    public void addAddApprovedLicense(String familyCategory) {
-        configuration.addApprovedLicenseCategory(familyCategory);
-    }
-
-    public void setRemoveApprovedLicense(String familyCategory) {
-        configuration.removeApprovedLicenseCategory(familyCategory);
-    }
-
-    public void setRemoveApprovedLicense(String[] familyCategory) {
-        configuration.removeApprovedLicenseCategories(Arrays.asList(familyCategory));
-    }
-
-    public void setCopyrightMessage(String copyrightMessage) {
-        configuration.setCopyrightMessage(copyrightMessage);
-    }
-
-    public void setAddLicenseHeaders(AddLicenseHeaders setting) {
-        configuration.setAddLicenseHeaders(setting.getNative());
-    }
-
-    public void setAddDefaultDefinitions(File fileName) {
+    /**
+     * Adds definition information
+     * @param fileName the file to add
+     * @deprecated Use {@link #addLicense}
+     */
+    @Deprecated
+    public void setAddDefaultDefinitions(final File fileName) {
         try {
-            defaultsBuilder.add(fileName);
-        } catch (MalformedURLException e) {
-            throw new BuildException("Can not open additional default definitions: " + fileName.toString(), e);
+            Licenses lic = createLicenses();
+            lic.addText(fileName.getCanonicalPath());
+        } catch (IOException e) {
+            throw new BuildException("Unable to read license file " + fileName, e);
         }
     }
 
+    /**
+     * Creates the ReportConfiguration from the ant options.
+     * @return the ReportConfiguration.
+     */
     public ReportConfiguration getConfiguration() {
         try {
-            Defaults defaults = defaultsBuilder.build(configuration.getLog());
-
-            configuration.setFrom(defaults);
+            final ReportConfiguration configuration = OptionCollection.parseCommands(args().toArray(new String[0]),
+                    o -> DefaultLog.getInstance().warn("Help option not supported"),
+                    true);
+            if (!args().contains(asKey(OptionCollection.OUT))) {
+                configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
+            }
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
+            configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
+            configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
+            if (deprecatedConfig.inputFileFilter != null) {
+                if (configuration.getFilesToIgnore() != null) {
+                    configuration.setFilesToIgnore(new OrFileFilter(configuration.getFilesToIgnore(), deprecatedConfig.inputFileFilter));
+                } else {
+                    configuration.setFilesToIgnore(deprecatedConfig.inputFileFilter);
+                }
+            }
             families.stream().map(Family::build).forEach(configuration::addFamily);
             licenses.stream().map(License::asBuilder)
                     .forEach(l -> configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily()));
             return configuration;
-        } catch (ImplementationException e) {
+        } catch (IOException | ImplementationException e) {
             throw new BuildException(e.getMessage(), e);
         }
     }
@@ -238,7 +355,7 @@ public class Report extends Task {
     /**
      * validates the task's configuration.
      */
-    private ReportConfiguration validate(ReportConfiguration cfg) {
+    protected ReportConfiguration validate(final ReportConfiguration cfg) {
         try {
             cfg.validate(s -> log(s, Project.MSG_WARN));
         } catch (ConfigurationException e) {
@@ -252,16 +369,21 @@ public class Report extends Task {
 
     /**
      * Type for the addLicenseHeaders attribute.
+     * @deprecated No longer required=, use stylesheet or xml attributes.
      */
+    @Deprecated
     public static class AddLicenseHeaders extends EnumeratedAttribute {
+        /** add license headers and create *.new file */
         static final String TRUE = "true";
+        /** do not add license headers */
         static final String FALSE = "false";
+        /** add license headers and overwrite existing files */
         static final String FORCED = "forced";
 
         public AddLicenseHeaders() {
         }
 
-        public AddLicenseHeaders(String s) {
+        public AddLicenseHeaders(final String s) {
             setValue(s);
         }
 
@@ -277,13 +399,15 @@ public class Report extends Task {
 
     /**
      * Type for the addLicenseHeaders attribute.
+     * @deprecated use listLicenses or listFamilies attributes.
      */
+    @Deprecated
     public static class ApprovalFilter extends EnumeratedAttribute {
 
         public ApprovalFilter() {
         }
 
-        public ApprovalFilter(String s) {
+        public ApprovalFilter(final String s) {
             setValue(s);
         }
 
@@ -297,18 +421,20 @@ public class Report extends Task {
             return LicenseSetFactory.LicenseFilter.valueOf(getValue());
         }
     }
-    
+
+    /**
+     * A facade for the Logger provided by Ant.
+     */
     private class Logger implements Log {
 
-        private void write(int level, String msg) {
-            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level)))
-            {
+        private void write(final int level, final String msg) {
+            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level))) {
                pw.write(msg);
             }
         }
 
         @Override
-        public void log(Level level, String msg) {
+        public void log(final Level level, final String msg) {
             switch (level) {
             case DEBUG:
                 write(Project.MSG_DEBUG, msg);
@@ -327,6 +453,5 @@ public class Report extends Task {
                 break;
             }
         }
-        
     }
 }

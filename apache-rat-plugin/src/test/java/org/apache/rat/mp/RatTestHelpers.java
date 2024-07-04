@@ -65,7 +65,7 @@ public final class RatTestHelpers {
                 throw new IOException("Unable to delete file: " + pDir);
             }
         } else if (pDir.isDirectory()) {
-        	FileUtils.deleteDirectory(pDir);
+            FileUtils.deleteDirectory(pDir);
         } else if (pDir.exists()) {
             throw new IOException("Unable to delete unknown object " + pDir);
         }

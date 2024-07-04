@@ -33,28 +33,33 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
 
 /**
  * A class to track the Matcher Builders as they are defined.  Matchers may be defined in multiple configuration files
- * this method tracks them so that they can be referenced across the configuration files.
+ * this class tracks them so that they can be referenced across the configuration files.
  */
 public final class MatcherBuilderTracker {
 
     /** The instance of the BuildTracker. */
-    public static MatcherBuilderTracker INSTANCE;
+    private static MatcherBuilderTracker instance;
 
+    /** Map of matcher name to the class of the Builder */
     private final Map<String, Class<? extends AbstractBuilder>> matcherBuilders;
 
-    private static synchronized MatcherBuilderTracker instance() {
-        if (INSTANCE == null) {
-            INSTANCE = new MatcherBuilderTracker();
+    /**
+     * Gets the instance of the MatcherBuilderTracker.
+     * @return the instance of the MatcherBuilderTracker.
+     */
+    public  static synchronized MatcherBuilderTracker instance() {
+        if (instance == null) {
+            instance = new MatcherBuilderTracker();
             Defaults.init();
         }
-        return INSTANCE;
+        return instance;
     }
 
     /**
      * Adds a builder to the tracker.
      * If the {@code name} is null then the builder class name simple is used with the "Builder" suffix removed.
      * @param className the Class name for the builder.
-     * @param name the short name for the builder. 
+     * @param name the short name for the builder.
      */
     public static void addBuilder(final String className, final String name) {
         instance().addBuilderImpl(className, name);
@@ -85,7 +90,6 @@ public final class MatcherBuilderTracker {
     private MatcherBuilderTracker() {
         matcherBuilders = new HashMap<>();
     }
-    
 
     /**
      * Gets a collection of classes that are recognized as builders.

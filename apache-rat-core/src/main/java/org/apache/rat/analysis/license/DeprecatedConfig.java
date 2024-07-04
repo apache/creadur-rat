@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.analysis.license;
 
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -25,10 +26,11 @@ import org.apache.rat.license.ILicenseFamily;
  * A temporary interface for deprecated configuration options.
  */
 @Deprecated // remove in v1.0
+@DeprecationReporter.Info(since = "0.16", forRemoval = true, use = "new configuration options")
 public interface DeprecatedConfig {
     /**
-	 * @return the license definition.
-	 */
+     * @return the license definition.
+     */
     ILicense.Builder getLicense();
     /**
      * @return the license family definition.

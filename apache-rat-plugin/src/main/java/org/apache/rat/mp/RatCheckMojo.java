@@ -20,19 +20,17 @@ package org.apache.rat.mp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.Defaults;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
-import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 
@@ -41,23 +39,44 @@ import org.apache.rat.report.claim.ClaimStatistic;
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
+
+    /** The default output file if no other is specified. */
+    @Parameter(property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
+    private File defaultReportFile;
+
     /**
      * Where to store the report.
+     * @deprecated use 'out' property.
      */
-    @Parameter(property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
-    private File reportFile;
-
-    @Parameter(property = "rat.scanHiddenDirectories", defaultValue = "false")
-    private boolean scanHiddenDirectories;
+    @Deprecated
+    @Parameter(property = "rat.outputFile")
+    public void setReportFile(final File reportFile) {
+        if (!reportFile.getParentFile().exists()) {
+            if (!reportFile.getParentFile().mkdirs()) {
+                getLog().error("Unable to create directory " + reportFile.getParentFile());
+            }
+        }
+        setOut(reportFile.getAbsolutePath());
+    }
 
     /**
      * Output style of the report. Use "plain" (the default) for a plain text report
      * or "xml" for the raw XML report. Alternatively you can give the path of an
      * XSL transformation that will be applied on the raw XML to produce the report
      * written to the output file.
+     * @deprecated use setStyleSheet or xml
      */
-    @Parameter(property = "rat.outputStyle", defaultValue = "plain")
-    private String reportStyle;
+    @Deprecated
+    @Parameter(property = "rat.outputStyle")
+    public void setReportStyle(final String value) {
+        if (value.equalsIgnoreCase("xml")) {
+            setXml(true);
+        } else if (value.equalsIgnoreCase("plain")) {
+            setStylesheet("plain-rat");
+        } else {
+            setStylesheet(value);
+        }
+    }
 
     /**
      * Maximum number of files with unapproved licenses.
@@ -68,16 +87,37 @@ public class RatCheckMojo extends AbstractRatMojo {
     /**
      * Whether to add license headers; possible values are {@code forced},
      * {@code true}, and {@code false} (default).
+     * @deprecated use addLicense and forced
      */
-    @Parameter(property = "rat.addLicenseHeaders", defaultValue = "false")
-    private String addLicenseHeaders;
+    @Deprecated
+    @Parameter(property = "rat.addLicenseHeaders")
+    public void setAddLicenseHeaders(final String addLicenseHeaders) {
+        switch (addLicenseHeaders.trim().toUpperCase()) {
+            case "FALSE":
+                // do nothing;
+                break;
+            case "TRUE":
+                setAddLicense(true);
+                break;
+            case "FORCED":
+                setAddLicense(true);
+                setForce(true);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown addlicense header: " + addLicenseHeaders);
+        }
+    }
 
     /**
      * Copyright message to add to license headers. This option is ignored, unless
      * {@code addLicenseHeaders} is set to {@code true}, or {@code forced}.
+     * @deprecated use copyright
      */
+    @Deprecated
     @Parameter(property = "rat.copyrightMessage")
-    private String copyrightMessage;
+    public void setCopyrightMessage(final String copyrightMessage) {
+        setCopyright(copyrightMessage);
+    }
 
     /**
      * Will ignore rat errors and display a log message if any. Its use is NOT
@@ -98,6 +138,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Parameter(property = "rat.consoleOutput", defaultValue = "true")
     private boolean consoleOutput;
 
+    /** The reporter that this mojo uses */
     private Reporter reporter;
 
     /**
@@ -114,13 +155,14 @@ public class RatCheckMojo extends AbstractRatMojo {
             getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
             return;
         }
-        ReportConfiguration config = getConfiguration();
-        logLicenses(config.getLicenses(LicenseFilter.ALL));
-        final File parent = reportFile.getParentFile();
-        if (!parent.mkdirs() && !parent.isDirectory()) {
-            throw new MojoExecutionException("Could not create report parent directory " + parent);
-        }
 
+        String outKey = "--" + OptionCollection.OUT.getLongOpt();
+        if (args.get(outKey) == null) {
+            setArg(outKey, defaultReportFile.getPath());
+        }
+        ReportConfiguration config = getConfiguration();
+
+        logLicenses(config.getLicenses(LicenseFilter.ALL));
         try {
             this.reporter = new Reporter(config);
             reporter.output();
@@ -143,7 +185,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                 .append(stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)).append(", unknown: ")
                 .append(stats.getCounter(ClaimStatistic.Counter.UNKNOWN)).append(", generated: ")
                 .append(stats.getCounter(ClaimStatistic.Counter.GENERATED)).append(", approved: ").append(numApproved)
-                .append((numApproved > 0 ? " licenses." : " license."));
+                .append(numApproved > 0 ? " licenses." : " license.");
 
         getLog().info(statSummary.toString());
         if (numUnapprovedLicenses < stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)) {
@@ -151,13 +193,13 @@ public class RatCheckMojo extends AbstractRatMojo {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     reporter.output(Defaults.getUnapprovedLicensesStyleSheet(), () -> baos);
-                    getLog().warn(baos.toString());
+                    getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
                 } catch (Exception e) {
                     getLog().warn("Unable to print the files with unapproved licenses to the console.");
                 }
             }
 
-            final String seeReport = " See RAT report in: " + reportFile;
+            final String seeReport = " See RAT report in: " + args.get("--" + OptionCollection.OUT.getLongOpt());
             if (!ignoreErrors) {
                 throw new RatCheckException("Too many files with unapproved license: "
                         + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED) + seeReport);
@@ -165,36 +207,5 @@ public class RatCheckMojo extends AbstractRatMojo {
             getLog().warn("Rat check: " + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)
                     + " files with unapproved licenses." + seeReport);
         }
-    }
-
-    @Override
-    protected ReportConfiguration getConfiguration() throws MojoExecutionException {
-        final ReportConfiguration configuration = super.getConfiguration();
-        if (StringUtils.isNotBlank(addLicenseHeaders)) {
-            configuration.setAddLicenseHeaders(AddLicenseHeaders.valueOf(addLicenseHeaders.toUpperCase()));
-        }
-        if (StringUtils.isNotBlank(copyrightMessage)) {
-            configuration.setCopyrightMessage(copyrightMessage);
-        }
-        if (scanHiddenDirectories) {
-            configuration.setDirectoriesToIgnore(null);
-        }
-        if (reportFile != null) {
-            if (!reportFile.exists()) {
-                reportFile.getParentFile().mkdirs();
-            }
-            configuration.setOut(reportFile);
-        }
-        if (StringUtils.isNotBlank(reportStyle)) {
-            if ("xml".equalsIgnoreCase(reportStyle)) {
-                configuration.setStyleReport(false);
-            } else {
-                configuration.setStyleReport(true);
-                if (!"plain".equalsIgnoreCase(reportStyle)) {
-                    configuration.setStyleSheet(() -> Files.newInputStream(Paths.get(reportStyle)));
-                }
-            }
-        }
-        return configuration;
     }
 }

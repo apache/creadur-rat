@@ -18,13 +18,15 @@
  */
 package org.apache.rat;
 
+import static java.lang.String.format;
+
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -39,6 +41,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
@@ -52,7 +55,13 @@ public final class Defaults {
     /**
      * The default configuration file from the package.
      */
-    private static final URL DEFAULT_CONFIG_URL = Defaults.class.getResource("/org/apache/rat/default.xml");
+    private static final URI DEFAULT_CONFIG_URI;
+
+    /**
+     * The path to the default config resource.
+     */
+    private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
+
     /**
      * The default XSLT stylesheet to produce a text output file.
      */
@@ -62,36 +71,82 @@ public final class Defaults {
      */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
 
-    public static final FilenameFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
+    /**
+     * The default files to ignore if none are specified.
+     */
+    public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
 
+    /**
+     * The default directories to ignore if none are specified.
+     */
     public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
 
+    /**
+     * The default ARCHIVE processing style.
+     */
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
 
+    /**
+     * The default STANDARD processing style.
+     */
     public static final ReportConfiguration.Processing STANDARD_PROCESSING = ReportConfiguration.Processing.ABSENCE;
 
+    /**
+     * The default license families to list.
+     */
     public static final LicenseFilter LIST_FAMILIES = LicenseFilter.NONE;
 
+    /**
+     * The default licenses to list.
+     */
     public static final LicenseFilter LIST_LICENSES = LicenseFilter.NONE;
 
+    /**
+     * The License set factory.
+     */
     private final LicenseSetFactory setFactory;
 
-
+    // TODO look at this static block with respect to the init() static method and figure out if we need both.
+    static {
+         URL url = Defaults.class.getResource(DEFAULT_CONFIG_PATH);
+         URI uri = null;
+         if (url == null) {
+             DefaultLog.getInstance().error(format("Unable to read '%s'", DEFAULT_CONFIG_PATH));
+         } else {
+             try {
+                 uri = url.toURI();
+             } catch (URISyntaxException e) {
+                 DefaultLog.getInstance().error("Unable to read " + url, e);
+             }
+         }
+         DEFAULT_CONFIG_URI = uri;
+    }
     /**
      * Initialize the system configuration reader.
      */
     public static void init() {
-        Format fmt = Format.fromURL(DEFAULT_CONFIG_URL);
-        MatcherReader mReader = fmt.matcherReader();
-        mReader.addMatchers(DEFAULT_CONFIG_URL);
-        mReader.readMatcherBuilders();
+        try {
+            URL url = DEFAULT_CONFIG_URI.toURL();
+            Format fmt = Format.fromURL(url);
+            MatcherReader mReader = fmt.matcherReader();
+            if (mReader != null) {
+                mReader.addMatchers(url);
+                mReader.readMatcherBuilders();
+            } else {
+                DefaultLog.getInstance().error("Unable to construct MatcherReader from" + DEFAULT_CONFIG_URI);
+            }
+        } catch (MalformedURLException e) {
+            DefaultLog.getInstance().error("Invalid URL: " + DEFAULT_CONFIG_URI.toString(), e);
+        }
     }
 
     /**
      * Builder constructs instances.
+     * @param log The log to write messages to.
+     * @param uris The set of URIs to read.
      */
-    private Defaults(final Log log, final Set<URL> urls) {
-        this.setFactory = Defaults.readConfigFiles(log, urls);
+    private Defaults(final Log log, final Set<URI> uris) {
+        this.setFactory = Defaults.readConfigFiles(log, uris);
     }
 
     /**
@@ -104,30 +159,36 @@ public final class Defaults {
 
     /**
      * Reads the configuration files.
-     * @param urls the URLs to read.
+     * @param uris the URIs to read.
      */
-    private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URL> urls) {
+    private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URI> uris) {
 
         SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
 
         SortedSet<String> approvedLicenseIds = new TreeSet<>();
 
-        for (URL url : urls) {
-            Format fmt = Format.fromURL(url);
-            MatcherReader mReader = fmt.matcherReader();
-            if (mReader != null) {
-                mReader.addMatchers(url);
-                mReader.readMatcherBuilders();
-            }
+        for (URI uri : uris) {
+            try {
+                URL url = uri.toURL();
+                Format fmt = Format.fromURL(url);
+                MatcherReader mReader = fmt.matcherReader();
+                if (mReader != null) {
+                    mReader.addMatchers(url);
+                    mReader.readMatcherBuilders();
+                }
 
-            LicenseReader lReader = fmt.licenseReader();
-            if (lReader != null) {
-                lReader.setLog(log);
-                lReader.addLicenses(url);
-                licenses.addAll(lReader.readLicenses());
-                lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
+                LicenseReader lReader = fmt.licenseReader();
+                if (lReader != null) {
+                    lReader.setLog(log);
+                    lReader.addLicenses(url);
+                    licenses.addAll(lReader.readLicenses());
+                    lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseIds::add);
+                }
+            } catch (MalformedURLException e) {
+                DefaultLog.getInstance().error("Invalid URL: " + uri.toString(), e);
             }
         }
+
         return new LicenseSetFactory(licenses, approvedLicenseIds);
     }
 
@@ -174,31 +235,34 @@ public final class Defaults {
     public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
         return setFactory.getLicenseFamilyIds(filter);
     }
-    
+
     /**
      * The Defaults builder.
      */
-    public final static class Builder {
-        private final Set<URL> fileNames = new TreeSet<>(Comparator.comparing(URL::toString));
+    public static final class Builder {
+        /** The list of URIs that we wil read to configure the Defaults */
+        private final Set<URI> fileNames = new TreeSet<>();
 
         private Builder() {
-            fileNames.add(DEFAULT_CONFIG_URL);
+            if (DEFAULT_CONFIG_URI == null) {
+                DefaultLog.getInstance().error("Unable to read default.xml");
+            } else {
+               fileNames.add(DEFAULT_CONFIG_URI);
+            }
         }
 
         /**
          * Adds a URL to a configuration file to be read.
-         * 
-         * @param url the URL to add
+         * @param uri the URI to add
          * @return this Builder for chaining
          */
-        public Builder add(final URL url) {
-            fileNames.add(url);
+        public Builder add(final URI uri) {
+            fileNames.add(uri);
             return this;
         }
 
         /**
          * Adds the name of a configuration file to be read.
-         * 
          * @param fileName the name of the file to add.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the fileName cannot be found.
@@ -209,29 +273,26 @@ public final class Defaults {
 
         /**
          * Adds a configuration file to be read.
-         * 
          * @param file the File to add.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the file cannot be found.
          */
         public Builder add(final File file) throws MalformedURLException {
-            return add(file.toURI().toURL());
+            return add(file.toURI());
         }
 
         /**
          * Removes a file from the list of configuration files to process.
-         * 
-         * @param url the URL of the file to remove.
+         * @param uri the URI of the file to remove.
          * @return this Builder for chaining
          */
-        public Builder remove(final URL url) {
-            fileNames.remove(url);
+        public Builder remove(final URI uri) {
+            fileNames.remove(uri);
             return this;
         }
 
         /**
          * Removes a file name from the list of configuration files to process.
-         * 
          * @param fileName the fileName of the file to remove.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the fileName cannot be found.
@@ -242,22 +303,20 @@ public final class Defaults {
 
         /**
          * Removes a file from the list of configuration files to process.
-         * 
          * @param file the File of the file to remove.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the file cannot be found.
          */
         public Builder remove(final File file) throws MalformedURLException {
-            return remove(file.toURI().toURL());
+            return remove(file.toURI());
         }
 
         /**
          * Removes the default definitions from the list of files to process.
-         * 
          * @return this Builder for chaining
          */
         public Builder noDefault() {
-            return remove(DEFAULT_CONFIG_URL);
+            return remove(DEFAULT_CONFIG_URI);
         }
 
         /**

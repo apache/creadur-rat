@@ -56,6 +56,7 @@ import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
+import org.apache.rat.VersionInfo;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.codehaus.plexus.util.ReaderFactory;
 
@@ -159,7 +160,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
 
             // MSHARED-204: only render Doxia sink if not an external report
             if (!isExternalReport()) {
-                outputDirectory.mkdirs();
+                if (!outputDirectory.exists()) {
+                    if (!outputDirectory.mkdirs()) {
+                        getLog().error("Unable to create output directory: " + outputDirectory);
+                    }
+                }
 
                 try (Writer writer = new OutputStreamWriter(
                         Files.newOutputStream(new File(outputDirectory, filename).toPath()), getOutputEncoding())) {
@@ -176,7 +181,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         }
     }
 
-    private SiteRenderingContext createSiteRenderingContext(Locale locale) throws MavenReportException, IOException {
+    private SiteRenderingContext createSiteRenderingContext(final Locale locale) throws MavenReportException, IOException {
         DecorationModel decorationModel = new DecorationModel();
 
         Map<String, Object> templateProperties = new HashMap<>();
@@ -221,7 +226,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      */
     @Deprecated
     @Override
-    public void generate(org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
+    public void generate(final org.codehaus.doxia.sink.Sink sink, final Locale locale) throws MavenReportException {
         generate(sink, null, locale);
     }
 
@@ -234,7 +239,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
      */
     @Deprecated
-    public void generate(Sink sink, Locale locale) throws MavenReportException {
+    public void generate(final Sink sink, final Locale locale) throws MavenReportException {
         generate(sink, null, locale);
     }
 
@@ -248,7 +253,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @throws MavenReportException if any
      */
     @Override
-    public void generate(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
+    public void generate(final Sink sink, final SinkFactory sinkFactory, final Locale locale) throws MavenReportException {
         if (!canGenerateReport()) {
             getLog().info("This report cannot be generated as part of the current build. "
                     + "The report name should be referenced in this line of output.");
@@ -282,7 +287,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     }
 
     @Override
-    public void setReportOutputDirectory(File reportOutputDirectory) {
+    public void setReportOutputDirectory(final File reportOutputDirectory) {
         this.reportOutputDirectory = reportOutputDirectory;
         this.outputDirectory = reportOutputDirectory;
     }
@@ -318,14 +323,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * Actions when closing the report.
      */
     protected void closeReport() {
-        getSink().close();
-    }
-
-    /**
-     * @return the sink used
-     */
-    public Sink getSink() {
-        return sink;
+        sink.close();
     }
 
     /**
@@ -350,29 +348,12 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     }
 
     /**
-     * Searches for a Rat artifact in the dependency list and returns its version.
-     *
-     * @return Version number, if found, or null.
-     */
-    // TODO The canonical way is to read the pom.properties for the artifact desired
-    // in META-INF/maven
-    private String getRatVersion() {
-        // noinspection unchecked
-        for (Artifact a : getProject().getDependencyArtifacts()) {
-            if ("rat-lib".equals(a.getArtifactId())) {
-                return a.getVersion();
-            }
-        }
-        return null;
-    }
-
-    /**
      * Writes the report to the Doxia sink.
      *
      * @param locale The locale to use for writing the report.
      * @throws MavenReportException Writing the report failed.
      */
-    protected void executeReport(Locale locale) throws MavenReportException {
+    protected void executeReport(final Locale locale) throws MavenReportException {
         ResourceBundle bundle = getBundle(locale);
         final String title = bundle.getString("report.rat.title");
         sink.head();
@@ -393,7 +374,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.link(bundle.getString("report.rat.url"));
         sink.text(bundle.getString("report.rat.fullName"));
         sink.link_();
-        final String ratVersion = getRatVersion();
+        final String ratVersion = new VersionInfo(RatReportMojo.class).toString();
         if (ratVersion != null) {
             sink.text(" " + ratVersion);
         }
@@ -409,7 +390,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             config.setOut(() -> baos);
             new Reporter(config).output();
-            sink.text(baos.toString());
+            sink.text(baos.toString(StandardCharsets.UTF_8.name()));
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }
@@ -425,7 +406,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @param locale Requested locale of the bundle
      * @return The bundle, which is used to read localized strings.
      */
-    private ResourceBundle getBundle(Locale locale) {
+    private ResourceBundle getBundle(final Locale locale) {
         return ResourceBundle.getBundle("org/apache/rat/mp/rat-report", locale, getClass().getClassLoader());
     }
 
@@ -437,7 +418,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * the bundle.
      */
     @Override
-    public String getDescription(Locale locale) {
+    public String getDescription(final Locale locale) {
         return getBundle(locale).getString("report.rat.description");
     }
 
@@ -448,7 +429,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @return Report name, as given by the key "report.rat.name" in the bundle.
      */
     @Override
-    public String getName(Locale locale) {
+    public String getName(final Locale locale) {
         return getBundle(locale).getString("report.rat.name");
     }
 

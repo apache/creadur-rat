@@ -88,8 +88,7 @@ public abstract class BetterAbstractMojoTestCase extends AbstractMojoTestCase {
             repoSession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory().newInstance(repoSession,
                     new LocalRepository(request.getLocalRepository().getBasedir())));
 
-            MavenSession session = new MavenSession(getContainer(), repoSession, request, result);
-            return session;
+            return new MavenSession(getContainer(), repoSession, request, result);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
