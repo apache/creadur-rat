@@ -442,6 +442,7 @@ public class ReportConfiguration {
                 log.warn("Unable to delete file:" + file);
             }
         }
+        file.getParentFile().mkdirs();
         setOut(() -> new FileOutputStream(file, true));
     }
 

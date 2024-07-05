@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
+import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -56,6 +57,7 @@ import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.license.DeprecatedConfig;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.config.SourceCodeManagementSystems;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
@@ -319,6 +321,33 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
     }
 
+    /**
+     * Reads values for the Arg.
+     *
+     * @param arg The Arg to get the values for.
+     * @return The list of values or an empty list.
+     */
+    protected List<String> getValues(Arg arg) {
+        List<String> result = new ArrayList<>();
+        for (Option option : arg.group().getOptions()) {
+            if (option.getLongOpt() != null) {
+                List<String> args = getArg(option.getLongOpt());
+                if (args != null) {
+                    result.addAll(args);
+                }
+            }
+        }
+        return result;
+    }
+
+    protected void removeKey(Arg arg) {
+        for (Option option : arg.group().getOptions()) {
+            if (option.getLongOpt() != null) {
+                removeArg(option.getLongOpt());
+            }
+        }
+    }
+
     private org.apache.rat.utils.Log makeLog() {
         return new org.apache.rat.utils.Log() {
             private final Log log = getLog();
@@ -356,18 +385,12 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 log.debug("End BaseRatMojo Configuration options");
             }
 
-            String key = "--" + createName(OptionCollection.EXCLUDE_CLI.getLongOpt());
-            List<String> argList = args.get(key);
-            if (argList != null) {
-                excludesList.addAll(argList);
-            }
-            args.remove(key);
-            key = "--" + createName(OptionCollection.EXCLUDE_FILE_CLI.getLongOpt());
-            argList = args.get(key);
-            if (argList != null) {
-                excludesFileList.addAll(argList);
-            }
-            args.remove(key);
+            excludesList.addAll(getValues(Arg.EXCLUDE));
+            removeKey(Arg.EXCLUDE);
+
+            excludesFileList.addAll(getValues(Arg.EXCLUDE_FILE));
+            removeKey(Arg.EXCLUDE_FILE);
+
             ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
                     o -> getLog().warn("Help option not supported"),
                     true);
@@ -499,7 +522,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
     }
 
-    private void setIncludes(final DirectoryScanner ds) throws MojoExecutionException {
+    // package private for testing
+    void setIncludes(final DirectoryScanner ds) throws MojoExecutionException {
         if (includes != null && includes.length > 0 || includesFile != null) {
             final List<String> includeList = new ArrayList<>();
             if (includes != null) {
@@ -538,7 +562,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         return patterns;
     }
 
-    private void setExcludes(final IgnoringDirectoryScanner ds) throws MojoExecutionException {
+    // package private for testing.
+    void setExcludes(final IgnoringDirectoryScanner ds) throws MojoExecutionException {
         final List<IgnoreMatcher> ignoreMatchers = mergeDefaultExclusions();
         if (!excludesList.isEmpty()) {
             getLog().debug("No excludes explicitly specified.");
