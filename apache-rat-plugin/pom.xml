@@ -55,6 +55,12 @@
         </includes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/filtered-resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -142,7 +148,7 @@
         <configuration>
           <mainClass>org.apache.rat.tools.MavenGenerator</mainClass>
           <arguments>
-            <argument>org.apache.rat.ui.lib</argument>
+            <argument>org.apache.rat.plugin</argument>
             <argument>BaseRatMojo</argument>
             <argument>${project.build.directory}/generated/src/main/java</argument>
           </arguments>
@@ -211,7 +217,7 @@
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <classifier>tests</classifier>
       <scope>test</scope>

@@ -39,6 +39,7 @@ import org.junit.jupiter.params.provider.Arguments;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -566,13 +567,19 @@ public abstract class AbstractOptionsProvider {
     }
 
     private void styleSheetTest(Option option) {
+        // copy the dummy stylesheet so that the we have a local file for users of the testing jar.
+        File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
+        try (
+            InputStream in = ReportTest.class.getResourceAsStream("MatcherContainerResource.txt");
+            OutputStream out = new FileOutputStream(file)) {
+            IOUtils.copy(in, out);
+        } catch (IOException e) {
+            fail("Could not copy MatcherCointainerResource.txt: "+e.getMessage());
+        }
+        // run the test
         String[] args = {null};
         try {
-            URL url = ReportTest.class.getResource("MatcherContainerResource.txt");
-            if (url == null) {
-                fail("Could not locate 'MatcherContainerResource.txt'");
-            }
-            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", url.getFile()}) {
+            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", file.getAbsolutePath()}) {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 try (InputStream expected = Arg.getStyleSheet(sheet).get();
@@ -582,7 +589,7 @@ public abstract class AbstractOptionsProvider {
                 }
             }
         } catch (IOException e) {
-            fail(e.getMessage());
+            fail(e.getMessage(), e);
         }
     }
 

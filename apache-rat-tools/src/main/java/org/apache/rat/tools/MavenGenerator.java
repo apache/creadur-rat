@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -39,7 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.InputArgs;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -52,7 +52,7 @@ public final class MavenGenerator {
     private static final Map<String, String> RENAME_MAP = new HashMap<>();
 
     static {
-        RENAME_MAP.put("licenses", "config");
+        //RENAME_MAP.put("licenses", "config");
         RENAME_MAP.put("addLicense", "add-license");
     }
     /**
@@ -100,7 +100,7 @@ public final class MavenGenerator {
         String destDir = args[2];
         List<MavenOption> options = OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER)
                 .map(MavenOption::new).collect(Collectors.toList());
-        String pkgName = String.join(File.separator, new CasedString(CasedString.StringCase.DOT, packageName).getSegments());
+        String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         System.out.println("Creating " + file);
         file.getParentFile().mkdirs();
@@ -113,6 +113,14 @@ public final class MavenGenerator {
             while (iter.hasNext()) {
                 String line = iter.next();
                 switch (line.trim()) {
+                    case "${static}":
+                        for (Map.Entry<String, String> entry : RENAME_MAP.entrySet()) {
+                            writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
+                        }
+                        for (Option option : MAVEN_FILTER_LIST) {
+                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt())));
+                        }
+                        break;
                     case "${methods}":
                         writeMethods(writer, options);
                         break;
@@ -145,9 +153,14 @@ public final class MavenGenerator {
     private static void writeMethods(final FileWriter writer, final List<MavenOption> options) throws IOException {
         for (MavenOption option : options) {
             writer.append(getComment(option))
-                    .append(option.getMethodSignature("    ")).append(" {").append(System.lineSeparator())
+                    .append(option.getMethodSignature("    ", false)).append(" {").append(System.lineSeparator())
                     .append(getBody(option))
                     .append("    }").append(System.lineSeparator());
+            if (option.hasArgs()) {
+                writer.append(option.getMethodSignature("    ", true)).append(" {").append(System.lineSeparator())
+                        .append(getBody(option))
+                        .append("    }").append(System.lineSeparator());
+            }
         }
     }
 
@@ -160,4 +173,11 @@ public final class MavenGenerator {
                     option.getName(), option.keyValue());
         }
     }
+
+    static String createName(final Option option) {
+        String name = option.getLongOpt();
+        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
+        return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
+    }
+
 }

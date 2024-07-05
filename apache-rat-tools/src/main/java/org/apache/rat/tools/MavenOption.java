@@ -123,7 +123,6 @@ public class MavenOption {
             parmArgs = format("(property = \"rat.%s\")", name);
         }
 
-
         return sb.append(format("%1$s@Parameter%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
                         indent, name, fname, args, parmArgs))
                 .toString();

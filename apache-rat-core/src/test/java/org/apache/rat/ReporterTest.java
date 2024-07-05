@@ -255,18 +255,6 @@ public class ReporterTest {
             "-------" + NL + //
             "Generated at: ";
 
-    private String documentOut(boolean approved, Type type, String name) {
-        return String.format("^\\Q%s%s %s\\E$", approved ? " " : "!", type.name().charAt(0), name);
-    }
-
-    private String licenseOut(String family, String name) {
-        return licenseOut(family, family, name);
-    }
-
-    private String licenseOut(String family, String id, String name) {
-        return String.format("\\s+\\Q%s\\E\\s+\\Q%s\\E\\s+\\Q%s\\E$", family, id, name);
-    }
-
     @Test
     public void plainReportTest() throws Exception {
         Defaults defaults = Defaults.builder().build(DefaultLog.getInstance());
@@ -298,32 +286,32 @@ public class ReporterTest {
                         + "\\Qsrc/test/resources/elements/Source.java\\E\\s+" //
                         + "\\Qsrc/test/resources/elements/sub/Empty.txt\\E\\s",
                 document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.ARCHIVE, "src/test/resources/elements/dummy.jar"),
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.ARCHIVE, "src/test/resources/elements/dummy.jar"),
                 document);
         TextUtils.assertPatternInTarget(
-                documentOut(true, Type.STANDARD, "src/test/resources/elements/ILoggerFactory.java")
-                        + licenseOut("MIT", "The MIT License"),
+                ReporterTestUtils.documentOut(true, Type.STANDARD, "src/test/resources/elements/ILoggerFactory.java")
+                        + ReporterTestUtils.licenseOut("MIT", "The MIT License"),
                 document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.BINARY, "src/test/resources/elements/Image.png"),
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.BINARY, "src/test/resources/elements/Image.png"),
                 document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.NOTICE, "src/test/resources/elements/LICENSE"),
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.NOTICE, "src/test/resources/elements/LICENSE"),
                 document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.NOTICE, "src/test/resources/elements/NOTICE"), document);
-        TextUtils.assertPatternInTarget(documentOut(false, Type.STANDARD, "src/test/resources/elements/Source.java")
-                + licenseOut("?????", "Unknown license (Unapproved)"), document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.STANDARD, "src/test/resources/elements/Text.txt")
-                + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.STANDARD, "src/test/resources/elements/Xml.xml")
-                + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.STANDARD, "src/test/resources/elements/buildr.rb")
-                + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.STANDARD, "src/test/resources/elements/TextHttps.txt")
-                + licenseOut("AL", "Apache License Version 2.0"), document);
-        TextUtils.assertPatternInTarget(documentOut(true, Type.STANDARD, "src/test/resources/elements/tri.txt")
-                + licenseOut("AL", "Apache License Version 2.0") + licenseOut("BSD-3", "BSD 3 clause")
-                + licenseOut("BSD-3", "TMF", "The Telemanagement Forum License"), document);
-        TextUtils.assertPatternInTarget(documentOut(false, Type.STANDARD, "src/test/resources/elements/sub/Empty.txt")
-                + licenseOut("?????", "Unknown license (Unapproved)"), document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.NOTICE, "src/test/resources/elements/NOTICE"), document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(false, Type.STANDARD, "src/test/resources/elements/Source.java")
+                + ReporterTestUtils.UNKNOWN_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "src/test/resources/elements/Text.txt")
+                + ReporterTestUtils.APACHE_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "src/test/resources/elements/Xml.xml")
+                + ReporterTestUtils.APACHE_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "src/test/resources/elements/buildr.rb")
+                + ReporterTestUtils.APACHE_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "src/test/resources/elements/TextHttps.txt")
+                + ReporterTestUtils.APACHE_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "src/test/resources/elements/tri.txt")
+                + ReporterTestUtils.APACHE_LICENSE + ReporterTestUtils.licenseOut("BSD-3", "BSD 3 clause")
+                + ReporterTestUtils.licenseOut("BSD-3", "TMF", "The Telemanagement Forum License"), document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(false, Type.STANDARD, "src/test/resources/elements/sub/Empty.txt")
+                + ReporterTestUtils.UNKNOWN_LICENSE, document);
     }
 
     @Test

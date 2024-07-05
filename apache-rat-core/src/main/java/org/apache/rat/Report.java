@@ -23,9 +23,11 @@ import static java.lang.String.format;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.utils.DefaultLog;
