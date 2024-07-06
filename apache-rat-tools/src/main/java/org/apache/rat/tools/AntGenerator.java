@@ -42,6 +42,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
@@ -59,6 +60,7 @@ public final class AntGenerator {
     static {
         ANT_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
         ANT_FILTER_LIST.addAll(Arg.DIR.group().getOptions());
+        ANT_FILTER_LIST.add(OptionCollection.HELP);
     }
 
     /**
@@ -116,6 +118,14 @@ public final class AntGenerator {
             while (iter.hasNext()) {
                 String line = iter.next();
                 switch (line.trim()) {
+                    case "${static}":
+                        for (Map.Entry<String, String> entry : RENAME_MAP.entrySet()) {
+                            writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
+                        }
+                        for (Option option : ANT_FILTER_LIST) {
+                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt())));
+                        }
+                        break;
                     case "${methods}":
                         writeMethods(writer, options, customClasses);
                         break;
@@ -132,6 +142,11 @@ public final class AntGenerator {
                         customClasses.flush();
                         customClasses.close();
                         writer.write(bos.toString());
+                        break;
+                    case "${commonArgs}":
+                        try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
+                            IOUtils.copy(argsTpl, writer, StandardCharsets.UTF_8);
+                        }
                         break;
                     default:
                         writer.append(line).append(System.lineSeparator());

@@ -30,11 +30,10 @@ public class AntOption {
     /**
      * Constructor.
      * @param option The CLI option
-     * @param name The Ant based name for the option.
      */
-    AntOption(Option option, String name) {
+    AntOption(Option option) {
         this.option = option;
-        this.name = name;
+        this.name = BaseAntTask.createName(option.getLongOpt());
     }
 
     /**

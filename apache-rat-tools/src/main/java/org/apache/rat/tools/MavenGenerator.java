@@ -133,6 +133,11 @@ public final class MavenGenerator {
                     case "${class}":
                         writer.append(format("public abstract class %s extends AbstractMojo {%n", className));
                         break;
+                    case "${commonArgs}":
+                        try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
+                            IOUtils.copy(argsTpl, writer, StandardCharsets.UTF_8);
+                        }
+                        break;
                     default:
                         writer.append(line).append(System.lineSeparator());
                         break;

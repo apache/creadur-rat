@@ -83,7 +83,7 @@ public class AntOption {
      * @return The key value for the option.
      */
     public String keyValue() {
-        return format("\"--%s\"", option.getLongOpt());
+        return format("\"%s\"", option.getLongOpt());
     }
 
     /**
