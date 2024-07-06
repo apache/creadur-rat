@@ -19,13 +19,16 @@
 
 ${package}
 
-import org.apache.commons.cli.Option;
-
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.utils.CasedString;
 import org.apache.tools.ant.Task;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -36,69 +39,27 @@ import java.util.stream.Collectors;
  * DO NOT EDIT - GENERATED FILE
  */
 ${class}
-    /**
-     * A map of CLI based arguments to values.
-     */
-    protected final Map<String, List<String>> args = new HashMap<>();
 
-    /**
-     * Get the name of the option as the key to the argument map.
-     * @param option The option to process.
-     * @return The key for the map.
-     */
-    public static String asKey(Option option) {
-        return "--" + option.getLongOpt();
+    private final static Map<String,String> xlateName = new HashMap<>();
+
+    private final static List<String> unsupportedArgs = new ArrayList<>();
+
+    static {
+${static}
     }
+
+    public static String createName(String longOpt) {
+        String name = StringUtils.defaultIfEmpty(xlateName.get(longOpt), longOpt).toLowerCase(Locale.ROOT);
+        return new CasedString(CasedString.StringCase.KEBAB, name).toCase(CasedString.StringCase.CAMEL);
+    }
+
+    public static List<String> unsupportedArgs() {
+        return Collections.unmodifiableList(unsupportedArgs);
+    }
+
+${commonArgs}
 
 ${constructor}
-
-    /**
-     * Gets the list of arguments prepared for the CLI code to parse.
-     * @return the List of arguments for the CLI command line.
-     */
-    protected List<String> args() {
-        List<String> result = new ArrayList<>();
-        for (Map.Entry<String, List<String>> entry : args.entrySet()) {
-            result.add(entry.getKey());
-            result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
-        }
-        return result;
-    }
-
-    /**
-     * Set a key and value into the argument list.
-     * Replaces any existing value.
-     * @param key the key for the map.
-     * @param value the value to set.
-     */
-    protected void setArg(String key, String value) {
-        List<String> values = new ArrayList<>();
-        values.add(value);
-        args.put(key, values);
-    }
-
-    /**
-     * Add an value to the key in the argument list.
-     * If the key does not exist, adds it.
-     * @param key the key for the map.
-     * @param value the value to set.
-     */
-    protected void addArg(String key, String value) {
-        List<String> values = args.get(key);
-        if (values == null) {
-            setArg(key, value);
-        } else {
-            values.add(value);
-        }
-    }
-
-    /**
-     * remove a key from the argument list.
-     * @param key the key to remove from the map.
-     */
-    protected void removeArg(String key) {
-        args.remove(key);
-    }
 
     /**
      * A child element.

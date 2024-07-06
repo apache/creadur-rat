@@ -28,14 +28,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.Defaults;
 import org.apache.rat.ImplementationException;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
-import org.apache.rat.commandline.OutputArgs;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -307,6 +309,34 @@ public class Report extends BaseAntTask {
     }
 
     /**
+     * Reads values for the Arg.
+     *
+     * @param arg The Arg to get the values for.
+     * @return The list of values or an empty list.
+     */
+    protected List<String> getValues(Arg arg) {
+        List<String> result = new ArrayList<>();
+        for (Option option : arg.group().getOptions()) {
+            if (option.getLongOpt() != null) {
+                List<String> args = getArg(option.getLongOpt());
+                if (args != null) {
+                    result.addAll(args);
+                }
+            }
+        }
+        return result;
+    }
+
+    protected void removeKey(Arg arg) {
+        for (Option option : arg.group().getOptions()) {
+            if (option.getLongOpt() != null) {
+                removeArg(option.getLongOpt());
+            }
+        }
+    }
+
+
+    /**
      * Creates the ReportConfiguration from the ant options.
      * @return the ReportConfiguration.
      */
@@ -315,15 +345,12 @@ public class Report extends BaseAntTask {
             final ReportConfiguration configuration = OptionCollection.parseCommands(args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
-            if (!args().contains(asKey(OutputArgs.OUT))) {
+            if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
                 configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
             }
             configuration.setReportable(new ResourceCollectionContainer(nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
-            if (deprecatedConfig.styleSheet != null) {
-                configuration.setStyleSheet(() -> deprecatedConfig.styleSheet.getInputStream());
-            }
             if (deprecatedConfig.inputFileFilter != null) {
                 if (configuration.getFilesToIgnore() != null) {
                     configuration.setFilesToIgnore(new OrFileFilter(configuration.getFilesToIgnore(), deprecatedConfig.inputFileFilter));
@@ -347,7 +374,7 @@ public class Report extends BaseAntTask {
     public void execute() {
         try {
             Reporter r = new Reporter(validate(getConfiguration()));
-            r.output(null, () -> new ReportConfiguration.NoCloseOutputStream(System.out));
+            r.output(Defaults.getPlainStyleSheet(), () -> new ReportConfiguration.NoCloseOutputStream(System.out));
             r.output();
         } catch (BuildException e) {
             throw e;
