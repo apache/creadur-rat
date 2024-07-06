@@ -21,7 +21,6 @@
     <artifactId>apache-rat-project</artifactId>
     <groupId>org.apache.rat</groupId>
     <version>0.17-SNAPSHOT</version>
-    <relativePath>..</relativePath>
   </parent>
   <artifactId>apache-rat-plugin</artifactId>
   <packaging>maven-plugin</packaging>
@@ -147,6 +146,8 @@
         </executions>
         <configuration>
           <mainClass>org.apache.rat.tools.MavenGenerator</mainClass>
+          <!-- tools are in test scope only.  We don't want them packaged with plugin -->
+          <classpathScope>test</classpathScope>
           <arguments>
             <argument>org.apache.rat.plugin</argument>
             <argument>BaseRatMojo</argument>
@@ -221,9 +222,11 @@
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
     </dependency>
+    <!-- rat tools in test scope so that it does not get bundles into the plugin -->
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tools</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.rat</groupId>

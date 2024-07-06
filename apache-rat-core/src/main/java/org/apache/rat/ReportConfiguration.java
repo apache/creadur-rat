@@ -40,6 +40,7 @@ import java.util.function.Consumer;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -376,7 +377,7 @@ public class ReportConfiguration {
     public void setFrom(final Defaults defaults) {
         licenseSetFactory.add(defaults.getLicenseSetFactory());
         if (getStyleSheet() == null) {
-            setStyleSheet(Defaults.getPlainStyleSheet());
+            setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
     }
 

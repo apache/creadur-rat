@@ -18,13 +18,13 @@
  */
 package org.apache.rat.utils;
 
+import org.apache.commons.text.WordUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import org.apache.commons.text.WordUtils;
 
 /**
  * Handles converting from one string case to another (e.g. camel case to snake case).
@@ -54,34 +54,34 @@ public class CasedString {
     public enum StringCase {
         /**
          * Camel case tags strings like 'CamelCase' or 'camelCase'. This conversion forces the first character to
-         * lower case. If specific capitalization rules are required use {@code WordUtils.capitalize()} to set the first
+         * lower case. If specific capitalization rules are required use {@link WordUtils#capitalize(String)} to set the first
          * character of the string.
          */
         CAMEL(Character::isUpperCase, true, CAMEL_JOINER),
         /**
          * Snake case tags strings like 'Snake_Case'.  This conversion does not change the capitalization of any characters
-         * in the string.  If specific capitalization is required use {@code String.toUpperCase()}, {@code String.toLowerCase()},
-         * or the commons-text methods {@code WordUtils.capitalize()}, or {@code WordUtils.uncapitalize()} as required.
+         * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
+         * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
          */
         SNAKE(c -> c == '_', false, a -> String.join("_", a)),
         /**
          * Kebab case tags strings like 'kebab-case'.  This conversion does not change the capitalization of any characters
-         * in the string.  If specific capitalization is required use {@code String.toUpperCase()}, {@code String.toLowerCase()},
-         * or the commons-text methods {@code WordUtils.capitalize()}, or {@code WordUtils.uncapitalize()} as required.
+         * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
+         *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
          */
         KEBAB(c -> c == '-', false, a -> String.join("-", a)),
 
         /**
          * Phrase case tags phrases of words like 'phrase case'. This conversion does not change the capitalization of any characters
-         * in the string.  If specific capitalization is required use {@code String.toUpperCase()}, {@code String.toLowerCase()},
-         * or the commons-text methods {@code WordUtils.capitalize()}, or {@code WordUtils.uncapitalize()} as required.
+         * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
+         *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
          */
         PHRASE(Character::isWhitespace, false, a -> String.join(" ", a)),
 
         /**
          * Dot case tags phrases of words like 'phrase.case'. This conversion does not change the capitalization of any characters
-         * in the string.  If specific capitalization is required use {@code String.toUpperCase()}, {@code String.toLowerCase()},
-         * or the commons-text methods {@code WordUtils.capitalize()}, or {@code WordUtils.uncapitalize()} as required.
+         * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
+         *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
          */
         DOT(c -> c == '.', false, a -> String.join(".", a));
 

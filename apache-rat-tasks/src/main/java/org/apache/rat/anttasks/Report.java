@@ -38,6 +38,7 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -374,7 +375,7 @@ public class Report extends BaseAntTask {
     public void execute() {
         try {
             Reporter r = new Reporter(validate(getConfiguration()));
-            r.output(Defaults.getPlainStyleSheet(), () -> new ReportConfiguration.NoCloseOutputStream(System.out));
+            r.output(StyleSheets.PLAIN.getStyleSheet(), () -> new ReportConfiguration.NoCloseOutputStream(System.out));
             r.output();
         } catch (BuildException e) {
             throw e;

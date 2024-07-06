@@ -18,7 +18,7 @@
  */
 package org.apache.rat.configuration;
 
-import java.net.URL;
+import java.net.URI;
 
 /**
  * An interface that describes the methods of a Matcher reader.
@@ -27,9 +27,9 @@ public interface MatcherReader {
     /**
      * Adds a URL to the set of files to be read.
      * 
-     * @param url the URL to read.
+     * @param uri the URI to read.
      */
-    void addMatchers(URL url);
+    void addMatchers(URI uri);
 
     /**
      * Reads the configuration and MatcherBuilder classes and adds them to Readers.

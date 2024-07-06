@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -135,8 +136,8 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     @Override
-    public void addLicenses(URL url) {
-        read(url);
+    public void addLicenses(URI uri) {
+        read(uri);
     }
 
     /**
@@ -163,20 +164,20 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     /**
      * Read the urls and extract the DOM information to create new objects.
      *
-     * @param urls The URLs to read.
+     * @param uris The URLs to read.
      */
-    public void read(URL... urls) {
+    public void read(URI... uris) {
         DocumentBuilder builder;
         try {
             builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new ConfigurationException("Unable to create DOM builder", e);
         }
-        for (URL url : urls) {
-            try (InputStream inputStream = url.openStream()){
+        for (URI uri : uris) {
+            try (InputStream inputStream = uri.toURL().openStream()){
                 add(builder.parse(inputStream));
             } catch (SAXException | IOException e) {
-                throw new ConfigurationException("Unable to read url: " + url, e);
+                throw new ConfigurationException("Unable to read uri: " + uri, e);
             }
         }
     }
@@ -545,8 +546,8 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     @Override
-    public void addMatchers(URL url) {
-        read(url);
+    public void addMatchers(URI uri) {
+        read(uri);
     }
 
     ////////////// Helper classes

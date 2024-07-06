@@ -29,6 +29,7 @@ import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportTest;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -45,11 +46,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -574,7 +573,7 @@ public abstract class AbstractOptionsProvider {
             OutputStream out = new FileOutputStream(file)) {
             IOUtils.copy(in, out);
         } catch (IOException e) {
-            fail("Could not copy MatcherCointainerResource.txt: "+e.getMessage());
+            fail("Could not copy MatcherContainerResource.txt: "+e.getMessage());
         }
         // run the test
         String[] args = {null};
@@ -582,7 +581,7 @@ public abstract class AbstractOptionsProvider {
             for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", file.getAbsolutePath()}) {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                try (InputStream expected = Arg.getStyleSheet(sheet).get();
+                try (InputStream expected = StyleSheets.getStyleSheet(sheet).get();
                      InputStream actual = config.getStyleSheet().get();
                 ) {
                     assertTrue(IOUtils.contentEquals(expected, actual), () -> String.format("'%s' does not match", sheet));
@@ -613,7 +612,7 @@ public abstract class AbstractOptionsProvider {
     protected void xmlTest() {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
-            try (InputStream expected = Arg.getStyleSheet("xml").get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
                  InputStream actual = config.getStyleSheet().get();
             ) {
                 assertTrue(IOUtils.contentEquals(expected, actual), "'xml' does not match");
