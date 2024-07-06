@@ -22,7 +22,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Arrays;
 
 import org.apache.rat.ConfigurationException;
@@ -104,11 +104,11 @@ public enum Format {
 
    /**
     * Determine the {@code Format} from a URL.
-    * @param url the URL to check.
+    * @param uri the URI to check.
     * @return the Format
     */
-   public static Format fromURL(final URL url) {
-        return Format.fromName(url.getFile());
+   public static Format fromURI(final URI uri) {
+        return Format.fromName(uri.getPath());
     }
 
    /**
@@ -118,6 +118,6 @@ public enum Format {
     * @throws MalformedURLException in case the file cannot be found.
     */
    public static Format fromFile(final File file) throws MalformedURLException {
-        return Format.fromURL(file.toURI().toURL());
+        return Format.fromURI(file.toURI());
     }
 }

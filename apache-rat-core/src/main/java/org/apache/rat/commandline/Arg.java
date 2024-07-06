@@ -34,11 +34,9 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
-import org.apache.rat.Report;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.LicenseSetFactory;
@@ -50,10 +48,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -620,37 +615,16 @@ public enum Arg {
             if (selected.equals("x")) {
                 // display deprecated message.
                 ctxt.getCommandLine().hasOption("x");
-                ctxt.getConfiguration().setStyleSheet(getStyleSheet("xml"));
+                ctxt.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
             } else {
                 String[] style = ctxt.getCommandLine().getOptionValues(OUTPUT_STYLE.getSelected());
                 if (style.length != 1) {
                     ctxt.getLog().error("Please specify a single stylesheet");
                     throw new ConfigurationException("Please specify a single stylesheet");
                 }
-                ctxt.getConfiguration().setStyleSheet(getStyleSheet(style[0]));
+                ctxt.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
             }
         }
-    }
-
-    /**
-     * Get the IOSupplier for a style sheet.
-     * @param style the styles sheet to get the IOSupplier for.
-     * @return an IOSupplier for the sheet.
-     */
-    public static IOSupplier<InputStream> getStyleSheet(final StyleSheets style) {
-        return getStyleSheet(style.arg());
-    }
-
-    /**
-     * Get the IOSupplier for a style sheet.
-     * @param name the short name for or the path to a style sheet.
-     * @return the IOSupplier for the style sheet.
-     */
-    public static IOSupplier<InputStream> getStyleSheet(final String name) {
-        URL url = Report.class.getClassLoader().getResource(String.format("org/apache/rat/%s.xsl", name));
-        return url == null
-                ? () -> Files.newInputStream(Paths.get(name))
-                : url::openStream;
     }
 
     public static void reset() {

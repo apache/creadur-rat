@@ -21,7 +21,6 @@ package org.apache.rat;
 import static java.lang.String.format;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,7 +32,6 @@ import java.util.TreeSet;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
@@ -45,32 +43,19 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
+import static java.lang.String.format;
+
 /**
  * A class that provides the standard system defaults for the ReportConfiguration.
  * Properties in this class may be overridden or added to by configuration options in the various UIs.
  * See the specific UI for details.
  */
 public final class Defaults {
-
-    /**
-     * The default configuration file from the package.
-     */
-    private static final URI DEFAULT_CONFIG_URI;
-
-    /**
-     * The path to the default config resource.
-     */
+    /** The path to the default configuration file */
     private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
-
-    /**
-     * The default XSLT stylesheet to produce a text output file.
-     */
-    public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
-    /**
-     * The default XSLT stylesheet to produce a list of unapproved licenses.
-     */
-    public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
-    /** The default files to ignore if none are specified. */
+    /** The default configuration file from the package. */
+    private static final URI DEFAULT_CONFIG_URI;
+   /** The default files to ignore if none are specified. */
     public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
     /** The default directories to ignore */
     public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
@@ -105,18 +90,13 @@ public final class Defaults {
      * Initialize the system configuration reader.
      */
     public static void init() {
-        try {
-            URL url = DEFAULT_CONFIG_URI.toURL();
-            Format fmt = Format.fromURL(url);
-            MatcherReader mReader = fmt.matcherReader();
-            if (mReader != null) {
-                mReader.addMatchers(url);
-                mReader.readMatcherBuilders();
-            } else {
-                DefaultLog.getInstance().error("Unable to construct MatcherReader from" + DEFAULT_CONFIG_URI);
-            }
-        } catch (MalformedURLException e) {
-            DefaultLog.getInstance().error("Invalid URL: " + DEFAULT_CONFIG_URI.toString(), e);
+        Format fmt = Format.fromURI(DEFAULT_CONFIG_URI);
+        MatcherReader mReader = fmt.matcherReader();
+        if (mReader != null) {
+            mReader.addMatchers(DEFAULT_CONFIG_URI);
+            mReader.readMatcherBuilders();
+        } else {
+            DefaultLog.getInstance().error("Unable to construct MatcherReader from" + DEFAULT_CONFIG_URI);
         }
     }
 
@@ -139,6 +119,7 @@ public final class Defaults {
 
     /**
      * Reads the configuration files.
+     * @param log The log to write messages to.
      * @param uris the URIs to read.
      */
     private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URI> uris) {
@@ -148,24 +129,19 @@ public final class Defaults {
         SortedSet<String> approvedLicenseCategories = new TreeSet<>();
 
         for (URI uri : uris) {
-            try {
-                URL url = uri.toURL();
-                Format fmt = Format.fromURL(url);
-                MatcherReader mReader = fmt.matcherReader();
-                if (mReader != null) {
-                    mReader.addMatchers(url);
-                    mReader.readMatcherBuilders();
-                }
+            Format fmt = Format.fromURI(uri);
+            MatcherReader mReader = fmt.matcherReader();
+            if (mReader != null) {
+                mReader.addMatchers(uri);
+                mReader.readMatcherBuilders();
+            }
 
-                LicenseReader lReader = fmt.licenseReader();
-                if (lReader != null) {
-                    lReader.setLog(log);
-                    lReader.addLicenses(url);
-                    licenses.addAll(lReader.readLicenses());
-                    lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseCategories::add);
-                }
-            } catch (MalformedURLException e) {
-                DefaultLog.getInstance().error("Invalid URL: " + uri.toString(), e);
+            LicenseReader lReader = fmt.licenseReader();
+            if (lReader != null) {
+                lReader.setLog(log);
+                lReader.addLicenses(uri);
+                licenses.addAll(lReader.readLicenses());
+                lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseCategories::add);
             }
         }
 
@@ -175,21 +151,9 @@ public final class Defaults {
     }
 
     /**
-     * Gets a supplier for the "plain" text stylesheet.
-     * @return an IOSupplier for the plain text stylesheet.
+     * Gets the default license set factory.
+     * @return the default license set factory.
      */
-    public static IOSupplier<InputStream> getPlainStyleSheet() {
-        return () -> Defaults.class.getClassLoader().getResourceAsStream(Defaults.PLAIN_STYLESHEET);
-    }
-
-    /**
-     * Gets a supplier for the unapproved licences list stylesheet
-     * @return an IOSupplier for the unapproved licenses list stylesheet.
-     */
-    public static IOSupplier<InputStream> getUnapprovedLicensesStyleSheet() {
-        return () -> Defaults.class.getClassLoader().getResourceAsStream(Defaults.UNAPPROVED_LICENSES_STYLESHEET);
-    }
-
     public LicenseSetFactory getLicenseSetFactory() {
         return setFactory;
     }

@@ -32,7 +32,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -398,21 +398,17 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
             if (additionalLicenseFiles != null) {
                 for (String licenseFile : additionalLicenseFiles) {
-                    try {
-                        URL url = new File(licenseFile).toURI().toURL();
-                        Format fmt = Format.fromName(licenseFile);
-                        MatcherReader mReader = fmt.matcherReader();
-                        if (mReader != null) {
-                            mReader.addMatchers(url);
-                        }
-                        LicenseReader lReader = fmt.licenseReader();
-                        if (lReader != null) {
-                            lReader.addLicenses(url);
-                            config.addLicenses(lReader.readLicenses());
-                            config.addApprovedLicenseCategories(lReader.approvedLicenseId());
-                        }
-                    } catch (MalformedURLException e) {
-                        throw new ConfigurationException(licenseFile + " is not a valid license file", e);
+                    URI uri = new File(licenseFile).toURI();
+                    Format fmt = Format.fromName(licenseFile);
+                    MatcherReader mReader = fmt.matcherReader();
+                    if (mReader != null) {
+                        mReader.addMatchers(uri);
+                    }
+                    LicenseReader lReader = fmt.licenseReader();
+                    if (lReader != null) {
+                        lReader.addLicenses(uri);
+                        config.addLicenses(lReader.readLicenses());
+                        config.addApprovedLicenseCategories(lReader.approvedLicenseId());
                     }
                 }
             }

@@ -34,6 +34,7 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 
@@ -198,7 +199,7 @@ public class RatCheckMojo extends AbstractRatMojo {
             if (consoleOutput) {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    reporter.output(Defaults.getUnapprovedLicensesStyleSheet(), () -> baos);
+                    reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
                     getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
                 } catch (Exception e) {
                     getLog().warn("Unable to print the files with unapproved licenses to the console.");
