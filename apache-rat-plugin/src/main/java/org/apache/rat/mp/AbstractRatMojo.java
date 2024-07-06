@@ -327,7 +327,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * @param arg The Arg to get the values for.
      * @return The list of values or an empty list.
      */
-    protected List<String> getValues(Arg arg) {
+    protected List<String> getValues(final Arg arg) {
         List<String> result = new ArrayList<>();
         for (Option option : arg.group().getOptions()) {
             if (option.getLongOpt() != null) {
@@ -340,7 +340,11 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         return result;
     }
 
-    protected void removeKey(Arg arg) {
+    /**
+     * Removes all values for an Arg.
+     * @param arg The arg to remove values for.
+     */
+    protected void removeKey(final Arg arg) {
         for (Option option : arg.group().getOptions()) {
             if (option.getLongOpt() != null) {
                 removeArg(option.getLongOpt());
@@ -399,7 +403,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             if (additionalLicenseFiles != null) {
                 for (String licenseFile : additionalLicenseFiles) {
                     URI uri = new File(licenseFile).toURI();
-                    Format fmt = Format.fromName(licenseFile);
+                    Format fmt = Format.from(licenseFile);
                     MatcherReader mReader = fmt.matcherReader();
                     if (mReader != null) {
                         mReader.addMatchers(uri);

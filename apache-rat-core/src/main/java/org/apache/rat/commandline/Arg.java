@@ -19,6 +19,19 @@
 
 package org.apache.rat.commandline;
 
+import static java.lang.String.format;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.PatternSyntaxException;
+
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DeprecatedAttributes;
@@ -43,20 +56,6 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.PatternSyntaxException;
-
-import static java.lang.String.format;
-
-
 public enum Arg {
 
     ///////////////////////// EDIT OPTIONS
@@ -70,7 +69,8 @@ public enum Arg {
                                     .setDescription("Use '--edit-copyright' instead.").get())
                             .build())
                     .addOption(Option.builder().longOpt("edit-copyright").hasArg()
-                            .desc("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\".  Only valid with --edit-license")
+                            .desc("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\".  "
+                                    + "Only valid with --edit-license")
                             .build())),
 
     /**
@@ -82,8 +82,8 @@ public enum Arg {
                                     .setDescription("Use '--edit-overwrite' instead.").get())
                             .build())
                     .addOption(Option.builder().longOpt("edit-overwrite")
-                            .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created).  "+
-                            "Only valid with --edit-license")
+                            .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created).  "
+                                    + "Only valid with --edit-license")
                             .build())),
 
     /**
@@ -100,8 +100,8 @@ public enum Arg {
                             .build())
                     .addOption(Option.builder().longOpt("edit-license").desc(
                             "Add the default license header to any file with an unknown license that is not in the exclusion list. "
-                                    +"By default new files will be created with the license header, "
-                                    +"to force the modification of existing files use the --edit-overwrite option.").build()
+                                    + "By default new files will be created with the license header, "
+                                    + "to force the modification of existing files use the --edit-overwrite option.").build()
                     )),
 
     //////////////////////////// CONFIGURATION OPTIONS
@@ -129,8 +129,8 @@ public enum Arg {
 
     /** Option that add approved licenses to the list */
     LICENSES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
-                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. "
+                    + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
             .build())),
 
     /** Option that add approved licenses from a file */
@@ -141,8 +141,8 @@ public enum Arg {
 
     /** Option that specifies approved license families */
     FAMILIES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved").hasArgs().argName("FamilyID")
-            .desc("The approved License Family IDs.  These licenses families will be added to the list of approved licenses families " +
-                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+            .desc("The approved License Family IDs.  These licenses families will be added to the list of approved licenses families "
+                    + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
             .build())),
 
     /** Option that specifies approved license families from a file */
@@ -153,8 +153,8 @@ public enum Arg {
 
     /** Option to remove licenses from the approved list */
     LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. " +
-                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. "
+                    + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
             .build())),
 
     /** Option to read a file licenses to be removed from the approved list */
@@ -165,8 +165,8 @@ public enum Arg {
 
     /** Option to list license families to remove from the approved list */
     FAMILIES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied").hasArgs().argName("FamilyID")
-            .desc("The denied License family IDs.  These license families will be removed from the list of approved licenses. " +
-                    "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+            .desc("The denied License family IDs.  These license families will be removed from the list of approved licenses. "
+                    + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
             .build())),
 
     /** Option to read a list of license families to remove from the approved list */
@@ -290,16 +290,25 @@ public enum Arg {
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build()));
 
-
+    /** The option group for the argument */
     private final OptionGroup group;
-    Arg(OptionGroup group) {
+
+    Arg(final OptionGroup group) {
         this.group = group;
     }
 
+    /**
+     * Determines if the group has a selected element.
+     * @return {@code true} if the group has a selected element.
+     */
     public boolean isSelected() {
         return group.getSelected() != null;
     }
 
+    /**
+     * Gets the select element from the group.
+     * @return the selected element or null if no element is selected.
+     */
     public Option getSelected() {
         String s = group.getSelected();
         if (s != null) {
@@ -312,19 +321,33 @@ public enum Arg {
         return null;
     }
 
-    public Option find(String key) {
+    /**
+     * Finds the element associated with the key within the element group.
+     * @param key the key to search for.
+     * @return the matching Option.
+     * @throws IllegalArgumentException if the key can not be found.
+     */
+    public Option find(final String key) {
         for (Option result : group.getOptions()) {
             if (key.equals(result.getKey()) || key.equals(result.getLongOpt())) {
                 return result;
             }
         }
-        throw new IllegalArgumentException("Can not find "+key);
+        throw new IllegalArgumentException("Can not find " + key);
     }
 
+    /**
+     * Gets the group for this arg.
+     * @return the option gorup for this arg.
+     */
     public OptionGroup group() {
         return group;
     }
 
+    /**
+     * Returns the first non-deprecated option from the group.
+     * @return the first non-deprecated option or null if no non-deprecated option is available.
+     */
     public Option option() {
         for (Option result : group.getOptions()) {
             if (!result.isDeprecated()) {
@@ -343,16 +366,6 @@ public enum Arg {
             options.addOptionGroup(arg.group);
         }
         return options;
-    }
-
-    public static Option findOption(String key) {
-        for (Arg arg: Arg.values()) {
-            Option result = arg.find(key);
-            if (result != null) {
-                return result;
-            }
-        }
-        return null;
     }
 
     /**

@@ -18,9 +18,7 @@
  */
 
 /**
- * The base package for the RAT tool.
- *
- * In general UIs will Use OptionsCollection to get the list of supported options and then create an instance of
- * ReportConfiguration that is then passed to the Reporter for processing and report generation.
+ * Classes to process configuration information from/to files.
  */
-package org.apache.rat;
+
+package org.apache.rat.configuration;

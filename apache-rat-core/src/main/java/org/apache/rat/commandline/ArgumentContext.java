@@ -20,13 +20,13 @@ package org.apache.rat.commandline;
 
 import static java.lang.String.format;
 
+import java.io.IOException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.utils.Log;
-
-import java.io.IOException;
 
 /**
  * Provides the context necessary to process various arguments.

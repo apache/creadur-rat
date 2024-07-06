@@ -24,7 +24,6 @@ import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +53,6 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.w3c.dom.DOMException;
@@ -70,20 +68,29 @@ import org.xml.sax.SAXException;
  * A class that reads the XML configuration file format.
  */
 public final class XMLConfigurationReader implements LicenseReader, MatcherReader {
-
+    /** The log to write to */
     private Log log;
+    /** The document we are building */
     private Document document;
+    /** The root element in the document */
     private final Element rootElement;
+    /** The families element in the document */
     private final Element familiesElement;
+    /** The licenses element in the doucment */
     private final Element licensesElement;
+    /** The approved element in the document */
     private final Element approvedElement;
+    /** The matchers element in the document */
     private final Element matchersElement;
-
+    /** The sorted set of licenses */
     private final SortedSet<ILicense> licenses;
-
+    /** The map of matcher ids to matcher */
     private final Map<String, IHeaderMatcher> matchers;
+    /** The builder parameters */
     private final BuilderParams builderParams;
+    /** The sorted set of license families */
     private final SortedSet<ILicenseFamily> licenseFamilies;
+    /** The sorted set of approved license family categories */
     private final SortedSet<String> approvedFamilies;
 
     /**
@@ -123,29 +130,28 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     @Override
-    public void setLog(Log log) {
+    public void setLog(final Log log) {
         this.log = log;
     }
 
     /**
      * Returns the log the reader.
-     * @return the log if set, if not set {@code DefaultLog.getInstance()} is returned.
+     * @return the log if set, if not set {@link DefaultLog#getInstance()} is returned.
      */
     public Log getLog() {
         return log == null ? DefaultLog.getInstance() : log;
     }
 
     @Override
-    public void addLicenses(URI uri) {
+    public void addLicenses(final URI uri) {
         read(uri);
     }
 
     /**
      * Read xml from a reader.
-     *
      * @param reader the reader to read XML from.
      */
-    public void read(Reader reader) {
+    public void read(final Reader reader) {
         DocumentBuilder builder;
         try {
             builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -158,15 +164,13 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         } catch (SAXException | IOException e) {
             throw new ConfigurationException("Unable to read inputSource", e);
         }
-
     }
 
     /**
-     * Read the urls and extract the DOM information to create new objects.
-     *
-     * @param uris The URLs to read.
+     * Read the uris and extract the DOM information to create new objects.
+     * @param uris The URIs to read.
      */
-    public void read(URI... uris) {
+    public void read(final URI... uris) {
         DocumentBuilder builder;
         try {
             builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -174,7 +178,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
             throw new ConfigurationException("Unable to create DOM builder", e);
         }
         for (URI uri : uris) {
-            try (InputStream inputStream = uri.toURL().openStream()){
+            try (InputStream inputStream = uri.toURL().openStream()) {
                 add(builder.parse(inputStream));
             } catch (SAXException | IOException e) {
                 throw new ConfigurationException("Unable to read uri: " + uri, e);
@@ -183,23 +187,22 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     /**
-     * Applies the {@code consumer} to each node in the {@code list}
-     *
+     * Applies the {@code consumer} to each node in the {@code list}.  Generally used for extracting info from a
+     * {@code NodeList}.
      * @param list the NodeList to process
      * @param consumer the consumer to apply to each node in the list.
      */
-    private void nodeListConsumer(NodeList list, Consumer<Node> consumer) {
+    private void nodeListConsumer(final NodeList list, final Consumer<Node> consumer) {
         for (int i = 0; i < list.getLength(); i++) {
             consumer.accept(list.item(i));
         }
     }
 
     /**
-     * Merge the new document into the document that this reader processes.
-     *
+     * Merge the new document into the document that this reader processes is building.
      * @param newDoc the Document to merge.
      */
-    public void add(Document newDoc) {
+    public void add(final Document newDoc) {
         nodeListConsumer(newDoc.getElementsByTagName(XMLConfig.FAMILIES), nl -> nodeListConsumer(nl.getChildNodes(),
                 n -> familiesElement.appendChild(rootElement.getOwnerDocument().adoptNode(n.cloneNode(true)))));
         nodeListConsumer(newDoc.getElementsByTagName(XMLConfig.LICENSE),
@@ -212,11 +215,10 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
 
     /**
      * Get a map of Node attribute names to values.
-     *
      * @param node The node to process
-     * @return the map of attributes on the node
+     * @return the map of attributes on the node.
      */
-    private Map<String, String> attributes(Node node) {
+    private Map<String, String> attributes(final Node node) {
         NamedNodeMap nnm = node.getAttributes();
         Map<String, String> result = new HashMap<>();
         for (int i = 0; i < nnm.getLength(); i++) {
@@ -226,7 +228,13 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         return result;
     }
 
-    private void callSetter(Description desc, IHeaderMatcher.Builder builder, Object value) {
+    /**
+     * Finds the setter description property i nthe builder and set it with the value.
+     * @param desc The description for the setter.
+     * @param builder The builder to set the value in.
+     * @param value The value to set.
+     */
+    private void callSetter(final Description desc, final IHeaderMatcher.Builder builder, final Object value) {
         try {
             desc.setter(builder.getClass()).invoke(builder, value);
         } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -235,7 +243,12 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         }
     }
 
-    private void processBuilderParams(Description description, IHeaderMatcher.Builder builder) {
+    /**
+     * For any children of description that are BUILD_PARAMETERS set the builder property.
+     * @param description The description for the builder.
+     * @param builder the builder to set the properties in.
+     */
+    private void processBuilderParams(final Description description, final IHeaderMatcher.Builder builder) {
         for (Description desc : description.childrenOfType(ComponentType.BUILD_PARAMETER)) {
             Method m = builderParams.get(desc.getCommonName());
             try {
@@ -251,14 +264,13 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * of the child (if any) to the BiPredicate. If there is not a child description
      * for the node it is ignored. If the node is processed it is removed from list
      * of children.
-     * 
      * @param description the Description of the node being processed
      * @param children the child nodes of that node.
      * @param childProcessor the function that handles the processing of the child
      * node.
      */
-    private void processChildren(Description description, List<Node> children,
-            BiPredicate<Node, Description> childProcessor) {
+    private void processChildren(final Description description, final List<Node> children,
+                                 final BiPredicate<Node, Description> childProcessor) {
         Iterator<Node> iter = children.iterator();
         while (iter.hasNext()) {
             Node child = iter.next();
@@ -271,7 +283,13 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         }
     }
 
-    private BiPredicate<Node, Description> matcherChildNodeProcessor(AbstractBuilder builder, Description description) {
+    /**
+     * Creates a child node processor for the builder described by the description.
+     * @param builder The builder to set properties in.
+     * @param description the description of the builder.
+     * @return
+     */
+    private BiPredicate<Node, Description> matcherChildNodeProcessor(final AbstractBuilder builder, final Description description) {
         return (child, childDescription) -> {
             switch (childDescription.getType()) {
             case LICENSE:
@@ -296,8 +314,15 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         };
     }
 
-    private void setValue(Description description, Description childDescription, IHeaderMatcher.Builder builder,
-            Node child) {
+    /**
+     * Sets the value of the element described by the description in the builder with the value from childDescription.
+     * @param description the property in the builder to set.
+     * @param childDescription the description of the child property to extract.
+     * @param builder the bulider to set the value in.
+     * @param child the child to extract the value from.
+     */
+    private void setValue(final Description description, final Description childDescription, final IHeaderMatcher.Builder builder,
+            final Node child) {
         if (childDescription.getChildType() == String.class) {
             callSetter(description, builder, child.getTextContent());
         } else {
@@ -309,7 +334,6 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * Process the ELEEMENT_NODEs children of the parent whos names match child
      * descriptions. All children children are processed with the childProcessor. If
      * the childProcessor handles the node it is not included in the resulting list.
-     * 
      * @param description the Description of the parent node.
      * @param parent the node being processed
      * @param childProcessor the BiProcessor to handle process each child. if the
@@ -317,14 +341,14 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * @return A Pair comprising a boolean flag indicating children were found, and
      * a list of all child nodes that were not processed by the childProcessor.
      */
-    private Pair<Boolean, List<Node>> processChildNodes(Description description, Node parent,
-            BiPredicate<Node, Description> childProcessor) {
+    private Pair<Boolean, List<Node>> processChildNodes(final Description description, final Node parent,
+            final BiPredicate<Node, Description> childProcessor) {
         boolean foundChildren = false;
         List<Node> children = new ArrayList<>();
         // check XML child nodes.
         if (parent.hasChildNodes()) {
 
-            nodeListConsumer(parent.getChildNodes(), (n) -> {
+            nodeListConsumer(parent.getChildNodes(), n -> {
                 if (n.getNodeType() == Node.ELEMENT_NODE) {
                     children.add(n);
                 }
@@ -337,7 +361,12 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         return new ImmutablePair<>(foundChildren, children);
     }
 
-    private AbstractBuilder parseMatcher(Node matcherNode) {
+    /**
+     * Creates a Builder from a Matcher node.
+     * @param matcherNode the Matcher node to parse.
+     * @return The Builder for the matcher described by the node.
+     */
+    private AbstractBuilder parseMatcher(final Node matcherNode) {
         final AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(matcherNode.getNodeName());
 
         try {
@@ -400,8 +429,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         return builder.hasId() ? new IDRecordingBuilder(matchers, builder) : builder;
     }
 
-    private BiPredicate<Node, Description> licenseChildNodeProcessor(ILicense.Builder builder,
-            Description description) {
+    private BiPredicate<Node, Description> licenseChildNodeProcessor(final ILicense.Builder builder, final Description description) {
         return (child, childDescription) -> {
             switch (childDescription.getType()) {
             case LICENSE:
@@ -415,7 +443,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
                 callSetter(b.getDescription(), builder, b);
                 return true;
             case PARAMETER:
-                if ((!XMLConfig.isLicenseChild(childDescription.getCommonName()))
+                if (!XMLConfig.isLicenseChild(childDescription.getCommonName())
                         || childDescription.getChildType() == String.class) {
                     callSetter(childDescription, builder, child.getTextContent());
                 } else {
@@ -427,7 +455,12 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         };
     }
 
-    private ILicense parseLicense(Node licenseNode) {
+    /**
+     * Parses a license from a license node.
+     * @param licenseNode the node to parse.
+     * @return the License definition.
+     */
+    private ILicense parseLicense(final Node licenseNode) {
         ILicense.Builder builder = ILicense.builder();
         // get the description for the builder
         Description description = builder.getDescription();
@@ -480,7 +513,12 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         return Collections.unmodifiableSortedSet(licenseFamilies);
     }
 
-    private ILicenseFamily parseFamily(Map<String, String> attributes) {
+    /**
+     * Parses a license family from a map that contains the ID and Name attributes.
+     * @param attributes the map of attributes.
+     * @return the license family defined in the map.
+     */
+    private ILicenseFamily parseFamily(final Map<String, String> attributes) {
         if (attributes.containsKey(XMLConfig.ATT_ID)) {
             ILicenseFamily.Builder builder = ILicenseFamily.builder();
             builder.setLicenseFamilyCategory(attributes.get(XMLConfig.ATT_ID));
@@ -491,7 +529,11 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         return null;
     }
 
-    private void parseFamily(Node familyNode) {
+    /**
+     * Parses a license family node into a license family and adds it othe license families set.
+     * @param familyNode the node to parse.
+     */
+    private void parseFamily(final Node familyNode) {
         if (XMLConfig.FAMILY.equals(familyNode.getNodeName())) {
             ILicenseFamily result = parseFamily(attributes(familyNode));
             if (result == null) {
@@ -502,7 +544,12 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         }
     }
 
-    private void parseApproved(Node approvedNode) {
+    /**
+     * Parse an approved License family and adds it to the set of license families as well as the
+     * set of approved license families.
+     * @param approvedNode the node to parse.
+     */
+    private void parseApproved(final Node approvedNode) {
         if (XMLConfig.FAMILY.equals(approvedNode.getNodeName())) {
             Map<String, String> attributes = attributes(approvedNode);
             if (attributes.containsKey(XMLConfig.ATT_LICENSE_REF)) {
@@ -532,7 +579,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         return Collections.unmodifiableSortedSet(approvedFamilies);
     }
 
-    private void parseMatcherBuilder(Node classNode) {
+    private void parseMatcherBuilder(final Node classNode) {
         Map<String, String> attributes = attributes(classNode);
         if (attributes.get(XMLConfig.ATT_CLASS_NAME) == null) {
             throw new ConfigurationException("matcher must have a " + XMLConfig.ATT_CLASS_NAME + " attribute");
@@ -546,16 +593,20 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     @Override
-    public void addMatchers(URI uri) {
+    public void addMatchers(final URI uri) {
         read(uri);
     }
 
-    ////////////// Helper classes
     /**
      * An abstract builder that delegates to another abstract builder.
      */
     static class IDRecordingBuilder extends AbstractBuilder {
+        /** The builder we are delegating to */
         private final AbstractBuilder delegate;
+        /**
+         * The map of matchers that the system is building during processing.  We will utilize this to set the
+         * matcher value later .
+         */
         private final Map<String, IHeaderMatcher> matchers;
 
         IDRecordingBuilder(final Map<String, IHeaderMatcher> matchers, final AbstractBuilder delegate) {
