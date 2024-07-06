@@ -31,7 +31,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -597,7 +596,7 @@ public class ReportConfiguration {
      * been removed from the approved list it cannot be re-added</em>
      * @return the Sorted set of approved license categories.
      */
-    public SortedSet<String> getLicenseCategories(LicenseFilter filter) {
+    public SortedSet<String> getLicenseCategories(final LicenseFilter filter) {
         return licenseSetFactory.getLicenseCategories(filter);
     }
 
@@ -606,7 +605,7 @@ public class ReportConfiguration {
      * been removed from the approved list it cannot be re-added</em>
      * @return the Sorted set of approved license categories.
      */
-    public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
+    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
         return licenseSetFactory.getLicenses(filter);
     }
 
@@ -615,7 +614,7 @@ public class ReportConfiguration {
      * been removed from the approved list it cannot be re-added</em>
      * @return the Sorted set of approved license categories.
      */
-    public SortedSet<String> getLicenseIds(LicenseFilter filter) {
+    public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
         return licenseSetFactory.getLicenseIds(filter);
     }
 

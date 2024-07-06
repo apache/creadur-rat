@@ -18,14 +18,13 @@
  */
 package org.apache.rat.commandline;
 
-import org.apache.commons.io.function.IOSupplier;
-import org.apache.rat.Report;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
+
+import org.apache.commons.io.function.IOSupplier;
 
 /**
  * The enumeration of system defined stylesheets.
@@ -67,17 +66,16 @@ public enum StyleSheets {
     }
 
     /**
-     * Get the IOSupplier for a style sheet.
-     * @param style the styles sheet to get the IOSupplier for.
+     * Gets the IOSupplier for a style sheet.
      * @return an IOSupplier for the sheet.
      */
     public IOSupplier<InputStream> getStyleSheet() {
         return Objects.requireNonNull(StyleSheets.class.getClassLoader().getResource(String.format("org/apache/rat/%s.xsl", name)),
-                "missing stylesheet: "+name)::openStream;
+                "missing stylesheet: " + name)::openStream;
     }
 
     /**
-     * Get the IOSupplier for a style sheet.
+     * Gets the IOSupplier for a style sheet.
      * @param name the short name for or the path to a style sheet.
      * @return the IOSupplier for the style sheet.
      */

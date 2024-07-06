@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -51,10 +52,10 @@ public class XMLConfigurationReaderTest {
             "GPL3", "MIT", "OASIS", "W3C", "W3CD" };
 
     @Test
-    public void approvedLicenseIdTest() {
+    public void approvedLicenseIdTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
-        reader.read(url);
+        reader.read(url.toURI());
 
         Collection<String> readCategories = reader.approvedLicenseId();
 
@@ -62,10 +63,10 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void LicensesTest() {
+    public void LicensesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
-        reader.read(url);
+        reader.read(url.toURI());
 
         Collection<String> readCategories = reader.readLicenses().stream().map(x -> x.getId())
                 .collect(Collectors.toList());
@@ -73,10 +74,10 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void LicenseFamiliesTest() {
+    public void LicenseFamiliesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
-        reader.read(url);
+        reader.read(url.toURI());
 
         Collection<String> readCategories = reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim())
                 .collect(Collectors.toList());
@@ -90,10 +91,10 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void checkSystemMatcherTest() {
+    public void checkSystemMatcherTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
-        reader.read(url);
+        reader.read(url.toURI());
         reader.readMatcherBuilders();
         checkMatcher("all", AllBuilder.class);
         checkMatcher("any", AnyBuilder.class);
@@ -106,10 +107,10 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void descriptionTest() throws NoSuchMethodException, SecurityException {
+    public void descriptionTest() throws NoSuchMethodException, SecurityException, URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
-        reader.read(url);
+        reader.read(url.toURI());
         reader.readMatcherBuilders();
 
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");

@@ -43,8 +43,6 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
-import static java.lang.String.format;
-
 /**
  * A class that provides the standard system defaults for the ReportConfiguration.
  * Properties in this class may be overridden or added to by configuration options in the various UIs.
@@ -90,7 +88,7 @@ public final class Defaults {
      * Initialize the system configuration reader.
      */
     public static void init() {
-        Format fmt = Format.fromURI(DEFAULT_CONFIG_URI);
+        Format fmt = Format.from(DEFAULT_CONFIG_URI);
         MatcherReader mReader = fmt.matcherReader();
         if (mReader != null) {
             mReader.addMatchers(DEFAULT_CONFIG_URI);
@@ -129,7 +127,7 @@ public final class Defaults {
         SortedSet<String> approvedLicenseCategories = new TreeSet<>();
 
         for (URI uri : uris) {
-            Format fmt = Format.fromURI(uri);
+            Format fmt = Format.from(uri);
             MatcherReader mReader = fmt.matcherReader();
             if (mReader != null) {
                 mReader.addMatchers(uri);
@@ -157,7 +155,7 @@ public final class Defaults {
     public LicenseSetFactory getLicenseSetFactory() {
         return setFactory;
     }
-    
+
     /**
      * The Defaults builder.
      */

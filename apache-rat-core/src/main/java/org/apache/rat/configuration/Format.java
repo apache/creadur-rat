@@ -91,9 +91,9 @@ public enum Format {
      * @param name the file name to check.
      * @return the Format
      */
-    public static Format fromName(final String name) {
-        String[] parts = name.split("\\.");
-        String suffix = parts[parts.length - 1];
+    public static Format from(final String name) {
+        int pos = name.lastIndexOf('.');
+        String suffix = name.substring(pos + 1);
         for (Format f : Format.values()) {
             if (Arrays.asList(f.suffix).contains(suffix)) {
                 return f;
@@ -107,8 +107,8 @@ public enum Format {
     * @param uri the URI to check.
     * @return the Format
     */
-   public static Format fromURI(final URI uri) {
-        return Format.fromName(uri.getPath());
+   public static Format from(final URI uri) {
+        return Format.from(uri.toString());
     }
 
    /**
@@ -117,7 +117,7 @@ public enum Format {
     * @return the Format
     * @throws MalformedURLException in case the file cannot be found.
     */
-   public static Format fromFile(final File file) throws MalformedURLException {
-        return Format.fromURI(file.toURI());
+   public static Format from(final File file) throws MalformedURLException {
+        return Format.from(file.getName());
     }
 }

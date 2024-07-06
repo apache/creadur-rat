@@ -45,24 +45,27 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 /**
- * A class that writes the XML configuration file format.
+ * Writes the XML configuration file format.
  */
 public class XMLConfigurationWriter {
-    private ReportConfiguration configuration;
-    private Set<String> matchers;
-    private Set<String> licenseChildren;
+    /** The configuration that is being written */
+    private final ReportConfiguration configuration;
+    /** The set of defined matcher IDs */
+    private final Set<String> matchers;
+    /** The set of defined license IDs */
+    private final Set<String> licenseChildren;
 
     /**
      * Constructor
-     * @param configuration the configuration to write.
+     * @param configuration the configuration information to write.
      */
-    public XMLConfigurationWriter(ReportConfiguration configuration) {
+    public XMLConfigurationWriter(final ReportConfiguration configuration) {
         this.configuration = configuration;
         this.matchers = new HashSet<>();
         licenseChildren = new HashSet<>(Arrays.asList(XMLConfig.LICENSE_CHILDREN));
     }
 
-    private Predicate<Description> attributeFilter(Description parent) {
+    private Predicate<Description> attributeFilter(final Description parent) {
         return d -> {
             if (d.getType() == ComponentType.PARAMETER) {
                 switch (parent.getType()) {
@@ -83,7 +86,7 @@ public class XMLConfigurationWriter {
      * @param plainWriter a writer to write the XML to.
      * @throws RatException on error.
      */
-    public void write(Writer plainWriter) throws RatException {
+    public void write(final Writer plainWriter) throws RatException {
         write(new XmlWriter(plainWriter));
     }
 
@@ -92,7 +95,7 @@ public class XMLConfigurationWriter {
      * @param writer the IXmlWriter to write to.
      * @throws RatException on error.
      */
-    public void write(IXmlWriter writer) throws RatException {
+    public void write(final IXmlWriter writer) throws RatException {
         if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
             try {
                 writer.openElement(XMLConfig.ROOT);
@@ -114,7 +117,7 @@ public class XMLConfigurationWriter {
                     for (ILicense license : licenses) {
                         writeDescription(writer, license.getDescription(), license);
                     }
-                    writer.closeElement();// LICENSES
+                    writer.closeElement(); // LICENSES
                 }
 
                 // write approved section
@@ -141,7 +144,7 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeFamily(IXmlWriter writer, ILicenseFamily family) throws RatException {
+    private void writeFamily(final IXmlWriter writer, final ILicenseFamily family) throws RatException {
         try {
             writer.openElement(XMLConfig.FAMILY).attribute(XMLConfig.ATT_ID, family.getFamilyCategory().trim())
                     .attribute(XMLConfig.ATT_NAME, family.getFamilyName());
@@ -151,21 +154,21 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeDescriptions(IXmlWriter writer, Collection<Description> descriptions, IHeaderMatcher component)
+    private void writeDescriptions(final IXmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
             throws RatException {
         for (Description description : descriptions) {
             writeDescription(writer, description, component);
         }
     }
 
-    private void writeChildren(IXmlWriter writer, Description description, IHeaderMatcher component)
+    private void writeChildren(final IXmlWriter writer, final Description description, final IHeaderMatcher component)
             throws RatException {
         writeAttributes(writer, description.filterChildren(attributeFilter(component.getDescription())), component);
         writeDescriptions(writer, description.filterChildren(attributeFilter(component.getDescription()).negate()),
                 component);
     }
 
-    private void writeAttributes(IXmlWriter writer, Collection<Description> descriptions, IHeaderMatcher component)
+    private void writeAttributes(final IXmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
             throws RatException {
         for (Description d : descriptions) {
             try {
@@ -176,13 +179,13 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeComment(IXmlWriter writer, Description description) throws IOException {
+    private void writeComment(final IXmlWriter writer, final Description description) throws IOException {
         if (StringUtils.isNotBlank(description.getDescription())) {
             writer.comment(description.getDescription());
         }
     }
 
-    private void writeAttribute(IXmlWriter writer, Description description, IHeaderMatcher component)
+    private void writeAttribute(final IXmlWriter writer, final Description description, final IHeaderMatcher component)
             throws IOException {
         String paramValue = description.getParamValue(configuration.getLog(), component);
         if (paramValue != null) {
@@ -192,7 +195,9 @@ public class XMLConfigurationWriter {
 
     /* package private for testing */
     @SuppressWarnings("unchecked")
-    void writeDescription(IXmlWriter writer, Description description, IHeaderMatcher component) throws RatException {
+    void writeDescription(final IXmlWriter writer, final Description desc, final IHeaderMatcher comp) throws RatException {
+        Description description = desc;
+        IHeaderMatcher component = comp;
         try {
             switch (description.getType()) {
             case MATCHER:

@@ -26,7 +26,6 @@ import java.net.URI;
 public interface MatcherReader {
     /**
      * Adds a URL to the set of files to be read.
-     * 
      * @param uri the URI to read.
      */
     void addMatchers(URI uri);
