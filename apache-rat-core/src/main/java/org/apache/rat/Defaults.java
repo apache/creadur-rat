@@ -54,7 +54,15 @@ public final class Defaults {
      * The default configuration file from the package.
      */
     private static final URI DEFAULT_CONFIG_URI;
-   /** The default files to ignore if none are specified. */
+    /**
+     * The default XSLT stylesheet to produce a text output file.
+     */
+    public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
+    /**
+     * The default XSLT stylesheet to produce a list of unapproved licenses.
+     */
+    public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
+    /** The default files to ignore if none are specified. */
     public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
     /** The default directories to ignore */
     public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
