@@ -54,27 +54,20 @@ public final class Defaults {
      * The default configuration file from the package.
      */
     private static final URI DEFAULT_CONFIG_URI;
-    /**
-     * The default XSLT stylesheet to produce a text output file.
-     */
-    public static final String PLAIN_STYLESHEET = "org/apache/rat/plain-rat.xsl";
-    /**
-     * The default XSLT stylesheet to produce a list of unapproved licenses.
-     */
-    public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
-
+   /** The default files to ignore if none are specified. */
     public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
-
+    /** The default directories to ignore */
     public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
-
+    /** The default ARCHIVES processing style */
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
-
+    /** The default STANDARD processing style */
     public static final ReportConfiguration.Processing STANDARD_PROCESSING = ReportConfiguration.Processing.ABSENCE;
-
+    /** The default license families to list */
     public static final LicenseFilter LIST_FAMILIES = LicenseFilter.NONE;
-
+    /** The default licenses to list */
     public static final LicenseFilter LIST_LICENSES = LicenseFilter.NONE;
 
+    /** The license set factory to build license sets based upon default options */
     private final LicenseSetFactory setFactory;
 
     static {
@@ -112,6 +105,8 @@ public final class Defaults {
 
     /**
      * Builder constructs instances.
+     * @param log The log to write messages to.
+     * @param urls The set of URLs to read.
      */
     private Defaults(final Log log, final Set<URI> urls) {
         this.setFactory = Defaults.readConfigFiles(log, urls);
