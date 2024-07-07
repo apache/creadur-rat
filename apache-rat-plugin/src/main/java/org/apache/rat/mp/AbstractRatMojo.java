@@ -120,7 +120,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     /** A file containing a list of approved licenses */
     @Parameter(property = "rat.approvedFile")
     private String approvedLicenseFile;
-    
+
     /**
      * Specifies the license families to accept.
      *
@@ -315,13 +315,13 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
         return result;
     }
-    
+
     @Deprecated // remove this for version 1.0
     private Stream<License> getLicenses() {
         if (licenses == null) {
             return Stream.empty();
         }
-        return Arrays.stream(licenses).filter( s -> {return s instanceof License;}).map(License.class::cast);
+        return Arrays.stream(licenses).filter(s -> s instanceof License).map(License.class::cast);
     }
 
     @Deprecated // remove this for version 1.0
@@ -329,16 +329,16 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         if (licenses == null) {
             return Stream.empty();
         }
-        return Arrays.stream(licenses).filter( s -> {return s instanceof DeprecatedConfig;}).map(DeprecatedConfig.class::cast);
+        return Arrays.stream(licenses).filter(s -> s instanceof DeprecatedConfig).map(DeprecatedConfig.class::cast);
     }
-    
+
     @Deprecated // remove this for version 1.0
     private void reportDeprecatedProcessing() {
         if (getDeprecatedConfigs().findAny().isPresent()) {
             getLog().warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
         }
     }
-    
+
     @Deprecated // remove this for version 1.0
     private void processLicenseFamilies(final ReportConfiguration config) {
         List<ILicenseFamily> families = getDeprecatedConfigs().map(DeprecatedConfig::getLicenseFamily).filter(Objects::nonNull).collect(Collectors.toList());
@@ -355,10 +355,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
         }
     }
-    
+
     private org.apache.rat.utils.Log makeLog() {
         return new org.apache.rat.utils.Log() {
-            final Log log = getLog();
+            private final Log log = getLog();
             @Override
             public void log(final Level level, final String msg) {
                 switch (level) {
@@ -380,7 +380,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
         };
     }
-    
+
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         DefaultLog.setInstance(makeLog());
         try {

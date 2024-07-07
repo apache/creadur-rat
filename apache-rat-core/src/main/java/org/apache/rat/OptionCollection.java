@@ -435,32 +435,28 @@ public final class OptionCollection {
             }
         }
 
-        if (cl.hasOption(ARCHIVE)) {
-            try {
-                configuration.setArchiveProcessing(cl.getParsedOptionValue(ARCHIVE));
-            } catch (ParseException e) {
-                logParseException(log, e, ARCHIVE, cl, Defaults.ARCHIVE_PROCESSING);
-            }
+        try {
+            configuration.setArchiveProcessing(cl.getParsedOptionValue(ARCHIVE));
+        } catch (ParseException e) {
+            logParseException(log, e, ARCHIVE, cl, Defaults.ARCHIVE_PROCESSING);
         }
 
-        if (cl.hasOption(STANDARD)) {
-            try {
-                configuration.setStandardProcessing(cl.getParsedOptionValue(STANDARD));
-            } catch (ParseException e) {
-                logParseException(log, e, STANDARD, cl, Defaults.STANDARD_PROCESSING);
-            }
+        try {
+            configuration.setStandardProcessing(cl.getParsedOptionValue(STANDARD));
+        } catch (ParseException e) {
+            logParseException(log, e, STANDARD, cl, Defaults.STANDARD_PROCESSING);
         }
 
-        if (cl.hasOption(OUT)) {
-            try {
-                File f = cl.getParsedOptionValue(OUT);
+        try {
+            File f = cl.getParsedOptionValue(OUT);
+            if (f != null) {
                 if (f.getParentFile().mkdirs() && !f.isDirectory()) {
                     log.error("Could not create report parent directory " + f);
                 }
                 configuration.setOut(f);
-            } catch (ParseException e) {
-                logParseException(log, e, OUT, cl, "System.out");
             }
+        } catch (ParseException e) {
+            logParseException(log, e, OUT, cl, "System.out");
         }
 
         if (cl.hasOption(SCAN_HIDDEN_DIRECTORIES)) {

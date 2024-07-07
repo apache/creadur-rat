@@ -18,6 +18,8 @@
  */
 package org.apache.rat;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -54,6 +56,12 @@ public final class Defaults {
      * The default configuration file from the package.
      */
     private static final URI DEFAULT_CONFIG_URI;
+
+    /**
+     * The path to the default config resource.
+     */
+    private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
+
     /**
      * The default XSLT stylesheet to produce a text output file.
      */
@@ -78,11 +86,12 @@ public final class Defaults {
     /** The license set factory to build license sets based upon default options */
     private final LicenseSetFactory setFactory;
 
+    // TODO look at this static block with respect to the init() static method and figure out if we need both.
     static {
-         URL url = Defaults.class.getResource("/org/apache/rat/default.xml");
+         URL url = Defaults.class.getResource(DEFAULT_CONFIG_PATH);
          URI uri = null;
          if (url == null) {
-             DefaultLog.getInstance().error("Unable to read '/org/apache/rat/default.xml'");
+             DefaultLog.getInstance().error(format("Unable to read '%s'", DEFAULT_CONFIG_PATH));
          } else {
              try {
                  uri = url.toURI();
