@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +57,11 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
+/**
+ * An enumeration of options.
+ * Each Arg contains an OptionGroup that contains the individual options that all resolve to the same option.  This allows
+ * us to deprecate options as we move forward in development.
+ */
 public enum Arg {
 
     ///////////////////////// EDIT OPTIONS
@@ -107,7 +113,7 @@ public enum Arg {
     //////////////////////////// CONFIGURATION OPTIONS
 
 
-    /** group of options that read a configuraiton file */
+    /** group of options that read a configuration file */
     CONFIGURATION(new OptionGroup()
             .addOption(Option.builder().longOpt("config").hasArgs().argName("File")
             .desc("File names for system configuration.  May be followed by multiple arguments. "
@@ -413,7 +419,7 @@ public enum Arg {
         if (FAMILIES_APPROVED_FILE.isSelected()) {
             try {
                 File f = ctxt.getCommandLine().getParsedOptionValue(FAMILIES_APPROVED_FILE.getSelected());
-                try (InputStream in = new FileInputStream(f)) {
+                try (InputStream in = Files.newInputStream(f.toPath())) {
                     ctxt.getConfiguration().addApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
                 }
             } catch (IOException | ParseException e) {
@@ -428,7 +434,7 @@ public enum Arg {
         if (FAMILIES_DENIED_FILE.isSelected()) {
             try {
                 File f = ctxt.getCommandLine().getParsedOptionValue(FAMILIES_DENIED_FILE.getSelected());
-                try (InputStream in = new FileInputStream(f)) {
+                try (InputStream in = Files.newInputStream(f.toPath())) {
                     ctxt.getConfiguration().removeApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
                 }
             } catch (IOException | ParseException e) {
@@ -444,7 +450,7 @@ public enum Arg {
         if (LICENSES_APPROVED_FILE.isSelected()) {
             try {
                 File f = ctxt.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
-                try (InputStream in = new FileInputStream(f)) {
+                try (InputStream in = Files.newInputStream(f.toPath())) {
                     ctxt.getConfiguration().addApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                 }
             } catch (IOException | ParseException e) {
@@ -459,7 +465,7 @@ public enum Arg {
         if (LICENSES_DENIED_FILE.isSelected()) {
             try {
                 File f = ctxt.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
-                try (InputStream in = new FileInputStream(f)) {
+                try (InputStream in = Files.newInputStream(f.toPath())) {
                     ctxt.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                 }
             } catch (IOException | ParseException e) {
