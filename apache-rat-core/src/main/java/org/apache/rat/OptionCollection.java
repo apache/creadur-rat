@@ -58,7 +58,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
-
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.LicenseSetFactory;
