@@ -151,7 +151,8 @@ public final class OptionCollection {
         CommandLine commandLine;
         Log log = DefaultLog.getInstance();
         try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter(log)).build().parse(opts, args);
+            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter(log))
+                    .setAllowPartialMatching(true).build().parse(opts, args);
         } catch (ParseException e) {
             log.error(e.getMessage());
             log.error("Please use the \"--help\" option to see a list of valid commands and options", e);

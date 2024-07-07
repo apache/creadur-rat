@@ -22,6 +22,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.testhelpers.TestingLog;
@@ -122,7 +123,14 @@ public class OptionCollectionTest {
         log.assertNotContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", 1);
     }
 
-
+    @Test
+    public void testShortenedOptions() throws IOException {
+        String[] args = {"--scan"};
+        ReportConfiguration config = OptionCollection.parseCommands(args, (o) -> {
+        }, true);
+        assertThat(config).isNotNull();
+        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
+    }
 
     @Test
     public void testDefaultConfiguration() throws ParseException, IOException {
