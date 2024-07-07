@@ -49,10 +49,11 @@ import org.apache.rat.walker.NameBasedHiddenFileFilter;
  * See the specific UI for details.
  */
 public final class Defaults {
-    /** The path to the default configuration file */
-    private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
     /** The default configuration file from the package. */
     private static final URI DEFAULT_CONFIG_URI;
+    /** The path to the default configuration file */
+    private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
+
    /** The default files to ignore if none are specified. */
     public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
     /** The default directories to ignore */
