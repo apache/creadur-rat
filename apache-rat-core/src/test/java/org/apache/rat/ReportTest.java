@@ -72,7 +72,7 @@ public class ReportTest {
         TextUtils.assertContains("--edit-license ", result);
         TextUtils.assertContains("--edit-overwrite ", result);
         TextUtils.assertContains("-f,--force ", result);
-        TextUtils.assertContains("-h,--help ", result);
+        TextUtils.assertContains("-?,--help ", result);
         TextUtils.assertContains("--input-exclude <Expression> ", result);
         TextUtils.assertContains("--input-exclude-file <File> ", result);
         TextUtils.assertContains("--license-families-approved <FamilyID> ", result);

@@ -81,7 +81,7 @@ public final class OptionCollection {
     /**
      * Produce help
      */
-    public static final Option HELP = new Option("h", "help", false, "Print help for the RAT command line interface and exit.");
+    public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
 
     /**
