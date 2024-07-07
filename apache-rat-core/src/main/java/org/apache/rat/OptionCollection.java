@@ -212,7 +212,6 @@ public final class OptionCollection {
     /**
      * Ths option to signal the end of an argument list and the start of the directory/archive arguments.
      */
-    // TODO rework when commons-cli 1.7.1 or higher is available.
     static final DeprecatedAttributes DIR_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
             .setDescription("Use '--'").get();
     public static final Option DIR = Option.builder().option("d").longOpt("dir").hasArg()
@@ -222,7 +221,6 @@ public final class OptionCollection {
     /**
      * Option to signal that license text should be added to the files.
      */
-    // TODO rework when Commons-CLI version 1.7.1 or higher is available.
     private static final DeprecatedAttributes ADD_ATTRIBUTES = DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
             .setDescription("Use '-A' or '--addLicense' instead.").get();
     static final OptionGroup ADD = new OptionGroup()
@@ -395,11 +393,11 @@ public final class OptionCollection {
      * @param exception the parse exception to log
      * @param opt the option being processed
      * @param cl the command line being processed
-     * @param dflt The default value the option is being set to.
+     * @param defaultValue The default value the option is being set to.
      */
-    private static void logParseException(final Log log, final ParseException exception, final Option opt, final CommandLine cl, final Object dflt) {
+    private static void logParseException(final Log log, final ParseException exception, final Option opt, final CommandLine cl, final Object defaultValue) {
         log.warn(format("Invalid %s specified: %s ", opt.getOpt(), cl.getOptionValue(opt)));
-        log.warn(format("%s set to: %s", opt.getOpt(), dflt));
+        log.warn(format("%s set to: %s", opt.getOpt(), defaultValue));
         log.debug(exception);
     }
 

@@ -114,10 +114,10 @@ public final class Defaults {
     /**
      * Builder constructs instances.
      * @param log The log to write messages to.
-     * @param urls The set of URLs to read.
+     * @param uris The set of URIs to read.
      */
-    private Defaults(final Log log, final Set<URI> urls) {
-        this.setFactory = Defaults.readConfigFiles(log, urls);
+    private Defaults(final Log log, final Set<URI> uris) {
+        this.setFactory = Defaults.readConfigFiles(log, uris);
     }
 
     /**
@@ -130,15 +130,15 @@ public final class Defaults {
 
     /**
      * Reads the configuration files.
-     * @param urls the URIs to read.
+     * @param uris the URIs to read.
      */
-    private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URI> urls) {
+    private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URI> uris) {
 
         SortedSet<ILicense> licenses = LicenseSetFactory.emptyLicenseSet();
 
         SortedSet<String> approvedLicenseIds = new TreeSet<>();
 
-        for (URI uri : urls) {
+        for (URI uri : uris) {
             try {
                 URL url = uri.toURL();
                 Format fmt = Format.fromURL(url);
@@ -224,7 +224,6 @@ public final class Defaults {
 
         /**
          * Adds a URL to a configuration file to be read.
-         * 
          * @param uri the URI to add
          * @return this Builder for chaining
          */
@@ -235,7 +234,6 @@ public final class Defaults {
 
         /**
          * Adds the name of a configuration file to be read.
-         * 
          * @param fileName the name of the file to add.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the fileName cannot be found.
@@ -246,7 +244,6 @@ public final class Defaults {
 
         /**
          * Adds a configuration file to be read.
-         * 
          * @param file the File to add.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the file cannot be found.
@@ -257,7 +254,6 @@ public final class Defaults {
 
         /**
          * Removes a file from the list of configuration files to process.
-         * 
          * @param uri the URI of the file to remove.
          * @return this Builder for chaining
          */
@@ -268,7 +264,6 @@ public final class Defaults {
 
         /**
          * Removes a file name from the list of configuration files to process.
-         * 
          * @param fileName the fileName of the file to remove.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the fileName cannot be found.
@@ -279,7 +274,6 @@ public final class Defaults {
 
         /**
          * Removes a file from the list of configuration files to process.
-         * 
          * @param file the File of the file to remove.
          * @return this Builder for chaining
          * @throws MalformedURLException in case the file cannot be found.
@@ -290,7 +284,6 @@ public final class Defaults {
 
         /**
          * Removes the default definitions from the list of files to process.
-         * 
          * @return this Builder for chaining
          */
         public Builder noDefault() {
