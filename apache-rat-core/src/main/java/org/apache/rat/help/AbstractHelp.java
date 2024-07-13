@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
@@ -51,6 +52,8 @@ public abstract class AbstractHelp {
 
     protected AbstractHelp() {
         helpFormatter = new RatHelpFormatter();
+        helpFormatter.setWidth(HELP_WIDTH);
+        helpFormatter.setOptionComparator(new OptionCollection.OptionComparator());
         versionInfo = new VersionInfo();
     }
 
