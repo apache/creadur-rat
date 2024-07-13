@@ -61,6 +61,7 @@ public final class Help extends AbstractHelp {
 
     /**
      * Print the usage to the specific PrintWriter.
+     * @param writer the PrintWriter to output to.
      * @param opts The defined options.
      */
     public void printUsage(final Options opts) {
@@ -73,6 +74,7 @@ public final class Help extends AbstractHelp {
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                     argumentPadding + argInfo.getValue().get());
         }
+
 
         writer.println(header("Notes"));
         int idx = 1;
