@@ -22,6 +22,7 @@ import static java.lang.String.format;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +46,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
@@ -68,6 +70,11 @@ public final class OptionCollection {
      * Produce help
      */
     public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
+
+    /**
+     * Provide license definition listing
+     */
+    public static final Option HELP_LICENSES = Option.builder().longOpt("help-licenses").desc("Print help for the RAT command line interface and exit.").build();
 
     /**
      * A mapping of {@code argName(value)} values to a description of those values.
@@ -149,6 +156,11 @@ public final class OptionCollection {
 
         if (commandLine.hasOption(HELP)) {
             helpCmd.accept(opts);
+            return null;
+        }
+
+        if (commandLine.hasOption(HELP_LICENSES)) {
+            new Licenses(createConfiguration(log, null, commandLine), new PrintWriter(System.out)).printHelp();
             return null;
         }
 
