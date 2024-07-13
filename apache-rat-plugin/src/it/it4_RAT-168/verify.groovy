@@ -18,10 +18,7 @@ content = new File( basedir, 'build.log' ).text
 
 assert content.contains( 'BUILD SUCCESS' )
 
-/*
- * [WARNING] No resources included
- */
-assert ! content.contains( '[WARNING] No resources' )
+assert ! content.contains( '[WARNING] No resources included' )
 
 report = new File( basedir, 'target/site/rat-report.html' ).text
 
