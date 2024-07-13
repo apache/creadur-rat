@@ -74,6 +74,7 @@ public final class Help extends AbstractHelp {
                     argumentPadding + argInfo.getValue().get());
         }
 
+
         writer.println(header("Notes"));
         int idx = 1;
         for (String note : NOTES) {
