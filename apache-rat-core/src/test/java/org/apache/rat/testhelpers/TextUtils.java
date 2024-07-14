@@ -80,7 +80,7 @@ public class TextUtils {
      */
     public static void assertContainsExactly(int times, String find, String target) {
         String t = target;
-        for (int i=0; i<times; i++) {
+        for (int i = 0; i < times; i++) {
             final int j = i + 1;
             assertTrue(t.contains(find), () -> format("Target does not contain %s copies fo %s%n%s", times, find, target));
             t = t.substring(t.indexOf(find) + find.length());

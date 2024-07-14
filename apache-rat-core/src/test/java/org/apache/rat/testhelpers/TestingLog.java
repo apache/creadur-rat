@@ -43,7 +43,7 @@ public class TestingLog implements Log {
     }
 
     /**
-     * asserts the text was found in the log.
+     * Asserts the text was found in the given log entry.
      * @param expected the text to find.
      */
     public void assertContains(String expected) {
@@ -51,7 +51,7 @@ public class TestingLog implements Log {
     }
 
     /**
-     * Asserts the text was found exactly n times n the log.
+     * Asserts the text was found exactly n times in the log.
      * @param times the number of times to find the expected text.
      * @param expected the expected test.
      */
@@ -61,10 +61,10 @@ public class TestingLog implements Log {
 
     /**
      * Asserts that the text is not found in the log.
-     * @param expected the text that should not be in the log.
+     * @param notExpected the text that should not be in the log.
      */
-    public void assertNotContains(String expected) {
-        TextUtils.assertNotContains(expected, captured.toString());
+    public void assertNotContains(String notExpected) {
+        TextUtils.assertNotContains(notExpected, captured.toString());
     }
 
 

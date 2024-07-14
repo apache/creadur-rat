@@ -32,8 +32,8 @@ import org.apache.rat.Defaults;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 
 /**
- * A class to track the Matcher Builders as they are defined.  Matchers may be defined in multiple configuration files
- * this class tracks them so that they can be referenced across the configuration files.
+ * A class to track the Matcher Builders as they are defined. Matchers may be defined in multiple configuration files.
+ * This class tracks them so that they can be referenced across the configuration files.
  */
 public final class MatcherBuilderTracker {
 
