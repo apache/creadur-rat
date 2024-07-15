@@ -70,9 +70,9 @@ import org.apache.rat.mp.util.ScmIgnoreParser;
 import org.apache.rat.mp.util.ignore.GlobIgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoreMatcher;
 import org.apache.rat.mp.util.ignore.IgnoringDirectoryScanner;
+import org.apache.rat.plugin.BaseRatMojo;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.plugin.BaseRatMojo;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
@@ -95,6 +95,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter
     private String[] defaultLicenseFiles;
 
+    /** Specifies the additional licenses file. */
     @Parameter
     private String[] additionalLicenseFiles;
 
@@ -114,13 +115,14 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter(property = "rat.addDefaultLicenseMatchers")
     private boolean addDefaultLicenseMatchers;
 
-
+    /** the list of approved licenses */
     @Parameter(required = false)
     private String[] approvedLicenses;
 
+    /** The file of approved licenses */
     @Parameter(property = "rat.approvedFile")
     private String approvedLicenseFile;
-    
+
     /**
      * Specifies the license families to accept.
      *
@@ -131,9 +133,11 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter
     private SimpleLicenseFamily[] licenseFamilies;
 
+    /** The list of license definitions */
     @Parameter
     private Object[] licenses;
-    
+
+    /** The list of family definitions */
     @Parameter
     private Family[] families;
 
@@ -158,6 +162,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String includesFileCharset;
 
+    /** The list of excluded file names */
     private List<String> excludesList = new ArrayList<>();
 
     /**
@@ -284,7 +289,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         if (licenses == null) {
             return Stream.empty();
         }
-        return Arrays.stream(licenses).filter( s -> {return s instanceof License;}).map(License.class::cast);
+        return Arrays.stream(licenses).filter(s -> s instanceof License).map(License.class::cast);
     }
 
     @Deprecated // remove this for version 1.0
@@ -292,25 +297,24 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         if (licenses == null) {
             return Stream.empty();
         }
-        return Arrays.stream(licenses).filter( s -> {return s instanceof DeprecatedConfig;}).map(DeprecatedConfig.class::cast);
+        return Arrays.stream(licenses).filter(s -> s instanceof DeprecatedConfig).map(DeprecatedConfig.class::cast);
     }
-    
+
     @Deprecated // remove this for version 1.0
-    private void reportDeprecatedProcessing()
-    {
+    private void reportDeprecatedProcessing() {
         if (getDeprecatedConfigs().findAny().isPresent()) {
             Log log = getLog();
             log.warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
         }
     }
-    
+
     @Deprecated // remove this for version 1.0
-    private void processLicenseFamilies(ReportConfiguration config) {
+    private void processLicenseFamilies(final ReportConfiguration config) {
         List<ILicenseFamily> families = getDeprecatedConfigs().map(DeprecatedConfig::getLicenseFamily).filter(Objects::nonNull).collect(Collectors.toList());
         if (licenseFamilies != null) {
             for (SimpleLicenseFamily slf : licenseFamilies) {
                 if (StringUtils.isBlank(slf.getFamilyCategory())) {
-                    families.stream().filter( f -> f.getFamilyName().equalsIgnoreCase(slf.getFamilyName())).findFirst()
+                    families.stream().filter(f -> f.getFamilyName().equalsIgnoreCase(slf.getFamilyName())).findFirst()
                     .ifPresent(config::addApprovedLicenseCategory);
                 } else {
                     config.addApprovedLicenseCategory(ILicenseFamily.builder().setLicenseFamilyCategory(slf.getFamilyCategory())

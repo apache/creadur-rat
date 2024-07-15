@@ -29,6 +29,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -82,29 +83,30 @@ public class Reporter {
      * @return this reporter
      * @throws RatException on error.
      */
-    private Reporter init() throws RatException  {
-        try {
-            if (configuration.getReportable() != null) {
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                Writer outputWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
-                try (IXmlWriter writer = new XmlWriter(outputWriter)) {
-                    statistic = new ClaimStatistic();
-                    RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
-                    report.startReport();
-                    configuration.getReportable().run(report);
-                    report.endReport();
+    private void init() throws RatException  {
+        if (document == null || statistic == null) {
+            try {
+                if (configuration.getReportable() != null) {
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    Writer outputWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+                    try (IXmlWriter writer = new XmlWriter(outputWriter)) {
+                        statistic = new ClaimStatistic();
+                        RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
+                        report.startReport();
+                        configuration.getReportable().run(report);
+                        report.endReport();
 
-                    InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-                    document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+                        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+                        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+                    }
+                } else {
+                    document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                    statistic = new ClaimStatistic();
                 }
-            } else {
-                document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-                statistic = new ClaimStatistic();
+            }  catch (Exception e) {
+                throw RatException.makeInstance(e);
             }
-        } catch (Exception e) {
-            throw RatException.makeInstance(e);
         }
-        return this;
     }
 
     /**
