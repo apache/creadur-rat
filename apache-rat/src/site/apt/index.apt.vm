@@ -63,12 +63,12 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar --addlicense
   a series of files to exclude (such as a README or version control
   files).  If you are using the Rat application instead of a plugin you
   can specify a series of regex excludes in a file and specify that with
-  the -E option.
+  the --exclude-file option.
 
 +------------------------------------------+
 java -jar apache-rat/target/apache-rat-${project.version}.jar
- -E /path/to/project/.rat-excludes
- -d /path/to/project
+ --exclude-file /path/to/project/.rat-excludes
+ -- /path/to/project
 +------------------------------------------+
 
 * Command Line Options

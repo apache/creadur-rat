@@ -19,111 +19,181 @@
 package org.apache.rat.tools;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.UUID;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.MatcherBuilderTracker;
+import org.apache.rat.configuration.XMLConfig;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * Generates text based documentation for Licenses, LicenceFamilies, and Matchers.
- *
  * Utilizes the same command line as the CLI based Report client so that additional licenses, etc. can be added.
- *
  */
 public final class Documentation {
 
-    /** The indentation for the documentation */
-    private static final String INDENT = "   ";
+    /** The width of the display in characters */
+    private static final int WIDTH = 120;
 
-    /** The number of characters for a page width */
-    private static final int PAGE_WIDTH = 120;
+    private static final int INDENT_SIZE = 4;
 
-    private Documentation() {
-        // Do not instantiate
+    ReportConfiguration config;
+    SortedSet<ILicense> licenses;
+    Map<String, IHeaderMatcher> matchers;
+    HelpFormatter formatter;
+    PrintWriter printWriter;
+
+
+    Documentation(ReportConfiguration config, Writer writer) {
+        this.config = config;
+        this.licenses = config.getLicenses(LicenseFilter.ALL);
+        matchers = new TreeMap<>();
+        for (ILicense l : licenses) {
+            matchers.put(l.getMatcher().getId(), l.getMatcher());
+        }
+        printWriter = new PrintWriter(writer);
+        formatter = HelpFormatter.builder().setShowDeprecated(false).setPrintWriter(printWriter).get();
+    }
+
+    void print(int indent, String text) {
+        StringBuilder sb = new StringBuilder();
+        int leftMargin = indent*INDENT_SIZE;
+        for (int i=0;i<leftMargin;i++) {
+            sb.append(' ');
+        }
+        sb.append(text);
+        int tabStop = leftMargin+(INDENT_SIZE/2);
+        formatter.printWrapped( printWriter, WIDTH, tabStop, sb.toString());
     }
 
     /**
      * Output the ReportConfiguration to a writer.
-     * @param cfg The configuration to write.
-     * @param writer the writer to write to.
+
      * @throws IOException on error.
      */
-    public static void output(final ReportConfiguration cfg, final Writer writer) throws IOException {
-        writer.write(String.format("%n>>>> LICENSES <<<<%n%n"));
-        for (ILicense l : cfg.getLicenses(LicenseFilter.ALL)) {
-            printLicense(l, writer);
+    public void output() throws IOException {
+
+        print(0, format("%n>>>> LICENSES <<<<%n%n"));
+
+        Description licenseDescription = DescriptionBuilder.build(licenses.first());
+        Collection<Description> licenseParams = licenseDescription.filterChildren(d -> d.getType() == ComponentType.PARAMETER);
+
+        print(0, format("Licenses have the following properties:%n"));
+        for (Description param : licenseParams) {
+            print(1, format("%s: %s%n", param.getCommonName(), param.getDescription()));
         }
 
-        writer.write(String.format("%n>>>> MATCHERS (Datatype IHeaderMatcher) <<<<%n%n"));
+        print(0, format("%nThe defined licenses are:%n"));
+        for (ILicense l : licenses) {
+            printObject(0, l);
+        }
+
+        print(0, format("%n>>>> MATCHERS (Datatype IHeaderMatcher) <<<<%n%n"));
         for (Class<? extends AbstractBuilder> mClazz : MatcherBuilderTracker.instance().getClasses()) {
             try {
                 AbstractBuilder builder = mClazz.getConstructor().newInstance();
-                printMatcher(DescriptionBuilder.buildMap(builder.builtClass()), writer);
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
                     | IllegalArgumentException | InvocationTargetException e) {
                 throw new ConfigurationException(
-                        String.format("Can not instantiate matcher builder  %s ", mClazz.getName()), e);
+                        format("Can not instantiate matcher builder  %s ", mClazz.getName()), e);
             }
         }
 
-        writer.write(String.format("%n>>>> FAMILIES (Datatype ILicenseFamily) <<<<%n%n"));
-        for (ILicenseFamily family : cfg.getLicenseFamilies(LicenseFilter.ALL)) {
-            printFamily(family, writer);
+        print(0, format("%n>>>> FAMILIES (Datatype ILicenseFamily) <<<<%n%n"));
+        for (ILicenseFamily family : config.getLicenseFamilies(LicenseFilter.ALL)) {
+            print(1, format("'%s' - %s%n", family.getFamilyCategory().trim(), family.getFamilyName()));
         }
     }
 
-    private static void printFamily(final ILicenseFamily family, final Writer writer) throws IOException {
-        writer.write(String.format("'%s' - %s%n", family.getFamilyCategory().trim(), family.getFamilyName()));
+
+    private void printObject(int indent, final Object object) throws IOException {
+        if (object == null) {
+            return;
+        }
+        Description description = DescriptionBuilder.build(object);
+        print(indent, format("%s (%s)%n", description.getCommonName(), description.getDescription()));
+        printChildren(indent+1, object, description.getChildren());
     }
 
-    private static void printMatcher(final Description matcher, final Writer writer) throws IOException {
-        writer.write(String.format("'%s' - %s%n", matcher.getCommonName(), matcher.getDescription()));
-        printChildren(1, matcher.getChildren(), writer);
-
-    }
-
-    private static void printLicense(final ILicense license, final Writer writer) throws IOException {
-        Description dLicense = license.getDescription();
-        writer.write(String.format("'%s' - %s %n", dLicense.getCommonName(), dLicense.getDescription()));
-        printChildren(1, dLicense.getChildren(), writer);
-    }
-
-    private static void writeIndent(final int indent, final Writer writer) throws IOException {
-        for (int i = 0; i < indent; i++) {
-            writer.write(INDENT);
+    private boolean isUUID(String s) {
+        try {
+            UUID.fromString(s);
+            return true;
+        } catch (IllegalArgumentException expected) {
+           return false;
         }
     }
 
-    private static void printChildren(final int indent, final Map<String, Description> children, final Writer writer) throws IOException {
+    private void printChildren(final int indent, final Object parent, final Map<String, Description> children) throws IOException {
         for (Description d : children.values()) {
-            writeIndent(indent, writer);
             switch (d.getType()) {
-            case PARAMETER:
-            case BUILD_PARAMETER:
-                writer.write(String.format("'%s' %s (Datatype: %s%s)%n", d.getCommonName(), d.getDescription(),
-                        d.isCollection() ? "Collection of " : "", d.getChildType().getSimpleName()));
-                break;
-            case LICENSE:
-                // do nothing
-                break;
-            case MATCHER:
-                writeIndent(indent + 1, writer);
-                writer.write(String.format("%s %s %n", d.isCollection() ? "Collection of " : "A ",
-                        d.getChildType().getSimpleName()));
-                printChildren(indent + 2, d.getChildren(), writer);
-                break;
+                case PARAMETER:
+                    if (d.isCollection()) {
+                        print(indent, format("%s: %n", d.getCommonName()));
+                        try {
+                            Collection<?> result = (Collection<?>) d.getter(parent.getClass()).invoke(parent);
+                            for (Object o : result) {
+                                printObject(indent+1, o);
+                            }
+                            return;
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        } catch (NoSuchMethodException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    if (IHeaderMatcher.class.isAssignableFrom(d.getChildType())) {
+                        print(indent, format("%s: %n", d.getCommonName()));
+                        // is a matcher.
+                        try {
+                            Object matcher = d.getter(parent.getClass()).invoke(parent);
+                            printObject(indent + 1, matcher);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        } catch (NoSuchMethodException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        String txt = StringUtils.defaultIfBlank(d.getParamValue(DefaultLog.getInstance(), parent), "").replaceAll("\\s{2,}", " ");
+                        if (!txt.isEmpty() && !(d.getCommonName().equals("id") && isUUID(txt))) {
+                               print(indent, format("%s: %s%n", d.getCommonName(), txt.replaceAll("\\s{2,}", " ")));
+                        }
+                    }
+                    break;
+                case BUILD_PARAMETER:
+                case LICENSE:
+                    // do nothing
+                    break;
+                case MATCHER:
+                    printChildren(indent + 1, parent, d.getChildren());
+                    break;
             }
         }
     }
@@ -137,7 +207,7 @@ public final class Documentation {
         ReportConfiguration config = OptionCollection.parseCommands(args, Documentation::printUsage, true);
         if (config != null) {
             try (Writer writer = config.getWriter().get()) {
-                Documentation.output(config, writer);
+                new Documentation(config, writer).output();
             }
         }
     }
@@ -145,10 +215,10 @@ public final class Documentation {
     private static void printUsage(final Options opts) {
         HelpFormatter f = new HelpFormatter();
         f.setOptionComparator(OptionCollection.optionComparator);
-        f.setWidth(PAGE_WIDTH);
+        f.setWidth(WIDTH);
         String header = "\nAvailable options";
         String footer = "";
-        String cmdLine = String.format("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar %s [options]",
+        String cmdLine = format("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar %s [options]",
                 Documentation.class.getName());
         f.printHelp(cmdLine, header, opts, footer, false);
         System.exit(0);

@@ -96,27 +96,36 @@ Apache Rat&#8482;
 
 * Quick Start: Running Rat
 
+  There are three user interfaces for Rat: from the command line, from Ant, and from Maven.  All three of the interfaces
+  support standard options as noted in the list below.
+
++------------------------------------------+
+#include( "naming_help.txt" )
++------------------------------------------+
+
 ** Command Line
 
- Quick start by
+ To run from the command line enter the following command:
 
 +------------------------------------------+
-java -jar apache-rat-${project.version}.jar --help
+java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 +------------------------------------------+
 
- Read more {{{./apache-rat/index.html}here}}.
+ Where "[options]" are one or more of the options listed in for CLI int the table above, and "[Directory or Archive]" is the directory or archive you want to process.
+ There is more detailed information found in the {{{./apache-rat/index.html}CLI documentation}}.
 
 ** Apache Ant
 
- Use the task library for {{{https://ant.apache.org/} Apache Ant 1.7}} or later
-
- Read more {{{./apache-rat-tasks/index.html} here}}.
+ Ant support is provided via a task library.  This requires {{{https://ant.apache.org/}Apache Ant 1.7}} or later.  The {{{./apache-rat-tasks/index.html}Ant library documentation}}
+ provides detailed information concerning how to load the library and how to use the custom elements and properties for the Rat tasks.
 
 ** Apache Maven
 
- Use the plugin for {{{https://maven.apache.org}Apache Maven ${mavenVersion}}} or later.
+ To use Maven the Rat Maven plugin must be used.  The plugin supports {{{https://maven.apache.org}Apache Maven}} ${mavenVersion} or later.
 
  <<ATTENTION!>> Maven4 is based on Java 17 and thus cannot be used with RAT, that relies on Java 8.
+
+ To use the plugin add the following information to your pom file.
 
 +------------------------------------------+
   <plugin>
@@ -126,7 +135,7 @@ java -jar apache-rat-${project.version}.jar --help
   </plugin>
 +------------------------------------------+
 
- Read more {{{./apache-rat-plugin/index.html} here}}.
+ Detailed information about the {{{./apache-rat-plugin/index.html} Maven plugin}} is available.
 
 ** Styling output
 
@@ -142,24 +151,41 @@ java -jar apache-rat-${project.version}.jar --help
 
  In addition, new {{{/xslt_def.html}stylesheets may be developed}} and applied to create new reports.
 
-* Checking Out Rat
+** Standard license and matcher definitions.
 
-  Quick start
+  Rat ships with a number of licenses, license families, adn matcher definitions.  Additional definitions/implementations of these objects may be added to the system.
+  The list of standard libraries is available from the user interface and is listed below:
+
++------------------------------------------+
+#include( "license_help.txt" )
++------------------------------------------+
+
+* Building Rat from source
+
+** Checkout the code
+
+  Rat uses the a Git repository.  You can clone it using:
 
 +------------------------------------------+
 git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 +------------------------------------------+
 
- Read more {{{./scm.html}here}}.
+ For more information about how to access our repository please read out {{{./scm.html}source code management}} documentation.
 
-* Building Rat
+** Building Rat
 
- Build Rat with {{{https://maven.apache.org/} Apache Maven}}
+ Build Rat with {{{https://maven.apache.org/}Apache Maven}} preferably version ${mavenVersion} or later.
 
- Quick start
-
- If you want to build RAT just launch 'mvn' or './mvnw' inside the root folder. It will automatically perform a
+ There are two methods for building the Rat suite:
 
 +------------------------------------------+
+cd creadur-rat
 mvn clean install
++------------------------------------------+
+
+or
+
++------------------------------------------+
+cd creadur-rat
+./mvnw
 +------------------------------------------+

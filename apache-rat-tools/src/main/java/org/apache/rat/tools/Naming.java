@@ -47,33 +47,131 @@ public final class Naming {
      * @throws IOException on error
      * @param args arguments, only 1 is required.
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException, ParseException {
         if(args == null || args.length < 1) {
             System.err.println("At least one argument is required: path to file is missing.");
             return;
         }
+        CommandLine cl = DefaultParser.builder().build().parse(OPTIONS, args);
 
-        Options options = OptionCollection.buildOptions();
-        Predicate<Option> mavenFilter = MavenGenerator.getFilter();
-        Predicate<Option> antFilter = AntGenerator.getFilter();
-        try (CSVPrinter printer = new CSVPrinter(new FileWriter(args[0]), CSVFormat.DEFAULT)) {
-            printer.printRecord("CLI", "Maven", "Ant", "Description");
-            for (Option option : options.getOptions()) {
-                if (option.getLongOpt() != null) {
-                    String mavenCell = mavenFilter.test(option) ? mavenFunctionName(option) : "-- not supported --";
-                    String antCell = antFilter.test(option) ? antFunctionName(option) : "-- not supported --";
-                    printer.printRecord("--" + option.getLongOpt(), mavenCell, antCell, description(option));
+        Predicate<Option> mavenFilter = cl.hasOption(MAVEN) ? MavenGenerator.getFilter() : null;
+
+        Predicate<Option> antFilter = cl.hasOption(ANT) ? AntGenerator.getFilter() : null;
+        boolean includeDeprecated = cl.hasOption(INCLUDE_DEPRECATED);
+        Predicate<Option> filter = o -> o.hasLongOpt() && (!o.isDeprecated() || includeDeprecated);
+
+        try (Writer underWriter =cl.getArgs().length != 0 ? new FileWriter(cl.getArgs()[0]) : new OutputStreamWriter(System.out)) {
+            if (cl.hasOption(CSV)) {
+                printCSV(filter, cl.hasOption(CLI), mavenFilter, antFilter, underWriter);
+            } else {
+                printText(filter, cl.hasOption(CLI), mavenFilter, antFilter, underWriter);
+            }
+        }
+    }
+
+    private static List<String> fillColumns(List<String> columns, Option option, boolean addCLI, Predicate<Option> mavenFilter, Predicate<Option> antFilter) {
+        if (addCLI) {
+            columns.add("--" + option.getLongOpt());
+        }
+        if (antFilter != null) {
+            columns.add(antFilter.test(option) ? antFunctionName(option) : "-- not supported --");
+        }
+        if (mavenFilter != null) {
+            columns.add(mavenFilter.test(option) ? mavenFunctionName(option) : "-- not supported --");
+        }
+        columns.add(option.getDescription());
+        return columns;
+    }
+
+    private static void printCSV(Predicate<Option> filter, boolean addCLI, Predicate<Option> mavenFilter, Predicate<Option> antFilter, Writer underWriter) throws IOException {
+        List<String> columns = new ArrayList<>();
+
+        if (addCLI) {
+            columns.add("CLI");
+        }
+
+        if (antFilter != null) {
+            columns.add("Ant");
+        }
+
+        if (mavenFilter != null) {
+            columns.add("Maven");
+        }
+        columns.add("Description");
+
+        try (CSVPrinter printer = new CSVPrinter(underWriter, CSVFormat.DEFAULT)) {
+            printer.printRecord(columns);
+            for (Option option : OptionCollection.buildOptions().getOptions()) {
+                if (filter.test(option)) {
+                    columns.clear();
+                    printer.printRecord(fillColumns(columns, option, addCLI, mavenFilter, antFilter));
                 }
             }
         }
     }
 
-    private static String description(final Option option) {
-        StringBuilder sb = new StringBuilder();
-        if (option.isDeprecated()) {
-            sb.append(option.getDeprecated().toString()).append(System.lineSeparator());
+    private static void printText(Predicate<Option> filter, boolean addCLI, Predicate<Option> mavenFilter, Predicate<Option> antFilter, Writer underWriter) throws IOException {
+        List<List<String>> page = new ArrayList<>();
+        List<String> columns = new ArrayList<>();
+        if (addCLI) {
+            columns.add("CLI");
         }
-        return sb.append(StringUtils.defaultIfEmpty(option.getDescription(), "")).toString();
+        if (antFilter != null) {
+            columns.add("Ant");
+        }
+        if (mavenFilter != null) {
+            columns.add("Maven");
+        }
+        columns.add("Description");
+        int columnCount = columns.size();
+        page.add(columns);
+
+        for (Option option : OptionCollection.buildOptions().getOptions()) {
+            if (filter.test(option)) {
+                page.add(fillColumns(new ArrayList<>(), option, addCLI, mavenFilter, antFilter));
+            }
+        }
+
+        HelpFormatter helpFormatter;
+        helpFormatter = new HelpFormatter.Builder().get();
+        helpFormatter.setWidth(AbstractHelp.HELP_WIDTH);
+        int colWidth = (AbstractHelp.HELP_WIDTH - (columnCount * 2)) / columnCount;
+
+        List<Deque<String>> entries = new ArrayList<>();
+        CharArrayWriter cWriter = new CharArrayWriter();
+
+        for (List<String> cols : page) {
+            entries.clear();
+            PrintWriter writer = new PrintWriter(cWriter);
+            for (String col : cols) {
+                for (String line : col.split("\\v")) {
+                    helpFormatter.printWrapped(writer, colWidth, 2, line);
+                }
+                writer.flush();
+                Deque<String> entryLines = new LinkedList<>();
+                entryLines.addAll(Arrays.asList(cWriter.toString().split("\\v")));
+                entries.add(entryLines);
+                cWriter.reset();
+            }
+
+            boolean cont = true;
+            while (cont) {
+                cont = false;
+                for (Deque<String> queue : entries) {
+                    if (queue.isEmpty()) {
+                        underWriter.append(AbstractHelp.createPadding(colWidth + 2));
+                    } else {
+                        String ln = queue.pop();
+                        underWriter.append(ln);
+                        underWriter.append(AbstractHelp.createPadding(colWidth - ln.length() + 2));
+                        if (!queue.isEmpty()) {
+                            cont = true;
+                        }
+                    }
+                }
+                underWriter.append(System.lineSeparator());
+            }
+        }
     }
 
     public static String mavenFunctionName(final Option option) {
