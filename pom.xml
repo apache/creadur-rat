@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>32</version>
+    <version>33</version>
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
@@ -59,7 +59,7 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenPluginPluginVersion>3.13.1</mavenPluginPluginVersion>
     <mavenChangesVersion>2.12.1</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.7.0</mavenJavadocPluginVersion>
-    <mavenPmdPluginVersion>3.23.0</mavenPmdPluginVersion>
+    <mavenPmdPluginVersion>3.24.0</mavenPmdPluginVersion>
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
     <!-- START - adapt manually before doing a release -->
     <previousRatVersion>0.17</previousRatVersion>
@@ -188,7 +188,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.26.0</version>
+        <version>3.26.3</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -304,7 +304,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.6.2</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -351,7 +351,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.8.6.1</version>
+          <version>4.8.6.2</version>
           <configuration>
             <!-- RAT-369: JDK21 finds 70 errors, while older releases find 63 -->
             <maxAllowedViolations>70</maxAllowedViolations>
@@ -465,7 +465,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.1.1</version>
           <configuration>
             <!-- Only prompt once for the release version -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -483,12 +483,12 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.3.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.3.1</version>
           <configuration>
             <forkCount>1</forkCount>
             <argLine>-Dfile.encoding=ISO-8859-1</argLine>

@@ -100,10 +100,8 @@ public class OptionCollectionTest {
         } finally {
             DefaultLog.setInstance(null);
         }
-        log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
-        log.assertNotContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", 1);
-        log.assertContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '--edit-license'");
-        log.assertNotContains("WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '--edit-license'", 1);
+        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
+        log.assertContainsExactly(1, "WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '-A' or '--addLicense'");
     }
 
     @Test
@@ -119,8 +117,7 @@ public class OptionCollectionTest {
             DefaultLog.setInstance(null);
         }
         assertThat(config).isNotNull();
-        log.assertContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
-        log.assertNotContains("WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'", 1);
+        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
     }
 
     @Test
