@@ -215,7 +215,6 @@ public class OptionMojoTest   {
     }
 
     public static abstract class SimpleMojoTestcase extends BetterAbstractMojoTestCase {
-
         public RatCheckMojo getMojo(File pomFile) throws Exception {
             setUp();
             ProjectBuildingRequest buildingRequest = newMavenSession().getProjectBuildingRequest();
