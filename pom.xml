@@ -359,7 +359,7 @@ agnostic home for software distribution comprehension and audit tools.
             <!-- we only want to see our own problems and in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
             <!-- in order to have a global spotbugs configuration an exclusion file needs to exist in all submodules -->
-            <excludeFilterFile>${basedir}/spotbugs_ignore.xml</excludeFilterFile>
+            <excludeFilterFile>${project.basedir}/spotbugs-ignore.xml</excludeFilterFile>
             <plugins>
               <plugin>
                 <groupId>com.h3xstream.findsecbugs</groupId>
