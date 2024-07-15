@@ -37,6 +37,10 @@
     </Match>
 
     <Match>
+        <Bug pattern='EI_EXPOSE_REP'/>
+    </Match>
+
+    <Match>
         <Class name="org.apache.rat.configuration.XMLConfigurationReader"/>
         <Bug pattern='XXE_DOCUMENT'/>
     </Match>
