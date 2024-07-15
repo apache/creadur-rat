@@ -93,7 +93,7 @@
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <configuration>
-          <excludeFilterFile>../src/conf/spotbugs-exclude.xml</excludeFilterFile>
+          <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
         </configuration>
       </plugin>
     </plugins>
