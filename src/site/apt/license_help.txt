@@ -1,0 +1,380 @@
+Listing of licenses for Apache Creadur RAT 0.17-SNAPSHOT (Apache Software Foundation)
+
+====== Licenses ======
+Licenses have the following properties:
+    family: The license family category for this license.
+    id: The ID for this license.
+    matcher: The matcher for this license.
+    name: The name of this license.
+    note: The notes about this license.
+
+The defined licenses are:
+
+AL (Apache License Version 2.0)
+    family: AL
+    id: AL
+    matcher:
+        all (Returns true if all enclosed matchers return true.)
+            enclosed:
+                any (Returns true if at least one of the enclosed matchers returns true.)
+                    enclosed:
+                        text (Matches the enclosed text)
+                            simpleText: Licensed under the Apache License, Version 2.0 (the "License")
+                        text (Matches the enclosed text)
+                            simpleText: Licensed to the Apache Software Foundation (ASF) under one or more contributor
+                              license agreements; and to You under the Apache License, Version 2.0.
+                        text (Matches the enclosed text)
+                            simpleText: http://www.apache.org/licenses/LICENSE-2.0
+                        text (Matches the enclosed text)
+                            simpleText: https://www.apache.org/licenses/LICENSE-2.0
+                        text (Matches the enclosed text)
+                            simpleText: http://www.apache.org/licenses/LICENSE-2.0.html
+                        text (Matches the enclosed text)
+                            simpleText: https://www.apache.org/licenses/LICENSE-2.0.html
+                        text (Matches the enclosed text)
+                            simpleText: http://www.apache.org/licenses/LICENSE-2.0.txt
+                        text (Matches the enclosed text)
+                            simpleText: https://www.apache.org/licenses/LICENSE-2.0.txt
+                        spdx (Matches SPDX enclosed license identifier.)
+                            id: SPDX:Apache-2.0
+                            name: Apache-2.0
+                not (Negates the enclosed matcher.)
+                    enclosed:
+                        copyright (Matches copyright statements.)
+    name: Apache License Version 2.0
+
+ASL (Applied Apache License Version 2.0)
+    family: AL
+    id: ASL
+    matcher:
+        all (Returns true if all enclosed matchers return true.)
+            enclosed:
+                any (Returns true if at least one of the enclosed matchers returns true.)
+                    enclosed:
+                        text (Matches the enclosed text)
+                            simpleText: Licensed under the Apache License, Version 2.0 (the "License")
+                        text (Matches the enclosed text)
+                            simpleText: Licensed to the Apache Software Foundation (ASF) under one or more contributor
+                              license agreements; and to You under the Apache License, Version 2.0.
+                        text (Matches the enclosed text)
+                            simpleText: http://www.apache.org/licenses/LICENSE-2.0
+                        text (Matches the enclosed text)
+                            simpleText: https://www.apache.org/licenses/LICENSE-2.0
+                        text (Matches the enclosed text)
+                            simpleText: http://www.apache.org/licenses/LICENSE-2.0.html
+                        text (Matches the enclosed text)
+                            simpleText: https://www.apache.org/licenses/LICENSE-2.0.html
+                        text (Matches the enclosed text)
+                            simpleText: http://www.apache.org/licenses/LICENSE-2.0.txt
+                        text (Matches the enclosed text)
+                            simpleText: https://www.apache.org/licenses/LICENSE-2.0.txt
+                        spdx (Matches SPDX enclosed license identifier.)
+                            id: SPDX:Apache-2.0
+                            name: Apache-2.0
+                copyright (Matches copyright statements.)
+    name: Applied Apache License Version 2.0
+
+BSD-3 (BSD 3 clause)
+    family: BSD-3
+    id: BSD-3
+    matcher:
+        any (Returns true if at least one of the enclosed matchers returns true.)
+            enclosed:
+                all (Returns true if all enclosed matchers return true.)
+                    enclosed:
+                        copyright (Matches copyright statements.)
+                        text (Matches the enclosed text)
+                            id: BSD-3-txt
+                            simpleText: Redistribution and use in source and binary forms, with or without modification,
+                              are permitted provided that the following conditions are met: 1. Redistributions of source
+                              code must retain the above copyright notice, this list of conditions and the following
+                              disclaimer. 2. Redistributions in binary form must reproduce the above copyright notice,
+                              this list of conditions and the following disclaimer in the documentation and/or other
+                              materials provided with the distribution. 3. Neither the name of the copyright holder nor
+                              the names of its contributors may be used to endorse or promote products derived from this
+                              software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE
+                              COPYRIGHT HOLDERS AND CONTRIBUTORS ?AS IS? AND ANY EXPRESS OR IMPLIED WARRANTIES,
+                              INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+                              PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+                              BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+                              DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+                              OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+                              LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+                              OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                              POSSIBILITY OF SUCH DAMAGE.
+                spdx (Matches SPDX enclosed license identifier.)
+                    id: SPDX:BSD-3-Clause
+                    name: BSD-3-Clause
+    name: BSD 3 clause
+
+DOJO (DOJO License)
+    family: BSD-3
+    id: DOJO
+    matcher:
+        text (Matches the enclosed text)
+            simpleText: http://dojotoolkit.org/community/licensing.shtml
+    name: DOJO License
+
+TMF (The Telemanagement Forum License)
+    family: BSD-3
+    id: TMF
+    matcher:
+        all (Returns true if all enclosed matchers return true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: TMF854 Version 1.0
+                copyright (Matches copyright statements.)
+                    owner: TeleManagement Forum
+                any (Returns true if at least one of the enclosed matchers returns true.)
+                    enclosed:
+                        matcherRef (A pointer to another Matcher)
+                            refId: BSD-3-txt
+                        spdx (Matches SPDX enclosed license identifier.)
+                            id: SPDX:BSD-3-Clause
+                            name: BSD-3-Clause
+    name: The Telemanagement Forum License
+
+CDDL1 (COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0)
+    family: CDDL1
+    id: CDDL1
+    matcher:
+        any (Returns true if at least one of the enclosed matchers returns true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: The contents of this file are subject to the terms of the Common Development and
+                      Distribution License("CDDL") (the "License"). You may not use this file except in compliance with
+                      the License.
+                spdx (Matches SPDX enclosed license identifier.)
+                    id: SPDX:CDDL-1.0
+                    name: CDDL-1.0
+    name: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0
+
+ILLUMOS (ILLUMOS CDDL1 Derived license)
+    family: CDDL1
+    id: ILLUMOS
+    matcher:
+        text (Matches the enclosed text)
+            simpleText: The contents of this file are subject to the terms of the Common Development and Distribution
+              License (the "License") You may not use this file except in compliance with the License.
+    name: ILLUMOS CDDL1 Derived license
+    note: Modified CDDL1 license
+
+GEN (Generated Files)
+    family: GEN
+    id: GEN
+    matcher:
+        any (Returns true if at least one of the enclosed matchers returns true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: Generated text no license required
+                text (Matches the enclosed text)
+                    simpleText: generated by Cayenne
+                text (Matches the enclosed text)
+                    simpleText: Generated By:JJTree
+                text (Matches the enclosed text)
+                    simpleText: Generated By:JavaCC
+                text (Matches the enclosed text)
+                    simpleText: THIS FILE IS AUTOMATICALLY GENERATED
+                text (Matches the enclosed text)
+                    simpleText: NOTE: this file is autogenerated by XBeans
+                text (Matches the enclosed text)
+                    simpleText: This file was automatically generated by
+                text (Matches the enclosed text)
+                    simpleText: # WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+                text (Matches the enclosed text)
+                    simpleText: # Microsoft Developer Studio Generated NMAKE File
+                text (Matches the enclosed text)
+                    simpleText: # Microsoft Developer Studio Generated Build File
+                text (Matches the enclosed text)
+                    simpleText: Generated from configure.ac by autoheader
+                text (Matches the enclosed text)
+                    simpleText: generated automatically by aclocal
+                text (Matches the enclosed text)
+                    simpleText: build.xml generated by maven from project.xml
+                text (Matches the enclosed text)
+                    simpleText: This file was generated by
+                text (Matches the enclosed text)
+                    simpleText: This file has been automatically generated.
+                text (Matches the enclosed text)
+                    simpleText: Automatically generated - do not modify!
+                text (Matches the enclosed text)
+                    simpleText: Javadoc style sheet
+                text (Matches the enclosed text)
+                    simpleText: SOURCE FILE GENERATATED
+                text (Matches the enclosed text)
+                    simpleText: Generated by the Batik
+                text (Matches the enclosed text)
+                    simpleText: this file is autogenerated
+                text (Matches the enclosed text)
+                    simpleText: This class was autogenerated
+                text (Matches the enclosed text)
+                    simpleText: Generated by Maven
+                text (Matches the enclosed text)
+                    simpleText: Autogenerated by Thrift
+                text (Matches the enclosed text)
+                    simpleText: DO NOT EDIT THIS FILE - it is machine generated
+                text (Matches the enclosed text)
+                    simpleText: This class was generated by
+                text (Matches the enclosed text)
+                    simpleText: Generated by javadoc
+    name: Generated Files
+    note:  Files that are autmoatically generated.
+
+GPL1 (GNU General Public License, version 1)
+    family: GPL1
+    id: GPL1
+    matcher:
+        any (Returns true if at least one of the enclosed matchers returns true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: This program is free software; you can redistribute it and/or modify it under the terms
+                      of the GNU General Public License as published by the Free Software Foundation; either version 1,
+                      or (at your option) any later version.
+                spdx (Matches SPDX enclosed license identifier.)
+                    id: SPDX:GPL-1.0-only
+                    name: GPL-1.0-only
+    name: GNU General Public License, version 1
+
+GPL2 (GNU General Public License, version 2)
+    family: GPL2
+    id: GPL2
+    matcher:
+        any (Returns true if at least one of the enclosed matchers returns true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: This program is free software; you can redistribute it and/or modify it under the terms
+                      of the GNU General Public License as published by the Free Software Foundation; either version 2
+                      of the License, or (at your option) any later version.
+                spdx (Matches SPDX enclosed license identifier.)
+                    id: SPDX:GPL-2.0-only
+                    name: GPL-2.0-only
+    name: GNU General Public License, version 2
+
+GPL3 (GNU General Public License, version 3)
+    family: GPL3
+    id: GPL3
+    matcher:
+        any (Returns true if at least one of the enclosed matchers returns true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: This program is free software: you can redistribute it and/or modify it under the terms
+                      of the GNU General Public License as published by the Free Software Foundation, either version 3
+                      of the License, or (at your option) any later version.
+                spdx (Matches SPDX enclosed license identifier.)
+                    id: SPDX:GPL-3.0-only
+                    name: GPL-3.0-only
+    name: GNU General Public License, version 3
+
+MIT (The MIT License)
+    family: MIT
+    id: MIT
+    matcher:
+        any (Returns true if at least one of the enclosed matchers returns true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: Permission is hereby granted, free of charge, to any person obtaining a copy of this
+                      software and associated documentation files (the \"Software\"), to deal in the Software without
+                      restriction, including without limitation the rights to use, copy, modify, merge, publish,
+                      distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+                      Software is furnished to do so, subject to the following conditions: The above copyright notice
+                      and this permission notice shall be included in all copies or substantial portions of the
+                      Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+                      INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+                      AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+                      DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+                      OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+                spdx (Matches SPDX enclosed license identifier.)
+                    id: SPDX:MIT
+                    name: MIT
+    name: The MIT License
+
+OASIS (OASIS Open License)
+    family: OASIS
+    id: OASIS
+    matcher:
+        all (Returns true if all enclosed matchers return true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: This document and translations of it may be copied and furnished to others and
+                      derivative works that comment on or otherwise explain it or assist in its implementation may be
+                      prepared copied published and distributed
+                copyright (Matches copyright statements.)
+                    owner: OASIS Open
+    name: OASIS Open License
+    note: No modifications allowed
+
+W3C (W3C Software Copyright)
+    family: W3C
+    id: W3C
+    matcher:
+        any (Returns true if at least one of the enclosed matchers returns true.)
+            enclosed:
+                text (Matches the enclosed text)
+                    simpleText: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+                spdx (Matches SPDX enclosed license identifier.)
+                    id: SPDX:W3C
+                    name: W3C
+    name: W3C Software Copyright
+    note: Note that W3C requires a NOTICE.
+All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.
+
+W3CD (W3C Document Copyright)
+    family: W3CD
+    id: W3CD
+    matcher:
+        text (Matches the enclosed text)
+            simpleText: http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231
+    name: W3C Document Copyright
+    note:  Note that W3CD does not allow modifications. See
+      http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.
+
+====== Defined Matchers ======
+
+all: Returns true if all enclosed matchers return true.
+        Encloses multiple matchers
+    id: The id of the matcher.
+    resource: Resource to read matcher definitions from.
+
+any: Returns true if at least one of the enclosed matchers returns true.
+        Encloses multiple matchers
+    id: The id of the matcher.
+    resource: Resource to read matcher definitions from.
+
+copyright: Matches copyright statements.
+    end: The last date the copyright was modifed
+    id: The id of the matcher.
+    owner: The owner of the copyright
+    start: The initial date of the copyright
+
+matcherRef: A pointer to another Matcher
+    matcherMap: Map of matcher names to matcher instances
+    refId: Reference to an existing matcher
+
+not: Negates the enclosed matcher.
+        Wraps a single matcher
+    id: The id of the matcher.
+
+regex: Performs a regex match using the enclosed the text
+    expr: The pattern to match
+    id: The id of the matcher.
+
+spdx: Matches SPDX enclosed license identifier.
+    id: The id of the matcher.
+    name: The SPDX identifier string
+
+text: Matches the enclosed text
+    id: The id of the matcher.
+    simpleText: (required) The text to match
+
+====== Defined Families ======
+    AL    - Apache License Version 2.0
+    BSD-3 - BSD 3 clause
+    CDDL1 - COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0
+    GEN   - Generated Files
+    GPL1  - GNU General Public License, version 1
+    GPL2  - GNU General Public License, version 2
+    GPL3  - GNU General Public License, version 3
+    MIT   - The MIT License
+    OASIS - OASIS Open License
+    W3C   - W3C Software Copyright
+    W3CD  - W3C Document Copyright
