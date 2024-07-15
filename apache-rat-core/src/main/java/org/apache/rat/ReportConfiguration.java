@@ -442,7 +442,9 @@ public class ReportConfiguration {
                 log.warn("Unable to delete file:" + file);
             }
         }
-        file.getParentFile().mkdirs();
+        if (!file.getParentFile().mkdirs()) {
+            log.warn("Unable to create directory:" + file.getParentFile());
+        }
         setOut(() -> new FileOutputStream(file, true));
     }
 

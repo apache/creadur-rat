@@ -32,11 +32,11 @@ import org.apache.rat.license.ILicenseFamily;
  * set of approved licenses.
  */
 public class DefaultPolicy implements IDocumentAnalyser {
+    /** The set of all approved license families */
     private final SortedSet<ILicenseFamily> approvedLicenseFamilies;
 
     /**
      * Constructor with the list of approved license families.
-     * 
      * @param approvedLicenseFamilies the approved license families.
      */
     public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseFamilies) {
@@ -46,10 +46,9 @@ public class DefaultPolicy implements IDocumentAnalyser {
 
     /**
      * Adds an ILicenseFamily to the list of approved licenses.
-     * 
      * @param approvedLicense license to be approved.
      */
-    public void add(ILicenseFamily approvedLicense) {
+    public void add(final ILicenseFamily approvedLicense) {
         this.approvedLicenseFamilies.add(approvedLicense);
     }
 
@@ -63,7 +62,6 @@ public class DefaultPolicy implements IDocumentAnalyser {
     /**
      * Gets an unmodifiable reference to the SortedSet of approved licenses that
      * this policy is holding.
-     * 
      * @return sorted set of license family definitions.
      */
     public SortedSet<ILicenseFamily> getApprovedLicenseFamilies() {

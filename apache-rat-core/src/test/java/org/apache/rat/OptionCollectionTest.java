@@ -44,7 +44,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -101,7 +100,7 @@ public class OptionCollectionTest {
             DefaultLog.setInstance(null);
         }
         log.assertContainsExactly(1, "WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
-        log.assertContainsExactly(1, "WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '-A' or '--addLicense'");
+        log.assertContainsExactly(1, "WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '--edit-license'");
     }
 
     @Test

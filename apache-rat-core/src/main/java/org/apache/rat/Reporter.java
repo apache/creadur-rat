@@ -60,10 +60,10 @@ public class Reporter {
     private static final String LICENSE_FORMAT = "%s:\t%s%n\t\t%s%n";
 
     /** The XML output document */
-    private final Document document;
+    private Document document;
 
     /** statistics generated as the report was built */
-    private final ClaimStatistic statistic;
+    private ClaimStatistic statistic;
 
     /** The configuration for the report */
     private final ReportConfiguration configuration;
@@ -72,10 +72,17 @@ public class Reporter {
      * Create the reporter.
      *
      * @param configuration the configuration to use.
+     */
+    public Reporter(final ReportConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    /**
+     * Initialize the reporter.
+     * @return this reporter
      * @throws RatException on error.
      */
-    public Reporter(final ReportConfiguration configuration) throws RatException {
-        this.configuration = configuration;
+    private Reporter init() throws RatException  {
         try {
             if (configuration.getReportable() != null) {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -97,6 +104,7 @@ public class Reporter {
         } catch (Exception e) {
             throw RatException.makeInstance(e);
         }
+        return this;
     }
 
     /**
@@ -125,6 +133,7 @@ public class Reporter {
      * @throws RatException one error.
      */
     public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
+        init();
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         try (OutputStream out = output.get();
