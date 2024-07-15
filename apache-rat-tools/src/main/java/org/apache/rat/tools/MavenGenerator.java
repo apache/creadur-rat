@@ -43,7 +43,6 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
-
 /**
  * A simple tool to convert CLI options to Maven Mojo base class
  */

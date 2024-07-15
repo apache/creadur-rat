@@ -323,7 +323,14 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * Actions when closing the report.
      */
     protected void closeReport() {
-        sink.close();
+        getSink().close();
+    }
+
+    /**
+     * @return the sink used
+     */
+    public Sink getSink() {
+        return sink;
     }
 
     /**

@@ -335,8 +335,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Deprecated // remove this for version 1.0
     private void reportDeprecatedProcessing() {
         if (getDeprecatedConfigs().findAny().isPresent()) {
-            Log log = getLog();
-            log.warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
+            getLog().warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
         }
     }
 
@@ -360,7 +359,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     private org.apache.rat.utils.Log makeLog() {
         return new org.apache.rat.utils.Log() {
             private final Log log = getLog();
-
             @Override
             public void log(final Level level, final String msg) {
                 switch (level) {
@@ -571,14 +569,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
                 patterns.add(s);
             }
-        } catch (Throwable th) {
-            if (th instanceof RuntimeException) {
-                throw (RuntimeException) th;
-            }
-            if (th instanceof Error) {
-                throw (Error) th;
-            }
-            throw new MojoExecutionException(th.getMessage(), th);
+        } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
         return patterns;
     }

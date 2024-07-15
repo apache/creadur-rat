@@ -23,9 +23,11 @@ import static java.lang.String.format;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.utils.DefaultLog;
@@ -94,13 +96,22 @@ public final class Report {
         return String.format("%n====== %s ======%n", WordUtils.capitalizeFully(txt));
     }
 
+    /** Function to format deprecated display */
+    private static final Function<Option, String> DEPRECATED_MSG = o -> {
+        StringBuilder sb = new StringBuilder("[").append(o.getDeprecated().toString()).append("]");
+        if (o.getDescription() != null) {
+            sb.append(" ").append(o.getDescription());
+        }
+        return sb.toString();
+    };
+
     /**
      * Print the usage to the specific PrintWriter.
      * @param writer the PrintWriter to output to.
      * @param opts The defined options.
      */
     static void printUsage(final PrintWriter writer, final Options opts) {
-        HelpFormatter helpFormatter = new HelpFormatter.Builder().get();
+        HelpFormatter helpFormatter = new HelpFormatter.Builder().setShowDeprecated(DEPRECATED_MSG).get();
         helpFormatter.setWidth(HELP_WIDTH);
         helpFormatter.setOptionComparator(new OptionCollection.OptionComparator());
         VersionInfo versionInfo = new VersionInfo();

@@ -369,7 +369,7 @@ public class Report extends BaseAntTask {
 
     /**
      * Type for the addLicenseHeaders attribute.
-     * @deprecated No longer required=, use stylesheet or xml attributes.
+     * @deprecated No longer required, use stylesheet or xml attributes.
      */
     @Deprecated
     public static class AddLicenseHeaders extends EnumeratedAttribute {

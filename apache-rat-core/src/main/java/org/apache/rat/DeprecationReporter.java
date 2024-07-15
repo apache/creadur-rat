@@ -84,18 +84,6 @@ public final class DeprecationReporter {
     }
 
     /**
-     * Log deprecated options
-     * @param log The log to write to.
-     * @param option potentially deprecated option to log.
-     */
-    // TODO remove this when commons-cli 1.7.1 or higher is available
-    public static void logDeprecated(final Log log, final Option option) {
-        if (option.isDeprecated()) {
-            getLogReporter(log).accept(option);
-        }
-    }
-
-    /**
      * Annotation to provide deprecation information for Java8.
      * TODO remove this when Java 8 no longer supported.
      */

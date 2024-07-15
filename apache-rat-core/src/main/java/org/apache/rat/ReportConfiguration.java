@@ -61,17 +61,11 @@ public class ReportConfiguration {
      * The styles of processing for various categories of documents.
      */
     public enum Processing {
-        /**
-         * List file as present only
-         */
+        /** List file as present only */
         NOTIFICATION("List file as present"),
-        /**
-         * List all present licenses
-         */
+        /** List all present licenses */
         PRESENCE("List any licenses found"),
-        /**
-         * List all present licenses and unknown licenses
-         */
+        /** List all present licenses and unknown licenses */
         ABSENCE("List licenses found and any unknown licences");
 
         /**
@@ -235,7 +229,7 @@ public class ReportConfiguration {
     public void logFamilyCollisions(final Log.Level level) {
         families.setLogLevel(level);
     }
-
+    
     /**
      * Sets the reporting option for duplicate license families.
      * @param state The ReportingSet.Option to use for reporting.
@@ -251,7 +245,7 @@ public class ReportConfiguration {
     public void logLicenseCollisions(final Log.Level level) {
         licenses.setLogLevel(level);
     }
-
+    
     /**
      * Sets the reporting option for duplicate licenses.
      * @param state the ReportingSt.Option to use for reporting.
@@ -259,7 +253,7 @@ public class ReportConfiguration {
     public void licenseDuplicateOption(final ReportingSet.Options state) {
         licenses.setDuplicateOption(state);
     }
-
+    
     /**
      * Set the level of license families that should be output in the XML document.
      * @param filter the license families to list.
@@ -267,11 +261,11 @@ public class ReportConfiguration {
     public void listFamilies(final LicenseFilter filter) {
         listFamilies = filter;
     }
-
+    
     public LicenseFilter listFamilies() {
         return listFamilies;
     }
-
+    
     /**
      * Set the level of licenses that should be output in the XML document.
      * @param filter the licenses to list.
@@ -287,7 +281,7 @@ public class ReportConfiguration {
     public LicenseFilter listLicenses() {
         return listLicenses;
     }
-
+    
     /**
      * Sets the dry run flag.
      * @param state the state for the dry run flag.
@@ -295,7 +289,7 @@ public class ReportConfiguration {
     public void setDryRun(final boolean state) {
         dryRun = state;
     }
-
+    
     /**
      * Returns the state of the dry run flag.
      * @return the state of the dry run flag.
@@ -303,7 +297,7 @@ public class ReportConfiguration {
     public boolean isDryRun() {
         return dryRun;
     }
-
+    
     /**
      * Gets the file name filter for files to ignore.
      * @return The filename filter that identifies files to ignore.
@@ -543,7 +537,7 @@ public class ReportConfiguration {
         this.licenses.addAllIfNotPresent(licenses);
         licenses.stream().map(ILicense::getLicenseFamily).forEach(families::addIfNotPresent);
     }
-
+    
     /**
      * Adds a license family to the list of families. Does not add the family to the
      * list of approved licenses.

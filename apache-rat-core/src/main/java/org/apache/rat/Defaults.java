@@ -70,40 +70,20 @@ public final class Defaults {
      * The default XSLT stylesheet to produce a list of unapproved licenses.
      */
     public static final String UNAPPROVED_LICENSES_STYLESHEET = "org/apache/rat/unapproved-licenses.xsl";
-
-    /**
-     * The default files to ignore if none are specified.
-     */
+    /** The default files to ignore if none are specified. */
     public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
-
-    /**
-     * The default directories to ignore if none are specified.
-     */
+    /** The default directories to ignore */
     public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
-
-    /**
-     * The default ARCHIVE processing style.
-     */
+    /** The default ARCHIVES processing style */
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
-
-    /**
-     * The default STANDARD processing style.
-     */
+    /** The default STANDARD processing style */
     public static final ReportConfiguration.Processing STANDARD_PROCESSING = ReportConfiguration.Processing.ABSENCE;
-
-    /**
-     * The default license families to list.
-     */
+    /** The default license families to list */
     public static final LicenseFilter LIST_FAMILIES = LicenseFilter.NONE;
-
-    /**
-     * The default licenses to list.
-     */
+    /** The default licenses to list */
     public static final LicenseFilter LIST_LICENSES = LicenseFilter.NONE;
 
-    /**
-     * The License set factory.
-     */
+    /** The license set factory to build license sets based upon default options */
     private final LicenseSetFactory setFactory;
 
     // TODO look at this static block with respect to the init() static method and figure out if we need both.
@@ -235,7 +215,7 @@ public final class Defaults {
     public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
         return setFactory.getLicenseFamilyIds(filter);
     }
-
+    
     /**
      * The Defaults builder.
      */
