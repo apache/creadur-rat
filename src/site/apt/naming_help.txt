@@ -1,0 +1,88 @@
+CLI                           Ant                           Maven                         Description                   
+--archive                     <rat:report archive =         <archive>                     Specifies the level of        
+                                'text'/>                                                    detail in ARCHIVE file      
+                                                                                            reporting. (default is      
+                                                                                            NOTIFICATION)               
+--standard                    <rat:report standard =        <standard>                    Specifies the level of        
+                                'text'/>                                                    detail in STANDARD file     
+                                                                                            reporting. (default is      
+                                                                                            ABSENCE)                    
+--dry-run                     <rat:report dryRun =          <dryRun>                      If set do not update the      
+                                'text'/>                                                    files but generate the      
+                                                                                            reports.                    
+--list-families               <rat:report listFamilies =    <listFamilies>                List the defined license      
+                                'text'/>                                                    families (default is        
+                                                                                            NONE). Valid options are:   
+                                                                                            ALL, APPROVED, NONE         
+--list-licenses               <rat:report listLicenses =    <listLicenses>                List the defined licenses     
+                                'text'/>                                                    (default is NONE). Valid    
+                                                                                            options are: ALL,           
+                                                                                            APPROVED, NONE              
+--help                        -- not supported --           -- not supported --           Print help for the RAT        
+                                                                                            command line interface and  
+                                                                                            exit.                       
+--help-licenses               <rat:report helpLicenses =    <helpLicenses>                Print help for the RAT        
+                                'text'/>                                                    command line interface and  
+                                                                                            exit.                       
+--out                         <rat:report out = 'text'/>    <out>                         Define the output file where  
+                                                                                            to write a report to        
+                                                                                            (default is System.out).    
+--no-default-licenses         <rat:report                   <noDefaultLicenses>           Ignore default                
+                                noDefaultLicenses =                                         configuration. By default   
+                                'text'/>                                                    all approved default        
+                                                                                            licenses are used           
+--licenses                    <rat:report>                  <config>                      File names or URLs for        
+                                <licenses>text</licenses>                                   license definitions.  May   
+                              </rat:report>                                                 be followed by multiple     
+                                                                                            arguments. Note that '--'   
+                                                                                            or a following option is    
+                                                                                            required when using this    
+                                                                                            parameter.                  
+--scan-hidden-directories     <rat:report                   <scanHiddenDirectories>       Scan hidden directories       
+                                scanHiddenDirectories =                                                                 
+                                'text'/>                                                                                
+--addLicense                  <rat:report addLicense =      <addLicense>                  Add the default license       
+                                'text'/>                                                    header to any file with an  
+                                                                                            unknown license that is     
+                                                                                            not in the exclusion list.  
+                                                                                            By default new files will   
+                                                                                            be created with the         
+                                                                                            license header, to force    
+                                                                                            the modification of         
+                                                                                            existing files use the      
+                                                                                            --force option.             
+--force                       <rat:report force = 'text'/>  <force>                       Forces any changes in files   
+                                                                                            to be written directly to   
+                                                                                            the source files (i.e. new  
+                                                                                            files are not created).     
+                                                                                            Only valid with             
+                                                                                            --addLicense                
+--copyright                   <rat:report copyright =       <copyright>                   The copyright message to use  
+                                'text'/>                                                    in the license headers,     
+                                                                                            usually in the form of      
+                                                                                            "Copyright 2008 Foo".       
+                                                                                            Only valid with             
+                                                                                            --addLicense                
+--exclude                     <rat:report>                  <exclude>                     Excludes files matching       
+                                <exclude>text</exclude>                                     wildcard <Expression>. May  
+                              </rat:report>                                                 be followed by multiple     
+                                                                                            arguments. Note that '--'   
+                                                                                            or a following option is    
+                                                                                            required when using this    
+                                                                                            parameter.                  
+--exclude-file                <rat:report excludeFile =     <excludeFile>                 Excludes files matching       
+                                'text'/>                                                    regular expression in the   
+                                                                                            input file.                 
+--log-level                   -- not supported --           <logLevel>                    sets the log level.           
+--xml                         <rat:report xml = 'text'/>    <xml>                         Output the report in raw XML  
+                                                                                            format.  Not compatible     
+                                                                                            with -s                     
+--stylesheet                  <rat:report stylesheet =      <stylesheet>                  XSLT stylesheet to use when   
+                                'text'/>                                                    creating the report.  Not   
+                                                                                            compatible with -x. Either  
+                                                                                            an external xsl file may    
+                                                                                            be specified or one of the  
+                                                                                            internal named sheets:      
+                                                                                            plain-rat (default),        
+                                                                                            missing-headers, or         
+                                                                                            unapproved-licenses         
