@@ -19,6 +19,7 @@
 package org.apache.rat.tools;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 
 import org.apache.commons.cli.HelpFormatter;
