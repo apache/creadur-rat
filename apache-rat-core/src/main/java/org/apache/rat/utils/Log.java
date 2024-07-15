@@ -22,7 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * The definition of logging for the core.  UIs are expected to provide an implementation of 
+ * The definition of logging for the core.  UIs are expected to provide an implementation of
  * Log to log data to the appropriate system within the UI.
  */
 public interface Log {
@@ -31,26 +31,16 @@ public interface Log {
      */
     enum Level {
         // these must be listed in order of decreasing noisiness.
-        /**
-         * Log debug only.
-         */
+        /** Log debug only. */
         DEBUG,
-        /**
-         * Log info only.
-         */
+        /** Log info only. */
         INFO,
-        /**
-         * Log warn only.
-         */
+        /** Log warn only. */
         WARN,
-        /**
-         * Log error only.
-         */
+        /** Log error only. */
         ERROR,
-       /**
-        * Log nothing.
-        */
-       OFF};
+       /** Log nothing. */
+       OFF };
 
     /**
      * Writes a message at a specific log level.
@@ -58,7 +48,7 @@ public interface Log {
      * @param message the Message to write.
      */
     void log(Level level, String message);
-    
+
     /**
      * Write a log message at the specified level.
      * @param level the level to write the message at.
@@ -67,7 +57,7 @@ public interface Log {
     default void log(Level level, Object message) {
         log(level, message == null ? "NULL" : message.toString());
     }
-    
+
     /**
      * Write a message at DEBUG level.
      * @param message the message to write.
@@ -83,7 +73,7 @@ public interface Log {
     default void info(Object message) {
         log(Level.INFO, message);
     }
-    
+
     /**
      * Write a message at WARN level.
      * @param message the message to write.
@@ -91,7 +81,7 @@ public interface Log {
     default void warn(Object message) {
         log(Level.WARN, message);
     }
-    
+
     /**
      * Write a message at ERROR level.
      * @param message the message to write.
@@ -99,7 +89,7 @@ public interface Log {
     default void error(Object message) {
         log(Level.ERROR, message);
     }
-    
+
     /**
      * Write a log message and report throwable stack trace at the specified log level.
      * @param level the level to report at
@@ -114,17 +104,17 @@ public interface Log {
         throwable.printStackTrace(pWriter);
         log(level, writer.toString());
     }
-    
+
     /**
      * Write a log message and report throwable stack trace at the specified log level.
      * @param level the level to report at
      * @param message the message for the log
      * @param throwable the throwable
      */
-    default void log(Level level, Object message, Throwable throwable){
+    default void log(Level level, Object message, Throwable throwable) {
         log(level, message == null ? "NULL" : message.toString(), throwable);
     }
-    
+
     /**
      * Write a debug message and report throwable stack trace.
      * @param message the message for the log
@@ -142,7 +132,7 @@ public interface Log {
     default void info(Object message, Throwable throwable) {
         log(Level.INFO, message, throwable);
     }
-    
+
     /**
      * Write a warn message and report throwable stack trace.
      * @param message the message for the log
@@ -151,7 +141,7 @@ public interface Log {
     default void warn(Object message, Throwable throwable) {
         log(Level.WARN, message, throwable);
     }
-    
+
     /**
      * Write an error message and report throwable stack trace.
      * @param message the message for the log
