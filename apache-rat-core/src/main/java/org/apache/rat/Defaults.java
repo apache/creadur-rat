@@ -95,7 +95,7 @@ public final class Defaults {
             mReader.addMatchers(DEFAULT_CONFIG_URI);
             mReader.readMatcherBuilders();
         } else {
-            DefaultLog.getInstance().error("Unable to construct MatcherReader from" + DEFAULT_CONFIG_URI);
+            DefaultLog.getInstance().error("Unable to construct MatcherReader from " + DEFAULT_CONFIG_URI);
         }
     }
 
