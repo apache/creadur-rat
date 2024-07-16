@@ -55,6 +55,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -80,7 +81,7 @@ public class OptionMojoTest   {
     @BeforeAll
     public static void makeDirs() throws IOException {
         testPath.toFile().mkdirs();
-        POM_FMT = IOUtils.resourceToString("/optionTest/pom.tpl", StandardCharsets.UTF_8);
+        POM_FMT = IOUtils.resourceToString("/optionTest/pom.tpl", StandardCharsets.UTF_8, OptionMojoTest.class.getClassLoader());
     }
 
     @ParameterizedTest
