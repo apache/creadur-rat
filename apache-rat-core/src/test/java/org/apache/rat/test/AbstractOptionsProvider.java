@@ -33,12 +33,14 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -46,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +58,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
+import static org.apache.rat.commandline.Arg.HELP_LICENSES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -96,6 +100,7 @@ public abstract class AbstractOptionsProvider {
         testMap.put("exclude-file", this::excludeFileTest);
         testMap.put("force", this::forceTest);
         testMap.put("help", this::helpTest);
+        testMap.put("help-licenses", this::helpLicenses);
         testMap.put("input-exclude", this::inputExcludeTest);
         testMap.put("input-exclude-file", this::inputExcludeFileTest);
         testMap.put("license-families-approved", this::licenseFamiliesApprovedTest);
@@ -200,6 +205,23 @@ public abstract class AbstractOptionsProvider {
         } catch (IOException e) {
             fail(e.getMessage());
         }
+    }
+
+    public void helpLicenses() {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream origin = System.out;
+        try (PrintStream out = new PrintStream(output)){
+            System.setOut(out);
+            ReportConfiguration config = generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
+        } catch (IOException e) {
+            fail(e.getMessage());
+        } finally {
+            System.setOut(origin);
+        }
+        String txt = output.toString();
+        TextUtils.assertContains("====== Licenses ======", txt);
+        TextUtils.assertContains("====== Defined Matchers ======", txt);
+        TextUtils.assertContains("====== Defined Families ======", txt);
     }
 
     protected void licensesApprovedFileTest() {
@@ -377,7 +399,7 @@ public abstract class AbstractOptionsProvider {
     private void editCopyrightTest(Option option) {
         try {
             Pair<Option, String[]> arg1 = ImmutablePair.of(option, new String[]{"MyCopyright"});
-            ReportConfiguration config =generateConfig(arg1);
+            ReportConfiguration config = generateConfig(arg1);
             assertNull(config.getCopyrightMessage(), "Copyright without --edit-license should not work");
             Pair<Option, String[]> arg2 = ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null);
             config = generateConfig(arg1, arg2);
