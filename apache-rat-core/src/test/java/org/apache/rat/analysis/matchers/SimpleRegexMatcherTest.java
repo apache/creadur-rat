@@ -18,7 +18,7 @@
  */
 package org.apache.rat.analysis.matchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.regex.Pattern;
 
@@ -36,8 +36,8 @@ public class SimpleRegexMatcherTest {
 
     @Test
     public void test() {
-        assertEquals(false, target.matches(AbstractMatcherTest.makeHeaders("what in the world", null)));
-        assertEquals(true, target.matches(AbstractMatcherTest.makeHeaders("hello world", null)));
+        assertThat(target.matches(AbstractMatcherTest.makeHeaders("what in the world", null))).isFalse();
+        assertThat(target.matches(AbstractMatcherTest.makeHeaders("hello world", null))).isTrue();
         target.reset();
     }
 }

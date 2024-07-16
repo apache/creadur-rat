@@ -38,11 +38,11 @@ class DirectoryScanner {
      * 
      * @param directory the directory containing the files
      * @param matcher the license matcher
-     * @param expected the expected result of the each scan
+     * @param expected the expected result of each scan
      * @throws Exception
      */
     @Test
-    public static void testFilesInDir(String directory, ILicense license, boolean expected) throws Exception {
+    public static void runTestsOnFilesInDir(String directory, ILicense license, boolean expected) throws Exception {
         final File[] resourceFiles = Resources.getResourceFiles(directory);
         if (resourceFiles.length == 0) {
             fail("No files found under " + directory);
