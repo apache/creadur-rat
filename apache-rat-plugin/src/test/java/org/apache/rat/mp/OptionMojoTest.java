@@ -82,7 +82,7 @@ public class OptionMojoTest   {
     @BeforeAll
     public static void makeDirs() throws IOException {
         testPath.toFile().mkdirs();
-        POM_FMT = IOUtils.resourceToString("/optionTest/pom.tpl", StandardCharsets.UTF_8);
+        POM_FMT = IOUtils.resourceToString("/optionTest/pom.tpl", StandardCharsets.UTF_8, OptionMojoTest.class.getClassLoader());
     }
 
     @ParameterizedTest
