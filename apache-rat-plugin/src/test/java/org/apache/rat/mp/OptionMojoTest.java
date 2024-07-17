@@ -49,6 +49,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -81,7 +82,8 @@ public class OptionMojoTest   {
     @BeforeAll
     public static void makeDirs() throws IOException {
         testPath.toFile().mkdirs();
-        POM_FMT = IOUtils.resourceToString("/optionTest/pom.tpl", StandardCharsets.UTF_8, OptionMojoTest.class.getClassLoader());
+        URL url = OptionMojoTest.class.getResource("optionTest/pom.tpl");
+        POM_FMT = String.join("\n", IOUtils.readLines(url.openStream(), StandardCharsets.UTF_8));
     }
 
     @ParameterizedTest
