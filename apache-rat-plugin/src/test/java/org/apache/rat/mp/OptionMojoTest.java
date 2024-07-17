@@ -82,7 +82,8 @@ public class OptionMojoTest   {
     @BeforeAll
     public static void makeDirs() throws IOException {
         testPath.toFile().mkdirs();
-        POM_FMT = IOUtils.resourceToString("/optionTest/pom.tpl", StandardCharsets.UTF_8, OptionMojoTest.class.getClassLoader());
+        URL url = OptionMojoTest.class.getResource("optionTest/pom.tpl");
+        POM_FMT = String.join("\n", IOUtils.readLines(url.openStream(), StandardCharsets.UTF_8));
     }
 
     @ParameterizedTest
