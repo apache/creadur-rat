@@ -580,7 +580,7 @@ public class ReportConfigurationTest {
                 .setLicenseFamilies(underTest.getLicenseFamilies(LicenseFilter.ALL))
                 .build());
         
-        // verify default collistion logs WARN
+        // verify default collision logs WARN
         underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setFamily(family.getFamilyCategory())
                 .setMatcher( matcher ).setLicenseFamilies(underTest.getLicenseFamilies(LicenseFilter.ALL))
                 .build());
@@ -646,7 +646,6 @@ public class ReportConfigurationTest {
             assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).contains(ILicenseFamily.makeCategory(s));
         }
     }
-    
 
     /**
      * Validates that the configruation contains the default license families.
@@ -695,7 +694,7 @@ public class ReportConfigurationTest {
     }
 
     /**
-     * A class to act as an output stream an count the number of close operations.
+     * A class to act as an output stream and count the number of close operations.
      */
     static class OutputStreamInterceptor extends OutputStream {
         
