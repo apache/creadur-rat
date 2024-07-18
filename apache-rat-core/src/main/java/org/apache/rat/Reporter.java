@@ -50,7 +50,7 @@ import org.w3c.dom.Document;
 
 /**
  * Class that executes the report as defined in a ReportConfiguration and stores
- * the result for later handleing.
+ * the result for later handling.
  */
 public class Reporter {
 
@@ -63,7 +63,7 @@ public class Reporter {
     /** The XML output document */
     private Document document;
 
-    /** statistics generated as the report was built */
+    /** Statistics generated as the report was built */
     private ClaimStatistic statistic;
 
     /** The configuration for the report */
@@ -79,7 +79,7 @@ public class Reporter {
     }
 
     /**
-     * Initialize the reporter.
+     * Initializes the reporter.
      * @return this reporter
      * @throws RatException on error.
      */
@@ -131,7 +131,7 @@ public class Reporter {
      * Outputs the report to the specified output useing the optional stylesheet.
      *
      * @param stylesheet the style sheet to use for XSLT formatting, may be null for XML output.
-     * @param output     the output stream to write to.
+     * @param output the output stream to write to.
      * @throws RatException one error.
      */
     public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {

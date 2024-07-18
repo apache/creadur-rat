@@ -62,12 +62,10 @@ public final class OptionCollection {
         // do not instantiate
     }
 
-
     /**
      * Produce help
      */
     public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
-
 
     /**
      * A mapping of {@code argName(value)} values to a description of those values.
@@ -78,14 +76,14 @@ public final class OptionCollection {
         ARGUMENT_TYPES.put("File", () -> "A file name.");
         ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan.");
         ARGUMENT_TYPES.put("Expression", () -> "A wildcard file matching pattern. example: *-test-*.txt");
-        ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include.  Valid values: %s.",
+        ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
                 asString(LicenseSetFactory.LicenseFilter.values())));
-        ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use.  Valid values %s.", asString(Log.Level.values())));
-        ARGUMENT_TYPES.put("ProcessingType", () -> format("Specifies how to process file types.  Valid values are: %s",
+        ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Log.Level.values())));
+        ARGUMENT_TYPES.put("ProcessingType", () -> format("Specifies how to process file types. Valid values are: %s",
                 Arrays.stream(ReportConfiguration.Processing.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
                         .collect(Collectors.joining(""))));
-        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file or maybe one of the internal named sheets.  Internal sheets are: %s.",
+        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file or maybe one of the internal named sheets. Internal sheets are: %s.",
                 Arrays.stream(StyleSheets.values())
                         .map(v -> format("\t%s: %s", v.arg(), v.desc()))
                         .collect(Collectors.joining(""))));
@@ -113,7 +111,7 @@ public final class OptionCollection {
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
-     * @param args    the arguments to parse
+     * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
      * @return a ReportConfiguration or null if Help was printed.
      * @throws IOException on error.
@@ -125,9 +123,9 @@ public final class OptionCollection {
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
-     * @param args    the arguments to parse
+     * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
-     * @param noArgs  If true then the commands do not need extra arguments
+     * @param noArgs If true then the commands do not need extra arguments
      * @return a ReportConfiguration or null if Help was printed.
      * @throws IOException on error.
      */
@@ -173,7 +171,7 @@ public final class OptionCollection {
 
     /**
      * Create the report configuration.
-     * Note: this method is package private for testing.  You probably want one of the {@code ParseCommands} methods.
+     * Note: this method is package private for testing. You probably want one of the {@code ParseCommands} methods.
      * @param log The log to log errors to.
      * @param baseDirectory the base directory where files will be found.
      * @param cl the parsed command line.
@@ -191,7 +189,6 @@ public final class OptionCollection {
         return configuration;
     }
 
-
     /**
      * Create an {@code Options} object from the list of defined Options.
      * Mutually exclusive options must be listed in an OptionGroup.
@@ -206,7 +203,7 @@ public final class OptionCollection {
      * object.
      *
      * @param baseDirectory the directory that contains the files to report on.
-     * @param config        the ReportConfiguration.
+     * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
     private static IReportable getDirectory(final String baseDirectory, final ReportConfiguration config) {

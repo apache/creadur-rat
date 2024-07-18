@@ -68,7 +68,7 @@ public class ReportConfiguration {
         ABSENCE("List licenses found and any unknown licences");
 
         /**
-         * the description of the processing.
+         * Description of the processing
          */
         private final String description;
 
@@ -98,7 +98,7 @@ public class ReportConfiguration {
      */
     private final ReportingSet<ILicense> licenses;
 
-       /**
+    /**
      * {@code true} if we are adding license headers to the files.
      */
     private boolean addingLicenses;
@@ -107,7 +107,7 @@ public class ReportConfiguration {
      */
     private boolean addingLicensesForced;
     /**
-     * The copyright message to add if we are adding headers.  Will be null if we are not
+     * The copyright message to add if we are adding headers. Will be null if we are not
      * adding copyright messages.
      */
     private String copyrightMessage;
@@ -155,6 +155,7 @@ public class ReportConfiguration {
      * How to process STANDARD document types.
      */
     private Processing standardProcessing;
+
     /**
      * Constructor
      * @param log The Log implementation that messages will be written to.
@@ -180,7 +181,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Sets the archive processing type.  If not set will default to NOTIFICATION.
+     * Sets the archive processing type. If not set will default to NOTIFICATION.
      * @param archiveProcessing the type of processing archives should have.
      */
     public void setArchiveProcessing(final Processing archiveProcessing) {
@@ -196,7 +197,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Sets the archive processing type.  If not set will default to NOTIFICATION.
+     * Sets the archive processing type. If not set will default to NOTIFICATION.
      * @param standardProcessing the type of processing archives should have.
      */
     public void setStandardProcessing(final Processing standardProcessing) {
@@ -439,11 +440,11 @@ public class ReportConfiguration {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
-                log.warn("Unable to delete file:" + file);
+                log.warn("Unable to delete file: " + file);
             }
         }
         if (!file.getParentFile().mkdirs()) {
-            log.warn("Unable to create directory:" + file.getParentFile());
+            log.warn("Unable to create directory: " + file.getParentFile());
         }
         setOut(() -> new FileOutputStream(file, true));
     }
