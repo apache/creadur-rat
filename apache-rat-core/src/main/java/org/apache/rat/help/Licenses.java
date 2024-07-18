@@ -43,20 +43,6 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.utils.DefaultLog;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.UUID;
-
-import static java.lang.String.format;
 
 /**
  * Generates text based documentation for Licenses, LicenceFamilies, and Matchers.
@@ -130,7 +116,6 @@ public final class Licenses extends AbstractHelp {
                 printObject(0, l);
             }
         }
-
         print(0, header("DEFINED MATCHERS"));
         SortedSet<Description> matchers = new TreeSet<>((d1, d2) -> d1.getCommonName().compareTo(d2.getCommonName()));
         for (Class<? extends AbstractBuilder> mClazz : MatcherBuilderTracker.instance().getClasses()) {
