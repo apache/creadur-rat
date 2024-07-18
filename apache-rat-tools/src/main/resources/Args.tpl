@@ -12,7 +12,7 @@
     protected List<String> args() {
         List<String> result = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : args.entrySet()) {
-            result.add("--"+entry.getKey());
+            result.add("--" + entry.getKey());
             result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
         }
         return result;
@@ -55,7 +55,7 @@
     }
 
     /**
-     * Add an value to the key in the argument list.
+     * Add a value to the key in the argument list.
      * If the key does not exist, adds it.
      * @param key the key for the map.
      * @param value the value to set.
@@ -70,7 +70,7 @@
     }
 
     /**
-     * remove a key from the argument list.
+     * Remove a key from the argument list.
      * @param key the key to remove from the map.
      */
     protected void removeArg(String key) {
