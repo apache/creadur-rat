@@ -112,7 +112,7 @@ public enum Arg {
     //////////////////////////// CONFIGURATION OPTIONS
 
 
-    /** group of options that read a configuration file */
+    /** Group of options that read a configuration file */
     CONFIGURATION(new OptionGroup()
             .addOption(Option.builder().longOpt("config").hasArgs().argName("File")
             .desc("File names for system configuration.  May be followed by multiple arguments. "
@@ -124,21 +124,21 @@ public enum Arg {
             .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --config").get())
             .build())),
 
-    /** group of options that skip the default configuration file */
+    /** Group of options that skip the default configuration file */
     CONFIGURATION_NO_DEFAULTS(new OptionGroup()
             .addOption(Option.builder().longOpt("configuration-no-defaults")
                     .desc("Ignore default configuration.").build())
             .addOption(Option.builder().longOpt("no-default-licenses")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --configuration-no-defaults").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --configuration-no-defaults").get())
                     .build())),
 
-    /** Option that add approved licenses to the list */
+    /** Option that adds approved licenses to the list */
     LICENSES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved").hasArgs().argName("LicenseID")
             .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. "
                     + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
             .build())),
 
-    /** Option that add approved licenses from a file */
+    /** Option that adds approved licenses from a file */
     LICENSES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
             .desc("Name of file containing the approved license IDs.")
             .type(File.class)
@@ -226,13 +226,13 @@ public enum Arg {
                             + "Either an external xsl file may be specified or one of the internal named sheets.")
                     .build())
             .addOption(Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-style").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --output-style").get())
                     .build())
             .addOption(Option.builder("x").longOpt("xml")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-style xml").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --output-style xml").get())
                     .build())),
 
-    /** Specifies that  license definitions that should be included in the output */
+    /** Specifies the license definitions that should be included in the output */
     OUTPUT_LICENSES(new OptionGroup()
             .addOption(Option.builder().longOpt("output-licenses").hasArg().argName("LicenseFilter")
                     .desc("List the defined licenses (default is NONE).")
@@ -241,10 +241,10 @@ public enum Arg {
             .addOption(Option.builder().longOpt("list-licenses").hasArg().argName("LicenseFilter")
                     .desc("List the defined licenses (default is NONE).")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-licenses").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --output-licenses").get())
                     .build())),
 
-    /** Specifies that the license families that should be included in the output */
+    /** Specifies the license families that should be included in the output */
     OUTPUT_FAMILIES(new OptionGroup()
             .addOption(Option.builder().longOpt("output-families").hasArg().argName("LicenseFilter")
                     .desc("List the defined license families (default is NONE).")
@@ -253,7 +253,7 @@ public enum Arg {
             .addOption(Option.builder().longOpt("list-families").hasArg().argName("LicenseFilter")
                     .desc("List the defined license families (default is NONE).")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-families").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --output-families").get())
                     .build())),
 
     /** Specifies the log level to log messages at. */
@@ -263,13 +263,13 @@ public enum Arg {
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build())),
 
-    /** Specifies that the run should not perform any updates to files.  */
+    /** Specifies that the run should not perform any updates to files. */
     DRY_RUN(new OptionGroup().addOption(Option.builder().longOpt("dry-run")
             .desc("If set do not update the files but generate the reports.")
             .build())),
 
 
-    /** Specifies where the output should be written.  */
+    /** Specifies where the output should be written. */
     OUTPUT_FILE(new OptionGroup()
             .addOption(Option.builder().option("o").longOpt("out").hasArg().argName("File")
                     .desc("Define the output file where to write a report to (default is System.out).")
@@ -287,7 +287,7 @@ public enum Arg {
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build())),
 
-    /** Specifies the level or reporting detail for standard files. */
+    /** Specifies the level of reporting detail for standard files. */
     OUTPUT_STANDARD(new OptionGroup()
             .addOption(Option.builder().longOpt("output-standard").hasArg().argName("ProcessingType")
                     .desc(format("Specifies the level of detail in STANDARD file reporting. (default is %s)",
@@ -312,7 +312,7 @@ public enum Arg {
 
     /**
      * Gets the select element from the group.
-     * @return the selected element or null if no element is selected.
+     * @return the selected element or {@code null} if no element is selected.
      */
     public Option getSelected() {
         String s = group.getSelected();
@@ -566,17 +566,22 @@ public enum Arg {
                     logParseException(log, e, LOG_LEVEL.getSelected(), commandLine, dLog.getLevel());
                 }
             } else {
-                log.error("log was not a DefaultLog instance. LogLevel not set.");
+                log.error("Given log was not a DefaultLog instance. LogLevel not set.");
             }
         }
     }
 
+    /**
+    * Process the arguments.
+    * @param ctxt the context in which to process the args.
+    */
     public static void processArgs(final ArgumentContext ctxt) throws IOException {
         processOutputArgs(ctxt);
         processEditArgs(ctxt);
         processInputArgs(ctxt);
         processConfigurationArgs(ctxt);
     }
+
     /**
      * Process the arguments that can be processed together.
      * @param ctxt the context in which to process the args.
