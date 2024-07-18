@@ -31,7 +31,7 @@ import org.apache.commons.io.function.IOSupplier;
  */
 public enum StyleSheets {
     /**
-     * The plain style sheet.  The default.
+     * The plain style sheet. The current default.
      */
     PLAIN("plain-rat", "The default style"),
     /**
@@ -43,11 +43,11 @@ public enum StyleSheets {
      */
     UNAPPROVED_LICENSES("unapproved-licenses", "Produces a report of the files with unapproved licenses"),
     /**
-     * The plain style sheet.  The default.
+     * The plain style sheet. The current default.
      */
     XML("xml", "The default style");
     /**
-     * The name of the style sheet.  Must map to bundled resource xslt file
+     * The name of the style sheet. Must map to bundled resource xslt file
      */
     private final String name;
     /**

@@ -130,7 +130,7 @@ public class SimpleLicense implements ILicense {
         private SortedSet<ILicenseFamily> licenseFamilies;
         /** The matcher builder in use for this license */
         private IHeaderMatcher.Builder matcher;
-        /** The notes for the license. */
+        /** The notes for the license */
         private List<String> notes = new ArrayList<>();
         /** The name of this license */
         private String name;

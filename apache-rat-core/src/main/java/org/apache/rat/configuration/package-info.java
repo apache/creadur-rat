@@ -20,5 +20,4 @@
 /**
  * Classes to process configuration information from/to files.
  */
-
 package org.apache.rat.configuration;

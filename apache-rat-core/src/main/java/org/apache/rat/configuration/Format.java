@@ -32,12 +32,12 @@ import org.apache.rat.ConfigurationException;
  * information.
  */
 public enum Format {
-    /** an XML file */
+    /** An XML file */
     XML(XMLConfigurationReader.class, "xml"),
     /** A plain text file */
     TXT(null, "txt", "text");
 
-    /** The list of file suffix that this format applies to*/
+    /** The list of file suffixes that this format applies to */
     private final String[] suffix;
 
     /** The constructor for the MatcherReader for this Format */
@@ -103,7 +103,7 @@ public enum Format {
     }
 
    /**
-    * Determine the {@code Format} from a URL.
+    * Determine the {@code Format} from an URI.
     * @param uri the URI to check.
     * @return the Format
     */
@@ -112,7 +112,7 @@ public enum Format {
     }
 
    /**
-    * Determine the {@code Format} from a File.
+    * Determine the {@code Format} from a file.
     * @param file the File to check.
     * @return the Format
     * @throws MalformedURLException in case the file cannot be found.

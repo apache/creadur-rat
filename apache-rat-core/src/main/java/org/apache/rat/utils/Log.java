@@ -39,8 +39,8 @@ public interface Log {
         WARN,
         /** Log error only. */
         ERROR,
-       /** Log nothing. */
-       OFF };
+        /** Log nothing. */
+        OFF };
 
     /**
      * Writes a message at a specific log level.

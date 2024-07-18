@@ -25,7 +25,7 @@ import java.net.URI;
  */
 public interface MatcherReader {
     /**
-     * Adds a URL to the set of files to be read.
+     * Adds an URI to the set of files to be read.
      * @param uri the URI to read.
      */
     void addMatchers(URI uri);
@@ -34,5 +34,4 @@ public interface MatcherReader {
      * Reads the configuration and MatcherBuilder classes and adds them to Readers.
      */
     void readMatcherBuilders();
-
 }

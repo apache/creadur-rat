@@ -127,7 +127,7 @@ public class LicenseSetFactory {
      * Constructs a factory with the specified set of Licenses and the approved
      * license collection.
      *
-     * @param licenses the set of defined licenses.  families will be extracted from the licenses.
+     * @param licenses the set of defined licenses. Families will be extracted from the licenses.
      */
     public LicenseSetFactory(SortedSet<ILicense> licenses) {
         this.families = new TreeSet<>();
@@ -194,7 +194,7 @@ public class LicenseSetFactory {
 
     /**
      * Test for approved family category.
-     * @param family the license family to test. must be in category format.
+     * @param family the license family to test, must be in category format.
      * @return return {@code true} if the category is approved.
      */
     private boolean isApprovedCategory(final ILicenseFamily family) {

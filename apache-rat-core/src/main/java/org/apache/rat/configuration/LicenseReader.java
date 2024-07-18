@@ -30,7 +30,7 @@ import org.apache.rat.utils.Log;
  */
 public interface LicenseReader {
     /**
-     * Adds a URL to the set of files to be read.
+     * Adds an URI to the set of files to be read.
      * @param uri the URI to read.
      */
     void addLicenses(URI uri);

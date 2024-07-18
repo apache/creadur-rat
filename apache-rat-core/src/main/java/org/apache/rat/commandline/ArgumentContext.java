@@ -52,7 +52,6 @@ public class ArgumentContext {
         Arg.processArgs(this);
     }
 
-
     /**
      * Gets the configuration.
      * @return The configuration that is being built.
@@ -63,7 +62,7 @@ public class ArgumentContext {
 
     /**
      * Gets the command line.
-     * @return The caommand line that is driving the configuration.
+     * @return The command line that is driving the configuration.
      */
     public CommandLine getCommandLine() {
         return commandLine;

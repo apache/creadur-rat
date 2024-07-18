@@ -229,7 +229,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     /**
-     * Finds the setter description property i nthe builder and set it with the value.
+     * Finds the setter description property in the builder and set it with the value.
      * @param desc The description for the setter.
      * @param builder The builder to set the value in.
      * @param value The value to set.
@@ -331,7 +331,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     /**
-     * Process the ELEEMENT_NODEs children of the parent whos names match child
+     * Process the ELEEMENT_NODEs children of the parent whose names match child
      * descriptions. All children children are processed with the childProcessor. If
      * the childProcessor handles the node it is not included in the resulting list.
      * @param description the Description of the parent node.
@@ -530,7 +530,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     /**
-     * Parses a license family node into a license family and adds it othe license families set.
+     * Parses a license family node into a license family and adds it to the license families set.
      * @param familyNode the node to parse.
      */
     private void parseFamily(final Node familyNode) {
@@ -605,7 +605,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         private final AbstractBuilder delegate;
         /**
          * The map of matchers that the system is building during processing.  We will utilize this to set the
-         * matcher value later .
+         * matcher value later.
          */
         private final Map<String, IHeaderMatcher> matchers;
 
