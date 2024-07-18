@@ -35,27 +35,55 @@ public class HelpTest {
         Help  help = new Help();
         help.printUsage(new PrintWriter(out), opts);
 
+
         String result = out.toString();
-        System.out.println(result);
 
         TextUtils.assertContains("-a ", result);
         TextUtils.assertContains("-A,--addLicense ", result);
-        TextUtils.assertContains("--archive <ProcessingType> ", result);
         TextUtils.assertContains("-c,--copyright <arg> ", result);
+        TextUtils.assertContains("--config <File> ", result);
+        TextUtils.assertContains("--configuration-no-defaults", result);
         TextUtils.assertContains("-d,--dir <DirOrArchive> ", result);
         TextUtils.assertContains("--dry-run ", result);
         TextUtils.assertContains("-e,--exclude <Expression> ", result);
-        TextUtils.assertContains("-E,--exclude-file <FileOrURI> ", result);
+        TextUtils.assertContains("-E,--exclude-file <File> ", result);
+        TextUtils.assertContains("--edit-copyright <arg> ", result);
+        TextUtils.assertContains("--edit-license ", result);
+        TextUtils.assertContains("--edit-overwrite ", result);
         TextUtils.assertContains("-f,--force ", result);
-        TextUtils.assertContains("-h,--help ", result);
-        TextUtils.assertContains("--licenses <FileOrURI> ", result);
+        TextUtils.assertContains("-?,--help ", result);
+        TextUtils.assertContains("--input-exclude <Expression> ", result);
+        TextUtils.assertContains("--input-exclude-file <File> ", result);
+        TextUtils.assertContains("--license-families-approved <FamilyID> ", result);
+        TextUtils.assertContains("--license-families-approved-file <File> ", result);
+        TextUtils.assertContains("--license-families-denied <FamilyID> ", result);
+        TextUtils.assertContains("--license-families-denied-file <File> ", result);
+        TextUtils.assertContains("--licenses <File> ", result);
+        TextUtils.assertContains("--licenses-approved <LicenseID> ", result);
+        TextUtils.assertContains("--licenses-approved-file <File> ", result);
+        TextUtils.assertContains("--licenses-denied <LicenseID> ", result);
+        TextUtils.assertContains("--licenses-denied-file <File> ", result);
         TextUtils.assertContains("--list-families <LicenseFilter> ", result);
         TextUtils.assertContains("--list-licenses <LicenseFilter> ", result);
         TextUtils.assertContains("--log-level <LogLevel> ", result);
         TextUtils.assertContains("--no-default-licenses ", result);
-        TextUtils.assertContains("-o,--out <arg> ", result);
+        TextUtils.assertContains("-o,--out <File> ", result);
+        TextUtils.assertContains("--output-archive <ProcessingType> ", result);
+        TextUtils.assertContains("--output-families <LicenseFilter> ", result);
+        TextUtils.assertContains("--output-file <File> ", result);
+        TextUtils.assertContains("--output-licenses <LicenseFilter> ", result);
+        TextUtils.assertContains("--output-standard <ProcessingType> ", result);
+        TextUtils.assertContains("--output-style <StyleSheet> ", result);
         TextUtils.assertContains("-s,--stylesheet <StyleSheet> ", result);
         TextUtils.assertContains("--scan-hidden-directories ", result);
         TextUtils.assertContains("-x,--xml ", result);
+        TextUtils.assertPatternInTarget("^<DirOrArchive>", result);
+        TextUtils.assertPatternInTarget("^<Expression>", result);
+        TextUtils.assertPatternInTarget("^<FamilyID>", result);
+        TextUtils.assertPatternInTarget("^<File>", result);
+        TextUtils.assertPatternInTarget("^<LicenseFilter>", result);
+        TextUtils.assertPatternInTarget("^<LicenseID>", result);
+        TextUtils.assertPatternInTarget("^<ProcessingType>", result);
+        TextUtils.assertPatternInTarget("^<StyleSheet>", result);
     }
 }
