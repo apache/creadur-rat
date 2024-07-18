@@ -45,7 +45,6 @@ import org.apache.rat.utils.DefaultLog;
  */
 public class ArchiveWalker extends Walker {
 
-
     /**
      * Constructs a walker.
      * @param config the report configuration for this run.
