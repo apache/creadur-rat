@@ -101,6 +101,11 @@ public class InputArgsTest {
         DefaultLog.setInstance(null);
     }
 
+    @AfterAll
+    public static void resetLog() {
+        DefaultLog.setInstance(null);
+    }
+
     /** Provider for the testParseExclusions */
     public static Stream<Arguments> exclusionsProvider() {
         List<Arguments> lst = new ArrayList<>();
