@@ -155,7 +155,7 @@ public final class OptionCollection {
         }
 
         if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(log, null, commandLine), new PrintWriter(System.out)).printHelp();
+            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
             return null;
         }
 
