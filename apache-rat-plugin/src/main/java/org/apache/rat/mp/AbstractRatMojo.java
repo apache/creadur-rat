@@ -115,7 +115,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter(property = "rat.addDefaultLicenseMatchers")
     private boolean addDefaultLicenseMatchers;
 
-    /** the list of approved licenses */
+    /** The list of approved licenses */
     @Parameter(required = false)
     private String[] approvedLicenses;
 
@@ -157,7 +157,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the include files character set. Defaults
-     * to @code{${project.build.sourceEncoding}), or @code{UTF8}.
+     * to @code{${project.build.sourceEncoding}), or @code{UTF-8}.
      */
     @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String includesFileCharset;
@@ -192,7 +192,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * excludes are:
      * <ul>
      * <li>meta data files for source code management / revision control systems,
-     * see {@link SourceCodeManagementSystems}</li>
+     * see {@link org.apache.rat.config.SourceCodeManagementSystems}</li>
      * <li>temporary files used by Maven, see
      * <a href="#useMavenDefaultExcludes">useMavenDefaultExcludes</a></li>
      * <li>configuration files for Eclipse, see
