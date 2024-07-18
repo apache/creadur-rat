@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.Writer;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -50,7 +49,6 @@ import java.util.stream.Stream;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.rat.ConfigurationException;
@@ -63,7 +61,6 @@ import org.apache.rat.config.SourceCodeManagementSystems;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
-import org.apache.rat.help.Licenses;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -75,6 +72,7 @@ import org.apache.rat.mp.util.ignore.IgnoringDirectoryScanner;
 import org.apache.rat.plugin.BaseRatMojo;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
@@ -305,7 +303,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Deprecated // remove this for version 1.0
     private void reportDeprecatedProcessing() {
         if (getDeprecatedConfigs().findAny().isPresent()) {
-            getLog().warn("Configuration uses deprecated configuration. Please upgrade to v0.17 configuration options");
+            DefaultLog.getInstance().warn("Configuration uses deprecated configuration. Please upgrade to v0.17 configuration options");
         }
     }
 
@@ -359,7 +357,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     private org.apache.rat.utils.Log makeLog() {
         return new org.apache.rat.utils.Log() {
-            private final Log log = getLog();
+            private final org.apache.maven.plugin.logging.Log log = getLog();
             @Override
             public void log(final Level level, final String msg) {
                 switch (level) {
@@ -385,8 +383,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         DefaultLog.setInstance(makeLog());
         try {
-            Log log = getLog();
-            if (log.isDebugEnabled()) {
+            Log log = DefaultLog.getInstance();
+            if (super.getLog().isDebugEnabled()) {
                 log.debug("Start BaseRatMojo Configuration options");
                 for (Map.Entry<String, List<String>> entry : args.entrySet()) {
                     log.debug(String.format(" * %s %s", entry.getKey(), String.join(", ", entry.getValue())));
@@ -425,10 +423,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
             }
             if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
-                if (log.isDebugEnabled()) {
+                if (super.getLog().isDebugEnabled()) {
                     log.debug(String.format("%s license families loaded from pom", families.length));
                 }
-                Consumer<ILicenseFamily> logger = log.isDebugEnabled() ? l -> log.debug(String.format("Family: %s", l))
+                Consumer<ILicenseFamily> logger = super.getLog().isDebugEnabled() ? l -> log.debug(String.format("Family: %s", l))
                         : l -> {
                 };
 
@@ -446,10 +444,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             }
 
             if (licenses != null) {
-                if (log.isDebugEnabled()) {
+                if (super.getLog().isDebugEnabled()) {
                     log.debug(String.format("%s licenses loaded from pom", licenses.length));
                 }
-                Consumer<ILicense> logger = log.isDebugEnabled() ? l -> log.debug(String.format("License: %s", l))
+                Consumer<ILicense> logger = super.getLog().isDebugEnabled() ? l -> log.debug(String.format("License: %s", l))
                         : l -> {
                 };
                 Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)
@@ -467,7 +465,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             config.setReportable(getReportable());
 
             if (helpLicenses) {
-                new org.apache.rat.help.Licenses(config, new PrintWriter(logAsWriter())).printHelp();
+                new org.apache.rat.help.Licenses(config, new PrintWriter(log.asWriter())).printHelp();
             }
             return config;
         } catch (IOException e) {
@@ -482,42 +480,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 getLog().debug("* " + license.toString());
             }
         }
-    }
-
-    protected Writer logAsWriter() {
-        return new Writer(){
-            final Log log = getLog();
-            StringBuilder sb = new StringBuilder();
-            @Override
-            public void write(char[] cbuf, int off, int len) throws IOException {
-                String txt = String.copyValueOf(cbuf, off, len);
-                int pos = txt.indexOf(System.lineSeparator());
-                if (pos == -1) {
-                    sb.append(txt);
-                } else {
-                    while (pos > -1) {
-                        log.info(sb.append(txt.substring(0, pos)).toString());
-                        sb.delete(0,sb.length());
-                        txt = txt.substring(pos+1);
-                        pos = txt.indexOf(System.lineSeparator());
-                    }
-                    sb.append(txt);
-                }
-            }
-
-            @Override
-            public void flush() throws IOException {
-                if (sb.length() > 0) {
-                    log.info(sb.toString());
-                }
-                sb = new StringBuilder();
-            }
-
-            @Override
-            public void close() throws IOException {
-                flush();
-            }
-        };
     }
 
     /**

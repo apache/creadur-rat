@@ -28,7 +28,7 @@ import java.io.File;
  * already.
  */
 public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
-
+    /** The copyright message to insert.  May be null. */
     private String copyright;
 
     /**
@@ -43,13 +43,13 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
      * the form &quot;Copyright 2008 Foo&quot;
      * @param copyright copyright line to add to the headers.
      */
-    public ApacheV2LicenseAppender(String copyright) {
-        super();
+    public ApacheV2LicenseAppender(final String copyright) {
+        this();
         this.copyright = copyright;
     }
 
     @Override
-    public String getLicenseHeader(File document) {
+    public String getLicenseHeader(final File document) {
         int type = getType(document);
         StringBuilder sb = new StringBuilder();
         if (copyright == null) {
@@ -91,6 +91,4 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
         }
         return sb.toString();
     }
-
-
 }

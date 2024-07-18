@@ -345,6 +345,9 @@ public class Report extends BaseAntTask {
      */
     public ReportConfiguration getConfiguration() {
         try {
+            boolean helpLicenses = !getValues(Arg.HELP_LICENSES).isEmpty();
+            removeKey(Arg.HELP_LICENSES);
+
             final ReportConfiguration configuration = OptionCollection.parseCommands(args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
@@ -364,6 +367,9 @@ public class Report extends BaseAntTask {
             families.stream().map(Family::build).forEach(configuration::addFamily);
             licenses.stream().map(License::asBuilder)
                     .forEach(l -> configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily()));
+            if (helpLicenses) {
+                new org.apache.rat.help.Licenses(configuration, new PrintWriter(DefaultLog.getInstance().asWriter())).printHelp();
+            }
             return configuration;
         } catch (IOException | ImplementationException e) {
             throw new BuildException(e.getMessage(), e);

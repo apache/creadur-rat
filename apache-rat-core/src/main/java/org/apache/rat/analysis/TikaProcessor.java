@@ -18,6 +18,11 @@
  */
 package org.apache.rat.analysis;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
@@ -26,15 +31,10 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.mime.MediaType;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A wrapping around the tika processor.
  */
-public class TikaProcessor {
+public final class TikaProcessor {
 
     /** the Tika parser */
     private static final Tika TIKA = new Tika();
@@ -90,6 +90,10 @@ public class TikaProcessor {
         documentTypeMap.put("image/svg+xml", Document.Type.STANDARD);
 //        org.apache.tika.parser.xml.FictionBookParser
         documentTypeMap.put("application/x-fictionbook+xml", Document.Type.STANDARD);
+    }
+
+    private TikaProcessor() {
+        // do not instantiate
     }
 
     /**

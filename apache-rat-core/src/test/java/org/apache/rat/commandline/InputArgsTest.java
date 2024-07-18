@@ -26,6 +26,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -93,6 +94,11 @@ public class InputArgsTest {
         } finally {
             DefaultLog.setInstance(null);
         }
+    }
+
+    @AfterAll
+    public static void resetLog() {
+        DefaultLog.setInstance(null);
     }
 
     /** Provider for the testParseExclusions */
