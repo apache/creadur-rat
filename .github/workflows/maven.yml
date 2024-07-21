@@ -39,7 +39,7 @@ jobs:
         java: [8, 11, 17, 21]
       fail-fast: false
 
-    runs-on: ${{ matrix.os }}-JDK${{ matrix.java }}
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
