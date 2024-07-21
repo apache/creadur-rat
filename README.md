@@ -12,7 +12,7 @@ Apache Rat is developed by the Apache Creadur project of the Apache Software
 Foundation. Join us at https://creadur.apache.org and read more about Apache Rat
 at https://creadur.apache.org/rat.
 
-*Release Audit Tool (Rat)* is a tool to improve accuracy and efficiency when checking
+*Release Audit Tool (RAT)* is a tool to improve accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
 Its reports require interpretation.
