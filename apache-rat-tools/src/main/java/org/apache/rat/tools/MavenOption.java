@@ -52,7 +52,7 @@ public class MavenOption extends AbstractOption {
     }
 
     @Override
-    protected String cleanupName(Option option) {
+    protected String cleanupName(final Option option) {
         return format("<%s>", MavenGenerator.createName(option));
     }
 
@@ -66,7 +66,7 @@ public class MavenOption extends AbstractOption {
         return result;
     }
 
-    public String getPropertyAnnotation(String fname) {
+    public String getPropertyAnnotation(final String fname) {
         StringBuilder sb = new StringBuilder("@Parameter");
         String property = option.hasArgs() ? null : format("property = \"rat.%s\"", fname);
         String defaultValue = option.isDeprecated() ? null : getDefaultValue();
