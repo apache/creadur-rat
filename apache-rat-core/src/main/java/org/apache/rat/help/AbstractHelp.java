@@ -52,8 +52,6 @@ public abstract class AbstractHelp {
 
     protected AbstractHelp() {
         helpFormatter = new RatHelpFormatter();
-        helpFormatter.setWidth(HELP_WIDTH);
-        helpFormatter.setOptionComparator(new OptionCollection.OptionComparator());
         versionInfo = new VersionInfo();
     }
 
