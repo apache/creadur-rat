@@ -32,12 +32,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
@@ -51,20 +54,19 @@ public final class MavenGenerator {
     /** A mapping of external name to internal name if not standard */
     private static final Map<String, String> RENAME_MAP = new HashMap<>();
 
-    static {
-        //RENAME_MAP.put("licenses", "config");
-        RENAME_MAP.put("addLicense", "add-license");
-    }
-    /**
-     * List of CLI Options that are not supported by Maven.
-     */
+    /** List of CLI Options that are not supported by Maven. */
     private static final List<Option> MAVEN_FILTER_LIST = new ArrayList<>();
 
+
     static {
+        RENAME_MAP.put("addLicense", "add-license");
+
         MAVEN_FILTER_LIST.addAll(Arg.DIR.group().getOptions());
         MAVEN_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
         MAVEN_FILTER_LIST.add(OptionCollection.HELP);
     }
+
+
 
     /**
      * Filter to remove Options not supported by Maven.
@@ -152,10 +154,35 @@ public final class MavenGenerator {
     }
 
     private static String getComment(final MavenOption option) {
+        String desc = option.getDescription();
+        if (desc == null) {
+            throw new IllegalStateException(format("Description for %s may not be null", option.getName()));
+        }
+        if (!desc.contains(".")) {
+            throw new IllegalStateException(format("First sentence of description for %s must end with a '.'", option.getName()));
+        }
+        String arg = null;
+        if (option.hasArg()) {
+            arg = desc.substring(desc.indexOf(" "), desc.indexOf(".") + 1);
+            arg = WordUtils.capitalize(arg.substring(0,1)) + arg.substring(1);
+        } else {
+            arg = "the state";
+        }
+        if (option.hasArg() && option.getArgName() != null) {
+            Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());
+            if (sup == null) {
+                throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
+            }
+            String typeDesc = sup.get();
+            typeDesc = WordUtils.uncapitalize(typeDesc.substring(0,1)) + typeDesc.substring(1);
+            desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
+                    option.hasArgs() ? "" : "a ", option.getArgName());
+        }
         StringBuilder sb = new StringBuilder()
-            .append(format("    /**%n     * %s%n     * @param %s the argument.%n", option.getDescription(), option.getName()));
+            .append(format("    /**%n     * %s%n     * @param %s %s%n", StringEscapeUtils.escapeHtml4(desc),
+                    option.getName(),  arg));
         if (option.isDeprecated()) {
-            sb.append(format("     * %s%n     * @deprecated%n", option.getDeprecated()));
+            sb.append(format("     * @deprecated %s%n", StringEscapeUtils.escapeHtml4(option.getDeprecated())));
         }
         return sb.append(format("     */%n")).toString();
     }
@@ -163,14 +190,9 @@ public final class MavenGenerator {
     private static void writeMethods(final FileWriter writer, final List<MavenOption> options) throws IOException {
         for (MavenOption option : options) {
             writer.append(getComment(option))
-                    .append(option.getMethodSignature("    ", false)).append(" {").append(System.lineSeparator())
+                    .append(option.getMethodSignature("    ", option.hasArgs())).append(" {").append(System.lineSeparator())
                     .append(getBody(option))
                     .append("    }").append(System.lineSeparator());
-            if (option.hasArgs()) {
-                writer.append(option.getMethodSignature("    ", true)).append(" {").append(System.lineSeparator())
-                        .append(getBody(option))
-                        .append("    }").append(System.lineSeparator());
-            }
         }
     }
 
@@ -184,8 +206,13 @@ public final class MavenGenerator {
         }
     }
 
+    /**
+     * Creates the Maven element name for the specified option.
+     * @param option The option to process.
+     * @return the Maven based name.
+     */
     static String createName(final Option option) {
-        String name = option.getLongOpt();
+        String name = StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
         name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
         return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
     }

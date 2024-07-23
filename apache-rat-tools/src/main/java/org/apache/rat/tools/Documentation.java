@@ -42,6 +42,7 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.configuration.XMLConfig;
 import org.apache.rat.configuration.builders.AbstractBuilder;
+import org.apache.rat.help.Licenses;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -204,7 +205,7 @@ public final class Documentation {
         ReportConfiguration config = OptionCollection.parseCommands(args, Documentation::printUsage, true);
         if (config != null) {
             try (Writer writer = config.getWriter().get()) {
-                new Documentation(config, writer).output();
+                new Licenses(config, writer).output();
             }
         }
     }

@@ -23,15 +23,30 @@ import static java.lang.String.format;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.commandline.Arg;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A representation of a CLI option as a Maven option
  */
 public class MavenOption {
+    /** The pattern to match CLI options in text */
+    private static final Pattern pattern = Pattern.compile( "\\-(\\-[a-z0-9]+){1,}");
     /** The CLI that the Maven option is wrapping */
     private final Option option;
     /** The Maven name for the option */
     private final String name;
+
+    private static final Map<Arg,String> DEFAULT_VALUES = new HashMap<>();
+
+    static {
+        DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
+    }
 
     /**
      * Constructor.
@@ -57,19 +72,33 @@ public class MavenOption {
      * @return the description or an empty string.
      */
     public String getDescription() {
-        return StringUtils.defaultIfEmpty(option.getDescription(), "")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
+        return cleanup(option.getDescription());
+    }
+
+    private String getPropertyValue() {
+        StringBuilder sb = new StringBuilder("A ");
+        if (option.hasArg()) {
+            if (option.hasArgs()) {
+                sb.append("collection of ");
+            }
+            if (option.getArgName() == null) {
+                sb.append("String");
+            } else {
+                sb.append(option.getArgName());
+            }
+            sb.append(option.hasArgs() ? "s." : ".");
+        } else {
+            sb.append("boolean value.");
+        }
+        return sb.toString();
     }
 
     /**
      * Returns the value as an POM xml node.
-     *
-     * @param value the value
      * @return the pom xml node.
      */
-    public String xmlNode(final String value) {
-        return format("<%1$s>%2$s</%1$s>%n", name, value == null ? "false" : value);
+    public String xmlNode() {
+        return format("<%1$s>", name);
     }
 
     /**
@@ -81,6 +110,11 @@ public class MavenOption {
     public Class<?> getType() {
         return option.hasArg() ? ((Class<?>) option.getType()) : boolean.class;
     }
+
+    public String getArgName() {
+        return option.getArgName();
+    }
+
 
     public boolean isDeprecated() {
         return option.isDeprecated();
@@ -101,11 +135,57 @@ public class MavenOption {
      * @return the key value for the CLI argument map.
      */
     public String keyValue() {
-        return "\"" + option.getLongOpt() + "\"";
+        return "\"" + StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt()) + "\"";
     }
 
     public String getDeprecated() {
-        return option.getDeprecated().toString();
+        return  option.isDeprecated() ? cleanup(StringUtils.defaultIfEmpty(option.getDeprecated().toString(), StringUtils.EMPTY)) : StringUtils.EMPTY;
+    }
+
+    private String cleanup(String str) {
+        if (StringUtils.isNotBlank(str)) {
+            Map<String, String> maps = new HashMap<>();
+            Matcher matcher = pattern.matcher(str);
+            while (matcher.find()) {
+                String key = matcher.group();
+                String optKey = key.substring(2);
+                Optional<Option> maybeResult = Arg.getOptions().getOptions().stream().filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
+                if (maybeResult.isPresent()) {
+                    MavenOption replacement = new MavenOption(maybeResult.get());
+                    maps.put(key, replacement.xmlNode());
+                }
+            }
+            for (Map.Entry<String, String> entry : maps.entrySet()) {
+                str = str.replaceAll(Pattern.quote(format("%s", entry.getKey())), entry.getValue());
+            }
+        }
+        return str;
+    }
+
+    public String getDefaultValue() {
+        Arg arg = Arg.findArg(option);
+        String result = DEFAULT_VALUES.get(arg);
+        if (result == null) {
+            result = arg.defaultValue();
+        }
+        return result;
+    }
+    
+    public String getPropertyAnnotation(String fname) {
+        StringBuilder sb = new StringBuilder("@Parameter");
+        String property = option.hasArgs() ? null : format("property = \"rat.%s\"", fname);
+        String defaultValue = getDefaultValue();
+        if (property != null || defaultValue != null) {
+            sb.append("(");
+            if (property != null) {
+                sb.append(property).append(defaultValue != null ? ", " : StringUtils.EMPTY);
+            }
+            if (defaultValue != null) {
+                sb.append(format("defaultValue = \"%s\"", defaultValue));
+            }
+            sb.append(")");
+        }
+        return sb.toString();
     }
 
     public String getMethodSignature(final String indent, final boolean multiple) {
@@ -115,16 +195,15 @@ public class MavenOption {
         }
         String fname = WordUtils.capitalize(name);
         String args = option.hasArg() ? "String" : "boolean";
-        String parmArgs = "";
         if (multiple) {
-            fname = fname + "s";
+            if (!(fname.endsWith("s") || fname.endsWith("Approved") || fname.endsWith("Denied"))) {
+                fname = fname + "s";
+            }
             args = args + "[]";
-        } else {
-            parmArgs = format("(property = \"rat.%s\")", name);
         }
 
-        return sb.append(format("%1$s@Parameter%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
-                        indent, name, fname, args, parmArgs))
+        return sb.append(format("%1$s%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
+                        indent, name, fname, args, getPropertyAnnotation(fname)))
                 .toString();
     }
 

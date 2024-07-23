@@ -96,7 +96,7 @@
               <exclude>src/test/resources/unit/**</exclude>
               <exclude>**/*.iml</exclude>
               <!-- these files are generated -->
-              <exclude>src/site/apt/plugin_help.txt</exclude>
+              <exclude>src/site/apt/argument_types.txt</exclude>
               <!-- These files have a custom license header (non Apache) to test validating custom licenses -->
               <exclude>src/it/CustomLicense/src/**/</exclude>
               <!-- RAT-171: needs to be added since SCM ignores are only parsed in project root -->
@@ -161,11 +161,10 @@
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.apache.rat.tools.Naming</mainClass>
+              <mainClass>org.apache.rat.tools.ArgumentTypes</mainClass>
               <classpathScope>test</classpathScope>
               <arguments>
-                <argument>--maven</argument>
-                <argument>${project.basedir}/src/site/apt/plugin_help.txt</argument>
+                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
               </arguments>
             </configuration>
           </execution>

@@ -88,7 +88,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the licenses to accept. By default, these are added to the default
-     * licenses, unless you set {@link #addDefaultLicenseMatchers} to false.
+     * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false.  Arguments should be
+     * file name of &lt;Configs&gt; file structure.
      *
      * @since 0.8
      */
@@ -101,7 +102,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Whether to add the default list of licenses.
-     * @deprecated use noDefaultLicenses (note the change of state)
+     * @deprecated Deprecated for removal since 0.17: Use &lt;configurationNoDefaults&gt; instead (note the change of state).
      */
     @Deprecated
     @Parameter(property = "rat.addDefaultLicenses", name = "addDefaultLicenses")
@@ -129,15 +130,21 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * @since 0.8
      * @deprecated use LicenseFamily section of configuration file.
      */
-    @Deprecated // remove in v1.0
+    @Deprecated
     @Parameter
     private SimpleLicenseFamily[] licenseFamilies;
 
-    /** The list of license definitions */
+    /** The list of license definitions.
+     * @deprecated Deprecated for removal since 0.17: Use &lt;Config&gt; instead.  See Config file documentation.
+     */
+    @Deprecated
     @Parameter
     private Object[] licenses;
 
-    /** The list of family definitions */
+    /** The list of family definitions.
+     * @deprecated use &lt;Configs&gt;
+     */
+    @Deprecated
     @Parameter
     private Family[] families;
 
@@ -156,10 +163,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     private String includesFile;
 
     /**
-     * Specifies the include files character set. Defaults
-     * to @code{${project.build.sourceEncoding}), or @code{UTF-8}.
+     * Specifies the include files character set.
      */
-    @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding}")
+    @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding} or UTF-8 if not specified")
     private String includesFileCharset;
 
     /** The list of excluded file names */
@@ -181,10 +187,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     }
 
     /**
-     * Specifies the include files character set. Defaults
-     * to @code{${project.build.sourceEncoding}), or @code{UTF-8}.
+     * Specifies the include files character set.
      */
-    @Parameter(property = "rat.excludesFileCharset", defaultValue = "${project.build.sourceEncoding}")
+    @Parameter(property = "rat.excludesFileCharset", defaultValue = "${project.build.sourceEncoding} or UTF-8 if not set")
     private String excludesFileCharset;
 
     /**

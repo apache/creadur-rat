@@ -37,8 +37,7 @@ public class HelpTest {
     public void verifyAllOptionsListed() {
         Options opts = OptionCollection.buildOptions();
         StringWriter out = new StringWriter();
-        Help help = new Help();
-        help.printUsage(new PrintWriter(out), opts);
+        new Help(out).printUsage(opts);
 
         String result = out.toString();
 
@@ -57,8 +56,7 @@ public class HelpTest {
         Options opts = OptionCollection.buildOptions();
         Set<String> argTypes = OptionCollection.getArgumentTypes().keySet();
         StringWriter out = new StringWriter();
-        Help help = new Help();
-        help.printUsage(new PrintWriter(out), opts);
+        new Help(out).printUsage(opts);
 
         String result = out.toString();
         System.out.println(result);

@@ -71,7 +71,7 @@ public final class Licenses extends AbstractHelp {
     }
 
     /**
-     * Piints the text indented and wrapped
+     * Prints the text indented and wrapped
      * @param indent the number of spaces to indent.
      * @param text the text to write.
      */

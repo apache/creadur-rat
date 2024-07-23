@@ -39,11 +39,18 @@ import org.apache.rat.report.claim.ClaimStatistic;
 
 /**
  * Run Rat to perform a violation check.
+ * <p>
+ *     This documentation mentiones data types for some of the arguments.  An <a href="data_types.html">explanation of the data types</a> is included
+ *     in ths documentation package.
+ * </p>
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
 
-    /** The default output file if no other is specified. */
+    /** The default output file if no other is specified.
+     * @deprecated Use &lt;outputFile&gt; instead.
+     */
+    @Deprecated
     @Parameter(defaultValue = "${project.build.directory}/rat.txt")
     private File defaultReportFile;
 
@@ -90,7 +97,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     /**
      * Whether to add license headers; possible values are {@code forced},
      * {@code true}, and {@code false} (default).
-     * @deprecated use addLicense and forced
+     * @deprecated use &lt;editLicense&gt; and &lt;editOverwrite&gt;
      */
     @Deprecated
     @Parameter(property = "rat.addLicenseHeaders")
@@ -112,9 +119,8 @@ public class RatCheckMojo extends AbstractRatMojo {
     }
 
     /**
-     * Copyright message to add to license headers. This option is ignored, unless
-     * {@code addLicenseHeaders} is set to {@code true}, or {@code forced}.
-     * @deprecated use copyright
+     * Copyright message to add to license headers.
+     * @deprecated Deprecated for removal since 0.17: Use &lt;editCopyright&gt; instead.
      */
     @Deprecated
     @Parameter(property = "rat.copyrightMessage")
