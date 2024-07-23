@@ -55,11 +55,11 @@ Developing Rat
 
  Browse {{{./xref/index.html}the source}}.
 
- Read {{{./apidocs/index.html}the JavaDocs}}.
-
 +------------------------------------------+
 git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 +------------------------------------------+
+
+ Read {{{./apidocs/index.html}the JavaDocs}}.
 
  Build with {{{https://maven.apache.org/} Apache Maven}}
 
