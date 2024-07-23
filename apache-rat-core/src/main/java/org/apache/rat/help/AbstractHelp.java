@@ -41,7 +41,7 @@ import static java.lang.String.format;
  */
 public abstract class AbstractHelp {
     /** Text to display when multiple options are supported */
-    private static final String END_OF_OPTION_MSG = " Multiple values may be specified.  " +
+    private static final String END_OF_OPTION_MSG = " Multiple values may be specified. " +
             "Note that '--' or a following option is required when using this parameter.";
 
     /** The width of the help report in chars. */
