@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AntGeneratorTest {
@@ -32,5 +33,13 @@ public class AntGeneratorTest {
         AntGenerator.main( new String[]{"com.example", "AntExample", "target"});
         File f = new File("target/com/example/AntExample.java");
         assertTrue(f.exists());
+    }
+
+    @Test
+    public void testGenerationWithoutParameters() throws IOException {
+        assertDoesNotThrow(() -> AntGenerator.main(null));
+        assertDoesNotThrow(() -> AntGenerator.main(new String[]{}));
+        assertDoesNotThrow(() -> AntGenerator.main(new String[]{"one"}));
+        assertDoesNotThrow(() -> AntGenerator.main(new String[]{"one", "two"}));
     }
 }

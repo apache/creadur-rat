@@ -42,5 +42,4 @@ public class MavenGeneratorTest {
         assertDoesNotThrow(() -> MavenGenerator.main(new String[]{"one"}));
         assertDoesNotThrow(() -> MavenGenerator.main(new String[]{"one", "two"}));
     }
-
 }
