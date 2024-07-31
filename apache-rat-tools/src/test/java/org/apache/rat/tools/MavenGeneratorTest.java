@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MavenGeneratorTest {
@@ -33,4 +34,13 @@ public class MavenGeneratorTest {
         File f = new File("target/com/example/MavenExample.java");
         assertTrue(f.exists());
     }
+
+    @Test
+    public void testGenerationWithoutParameters() throws IOException {
+        assertDoesNotThrow(() -> MavenGenerator.main(null));
+        assertDoesNotThrow(() -> MavenGenerator.main(new String[]{}));
+        assertDoesNotThrow(() -> MavenGenerator.main(new String[]{"one"}));
+        assertDoesNotThrow(() -> MavenGenerator.main(new String[]{"one", "two"}));
+    }
+
 }

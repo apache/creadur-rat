@@ -95,6 +95,11 @@ public final class MavenGenerator {
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {
+        if(args == null || args.length < 3) {
+            System.err.println("At least three arguments are required: package, simple class name, target directory.");
+            return;
+        }
+
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
