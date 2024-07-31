@@ -23,15 +23,22 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NamingTest {
     @Test
-    public void testNaming() throws IOException {
+    public void testNamingGeneration() throws IOException {
         File d = new File("target/com/example");
         d.mkdirs();
-        Naming.main( new String[]{"target/com/example/NamingExample.csv"});
+        Naming.main(new String[]{"target/com/example/NamingExample.csv"});
         File f = new File("target/com/example/NamingExample.csv");
         assertTrue(f.exists());
+    }
+
+    @Test
+    public void testNamingGenerationWithoutParameters() throws IOException {
+        assertDoesNotThrow(() -> Naming.main(null));
+        assertDoesNotThrow(() -> Naming.main(new String[]{}));
     }
 }

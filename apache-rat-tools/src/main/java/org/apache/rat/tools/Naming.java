@@ -45,8 +45,14 @@ public final class Naming {
      *    <li>the name of the output file with path if desired</li>
      * </ol>
      * @throws IOException on error
+     * @param args arguments, only 1 is required.
      */
     public static void main(final String[] args) throws IOException {
+        if(args == null || args.length < 1) {
+            System.err.println("At least one argument is required: path to file is missing.");
+            return;
+        }
+
         Options options = OptionCollection.buildOptions();
         Predicate<Option> mavenFilter = MavenGenerator.getFilter();
         Predicate<Option> antFilter = AntGenerator.getFilter();
