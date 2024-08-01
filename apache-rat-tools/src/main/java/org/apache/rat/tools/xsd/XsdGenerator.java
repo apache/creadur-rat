@@ -118,7 +118,7 @@ public class XsdGenerator {
      * @param output the output to write to.
      * @throws IOException on write error.
      */
-    public void write(Writer output) throws IOException {
+    public void write(final Writer output) throws IOException {
         writer = new XsdWriter(output).init();
 
         writer.open(Type.ELEMENT, "name", XMLConfig.ROOT)
