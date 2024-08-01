@@ -109,7 +109,18 @@ public interface IXmlWriter extends AutoCloseable {
      * or after the first element has been closed
      */
     IXmlWriter closeElement() throws IOException;
-    
+
+    /**
+     * Closes all open elements back to and includind the named element.
+     *
+     * @param name  the last element to close
+     * @return this object
+     * @throws OperationNotAllowedException
+     * if called before any call to {@link #openElement}
+     * or after the first element has been closed
+     */
+    IXmlWriter closeElement(CharSequence name) throws IOException;
+
     /**
      * Closes all pending elements.
      * When appropriate, resources are also flushed and closed.

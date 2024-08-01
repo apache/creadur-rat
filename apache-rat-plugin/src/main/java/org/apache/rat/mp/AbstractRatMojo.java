@@ -164,8 +164,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the include files character set.
+     * if ${project.build.sourceEncoding} is not set defaults to UTF-8
      */
-    @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding} or UTF-8 if not specified")
+    @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String includesFileCharset;
 
     /** The list of excluded file names */
@@ -188,8 +189,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the include files character set.
+     * if ${project.build.sourceEncoding} is not set defaults to UTF-8
      */
-    @Parameter(property = "rat.excludesFileCharset", defaultValue = "${project.build.sourceEncoding} or UTF-8 if not set")
+    @Parameter(property = "rat.excludesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String excludesFileCharset;
 
     /**

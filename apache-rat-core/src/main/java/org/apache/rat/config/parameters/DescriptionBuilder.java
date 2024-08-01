@@ -120,6 +120,20 @@ public class DescriptionBuilder {
         ConfigComponent configComponent = clazz.getAnnotation(ConfigComponent.class);
         return configComponent == null ? findConfigComponent(clazz.getSuperclass()) : configComponent;
     }
+
+    public static Class<?> getBuiltClass(Class<? extends IHeaderMatcher.Builder> clazz) {
+        try {
+            MatcherBuilder matcherBuilder = clazz.getAnnotation(MatcherBuilder.class);
+            if (matcherBuilder == null) {
+                return clazz.getMethod("build").getReturnType();
+            } else {
+                return matcherBuilder.value();
+            }
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new IllegalStateException("the 'build' method of the Builder interface must always be public");
+        }
+    }
+
     /**
      * Create a description for a class.
      * @param clazz the class to build the description for.
@@ -128,6 +142,9 @@ public class DescriptionBuilder {
     public static Description buildMap(Class<?> clazz) {
         if (clazz == IHeaderMatcher.class) {
             throw new ImplementationException("'clazz' parameter must not be IHeaderMatcher.class but may be a child of it"); 
+        }
+        if (IHeaderMatcher.Builder.class.isAssignableFrom(clazz)) {
+            clazz = getBuiltClass((Class<IHeaderMatcher.Builder>) clazz);
         }
         ConfigComponent configComponent = findConfigComponent(clazz);
         if (configComponent == null) {

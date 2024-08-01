@@ -173,7 +173,7 @@ public class OptionMojoTest   {
                 assertThat(ds.getExcludedList()).contains("justbaz");
                 assertThat(ds.getIncludedList()).contains("notbaz");
             } catch (IOException | MojoExecutionException e) {
-                fail(e.getMessage());
+                fail(e.getMessage(), e);
             }
         }
 

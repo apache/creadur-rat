@@ -628,6 +628,39 @@ public final class XmlWriter implements IXmlWriter {
     }
 
     /**
+     * Closes the last element written.
+     *
+     * @return this object
+     * @throws OperationNotAllowedException if called before any call to
+     * {@link #openElement} or after the first element has been closed
+     */
+    @Override
+    public IXmlWriter closeElement(CharSequence name) throws IOException {
+        if (elementNames.isEmpty()) {
+            if (elementsWritten) {
+                throw new OperationNotAllowedException("Root element has already been closed.");
+            }
+            throw new OperationNotAllowedException("Close called before an element has been opened.");
+        }
+        CharSequence elementName = null;
+        while (!name.equals(elementName)) {
+            elementName = elementNames.pop();
+            if (inElement) {
+                writer.write('/');
+                writer.write('>');
+            } else {
+                writer.write('<');
+                writer.write('/');
+                rawWrite(elementName);
+                writer.write('>');
+            }
+            inElement = false;
+        }
+        writer.flush();
+        return this;
+    }
+
+    /**
      * Closes all pending elements. When appropriate, resources are also flushed and
      * closed. No exception is raised when called upon a document whose root element
      * has already been closed.

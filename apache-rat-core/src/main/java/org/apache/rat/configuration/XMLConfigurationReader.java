@@ -354,9 +354,9 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         final AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(matcherNode.getNodeName());
 
         try {
-            final Description description = DescriptionBuilder.buildMap(builder.builtClass());
+            final Description description = DescriptionBuilder.buildMap(builder.getClass());
             if (description == null) {
-                throw new ConfigurationException(String.format("Unable to build description for %s", builder.builtClass()));
+                throw new ConfigurationException(String.format("Unable to build description for %s", builder.getClass()));
             }
             processBuilderParams(description, builder);
 
@@ -604,11 +604,6 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
             IHeaderMatcher result = delegate.build();
             matchers.put(result.getId(), result);
             return result;
-        }
-
-        @Override
-        public Class<?> builtClass() throws SecurityException {
-            return delegate.builtClass();
         }
 
         @Override

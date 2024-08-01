@@ -16,27 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.mp;
+package org.apache.rat.config.parameters;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.Builder;
-import org.apache.rat.config.parameters.MatcherBuilder;
-import org.apache.rat.configuration.builders.AllBuilder;
 
-public class All extends EnclosingMatcher implements IHeaderMatcher.Builder {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    AllBuilder builder = Builder.all();
+/**
+ * An annotation that marks a configuration component.
+ * 
+ */
+@Target({ElementType.FIELD, ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MatcherBuilder {
+    /**
+     * The common name for the component. If not specified the name of the field or class is used.
+     * @return the component name.
+     */
+    Class<? extends IHeaderMatcher> value();
 
-    public All() {
-    }
-
-    @Override
-    protected void setMatcher(IHeaderMatcher.Builder builder) {
-        this.builder.addEnclosed(builder);
-    }
-
-    @Override
-    public IHeaderMatcher build() {
-        return builder.build();
-    }
 }

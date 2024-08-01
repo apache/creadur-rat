@@ -53,7 +53,7 @@ public class TextBuilderTest {
         TextBuilder underTest = new TextBuilder();
         attributes.put("id", "IDValue");
 
-        Description description = DescriptionBuilder.buildMap(underTest.builtClass());
+        Description description = DescriptionBuilder.buildMap(underTest.getClass());
         description.setChildren(underTest, attributes);
         description.setChild(underTest, "simpleText", "example text");
 
@@ -83,7 +83,7 @@ public class TextBuilderTest {
             IllegalArgumentException, InvocationTargetException {
         TextBuilder underTest = new TextBuilder();
 
-        Description description = DescriptionBuilder.buildMap(underTest.builtClass());
+        Description description = DescriptionBuilder.buildMap(underTest.getClass());
         description.setChildren(underTest, attributes);
         description.setChild(underTest, "simpleText", "exampletext");
 

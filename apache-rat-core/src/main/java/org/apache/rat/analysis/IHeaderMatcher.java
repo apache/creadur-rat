@@ -85,24 +85,20 @@ public interface IHeaderMatcher {
          */
         IHeaderMatcher build();
 
-        /**
-         * Gets the class that is build by this builder.
-         * @return The class that is build by this builder.
-         */
-        default Class<?> builtClass() throws SecurityException {
-            try {
-                return this.getClass().getMethod("build").getReturnType();
-            } catch (NoSuchMethodException | SecurityException e) {
-                throw new IllegalStateException("the 'build' method of the Builder interface must always be public");
-            }
-        }
+//        /**
+//         * Gets the class that is build by this builder.
+//         * @return The class that is build by this builder.
+//         */
+//        default Class<?> builtClass() throws SecurityException {
+//            return DescriptionBuilder.getBuiltClass(this.getClass());
+//        }
 
         /**
          * Gets the Description for this builder.
          * @return The description of the builder 
          */
         default Description getDescription() {
-            Class<?> clazz = builtClass();
+            Class<?> clazz = DescriptionBuilder.getBuiltClass(this.getClass());
             if (clazz == IHeaderMatcher.class) {
                 throw new ImplementationException(String.format(
                         "Class %s must implement buildClass() method to return a child class of IHeaderMatcher", 

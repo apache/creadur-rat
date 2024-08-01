@@ -56,6 +56,13 @@
       <item name="With Maven" href="apache-rat-plugin/index.html"/>
     </menu>
 
+    <menu name="Configuring Rat" inherit="bottom">
+      <item name="Defining New Licenses" href="license_def.html"/>
+      <item name="Option Name Cross Reference" href="apache-rat/name_xref.html" />
+      <item name="Default Licenses, etc" href="apache-rat/default_licenses.html" />
+    </menu>
+
+
     <menu name="Apache Creadur&#8482;" inherit="bottom">
       <item name='Creadur Project Home' href="https://creadur.apache.org"/>
       <item name='Apache Tentacles' href="https://creadur.apache.org/tentacles"/>

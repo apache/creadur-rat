@@ -174,7 +174,7 @@ public class MavenOption {
     public String getPropertyAnnotation(String fname) {
         StringBuilder sb = new StringBuilder("@Parameter");
         String property = option.hasArgs() ? null : format("property = \"rat.%s\"", fname);
-        String defaultValue = getDefaultValue();
+        String defaultValue = option.isDeprecated() ? null : getDefaultValue();
         if (property != null || defaultValue != null) {
             sb.append("(");
             if (property != null) {

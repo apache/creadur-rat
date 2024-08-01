@@ -125,18 +125,16 @@ How to define licenses in Apache Rat
  </rat-config>
 +------------------------------------------+
 
+* Reading multiple configuration files.
+
+ Multiple configuration files can be read by using the <<<--config>>> argument.  Later definitions override earlier definitions.
+
+
 * Listing components
 
- All the components (Licenses and Matchers) defined in the system can be displayed using the Documentation
- tool.  Download the apache-rat-tools-${project.version}.jar and run the tool execute:
+ All the defined components (Licenses, License Families, and Matchers) defined in the system can be displayed using the <<<--help-licenses>>>
+ to argument.  This will produce a textual report of all the components.
 
-+------------------------------------------+
-java -cp apache-rat-${project.version}.jar:apache-rat-tools-${project.version} org.apache.rat.tools.Documentation
-+------------------------------------------+
-
- The tool take the same arguments as the standard Rat CLI, so additional license files can be defined.
- To display help for the tool execute 
-
-+------------------------------------------+
-java -cp apache-rat-${project.version}.jar:apache-rat-tools-${project.version} org.apache.rat.tools.Documentation --help
-+------------------------------------------+ 
+ License definitions and license family definitions can be added to the XML output by using the <<<--output-licenses>>> and <<<--output-families>>> options.
+ these options output directly to the XML and are ignored by the standard XSLT reports.  To see the output either a custom XSLT will need to be
+ created or use the <<<--output-style xml>>> option.

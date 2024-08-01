@@ -146,7 +146,7 @@
             </goals>
             <configuration>
               <executable>java</executable>
-              <outputFile>${project.basedir}/../src/site/apt/naming_help.txt</outputFile>
+              <outputFile>${project.basedir}/src/site/apt/name_xref.txt</outputFile>
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
@@ -165,7 +165,7 @@
             </goals>
             <configuration>
               <executable>java</executable>
-              <outputFile>${project.basedir}/../src/site/apt/license_help.txt</outputFile>
+              <outputFile>${project.basedir}/src/site/apt/default_licenses.txt</outputFile>
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>

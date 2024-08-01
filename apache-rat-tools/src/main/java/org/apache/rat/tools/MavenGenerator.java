@@ -193,6 +193,12 @@ public final class MavenGenerator {
                     .append(option.getMethodSignature("    ", option.hasArgs())).append(" {").append(System.lineSeparator())
                     .append(getBody(option))
                     .append("    }").append(System.lineSeparator());
+            if (option.hasArgs()) {
+                writer.append(getComment(option))
+                        .append(option.getMethodSignature("    ", false)).append(" {").append(System.lineSeparator())
+                        .append(getBody(option))
+                        .append("    }").append(System.lineSeparator());
+            }
         }
     }
 
