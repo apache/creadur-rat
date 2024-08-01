@@ -174,6 +174,7 @@ public final class Naming {
         columns.add(descriptionFunction.apply(option));
         columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
         columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
+        columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
         return columns;
     }
 
