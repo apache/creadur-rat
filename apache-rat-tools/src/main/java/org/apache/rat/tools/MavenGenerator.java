@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.rat.tools;
 
 import static java.lang.String.format;
@@ -27,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -52,13 +52,19 @@ public final class MavenGenerator {
     private static final Map<String, String> RENAME_MAP = new HashMap<>();
 
     static {
-        RENAME_MAP.put("licenses", "config");
+        //RENAME_MAP.put("licenses", "config");
         RENAME_MAP.put("addLicense", "add-license");
     }
     /**
      * List of CLI Options that are not supported by Maven.
      */
-    private static final List<Option> MAVEN_FILTER_LIST = Arrays.asList(OptionCollection.HELP, OptionCollection.DIR);
+    private static final List<Option> MAVEN_FILTER_LIST = new ArrayList<>();
+
+    static {
+        MAVEN_FILTER_LIST.addAll(Arg.DIR.group().getOptions());
+        MAVEN_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
+        MAVEN_FILTER_LIST.add(OptionCollection.HELP);
+    }
 
     /**
      * Filter to remove Options not supported by Maven.
@@ -89,6 +95,11 @@ public final class MavenGenerator {
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {
+        if(args == null || args.length < 3) {
+            System.err.println("At least three arguments are required: package, simple class name, target directory.");
+            return;
+        }
+
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
@@ -111,6 +122,9 @@ public final class MavenGenerator {
                         for (Map.Entry<String, String> entry : RENAME_MAP.entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
+                        for (Option option : MAVEN_FILTER_LIST) {
+                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt())));
+                        }
                         break;
                     case "${methods}":
                         writeMethods(writer, options);
@@ -124,6 +138,11 @@ public final class MavenGenerator {
                     case "${class}":
                         writer.append(format("public abstract class %s extends AbstractMojo {%n", className));
                         break;
+                    case "${commonArgs}":
+                        try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
+                            IOUtils.copy(argsTpl, writer, StandardCharsets.UTF_8);
+                        }
+                        break;
                     default:
                         writer.append(line).append(System.lineSeparator());
                         break;
@@ -133,9 +152,8 @@ public final class MavenGenerator {
     }
 
     private static String getComment(final MavenOption option) {
-        String desc = option.getDescription().replace("<", "&lt;").replace(">", "&gt;");
         StringBuilder sb = new StringBuilder()
-            .append(format("    /**%n     * %s%n     * @param %s the argument.%n", desc, option.getName()));
+            .append(format("    /**%n     * %s%n     * @param %s the argument.%n", option.getDescription(), option.getName()));
         if (option.isDeprecated()) {
             sb.append(format("     * %s%n     * @deprecated%n", option.getDeprecated()));
         }
@@ -145,9 +163,14 @@ public final class MavenGenerator {
     private static void writeMethods(final FileWriter writer, final List<MavenOption> options) throws IOException {
         for (MavenOption option : options) {
             writer.append(getComment(option))
-                    .append(option.getMethodSignature("    ")).append(" {").append(System.lineSeparator())
+                    .append(option.getMethodSignature("    ", false)).append(" {").append(System.lineSeparator())
                     .append(getBody(option))
                     .append("    }").append(System.lineSeparator());
+            if (option.hasArgs()) {
+                writer.append(option.getMethodSignature("    ", true)).append(" {").append(System.lineSeparator())
+                        .append(getBody(option))
+                        .append("    }").append(System.lineSeparator());
+            }
         }
     }
 

@@ -18,7 +18,7 @@
  */
 package org.apache.rat.configuration;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.SortedSet;
 
 import org.apache.rat.license.ILicense;
@@ -30,29 +30,25 @@ import org.apache.rat.utils.Log;
  */
 public interface LicenseReader {
     /**
-     * Adds a URL to the set of files to be read.
-     * 
-     * @param url the URL to read.
+     * Adds an URI to the set of files to be read.
+     * @param uri the URI to read.
      */
-    void addLicenses(URL url);
+    void addLicenses(URI uri);
 
     /**
      * Reads the configuration and extracts instances of ILicense.
-     * 
      * @return A collection of ILicense.
      */
     SortedSet<ILicense> readLicenses();
 
     /**
      * Reads the configuration and extracts instances of ILicenseFamily.
-     * 
      * @return A collection of ILicenseFamily.
      */
     SortedSet<ILicenseFamily> readFamilies();
 
     /**
      * Reads the configuration and extracts the list of approved licenses.
-     * 
      * @return The list of approved licenses specified in the configuration or an
      * empty list if none specified.
      */

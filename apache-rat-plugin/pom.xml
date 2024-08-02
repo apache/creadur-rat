@@ -146,6 +146,7 @@
         </executions>
         <configuration>
           <mainClass>org.apache.rat.tools.MavenGenerator</mainClass>
+          <!-- tools are in test scope only.  We don't want them packaged with plugin -->
           <classpathScope>test</classpathScope>
           <arguments>
             <argument>org.apache.rat.plugin</argument>
@@ -220,18 +221,16 @@
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
+    <!-- rat tools in test scope so that it does not get bundles into the plugin -->
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tools</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
-      <version>${project.version}</version>
       <type>test-jar</type>
       <classifier>tests</classifier>
       <scope>test</scope>

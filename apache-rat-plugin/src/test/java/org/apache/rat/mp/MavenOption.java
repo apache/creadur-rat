@@ -86,6 +86,6 @@ public class MavenOption {
      * @return the key value for the CLI argument map.
      */
     public String keyValue() {
-        return "--" + option.getLongOpt();
+        return option.getLongOpt();
     }
 }

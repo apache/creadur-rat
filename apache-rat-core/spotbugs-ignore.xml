@@ -23,22 +23,40 @@
     <Class name="org.apache.rat.Report"/>
     <Bug pattern="DM_DEFAULT_ENCODING"/>
   </Match>
+
   <Match>
     <!--
-    Convenience constructors that allow setting a charset are not available in Java8 for FileWriter.
+    Convenience constructors that allow setting a charset are not available in Java8 for PrintStream.
   -->
     <Class name="org.apache.rat.annotation.AbstractLicenseAppender"/>
     <Bug pattern="DM_DEFAULT_ENCODING"/>
   </Match>
+
   <Match>
-    <!--
-    Convenience constructors that allow setting a charset are not available in Java8 for FileReader.
-  -->
-    <Class name="org.apache.rat.document.impl.FileDocument"/>
-    <Bug pattern="DM_DEFAULT_ENCODING"/>
+    <Bug pattern='PATH_TRAVERSAL_IN'/>
   </Match>
+
   <Match>
-    <Class name="org.apache.rat.document.impl.MonolithicFileDocument"/>
-    <Bug pattern="DM_DEFAULT_ENCODING"/>
+    <Bug pattern='EI_EXPOSE_REP'/>
+  </Match>
+
+  <Match>
+    <Class name="org.apache.rat.configuration.XMLConfigurationReader"/>
+    <Bug pattern='XXE_DOCUMENT'/>
+  </Match>
+
+  <Match>
+    <Class name="org.apache.rat.Reporter"/>
+    <Bug pattern='XXE_DOCUMENT'/>
+  </Match>
+
+  <Match>
+    <Class name="org.apache.rat.Reporter"/>
+    <Bug pattern='XXE_DTD_TRANSFORM_FACTORY'/>
+  </Match>
+
+  <Match>
+    <Class name="org.apache.rat.Reporter"/>
+    <Bug pattern='XXE_XSLT_TRANSFORM_FACTORY'/>
   </Match>
 </FindBugsFilter>

@@ -31,7 +31,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -40,10 +39,10 @@ import java.util.function.Consumer;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
@@ -69,7 +68,7 @@ public class ReportConfiguration {
         ABSENCE("List licenses found and any unknown licences");
 
         /**
-         * the description of the processing.
+         * Description of the processing
          */
         private final String description;
 
@@ -87,6 +86,9 @@ public class ReportConfiguration {
         }
     }
 
+    /** The LicenseSetFactory for the configuration */
+    private final LicenseSetFactory licenseSetFactory;
+
     /**
      * The set of defined families.
      */
@@ -95,14 +97,7 @@ public class ReportConfiguration {
      * The set of defined licenses
      */
     private final ReportingSet<ILicense> licenses;
-    /**
-     * The set of approved license family categories.
-     */
-    private final SortedSet<String> approvedLicenseCategories;
-    /**
-     * The set of license categories that have are to be removed from consideration.
-     */
-    private final SortedSet<String> removedLicenseCategories;
+
     /**
      * {@code true} if we are adding license headers to the files.
      */
@@ -112,7 +107,7 @@ public class ReportConfiguration {
      */
     private boolean addingLicensesForced;
     /**
-     * The copyright message to add if we are adding headers.  Will be null if we are not
+     * The copyright message to add if we are adding headers. Will be null if we are not
      * adding copyright messages.
      */
     private String copyrightMessage;
@@ -120,10 +115,6 @@ public class ReportConfiguration {
      * The IOSupplier that provides the output stream to write the report to.
      */
     private IOSupplier<OutputStream> out;
-    /**
-     * {@code true} if the report should be styled.  {@code false} if XML should be produced.
-     */
-    private boolean styleReport;
     /**
      * The IOSupplier that provides the stylesheet to style the XML output.
      */
@@ -164,19 +155,18 @@ public class ReportConfiguration {
      * How to process STANDARD document types.
      */
     private Processing standardProcessing;
+
     /**
      * Constructor
      * @param log The Log implementation that messages will be written to.
      */
     public ReportConfiguration(final Log log) {
         this.log = log;
-        families = new ReportingSet<>(LicenseFamilySetFactory.emptyLicenseFamilySet()).setLog(log)
+        families = new ReportingSet<>(new TreeSet<ILicenseFamily>()).setLog(log)
                 .setMsgFormat(s -> String.format("Duplicate LicenseFamily category: %s", s.getFamilyCategory()));
-        licenses = new ReportingSet<>(LicenseSetFactory.emptyLicenseSet()).setLog(log)
+        licenses = new ReportingSet<>(new TreeSet<ILicense>()).setLog(log)
                 .setMsgFormat(s -> String.format("Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
-        approvedLicenseCategories = new TreeSet<>();
-        removedLicenseCategories = new TreeSet<>();
-        styleReport = true;
+        licenseSetFactory = new LicenseSetFactory(families, licenses);
         listFamilies = Defaults.LIST_FAMILIES;
         listLicenses = Defaults.LIST_LICENSES;
         dryRun = false;
@@ -191,7 +181,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Sets the archive processing type.  If not set will default to NOTIFICATION.
+     * Sets the archive processing type. If not set will default to NOTIFICATION.
      * @param archiveProcessing the type of processing archives should have.
      */
     public void setArchiveProcessing(final Processing archiveProcessing) {
@@ -207,7 +197,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Sets the archive processing type.  If not set will default to NOTIFICATION.
+     * Sets the archive processing type. If not set will default to NOTIFICATION.
      * @param standardProcessing the type of processing archives should have.
      */
     public void setStandardProcessing(final Processing standardProcessing) {
@@ -229,7 +219,7 @@ public class ReportConfiguration {
     public void logFamilyCollisions(final Log.Level level) {
         families.setLogLevel(level);
     }
-    
+
     /**
      * Sets the reporting option for duplicate license families.
      * @param state The ReportingSet.Option to use for reporting.
@@ -245,7 +235,7 @@ public class ReportConfiguration {
     public void logLicenseCollisions(final Log.Level level) {
         licenses.setLogLevel(level);
     }
-    
+
     /**
      * Sets the reporting option for duplicate licenses.
      * @param state the ReportingSt.Option to use for reporting.
@@ -253,7 +243,7 @@ public class ReportConfiguration {
     public void licenseDuplicateOption(final ReportingSet.Options state) {
         licenses.setDuplicateOption(state);
     }
-    
+
     /**
      * Set the level of license families that should be output in the XML document.
      * @param filter the license families to list.
@@ -261,11 +251,11 @@ public class ReportConfiguration {
     public void listFamilies(final LicenseFilter filter) {
         listFamilies = filter;
     }
-    
+
     public LicenseFilter listFamilies() {
         return listFamilies;
     }
-    
+
     /**
      * Set the level of licenses that should be output in the XML document.
      * @param filter the licenses to list.
@@ -281,7 +271,7 @@ public class ReportConfiguration {
     public LicenseFilter listLicenses() {
         return listLicenses;
     }
-    
+
     /**
      * Sets the dry run flag.
      * @param state the state for the dry run flag.
@@ -289,7 +279,7 @@ public class ReportConfiguration {
     public void setDryRun(final boolean state) {
         dryRun = state;
     }
-    
+
     /**
      * Returns the state of the dry run flag.
      * @return the state of the dry run flag.
@@ -297,7 +287,7 @@ public class ReportConfiguration {
     public boolean isDryRun() {
         return dryRun;
     }
-    
+
     /**
      * Gets the file name filter for files to ignore.
      * @return The filename filter that identifies files to ignore.
@@ -385,10 +375,9 @@ public class ReportConfiguration {
      * @param defaults The defaults to set.
      */
     public void setFrom(final Defaults defaults) {
-        addLicensesIfNotPresent(defaults.getLicenses(LicenseFilter.ALL));
-        addApprovedLicenseCategories(defaults.getLicenseIds(LicenseFilter.APPROVED));
-        if (isStyleReport() && getStyleSheet() == null) {
-            setStyleSheet(Defaults.getPlainStyleSheet());
+        licenseSetFactory.add(defaults.getLicenseSetFactory());
+        if (getStyleSheet() == null) {
+            setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
     }
 
@@ -426,22 +415,6 @@ public class ReportConfiguration {
     }
 
     /**
-     * Returns {@code true} if the XML report should be styled.
-     * @return {@code true} if the XML report should be styled.
-     */
-    public boolean isStyleReport() {
-        return styleReport;
-    }
-
-    /**
-     * Specifies that the XML report should or should not be styled.
-     * @param styleReport specifies whether the XML report should be styled.
-     */
-    public void setStyleReport(final boolean styleReport) {
-        this.styleReport = styleReport;
-    }
-
-    /**
      * Sets the supplier for the output stream. The supplier may be called multiple
      * times to provide the stream. Suppliers should prepare streams that are
      * appended to and that can be closed. If an {@code OutputStream} should not be
@@ -467,8 +440,11 @@ public class ReportConfiguration {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
-                log.warn("Unable to delete file:" + file);
+                log.warn("Unable to delete file: " + file);
             }
+        }
+        if (!file.getParentFile().mkdirs()) {
+            log.warn("Unable to create directory: " + file.getParentFile());
         }
         setOut(() -> new FileOutputStream(file, true));
     }
@@ -537,7 +513,7 @@ public class ReportConfiguration {
         this.licenses.addAllIfNotPresent(licenses);
         licenses.stream().map(ILicense::getLicenseFamily).forEach(families::addIfNotPresent);
     }
-    
+
     /**
      * Adds a license family to the list of families. Does not add the family to the
      * list of approved licenses.
@@ -567,7 +543,7 @@ public class ReportConfiguration {
      * @param families The license families to add.
      */
     public void addFamilies(final Collection<ILicenseFamily> families) {
-        this.families.addAll(families);
+        families.forEach(this::addApprovedLicenseCategory);
     }
 
     /**
@@ -575,7 +551,7 @@ public class ReportConfiguration {
      * @param approvedILicenseFamily the LicenseFamily to add.
      */
     public void addApprovedLicenseCategory(final ILicenseFamily approvedILicenseFamily) {
-        approvedLicenseCategories.add(approvedILicenseFamily.getFamilyCategory());
+        addApprovedLicenseCategory(approvedILicenseFamily.getFamilyCategory());
     }
 
     /**
@@ -583,7 +559,7 @@ public class ReportConfiguration {
      * @param familyCategory the category to add.
      */
     public void addApprovedLicenseCategory(final String familyCategory) {
-        approvedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
+        licenseSetFactory.addLicenseCategory(familyCategory);
     }
 
     /**
@@ -601,7 +577,7 @@ public class ReportConfiguration {
      * @param familyCategory the category to add.
      */
     public void removeApprovedLicenseCategory(final String familyCategory) {
-        removedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
+        licenseSetFactory.removeLicenseCategory(ILicenseFamily.makeCategory(familyCategory));
     }
 
     /**
@@ -614,15 +590,79 @@ public class ReportConfiguration {
         familyCategory.forEach(this::removeApprovedLicenseCategory);
     }
 
+    public LicenseSetFactory getLicenseSetFactory() {
+        return licenseSetFactory;
+    }
+
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
      * been removed from the approved list it cannot be re-added</em>
      * @return the Sorted set of approved license categories.
      */
-    public SortedSet<String> getApprovedLicenseCategories() {
-        SortedSet<String> result = new TreeSet<>(approvedLicenseCategories);
-        result.removeAll(removedLicenseCategories);
-        return result;
+    public SortedSet<String> getLicenseCategories(final LicenseFilter filter) {
+        return licenseSetFactory.getLicenseCategories(filter);
+    }
+
+    /**
+     * Gets the SortedSet of approved license categories. <em>Once a license has
+     * been removed from the approved list it cannot be re-added</em>
+     * @return the Sorted set of approved license categories.
+     */
+    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+        return licenseSetFactory.getLicenses(filter);
+    }
+
+    /**
+     * Gets the SortedSet of approved license categories. <em>Once a license has
+     * been removed from the approved list it cannot be re-added</em>
+     * @return the Sorted set of approved license categories.
+     */
+    public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
+        return licenseSetFactory.getLicenseIds(filter);
+    }
+
+    /**
+     * Adds an ILicenseFamily to the list of approved licenses.
+     * @param approvedLicense the License to add.
+     */
+    public void addApprovedLicenseId(final ILicense approvedLicense) {
+        addApprovedLicenseId(approvedLicense.getId());
+    }
+
+    /**
+     * Adds a license family category (id) to the list of approved licenses
+     * @param licenseId the license Id to add.
+     */
+    public void addApprovedLicenseId(final String licenseId) {
+        licenseSetFactory.addLicenseId(licenseId);
+    }
+
+    /**
+     * Adds a collection of license family categories to the set of approved license
+     * names.
+     * @param approvedLicenseIds set of approved license IDs.
+     */
+    public void addApprovedLicenseIds(final Collection<String> approvedLicenseIds) {
+        approvedLicenseIds.forEach(this::addApprovedLicenseId);
+    }
+
+    /**
+     * Adds a license family category to the list of approved licenses. <em>Once a
+     * license has been removed from the approved list it cannot be re-added</em>
+     * @param licenseId the license ID to add.
+     */
+    public void removeApprovedLicenseId(final String licenseId) {
+        licenseSetFactory.removeLicenseId(licenseId);
+    }
+
+    /**
+     * Removes a license family category from the list of approved licenses.
+     * <em>Once a license has been removed from the approved list it cannot be
+     * re-added</em>
+     * @param licenseIds the license IDs to remove.
+     */
+    public void removeApprovedLicenseIds(final Collection<String> licenseIds) {
+        licenseIds.forEach(this::removeApprovedLicenseId);
     }
 
     /**
@@ -689,28 +729,6 @@ public class ReportConfiguration {
     }
 
     /**
-     * Gets a set Licenses of depending on the {@code filter} if filter is set:
-     * <ul>
-     * <li>{@code all} - All licenses will be returned.</li>
-     * <li>{@code approved} - Only approved licenses will be returned</li>
-     * <li>{@code none} - No licenses will be returned</li>
-     * </ul>
-     * @param filter The license filter.
-     * @return The set of defined licenses.
-     */
-    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
-        switch (filter) {
-        case ALL:
-            return Collections.unmodifiableSortedSet(licenses);
-        case APPROVED:
-            return new LicenseSetFactory(licenses, getApprovedLicenseCategories()).getLicenses(filter);
-        case NONE:
-        default:
-            return LicenseSetFactory.emptyLicenseSet();
-        }
-    }
-
-    /**
      * Gets a sorted set of ILicenseFamily objects based on {@code filter}. if
      * filter is set:
      * <ul>
@@ -722,7 +740,7 @@ public class ReportConfiguration {
      * @return The set of defined licenses.
      */
     public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
-        return new LicenseFamilySetFactory(families, getApprovedLicenseCategories()).getFamilies(filter);
+        return licenseSetFactory.getLicenseFamilies(filter);
     }
 
     /**
@@ -735,12 +753,6 @@ public class ReportConfiguration {
         }
         if (licenses.isEmpty()) {
             throw new ConfigurationException("You must specify at least one license");
-        }
-        if (styleSheet != null && !isStyleReport()) {
-            logger.accept("Ignoring stylesheet because styling is not selected");
-        }
-        if (styleSheet == null && isStyleReport()) {
-            throw new ConfigurationException("Stylesheet must be specified if report styling is selected");
         }
     }
 

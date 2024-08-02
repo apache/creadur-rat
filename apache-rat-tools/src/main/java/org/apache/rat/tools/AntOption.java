@@ -21,6 +21,7 @@ package org.apache.rat.tools;
 import static java.lang.String.format;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 
 /**
@@ -82,7 +83,18 @@ public class AntOption {
      * @return The key value for the option.
      */
     public String keyValue() {
-        return format("\"--%s\"", option.getLongOpt());
+        return format("\"%s\"", option.getLongOpt());
+    }
+
+    /**
+     * Get the description escaped for XML format.
+     *
+     * @return the description or an empty string.
+     */
+    public String getDescription() {
+        return StringUtils.defaultIfEmpty(option.getDescription(), "")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 
     /**
@@ -93,7 +105,7 @@ public class AntOption {
      */
     public String getComment(final boolean addParam) {
         StringBuilder sb = new StringBuilder()
-                .append(format("    /**%n     * %s%n", option.getDescription().replaceAll("<", "&lt;").replaceAll(">", "&gt;")));
+                .append(format("    /**%n     * %s%n", getDescription()));
         if (option.isDeprecated()) {
             sb.append(format("     * %s%n     * @deprecated%n", option.getDeprecated()));
         }

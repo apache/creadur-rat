@@ -29,14 +29,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
+import org.apache.commons.cli.Option;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
+import org.apache.rat.ReporterTest;
+import org.apache.rat.ReporterTestUtils;
 import org.apache.rat.api.Document;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseFamilySetFactory;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TextUtils;
@@ -55,6 +58,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      * @throws Exception An error occurred while creating the Mojo.
      */
     private RatCheckMojo newRatCheckMojo(String pDir) throws Exception {
+        Arg.reset();
         return (RatCheckMojo) newRatMojo(pDir, "check", false);
     }
 
@@ -86,22 +90,9 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         } else if (mojo instanceof RatCheckMojo) {
             final File ratTxtFile = new File(buildDirectory, "rat.txt");
             FileUtils.write(ratTxtFile, "", UTF_8); // Ensure the output file exists and is empty (rerunning the test will append)
-            mojo.setOut(ratTxtFile.getAbsolutePath());
+            mojo.setOutputFile(ratTxtFile.getAbsolutePath());
         }
         return mojo;
-    }
-
-    /**
-     * Reads the location of the rat text file from the Mojo.
-     *
-     * @param pMojo The configured Mojo.
-     * @return Value of the "reportFile" property.
-     * @throws Exception An error occurred while reading the property.
-     */
-    private File getRatTxtFile(RatCheckMojo pMojo) throws Exception {
-        MavenOption mavenOption = new MavenOption(OptionCollection.OUT);
-        List<String> args = pMojo.getArg(mavenOption.keyValue());
-        return new File(args.get(0));
     }
 
     private String getDir(RatCheckMojo mojo) {
@@ -115,10 +106,10 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testIt1() throws Exception {
 
         final RatCheckMojo mojo = newRatCheckMojo("it1");
-        final File ratTxtFile = getRatTxtFile(mojo);
+        final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = { 
-                RatTestHelpers.documentOut(true, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
-                RatTestHelpers.APACHE_LICENSE,
+                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
+                ReporterTestUtils.APACHE_LICENSE,
                 "Notes: 0", "Binaries: 0", "Archives: 0",
                 "Standards: 1$", "Apache Licensed: 1$", "Generated Documents: 0", "^0 Unknown Licenses" };
 
@@ -137,17 +128,17 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testIt2() throws Exception {
 
         final RatCheckMojo mojo = newRatCheckMojo("it2");
-        final File ratTxtFile = getRatTxtFile(mojo);
+        final File ratTxtFile = mojo.getRatTxtFile();
         final String dir = getDir(mojo);
         final String[] expected = { 
                 "^Files with unapproved licenses:\\s+\\Q" + dir + "src.txt\\E\\s+", 
                 "Notes: 0", 
                 "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
                 "^1 Unknown Licenses", 
-                RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "src.txt") +
-                RatTestHelpers.UNKNOWN_LICENSE,
-                RatTestHelpers.documentOut(true, Document.Type.STANDARD, dir + "pom.xml") +
-                RatTestHelpers.APACHE_LICENSE
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, dir + "src.txt") +
+                ReporterTestUtils.UNKNOWN_LICENSE,
+                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, dir + "pom.xml") +
+                ReporterTestUtils.APACHE_LICENSE
                 };
         try {
             mojo.execute();
@@ -165,15 +156,15 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      */
     public void testIt3() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it3", "check", true);
-        final File ratTxtFile = getRatTxtFile(mojo);
+        final File ratTxtFile = mojo.getRatTxtFile();
         final String dir = getDir(mojo);
         final String[] expected = { "^Files with unapproved licenses:\\s+\\Q" + dir + "src.apt\\E\\s+", "Notes: 0",
                 "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
                 "^1 Unknown Licenses", 
-                RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "src.apt") +
-                RatTestHelpers.UNKNOWN_LICENSE,
-                RatTestHelpers.documentOut(true, Document.Type.STANDARD, dir + "pom.xml") +
-                RatTestHelpers.APACHE_LICENSE
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, dir + "src.apt") +
+                ReporterTestUtils.UNKNOWN_LICENSE,
+                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, dir + "pom.xml") +
+                ReporterTestUtils.APACHE_LICENSE
         };
 
         ReportConfiguration config = mojo.getConfiguration();
@@ -189,19 +180,18 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      */
     public void testIt5() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it5", "check", true);
-        final File ratTxtFile = getRatTxtFile(mojo);
+        final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = { "Notes: 0", "Binaries: 0", "Archives: 0", "Standards: 0$", "Apache Licensed: 0$",
                 "Generated Documents: 0", "^0 Unknown Licenses" };
 
         ReportConfiguration config = mojo.getConfiguration();
         assertFalse("Should not be adding licenses", config.isAddingLicenses());
         assertFalse("Should not be forcing licenses", config.isAddingLicensesForced());
-        assertTrue("Should be styling report", config.isStyleReport());
 
         ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
-        assertTrue(config.getApprovedLicenseCategories().contains(ILicenseFamily.makeCategory("YAL")));
+        assertTrue(config.getLicenseCategories(LicenseFilter.APPROVED).contains(ILicenseFamily.makeCategory("YAL")));
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL");
-        assertNotNull(LicenseFamilySetFactory.search("YAL", config.getLicenseFamilies(LicenseFilter.ALL)));
+        assertNotNull(LicenseSetFactory.familySearch("YAL", config.getLicenseFamilies(LicenseFilter.ALL)));
         ReportConfigurationTest.validateDefaultLicenses(config, "MyLicense", "CpyrT", "RegxT", "SpdxT", "TextT", 
                 "Not", "All", "Any");
         assertTrue(LicenseSetFactory.search("YAL", "MyLicense", config.getLicenses(LicenseFilter.ALL)).isPresent());
@@ -221,13 +211,13 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      */
     public void testRAT_343() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-343");
-        final File ratTxtFile = getRatTxtFile(mojo);
+        final File ratTxtFile = mojo.getRatTxtFile();
         // POM reports AL, BSD and CC BYas BSD because it contains the BSD and CC BY strings
         final String[] expected = { 
-                RatTestHelpers.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
-                RatTestHelpers.APACHE_LICENSE +
-                RatTestHelpers.licenseOut("BSD", "BSD") +
-                RatTestHelpers.licenseOut("CC BY", "Creative Commons Attribution (Unapproved)"),
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
+                ReporterTestUtils.APACHE_LICENSE +
+                ReporterTestUtils.licenseOut("BSD", "BSD") +
+                ReporterTestUtils.licenseOut("CC BY", "Creative Commons Attribution (Unapproved)"),
                 "Notes: 0", "Binaries: 0", "Archives: 0",
                 "Standards: 1$", "Apache Licensed: 1$", "Generated Documents: 0", "^0 Unknown Licenses" };
 
@@ -236,7 +226,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         assertThat(config.isAddingLicenses()).isFalse();
         assertThat(config.isAddingLicensesForced()).isFalse();
         assertThat(config.getCopyrightMessage()).isNull();
-        assertThat(config.isStyleReport()).isTrue();
         assertThat(config.getStyleSheet()).withFailMessage("Stylesheet should not be null").isNotNull();
         assertThat(config.getDirectoriesToIgnore()).withFailMessage("directoriesToIgnore filter should not be null").isNotNull();
         assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
@@ -256,7 +245,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      */
     public void testRAT335GitIgnore() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-335-GitIgnore");
-        final File ratTxtFile = getRatTxtFile(mojo);
+        final File ratTxtFile = mojo.getRatTxtFile();
         final String dir = getDir(mojo);
         final String[] expected = {
             "Notes: 1",
@@ -266,14 +255,14 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             "Apache Licensed: 2$",
             "Generated Documents: 0",
             "^3 Unknown Licenses",
-            RatTestHelpers.documentOut(true, Document.Type.STANDARD, dir + "pom.xml")+
-            RatTestHelpers.APACHE_LICENSE,
-            RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "dir1/dir1.md")+
-                RatTestHelpers.UNKNOWN_LICENSE,
-            RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "dir2/dir2.txt")+
-                RatTestHelpers.UNKNOWN_LICENSE,
-            RatTestHelpers.documentOut(false, Document.Type.STANDARD, dir + "dir3/file3.log")+
-                RatTestHelpers.UNKNOWN_LICENSE,  
+            ReporterTestUtils.documentOut(true, Document.Type.STANDARD, dir + "pom.xml")+
+            ReporterTestUtils.APACHE_LICENSE,
+            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, dir + "dir1/dir1.md")+
+                ReporterTestUtils.UNKNOWN_LICENSE,
+            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, dir + "dir2/dir2.txt")+
+                ReporterTestUtils.UNKNOWN_LICENSE,
+            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, dir + "dir3/file3.log")+
+                ReporterTestUtils.UNKNOWN_LICENSE,  
         };
         try {
             mojo.execute();
@@ -295,26 +284,23 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      */
     public void testRAT362GitIgnore() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-362-GitIgnore");
-        final File ratTxtFile = getRatTxtFile(mojo);
-        final String dir = getDir(mojo);
+        final File ratTxtFile = mojo.getRatTxtFile();
+        final String dirStr = getDir(mojo);
 
-        if (dir.contains(":")) {
+        if (dirStr.contains(":")) {
             // The problem this is testing for cannot happen if there is
             // a Windows drive letter in the name of the directory.
             // Any duplication of a ':' will make it all fail always.
             // So there is no point in continuing this test.
             return;
         }
+        File dir = new File(dirStr);
 
         // Make the target directory for the test file
-        File targetDirectory = new File(dir + dir);
-        if (!targetDirectory.exists()) {
-            assertTrue(targetDirectory.mkdirs());
-        }
-        assertTrue(targetDirectory.isDirectory());
+        assertTrue(dir.isDirectory());
 
         // Create the test file with a content on which it must fail
-        File generatedFile = new File(targetDirectory + "/foo.md");
+        File barFile = new File(dir, "bar.md");
         final String[] expected = {
                 "Notes: 0",
                 "Binaries: 0",
@@ -323,14 +309,10 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 "Apache Licensed: 2$",
                 "Generated Documents: 0",
                 "^1 Unknown Licenses",
-                RatTestHelpers.documentOut(false, Document.Type.STANDARD, generatedFile.getCanonicalPath()) +
-                    RatTestHelpers.UNKNOWN_LICENSE,
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, barFile.getCanonicalPath()) +
+                        ReporterTestUtils.UNKNOWN_LICENSE
         };
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(generatedFile));
-            writer.write("File without a valid license\n");
-            writer.close();
-
             mojo.execute();
             fail("Expected RatCheckException: This check should have failed on the invalid test file");
         } catch (RatCheckException e) {
@@ -338,9 +320,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             assertTrue("report filename was not contained in '" + msg + "'", msg.contains(ratTxtFile.getName()));
             assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase().contains("NULL")));
             ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
-        } finally {
-            // Cleanup
-            assertTrue(generatedFile.delete());
         }
     }
 

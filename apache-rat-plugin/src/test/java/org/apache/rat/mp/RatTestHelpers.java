@@ -51,10 +51,6 @@ import com.google.common.base.Charsets;
  */
 public final class RatTestHelpers {
 
-    public static final String APACHE_LICENSE = licenseOut("AL", "Apache License Version 2.0");
-    public static final String UNKNOWN_LICENSE = licenseOut("?????", "Unknown license (Unapproved)");
-    
-
     /**
      * @param pDir Removes the given directory recursively.
      * @throws IOException in case of errors.
@@ -212,38 +208,6 @@ public final class RatTestHelpers {
         for (String pattern : notIn) {
             TextUtils.assertPatternInTarget(pattern, document);
         }
-    }
-    
-    /**
-     * Defines the expected document string.
-     * @param approved the approved flag.
-     * @param type the document type
-     * @param name the document name.
-     * @return the string to match the document.
-     */
-    public static String documentOut(boolean approved, Type type, String name) {
-        return String.format("^\\Q%s%s %s\\E$", approved ? " " : "!", type.name().substring(0, 1), name);
-    }
-
-    /**
-     * Defines the expected license string.
-     * @param family the license family
-     * @param name the license name
-     * @return the string to match the license.
-     */
-    public static String licenseOut(String family, String name) {
-        return licenseOut(family, family, name);
-    }
-
-    /**
-     * Defines the expected license string.
-     * @param family the license family
-     * @param id the ID for the license.
-     * @param name the license name
-     * @return the string to match the license.
-     */
-    public static String licenseOut(String family, String id, String name) {
-        return String.format("\\s+\\Q%s\\E\\s+\\Q%s\\E\\s+\\Q%s\\E$", family, id, name);
     }
 
 }

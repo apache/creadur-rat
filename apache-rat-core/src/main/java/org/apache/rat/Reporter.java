@@ -29,6 +29,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -49,56 +50,68 @@ import org.w3c.dom.Document;
 
 /**
  * Class that executes the report as defined in a ReportConfiguration and stores
- * the result for later handleing.
+ * the result for later handling.
  */
 public class Reporter {
 
-    /**
-     * Format used for listing license families
-     */
+    /** Format used for listing license families. */
     private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s%n";
 
-    /**
-     * Format used for listing licenses.
-     */
+    /**  Format used for listing licenses. */
     private static final String LICENSE_FORMAT = "%s:\t%s%n\t\t%s%n";
 
-    private final Document document;
-    private final ClaimStatistic statistic;
+    /** The XML output document */
+    private Document document;
+
+    /** Statistics generated as the report was built */
+    private ClaimStatistic statistic;
+
+    /** The configuration for the report */
     private final ReportConfiguration configuration;
 
     /**
      * Create the reporter.
+     *
      * @param configuration the configuration to use.
+     */
+    public Reporter(final ReportConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    /**
+     * Initializes the reporter.
+     * @return this reporter
      * @throws RatException on error.
      */
-    public Reporter(ReportConfiguration configuration) throws RatException {
-        this.configuration = configuration;
-        try {
-            if (configuration.getReportable() != null) {
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                Writer outputWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
-                try (IXmlWriter writer = new XmlWriter(outputWriter)) {
-                    statistic = new ClaimStatistic();
-                    RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
-                    report.startReport();
-                    configuration.getReportable().run(report);
-                    report.endReport();
+    private void init() throws RatException  {
+        if (document == null || statistic == null) {
+            try {
+                if (configuration.getReportable() != null) {
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    Writer outputWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+                    try (IXmlWriter writer = new XmlWriter(outputWriter)) {
+                        statistic = new ClaimStatistic();
+                        RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
+                        report.startReport();
+                        configuration.getReportable().run(report);
+                        report.endReport();
 
-                    InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-                    document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+                        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+                        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+                    }
+                } else {
+                    document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                    statistic = new ClaimStatistic();
                 }
-            } else {
-                document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-                statistic = new ClaimStatistic();
+            }  catch (Exception e) {
+                throw RatException.makeInstance(e);
             }
-        } catch (Exception e) {
-            throw RatException.makeInstance(e);
         }
     }
 
     /**
      * Get the claim statistics from the run.
+     *
      * @return the claim statistics.
      */
     public ClaimStatistic getClaimsStatistic() {
@@ -107,76 +120,45 @@ public class Reporter {
 
     /**
      * Outputs the report using the stylesheet and output specified in the configuraiton.
+     *
      * @throws RatException on error.
      */
     public void output() throws RatException {
-        if (configuration.isStyleReport()) {
-            output(configuration.getStyleSheet(), configuration.getOutput());
-        } else {
-            output(null, configuration.getOutput());
-        }
+        output(configuration.getStyleSheet(), configuration.getOutput());
     }
 
     /**
      * Outputs the report to the specified output useing the optional stylesheet.
+     *
      * @param stylesheet the style sheet to use for XSLT formatting, may be null for XML output.
      * @param output the output stream to write to.
      * @throws RatException one error.
      */
-    public void output(IOSupplier<InputStream> stylesheet, IOSupplier<OutputStream> output) throws RatException {
-        InputStream styleIn = null;
+    public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
+        init();
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
-        try (OutputStream out=output.get()){
-            if (stylesheet != null) {
-                styleIn = stylesheet.get();
-                transformer = tf.newTransformer(new StreamSource(styleIn));
-            } else {
-                transformer = tf.newTransformer();
-                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-                transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            }
-
+        try (OutputStream out = output.get();
+             InputStream styleIn = stylesheet.get();) {
+            transformer = tf.newTransformer(new StreamSource(styleIn));
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new DOMSource(document),
                     new StreamResult(new OutputStreamWriter(out, "UTF-8")));
         } catch (TransformerException | IOException e) {
             throw new RatException(e);
-        } finally {
-            if (styleIn != null) {
-                try {
-                    styleIn.close();
-                } catch (IOException e) {
-                    configuration.getLog().error("Error closing stylesheet", e);
-                }
-            }
-        }
-    }
-
-    /**
-     * lists the license families information on the configured output stream.
-     * 
-     * @param configuration The configuration for the system
-     * @throws IOException if PrintWriter can not be retrieved from configuration.
-     */
-    public static void listLicenseFamilies(ReportConfiguration configuration, LicenseFilter filter) throws IOException {
-        try (PrintWriter pw = configuration.getWriter().get()) {
-            pw.format("Families (%s):%n", filter);
-            configuration.getLicenseFamilies(filter)
-                    .forEach(x -> pw.format(LICENSE_FAMILY_FORMAT, x.getFamilyCategory(), x.getFamilyName()));
-            pw.println();
         }
     }
 
     /**
      * lists the licenses on the configured output stream.
-     * 
      * @param configuration The configuration for the system
      * @throws IOException if PrintWriter can not be retrieved from configuration.
      */
-    public static void listLicenses(ReportConfiguration configuration, LicenseFilter filter) throws IOException {
+    public static void listLicenses(final ReportConfiguration configuration, final LicenseFilter filter) throws IOException {
         try (PrintWriter pw = configuration.getWriter().get()) {
             pw.format("Licenses (%s):%n", filter);
             configuration.getLicenses(filter)
@@ -185,5 +167,4 @@ public class Reporter {
             pw.println();
         }
     }
-
 }

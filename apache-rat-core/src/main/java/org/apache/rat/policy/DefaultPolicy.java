@@ -21,35 +21,34 @@ package org.apache.rat.policy;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseFamilySetFactory;
 
 /**
  * A default Document Analyser that determines if the matched license is in the
  * set of approved licenses.
  */
 public class DefaultPolicy implements IDocumentAnalyser {
+    /** The set of all approved license families */
     private final SortedSet<ILicenseFamily> approvedLicenseFamilies;
 
     /**
      * Constructor with the list of approved license families.
-     * 
      * @param approvedLicenseFamilies the approved license families.
      */
     public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseFamilies) {
-        this.approvedLicenseFamilies = LicenseFamilySetFactory.emptyLicenseFamilySet();
+        this.approvedLicenseFamilies = new TreeSet<>();
         this.approvedLicenseFamilies.addAll(approvedLicenseFamilies);
     }
 
     /**
      * Adds an ILicenseFamily to the list of approved licenses.
-     * 
      * @param approvedLicense license to be approved.
      */
-    public void add(ILicenseFamily approvedLicense) {
+    public void add(final ILicenseFamily approvedLicense) {
         this.approvedLicenseFamilies.add(approvedLicense);
     }
 
@@ -63,7 +62,6 @@ public class DefaultPolicy implements IDocumentAnalyser {
     /**
      * Gets an unmodifiable reference to the SortedSet of approved licenses that
      * this policy is holding.
-     * 
      * @return sorted set of license family definitions.
      */
     public SortedSet<ILicenseFamily> getApprovedLicenseFamilies() {

@@ -38,15 +38,20 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 
 /**
  * Generates text based documentation for Licenses, LicenceFamilies, and Matchers.
+ *
  * Utilizes the same command line as the CLI based Report client so that additional licenses, etc. can be added.
+ *
  */
 public final class Documentation {
 
-    /** The standard indentation to use for formatting */
+    /** The indentation for the documentation */
     private static final String INDENT = "   ";
-    /** The width of the display in characters */
-    private static final int WIDTH = 120;
+
+    /** The number of characters for a page width */
+    private static final int PAGE_WIDTH = 120;
+
     private Documentation() {
+        // Do not instantiate
     }
 
     /**
@@ -140,7 +145,7 @@ public final class Documentation {
     private static void printUsage(final Options opts) {
         HelpFormatter f = new HelpFormatter();
         f.setOptionComparator(new OptionCollection.OptionComparator());
-        f.setWidth(WIDTH);
+        f.setWidth(PAGE_WIDTH);
         String header = "\nAvailable options";
         String footer = "";
         String cmdLine = String.format("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar %s [options]",

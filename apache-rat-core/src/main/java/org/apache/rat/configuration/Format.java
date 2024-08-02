@@ -22,7 +22,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Arrays;
 
 import org.apache.rat.ConfigurationException;
@@ -32,12 +32,12 @@ import org.apache.rat.ConfigurationException;
  * information.
  */
 public enum Format {
-    /** an XML file */
+    /** An XML file */
     XML(XMLConfigurationReader.class, "xml"),
     /** A plain text file */
     TXT(null, "txt", "text");
 
-    /** The list of file suffix that this format applies to*/
+    /** The list of file suffixes that this format applies to */
     private final String[] suffix;
 
     /** The constructor for the MatcherReader for this Format */
@@ -91,9 +91,9 @@ public enum Format {
      * @param name the file name to check.
      * @return the Format
      */
-    public static Format fromName(final String name) {
-        String[] parts = name.split("\\.");
-        String suffix = parts[parts.length - 1];
+    public static Format from(final String name) {
+        int pos = name.lastIndexOf('.');
+        String suffix = name.substring(pos + 1);
         for (Format f : Format.values()) {
             if (Arrays.asList(f.suffix).contains(suffix)) {
                 return f;
@@ -103,21 +103,21 @@ public enum Format {
     }
 
    /**
-    * Determine the {@code Format} from a URL.
-    * @param url the URL to check.
+    * Determine the {@code Format} from an URI.
+    * @param uri the URI to check.
     * @return the Format
     */
-   public static Format fromURL(final URL url) {
-        return Format.fromName(url.getFile());
+   public static Format from(final URI uri) {
+        return Format.from(uri.toString());
     }
 
    /**
-    * Determine the {@code Format} from a File.
+    * Determine the {@code Format} from a file.
     * @param file the File to check.
     * @return the Format
     * @throws MalformedURLException in case the file cannot be found.
     */
-   public static Format fromFile(final File file) throws MalformedURLException {
-        return Format.fromURL(file.toURI().toURL());
+   public static Format from(final File file) throws MalformedURLException {
+        return Format.from(file.getName());
     }
 }

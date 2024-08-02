@@ -18,9 +18,7 @@
  */
 package org.apache.rat;
 
-import org.apache.commons.cli.Option;
-import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
+import static java.lang.String.format;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,7 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.function.Consumer;
 
-import static java.lang.String.format;
+import org.apache.commons.cli.Option;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 
 /**
  * Reporting methods for deprecated objects.

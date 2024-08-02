@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +43,7 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -54,8 +55,13 @@ public final class AntGenerator {
     /**
      * The list of Options that are not supported by Ant.
      */
-    private static final List<Option> ANT_FILTER_LIST = Arrays.asList(OptionCollection.HELP, OptionCollection.LOG_LEVEL,
-            OptionCollection.DIR);
+    private static final List<Option> ANT_FILTER_LIST = new ArrayList<>();
+
+    static {
+        ANT_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
+        ANT_FILTER_LIST.addAll(Arg.DIR.group().getOptions());
+        ANT_FILTER_LIST.add(OptionCollection.HELP);
+    }
 
     /**
      * the filter to filter out CLI options that Ant does not support.
@@ -90,11 +96,16 @@ public final class AntGenerator {
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {
+        if(args == null || args.length < 3) {
+            System.err.println("At least three arguments are required: package, simple class name, target directory.");
+            return;
+        }
+
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
 
-        List<AntOption> options = OptionCollection.buildOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
+        List<AntOption> options = Arg.getOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
                 .collect(Collectors.toList());
 
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
@@ -112,6 +123,14 @@ public final class AntGenerator {
             while (iter.hasNext()) {
                 String line = iter.next();
                 switch (line.trim()) {
+                    case "${static}":
+                        for (Map.Entry<String, String> entry : RENAME_MAP.entrySet()) {
+                            writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
+                        }
+                        for (Option option : ANT_FILTER_LIST) {
+                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt())));
+                        }
+                        break;
                     case "${methods}":
                         writeMethods(writer, options, customClasses);
                         break;
@@ -128,6 +147,11 @@ public final class AntGenerator {
                         customClasses.flush();
                         customClasses.close();
                         writer.write(bos.toString());
+                        break;
+                    case "${commonArgs}":
+                        try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
+                            IOUtils.copy(argsTpl, writer, StandardCharsets.UTF_8);
+                        }
                         break;
                     default:
                         writer.append(line).append(System.lineSeparator());

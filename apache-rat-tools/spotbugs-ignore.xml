@@ -16,11 +16,4 @@
   limitations under the License.
 -->
 <FindBugsFilter>
-  <Match>
-    <!-- Uses tryWithResources, thus closes resource properly:
-    [ERROR] Medium: org.apache.rat.configuration.builders.ChildContainerBuilder.setResource(String) may fail to close stream
-    [org.apache.rat.configuration.builders.ChildContainerBuilder] At ChildContainerBuilder.java:[line 62] OS_OPEN_STREAM
-    <Class name="org.apache.rat.configuration.builders.ChildContainerBuilder"/>
-    <Bug pattern="OS_OPEN_STREAM"/-->
-  </Match>
 </FindBugsFilter>

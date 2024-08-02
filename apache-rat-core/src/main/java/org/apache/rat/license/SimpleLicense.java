@@ -39,20 +39,23 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
  */
 @ConfigComponent(type = ComponentType.LICENSE)
 public class SimpleLicense implements ILicense {
-
+    /** The license family for this license */
     @ConfigComponent(type = ComponentType.BUILD_PARAMETER, desc = "The defined license families.", name = "licenseFamilies")
     private ILicenseFamily family;
-
+    /** The matcher for this license */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The matcher for this license.", required = true)
     private IHeaderMatcher matcher;
+    /** The notes for this license */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The notes about this license.")
     private String note;
+    /** The name of this license */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The name of this license.")
     private String name;
+    /** The ID for this license.  Must be unique */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The ID for this license.")
     private String id;
 
-    SimpleLicense(ILicenseFamily family, IHeaderMatcher matcher, String notes, String name, String id) {
+    SimpleLicense(final ILicenseFamily family, final IHeaderMatcher matcher, final String notes, final String name, final String id) {
         Objects.requireNonNull(matcher, "Matcher must not be null");
         Objects.requireNonNull(family, "Family must not be null");
         this.family = family;
@@ -88,7 +91,7 @@ public class SimpleLicense implements ILicense {
     }
 
     @Override
-    public boolean matches(IHeaders line) {
+    public boolean matches(final IHeaders line) {
         return matcher.matches(line);
     }
 
@@ -98,7 +101,7 @@ public class SimpleLicense implements ILicense {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         return ILicense.equals(this, o);
     }
 
@@ -123,39 +126,37 @@ public class SimpleLicense implements ILicense {
     }
 
     public static class Builder implements ILicense.Builder {
-
+        /** The set of known license families */
         private SortedSet<ILicenseFamily> licenseFamilies;
-
+        /** The matcher builder in use for this license */
         private IHeaderMatcher.Builder matcher;
-
+        /** The notes for the license */
         private List<String> notes = new ArrayList<>();
-
+        /** The name of this license */
         private String name;
-
+        /** The ID of this license */
         private String id;
-
+        /** The family category of this license */
         private String familyCategory;
 
         /**
          * Sets the matcher from a builder.
-         * 
          * @param matcher the builder for the matcher for the license.
          * @return this builder for chaining.
          */
         @Override
-        public Builder setMatcher(IHeaderMatcher.Builder matcher) {
+        public Builder setMatcher(final IHeaderMatcher.Builder matcher) {
             this.matcher = matcher;
             return this;
         }
 
         /**
          * Sets the matcher.
-         * 
          * @param matcher the matcher for the license.
          * @return this builder for chaining.
          */
         @Override
-        public Builder setMatcher(IHeaderMatcher matcher) {
+        public Builder setMatcher(final IHeaderMatcher matcher) {
             this.matcher = () -> matcher;
             return this;
         }
@@ -163,12 +164,11 @@ public class SimpleLicense implements ILicense {
         /**
          * Sets the notes for the license. If called multiple times the notes are
          * concatenated to create a single note.
-         * 
          * @param note the note for the license.
          * @return this builder.
          */
         @Override
-        public Builder setNote(String note) {
+        public Builder setNote(final String note) {
             if (StringUtils.isNotBlank(note)) {
                 this.notes.add(note);
             }
@@ -178,12 +178,11 @@ public class SimpleLicense implements ILicense {
         /**
          * Sets the ID of the license. If the ID is not set then the ID of the license
          * family is used.
-         * 
          * @param id the ID for the license
          * @return this builder for chaining.
          */
         @Override
-        public Builder setId(String id) {
+        public Builder setId(final String id) {
             this.id = id;
             return this;
         }
@@ -193,12 +192,11 @@ public class SimpleLicense implements ILicense {
          * all licenses and must be 5 characters. If more than 5 characters are provided
          * then only the first 5 are taken. If fewer than 5 characters are provided the
          * category is padded with spaces.
-         * 
          * @param licenseFamilyCategory the family category for the license.
          * @return this builder for chaining.
          */
         @Override
-        public Builder setFamily(String licenseFamilyCategory) {
+        public Builder setFamily(final String licenseFamilyCategory) {
             this.familyCategory = licenseFamilyCategory;
             return this;
         }
@@ -206,18 +204,17 @@ public class SimpleLicense implements ILicense {
         /**
          * Sets the name of the license. If the name is not set then the name of the
          * license family is used.
-         * 
          * @param name the name for the license
          * @return this builder for chaining.
          */
         @Override
-        public Builder setName(String name) {
+        public Builder setName(final String name) {
             this.name = name;
             return this;
         }
 
         @Override
-        public Builder setLicenseFamilies(SortedSet<ILicenseFamily> licenseFamilies) {
+        public Builder setLicenseFamilies(final SortedSet<ILicenseFamily> licenseFamilies) {
             this.licenseFamilies = licenseFamilies;
             return this;
         }
@@ -234,7 +231,8 @@ public class SimpleLicense implements ILicense {
                 throw new ImplementationException("License 'family' must be specified");
             }
 
-            Optional<ILicenseFamily> family = LicenseFamilySetFactory.findFamily(familyCategory, licenseFamilies);
+            String familyCat = ILicenseFamily.makeCategory(familyCategory);
+            Optional<ILicenseFamily> family = licenseFamilies.stream().filter(f ->  f.getFamilyCategory().equals(familyCat)).findFirst();
             if (!family.isPresent()) {
                 throw new ConfigurationException(String.format("License family '%s' not found.", familyCategory));
             }

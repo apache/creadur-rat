@@ -18,19 +18,22 @@
  */
 package org.apache.rat.mp;
 
+import static java.lang.String.format;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.rat.Defaults;
-import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
+import org.apache.rat.commandline.Arg;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 
@@ -41,7 +44,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
 public class RatCheckMojo extends AbstractRatMojo {
 
     /** The default output file if no other is specified. */
-    @Parameter(property = "rat.outputFile", defaultValue = "${project.build.directory}/rat.txt")
+    @Parameter(defaultValue = "${project.build.directory}/rat.txt")
     private File defaultReportFile;
 
     /**
@@ -49,14 +52,14 @@ public class RatCheckMojo extends AbstractRatMojo {
      * @deprecated use 'out' property.
      */
     @Deprecated
-    @Parameter(property = "rat.outputFile")
+    @Parameter
     public void setReportFile(final File reportFile) {
         if (!reportFile.getParentFile().exists()) {
             if (!reportFile.getParentFile().mkdirs()) {
                 getLog().error("Unable to create directory " + reportFile.getParentFile());
             }
         }
-        setOut(reportFile.getAbsolutePath());
+        setOutputFile(reportFile.getAbsolutePath());
     }
 
     /**
@@ -156,11 +159,12 @@ public class RatCheckMojo extends AbstractRatMojo {
             return;
         }
 
-        String outKey = "--" + OptionCollection.OUT.getLongOpt();
-        if (args.get(outKey) == null) {
-            setArg(outKey, defaultReportFile.getPath());
+        if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
+            setArg(Arg.OUTPUT_FILE.option().getLongOpt(), defaultReportFile.getAbsolutePath());
         }
+
         ReportConfiguration config = getConfiguration();
+
 
         logLicenses(config.getLicenses(LicenseFilter.ALL));
         try {
@@ -192,20 +196,35 @@ public class RatCheckMojo extends AbstractRatMojo {
             if (consoleOutput) {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    reporter.output(Defaults.getUnapprovedLicensesStyleSheet(), () -> baos);
+                    reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
                     getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
                 } catch (Exception e) {
                     getLog().warn("Unable to print the files with unapproved licenses to the console.");
                 }
             }
 
-            final String seeReport = " See RAT report in: " + args.get("--" + OptionCollection.OUT.getLongOpt());
             if (!ignoreErrors) {
-                throw new RatCheckException("Too many files with unapproved license: "
-                        + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED) + seeReport);
+                throw new RatCheckException(format("Too many files with unapproved license: %s. See RAT report in: '%s'",
+                        stats.getCounter(ClaimStatistic.Counter.UNAPPROVED),
+                        getRatTxtFile()));
             }
-            getLog().warn("Rat check: " + stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)
-                    + " files with unapproved licenses." + seeReport);
+            getLog().warn(format("Rat check: %s files with unapproved licenses. See RAT report in: '%s'",
+                    stats.getCounter(ClaimStatistic.Counter.UNAPPROVED),
+                    getRatTxtFile()));
         }
+    }
+
+    /**
+     * Reads the location of the rat text file from the Mojo.
+     *
+     * @return Value of the "reportFile" property.
+     * @throws MojoFailureException If no output file was specified.
+     */
+    public File getRatTxtFile() throws MojoFailureException {
+        List<String> args = getValues(Arg.OUTPUT_FILE);
+        if (args != null) {
+            return new File(args.get(0));
+        }
+        throw new MojoFailureException("No output file specified");
     }
 }
