@@ -26,14 +26,13 @@ import org.apache.rat.annotation.AbstractLicenseAppender;
 import org.apache.rat.annotation.ApacheV2LicenseAppender;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
-import org.apache.rat.utils.Log;
 
 public class LicenseAddingReport extends AbstractReport {
     private final AbstractLicenseAppender appender;
 
-    public LicenseAddingReport(final Log log, String pCopyrightMsg, boolean pForced) {
-        appender = pCopyrightMsg == null ? new ApacheV2LicenseAppender(log)
-                : new ApacheV2LicenseAppender(log, pCopyrightMsg);
+    public LicenseAddingReport(String pCopyrightMsg, boolean pForced) {
+        appender = pCopyrightMsg == null ? new ApacheV2LicenseAppender()
+                : new ApacheV2LicenseAppender(pCopyrightMsg);
         appender.setForce(pForced);
     }
 

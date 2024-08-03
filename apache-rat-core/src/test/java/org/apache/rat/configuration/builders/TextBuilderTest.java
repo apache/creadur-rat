@@ -54,8 +54,8 @@ public class TextBuilderTest {
         attributes.put("id", "IDValue");
 
         Description description = DescriptionBuilder.buildMap(underTest.builtClass());
-        description.setChildren(DefaultLog.getInstance(), underTest, attributes);
-        description.setChild(DefaultLog.getInstance(), underTest, "simpleText", "example text");
+        description.setChildren(underTest, attributes);
+        description.setChild(underTest, "simpleText", "example text");
 
         SimpleTextMatcher m = underTest.build();
         assertEquals("example text", m.getSimpleText());
@@ -84,8 +84,8 @@ public class TextBuilderTest {
         TextBuilder underTest = new TextBuilder();
 
         Description description = DescriptionBuilder.buildMap(underTest.builtClass());
-        description.setChildren(DefaultLog.getInstance(), underTest, attributes);
-        description.setChild(DefaultLog.getInstance(), underTest, "simpleText", "exampletext");
+        description.setChildren(underTest, attributes);
+        description.setChild(underTest, "simpleText", "exampletext");
 
         SimpleTextMatcher m = underTest.build();
         assertEquals("exampletext", m.getSimpleText());

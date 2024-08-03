@@ -57,7 +57,7 @@ abstract public class AbstractLicenseTest {
     @BeforeEach
     public void setup() {
         data = new MetaData();
-        defaults = Defaults.builder().build(DefaultLog.getInstance());
+        defaults = Defaults.builder().build();
     }
 
     protected ILicense extractCategory(String famId, String id) {

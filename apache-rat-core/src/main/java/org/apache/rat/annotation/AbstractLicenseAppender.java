@@ -19,7 +19,7 @@
 package org.apache.rat.annotation;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.DefaultLog;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -202,16 +202,13 @@ public abstract class AbstractLicenseAppender {
     }
 
     private boolean isForced;
-    /** The log to use */
-    private final Log log;
 
     /**
      * Constructor
      * @param log The log to use.
      */
-    public AbstractLicenseAppender(final Log log) {
+    public AbstractLicenseAppender() {
         super();
-        this.log = log;
     }
 
     /**
@@ -261,10 +258,10 @@ public abstract class AbstractLicenseAppender {
                 boolean isExecutable = Files.isExecutable(docPath);
                 Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
                 if (isExecutable && !document.setExecutable(true)) {
-                    log.warn(String.format("Could not set %s as executable.", document));
+                    DefaultLog.getInstance().warn(String.format("Could not set %s as executable.", document));
                 }
             } catch (InvalidPathException | IOException e) {
-                log.error(String.format("Failed to rename new file to %s, Original file is unchanged.", document), e);
+                DefaultLog.getInstance().error(String.format("Failed to rename new file to %s, Original file is unchanged.", document), e);
             }
         }
     }

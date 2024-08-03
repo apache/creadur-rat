@@ -26,7 +26,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.DefaultLog;
 
 /**
  * Provides the context necessary to process various arguments.
@@ -69,23 +69,15 @@ public class ArgumentContext {
     }
 
     /**
-     * Gets the log.
-     * @return The log to write messages to.
-     */
-    public Log getLog() {
-        return configuration.getLog();
-    }
-
-    /**
      * Logs a ParseException as a warning.
      * @param exception the parse exception to log
      * @param opt the option being processed
      * @param dflt The default value the option is being set to.
      */
     public void logParseException(final ParseException exception, final String opt, final Object dflt) {
-        configuration.getLog().warn(format("Invalid %s specified: %s ", opt, commandLine.getOptionValue(opt)));
-        configuration.getLog().warn(format("%s set to: %s", opt, dflt));
-        configuration.getLog().debug(exception);
+        DefaultLog.getInstance().warn(format("Invalid %s specified: %s ", opt, commandLine.getOptionValue(opt)));
+        DefaultLog.getInstance().warn(format("%s set to: %s", opt, dflt));
+        DefaultLog.getInstance().debug(exception);
     }
 
     /**
@@ -95,8 +87,8 @@ public class ArgumentContext {
      * @param dflt The default value the option is being set to.
      */
     public void logParseException(final ParseException exception, final Option opt, final Object dflt) {
-        configuration.getLog().warn(format("Invalid %s specified: %s ", opt, commandLine.getOptionValue(opt)));
-        configuration.getLog().warn(format("%s set to: %s", opt, dflt));
-        configuration.getLog().debug(exception);
+        DefaultLog.getInstance().warn(format("Invalid %s specified: %s ", opt, commandLine.getOptionValue(opt)));
+        DefaultLog.getInstance().warn(format("%s set to: %s", opt, dflt));
+        DefaultLog.getInstance().debug(exception);
     }
 }

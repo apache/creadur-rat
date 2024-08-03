@@ -72,7 +72,7 @@ public class TestLicenseAppender {
 
         createTestFile(name, creator);
 
-        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender(DefaultLog.getInstance());
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
         appender.append(new File(name));
 
         try (BufferedReader r = new BufferedReader(new FileReader(name + ".new"))) {
@@ -106,7 +106,7 @@ public class TestLicenseAppender {
 
         File file = new File(filename);
         file.deleteOnExit();
-        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender(DefaultLog.getInstance());
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
         appender.append(file);
 
         File newFile = new File(filename + ".new");
@@ -470,7 +470,7 @@ public class TestLicenseAppender {
     public void fileWithBOM() throws IOException {
         File f = Resources.getResourceFile("violations/FilterTest.cs");
 
-        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender(DefaultLog.getInstance());
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
         appender.append(f);
 
         try (BufferedReader r = new BufferedReader(new FileReader(f.getAbsolutePath() + ".new"))) {
@@ -651,7 +651,7 @@ public class TestLicenseAppender {
         try {
             createTestFile(name, phpCreator);
 
-            ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender(DefaultLog.getInstance());
+            ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
             appender.setForce(true);
             appender.append(new File(name));
 
@@ -684,7 +684,7 @@ public class TestLicenseAppender {
             createTestFile(name, phpCreator);
             assertTrue(new File(name).setExecutable(true), "Unable to set executable flag");
 
-            ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender(DefaultLog.getInstance());
+            ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
             appender.setForce(true);
             appender.append(new File(name));
 

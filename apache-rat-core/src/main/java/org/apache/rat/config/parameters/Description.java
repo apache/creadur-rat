@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.BuilderParams;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.DefaultLog;
 
 /**
  * A description of a component.
@@ -174,12 +174,11 @@ public class Description {
      * Retrieve the value of a the described parameter from the specified object.
      * 
      * If the parameter is a collection return {@code null}.
-     * 
-     * @param log the Log to log issues to.
+     *
      * @param object the object that contains the value.
      * @return the string value.
      */
-    public String getParamValue(Log log, Object object) {
+    public String getParamValue(Object object) {
         if (isCollection) {
             return null;
         }
@@ -188,7 +187,7 @@ public class Description {
             return val == null ? null : val.toString();
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
-            log.error(System.err.format("Can not retrieve value for '%s' from %s%n", name, object.getClass().getName()),
+            DefaultLog.getInstance().error(System.err.format("Can not retrieve value for '%s' from %s%n", name, object.getClass().getName()),
                     e);
             return null;
         }
@@ -282,18 +281,18 @@ public class Description {
         throw new IllegalStateException("Type " + type + " not valid.");
     }
 
-    private void callSetter(Log log, Description description, IHeaderMatcher.Builder builder, String value) {
+    private void callSetter(Description description, IHeaderMatcher.Builder builder, String value) {
         try {
             description.setter(builder.getClass()).invoke(builder, value);
         } catch (NoSuchMethodException e) {
             String msg = String.format("No setter for '%s' on %s", description.getCommonName(),
                     builder.getClass().getCanonicalName());
-            log.error(msg);
+            DefaultLog.getInstance().error(msg);
             throw new ConfigurationException(msg);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
             String msg = String.format("Unable to call setter for '%s' on %s", description.getCommonName(),
                     builder.getClass().getCanonicalName());
-            log.error(msg, e);
+            DefaultLog.getInstance().error(msg, e);
             throw new ConfigurationException(msg, e);
         }
     }
@@ -303,29 +302,27 @@ public class Description {
      * specified in the map. Only children that accept string arguments should be
      * specified.
      * 
-     * @param log The log to write messages to.
      * @param builder The Matcher builder to set the values in.
      * @param attributes a Map of parameter names to values.
      */
-    public void setChildren(Log log, IHeaderMatcher.Builder builder, Map<String, String> attributes) {
-        attributes.entrySet().forEach(entry -> setChild(log, builder, entry.getKey(), entry.getValue()));
+    public void setChildren(IHeaderMatcher.Builder builder, Map<String, String> attributes) {
+        attributes.entrySet().forEach(entry -> setChild(builder, entry.getKey(), entry.getValue()));
     }
 
     /**
      * Sets the child value in the builder.
      * 
-     * @param log The log to write messages to.
      * @param builder The Matcher builder to set the values in.
      * @param name the name of the child to set
      * @param value the value of the parameter.
      */
-    public void setChild(Log log, IHeaderMatcher.Builder builder, String name, String value) {
+    public void setChild(IHeaderMatcher.Builder builder, String name, String value) {
         Description d = getChildren().get(name);
         if (d == null) {
-            log.error(String.format("%s does not define a ConfigComponent for a member %s.",
+            DefaultLog.getInstance().error(String.format("%s does not define a ConfigComponent for a member %s.",
                     builder.getClass().getCanonicalName(), name));
         } else {
-            callSetter(log, d, builder, value);
+            callSetter(d, builder, value);
         }
     }
 
