@@ -209,11 +209,11 @@ public class XMLConfigurationWriter {
                 if (id.isPresent()) {
                     String matcherId = id.get().getParamValue(component);
                     // if we have seen the ID before just put a reference to the other one.
-                    if (matchers.contains(matcherId.toString())) {
-                        component = new MatcherRefBuilder.IHeaderMatcherProxy(matcherId.toString(), null);
+                    if (matchers.contains(matcherId)) {
+                        component = new MatcherRefBuilder.IHeaderMatcherProxy(matcherId, null);
                         description = component.getDescription();
                     } else {
-                        matchers.add(matcherId.toString());
+                        matchers.add(matcherId);
                     }
                     // remove the matcher id if it is a UUID
                     try {
@@ -251,7 +251,7 @@ public class XMLConfigurationWriter {
                         String paramId = description.getParamValue(component);
                         // if a UUID skip it.
                         if (paramId != null) {
-                            UUID.fromString(paramId.toString());
+                            UUID.fromString(paramId);
                             return;
                         }
                     } catch (IllegalArgumentException expected) {

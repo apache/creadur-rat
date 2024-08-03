@@ -100,7 +100,7 @@ public final class DefaultAnalyserFactory {
         public void analyse(final Document document) throws RatDocumentAnalysisException {
 
             TikaProcessor.process(document);
-            Predicate<ILicense> licensePredicate = null;
+            Predicate<ILicense> licensePredicate;
 
             switch (document.getMetaData().getDocumentType()) {
             case STANDARD:

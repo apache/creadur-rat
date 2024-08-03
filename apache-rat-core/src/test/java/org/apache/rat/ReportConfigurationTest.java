@@ -63,7 +63,6 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,8 +80,8 @@ public class ReportConfigurationTest {
         underTest = new ReportConfiguration();
     }
 
-    @AfterAll
-    public static void resetLog() {
+    @AfterEach
+    public void cleanup() {
         DefaultLog.setInstance(null);
     }
 
@@ -215,8 +214,8 @@ public class ReportConfigurationTest {
     }
 
     /**
-     * Sets up underTest to have a set of licenses named after cartoon cats.
-     * {@link https://en.wikipedia.org/wiki/List_of_fictional_cats_in_comics}
+     * Sets up underTest to have a set of licenses named after
+     * <a href="https://en.wikipedia.org/wiki/List_of_fictional_cats_in_comics"></a>cartoon cats</a>
      * all in the license family catz
      */
     private void addCatz() {
@@ -230,8 +229,8 @@ public class ReportConfigurationTest {
     }
 
     /**
-     * Sets up underTest to have a set of licenses named after cartoon dogs.
-     * {@link https://en.wikipedia.org/wiki/List_of_fictional_dogs_in_comics}
+     * Sets up underTest to have a set of licenses named after
+     * <a href="https://en.wikipedia.org/wiki/List_of_fictional_dogs_in_comics"></a>cartoon cats</a>cartoon dogs</a>
      * all in the license family dogz
      */
     private void addDogz() {

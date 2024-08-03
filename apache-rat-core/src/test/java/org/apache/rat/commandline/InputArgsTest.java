@@ -75,20 +75,24 @@ public class InputArgsTest {
     public void testParseExclusions(String pattern, List<IOFileFilter> expectedPatterns, List<String> logEntries) {
         TestingLog log = new TestingLog();
         DefaultLog.setInstance(log);
-        Optional<IOFileFilter> filter = Arg.parseExclusions(Collections.singletonList(pattern));
-        if (expectedPatterns.isEmpty()) {
-            assertThat(filter).isEmpty();
-        } else {
-            assertThat(filter).isNotEmpty();
-            assertInstanceOf(OrFileFilter.class, filter.get());
-            String result = filter.toString();
-            for (IOFileFilter expectedFilter : expectedPatterns) {
-                TextUtils.assertContains(expectedFilter.toString(), result);
+        try {
+            Optional<IOFileFilter> filter = Arg.parseExclusions(Collections.singletonList(pattern));
+            if (expectedPatterns.isEmpty()) {
+                assertThat(filter).isEmpty();
+            } else {
+                assertThat(filter).isNotEmpty();
+                assertInstanceOf(OrFileFilter.class, filter.get());
+                String result = filter.toString();
+                for (IOFileFilter expectedFilter : expectedPatterns) {
+                    TextUtils.assertContains(expectedFilter.toString(), result);
+                }
             }
-        }
-        assertEquals(log.isEmpty(), logEntries.isEmpty());
-        for (String logEntry : logEntries) {
-            log.assertContains(logEntry);
+            assertEquals(log.isEmpty(), logEntries.isEmpty());
+            for (String logEntry : logEntries) {
+                log.assertContains(logEntry);
+            }
+        } finally {
+            DefaultLog.setInstance(null);
         }
     }
 

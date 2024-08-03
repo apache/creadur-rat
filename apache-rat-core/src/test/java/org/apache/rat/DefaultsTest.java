@@ -29,7 +29,6 @@ import java.util.TreeSet;
 
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 

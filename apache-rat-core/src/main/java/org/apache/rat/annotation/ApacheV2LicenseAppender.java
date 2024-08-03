@@ -41,7 +41,6 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
     /**
      * Create a license appender with the given copyright line. This should be of
      * the form &quot;Copyright 2008 Foo&quot;
-     *
      * @param copyright copyright line to add to the headers.
      */
     public ApacheV2LicenseAppender(final String copyright) {

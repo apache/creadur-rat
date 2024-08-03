@@ -52,4 +52,5 @@ public interface LicenseReader {
      * empty list if none specified.
      */
     SortedSet<String> approvedLicenseId();
+
 }

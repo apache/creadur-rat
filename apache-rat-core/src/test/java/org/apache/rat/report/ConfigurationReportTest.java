@@ -44,7 +44,6 @@ import org.w3c.dom.Node;
 public class ConfigurationReportTest {
 
     private ConfigurationReport report;
-    private ReportConfiguration reportConfiguration;
     private StringWriter sw;
     private IXmlWriter writer;
 
@@ -52,7 +51,7 @@ public class ConfigurationReportTest {
 
     @BeforeEach
     public void setup() {
-        reportConfiguration = new ReportConfiguration();
+        ReportConfiguration reportConfiguration = new ReportConfiguration();
         reportConfiguration.listFamilies(LicenseFilter.ALL);
         reportConfiguration.listLicenses(LicenseFilter.ALL);
         reportConfiguration.setFrom(Defaults.builder().build());

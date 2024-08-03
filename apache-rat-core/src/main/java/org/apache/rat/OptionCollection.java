@@ -50,7 +50,7 @@ import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
@@ -80,7 +80,7 @@ public final class OptionCollection {
         ARGUMENT_TYPES.put("Expression", () -> "A wildcard file matching pattern. example: *-test-*.txt");
         ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
                 asString(LicenseSetFactory.LicenseFilter.values())));
-        ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Log.Level.values())));
+        ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Level.values())));
         ARGUMENT_TYPES.put("ProcessingType", () -> format("Specifies how to process file types. Valid values are: %s",
                 Arrays.stream(ReportConfiguration.Processing.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
@@ -134,13 +134,12 @@ public final class OptionCollection {
     public static ReportConfiguration parseCommands(final String[] args, final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
         Options opts = buildOptions();
         CommandLine commandLine;
-        Log log = DefaultLog.getInstance();
         try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter(log))
+            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
                     .setAllowPartialMatching(true).build().parse(opts, args);
         } catch (ParseException e) {
-            log.error(e.getMessage());
-            log.error("Please use the \"--help\" option to see a list of valid commands and options", e);
+            DefaultLog.getInstance().error(e.getMessage());
+            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
@@ -216,7 +215,7 @@ public final class OptionCollection {
         File base = new File(baseDirectory);
 
         if (!base.exists()) {
-            DefaultLog.getInstance().log(Log.Level.ERROR, "Directory '" + baseDirectory + "' does not exist");
+            DefaultLog.getInstance().error( "Directory '" + baseDirectory + "' does not exist");
             return null;
         }
 

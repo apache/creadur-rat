@@ -46,7 +46,7 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet;
 
 /**
@@ -145,7 +145,7 @@ public class ReportConfiguration {
     private Processing standardProcessing;
 
     /**
-     * Constructor,
+     * Constructor
      */
     public ReportConfiguration() {
         licenseSetFactory = new LicenseSetFactory();

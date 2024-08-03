@@ -154,7 +154,7 @@ public interface Log {
     }
 
     /**
-     * Retursn a Writer backed by this log.  All messages are logged at "INFO" level.
+     * Returns a Writer backed by this log.  All messages are logged at "INFO" level.
      * @return the Writer backed by this log.
      */
     default Writer asWriter() {
