@@ -43,7 +43,7 @@ public class LicenseAddingReport extends AbstractReport {
     public LicenseAddingReport(final String copyrightMsg, final boolean overwrite) {
         appender = copyrightMsg == null ? new ApacheV2LicenseAppender()
                 : new ApacheV2LicenseAppender(copyrightMsg);
-        appender.setForce(overwrite);
+        appender.setOverwrite(overwrite);
     }
 
     @Override
