@@ -96,7 +96,10 @@ public class Report extends BaseAntTask {
      * Constructor.
      */
     public Report() {
-        DefaultLog.setInstance(new Logger());
+        // replace the logger only if it has not already been set.
+        if (DefaultLog.getInstance() instanceof DefaultLog) {
+            DefaultLog.setInstance(new Logger());
+        }
     }
 
     /**

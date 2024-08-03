@@ -37,6 +37,7 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
     /** The license to analyse */
     private final Collection<ILicense> licenses;
 
+
     /**
      * Constructs the HeaderAnalyser for the specific license.
      * @param licenses The licenses to analyse
