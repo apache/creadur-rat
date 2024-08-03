@@ -94,7 +94,7 @@ public class OptionCollectionTest {
         TestingLog log = new TestingLog();
         try {
             DefaultLog.setInstance(log);
-            String[] args = {longOpt(OptionCollection.DIR), "target", "-a"};
+            String[] args = {"--dir", "target", "-a"};
             ReportConfiguration config = OptionCollection.parseCommands(args, o -> fail("Help printed"), true);
         } finally {
             DefaultLog.setInstance(null);
@@ -109,7 +109,7 @@ public class OptionCollectionTest {
         ReportConfiguration config = null;
         try {
             DefaultLog.setInstance(log);
-            String[] args = {longOpt(OptionCollection.DIR), "foo"};
+            String[] args = {"--dir", "foo"};
             config = OptionCollection.parseCommands(args, (o) -> {
             }, true);
         } finally {
