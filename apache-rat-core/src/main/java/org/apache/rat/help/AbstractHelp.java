@@ -46,7 +46,7 @@ public abstract class AbstractHelp {
     protected AbstractHelp() {
         helpFormatter = new HelpFormatter.Builder().setShowDeprecated(DEPRECATED_MSG).get();
         helpFormatter.setWidth(HELP_WIDTH);
-        helpFormatter.setOptionComparator(new OptionCollection.OptionComparator());
+        helpFormatter.setOptionComparator(OptionCollection.optionComparator);
         versionInfo = new VersionInfo();
     }
 
