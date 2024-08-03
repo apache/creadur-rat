@@ -637,7 +637,7 @@ public class TestLicenseAppender {
     }
 
     @Test
-    public void testForced() throws IOException {
+    public void TestOverwrite() throws IOException {
         String filename = "tmp.php";
         final String firstLine = "<?php";
 
@@ -652,7 +652,7 @@ public class TestLicenseAppender {
             createTestFile(name, phpCreator);
 
             ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
-            appender.setForce(true);
+            appender.setOverwrite(true);
             appender.append(new File(name));
 
             assertFalse(new File(name + ".new").exists());
@@ -685,7 +685,7 @@ public class TestLicenseAppender {
             assertTrue(new File(name).setExecutable(true), "Unable to set executable flag");
 
             ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
-            appender.setForce(true);
+            appender.setOverwrite(true);
             appender.append(new File(name));
 
             assertFalse(new File(name + ".new").exists());
