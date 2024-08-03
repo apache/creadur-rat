@@ -85,14 +85,6 @@ public interface IHeaderMatcher {
          */
         IHeaderMatcher build();
 
-//        /**
-//         * Gets the class that is build by this builder.
-//         * @return The class that is build by this builder.
-//         */
-//        default Class<?> builtClass() throws SecurityException {
-//            return DescriptionBuilder.getBuiltClass(this.getClass());
-//        }
-
         /**
          * Gets the Description for this builder.
          * @return The description of the builder 
