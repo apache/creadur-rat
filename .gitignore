@@ -21,3 +21,5 @@
 **/lib/
 **/bin
 **/.mvn/.develocity*
+**/*_help.txt
+
