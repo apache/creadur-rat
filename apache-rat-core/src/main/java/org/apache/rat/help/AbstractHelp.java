@@ -32,9 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
@@ -87,7 +85,7 @@ public abstract class AbstractHelp {
 
         RatHelpFormatter() {
             super();
-            this.optionComparator = new OptionCollection.OptionComparator();
+            this.optionComparator = OptionCollection.optionComparator;
             this.setWidth(HELP_WIDTH);
         }
 
