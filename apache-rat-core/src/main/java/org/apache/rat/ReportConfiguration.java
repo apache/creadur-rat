@@ -191,7 +191,7 @@ public class ReportConfiguration {
      * <p>NOTE: should be set before licenses or license families are added.</p>
      * @param level The log level to use.
      */
-    public void logFamilyCollisions(final Log.Level level) {
+    public void logFamilyCollisions(final Level level) {
         licenseSetFactory.logFamilyCollisions(level);
     }
 
@@ -207,7 +207,7 @@ public class ReportConfiguration {
      * Sets the log level for reporting license collisions.
      * @param level The log level.
      */
-    public void logLicenseCollisions(final Log.Level level) {
+    public void logLicenseCollisions(final Level level) {
         licenseSetFactory.logLicenseCollisions(level);
     }
 
