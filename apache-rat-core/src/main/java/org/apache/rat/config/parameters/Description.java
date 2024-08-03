@@ -65,8 +65,8 @@ public class Description {
      * @param type The component type required in the filter.
      * @return a predicate that will only return Descriptions with the specified component type.
      */
-    public static Predicate<Description> typePredicate(ComponentType type) {
-        return (d) -> d.getType() == type;
+    public static Predicate<Description> typePredicate(final ComponentType type) {
+        return d -> d.getType() == type;
     }
 
     /**
