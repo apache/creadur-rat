@@ -99,8 +99,8 @@ public class OptionCollectionTest {
         } finally {
             DefaultLog.setInstance(null);
         }
-        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
-        log.assertContainsExactly(1, "WARN: Option [-a] used.  Deprecated for removal since 0.17: Use '--edit-license'");
+        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use the standard '--'");
+        log.assertContainsExactly(1, "WARN: Option [-a] used.  Deprecated for removal since 0.17: Use --edit-license");
     }
 
     @Test
@@ -116,7 +116,7 @@ public class OptionCollectionTest {
             DefaultLog.setInstance(null);
         }
         assertThat(config).isNotNull();
-        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use '--'");
+        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use the standard '--'");
     }
 
     @Test
@@ -132,7 +132,7 @@ public class OptionCollectionTest {
     public void testDefaultConfiguration() throws ParseException, IOException {
         String[] empty = {};
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
-        ReportConfiguration config = OptionCollection.createConfiguration(DefaultLog.getInstance(), "", cl);
+        ReportConfiguration config = OptionCollection.createConfiguration("", cl);
         ReportConfigurationTest.validateDefault(config);
     }
 

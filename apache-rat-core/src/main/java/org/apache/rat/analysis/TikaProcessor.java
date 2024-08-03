@@ -21,7 +21,6 @@ package org.apache.rat.analysis;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.impl.guesser.NoteGuesser;
-import org.apache.rat.utils.Log;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
@@ -104,12 +103,11 @@ public class TikaProcessor {
 
     /**
      * Process the input document.
-     * @param log the log for messages.
      * @param document the Document to process.
      * @return the mimetype as a string.
      * @throws RatDocumentAnalysisException on error.
      */
-    public static String process(final Log log, final Document document) throws RatDocumentAnalysisException {
+    public static String process(final Document document) throws RatDocumentAnalysisException {
         Metadata metadata = new Metadata();
         try (InputStream stream = document.inputStream()) {
             metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName());
@@ -118,7 +116,7 @@ public class TikaProcessor {
             MediaType mediaType = new MediaType(parts[0], parts[1]);
             document.getMetaData().setMediaType(mediaType);
             document.getMetaData()
-                    .setDocumentType(fromMediaType(mediaType, log));
+                    .setDocumentType(fromMediaType(mediaType));
             if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
                 if (NoteGuesser.isNote(document)) {
                     document.getMetaData().setDocumentType(Document.Type.NOTICE);
@@ -131,7 +129,7 @@ public class TikaProcessor {
         }
     }
 
-    public static Document.Type fromMediaType(final MediaType mediaType, final Log log) {
+    public static Document.Type fromMediaType(final MediaType mediaType) {
         if ("text".equals(mediaType.getType())) {
             return Document.Type.STANDARD;
         }

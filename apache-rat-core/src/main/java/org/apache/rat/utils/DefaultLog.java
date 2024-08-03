@@ -21,60 +21,72 @@ package org.apache.rat.utils;
 /**
  * A default implementation of Log that writes to System.out and System.err
  */
-public class DefaultLog implements Log {
+public final class DefaultLog implements Log {
 
     /**
      * The instance of the default log.
      */
-    private static Log INSTANCE = new DefaultLog();
+    private static Log instance = new DefaultLog();
 
     /**
      * Retrieves teh DefaultLog instance.
      * @return the Default log instance.
      */
     public static Log getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
     /**
      * Sets the default log instance.
      * If not set an instance of DefaultLog will be returned
-     * @param instance a Log to use as the defult.
+     * @param newInstance a Log to use as the default.
+     * @return the old instance.
      */
-    public static void setInstance(final Log instance) {
-        INSTANCE = instance == null ? new DefaultLog() : instance;
+    public static Log setInstance(final Log newInstance) {
+        Log result = instance;
+        instance = newInstance == null ? new DefaultLog() : newInstance;
+        return result;
     }
-    
+
+    /** The level at which we will write messages */
     private Level level;
 
     private DefaultLog() {
         level = Level.WARN;
     }
 
-    public void setLevel(Level level) {
+    /**
+     * Sets the level.
+     * @param level the level to use when writing messages.
+     */
+    public void setLevel(final Level level) {
         this.level = level;
     }
-    
+
+    /**
+     * Gets the level we are writing at.
+     * @return the level we are writing at.
+     */
     public Level getLevel() {
         return level;
     }
-    
+
     @Override
-    public void log(Level level, String msg) {
-        if (this.level.ordinal() <= level.ordinal())
+    public void log(final Level level, final String msg) {
+        if (this.level.ordinal() <= level.ordinal()) {
             switch (level) {
-            case DEBUG:
-            case INFO:
-            case WARN:
-                System.out.format("%s: %s%n", level, msg);
-                break;
-            case ERROR:
-                System.err.format("%s: %s%n", level, msg);
-                break;
-            case OFF:
-                break;
-            default:
-                break;
+                case DEBUG:
+                case INFO:
+                case WARN:
+                    System.out.format("%s: %s%n", level, msg);
+                    break;
+                case ERROR:
+                    System.err.format("%s: %s%n", level, msg);
+                    break;
+                case OFF:
+                default:
+                    break;
             }
+        }
     }
 }

@@ -54,7 +54,6 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,8 +67,7 @@ import org.xml.sax.SAXException;
  * A class that reads the XML configuration file format.
  */
 public final class XMLConfigurationReader implements LicenseReader, MatcherReader {
-    /** The log to write to */
-    private Log log;
+
     /** The document we are building */
     private Document document;
     /** The root element in the document */
@@ -127,19 +125,6 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
                 return licenseFamilies;
             }
         };
-    }
-
-    @Override
-    public void setLog(final Log log) {
-        this.log = log;
-    }
-
-    /**
-     * Returns the log the reader.
-     * @return the log if set, if not set {@link DefaultLog#getInstance()} is returned.
-     */
-    public Log getLog() {
-        return log == null ? DefaultLog.getInstance() : log;
     }
 
     @Override
@@ -377,7 +362,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
             processBuilderParams(description, builder);
 
             // process the attributes
-            description.setChildren(getLog(), builder, attributes(matcherNode));
+            description.setChildren(builder, attributes(matcherNode));
 
             // check XML child nodes.
             Pair<Boolean, List<Node>> pair = processChildNodes(description, matcherNode,
@@ -419,7 +404,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
             }
 
             if (!children.isEmpty()) {
-                children.forEach(n -> getLog().warn(String.format("unrecognised child node '%s' in node '%s'%n",
+                children.forEach(n -> DefaultLog.getInstance().warn(String.format("unrecognised child node '%s' in node '%s'%n",
                         n.getNodeName(), matcherNode.getNodeName())));
             }
 
@@ -467,7 +452,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         // set the BUILDER_PARAM options from the description
         processBuilderParams(description, builder);
         // set the children from attributes.
-        description.setChildren(getLog(), builder, attributes(licenseNode));
+        description.setChildren(builder, attributes(licenseNode));
         // set children from the child nodes
         Pair<Boolean, List<Node>> pair = processChildNodes(description, licenseNode,
                 licenseChildNodeProcessor(builder, description));
@@ -485,7 +470,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         }
 
         if (!children.isEmpty()) {
-            children.forEach(n -> getLog().warn(String.format("unrecognised child node '%s' in node '%s'%n",
+            children.forEach(n -> DefaultLog.getInstance().warn(String.format("unrecognised child node '%s' in node '%s'%n",
                     n.getNodeName(), licenseNode.getNodeName())));
         }
         return builder.build();

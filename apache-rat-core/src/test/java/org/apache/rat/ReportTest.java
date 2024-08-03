@@ -42,7 +42,7 @@ public class ReportTest {
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath()});
-        ReportConfiguration config = OptionCollection.createConfiguration(DefaultLog.getInstance(), "target/test-classes/elements", cl);
+        ReportConfiguration config = OptionCollection.createConfiguration("target/test-classes/elements", cl);
         new Reporter(config).output();
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);

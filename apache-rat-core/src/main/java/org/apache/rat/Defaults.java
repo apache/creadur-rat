@@ -40,7 +40,6 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
@@ -101,11 +100,10 @@ public final class Defaults {
 
     /**
      * Builder constructs instances.
-     * @param log The log to write messages to.
      * @param uris The set of URIs to read.
      */
-    private Defaults(final Log log, final Set<URI> uris) {
-        this.setFactory = Defaults.readConfigFiles(log, uris);
+    private Defaults(final Set<URI> uris) {
+        this.setFactory = Defaults.readConfigFiles(uris);
     }
 
     /**
@@ -118,10 +116,9 @@ public final class Defaults {
 
     /**
      * Reads the configuration files.
-     * @param log The log to write messages to.
      * @param uris the URIs to read.
      */
-    private static LicenseSetFactory readConfigFiles(final Log log, final Collection<URI> uris) {
+    private static LicenseSetFactory readConfigFiles(final Collection<URI> uris) {
 
         SortedSet<ILicense> licenses = new TreeSet<>();
 
@@ -137,7 +134,6 @@ public final class Defaults {
 
             LicenseReader lReader = fmt.licenseReader();
             if (lReader != null) {
-                lReader.setLog(log);
                 lReader.addLicenses(uri);
                 licenses.addAll(lReader.readLicenses());
                 lReader.approvedLicenseId().stream().map(ILicenseFamily::makeCategory).forEach(approvedLicenseCategories::add);
@@ -242,11 +238,10 @@ public final class Defaults {
 
         /**
          * Builds the defaults object.
-         * @param log the Log to use to report errors when building the defaults.
          * @return the current defaults object.
          */
-        public Defaults build(final Log log) {
-            return new Defaults(log, fileNames);
+        public Defaults build() {
+            return new Defaults(fileNames);
         }
     }
 }

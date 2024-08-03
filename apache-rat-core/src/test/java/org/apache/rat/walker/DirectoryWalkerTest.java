@@ -54,7 +54,7 @@ public class DirectoryWalkerTest {
 
     @BeforeEach
     public void beforeEach() {
-        reportConfiguration = new ReportConfiguration(DefaultLog.getInstance());
+        reportConfiguration = new ReportConfiguration();
     }
 
     @BeforeAll
