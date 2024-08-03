@@ -181,7 +181,7 @@ public final class Documentation {
                             throw new RuntimeException(e);
                         }
                     } else {
-                        String txt = StringUtils.defaultIfBlank(d.getParamValue(DefaultLog.getInstance(), parent), "").replaceAll("\\s{2,}", " ");
+                        String txt = StringUtils.defaultIfBlank(d.getParamValue(parent), "").replaceAll("\\s{2,}", " ");
                         if (!txt.isEmpty() && !(d.getCommonName().equals("id") && isUUID(txt))) {
                                print(indent, format("%s: %s%n", d.getCommonName(), txt.replaceAll("\\s{2,}", " ")));
                         }

@@ -401,6 +401,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
             excludesFileList.addAll(getValues(Arg.EXCLUDE_FILE));
             removeKey(Arg.EXCLUDE_FILE);
 
+            boolean helpLicenses = !getValues(Arg.HELP_LICENSES).isEmpty();
+            removeKey(Arg.HELP_LICENSES);
+
             ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
                     o -> getLog().warn("Help option not supported"),
                     true);
