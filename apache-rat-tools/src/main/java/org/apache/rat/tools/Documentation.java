@@ -144,7 +144,7 @@ public final class Documentation {
 
     private static void printUsage(final Options opts) {
         HelpFormatter f = new HelpFormatter();
-        f.setOptionComparator(new OptionCollection.OptionComparator());
+        f.setOptionComparator(OptionCollection.optionComparator);
         f.setWidth(PAGE_WIDTH);
         String header = "\nAvailable options";
         String footer = "";

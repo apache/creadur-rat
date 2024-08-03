@@ -41,6 +41,10 @@ public final class DeprecationReporter {
      * Deprecated Command line option consumer.
      */
 
+    /**
+     * Creates the consumer that will log usage of deprecated operations to the default log.
+     * @return The consumer that will log usage of deprecated operations to the default log.
+     */
     public static Consumer<Option> getLogReporter() {
         return  o -> {
             StringBuilder buff = new StringBuilder();

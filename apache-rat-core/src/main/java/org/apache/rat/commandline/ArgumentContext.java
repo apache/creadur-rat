@@ -48,6 +48,10 @@ public class ArgumentContext {
         this.configuration = configuration;
     }
 
+    /**
+     * Process the arguments specified in this context.
+     * @throws IOException if files can not be read.
+     */
     public void processArgs() throws IOException {
         Arg.processArgs(this);
     }

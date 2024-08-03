@@ -113,7 +113,7 @@ public final class Report {
     static void printUsage(final PrintWriter writer, final Options opts) {
         HelpFormatter helpFormatter = new HelpFormatter.Builder().setShowDeprecated(DEPRECATED_MSG).get();
         helpFormatter.setWidth(HELP_WIDTH);
-        helpFormatter.setOptionComparator(new OptionCollection.OptionComparator());
+        helpFormatter.setOptionComparator(OptionCollection.optionComparator);
         VersionInfo versionInfo = new VersionInfo();
         String syntax = format("java -jar apache-rat/target/apache-rat-%s.jar [options] [DIR|ARCHIVE]", versionInfo.getVersion());
         helpFormatter.printHelp(writer, helpFormatter.getWidth(), syntax, header("Available options"), opts,

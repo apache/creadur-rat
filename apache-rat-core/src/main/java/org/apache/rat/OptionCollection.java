@@ -62,6 +62,8 @@ public final class OptionCollection {
         // do not instantiate
     }
 
+    public static final  Comparator<Option> optionComparator = new OptionComparator();
+
     /**
      * Produce help
      */
@@ -223,7 +225,7 @@ public final class OptionCollection {
     /**
      * This class implements the {@code Comparator} interface for comparing Options.
      */
-    public static class OptionComparator implements Comparator<Option>, Serializable {
+    private static class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
         private static final long serialVersionUID = 5305467873966684014L;
 
