@@ -202,7 +202,7 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("yml", TYPE_YAML);
     }
 
-    private boolean isForced;
+    private boolean isOverwrite;
 
     /**
      * Constructor
@@ -252,7 +252,7 @@ public abstract class AbstractLicenseAppender {
             }
         }
 
-        if (isForced) {
+        if (isOverwrite) {
             try {
                 Path docPath = document.toPath();
                 boolean isExecutable = Files.isExecutable(docPath);
@@ -388,13 +388,14 @@ public abstract class AbstractLicenseAppender {
      * to true then files will be modified directly, otherwise
      * new files will be created alongside the existing files.
      *
-     * @param force force flag.
+     * @param overwrite force flag.
      */
-    public void setForce(final boolean force) {
-        isForced = force;
+    public void setOverwrite(final boolean overwrite) {
+        isOverwrite = overwrite;
     }
 
     /**
+     * Gets the header text to insert into the file.
      * @param document document to extract from.
      * @return Get the license header of a document.
      */

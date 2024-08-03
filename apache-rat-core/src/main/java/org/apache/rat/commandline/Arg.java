@@ -584,9 +584,10 @@ public enum Arg {
     }
 
     /**
-    * Process the arguments.
-    * @param ctxt the context in which to process the args.
-    */
+     * Process the arguments.
+     * @param ctxt the context in which to process the args.
+     * @throws IOException if input files can not be read.
+     */
     public static void processArgs(final ArgumentContext ctxt) throws IOException {
         processOutputArgs(ctxt);
         processEditArgs(ctxt);
@@ -662,6 +663,9 @@ public enum Arg {
         }
     }
 
+    /**
+     * Resets the groups in the Args so that they are unused and ready to detect the next set of arguments.
+     */
     public static void reset() {
         for (Arg a : Arg.values()) {
             try {
@@ -708,6 +712,15 @@ public enum Arg {
      * Standard messages used in descriptions.
      */
     public static class StdMsgs {
+        private StdMsgs() {
+            // do not instantiate
+        }
+
+        /**
+         * Gets the standard "use instead" message for the specific name.
+         * @param name the name of the option to use instead.
+         * @return
+         */
         public static String useMsg(String name) {
             return format("Use %s instead.", name);
         }

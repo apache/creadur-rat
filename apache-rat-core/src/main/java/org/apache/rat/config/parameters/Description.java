@@ -61,6 +61,15 @@ public class Description {
     private final Map<String, Description> children;
 
     /**
+     * A predicate to filter Descriptions by the component type.
+     * @param type The component type require in the filter.
+     * @return a predicate that will only return Descriptions with the specified component type.
+     */
+    public static Predicate<Description> typePredicate(ComponentType type) {
+        return d -> d.getType() == type;
+    }
+
+    /**
      * Constructor.
      * @param type the type of the component.
      * @param name the name of the component.
@@ -69,6 +78,7 @@ public class Description {
      * @param childClass the class for expected for the getter/setter.
      * @param children the collection of descriptions for all the components that
      * are children of the described component.
+     * @param required If true the component is required.
      */
     public Description(final ComponentType type, final String name, final String desc, final boolean isCollection,
                        final Class<?> childClass, final Collection<Description> children, final boolean required) {
