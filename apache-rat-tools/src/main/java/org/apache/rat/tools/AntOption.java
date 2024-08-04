@@ -27,32 +27,18 @@ import org.apache.commons.text.WordUtils;
 /**
  * A class that wraps the CLI option and provides Ant specific values.
  */
-public class AntOption {
-    /** The CLI option we are wrapping */
-    private final Option option;
-    /** An uncapitalized name */
-    private final String name;
+public class AntOption extends AbstractOption{
 
     /**
      * Constructor.
      * @param option the option to wrap.
      */
     AntOption(final Option option) {
-        this.option = option;
-        name = AntGenerator.createName(option);
-    }
-
-    /**
-     * Gets the Ant name for the option.
-     * @return the Ant name for the option.
-     */
-    public String getName() {
-        return name;
+        super(option, AntGenerator.createName(option));
     }
 
     /**
      * Returns {@code true} if the option should be an attribute of the &lt;rat:report&gt; element.
-     *
      * @return {@code true} if the option should be an attribute of the &lt;rat:report&gt; element.
      */
     public boolean isAttribute() {
@@ -68,22 +54,10 @@ public class AntOption {
         return !isAttribute() || option.getType() != String.class;
     }
 
-    /**
-     * Returns {@code true} if the enclosed option has one or more arguments.
-     *
-     * @return {@code true} if the enclosed option has one or more arguments.
-     */
-    public boolean hasArg() {
-        return option.hasArg();
-    }
-
-    /**
-     * Returns The key value for the option.   This is the long opt enclosed in quotes and with leading dashes.
-     *
-     * @return The key value for the option.
-     */
-    public String keyValue() {
-        return format("\"%s\"", option.getLongOpt());
+    protected String cleanupName(Option option) {
+        AntOption antOption = new AntOption(option);
+        String fmt = antOption.isAttribute() ? "%s attribute" : "<%s>";
+        return  format(fmt, MavenGenerator.createName(option));
     }
 
     /**
@@ -91,11 +65,11 @@ public class AntOption {
      *
      * @return the description or an empty string.
      */
-    public String getDescription() {
-        return StringUtils.defaultIfEmpty(option.getDescription(), "")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
-    }
+//    public String getDescription() {
+//        return StringUtils.defaultIfEmpty(option.getDescription(), "")
+//                .replace("<", "&lt;")
+//                .replace(">", "&gt;");
+//    }
 
     /**
      * Get the method comment for this option.
@@ -116,9 +90,9 @@ public class AntOption {
     }
 
     /**
-     * Get the signature of th eattribute function.
+     * Get the signature of the attribute function.
      *
-     * @return the signature of the attribue function.
+     * @return the signature of the attribute function.
      */
     public String getAttributeFunctionName() {
         return "set" +
