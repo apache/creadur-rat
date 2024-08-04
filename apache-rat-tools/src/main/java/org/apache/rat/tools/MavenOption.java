@@ -42,12 +42,6 @@ public class MavenOption extends AbstractOption{
         DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
     }
 
-    private static final Map<Arg,String> DEFAULT_VALUES = new HashMap<>();
-
-    static {
-        DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
-    }
-
     /**
      * Constructor.
      *
