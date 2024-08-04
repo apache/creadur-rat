@@ -61,7 +61,6 @@ public final class Help extends AbstractHelp {
 
     /**
      * Print the usage to the specific PrintWriter.
-     * @param writer the PrintWriter to output to.
      * @param opts The defined options.
      */
     public void printUsage(final Options opts) {
