@@ -62,6 +62,17 @@ public class AntOption extends AbstractOption{
     }
 
     /**
+     * Get the description escaped for XML format.
+     *
+     * @return the description or an empty string.
+     */
+//    public String getDescription() {
+//        return StringUtils.defaultIfEmpty(option.getDescription(), "")
+//                .replace("<", "&lt;")
+//                .replace(">", "&gt;");
+//    }
+
+    /**
      * Get the method comment for this option.
      *
      * @param addParam if {@code true} the param annotation is added.
