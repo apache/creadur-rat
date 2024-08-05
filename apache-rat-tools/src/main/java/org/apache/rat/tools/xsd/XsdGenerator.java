@@ -20,6 +20,7 @@ package org.apache.rat.tools.xsd;
 
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
@@ -27,8 +28,12 @@ import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.configuration.XMLConfig;
 import org.apache.rat.license.SimpleLicense;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +41,22 @@ import java.util.Map;
 
 import org.apache.rat.tools.xsd.XsdWriter.Type;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+/**
+ * Generates the XSD for a configuration.
+ */
 public class XsdGenerator {
+    /** The Configuration to generate the XSD for */
     private ReportConfiguration cfg;
+    /** The XsdWriter being written to. */
     private XsdWriter writer;
+    /** AS map of component type to XML element name / property type */
     private static Map<ComponentType, String> typeMap = new HashMap<ComponentType, String>();
 
     static {
@@ -47,18 +65,61 @@ public class XsdGenerator {
         typeMap.put(ComponentType.LICENSE, XMLConfig.LICENSE);
     }
 
-    public static void main(String[] args) throws IOException {
-        ReportConfiguration configuration = OptionCollection.parseCommands(args, (options) -> {});
+    /**
+     * Command line that accepts standard RAT CLI command line options and generated an XSD from the
+     * configuration.
+     * @param args the arguments for RAT CLI.
+     * @throws IOException on IO errors.
+     * @throws TransformerException if the XSD can not be pretty printed.
+     */
+    public static void main(String[] args) throws IOException, TransformerException {
+        ReportConfiguration configuration = OptionCollection.parseCommands(args, (options) -> {
+        });
         XsdGenerator generator = new XsdGenerator(configuration);
-        generator.write();
+
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try (InputStream in = generator.getInputStream();
+             InputStream styleIn = StyleSheets.XML.getStyleSheet().get()) {
+            transformer = tf.newTransformer(new StreamSource(styleIn));
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            transformer.transform(new StreamSource(in),
+                    new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
+        }
     }
 
+    /**
+     * Constructs an XsdGenerator for the structures in the configuration.
+     * @param cfg the comfiguration to generate the XSD for.
+     */
     public XsdGenerator(ReportConfiguration cfg) {
         this.cfg = cfg;
     }
 
-    public void write() throws IOException {
-        writer = new XsdWriter(new OutputStreamWriter(System.out)).init();
+    /**
+     * Create an input stream from the output of the generator.
+     * @return an InputStream that contains the output of the generator.
+     * @throws IOException on output errors.
+     */
+    public InputStream getInputStream() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             Writer writer = new OutputStreamWriter(baos);) {
+            write(writer);
+            return new ByteArrayInputStream(baos.toByteArray());
+        }
+    }
+
+    /**
+     * Writes the XSD to the output.
+     * @param output the output to write to.
+     * @throws IOException on write error.
+     */
+    public void write(Writer output) throws IOException {
+        writer = new XsdWriter(output).init();
 
         writer.open(Type.ELEMENT, "name", XMLConfig.ROOT)
                 .open(Type.COMPLEX).open(Type.SEQUENCE);
