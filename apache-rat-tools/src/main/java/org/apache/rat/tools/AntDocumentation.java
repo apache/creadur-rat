@@ -59,6 +59,7 @@ public final class AntDocumentation {
     private final ReportConfiguration config;
     private final File outputDir;
 
+
     /**
      * Creates apt documentation files for Ant.
      * Requires 1 argument:
