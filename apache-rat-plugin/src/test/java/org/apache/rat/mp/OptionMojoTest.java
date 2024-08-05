@@ -36,6 +36,8 @@ import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.plugin.BaseRatMojo;
+import org.apache.rat.testhelpers.TextUtils;
+import org.apache.rat.tools.AntGenerator;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -43,11 +45,18 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -164,7 +173,7 @@ public class OptionMojoTest   {
                 assertThat(ds.getExcludedList()).contains("justbaz");
                 assertThat(ds.getIncludedList()).contains("notbaz");
             } catch (IOException | MojoExecutionException e) {
-                fail(e.getMessage());
+                fail(e.getMessage(), e);
             }
         }
 
@@ -173,6 +182,7 @@ public class OptionMojoTest   {
             String[] args = { "*.foo", "*.bar", "justbaz"};
             execExcludeTest(Arg.EXCLUDE.find("exclude"), args);
         }
+
         @Override
         protected void inputExcludeTest() {
             String[] args = { "*.foo", "*.bar", "justbaz"};
@@ -205,6 +215,7 @@ public class OptionMojoTest   {
     }
 
     public static class SimpleMojoTestcase extends BetterAbstractMojoTestCase {
+
         public RatCheckMojo getMojo(File pomFile) throws Exception {
             setUp();
             ProjectBuildingRequest buildingRequest = newMavenSession().getProjectBuildingRequest();

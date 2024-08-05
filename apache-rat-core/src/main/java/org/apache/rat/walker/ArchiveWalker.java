@@ -38,13 +38,12 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.ArchiveEntryDocument;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.DefaultLog;
 
 /**
  * Walks various kinds of archives files
  */
 public class ArchiveWalker extends Walker {
-    private final Log log;
 
     /**
      * Constructs a walker.
@@ -53,7 +52,6 @@ public class ArchiveWalker extends Walker {
      */
     public ArchiveWalker(final ReportConfiguration config, final Document document) {
         super(document, config.getFilesToIgnore());
-        this.log = config.getLog();
     }
 
     /**
@@ -64,7 +62,7 @@ public class ArchiveWalker extends Walker {
      *
      */
     public void run(final RatReport report) throws RatException {
-        for (Document document : getDocuments(log)) {
+        for (Document document : getDocuments()) {
             report.report(document);
         }
     }
@@ -79,11 +77,10 @@ public class ArchiveWalker extends Walker {
     }
     /**
      * Retrieves the documents from the archive.
-     * @param log The log to write messages to.
      * @return A collection of documents that pass the file filter.
      * @throws RatException on error.
      */
-    public Collection<Document> getDocuments(final Log log) throws RatException {
+    public Collection<Document> getDocuments() throws RatException {
         List<Document> result = new ArrayList<>();
         try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
             ArchiveEntry entry = null;
@@ -96,7 +93,7 @@ public class ArchiveWalker extends Walker {
                 }
             }
         } catch (ArchiveException e) {
-            log.warn(String.format("Unable to process %s: %s", getDocument().getName(), e.getMessage()));
+            DefaultLog.getInstance().warn(String.format("Unable to process %s: %s", getDocument().getName(), e.getMessage()));
         } catch (IOException e) {
             throw RatException.asRatException(e);
         }

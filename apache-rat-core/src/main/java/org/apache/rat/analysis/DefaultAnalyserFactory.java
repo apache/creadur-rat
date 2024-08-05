@@ -31,16 +31,19 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.ArchiveWalker;
 
 /**
  * Creates default analysers.
  */
-public class DefaultAnalyserFactory {
+public final class DefaultAnalyserFactory {
 
+    private DefaultAnalyserFactory() {
+        // do not instantiate
+    }
     /**
      * Creates a DocumentAnalyser from a collection of ILicenses.
-     * 
      * @param configuration the ReportConfiguration
      * @return A document analyser that uses the provides licenses.
      */
@@ -49,15 +52,15 @@ public class DefaultAnalyserFactory {
         if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
-        configuration.getLog().debug("Licenses in Test");
-        licenses.forEach(configuration.getLog()::debug);
+        DefaultLog.getInstance().debug("Licenses in Test");
+        licenses.forEach(DefaultLog.getInstance()::debug);
         return new DefaultAnalyser(configuration, licenses);
     }
 
     /**
      * A DocumentAnalyser a collection of licenses
      */
-    private final static class DefaultAnalyser implements IDocumentAnalyser {
+    private static final class DefaultAnalyser implements IDocumentAnalyser {
 
         /** The licenses to analyze */
         private final Collection<ILicense> licenses;
@@ -70,7 +73,7 @@ public class DefaultAnalyserFactory {
          * @param config the ReportConfiguration
          * @param licenses The licenses to analyse
          */
-        public DefaultAnalyser(ReportConfiguration config, final Collection<ILicense> licenses) {
+        DefaultAnalyser(final ReportConfiguration config, final Collection<ILicense> licenses) {
             this.licenses = licenses;
             this.configuration = config;
         }
@@ -80,7 +83,7 @@ public class DefaultAnalyserFactory {
          * @param proc the processing status to filter.
          * @return a Predicate to do the filtering.
          */
-        private  Predicate<ILicense> licenseFilter(ReportConfiguration.Processing proc)  {
+        private Predicate<ILicense> licenseFilter(final ReportConfiguration.Processing proc)  {
             return license -> {
                 switch (proc) {
                     case PRESENCE:
@@ -94,15 +97,15 @@ public class DefaultAnalyserFactory {
         }
 
         @Override
-        public void analyse(Document document) throws RatDocumentAnalysisException {
+        public void analyse(final Document document) throws RatDocumentAnalysisException {
 
-            TikaProcessor.process(configuration.getLog(), document);
-            Predicate<ILicense> licensePredicate = null;
+            TikaProcessor.process(document);
+            Predicate<ILicense> licensePredicate;
 
             switch (document.getMetaData().getDocumentType()) {
             case STANDARD:
                 licensePredicate = licenseFilter(configuration.getStandardProcessing()).negate();
-                new DocumentHeaderAnalyser(configuration.getLog(), licenses).analyse(document);
+                new DocumentHeaderAnalyser(licenses).analyse(document);
                 if (configuration.getStandardProcessing() != Defaults.STANDARD_PROCESSING) {
                     document.getMetaData().removeLicenses(licensePredicate);
                 }
@@ -112,7 +115,7 @@ public class DefaultAnalyserFactory {
                 if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
                     ArchiveWalker archiveWalker = new ArchiveWalker(configuration, document);
                     try {
-                        for (Document doc : archiveWalker.getDocuments(configuration.getLog())) {
+                        for (Document doc : archiveWalker.getDocuments()) {
                             analyse(doc);
                             doc.getMetaData().licenses().filter(licensePredicate).forEach(lic -> document.getMetaData().reportOnLicense(lic));
                         }

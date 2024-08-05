@@ -26,6 +26,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -54,7 +55,7 @@ public class InputArgsTest {
 
     @Test
     public void parseExclusionsTest() {
-        final Optional<IOFileFilter> filter = Arg.parseExclusions(DefaultLog.getInstance(), Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
+        final Optional<IOFileFilter> filter = Arg.parseExclusions(Arrays.asList("", " # foo/bar", "foo", "##", " ./foo/bar"));
         assertThat(filter).isPresent();
         assertThat(filter.get()).isExactlyInstanceOf(OrFileFilter.class);
         assertTrue(filter.get().accept(baseDir, "./foo/bar" ), "./foo/bar");
@@ -73,21 +74,31 @@ public class InputArgsTest {
     @MethodSource("exclusionsProvider")
     public void testParseExclusions(String pattern, List<IOFileFilter> expectedPatterns, List<String> logEntries) {
         TestingLog log = new TestingLog();
-        Optional<IOFileFilter> filter = Arg.parseExclusions(log, Collections.singletonList(pattern));
-        if (expectedPatterns.isEmpty()) {
-            assertThat(filter).isEmpty();
-        } else {
-            assertThat(filter).isNotEmpty();
-            assertInstanceOf(OrFileFilter.class, filter.get());
-            String result = filter.toString();
-            for (IOFileFilter expectedFilter : expectedPatterns) {
-                TextUtils.assertContains(expectedFilter.toString(), result);
+        DefaultLog.setInstance(log);
+        try {
+            Optional<IOFileFilter> filter = Arg.parseExclusions(Collections.singletonList(pattern));
+            if (expectedPatterns.isEmpty()) {
+                assertThat(filter).isEmpty();
+            } else {
+                assertThat(filter).isNotEmpty();
+                assertInstanceOf(OrFileFilter.class, filter.get());
+                String result = filter.toString();
+                for (IOFileFilter expectedFilter : expectedPatterns) {
+                    TextUtils.assertContains(expectedFilter.toString(), result);
+                }
             }
+            assertEquals(log.isEmpty(), logEntries.isEmpty());
+            for (String logEntry : logEntries) {
+                log.assertContains(logEntry);
+            }
+        } finally {
+            DefaultLog.setInstance(null);
         }
-        assertEquals(log.isEmpty(), logEntries.isEmpty());
-        for (String logEntry : logEntries) {
-            log.assertContains(logEntry);
-        }
+    }
+
+    @AfterAll
+    public static void resetLog() {
+        DefaultLog.setInstance(null);
     }
 
     /** Provider for the testParseExclusions */

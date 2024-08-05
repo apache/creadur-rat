@@ -18,6 +18,33 @@
         return result;
     }
 
+    private String argsKey(Option opt) {
+        return StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey());
+    }
+
+    private boolean validateSet(String key) {
+        Arg arg = Arg.findArg(key);
+        if (arg != null) {
+            Option opt = arg.find(key);
+            Option main = arg.option();
+            if (opt.isDeprecated()) {
+                args.remove(argsKey(main));
+                // deprecated options must be explicitly set so let it go.
+                return true;
+            }
+            // non-deprecated options may have default so ignore it if another option has already been set.
+            for (Option o : arg.group().getOptions()) {
+                if (!o.equals(main)) {
+                    if (args.containsKey(argsKey(o))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Set a key and value into the argument list.
      * Replaces any existing value.
@@ -25,9 +52,11 @@
      * @param value the value to set.
      */
     protected void setArg(String key, String value) {
-        List<String> values = new ArrayList<>();
-        values.add(value);
-        args.put(key, values);
+        if (validateSet(key)) {
+            List<String> values = new ArrayList<>();
+            values.add(value);
+            args.put(key, values);
+        }
     }
 
     /**
@@ -40,17 +69,19 @@
     }
 
     /**
-     * Add a value to the key in the argument list.
+     * Add values to the key in the argument list.
      * If the key does not exist, adds it.
      * @param key the key for the map.
      * @param value the value to set.
      */
-    protected void addArg(String key, String value) {
-        List<String> values = args.get(key);
-        if (values == null) {
-            setArg(key, value);
-        } else {
-            values.add(value);
+    protected void addArg(String key, String[] value) {
+        if (validateSet(key)) {
+            List<String> values = args.get(key);
+            if (values == null) {
+                values = new ArrayList<>();
+                args.put(key, values);
+            }
+            values.addAll(Arrays.asList(value));
         }
     }
 
@@ -60,13 +91,15 @@
      * @param key the key for the map.
      * @param value the value to set.
      */
-    protected void addArg(String key, String[] value) {
-        List<String> values = args.get(key);
-        if (values == null) {
-            values = new ArrayList<>();
-            args.put(key, values);
+    protected void addArg(String key, String value) {
+        if (validateSet(key)) {
+            List<String> values = args.get(key);
+            if (values == null) {
+                values = new ArrayList<>();
+                args.put(key, values);
+            }
+            values.add(value);
         }
-        values.addAll(Arrays.asList(value));
     }
 
     /**

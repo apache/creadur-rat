@@ -25,6 +25,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
  * A reference matching Matcher builder.
@@ -36,6 +37,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * IHeaderMatcherProxy is returned. the IHeaderMatcherProxy is resolved in a
  * later configuration construction phase.
  */
+@MatcherBuilder(MatcherRefBuilder.IHeaderMatcherProxy.class)
 public class MatcherRefBuilder extends AbstractBuilder {
     private String referenceId;
     private Map<String, IHeaderMatcher> matchers;
@@ -52,11 +54,6 @@ public class MatcherRefBuilder extends AbstractBuilder {
     public MatcherRefBuilder setRefId(String refId) {
         this.referenceId = refId;
         return this;
-    }
-
-    @Override
-    public Class<?> builtClass() {
-        return IHeaderMatcherProxy.class;
     }
 
     /**
@@ -94,7 +91,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
     @ConfigComponent(type = ComponentType.MATCHER, name = "matcherRef", desc = "A pointer to another Matcher")
     public static class IHeaderMatcherProxy implements IHeaderMatcher {
 
-        @ConfigComponent(type = ComponentType.PARAMETER, name = "refId", desc = "Reference to an existing matcher")
+        @ConfigComponent(type = ComponentType.PARAMETER, name = "refId", desc = "Reference to an existing matcher", required = true)
         private final String proxyId;
         private IHeaderMatcher wrapped;
 

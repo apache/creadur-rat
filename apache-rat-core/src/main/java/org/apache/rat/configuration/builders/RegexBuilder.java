@@ -22,10 +22,12 @@ import java.util.regex.Pattern;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
+import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
  * A builder for the regex matcher.
  */
+@MatcherBuilder(SimpleRegexMatcher.class)
 public class RegexBuilder extends AbstractBuilder {
 
     private Pattern pattern;

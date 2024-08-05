@@ -187,7 +187,7 @@ public class XMLConfigurationWriter {
 
     private void writeAttribute(final IXmlWriter writer, final Description description, final IHeaderMatcher component)
             throws IOException {
-        String paramValue = description.getParamValue(configuration.getLog(), component);
+        String paramValue = description.getParamValue(component);
         if (paramValue != null) {
             writer.attribute(description.getCommonName(), paramValue);
         }
@@ -207,13 +207,13 @@ public class XMLConfigurationWriter {
 
                 // id will not be present in matcherRef
                 if (id.isPresent()) {
-                    String matcherId = id.get().getParamValue(configuration.getLog(), component);
+                    String matcherId = id.get().getParamValue(component);
                     // if we have seen the ID before just put a reference to the other one.
-                    if (matchers.contains(matcherId.toString())) {
-                        component = new MatcherRefBuilder.IHeaderMatcherProxy(matcherId.toString(), null);
+                    if (matchers.contains(matcherId)) {
+                        component = new MatcherRefBuilder.IHeaderMatcherProxy(matcherId, null);
                         description = component.getDescription();
                     } else {
-                        matchers.add(matcherId.toString());
+                        matchers.add(matcherId);
                     }
                     // remove the matcher id if it is a UUID
                     try {
@@ -230,7 +230,7 @@ public class XMLConfigurationWriter {
                 Optional<Description> resource = description.childrenOfType(ComponentType.PARAMETER).stream()
                         .filter(i -> XMLConfig.ATT_RESOURCE.equals(i.getCommonName())).findFirst();
                 if (resource.isPresent()) {
-                    String resourceStr = resource.get().getParamValue(configuration.getLog(), component);
+                    String resourceStr = resource.get().getParamValue(component);
                     if (StringUtils.isNotBlank(resourceStr)) {
                         description.getChildren().remove("enclosed");
                     }
@@ -248,10 +248,10 @@ public class XMLConfigurationWriter {
             case PARAMETER:
                 if ("id".equals(description.getCommonName())) {
                     try {
-                        String paramId = description.getParamValue(configuration.getLog(), component);
+                        String paramId = description.getParamValue(component);
                         // if a UUID skip it.
                         if (paramId != null) {
-                            UUID.fromString(paramId.toString());
+                            UUID.fromString(paramId);
                             return;
                         }
                     } catch (IllegalArgumentException expected) {
@@ -262,12 +262,12 @@ public class XMLConfigurationWriter {
 
                     boolean inline = XMLConfig.isInlineNode(component.getDescription().getCommonName(),
                             description.getCommonName());
-                    String s = description.getParamValue(configuration.getLog(), component);
+                    String s = description.getParamValue(component);
                     if (StringUtils.isNotBlank(s)) {
                         if (!inline) {
                             writer.openElement(description.getCommonName());
                         }
-                        writer.content(description.getParamValue(configuration.getLog(), component));
+                        writer.content(description.getParamValue(component));
                         if (!inline) {
                             writer.closeElement();
                         }

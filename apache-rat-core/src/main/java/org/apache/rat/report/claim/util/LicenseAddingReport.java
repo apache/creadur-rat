@@ -24,21 +24,30 @@ import java.io.IOException;
 import org.apache.rat.analysis.UnknownLicense;
 import org.apache.rat.annotation.AbstractLicenseAppender;
 import org.apache.rat.annotation.ApacheV2LicenseAppender;
+import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
-import org.apache.rat.utils.Log;
 
+/**
+ * A Report that adds licenses text to files.
+ */
 public class LicenseAddingReport extends AbstractReport {
+    /** The license appender used to update files */
     private final AbstractLicenseAppender appender;
 
-    public LicenseAddingReport(final Log log, String pCopyrightMsg, boolean pForced) {
-        appender = pCopyrightMsg == null ? new ApacheV2LicenseAppender(log)
-                : new ApacheV2LicenseAppender(log, pCopyrightMsg);
-        appender.setForce(pForced);
+    /**
+     * Creates a LicenseAddingReport that inserts the copyright message and may overwrite the files.
+     * @param copyrightMsg The message to insert into the files.  May be {@code null}.
+     * @param overwrite if {@code true} will overwrite the files rather than create {@code .new} files.
+     */
+    public LicenseAddingReport(final String copyrightMsg, final boolean overwrite) {
+        appender = copyrightMsg == null ? new ApacheV2LicenseAppender()
+                : new ApacheV2LicenseAppender(copyrightMsg);
+        appender.setOverwrite(overwrite);
     }
 
     @Override
-    public void report(org.apache.rat.api.Document document) throws RatException {
+    public void report(final Document document) throws RatException {
         if (document.getMetaData().licenses().anyMatch(lic -> lic.equals(UnknownLicense.INSTANCE))) {
             final File file = new File(document.getName());
             if (file.isFile()) {

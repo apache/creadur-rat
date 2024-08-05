@@ -53,9 +53,9 @@ public class TextBuilderTest {
         TextBuilder underTest = new TextBuilder();
         attributes.put("id", "IDValue");
 
-        Description description = DescriptionBuilder.buildMap(underTest.builtClass());
-        description.setChildren(DefaultLog.getInstance(), underTest, attributes);
-        description.setChild(DefaultLog.getInstance(), underTest, "simpleText", "example text");
+        Description description = DescriptionBuilder.buildMap(underTest.getClass());
+        description.setChildren(underTest, attributes);
+        description.setChild(underTest, "simpleText", "example text");
 
         SimpleTextMatcher m = underTest.build();
         assertEquals("example text", m.getSimpleText());
@@ -83,9 +83,9 @@ public class TextBuilderTest {
             IllegalArgumentException, InvocationTargetException {
         TextBuilder underTest = new TextBuilder();
 
-        Description description = DescriptionBuilder.buildMap(underTest.builtClass());
-        description.setChildren(DefaultLog.getInstance(), underTest, attributes);
-        description.setChild(DefaultLog.getInstance(), underTest, "simpleText", "exampletext");
+        Description description = DescriptionBuilder.buildMap(underTest.getClass());
+        description.setChildren(underTest, attributes);
+        description.setChild(underTest, "simpleText", "exampletext");
 
         SimpleTextMatcher m = underTest.build();
         assertEquals("exampletext", m.getSimpleText());

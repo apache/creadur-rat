@@ -57,27 +57,27 @@ public class TikaProcessorTest {
                 throw new MalformedInputException(0);
             }
         });
-        assertThrows(RatDocumentAnalysisException.class, () -> TikaProcessor.process(DefaultLog.getInstance(), doc));
+        assertThrows(RatDocumentAnalysisException.class, () -> TikaProcessor.process(doc));
     }
 
     @Test
     public void UTF16_input() throws Exception {
         Document doc = getDocument(Resources.getResourceStream("/binaries/UTF16_with_signature.xml"));
-        TikaProcessor.process(DefaultLog.getInstance(), doc);
+        TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void UTF8_input() throws Exception {
         FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/UTF8_with_signature.xml"));
-        TikaProcessor.process(DefaultLog.getInstance(), doc);
+        TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void missNamedBinaryTest() throws Exception {
         FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/Image-png.not"));
-        TikaProcessor.process(DefaultLog.getInstance(), doc);
+        TikaProcessor.process(doc);
         assertEquals(Document.Type.BINARY, doc.getMetaData().getDocumentType());
     }
 
@@ -85,21 +85,21 @@ public class TikaProcessorTest {
     @Test
     public void plainTextTest() throws Exception {
         FileDocument doc = new FileDocument(Resources.getResourceFile("/elements/Text.txt"));
-        TikaProcessor.process(DefaultLog.getInstance(), doc);
+        TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void emptyFileTest() throws Exception {
         FileDocument doc = new FileDocument(Resources.getResourceFile("/elements/sub/Empty.txt"));
-        TikaProcessor.process(DefaultLog.getInstance(), doc);
+        TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void javaFileWithChineseCharacters_RAT301() throws Exception {
         FileDocument doc = new FileDocument(Resources.getResourceFile("/tikaFiles/standard/ChineseCommentsJava.java"));
-        TikaProcessor.process(DefaultLog.getInstance(), doc);
+        TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
@@ -113,7 +113,7 @@ public class TikaProcessorTest {
             if (typeDir.isDirectory()) {
                 for (File file : Objects.requireNonNull(typeDir.listFiles())) {
                     Document doc = new FileDocument(file);
-                    String mimeType = TikaProcessor.process(DefaultLog.getInstance(), doc);
+                    String mimeType = TikaProcessor.process(doc);
                     statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
                     assertEquals( docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for "+file.toString());
                     unseenMime.remove(mimeType);

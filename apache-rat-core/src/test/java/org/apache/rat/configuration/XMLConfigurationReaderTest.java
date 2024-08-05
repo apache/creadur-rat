@@ -114,7 +114,7 @@ public class XMLConfigurationReaderTest {
         reader.readMatcherBuilders();
 
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
-        Description desc = DescriptionBuilder.buildMap(builder.builtClass());
+        Description desc = DescriptionBuilder.buildMap(builder.getClass());
         assertNotNull(desc, () -> "did not build description for 'copyright'");
         assertEquals("copyright", desc.getCommonName());
         assertEquals(ComponentType.MATCHER, desc.getType());

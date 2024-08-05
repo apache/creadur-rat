@@ -19,10 +19,12 @@
 package org.apache.rat.configuration.builders;
 
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
+import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
  * A copyright builder.
  */
+@MatcherBuilder(CopyrightMatcher.class)
 public class CopyrightBuilder extends AbstractBuilder {
     private String start;
     private String end;

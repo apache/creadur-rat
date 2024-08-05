@@ -1,0 +1,140 @@
+<?xml version='1.0'?>
+<xs:schema attributeFormDefault='unqualified'
+           xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <!--
+ Licensed to the Apache Software Foundation (ASF) under one   *
+ or more contributor license agreements.  See the NOTICE file *
+ distributed with this work for additional information        *
+ regarding copyright ownership.  The ASF licenses this file   *
+ to you under the Apache License, Version 2.0 (the            *
+ "License"); you may not use this file except in compliance   *
+ with the License.  You may obtain a copy of the License at   *
+                                                              *
+   http://www.apache.org/licenses/LICENSE-2.0                 *
+                                                              *
+ Unless required by applicable law or agreed to in writing,   *
+ software distributed under the License is distributed on an  *
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ KIND, either express or implied.  See the License for the    *
+ specific language governing permissions and limitations      *
+ under the License.                                           *
+-->
+  <xs:element name='rat-config'>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name='families' maxOccurs='1' minOccurs='0'>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name='family' maxOccurs='unbounded' minOccurs='0'>
+                <xs:complexType>
+                  <xs:attribute name='id' type='xs:string' use='required'/>
+                  <xs:attribute name='name' type='xs:string' use='required'/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name='licenses' maxOccurs='1' minOccurs='0'>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name='license' maxOccurs='unbounded' minOccurs='0'>
+                <xs:complexType>
+                  <xs:choice minOccurs='1' maxOccurs='unbounded'>
+                    <xs:element ref='matcher' maxOccurs='1' minOccurs='1'/>
+                    <xs:element name='note' type='xs:string' minOccurs='0' maxOccurs='unbounded'/>
+                  </xs:choice>
+                  <xs:attribute name='family' form='unqualified' use='required'/>
+                  <xs:attribute name='id' form='unqualified' use='optional'/>
+                  <xs:attribute name='name' form='unqualified' use='optional'/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name='approved' maxOccurs='1' minOccurs='0'>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name='family' maxOccurs='unbounded' minOccurs='0'>
+                <xs:complexType>
+                  <xs:attribute name='license_ref' type='xs:string' use='required'/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name='matchers' maxOccurs='1' minOccurs='0'>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name='matcher' maxOccurs='unbounded' minOccurs='0'>
+                <xs:complexType>
+                  <xs:attribute name='class' type='xs:string' use='required'/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name='matcher' abstract='true'/>
+  <xs:element name='all' substitutionGroup='matcher'>
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref='matcher' maxOccurs='unbounded' minOccurs='1'/>
+      </xs:choice>
+      <xs:attribute name='id' form='unqualified' use='optional'/>
+      <xs:attribute name='resource' form='unqualified' use='optional'/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name='matcherRef' substitutionGroup='matcher'>
+    <xs:complexType>
+      <xs:attribute name='refId' form='unqualified' use='required'/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name='copyright' substitutionGroup='matcher'>
+    <xs:complexType>
+      <xs:attribute name='end' form='unqualified' use='optional'/>
+      <xs:attribute name='id' form='unqualified' use='optional'/>
+      <xs:attribute name='owner' form='unqualified' use='optional'/>
+      <xs:attribute name='start' form='unqualified' use='optional'/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name='not' substitutionGroup='matcher'>
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref='matcher' maxOccurs='1' minOccurs='1'/>
+      </xs:choice>
+      <xs:attribute name='id' form='unqualified' use='optional'/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name='regex' substitutionGroup='matcher'>
+    <xs:complexType>
+      <xs:attribute name='expr' form='unqualified' use='optional'/>
+      <xs:attribute name='id' form='unqualified' use='optional'/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name='spdx' substitutionGroup='matcher'>
+    <xs:complexType>
+      <xs:attribute name='id' form='unqualified' use='optional'/>
+      <xs:attribute name='name' form='unqualified' use='optional'/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name='text' substitutionGroup='matcher'>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base='xs:string'>
+          <xs:attribute name='id' form='unqualified' use='optional'/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name='any' substitutionGroup='matcher'>
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref='matcher' maxOccurs='unbounded' minOccurs='1'/>
+      </xs:choice>
+      <xs:attribute name='id' form='unqualified' use='optional'/>
+      <xs:attribute name='resource' form='unqualified' use='optional'/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

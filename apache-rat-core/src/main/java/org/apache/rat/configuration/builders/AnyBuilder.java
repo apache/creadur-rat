@@ -19,10 +19,12 @@
 package org.apache.rat.configuration.builders;
 
 import org.apache.rat.analysis.matchers.OrMatcher;
+import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
  * Constructs an Any matcher.
  */
+@MatcherBuilder(OrMatcher.class)
 public class AnyBuilder extends ChildContainerBuilder {
 
     @Override

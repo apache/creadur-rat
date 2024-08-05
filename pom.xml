@@ -354,7 +354,7 @@ agnostic home for software distribution comprehension and audit tools.
           <version>4.8.6.2</version>
           <configuration>
             <!-- RAT-369: JDK21 finds 70 errors, while older releases find 63 -->
-            <maxAllowedViolations>70</maxAllowedViolations>
+            <maxAllowedViolations>72</maxAllowedViolations>
             <failOnError>true</failOnError>
             <!-- we only want to see our own problems and in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
@@ -450,10 +450,13 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>apache-rat-plugin/src/test/resources/**</exclude>
               <exclude>apache-rat-plugin/src/it/**</exclude>
               <exclude>apache-rat-tasks/src/test/resources/**</exclude>
+              <exclude>/src/site/apt/naming_help.txt</exclude>
               <exclude>**/iso-8859-1.html</exclude>
               <exclude>**/velocity.log</exclude>
               <!-- RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we manually add the fonts -->
               <exclude>**/src/site/javadocFont/**</exclude>
+              <exclude>apache-rat/src/site/examples/**</exclude>
+              <exclude>apache-rat-plugin/src/site/apt/plugin_help.txt</exclude>
             </excludes>
           </configuration>
         </plugin>

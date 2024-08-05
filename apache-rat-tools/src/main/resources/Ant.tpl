@@ -19,7 +19,9 @@
 
 ${package}
 
+import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.tools.ant.Task;
 

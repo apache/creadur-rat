@@ -27,6 +27,8 @@ import java.util.function.Predicate;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.utils.Log;
+import org.apache.rat.utils.ReportingSet;
 
 /**
  * Class to take a set of ILicenses and collection of approved license
@@ -40,10 +42,10 @@ public class LicenseSetFactory {
      * @param licenseFamilies the license families to search
      * @return the matching instance of the target given.
      */
-    public static ILicenseFamily familySearch(String target, SortedSet<ILicenseFamily> licenseFamilies) {
+    public static ILicenseFamily familySearch(final String target, final SortedSet<ILicenseFamily> licenseFamilies) {
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory(target).setLicenseFamilyName("Searching family")
                 .build();
-        return familySearch( family, licenseFamilies);
+        return familySearch(family, licenseFamilies);
     }
 
     /**
@@ -52,7 +54,7 @@ public class LicenseSetFactory {
      * @param licenseFamilies the license families to search
      * @return the matching instance of the target given.
      */
-    public static ILicenseFamily familySearch(ILicenseFamily target, SortedSet<ILicenseFamily> licenseFamilies) {
+    public static ILicenseFamily familySearch(final ILicenseFamily target, final SortedSet<ILicenseFamily> licenseFamilies) {
         SortedSet<ILicenseFamily> part = licenseFamilies.tailSet(target);
         return (!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null;
     }
@@ -67,29 +69,14 @@ public class LicenseSetFactory {
         APPROVED,
         /** No licenses are returned */
         NONE;
-
-        /**
-         * Converts from a String to an enum value.
-         * 
-         * @param s String representation.
-         * @return given licenseFilter for the given String representation.
-         */
-        static public LicenseFilter fromText(String s) {
-            return LicenseFilter.valueOf(s.toUpperCase());
-        }
     }
 
-    /**
-     * The set of defined families.
-     */
-    private final SortedSet<ILicenseFamily> families;
-    /**
-     * The set of defined licenses
-     */
-    private final SortedSet<ILicense> licenses;
-    /**
-     * The set of approved license family categories. If the category is not listed the family is not approved.
-     */
+    /** The set of defined families. */
+    private final ReportingSet<ILicenseFamily> families;
+    /** The set of defined licenses */
+    private final ReportingSet<ILicense> licenses;
+
+    /** The set of approved license family categories. If the category is not listed the family is not approved.  */
     private final SortedSet<String> approvedLicenseCategories;
     /**
      * The set of license categories that are to be removed from consideration.  These are categories that were
@@ -110,13 +97,13 @@ public class LicenseSetFactory {
     /**
      * Constructs a factory with the specified set of Licenses and the approved
      * license collection.
-     *
-     * @param families the set of defined license families.
-     * @param licenses the set of defined licenses.
      */
-    public LicenseSetFactory(SortedSet<ILicenseFamily> families, SortedSet<ILicense> licenses) {
-        this.families = families;
-        this.licenses = licenses;
+    public LicenseSetFactory() {
+        families = new ReportingSet<>(new TreeSet<ILicenseFamily>())
+                .setMsgFormat(s -> String.format("Duplicate LicenseFamily category: %s", s.getFamilyCategory()));
+        licenses = new ReportingSet<>(new TreeSet<ILicense>())
+                .setMsgFormat(s -> String.format("Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
+
         approvedLicenseCategories = new TreeSet<>();
         removedLicenseCategories = new TreeSet<>();
         approvedLicenseIds = new TreeSet<>();
@@ -126,20 +113,15 @@ public class LicenseSetFactory {
     /**
      * Constructs a factory with the specified set of Licenses and the approved
      * license collection.
-     *
      * @param licenses the set of defined licenses. Families will be extracted from the licenses.
      */
-    public LicenseSetFactory(SortedSet<ILicense> licenses) {
-        this.families = new TreeSet<>();
-        this.licenses = licenses;
-        licenses.forEach(l -> families.add(l.getLicenseFamily()));
-        approvedLicenseCategories = new TreeSet<>();
-        removedLicenseCategories = new TreeSet<>();
-        approvedLicenseIds = new TreeSet<>();
-        removedLicenseIds = new TreeSet<>();
+    public LicenseSetFactory(final SortedSet<ILicense> licenses) {
+        this();
+        this.licenses.addAll(licenses);
+        licenses.forEach(l -> families.addIfNotPresent(l.getLicenseFamily()));
     }
 
-    public void add(LicenseSetFactory other) {
+    public void add(final LicenseSetFactory other) {
         this.families.addAll(other.families);
         this.licenses.addAll(other.licenses);
         this.approvedLicenseCategories.addAll(other.approvedLicenseCategories);
@@ -149,15 +131,108 @@ public class LicenseSetFactory {
     }
 
     /**
+     * Set the log level for reporting collisions in the set of license families.
+     * <p>NOTE: should be set before licenses or license families are added.</p>
+     * @param level The log level to use.
+     */
+    public void logFamilyCollisions(final Log.Level level) {
+        families.setLogLevel(level);
+    }
+
+    /**
+     * Sets the reporting option for duplicate license families.
+     * @param state The ReportingSet.Option to use for reporting.
+     */
+    public void familyDuplicateOption(final ReportingSet.Options state) {
+        families.setDuplicateOption(state);
+    }
+
+    /**
+     * Sets the log level for reporting license collisions.
+     * @param level The log level.
+     */
+    public void logLicenseCollisions(final Log.Level level) {
+        licenses.setLogLevel(level);
+    }
+
+    /**
+     * Sets the reporting option for duplicate licenses.
+     * @param state the ReportingSt.Option to use for reporting.
+     */
+    public void licenseDuplicateOption(final ReportingSet.Options state) {
+        licenses.setDuplicateOption(state);
+    }
+
+
+    /**
      * Create a sorted set of licenses families from the collection.
-     * 
      * @param licenses the collection of all licenses.
      * @return a SortedSet of license families from the collection.
      */
-    private static SortedSet<ILicenseFamily> extractFamily(Collection<ILicense> licenses) {
+    private static SortedSet<ILicenseFamily> extractFamily(final Collection<ILicense> licenses) {
         SortedSet<ILicenseFamily> result = new TreeSet<>();
         licenses.stream().map(ILicense::getLicenseFamily).forEach(result::add);
         return result;
+    }
+
+    /**
+     * Adds a license to the list of licenses. Does not add the license to the list
+     * of approved licenses.
+     * @param license The license to add to the list of licenses.
+     */
+    public void addLicense(final ILicense license) {
+        if (license != null) {
+            this.licenses.add(license);
+            this.families.addIfNotPresent(license.getLicenseFamily());
+        }
+    }
+
+    /**
+     * Adds a license to the list of licenses. Does not add the license to the list
+     * of approved licenses.
+     * @param builder The license builder to build and add to the list of licenses.
+     * @return The ILicense implementation that was added.
+     */
+    public ILicense addLicense(final ILicense.Builder builder) {
+        if (builder != null) {
+            ILicense license = builder.setLicenseFamilies(families).build();
+            this.licenses.add(license);
+            return license;
+        }
+        return null;
+    }
+
+    /**
+     * Adds multiple licenses to the list of licenses. Does not add the licenses to
+     * the list of approved licenses.
+     * @param licenses The licenses to add.
+     */
+    public void addLicenses(final Collection<ILicense> licenses) {
+        this.licenses.addAll(licenses);
+        licenses.stream().map(ILicense::getLicenseFamily).forEach(families::add);
+    }
+
+    /**
+     * Adds a license family to the list of families. Does not add the family to the
+     * list of approved licenses.
+     * @param family The license family to add to the list of license families.
+     */
+    public void addFamily(final ILicenseFamily family) {
+        if (family != null) {
+            this.families.add(family);
+        }
+    }
+
+    /**
+     * Adds a license family to the list of families. Does not add the family to the
+     * list of approved licenses.
+     * @param builder The licenseFamily.Builder to build and add to the list of
+     * licenses.
+     */
+    public void addFamily(final ILicenseFamily.Builder builder) {
+        if (builder != null) {
+            this.families.add(builder.build());
+        }
     }
 
     /**
@@ -203,11 +278,10 @@ public class LicenseSetFactory {
 
     /**
      * Gets the License objects based on the filter.
-     * 
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicense objects.
      */
-    public SortedSet<ILicense> getLicenses(LicenseFilter filter) {
+    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
         Predicate<ILicense> approved =  l -> (isApprovedCategory(l.getLicenseFamily()) ||
                 approvedLicenseIds.contains(l.getId())) && !removedLicenseIds.contains(l.getId());
 
@@ -226,12 +300,11 @@ public class LicenseSetFactory {
 
     /**
      * Gets the LicenseFamily objects based on the filter.
-     * 
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicenseFamily objects.
      */
-    public SortedSet<ILicenseFamily> getLicenseFamilies(LicenseFilter filter) {
-        SortedSet<ILicenseFamily> result ;
+    public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
+        SortedSet<ILicenseFamily> result;
         switch (filter) {
         case ALL:
             result = extractFamily(licenses);
@@ -253,7 +326,7 @@ public class LicenseSetFactory {
      * @param filter the types of License IDs to return.
      * @return The list of all licenses in the category regardless of whether or not it is used by an ILicense implementation.
      */
-    public SortedSet<String> getLicenseCategories(LicenseFilter filter) {
+    public SortedSet<String> getLicenseCategories(final LicenseFilter filter) {
         Predicate<ILicense> approved = l -> (isApprovedCategory(l.getLicenseFamily()) ||
                 approvedLicenseIds.contains(l.getId())) && !removedLicenseIds.contains(l.getId());
         SortedSet<String> result = new TreeSet<>();
@@ -281,7 +354,7 @@ public class LicenseSetFactory {
      * @param filter the types of License IDs to return.
      * @return The list of all licenses in the category regardless of whether or not it is used by an ILicense implementation.
      */
-    public SortedSet<String> getLicenseIds(LicenseFilter filter) {
+    public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
         Predicate<ILicense> approved =  l -> (isApprovedCategory(l.getLicenseFamily()) ||
                 approvedLicenseIds.contains(l.getId())) && !removedLicenseIds.contains(l.getId());
         SortedSet<String> result = new TreeSet<>();
@@ -294,7 +367,7 @@ public class LicenseSetFactory {
                 result.addAll(removedLicenseIds);
                 return result;
             case APPROVED:
-                licenses.stream().filter(approved).forEach(l ->result.add(l.getId()));
+                licenses.stream().filter(approved).forEach(l -> result.add(l.getId()));
                 families.stream().filter(this::isApprovedCategory).forEach(f -> result.add(f.getFamilyCategory()));
                 approvedLicenseIds.stream().filter(s -> !removedLicenseIds.contains(s)).forEach(result::add);
                 return result;
@@ -311,7 +384,7 @@ public class LicenseSetFactory {
      * @param licenses the SortedSet of licenses to search.
      * @return the matching license or {@code null} if not found.
      */
-    public static Optional<ILicense> search(String familyId, String licenseId, SortedSet<ILicense> licenses) {
+    public static Optional<ILicense> search(final String familyId, final String licenseId, final SortedSet<ILicense> licenses) {
         ILicenseFamily searchFamily = ILicenseFamily.builder().setLicenseFamilyCategory(familyId)
                 .setLicenseFamilyName("searching proxy").build();
         ILicense target = new ILicense() {
@@ -327,12 +400,12 @@ public class LicenseSetFactory {
             }
 
             @Override
-            public boolean matches(IHeaders headers) {
+            public boolean matches(final IHeaders headers) {
                 return false;
             }
 
             @Override
-            public boolean equals(Object o) {
+            public boolean equals(final Object o) {
                 return ILicense.equals(this, o);
             }
 
@@ -373,7 +446,7 @@ public class LicenseSetFactory {
      * @param licenses the SortedSet of licenses to search.
      * @return the matching license or {@code null} if not found.
      */
-    public static Optional<ILicense> search(ILicense target, SortedSet<ILicense> licenses) {
+    public static Optional<ILicense> search(final ILicense target, final SortedSet<ILicense> licenses) {
         SortedSet<ILicense> part = licenses.tailSet(target);
         return Optional.ofNullable((!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null);
     }

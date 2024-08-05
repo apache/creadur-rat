@@ -19,10 +19,12 @@
 package org.apache.rat.configuration.builders;
 
 import org.apache.rat.analysis.matchers.AndMatcher;
+import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
  * Constructs a All matcher.
  */
+@MatcherBuilder(AndMatcher.class)
 public class AllBuilder extends ChildContainerBuilder {
 
     @Override

@@ -22,10 +22,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.analysis.matchers.SimpleTextMatcher;
+import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
  * Builds text matcher.  The specific implementation is based on the complexity of the text to match.
  */
+@MatcherBuilder(SimpleTextMatcher.class)
 public class TextBuilder extends AbstractBuilder {
 
     private String text;
