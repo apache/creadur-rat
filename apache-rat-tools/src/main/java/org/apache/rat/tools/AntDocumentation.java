@@ -60,7 +60,7 @@ public final class AntDocumentation {
     private final File outputDir;
 
     /**
-     * Creates apt documentation fileis for Ant.
+     * Creates apt documentation files for Ant.
      * Requires 1 argument:
      * <ol>
      *     <li>the directory in which to write the documentation files.</li>
