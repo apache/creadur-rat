@@ -123,7 +123,8 @@ public final class AntDocumentation {
         System.exit(0);
     }
 
-    private AntDocumentation(final File outputDir) {
+   private AntDocumentation(final ReportConfiguration config, final File outputDir) {
+        this.config = config;
         this.outputDir = outputDir;
     }
 
