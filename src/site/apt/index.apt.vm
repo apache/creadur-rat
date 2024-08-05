@@ -100,7 +100,7 @@ Apache Rat&#8482;
   support standard options as noted in the list below.
 
 +------------------------------------------+
-#include( "naming_help.txt" )
+
 +------------------------------------------+
 
 ** Command Line
@@ -157,7 +157,7 @@ java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
   The list of standard libraries is available from the user interface and is listed below:
 
 +------------------------------------------+
-#include( "license_help.txt" )
+
 +------------------------------------------+
 
 * Building Rat from source
