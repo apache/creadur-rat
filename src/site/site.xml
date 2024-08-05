@@ -60,6 +60,7 @@
       <item name="Defining New Licenses" href="license_def.html"/>
       <item name="Option Name Cross Reference" href="apache-rat/name_xref.html" />
       <item name="Default Licenses, etc" href="apache-rat/default_licenses.html" />
+      <item name="Configuration XSD" href="apache-rat/xsd.html" />
     </menu>
 
 
