@@ -34,7 +34,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -438,9 +438,9 @@ public abstract class AbstractOptionsProvider {
     protected void logLevelTest() {
         Option option = Arg.LOG_LEVEL.find("log-level");
         String[] args = {null};
-        Log.Level logLevel = ((DefaultLog) DefaultLog.getInstance()).getLevel();
+        Level logLevel = ((DefaultLog) DefaultLog.getInstance()).getLevel();
         try {
-            for (Log.Level level : Log.Level.values()) {
+            for (Level level : Level.values()) {
                 try {
                     args[0] = level.name();
                     ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));

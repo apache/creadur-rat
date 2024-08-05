@@ -37,7 +37,6 @@ public class ReportingSet<T> implements SortedSet<T> {
     private final SortedSet<T> delegate;
     private Options duplicateOption = Options.IGNORE;
     private Log.Level duplicateLogLevel = Log.Level.WARN;
-    private Log log = DefaultLog.getInstance();
     private Function<T,String> duplicateFmt = (t) -> String.format("Duplicate %s (%s) detected %s", t.getClass(), t);
 
     public enum Options { OVERWRITE, IGNORE, FAIL }
@@ -80,17 +79,6 @@ public class ReportingSet<T> implements SortedSet<T> {
     }
 
     /**
-     * Sets the log that the reporting set will log to.
-     * if not set the DefaultLog is used.
-     * @param log the Log implementation to use.
-     * @return this for chaining.
-     */
-    public ReportingSet<T> setLog(Log log) {
-        this.log = log;
-        return this;
-    }
-
-    /**
      * Sets the log level that the reporting set will log at.
      * if not set the default level is WARN.
      * @param level the log level to use.
@@ -103,7 +91,7 @@ public class ReportingSet<T> implements SortedSet<T> {
 
     private ReportingSet<T> sameConfig(SortedSet<T> delegate) {
         ReportingSet<T> result = delegate instanceof ReportingSet ? (ReportingSet<T>) delegate : new ReportingSet<>(delegate);
-        return result.setDuplicateOption(this.duplicateOption).setLog(this.log).setLogLevel(this.duplicateLogLevel);
+        return result.setDuplicateOption(this.duplicateOption).setLogLevel(this.duplicateLogLevel);
     }
 
     /**
@@ -131,7 +119,7 @@ public class ReportingSet<T> implements SortedSet<T> {
             String msg = String.format("%s",ReportingSet.this.duplicateFmt.apply(e));
             if (reportDup) {
                 msg =  String.format( "%s (action: %s)", msg, duplicateOption);
-                log.log(duplicateLogLevel, msg);
+                DefaultLog.getInstance().log(duplicateLogLevel, msg);
             }
             switch (duplicateOption) {
             case FAIL:

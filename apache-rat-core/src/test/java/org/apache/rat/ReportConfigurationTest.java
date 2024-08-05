@@ -63,6 +63,7 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
 import org.apache.rat.walker.NameBasedHiddenFileFilter;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -75,7 +76,13 @@ public class ReportConfigurationTest {
     @BeforeEach
     public void setup() {
         log = new TestingLog();
-        underTest = new ReportConfiguration(log);
+        DefaultLog.setInstance(log);
+        underTest = new ReportConfiguration();
+    }
+
+    @AfterEach
+    public void cleanup() {
+        DefaultLog.setInstance(null);
     }
 
     @Test
@@ -207,8 +214,8 @@ public class ReportConfigurationTest {
     }
 
     /**
-     * Sets up underTest to have a set of licenses named after cartoon cats.
-     * {@link https://en.wikipedia.org/wiki/List_of_fictional_cats_in_comics}
+     * Sets up underTest to have a set of licenses named after
+     * <a href="https://en.wikipedia.org/wiki/List_of_fictional_cats_in_comics"></a>cartoon cats</a>
      * all in the license family catz
      */
     private void addCatz() {
@@ -222,8 +229,8 @@ public class ReportConfigurationTest {
     }
 
     /**
-     * Sets up underTest to have a set of licenses named after cartoon dogs.
-     * {@link https://en.wikipedia.org/wiki/List_of_fictional_dogs_in_comics}
+     * Sets up underTest to have a set of licenses named after
+     * <a href="https://en.wikipedia.org/wiki/List_of_fictional_dogs_in_comics"></a>cartoon cats</a>cartoon dogs</a>
      * all in the license family dogz
      */
     private void addDogz() {
@@ -330,7 +337,7 @@ public class ReportConfigurationTest {
 
         assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
 
-        underTest.setFrom(Defaults.builder().build(DefaultLog.getInstance()));
+        underTest.setFrom(Defaults.builder().build());
         assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
 
         IOFileFilter filter = mock(IOFileFilter.class);
@@ -342,7 +349,7 @@ public class ReportConfigurationTest {
     public void directoriesToIgnoreTest() {
         assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
 
-        underTest.setFrom(Defaults.builder().build(DefaultLog.getInstance()));
+        underTest.setFrom(Defaults.builder().build());
         assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
 
         underTest.setDirectoriesToIgnore(DirectoryFileFilter.DIRECTORY);
@@ -357,7 +364,7 @@ public class ReportConfigurationTest {
     public void archiveProcessingTest() {
         assertThat(underTest.getArchiveProcessing()).isEqualTo(ReportConfiguration.Processing.NOTIFICATION);
 
-        underTest.setFrom(Defaults.builder().build(DefaultLog.getInstance()));
+        underTest.setFrom(Defaults.builder().build());
         assertThat(underTest.getArchiveProcessing()).isEqualTo(ReportConfiguration.Processing.NOTIFICATION);
 
         underTest.setArchiveProcessing(ReportConfiguration.Processing.ABSENCE);
@@ -505,7 +512,7 @@ public class ReportConfigurationTest {
     
     @Test
     public void testSetOut() throws IOException {
-        ReportConfiguration config = new ReportConfiguration(log);
+        ReportConfiguration config = new ReportConfiguration();
         try (OutputStreamInterceptor osi = new OutputStreamInterceptor()) {
             config.setOut(() -> osi);
             assertThat(osi.closeCount).isEqualTo(0);

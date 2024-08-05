@@ -48,11 +48,11 @@ public class SimpleLicenseTest {
         Map<String, Description> children = underTest.getChildren();
         assertEquals(6, children.size());
         assertTrue(children.containsKey("id"));
-        assertEquals("TestingId", children.get("id").getParamValue(DefaultLog.getInstance(), lic));
+        assertEquals("TestingId", children.get("id").getParamValue(lic));
         assertTrue(children.containsKey("name"));
-        assertEquals("My testing license", children.get("name").getParamValue(DefaultLog.getInstance(), lic));
+        assertEquals("My testing license", children.get("name").getParamValue(lic));
         assertTrue(children.containsKey("note"));
-        assertEquals("These are the notes", children.get("note").getParamValue(DefaultLog.getInstance(), lic));
+        assertEquals("These are the notes", children.get("note").getParamValue(lic));
 
         assertTrue(children.containsKey("matcher"));
         assertEquals(ComponentType.PARAMETER, children.get("matcher").getType());

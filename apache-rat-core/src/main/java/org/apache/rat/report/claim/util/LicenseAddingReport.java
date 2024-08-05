@@ -26,15 +26,22 @@ import org.apache.rat.annotation.AbstractLicenseAppender;
 import org.apache.rat.annotation.ApacheV2LicenseAppender;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.AbstractReport;
-import org.apache.rat.utils.Log;
 
+/**
+ * A Report that adds licenses text to files.
+ */
 public class LicenseAddingReport extends AbstractReport {
     private final AbstractLicenseAppender appender;
 
-    public LicenseAddingReport(final Log log, String pCopyrightMsg, boolean pForced) {
-        appender = pCopyrightMsg == null ? new ApacheV2LicenseAppender(log)
-                : new ApacheV2LicenseAppender(log, pCopyrightMsg);
-        appender.setForce(pForced);
+    /**
+     * Creates a LicenseAddingReport that inserts the copyright message and may overwrite the files.
+     * @param copyrightMsg The message to insert into the files.  May be {@code null}.
+     * @param overwrite if {@code true} will overwrite the files rather than create {@code .new} files.
+     */
+    public LicenseAddingReport(String copyrightMsg, boolean overwrite) {
+        appender = copyrightMsg == null ? new ApacheV2LicenseAppender()
+                : new ApacheV2LicenseAppender(copyrightMsg);
+        appender.setOverwrite(overwrite);
     }
 
     @Override

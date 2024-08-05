@@ -67,7 +67,7 @@ public final class XmlReportFactory {
             reporters.add(new ClaimAggregator(statistic));
         }
         if (configuration.isAddingLicenses() && !configuration.isDryRun()) {
-            reporters.add(new LicenseAddingReport(configuration.getLog(), configuration.getCopyrightMessage(), configuration.isAddingLicensesForced()));
+            reporters.add(new LicenseAddingReport(configuration.getCopyrightMessage(), configuration.isAddingLicensesForced()));
         }
 
         if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
