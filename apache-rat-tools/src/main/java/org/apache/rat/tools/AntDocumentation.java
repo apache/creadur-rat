@@ -123,7 +123,7 @@ public final class AntDocumentation {
         System.exit(0);
     }
 
-    private AntDocumentation(ReportConfiguration config, File outputDir) {
+    private AntDocumentation(final ReportConfiguration config, final File outputDir) {
         this.config = config;
         this.outputDir = outputDir;
     }
@@ -138,7 +138,7 @@ public final class AntDocumentation {
         printValueTypes();
     }
 
-    public void writeAttributes(List<AntOption> options) {
+    public void writeAttributes(final List<AntOption> options) {
         File f = new File(outputDir, "report_attributes.txt");
         try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
             printOptions(out, options, AntOption::isAttribute,
@@ -148,7 +148,7 @@ public final class AntDocumentation {
         }
     }
 
-    public void writeElements(List<AntOption> options) {
+    public void writeElements(final List<AntOption> options) {
         File f = new File(outputDir, "report_elements.txt");
         try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
 
@@ -159,7 +159,7 @@ public final class AntDocumentation {
             throw new RuntimeException(e);
         }
     }
-    private void printOptions(Writer out, List<AntOption> options, Predicate<AntOption> typeFilter, String tableCaption) throws IOException {
+    private void printOptions(final Writer out, final List<AntOption> options, final Predicate<AntOption> typeFilter, final String tableCaption) throws IOException {
         boolean hasDeprecated = options.stream().anyMatch(typeFilter.and(AntOption::isDeprecated));
 
         if (hasDeprecated) {
@@ -213,21 +213,21 @@ public final class AntDocumentation {
 
     private static class AptFormat  {
 
-        public static void writeLicense(Writer writer) throws IOException {
+        public static void writeLicense(final Writer writer) throws IOException {
             try (InputStream in = AntDocumentation.class.getResourceAsStream("/license.apt")) {
                 IOUtils.copy(in, writer);
             }
         }
 
-        public static void writeTitle(Writer writer, String title) throws IOException {
+        public static void writeTitle(final Writer writer, final String title) throws IOException {
             writer.write(format("        -----%n        %1$s%n        -----%n%n%1$s%n%n", title));
         }
 
-        public static void writePara(Writer writer, String paragraph) throws IOException {
+        public static void writePara(final Writer writer, final String paragraph) throws IOException {
             writer.write(format("  %s%n%n", paragraph));
         }
 
-        public static void writeHeader(Writer writer, int level, String text) throws IOException {
+        public static void writeHeader(final Writer writer, final int level, final String text) throws IOException {
             writer.write(System.lineSeparator());
             for (int i = 0; i < level; i++) {
                 writer.write("*");
@@ -235,14 +235,14 @@ public final class AntDocumentation {
             writer.write(format(" %s%n%n", text));
         }
 
-        public static void writeList(Writer writer, Collection<String> list) throws IOException {
+        public static void writeList(final Writer writer, final Collection<String> list) throws IOException {
             for (String s : list) {
                 writer.write(format("    * %s%n", s));
             }
             writer.write(System.lineSeparator());
         }
 
-        public static void writeTable(Writer writer, Collection<? extends Collection<String>> table, String pattern, String caption) throws IOException {
+        public static void writeTable(final Writer writer, final Collection<? extends Collection<String>> table, final String pattern, final String caption) throws IOException {
             writer.write(format("%s%n", pattern));
             for (Collection<String> row : table) {
                 for (String cell : row) {
@@ -256,7 +256,7 @@ public final class AntDocumentation {
             writer.write(System.lineSeparator());
         }
 
-        public static void writeTable(Writer writer, Collection<? extends Collection<String>> table, String pattern) throws IOException {
+        public static void writeTable(final Writer writer, final Collection<? extends Collection<String>> table, final String pattern) throws IOException {
             writeTable(writer, table, pattern, null);
         }
     }
