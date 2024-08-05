@@ -133,33 +133,30 @@ public final class AntDocumentation {
         List<AntOption> options = Arg.getOptions().getOptions().stream().filter(AntGenerator.getFilter()).map(AntOption::new)
                 .collect(Collectors.toList());
 
-        writeAttributes(options);
-        writeElements(options);
-        printValueTypes();
-    }
-
-    public void writeAttributes(List<AntOption> options) {
-        File f = new File(outputDir, "report_attributes.txt");
+        File f = new File(outputDir, "report.apt");
         try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
-            printOptions(out, options, AntOption::isAttribute,"The attribute value types are listed in a table at the " +
+            AptFormat.writeLicense(out);
+            AptFormat.writeTitle(out, "Report Task");
+
+            try (InputStream in = AntDocumentation.class.getResourceAsStream("/ant/report.tpl")) {
+                IOUtils.copy(in, out);
+            }
+
+            AptFormat.writeHeader(out, 1, "Report Task Attributes");
+            AptFormat.writePara(out,"This section lists the attributes for the report task.  The attribute value types are listed in a table at the " +
                     "bottom of this page.");
+            printOptions(out, options, AntOption::isAttribute);
+            AptFormat.writeHeader(out, 1, "Report Task Nested Elements");
+            AptFormat.writePara(out,"This section lists the child elements for the report task.  The element value types are listed in a table at the " +
+                    "bottom of this page.");
+            printOptions(out, options, AntOption::isElement);
+            printValueTypes(out);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void writeElements(List<AntOption> options) {
-        File f = new File(outputDir, "report_elements.txt");
-        try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
-
-            printOptions(out, options, AntOption::isElement, "The element value types are listed in a table at the " +
-                    "bottom of this page.");
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    private void printOptions(Writer out, List<AntOption> options, Predicate<AntOption> typeFilter, String tableCaption) throws IOException {
+    private void printOptions(Writer out, List<AntOption> options, Predicate<AntOption> typeFilter) throws IOException {
         boolean hasDeprecated = options.stream().anyMatch(typeFilter.and(AntOption::isDeprecated));
 
         if (hasDeprecated) {
@@ -174,7 +171,7 @@ public final class AntDocumentation {
                         o.isRequired() ? "true" : "false"))
                 .forEach(table::add);
 
-        AptFormat.writeTable(out, table, "*--+--+--+--+", tableCaption);
+        AptFormat.writeTable(out, table, "*--+--+--+--+");
 
         if (hasDeprecated) {
             AptFormat.writeHeader(out, 2, "Deprecated ");
@@ -188,14 +185,12 @@ public final class AntDocumentation {
                             o.getDeprecated()))
                     .forEach(table::add);
 
-            AptFormat.writeTable(out, table, "*--+--+--+--+", tableCaption);
         }
     }
 
-    private void printValueTypes() throws IOException {
+    private void printValueTypes(Writer writer) throws IOException {
 
-        File f = new File(outputDir, "report_arg_types.txt");
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
+        AptFormat.writeHeader(writer, 1, "Argument Types");
 
         List<List<String>> table = new ArrayList<>();
         table.add(Arrays.asList("Value Type", "Description"));
@@ -206,9 +201,6 @@ public final class AntDocumentation {
 
         AptFormat.writeTable(writer, table, "*--+--+");
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static class AptFormat  {
@@ -242,7 +234,7 @@ public final class AntDocumentation {
             writer.write(System.lineSeparator());
         }
 
-        public static void writeTable(Writer writer, Collection<? extends Collection<String>> table, String pattern, String caption) throws IOException {
+        public static void writeTable(Writer writer, Collection<? extends Collection<String>> table, String pattern) throws IOException {
             writer.write(format("%s%n", pattern));
             for (Collection<String> row : table) {
                 for (String cell : row) {
@@ -250,14 +242,7 @@ public final class AntDocumentation {
                 }
                 writer.write(format("|%n%s%n", pattern));
             }
-            if (caption != null) {
-                writer.write(caption);
-            }
             writer.write(System.lineSeparator());
-        }
-
-        public static void writeTable(Writer writer, Collection<? extends Collection<String>> table, String pattern) throws IOException {
-            writeTable(writer, table, pattern, null);
         }
     }
 }
