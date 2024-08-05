@@ -87,7 +87,7 @@ public final class OptionCollection {
                 Arrays.stream(ReportConfiguration.Processing.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
                         .collect(Collectors.joining(""))));
-        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file or maybe one of the internal named sheets. Internal sheets are: %s.",
+        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %s.",
                 Arrays.stream(StyleSheets.values())
                         .map(v -> format("\t%s: %s", v.arg(), v.desc()))
                         .collect(Collectors.joining(""))));
