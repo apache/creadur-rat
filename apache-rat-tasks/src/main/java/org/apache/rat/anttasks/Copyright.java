@@ -21,6 +21,11 @@ package org.apache.rat.anttasks;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
 
+/**
+ * Creates a Copyright matcher.
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class Copyright implements IHeaderMatcher.Builder {
 
     private final CopyrightBuilder builder = new CopyrightBuilder();

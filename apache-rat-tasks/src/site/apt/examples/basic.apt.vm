@@ -59,16 +59,16 @@ java -jar apache-rat-${project.version}.jar src
   The equivalent of
 
 +------------------------------------------+
-java -jar apache-rat-${project.version}.jar --addlicense
-  --copyright "Copyright 2008 Foo"
+java -jar apache-rat-${project.version}.jar --edit-license
+  --edit-copyright "Copyright 2008 Foo"
   /path/to/project
 +------------------------------------------+
 
   is
 
 ---
-<rat:report addLicenseHeaders="true"
-            coprightMessage="Copyright 2008 Foo">
+<rat:report editLicense="true"
+            editCopyright="Copyright 2008 Foo">
     <fileset dir="/path/to/project"/>
 </rat:report>
 ---
@@ -76,11 +76,8 @@ java -jar apache-rat-${project.version}.jar --addlicense
 * Create a styled HTML report
 
 ---
-<rat:report format="styled" reportFile="rat.html">
+<rat:report outputStyle="my/rat-xml-2-html.xslt" outputFile="rat.html">
     <fileset dir="src"/>
-    <stylesheet>
-        <file file="my/rat-xml-2-html.xslt"/>
-    </stylesheet>
 </rat:report>
 ---
 
@@ -121,14 +118,11 @@ java -jar apache-rat-${project.version}.jar --addlicense
 * Make Rat only detect your custom license and mark this license
   approved.
 
+  Create a configuration file containing only your definition(s)).
+
 ---
 <rat:report addDefaultLicenseMatchers="false">
     <fileset dir="src"/>
-    <rat:substringMatcher licenseFamilyCategory="YASL1"
-             licenseFamilyName="Yet Another Software License, Version 1.0">
-        <pattern substring="Yet Another Software License, 1.0"/>
-    </rat:substringMatcher>
-    <rat:approvedLicense
-             familyName="Yet Another Software License, Version 1.0"/>
+    <rat:config>YOUR_CONFIGURATION_FILE</rat:config>
 </rat:report>
 ---

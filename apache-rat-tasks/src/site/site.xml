@@ -27,11 +27,9 @@
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Report Task" href="report.html"/>
-      <item name="Types" href="types.html"/>
     </menu>
     <menu name="Examples">
       <item name="Basic Usage" href="examples/basic.html"/>
-      <item name="Custom Types" href="examples/custom.html"/>
     </menu>
     <menu ref="reports"/>
   </body>

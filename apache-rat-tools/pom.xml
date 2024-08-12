@@ -53,6 +53,7 @@
             <excludes>
               <!-- This file is included into a generated file. -->
               <exclude>src/main/resources/Args.tpl</exclude>
+              <exclude>src/main/resources/ant/report.tpl</exclude>
               <!-- These files have bad license headers because they are used to test bad license headers -->
               <exclude>src/test/resources/**</exclude>
             </excludes>

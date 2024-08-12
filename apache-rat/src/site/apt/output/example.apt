@@ -1,0 +1,109 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                   --------------------------
+                   Default Output Example
+                   --------------------------
+
+Default Output Example
+
+  By default Rat produces a plain text output that is the result of processing the XML output with the plain text style
+  sheet.  The output is designed to provide the most commonly requested data.  Additional data may be retrieved by using
+  custom style sheets.
+
++------------------------------------------+
+*****************************************************
+Summary
+-------
+Generated at: 2024-03-30T14:40:39+01:00
+
+Notes: 2
+Binaries: 2
+Archives: 1
+Standards: 8
+
+Apache Licensed: 5
+Generated Documents: 1
+
+JavaDocs are generated, thus a license header is optional.
+Generated files do not require license headers.
+
+2 Unknown Licenses
+
+*****************************************************
+
+Files with unapproved licenses:
+
+  src/test/resources/elements/Source.java
+  src/test/resources/elements/sub/Empty.txt
+
+*****************************************************
+
+*****************************************************
+  Documents with unapproved licenses will start with a '!'
+  The next character identifies the document type.
+
+   char         type
+    a       Archive file
+    b       Binary file
+    g       Generated file
+    n       Notice file
+    s       Standard file
+    u       Unknown file.
+
+ s src/test/resources/elements/ILoggerFactory.java
+    MIT      MIT           The MIT License
+
+ b src/test/resources/elements/Image.png
+
+ n src/test/resources/elements/LICENSE
+
+ n src/test/resources/elements/NOTICE
+
+!s src/test/resources/elements/Source.java
+    ?????    ?????         Unknown license (Unapproved)
+
+ s src/test/resources/elements/Text.txt
+    AL       AL            Apache License Version 2.0
+
+ s src/test/resources/elements/TextHttps.txt
+    AL       AL            Apache License Version 2.0
+
+ s src/test/resources/elements/Xml.xml
+    AL       AL            Apache License Version 2.0
+
+ s src/test/resources/elements/buildr.rb
+    AL       AL            Apache License Version 2.0
+
+ a src/test/resources/elements/dummy.jar
+
+ g src/test/resources/elements/generated.txt
+    GEN      GEN           Generated Files
+
+ b src/test/resources/elements/plain.json
+
+ s src/test/resources/elements/tri.txt
+    AL       AL            Apache License Version 2.0
+    BSD-3    BSD-3         BSD 3 clause
+    BSD-3    TMF           The Telemanagement Forum License
+
+!s src/test/resources/elements/sub/Empty.txt
+    ?????    ?????         Unknown license (Unapproved)
+
+
+*****************************************************
++------------------------------------------+

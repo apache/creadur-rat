@@ -22,6 +22,11 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.configuration.builders.AllBuilder;
 
+/**
+ * Creates an Anl matcher.
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class All implements IHeaderMatcher.Builder {
 
     private final AllBuilder builder = Builder.all();

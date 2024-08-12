@@ -20,6 +20,11 @@ package org.apache.rat.anttasks;
 
 import org.apache.rat.license.ILicenseFamily;
 
+/**
+ * Creates a License Family
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class Family {
 
     private final ILicenseFamily.Builder builder = ILicenseFamily.builder();

@@ -22,9 +22,14 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 
+/**
+ * Creates an Any matcher.
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class Any implements IHeaderMatcher.Builder {
 
-    private final AnyBuilder builder = Builder.any();
+    private final AnyBuilder builder = new AnyBuilder();
 
     @Override
     public IHeaderMatcher build() {

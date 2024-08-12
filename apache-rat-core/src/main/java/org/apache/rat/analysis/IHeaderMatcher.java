@@ -90,19 +90,15 @@ public interface IHeaderMatcher {
          * @return The description of the builder 
          */
         default Description getDescription() {
-            Class<?> clazz = DescriptionBuilder.getBuiltClass(this.getClass());
-            if (clazz == IHeaderMatcher.class) {
-                throw new ImplementationException(String.format(
-                        "Class %s must implement buildClass() method to return a child class of IHeaderMatcher", 
-                        this.getClass()));
-            }
-            return DescriptionBuilder.buildMap(clazz);
+            return DescriptionBuilder.buildMap(this.getClass());
         }
 
         /**
          * @return an instance of the standard TextBuilder.
          * @see TextBuilder
+         * @deprecated Use new TextBuilder()
          */
+        @Deprecated // since 0.17
         static TextBuilder text() {
             return new TextBuilder();
         }
@@ -110,7 +106,9 @@ public interface IHeaderMatcher {
         /**
          * @return an instance of the standard AnyBuilder.
          * @see AnyBuilder
+         * @deprecated Use new AnyBuilder()
          */
+        @Deprecated // since 0.17
         static AnyBuilder any() {
             return new AnyBuilder();
         }
@@ -118,7 +116,9 @@ public interface IHeaderMatcher {
         /**
          * @return an instance of the standard AllBuilder.
          * @see AllBuilder
+         * @deprecated Use new AllBuilder()
          */
+        @Deprecated // since 0.17
         static AllBuilder all() {
             return new AllBuilder();
         }
@@ -126,7 +126,9 @@ public interface IHeaderMatcher {
         /**
          * @return an instance of the standard CopyrightBuilder.
          * @see CopyrightBuilder
+         * @deprecated Use new CopyrightBuilder()
          */
+        @Deprecated // since 0.17
         static CopyrightBuilder copyright() {
             return new CopyrightBuilder();
         }
@@ -134,7 +136,9 @@ public interface IHeaderMatcher {
         /**
          * @return an instance of the standard SpdxBuilder.
          * @see SpdxBuilder
+         * @deprecated Use new SpdxBuilder()
          */
+        @Deprecated // since 0.17
         static SpdxBuilder spdx() {
             return new SpdxBuilder();
         }
@@ -142,7 +146,9 @@ public interface IHeaderMatcher {
         /**
          * @return an instance of the standard MatcherRefBuilder.
          * @see MatcherRefBuilder
+         * @deprecated Use new MatcherRefBuilder()
          */
+        @Deprecated // since 0.17
         static MatcherRefBuilder matcherRef() {
             return new MatcherRefBuilder();
         }
@@ -150,7 +156,9 @@ public interface IHeaderMatcher {
         /**
          * @return an instance of the standard NotBuilder.
          * @see NotBuilder
+         * @deprecated Use new NotBuilder()
          */
+        @Deprecated // since 0.17
         static NotBuilder not() {
             return new NotBuilder();
         }
@@ -158,7 +166,9 @@ public interface IHeaderMatcher {
         /**
          * @return an instance of the standard RegexBuilder.
          * @see RegexBuilder
+         * @deprecated Use new RegexBuilder()
          */
+        @Deprecated // since 0.17
         static RegexBuilder regex() {
             return new RegexBuilder();
         }

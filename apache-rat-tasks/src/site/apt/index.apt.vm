@@ -37,6 +37,8 @@ Requirements
  In order to use the tasks Java 5 is required as of Rat 0.9 - Rat 0.8
  and earlier require Java 1.4.
 
+ Java 8 is required for RAT 0.14 and above.
+
 Installation
 
     There are several ways to use the Antlib:
