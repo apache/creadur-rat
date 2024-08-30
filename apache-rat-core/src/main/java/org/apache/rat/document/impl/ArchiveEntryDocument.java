@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.Collections;
 import java.util.SortedSet;
 
@@ -47,8 +48,8 @@ public class ArchiveEntryDocument extends Document {
      * @param path The path for the entry.
      * @param contents the contents of the entry.
      */
-    public ArchiveEntryDocument(Path path, byte[] contents) {
-        super(FileDocument.normalizeFileName(path.toFile()));
+    public ArchiveEntryDocument(Path path, byte[] contents, PathMatcher pathMatcher) {
+        super(FileDocument.normalizeFileName(path.toFile()), pathMatcher);
         this.path = path;
         this.contents = contents;
     }

@@ -24,15 +24,12 @@ import static java.lang.String.format;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
@@ -41,19 +38,13 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -165,13 +156,14 @@ public enum Arg {
             .build())),
 
     /** Option to read a file licenses to be removed from the approved list */
-    LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file").hasArg().argName("File")
+    LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
+            .hasArg().argName("File").type(File.class)
             .desc("Name of File containing the approved license IDs.")
-            .type(File.class)
             .build())),
 
     /** Option to list license families to remove from the approved list */
-    FAMILIES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied").hasArgs().argName("FamilyID")
+    FAMILIES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied")
+            .hasArgs().argName("FamilyID")
             .desc("The denied License family IDs. These license families will be removed from the list of approved licenses.")
             .build())),
 
@@ -188,29 +180,83 @@ public enum Arg {
             .addOption(Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-exclude")).get())
-                    .desc("Excludes files matching wildcard <Expression>.")
+                    .desc("Excludes files matching <Expression>.")
             .build())
             .addOption(Option.builder().longOpt("input-exclude").hasArgs().argName("Expression")
-                    .desc("Excludes files matching wildcard <Expression>.")
+                    .desc("Excludes files matching <Expression>.")
                     .build())),
 
     /** Excludes files based on content of file */
     EXCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
-                    .argName("File")
-                    .hasArg()
+                    .argName("File").hasArg().type(File.class)
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-exclude-file")).get())
-                    .desc("Excludes files matching regular expression in the input file.")
+                    .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
                     .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
-                    .argName("File")
-                    .hasArg().desc("Excludes files matching regular expression in the input file.")
+                    .argName("File").hasArg().type(File.class)
+                    .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
                     .build())),
 
-    /** Scan hidden directories */
-    SCAN_HIDDEN_DIRECTORIES(new OptionGroup().addOption(new Option(null, "scan-hidden-directories", false,
-            "Scans hidden directories."))),
+    EXCLUDE_STD(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-exclude-std").argName("StandardCollection")
+                    .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
+                    .desc("Excludes files defined in standard collections based on commonly occurring groups.")
+                    .build())
+    ),
+
+    /** Excludes files by expression */
+    INCLUDE(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-include").hasArgs().argName("Expression")
+                    .desc("Includes files matching <Expression>.  Will override excluded files.")
+                    .build())
+            .addOption(Option.builder().longOpt("include").hasArgs().argName("Expression")
+                    .desc("Includes files matching <Expression>.  Will override excluded files.")
+                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+                            .setDescription(StdMsgs.useMsg("--input-include")).get())
+            .build())
+            ),
+
+    /** Excludes files based on content of file */
+    INCLUDE_FILE(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-include-file")
+                    .argName("File").hasArg().type(File.class)
+                    .desc("Reads <Expression> entries from a file.  Entries will override excluded files.")
+                    .build())
+            .addOption(Option.builder().longOpt("includes-file")
+                    .argName("File").hasArg().type(File.class)
+                    .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
+                            .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+                            .setDescription(StdMsgs.useMsg("--input-include-file")).get())
+
+            .build())),
+
+    INCLUDE_STD(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-include-std").argName("StandardCollection")
+                    .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
+                    .desc("Includes files defined in standard collections based on commonly occurring groups. " +
+                            "Will override excluded files.")
+                    .build())
+            .addOption(Option.builder().longOpt("scan-hidden-directories")
+                    .desc("Scans hidden directories.")
+                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+                    .setDescription(StdMsgs.useMsg("--input-include-std with 'HIDDEN_DIR' argument")).get()).build()
+            )
+    ),
+
+    EXCLUDE_PARSE_SCM(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-exclude-parsed-scm")
+                    .argName("StandardCollection")
+                    .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
+                    .desc("Parse SCM based exclusion files to exclude specified files.")
+                    .build())
+//            .addOption(Option.builder().longOpt("parseSCMIgnoresAsExcludes")
+//                    .desc("Parse SCM based exclusion files to exclude specified files.")
+//                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+//                            .setDescription(StdMsgs.useMsg("--input-exclude-parsed-scm with 'ALL' argument, or with specific SCM name")).get()).build()
+//            )
+    ),
 
     /** Stop processing an input stream and declare an input file */
     DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
@@ -408,119 +454,87 @@ public enum Arg {
     /**
      * Processes the configuration options.
      * @param ctxt the context to process.
-     * @throws MalformedURLException if configuration files can not be read.
+     * @throws ConfigurationException if configuration files can not be read.
      */
-    private static void processConfigurationArgs(final ArgumentContext ctxt) throws MalformedURLException {
-        Defaults.Builder defaultBuilder = Defaults.builder();
-        if (CONFIGURATION.isSelected()) {
-            for (String fn : ctxt.getCommandLine().getOptionValues(CONFIGURATION.getSelected())) {
-                defaultBuilder.add(fn);
-            }
-        }
-        if (CONFIGURATION_NO_DEFAULTS.isSelected()) {
-            // display deprecation log if needed.
-            ctxt.getCommandLine().hasOption(CONFIGURATION.getSelected());
-            defaultBuilder.noDefault();
-        }
-        ctxt.getConfiguration().setFrom(defaultBuilder.build());
-
-        if (FAMILIES_APPROVED.isSelected()) {
-            for (String cat : ctxt.getCommandLine().getOptionValues(FAMILIES_APPROVED.getSelected())) {
-                ctxt.getConfiguration().addApprovedLicenseCategory(cat);
-            }
-        }
-        if (FAMILIES_APPROVED_FILE.isSelected()) {
-            try {
-                File f = ctxt.getCommandLine().getParsedOptionValue(FAMILIES_APPROVED_FILE.getSelected());
-                try (InputStream in = Files.newInputStream(f.toPath())) {
-                    ctxt.getConfiguration().addApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
+    private static void processConfigurationArgs(final ArgumentContext ctxt) throws ConfigurationException {
+        try {
+            Defaults.Builder defaultBuilder = Defaults.builder();
+            if (CONFIGURATION.isSelected()) {
+                for (String fn : ctxt.getCommandLine().getOptionValues(CONFIGURATION.getSelected())) {
+                    defaultBuilder.add(fn);
                 }
-            } catch (IOException | ParseException e) {
-                throw new ConfigurationException(e);
             }
-        }
-        if (FAMILIES_DENIED.isSelected()) {
-            for (String cat : ctxt.getCommandLine().getOptionValues(FAMILIES_DENIED.getSelected())) {
-                ctxt.getConfiguration().removeApprovedLicenseCategory(cat);
+            if (CONFIGURATION_NO_DEFAULTS.isSelected()) {
+                // display deprecation log if needed.
+                ctxt.getCommandLine().hasOption(CONFIGURATION.getSelected());
+                defaultBuilder.noDefault();
             }
-        }
-        if (FAMILIES_DENIED_FILE.isSelected()) {
-            try {
-                File f = ctxt.getCommandLine().getParsedOptionValue(FAMILIES_DENIED_FILE.getSelected());
-                try (InputStream in = Files.newInputStream(f.toPath())) {
-                    ctxt.getConfiguration().removeApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
+            ctxt.getConfiguration().setFrom(defaultBuilder.build());
+
+            if (FAMILIES_APPROVED.isSelected()) {
+                for (String cat : ctxt.getCommandLine().getOptionValues(FAMILIES_APPROVED.getSelected())) {
+                    ctxt.getConfiguration().addApprovedLicenseCategory(cat);
                 }
-            } catch (IOException | ParseException e) {
-                throw new ConfigurationException(e);
             }
-        }
-
-        if (LICENSES_APPROVED.isSelected()) {
-            for (String id : ctxt.getCommandLine().getOptionValues(LICENSES_APPROVED.getSelected())) {
-                ctxt.getConfiguration().addApprovedLicenseId(id);
-            }
-        }
-        if (LICENSES_APPROVED_FILE.isSelected()) {
-            try {
-                File f = ctxt.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
-                try (InputStream in = Files.newInputStream(f.toPath())) {
-                    ctxt.getConfiguration().addApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
+            if (FAMILIES_APPROVED_FILE.isSelected()) {
+                try {
+                    File f = ctxt.getCommandLine().getParsedOptionValue(FAMILIES_APPROVED_FILE.getSelected());
+                    try (InputStream in = Files.newInputStream(f.toPath())) {
+                        ctxt.getConfiguration().addApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
+                    }
+                } catch (IOException | ParseException e) {
+                    throw new ConfigurationException(e);
                 }
-            } catch (IOException | ParseException e) {
-                throw new ConfigurationException(e);
             }
-        }
-        if (LICENSES_DENIED.isSelected()) {
-            for (String id : ctxt.getCommandLine().getOptionValues(LICENSES_DENIED.getSelected())) {
-                ctxt.getConfiguration().removeApprovedLicenseId(id);
-            }
-        }
-        if (LICENSES_DENIED_FILE.isSelected()) {
-            try {
-                File f = ctxt.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
-                try (InputStream in = Files.newInputStream(f.toPath())) {
-                    ctxt.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
+            if (FAMILIES_DENIED.isSelected()) {
+                for (String cat : ctxt.getCommandLine().getOptionValues(FAMILIES_DENIED.getSelected())) {
+                    ctxt.getConfiguration().removeApprovedLicenseCategory(cat);
                 }
-            } catch (IOException | ParseException e) {
-                throw new ConfigurationException(e);
             }
-        }
-    }
-
-    /**
-     * Creates a filename filter from patterns to exclude.
-     * Package provide for use in testing.
-     * @param excludes the list of patterns to exclude.
-     * @return the FilenameFilter tht excludes the patterns or an empty optional.
-     */
-    static Optional<IOFileFilter> parseExclusions(final List<String> excludes) {
-        final OrFileFilter orFilter = new OrFileFilter();
-        int ignoredLines = 0;
-        for (String exclude : excludes) {
-
-            // skip comments
-            if (exclude.startsWith("#") || StringUtils.isEmpty(exclude)) {
-                ignoredLines++;
-                continue;
+            if (FAMILIES_DENIED_FILE.isSelected()) {
+                try {
+                    File f = ctxt.getCommandLine().getParsedOptionValue(FAMILIES_DENIED_FILE.getSelected());
+                    try (InputStream in = Files.newInputStream(f.toPath())) {
+                        ctxt.getConfiguration().removeApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
+                    }
+                } catch (IOException | ParseException e) {
+                    throw new ConfigurationException(e);
+                }
             }
 
-            String exclusion = exclude.trim();
-            // interpret given patterns as regular expression, direct file names or
-            // wildcards to give users more choices to configure exclusions
-            try {
-                orFilter.addFileFilter(new RegexFileFilter(exclusion));
-            } catch (PatternSyntaxException e) {
-                // report nothing, an acceptable outcome.
+            if (LICENSES_APPROVED.isSelected()) {
+                for (String id : ctxt.getCommandLine().getOptionValues(LICENSES_APPROVED.getSelected())) {
+                    ctxt.getConfiguration().addApprovedLicenseId(id);
+                }
             }
-            orFilter.addFileFilter(new NameFileFilter(exclusion));
-            if (exclude.contains("?") || exclude.contains("*")) {
-                orFilter.addFileFilter(WildcardFileFilter.builder().setWildcards(exclusion).get());
+            if (LICENSES_APPROVED_FILE.isSelected()) {
+                try {
+                    File f = ctxt.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
+                    try (InputStream in = Files.newInputStream(f.toPath())) {
+                        ctxt.getConfiguration().addApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
+                    }
+                } catch (IOException | ParseException e) {
+                    throw new ConfigurationException(e);
+                }
             }
+            if (LICENSES_DENIED.isSelected()) {
+                for (String id : ctxt.getCommandLine().getOptionValues(LICENSES_DENIED.getSelected())) {
+                    ctxt.getConfiguration().removeApprovedLicenseId(id);
+                }
+            }
+            if (LICENSES_DENIED_FILE.isSelected()) {
+                try {
+                    File f = ctxt.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
+                    try (InputStream in = Files.newInputStream(f.toPath())) {
+                        ctxt.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
+                    }
+                } catch (IOException | ParseException e) {
+                    throw new ConfigurationException(e);
+                }
+            }
+        } catch (Exception e) {
+            throw ConfigurationException.from(e);
         }
-        if (ignoredLines > 0) {
-            DefaultLog.getInstance().info("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
-        }
-        return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter);
     }
 
     /**
@@ -528,25 +542,60 @@ public enum Arg {
      * @param ctxt the context to work in.
      * @throws IOException if an exclude file can not be read.
      */
-    private static void processInputArgs(final ArgumentContext ctxt) throws IOException {
-        if (SCAN_HIDDEN_DIRECTORIES.isSelected()) {
-            ctxt.getConfiguration().setDirectoriesToIgnore(FalseFileFilter.FALSE);
-        }
-
-        // TODO when include/exclude processing is updated check calling methods to ensure that all specified
-        // directories are handled in the list of directories.
-        if (EXCLUDE.isSelected()) {
-            String[] excludes = ctxt.getCommandLine().getOptionValues(EXCLUDE.getSelected());
-            if (excludes != null) {
-                parseExclusions(Arrays.asList(excludes)).ifPresent(ctxt.getConfiguration()::setFilesToIgnore);
+    private static void processInputArgs(final ArgumentContext ctxt) throws ConfigurationException {
+        try {
+            // TODO when include/exclude processing is updated check calling methods to ensure that all specified
+            // directories are handled in the list of directories.
+            if (EXCLUDE.isSelected()) {
+                String[] excludes = ctxt.getCommandLine().getOptionValues(EXCLUDE.getSelected());
+                if (excludes != null) {
+                    ctxt.getConfiguration().addExcludedPatterns(Arrays.asList(excludes));
+                }
             }
-        }
-        if (EXCLUDE_FILE.isSelected()) {
-            String excludeFileName = ctxt.getCommandLine().getOptionValue(EXCLUDE_FILE.getSelected());
-            if (excludeFileName != null) {
-                parseExclusions(FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8))
-                        .ifPresent(ctxt.getConfiguration()::setFilesToIgnore);
+            if (EXCLUDE_FILE.isSelected()) {
+                File excludeFileName = ctxt.getCommandLine().getParsedOptionValue(EXCLUDE_FILE.getSelected());
+                if (excludeFileName != null) {
+                    ctxt.getConfiguration().addExcludedPatterns(ExclusionUtils.asIterable(excludeFileName,"#"));
+                }
             }
+            if (EXCLUDE_STD.isSelected()) {
+                for (String s : ctxt.getCommandLine().getOptionValues(EXCLUDE_STD.getSelected())) {
+                    ctxt.getConfiguration().addExcludedCollection(StandardCollection.valueOf(s));
+                }
+            }
+            if (EXCLUDE_PARSE_SCM.isSelected()) {
+                for (String s : ctxt.getCommandLine().getOptionValues(EXCLUDE_PARSE_SCM.getSelected())) {
+                    StandardCollection sc = StandardCollection.valueOf(s);
+                    if (sc == StandardCollection.ALL) {
+                        Arrays.asList(StandardCollection.values()).forEach(c -> ctxt.getConfiguration().addExcludedFileProcessor(c));
+                    } else {
+                        ctxt.getConfiguration().addExcludedFileProcessor(StandardCollection.valueOf(s));
+                    }
+                }
+            }
+            if (INCLUDE.isSelected()) {
+                String[] includes = ctxt.getCommandLine().getOptionValues(INCLUDE.getSelected());
+                if (includes != null) {
+                    ctxt.getConfiguration().addIncludedPatterns(Arrays.asList(includes));
+                }
+            }
+            if (INCLUDE_FILE.isSelected()) {
+                File includeFileName = ctxt.getCommandLine().getParsedOptionValue(INCLUDE_FILE.getSelected());
+                if (includeFileName != null) {
+                    ctxt.getConfiguration().addIncludedPatterns(ExclusionUtils.asIterable(includeFileName, "#"));
+                }
+            }
+            if (INCLUDE_STD.isSelected()) {
+                if ("scan-hidden-directories".equals(INCLUDE_STD.getSelected().getLongOpt())) {
+                    ctxt.getConfiguration().addIncludedCollection(StandardCollection.HIDDEN_DIR);
+                } else {
+                    for (String s : ctxt.getCommandLine().getOptionValues(INCLUDE_STD.getSelected())) {
+                        ctxt.getConfiguration().addIncludedCollection(StandardCollection.valueOf(s));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw ConfigurationException.from(e);
         }
     }
 
@@ -588,7 +637,7 @@ public enum Arg {
      * @param ctxt the context in which to process the args.
      * @throws IOException if input files can not be read.
      */
-    public static void processArgs(final ArgumentContext ctxt) throws IOException {
+    public static void processArgs(final ArgumentContext ctxt) throws ConfigurationException {
         processOutputArgs(ctxt);
         processEditArgs(ctxt);
         processInputArgs(ctxt);

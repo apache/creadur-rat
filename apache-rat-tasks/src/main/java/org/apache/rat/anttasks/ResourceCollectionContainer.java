@@ -24,9 +24,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.PathMatcher;
 import java.util.Collections;
 import java.util.SortedSet;
 
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.FileDocument;
@@ -41,18 +43,23 @@ import org.apache.tools.ant.types.resources.FileResource;
  * internally.
  */
 class ResourceCollectionContainer implements IReportable {
-    private final ResourceCollection rc;
+    private final ResourceCollection resources;
+    private final ReportConfiguration configuration;
+    private final File baseDir;
 
-    ResourceCollectionContainer(ResourceCollection rc) {
-        this.rc = rc;
+    ResourceCollectionContainer(ReportConfiguration configuration, File baseDir, ResourceCollection resources) {
+        this.resources = resources;
+        this.configuration = configuration;
+        this.baseDir = baseDir;
     }
 
     @Override
     public void run(RatReport report) throws RatException {
+        PathMatcher matcher = configuration.getPathMatcher(baseDir.getPath());
         ResourceDocument document = null;
-        for (Resource r : rc) {
+        for (Resource r : resources) {
             if (!r.isDirectory()) {
-                document = new ResourceDocument(r);
+                document = new ResourceDocument(r, configuration.getPathMatcher(r.toLongString()));
                 report.report(document);
             }
         }
@@ -68,9 +75,14 @@ class ResourceCollectionContainer implements IReportable {
                     : resource.getName();
         }
 
+        private static String asBasedir(Resource resource) {
+            return resource instanceof FileResource ?
+                    FileDocument.normalizeFileName(((FileResource) resource).getFile().getParentFile())
+                    : resource.getName();
+        }
 
-        private ResourceDocument(Resource resource) {
-            super(asName(resource));
+        private ResourceDocument(Resource resource, PathMatcher pathMatcher) {
+            super(asBasedir(resource), asName(resource), pathMatcher);
             this.resource = resource;
         }
 
@@ -94,7 +106,7 @@ class ResourceCollectionContainer implements IReportable {
         public SortedSet<Document> listChildren() {
             if (resource instanceof FileResource) {
                 final FileResource fileResource = (FileResource) resource;
-                return new FileDocument(fileResource.getFile()).listChildren();
+                return new FileDocument(fileResource.getFile(), pathMatcher).listChildren();
             }
             return Collections.emptySortedSet();
         }

@@ -37,7 +37,7 @@ public class FileDocumentTest {
     @BeforeEach
     public void setUp() throws Exception {
         file = Resources.getResourceFile("elements/Source.java");
-        document = new FileDocument(file);
+        document = new FileDocument(file, p -> true);
     }
 
     @Test

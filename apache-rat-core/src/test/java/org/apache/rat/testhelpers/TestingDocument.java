@@ -21,6 +21,7 @@ package org.apache.rat.testhelpers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.file.PathMatcher;
 import java.util.Collections;
 import java.util.SortedSet;
 
@@ -38,8 +39,13 @@ public class TestingDocument extends Document {
         this(null, name);
     }
 
+    public TestingDocument(String name, PathMatcher pathMatcher) {
+        super(name, pathMatcher);
+        this.reader = null;
+    }
+
     public TestingDocument(Reader reader, String name) {
-        super(name);
+        super(name, p -> true);
         this.reader = reader;
 
     }

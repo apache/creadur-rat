@@ -132,7 +132,7 @@ public class Reporter {
      *
      * @param stylesheet the style sheet to use for XSLT formatting, may be null for XML output.
      * @param output the output stream to write to.
-     * @throws RatException one error.
+     * @throws RatException on error.
      */
     public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
         init();

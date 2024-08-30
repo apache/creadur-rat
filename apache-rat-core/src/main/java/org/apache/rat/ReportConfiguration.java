@@ -19,6 +19,7 @@
 package org.apache.rat;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,16 +31,17 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.PathMatcher;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.config.exclusion.ExclusionProcessor;
+import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -114,14 +116,11 @@ public class ReportConfiguration {
      * The Reportable instance that provides the documents to process.
      */
     private IReportable reportable;
+
     /**
-     * A file filter that matches files to ignore.
+     * A predicate to test if a path should be included in the processing.
      */
-    private IOFileFilter filesToIgnore;
-    /**
-     * A file filter that matches directories to ignore.
-     */
-    private IOFileFilter directoriesToIgnore;
+    private final ExclusionProcessor exclusionProcessor;
 
     /**
      * The default filter for displaying families.
@@ -152,6 +151,7 @@ public class ReportConfiguration {
         listFamilies = Defaults.LIST_FAMILIES;
         listLicenses = Defaults.LIST_LICENSES;
         dryRun = false;
+        exclusionProcessor = new ExclusionProcessor();
     }
 
     /**
@@ -264,48 +264,56 @@ public class ReportConfiguration {
     }
 
     /**
-     * Gets the file name filter for files to ignore.
-     * @return The filename filter that identifies files to ignore.
+     * Excludes a StandardCollection of patterns.
+     * @param collection the StandardCollection to exclude.
+     * @see ExclusionProcessor#addExcludedCollection(StandardCollection)
      */
-    public IOFileFilter getFilesToIgnore() {
-        return filesToIgnore == null ? Defaults.FILES_TO_IGNORE : filesToIgnore;
+    public void addExcludedCollection(StandardCollection collection) {
+        exclusionProcessor.addExcludedCollection(collection);
     }
 
     /**
-     * Sets the files name filter for files to ignore.
-     * If not set or set to {@code null} uses the Default.FILES_TO_IGNORE value.
-     * @param filesToIgnore the filename filter to filter the input files.
-     * @see Defaults#FILES_TO_IGNORE
+     * Excludes the file processor defined in the  StandardCollection.
+     * @param collection the StandardCollection to exclude.
+     * @see ExclusionProcessor#addFileProcessor(StandardCollection)
      */
-    public void setFilesToIgnore(final IOFileFilter filesToIgnore) {
-        this.filesToIgnore = filesToIgnore;
+    public void addExcludedFileProcessor(StandardCollection collection) {
+        exclusionProcessor.addFileProcessor(collection);
     }
 
     /**
-     * Gets the directories filter.
-     * @return the directories filter.
+     * Excludes files that match a FileFilter.
+     * @param fileFilter the file filter to match.
      */
-    public IOFileFilter getDirectoriesToIgnore() {
-        return directoriesToIgnore == null ? Defaults.DIRECTORIES_TO_IGNORE : directoriesToIgnore;
+    public void addExcludedFilter(FileFilter fileFilter) {
+        exclusionProcessor.addExcludedFilter( str -> pth -> fileFilter.accept(new File(str).toPath().resolve(pth).toFile()));
     }
 
     /**
-     * Sets the directories to ignore.
-     * If {@code directoriesToIgnore} is null removes all directories to ignore.
-     * If not set {@code Defaults.DIRECTORIES_TO_IGNORE} is used.
-     * @param directoriesToIgnore the filter that defines the directories to ignore.
-     * @see Defaults#DIRECTORIES_TO_IGNORE
+     * Excludes files that match the pattern.
+     *
+     * @param patterns the collection of patterns to exclude.
+     * @see ExclusionProcessor#addIncludedPatterns(Iterable)
      */
-    public void setDirectoriesToIgnore(final IOFileFilter directoriesToIgnore) {
-        this.directoriesToIgnore = directoriesToIgnore == null ? FalseFileFilter.FALSE : directoriesToIgnore;
+    public void addExcludedPatterns(Iterable<String> patterns) {
+        exclusionProcessor.addExcludedPatterns(patterns);
     }
 
-    /**
-     * Adds a directory filter to the directories to ignore.
-     * @param directoryToIgnore the directory filter to add.
-     */
-    public void addDirectoryToIgnore(final IOFileFilter directoryToIgnore) {
-        this.directoriesToIgnore = this.directoriesToIgnore.or(directoryToIgnore);
+    public void addIncludedCollection(StandardCollection collection) {
+        exclusionProcessor.addIncludedCollection(collection);
+    }
+
+    public void addIncludedFilter(FileFilter fileFilter) {
+        exclusionProcessor.addIncludedFilter( str -> pth -> fileFilter.accept(new File(str).toPath().resolve(pth).toFile()));
+
+    }
+
+    public void addIncludedPatterns(Iterable<String> patterns) {
+        exclusionProcessor.addIncludedPatterns(patterns);
+    }
+
+    public PathMatcher getPathMatcher(String dir) {
+        return exclusionProcessor.getPathMatcher(dir);
     }
 
     /**
@@ -354,6 +362,8 @@ public class ReportConfiguration {
         if (getStyleSheet() == null) {
             setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
+
+        defaults.getStandardExclusion().forEach(this::addExcludedCollection);
     }
 
     /**

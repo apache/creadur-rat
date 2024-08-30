@@ -27,6 +27,7 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.tika.mime.MimeTypes;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,12 +35,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.MalformedInputException;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SortedSet;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TikaProcessorTest {
+    private final PathMatcher pathMatcher = p -> true;
     /**
      * Used to swallow a MalformedInputException and return false
      * because the encoding of the stream was different from the
@@ -56,27 +65,27 @@ public class TikaProcessorTest {
             public int read() throws IOException {
                 throw new MalformedInputException(0);
             }
-        });
+        }, pathMatcher);
         assertThrows(RatDocumentAnalysisException.class, () -> TikaProcessor.process(doc));
     }
 
     @Test
     public void UTF16_input() throws Exception {
-        Document doc = getDocument(Resources.getResourceStream("/binaries/UTF16_with_signature.xml"));
+        Document doc = getDocument(Resources.getResourceStream("/binaries/UTF16_with_signature.xml"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void UTF8_input() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/UTF8_with_signature.xml"));
+        FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/UTF8_with_signature.xml"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void missNamedBinaryTest() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/Image-png.not"));
+        FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/Image-png.not"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.BINARY, doc.getMetaData().getDocumentType());
     }
@@ -84,21 +93,21 @@ public class TikaProcessorTest {
 
     @Test
     public void plainTextTest() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/elements/Text.txt"));
+        FileDocument doc = new FileDocument(Resources.getResourceFile("/elements/Text.txt"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void emptyFileTest() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/elements/sub/Empty.txt"));
+        FileDocument doc = new FileDocument(Resources.getResourceFile("/elements/sub/Empty.txt"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void javaFileWithChineseCharacters_RAT301() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/tikaFiles/standard/ChineseCommentsJava.java"));
+        FileDocument doc = new FileDocument(Resources.getResourceFile("/tikaFiles/standard/ChineseCommentsJava.java"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
@@ -112,7 +121,7 @@ public class TikaProcessorTest {
             File typeDir = new File(dir, docType.name().toLowerCase(Locale.ROOT));
             if (typeDir.isDirectory()) {
                 for (File file : Objects.requireNonNull(typeDir.listFiles())) {
-                    Document doc = new FileDocument(file);
+                    Document doc = new FileDocument(file, pathMatcher);
                     String mimeType = TikaProcessor.process(doc);
                     statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
                     assertEquals( docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for " +file.toString());
@@ -132,9 +141,9 @@ public class TikaProcessorTest {
      * Build a document with the specific input stream
      * @return
      */
-    private static Document getDocument(final InputStream stream) {
+    private static Document getDocument(final InputStream stream, PathMatcher pathMatcher) {
 
-        Document doc = new Document("Testing Document") {
+        Document doc = new Document("Testing Document", pathMatcher) {
 
             @Override
             public Reader reader() throws IOException {

@@ -27,13 +27,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
+import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,9 +40,10 @@ import org.junit.jupiter.api.io.TempDir;
 
 public class DirectoryWalkerTest {
 
-	private static Document toWalk;
-    private ReportConfiguration reportConfiguration ;
+    private ReportConfiguration reportConfiguration;
 
+    @TempDir
+    private static File tempDir;
 
     private static void fileWriter(File dir, String name, String contents) throws IOException {
         try (FileWriter writer = new FileWriter(new File(dir, name))) {
@@ -57,9 +57,13 @@ public class DirectoryWalkerTest {
         reportConfiguration = new ReportConfiguration();
     }
 
+    public Document toWalk() {
+        return new FileDocument(tempDir, reportConfiguration.getPathMatcher(tempDir.toString()));
+    }
+
     @BeforeAll
-    public static void setUp(@TempDir File dir) throws Exception {
-        toWalk = new FileDocument(dir);
+    public static void setUp() throws Exception {
+
         /*
         Create a directory structure like this:
 
@@ -70,28 +74,24 @@ public class DirectoryWalkerTest {
                 regularFile
                 .hiddenFile
          */
-        File regular = new File(dir, "regular");
+        File regular = new File(tempDir, "regular");
         regular.mkdir();
         fileWriter(regular, "regularFile", "regular file");
         fileWriter(regular, ".hiddenFile", "hidden file");
 
-        File hidden = new File(dir, ".hidden");
+        File hidden = new File(tempDir, ".hidden");
         hidden.mkdir();
         fileWriter(hidden, "regularFile", "regular file");
         fileWriter(hidden, ".hiddenFile", "hidden file");
     }
 
     private String expectedName(String name) {
-        return toWalk.getName()+name;
+        return toWalk().getName() + name;
     }
-
-
     
     @Test
     public void noFiltersTest() throws IOException, RatException {
-        reportConfiguration.setFilesToIgnore(FalseFileFilter.FALSE);
-        reportConfiguration.setDirectoriesToIgnore(FalseFileFilter.FALSE);
-        DirectoryWalker walker = new DirectoryWalker(reportConfiguration, toWalk);
+        DirectoryWalker walker = new DirectoryWalker(toWalk());
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
         String[] expected = {"/regular/regularFile", "/regular/.hiddenFile", "/.hidden/regularFile", "/.hidden/.hiddenFile"};
@@ -103,9 +103,8 @@ public class DirectoryWalkerTest {
 
     @Test
     public void noHiddenFileFiltersTest() throws IOException, RatException {
-        reportConfiguration.setFilesToIgnore(NameBasedHiddenFileFilter.HIDDEN);
-        reportConfiguration.setDirectoriesToIgnore(FalseFileFilter.FALSE);
-        DirectoryWalker walker = new DirectoryWalker(reportConfiguration, toWalk);
+        reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_FILE);
+        DirectoryWalker walker = new DirectoryWalker(toWalk());
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
         String[] expected = {"/regular/regularFile", "/.hidden/regularFile"};
@@ -117,13 +116,12 @@ public class DirectoryWalkerTest {
 
     @Test
     public void noHiddenDirectoryFiltersTest() throws IOException, RatException {
-        reportConfiguration.setFilesToIgnore(FalseFileFilter.FALSE);
-        reportConfiguration.setDirectoriesToIgnore(NameBasedHiddenFileFilter.HIDDEN);
-        DirectoryWalker walker = new DirectoryWalker(reportConfiguration, toWalk);
+        reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_DIR);
+        DirectoryWalker walker = new DirectoryWalker(toWalk());
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
         String[] expected = {"/regular/regularFile", "/regular/.hiddenFile"};
-        assertEquals(2, scanned.size());
+         assertEquals(2, scanned.size());
         for (String ex : expected) {
             assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
         }
@@ -131,9 +129,9 @@ public class DirectoryWalkerTest {
 
     @Test
     public void noHiddenDirectoryAndNoHiddenFileFiltersTest() throws IOException, RatException {
-        reportConfiguration.setDirectoriesToIgnore(NameBasedHiddenFileFilter.HIDDEN);
-        reportConfiguration.setFilesToIgnore(NameBasedHiddenFileFilter.HIDDEN);
-        DirectoryWalker walker = new DirectoryWalker(reportConfiguration, toWalk);
+        reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_DIR);
+        reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_FILE);
+        DirectoryWalker walker = new DirectoryWalker(toWalk());
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
         String[] expected = {"/regular/regularFile"};

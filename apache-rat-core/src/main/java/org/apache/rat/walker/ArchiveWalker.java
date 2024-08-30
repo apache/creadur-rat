@@ -51,7 +51,7 @@ public class ArchiveWalker extends Walker {
      * @param document the document to process.
      */
     public ArchiveWalker(final ReportConfiguration config, final Document document) {
-        super(document, config.getFilesToIgnore());
+        super(document);
     }
 
     /**
@@ -86,10 +86,10 @@ public class ArchiveWalker extends Walker {
             ArchiveEntry entry = null;
             while ((entry = input.getNextEntry()) != null) {
                 Path path = this.getDocument().getPath().resolve("#" + entry.getName());
-                if (!entry.isDirectory() && this.isNotIgnored(path) && input.canReadEntryData(entry)) {
+                if (!entry.isDirectory() && getDocument().getPathMatcher().matches(path) && input.canReadEntryData(entry)) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     IOUtils.copy(input, baos);
-                    result.add(new ArchiveEntryDocument(path, baos.toByteArray()));
+                    result.add(new ArchiveEntryDocument(path, baos.toByteArray(), getDocument().getPathMatcher()));
                 }
             }
         } catch (ArchiveException e) {

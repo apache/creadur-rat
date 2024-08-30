@@ -25,25 +25,23 @@ import org.apache.rat.report.IReportable;
 
 import java.io.FilenameFilter;
 import java.nio.file.Path;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Abstract walker.
  */
 public abstract class Walker implements IReportable {
 
-    /** The file name filter that the walker is applying */
-    private final FilenameFilter filesToIgnore;
     /** The document this walker is walking */
-    private  final Document document;
+    private final Document document;
 
     /**
      * Creates  the walker
      * @param document The document the walker is walking.
-     * @param filesToIgnore the Files to ignore.  If {@code null} no files are ignored.
      */
-    protected Walker(final Document document, final FilenameFilter filesToIgnore) {
+    protected Walker(final Document document) {
         this.document = document;
-        this.filesToIgnore = filesToIgnore == null ? FalseFileFilter.FALSE : filesToIgnore;
     }
 
     /**
@@ -52,14 +50,5 @@ public abstract class Walker implements IReportable {
      */
     protected Document getDocument() {
         return document;
-    }
-
-    /**
-     * Tests if the specified path should be ignored.
-     * @param path the Path to test
-     * @return {@code true} if the file should not be ignored.
-     */
-    protected final boolean isNotIgnored(final Path path) {
-        return !filesToIgnore.accept(path.getParent().toFile(), path.toString());
     }
 }

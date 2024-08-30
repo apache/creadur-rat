@@ -22,8 +22,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
@@ -121,11 +121,11 @@ public class OptionCollectionTest {
 
     @Test
     public void testShortenedOptions() throws IOException {
-        String[] args = {"--scan"};
+        String[] args = {"--output-lic", "ALL"};
         ReportConfiguration config = OptionCollection.parseCommands(args, (o) -> {
         }, true);
         assertThat(config).isNotNull();
-        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
+        assertThat(config.listLicenses()).isEqualTo(LicenseSetFactory.LicenseFilter.ALL);
     }
 
     @Test

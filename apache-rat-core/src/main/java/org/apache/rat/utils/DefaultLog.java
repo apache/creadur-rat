@@ -73,7 +73,7 @@ public final class DefaultLog implements Log {
 
     @Override
     public void log(final Level level, final String msg) {
-        if (this.level.ordinal() <= level.ordinal()) {
+        if (isEnabled(level)) {
             switch (level) {
                 case DEBUG:
                 case INFO:

@@ -25,12 +25,14 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.config.exclusion.ExclusionUtils;
 
 /**
  * Document wrapping a File object
@@ -43,9 +45,10 @@ public class FileDocument extends Document {
     /**
      * Creates a File document.
      * @param file the file to wrap.
+     * @param pathMatcher the path matcher to filter files/directories with.
      */
-    public FileDocument(final File file) {
-        super(normalizeFileName(file));
+    public FileDocument(final File file, final PathMatcher pathMatcher) {
+        super(normalizeFileName(file), pathMatcher);
         this.file = file;
     }
 
@@ -54,7 +57,7 @@ public class FileDocument extends Document {
      * @param file The file to normalize
      * @return the String for the file name.
      */
-    public final static String normalizeFileName(final File file) {
+    public static String normalizeFileName(final File file) {
         String path = file.getPath();
         return path.replace('\\', '/');
     }
@@ -73,7 +76,10 @@ public class FileDocument extends Document {
     public SortedSet<Document> listChildren() {
         if (isDirectory()) {
             SortedSet<Document> result = new TreeSet<>();
-            Arrays.stream(file.listFiles()).map(f -> new FileDocument(f)).forEach(result::add);
+            File[] lst = file.listFiles(ExclusionUtils.asFileFilter(pathMatcher));
+            if (lst != null && lst.length > 0) {
+                Arrays.stream(lst).map(f -> new FileDocument(f, pathMatcher)).forEach(result::add);
+            }
             return result;
         }
         return Collections.emptySortedSet();

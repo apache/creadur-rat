@@ -85,6 +85,11 @@ public class TestingLog implements Log {
     }
 
     @Override
+    public Level getLevel() {
+        return Level.DEBUG;
+    }
+
+    @Override
     public void log(Level level, String msg) {
         captured.append(String.format("%s: %s%n", level, msg));
     }

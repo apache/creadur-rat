@@ -45,6 +45,16 @@ public interface Log {
         OFF };
 
     /**
+     * Gets the log level that is enabled.  If encapsulated logger does not report level
+     * implementations should return DEBUG.
+     * @return the level that is enabled.
+     */
+    Level getLevel();
+
+    default boolean isEnabled(Level level) {
+        return getLevel().ordinal() <= level.ordinal();
+    }
+    /**
      * Writes a message at a specific log level.
      * @param level The log level to write at.
      * @param message the Message to write.

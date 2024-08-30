@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
+import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
@@ -84,7 +86,10 @@ public final class OptionCollection {
         ARGUMENT_TYPES = new TreeMap<>();
         ARGUMENT_TYPES.put("File", () -> "A file name.");
         ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan.");
-        ARGUMENT_TYPES.put("Expression", () -> "A wildcard file matching pattern. example: *-test-*.txt");
+        ARGUMENT_TYPES.put("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
+                "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples).  " +
+                "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']' " +
+                "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase latin letters.");
         ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
                 asString(LicenseSetFactory.LicenseFilter.values())));
         ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Level.values())));
@@ -98,6 +103,10 @@ public final class OptionCollection {
                         .collect(Collectors.joining(System.lineSeparator()))));
         ARGUMENT_TYPES.put("LicenseID", () -> "The ID for a license.");
         ARGUMENT_TYPES.put("FamilyID", () -> "The ID for a license family.");
+        ARGUMENT_TYPES.put("StandardCollection", () -> format("Defines standard Expression patterns (see Above). Valid values are: %s%n",
+                Arrays.stream(StandardCollection.values())
+                        .map(v -> format("\t%s: %s", v.name(), v.desc()))
+                        .collect(Collectors.joining(System.lineSeparator()))));
     }
 
     /**
@@ -230,10 +239,16 @@ public final class OptionCollection {
             DefaultLog.getInstance().error( "Directory '" + baseDirectory + "' does not exist");
             return null;
         }
+        PathMatcher pathMatcher = config.getPathMatcher(baseDirectory);
 
-        Document doc = new FileDocument(base);
+        Document doc = new FileDocument(base, pathMatcher);
+        if (!pathMatcher.matches(doc.getPath())) {
+            DefaultLog.getInstance().error( "Directory '" + baseDirectory + "' is excluded list.");
+            return null;
+        }
+
         if (base.isDirectory()) {
-            return new DirectoryWalker(config, doc);
+            return new DirectoryWalker(doc);
         }
 
         return new ArchiveWalker(config, doc);

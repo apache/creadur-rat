@@ -21,6 +21,7 @@ package org.apache.rat.anttasks;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,13 +37,16 @@ import org.apache.rat.ImplementationException;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Resource;
@@ -357,15 +361,11 @@ public class Report extends BaseAntTask {
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
                 configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
             }
-            configuration.setReportable(new ResourceCollectionContainer(nestedResources));
+            configuration.setReportable(new ResourceCollectionContainer(configuration, this.getProject().getBaseDir(), nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
             if (deprecatedConfig.inputFileFilter != null) {
-                if (configuration.getFilesToIgnore() != null) {
-                    configuration.setFilesToIgnore(new OrFileFilter(configuration.getFilesToIgnore(), deprecatedConfig.inputFileFilter));
-                } else {
-                    configuration.setFilesToIgnore(deprecatedConfig.inputFileFilter);
-                }
+                configuration.addExcludedFilter(deprecatedConfig.inputFileFilter);
             }
             families.stream().map(Family::build).forEach(configuration::addFamily);
             licenses.stream().map(License::asBuilder)
@@ -469,32 +469,54 @@ public class Report extends BaseAntTask {
      * A facade for the Logger provided by Ant.
      */
     private class Logger implements Log {
+        org.apache.tools.ant.DefaultLogger delegate = new org.apache.tools.ant.DefaultLogger();
 
-        private void write(final int level, final String msg) {
-            try (PrintWriter pw = new PrintWriter(new LogOutputStream(Report.this, level))) {
-               pw.write(msg);
+        @Override
+        public Level getLevel() {
+            switch (delegate.getMessageOutputLevel()) {
+                case Project.MSG_ERR:
+                    return Level.ERROR;
+                case Project.MSG_WARN:
+                    return Level.WARN;
+                case Project.MSG_INFO:
+                    return Level.INFO;
+                case Project.MSG_VERBOSE:
+                case Project.MSG_DEBUG:
+                    return Level.DEBUG;
+                default:
+                    return Level.OFF;
             }
         }
 
         @Override
         public void log(final Level level, final String msg) {
+            log(level, msg, null);
+        }
+
+        @Override
+        public void log(Level level, String message, Throwable throwable) {
+            BuildEvent event = new BuildEvent(Report.this);
             switch (level) {
-            case DEBUG:
-                write(Project.MSG_DEBUG, msg);
-                break;
-            case INFO:
-                write(Project.MSG_INFO, msg);
-                break;
-            case WARN:
-                write(Project.MSG_WARN, msg);
-                break;
-            case ERROR:
-                write(Project.MSG_ERR, msg);
-                break;
-            case OFF:
-            default:
-                break;
+                case DEBUG:
+                    event.setMessage(message, Project.MSG_DEBUG);
+                    break;
+                case INFO:
+                    event.setMessage(message, Project.MSG_INFO);
+                    break;
+                case WARN:
+                    event.setMessage(message, Project.MSG_WARN);
+                    break;
+                case ERROR:
+                    event.setMessage(message, Project.MSG_ERR);
+                    break;
+                case OFF:
+                default:
+                    return;
             }
+            if (throwable != null) {
+                event.setException(throwable);
+            }
+            delegate.messageLogged(event);
         }
     }
 }

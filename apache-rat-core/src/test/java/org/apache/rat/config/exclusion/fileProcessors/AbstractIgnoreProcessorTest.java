@@ -1,5 +1,3 @@
-package org.apache.rat.mp.util.ignore;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,20 +16,26 @@ package org.apache.rat.mp.util.ignore;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.util.Optional;
+import org.junit.jupiter.api.io.TempDir;
 
-public interface IgnoreMatcher {
-    /**
-     * Checks if the file matches the stored expressions.
-     * @param filename The filename to be checked
-     * @return empty: not matched, True: must be ignored, False: it must be UNignored
-     */
-    Optional<Boolean> isIgnoredFile(String filename);
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-    /**
-     * Returns {@code true} if this IgnoreMatcher contains no rules.
-     * @return {@code true} if this IgnoreMatcher contains no rules
-     */
-    boolean isEmpty();
+public class AbstractIgnoreProcessorTest {
+
+    @TempDir
+    protected File baseDir;
+
+    protected File writeFile(String name, Iterable<String> lines) throws IOException {
+        File file = new File(baseDir, name);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+            lines.forEach(writer::println);
+        }
+        return file;
+    }
+
 }

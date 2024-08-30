@@ -35,7 +35,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.impl.FileDocument;
@@ -43,7 +42,6 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -66,8 +64,8 @@ public class ReporterTest {
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         assertTrue(content.contains("2 Unknown Licenses"));
-        assertTrue(content.contains("target/test-classes/elements/Source.java"));
-        assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
+        assertTrue(content.contains("/Source.java"));
+        assertTrue(content.contains("/sub/Empty.txt"));
     }
 
     @Test
@@ -92,19 +90,19 @@ public class ReporterTest {
         TextUtils.assertPatternInTarget("Apache Licensed: 5$", content);
         TextUtils.assertPatternInTarget("Generated Documents: 1$", content);
         TextUtils.assertPatternInTarget("^2 Unknown Licenses", content);
-        assertTrue(content.contains(" S target/test-classes/elements/ILoggerFactory.java"));
-        assertTrue(content.contains(" B target/test-classes/elements/Image.png"));
-        assertTrue(content.contains(" N target/test-classes/elements/LICENSE"));
-        assertTrue(content.contains(" N target/test-classes/elements/NOTICE"));
-        assertTrue(content.contains("!S target/test-classes/elements/Source.java"));
-        assertTrue(content.contains(" S target/test-classes/elements/Text.txt"));
-        assertTrue(content.contains(" S target/test-classes/elements/TextHttps.txt"));
-        assertTrue(content.contains(" S target/test-classes/elements/Xml.xml"));
-        assertTrue(content.contains(" S target/test-classes/elements/buildr.rb"));
-        assertTrue(content.contains(" A target/test-classes/elements/dummy.jar"));
-        assertTrue(content.contains("!S target/test-classes/elements/sub/Empty.txt"));
-        assertTrue(content.contains(" S target/test-classes/elements/tri.txt"));
-        assertTrue(content.contains(" G target/test-classes/elements/generated.txt"));
+        assertTrue(content.contains(" S target/test-classes/elements/ILoggerFactory.java"), () -> " S target/test-classes/elements/ILoggerFactory.java");
+        assertTrue(content.contains(" B target/test-classes/elements/Image.png"), () -> " B target/test-classes/elements/Image.png");
+        assertTrue(content.contains(" N target/test-classes/elements/LICENSE"), () -> " N target/test-classes/elements/LICENSE");
+        assertTrue(content.contains(" N target/test-classes/elements/NOTICE"), () -> " N target/test-classes/elements/NOTICE");
+        assertTrue(content.contains("!S target/test-classes/elements/Source.java"), () -> " S target/test-classes/elements/Source.java");
+        assertTrue(content.contains(" S target/test-classes/elements/Text.txt"), () -> " S target/test-classes/elements/Text.txt");
+        assertTrue(content.contains(" S target/test-classes/elements/TextHttps.txt"), () -> " S target/test-classes/elements/TextHttps.txt");
+        assertTrue(content.contains(" S target/test-classes/elements/Xml.xml"), () -> " S target/test-classes/elements/Xml.xml");
+        assertTrue(content.contains(" S target/test-classes/elements/buildr.rb"), () -> " S target/test-classes/elements/buildr.rb");
+        assertTrue(content.contains(" A target/test-classes/elements/dummy.jar"), () -> " A target/test-classes/elements/dummy.jar");
+        assertTrue(content.contains("!S target/test-classes/elements/sub/Empty.txt"), () -> " S target/test-classes/elements/sub/Empty.txt");
+        assertTrue(content.contains(" S target/test-classes/elements/tri.txt"), () -> " S target/test-classes/elements/tri.txt");
+        assertTrue(content.contains(" G target/test-classes/elements/generated.txt"), () -> " G target/test-classes/elements/generated.txt");
     }
 
     @Test
@@ -211,8 +209,8 @@ public class ReporterTest {
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
         configuration.setFrom(defaults);
-        configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
-        configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));
+        configuration.setReportable(new DirectoryWalker(new FileDocument(new File(elementsPath),
+                configuration.getPathMatcher(elementsPath))));
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
@@ -262,8 +260,8 @@ public class ReporterTest {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
-        configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
-        configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));
+        configuration.setReportable(new DirectoryWalker(new FileDocument(new File(elementsPath),
+                configuration.getPathMatcher(elementsPath))));
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
 
@@ -321,8 +319,8 @@ public class ReporterTest {
         final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
-        configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
-        configuration.setReportable(new DirectoryWalker(configuration, new FileDocument(new File(elementsPath))));
+        configuration.setReportable(new DirectoryWalker(new FileDocument(new File(elementsPath),
+                configuration.getPathMatcher(elementsPath))));
         configuration.setOut(() -> out);
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
         new Reporter(configuration).output();
@@ -332,8 +330,8 @@ public class ReporterTest {
 
         assertTrue(document.startsWith("Generated at: "), "'Generated at' is not present in " + document);
 
-        TextUtils.assertPatternInTarget("\\Qsrc/test/resources/elements/Source.java\\E$", document);
-        TextUtils.assertPatternInTarget("\\Qsrc/test/resources/elements/sub/Empty.txt\\E", document);
+        TextUtils.assertPatternInTarget("\\Q/Source.java\\E$", document);
+        TextUtils.assertPatternInTarget("\\Q/sub/Empty.txt\\E", document);
     }
 
     private static class LicenseInfo {

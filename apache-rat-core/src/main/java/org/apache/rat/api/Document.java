@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.SortedSet;
 
@@ -31,7 +32,7 @@ import java.util.SortedSet;
 public abstract class Document implements Comparable<Document> {
 
     /**
-     * An enumeraton of document types.
+     * An enumeration of document types.
      */
     public enum Type {
         /** A generated document. */
@@ -45,26 +46,38 @@ public abstract class Document implements Comparable<Document> {
         /** A binary file */
         BINARY,
         /** A standard document */
-        STANDARD;;
+        STANDARD;
     }
 
+    protected final PathMatcher pathMatcher;
     private final MetaData metaData;
     private final String name;
 
     /**
      * Creates an instance.
      * @param name the name of the resource.
+     * @param pathMatcher the path matcher to filter directories/files.
      */
-    protected Document(String name) {
+    protected Document(final String name, final PathMatcher pathMatcher) {
         this.name = name;
+        this.pathMatcher = pathMatcher;
         this.metaData = new MetaData();
     }
 
     /**
+     * Returns the name of the current document.
      * @return the name of the current document.
      */
     public final String getName() {
         return name;
+    }
+
+    /**
+     * Returns the file filter this document was created with.
+     * @return the file filter this document was created with.
+     */
+    public final PathMatcher getPathMatcher() {
+        return pathMatcher;
     }
 
     @Override
@@ -140,5 +153,4 @@ public abstract class Document implements Comparable<Document> {
      * @return A sorted set of child Documents.  May  be empty
      */
     public abstract SortedSet<Document> listChildren();
-
 }

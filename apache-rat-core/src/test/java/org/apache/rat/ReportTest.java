@@ -43,7 +43,7 @@ public class ReportTest {
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         assertTrue(content.contains("2 Unknown Licenses"));
-        assertTrue(content.contains("target/test-classes/elements/Source.java"));
-        assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
+        assertTrue(content.contains("/Source.java"), "missing /Source.java");
+        assertTrue(content.contains("/sub/Empty.txt"), "missing /sub/Empty.txt");
     }
 }

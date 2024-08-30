@@ -20,7 +20,12 @@ package org.apache.rat.report;
 
 import org.apache.rat.api.RatException;
 
+@FunctionalInterface
 public interface IReportable {
-
+    /**
+     * Adds the reportable to the RatReport.
+     * @param report the report to add the results to.
+     * @throws RatException on error.
+     */
     void run(RatReport report) throws RatException;
 }

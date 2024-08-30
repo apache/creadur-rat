@@ -25,13 +25,15 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.rat.config.exclusion.ExclusionProcessor;
+import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
@@ -40,7 +42,6 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.walker.NameBasedHiddenFileFilter;
 
 /**
  * A class that provides the standard system defaults for the ReportConfiguration.
@@ -52,11 +53,6 @@ public final class Defaults {
     private static final URI DEFAULT_CONFIG_URI;
     /** The path to the default configuration file */
     private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
-
-   /** The default files to ignore if none are specified. */
-    public static final IOFileFilter FILES_TO_IGNORE = FalseFileFilter.FALSE;
-    /** The default directories to ignore */
-    public static final IOFileFilter DIRECTORIES_TO_IGNORE = NameBasedHiddenFileFilter.HIDDEN;
     /** The default ARCHIVES processing style */
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
     /** The default STANDARD processing style */
@@ -68,6 +64,7 @@ public final class Defaults {
 
     /** The license set factory to build license sets based upon default options */
     private final LicenseSetFactory setFactory;
+    private final Supplier<ExclusionProcessor> exclusionSupplier;
 
     // TODO look at this static block with respect to the init() static method and figure out if we need both.
     static {
@@ -102,8 +99,9 @@ public final class Defaults {
      * Builder constructs instances.
      * @param uris The set of URIs to read.
      */
-    private Defaults(final Set<URI> uris) {
+    private Defaults(final Set<URI> uris, final Supplier<ExclusionProcessor> exclusionSupplier) {
         this.setFactory = Defaults.readConfigFiles(uris);
+        this.exclusionSupplier = exclusionSupplier;
     }
 
     /**
@@ -154,11 +152,21 @@ public final class Defaults {
     }
 
     /**
+     * Gets the default exclusion processor.
+     * @return the default exclusion processor.
+     */
+    public Collection<StandardCollection> getStandardExclusion() {
+        return Arrays.asList(StandardCollection.MISC, StandardCollection.HIDDEN_DIR);
+    };
+
+
+    /**
      * The Defaults builder.
      */
     public static final class Builder {
         /** The list of URIs that we wil read to configure the Defaults */
         private final Set<URI> fileNames = new TreeSet<>();
+        private Supplier<ExclusionProcessor> exclusionSupplier;
 
         private Builder() {
             if (DEFAULT_CONFIG_URI == null) {
@@ -166,6 +174,8 @@ public final class Defaults {
             } else {
                fileNames.add(DEFAULT_CONFIG_URI);
             }
+            exclusionSupplier = () -> new ExclusionProcessor().addExcludedCollection(StandardCollection.MISC)
+                    .addExcludedCollection(StandardCollection.HIDDEN_DIR);
         }
 
         /**
@@ -241,7 +251,7 @@ public final class Defaults {
          * @return the current defaults object.
          */
         public Defaults build() {
-            return new Defaults(fileNames);
+            return new Defaults(fileNames, exclusionSupplier);
         }
     }
 }
