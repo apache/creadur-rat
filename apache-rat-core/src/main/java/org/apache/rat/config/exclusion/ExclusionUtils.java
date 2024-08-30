@@ -155,8 +155,8 @@ public final class ExclusionUtils {
             return WrappedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
         } catch (FileNotFoundException e) {
             throw new ConfigurationException(format("%s is not a valid file.",patternFile));
-        }
     }
+
     /**
      * Creates an iterable of Strings from a file of patterns.
      * Removes comment lines.

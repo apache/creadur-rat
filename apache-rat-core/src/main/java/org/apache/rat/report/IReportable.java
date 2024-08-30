@@ -21,6 +21,7 @@ package org.apache.rat.report;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.DocumentName;
 
+@FunctionalInterface
 public interface IReportable {
     /**
      * Adds the reportable to the RatReport.

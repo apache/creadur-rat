@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.SortedSet;
 import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.DocumentName;
@@ -68,7 +70,7 @@ public abstract class Document implements Comparable<Document> {
     }
 
     /**
-     * Returns the name of the current document.
+     * Gets the name of the current document.
      * @return the name of the current document.
      */
     public final DocumentName getName() {
@@ -76,7 +78,7 @@ public abstract class Document implements Comparable<Document> {
     }
 
     /**
-     * Returns the file filter this document was created with.
+     * Gets the file filter this document was created with.
      * @return the file filter this document was created with.
      */
     public final DocumentNameMatcher getNameMatcher() {

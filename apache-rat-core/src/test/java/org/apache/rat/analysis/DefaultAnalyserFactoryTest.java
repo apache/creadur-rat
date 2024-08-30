@@ -85,7 +85,7 @@ public class DefaultAnalyserFactoryTest {
                 " * under the License.", //
                 " ]]></sample></resource>" };
 
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/Text.txt"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -97,7 +97,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void noteTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/LICENSE"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -106,7 +106,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void binaryTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/Image.png"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -115,7 +115,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void archiveTypeAnalyserTest() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/dummy.jar"), p -> true);
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
@@ -128,7 +128,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void archivesAbsenceTest() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/dummy.jar"), p -> true);
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
@@ -145,7 +145,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void archivesPresenceTest() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/dummy.jar"), p -> true);
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
@@ -162,7 +162,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void archiveTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/dummy.jar"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -171,7 +171,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT211_bmp_Test() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/jira/RAT211/side_left.bmp"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -180,7 +180,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT211_dia_Test() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/jira/RAT211/leader-election-message-arrives.dia"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -191,7 +191,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT147_unix_Test() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -207,7 +207,7 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT147_windows_Test() throws Exception {
-        final Document document = new FileDocument(basedir, 
+        final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -230,12 +230,12 @@ public class DefaultAnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.NOTIFICATION);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
 
-        Document document = new FileDocument(basedir, 
+        Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/Text.txt"), p -> true);
         analyser.analyse(document);
         assertFalse(document.getMetaData().detectedLicense());
 
-        document = new FileDocument(basedir, 
+        document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/sub/Empty.txt"), p -> true);
         analyser.analyse(document);
         assertFalse(document.getMetaData().detectedLicense());
@@ -250,12 +250,12 @@ public class DefaultAnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
 
-        Document document = new FileDocument(basedir, 
+        Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/Text.txt"), p -> true);
         analyser.analyse(document);
         assertTrue(document.getMetaData().detectedLicense());
 
-        document = new FileDocument(basedir, 
+        document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/sub/Empty.txt"), p -> true);
         analyser.analyse(document);
         assertTrue(document.getMetaData().detectedLicense());
@@ -269,12 +269,12 @@ public class DefaultAnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.PRESENCE);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
 
-        Document document = new FileDocument(basedir, 
+        Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/Text.txt"), p -> true);
         analyser.analyse(document);
         assertTrue(document.getMetaData().detectedLicense());
 
-        document = new FileDocument(basedir, 
+        document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/sub/Empty.txt"), p -> true);
         analyser.analyse(document);
         assertFalse(document.getMetaData().detectedLicense());

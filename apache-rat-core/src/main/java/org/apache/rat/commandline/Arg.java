@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -176,18 +177,14 @@ public enum Arg {
                     "Once licenses are removed they can not be added back.")
             .build())),
 
-    /**
-     * Option to read a file licenses to be removed from the approved list
-     */
+    /** Option to read a file licenses to be removed from the approved list */
     LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
             .hasArg().argName("File").type(File.class)
-            .converter(Converters.fileConverter)
             .desc("Name of File containing the approved license IDs.")
+            .converter(Converters.fileConverter)
             .build())),
 
-    /**
-     * Option to list license families to remove from the approved list
-     */
+    /** Option to list license families to remove from the approved list */
     FAMILIES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied")
             .hasArgs().argName("FamilyID")
             .desc("The denied License family IDs. These license families will be removed from the list of approved licenses.")
@@ -226,7 +223,7 @@ public enum Arg {
                     .converter(Converters.fileConverter)
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-exclude-file")).get())
-                    .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
+                    .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
                     .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
                     .argName("File").hasArg().type(File.class)
@@ -241,9 +238,7 @@ public enum Arg {
                     .build())
     ),
 
-    /**
-     * Excludes files by expression
-     */
+    /** Excludes files by expression */
     INCLUDE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include").hasArgs().argName("Expression")
                     .desc("Includes files matching <Expression>.  Will override excluded files.")
@@ -252,26 +247,23 @@ public enum Arg {
                     .desc("Includes files matching <Expression>.  Will override excluded files.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include")).get())
-                    .build())
-    ),
+            .build())
+            ),
 
-    /**
-     * Includes files based on content of file
-     */
+    /** Excludes files based on content of file */
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
                     .argName("File").hasArg().type(File.class)
-                    .converter(Converters.fileConverter)
                     .desc("Reads <Expression> entries from a file.  Entries will override excluded files.")
                     .build())
             .addOption(Option.builder().longOpt("includes-file")
                     .argName("File").hasArg().type(File.class)
-                    .converter(Converters.fileConverter)
                     .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+                            .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include-file")).get())
-                    .build())),
-    /** includes files based on Standard groups */
+
+            .build())),
+
     INCLUDE_STD(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
@@ -281,21 +273,24 @@ public enum Arg {
             .addOption(Option.builder().longOpt("scan-hidden-directories")
                     .desc("Scans hidden directories.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--input-include-std with 'HIDDEN_DIR' argument")).get()).build()
+                    .setDescription(StdMsgs.useMsg("--input-include-std with 'HIDDEN_DIR' argument")).get()).build()
             )
     ),
-    /** Excludes files based on SCM exclusion file processing */
+
     EXCLUDE_PARSE_SCM(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-parsed-scm")
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Parse SCM based exclusion files to exclude specified files.")
                     .build())
+//            .addOption(Option.builder().longOpt("parseSCMIgnoresAsExcludes")
+//                    .desc("Parse SCM based exclusion files to exclude specified files.")
+//                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+//                            .setDescription(StdMsgs.useMsg("--input-exclude-parsed-scm with 'ALL' argument, or with specific SCM name")).get()).build()
+//            )
     ),
 
-    /**
-     * Stop processing an input stream and declare an input file
-     */
+    /** Stop processing an input stream and declare an input file */
     DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
             .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
@@ -304,9 +299,7 @@ public enum Arg {
     /////////////// OUTPUT OPTIONS
 
 
-    /**
-     * Defines the stylesheet to use
-     */
+    /** Defines the stylesheet to use */
     OUTPUT_STYLE(new OptionGroup()
             .addOption(Option.builder().longOpt("output-style").hasArg().argName("StyleSheet")
                     .desc("XSLT stylesheet to use when creating the report. "
@@ -324,9 +317,7 @@ public enum Arg {
                     .desc("forces XML output rather than the report.")
                     .build())),
 
-    /**
-     * Specifies the license definitions that should be included in the output
-     */
+    /** Specifies the license definitions that should be included in the output */
     OUTPUT_LICENSES(new OptionGroup()
             .addOption(Option.builder().longOpt("output-licenses").hasArg().argName("LicenseFilter")
                     .desc("List the defined licenses.")
@@ -338,9 +329,7 @@ public enum Arg {
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-licenses")).get())
                     .build())),
 
-    /**
-     * Specifies the license families that should be included in the output
-     */
+    /** Specifies the license families that should be included in the output */
     OUTPUT_FAMILIES(new OptionGroup()
             .addOption(Option.builder().longOpt("output-families").hasArg().argName("LicenseFilter")
                     .desc("List the defined license families.")
@@ -352,26 +341,20 @@ public enum Arg {
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-families")).get())
                     .build())),
 
-    /**
-     * Specifies the log level to log messages at.
-     */
+    /** Specifies the log level to log messages at. */
     LOG_LEVEL(new OptionGroup().addOption(Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
             .desc("sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build())),
 
-    /**
-     * Specifies that the run should not perform any updates to files.
-     */
+    /** Specifies that the run should not perform any updates to files. */
     DRY_RUN(new OptionGroup().addOption(Option.builder().longOpt("dry-run")
             .desc("If set do not update the files but generate the reports.")
             .build())),
 
 
-    /**
-     * Specifies where the output should be written.
-     */
+    /** Specifies where the output should be written. */
     OUTPUT_FILE(new OptionGroup()
             .addOption(Option.builder().option("o").longOpt("out").hasArg().argName("File")
                     .desc("Define the output file where to write a report to.")
@@ -385,33 +368,25 @@ public enum Arg {
                     .converter(Converters.fileConverter)
                     .build())),
 
-    /**
-     * Specifies the level of reporting detail for archive files.
-     */
+    /** Specifies the level of reporting detail for archive files. */
     OUTPUT_ARCHIVE(new OptionGroup()
             .addOption(Option.builder().longOpt("output-archive").hasArg().argName("ProcessingType")
                     .desc("Specifies the level of detail in ARCHIVE file reporting.")
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build())),
 
-    /**
-     * Specifies the level of reporting detail for standard files.
-     */
+    /** Specifies the level of reporting detail for standard files. */
     OUTPUT_STANDARD(new OptionGroup()
             .addOption(Option.builder().longOpt("output-standard").hasArg().argName("ProcessingType")
                     .desc("Specifies the level of detail in STANDARD file reporting.")
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build())),
 
-    /**
-     * Provide license definition listing
-     */
+    /** Provide license definition listing */
     HELP_LICENSES(new OptionGroup()
             .addOption(Option.builder().longOpt("help-licenses").desc("Print information about registered licenses.").build()));
 
-    /**
-     * The option group for the argument
-     */
+    /** The option group for the argument */
     private final OptionGroup group;
 
     /**

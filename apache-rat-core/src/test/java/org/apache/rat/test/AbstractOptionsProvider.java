@@ -348,6 +348,125 @@ public abstract class AbstractOptionsProvider {
         }
     }
 
+    protected void inputExcludeStdTest() {
+        Option option = Arg.EXCLUDE_STD.find("input-exclude-std");
+        String[] args = { StandardCollection.MISC.name() };
+        String[] excluded = { "afile~", ".#afile", "%afile%", "._afile" };
+        String[] notExcluded = { "afile~more",   "what.#afile", "%afile%withMore", "well._afile" };
+        try {
+            TracablePathMatcher.setTraceEnabled(true);
+            ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
+            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            for (String fname : excluded) {
+                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+            }
+            for (String fname : notExcluded) {
+                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+            }
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    protected void inputExcludeParsedScmTest() {
+        Option option = Arg.EXCLUDE_PARSE_SCM.find("input-exclude-parsed-scm");
+        String[] args = {"GIT"};
+        String[] lines = {
+                "# somethings",
+                "!thingone", "thing*", System.lineSeparator(),
+                "# some fish",
+                "**/fish", "*_fish",
+                "# some colorful directories",
+                "red/", "blue/*/"};
+        String[] notExcluded = { "thingone", "dir/fish_two"};
+        String[] excluded = { "thingtwo", "dir/fish", "red/fish", "blue/fish" };
+
+        writeFile(".gitignore", Arrays.asList(lines));
+
+        List<String> expected = WrappedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
+                .map(s -> new File(baseDir, s).getPath()).toList();
+        expected.add(0, "!"+new File(baseDir, "thingone").getPath());
+        // "thingone",
+        try {
+            TracablePathMatcher.setTraceEnabled(true);
+            ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
+            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            for (String fname : excluded) {
+                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+            }
+            for (String fname : notExcluded) {
+                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+            }
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    // include tests
+
+    private void execIncludeTest(Option option, String[] args) {
+        Option excludeOption = Arg.EXCLUDE.option();
+        String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
+        String[] excluded = {"some.foo"};
+        try {
+            TracablePathMatcher.setTraceEnabled(true);
+            ReportConfiguration config = generateConfig(ImmutablePair.of(option, args),
+                    ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
+            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            for (String fname : excluded) {
+                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" " + fname);
+            }
+            for (String fname : notExcluded) {
+                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" " + fname);
+            }
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    private void includeFileTest(Option option) {
+        File outputFile = writeFile("include.txt", Arrays.asList(INCLUDE_ARGS));
+        execIncludeTest(option, new String[] {outputFile.getPath()});
+    }
+    protected void inputIncludeFileTest() {
+        includeFileTest(Arg.INCLUDE_FILE.find("input-include-file"));
+    }
+
+    protected void includesFileTest() {
+        includeFileTest(Arg.INCLUDE_FILE.find("includes-file"));
+    }
+
+    protected void includeTest() {
+        execIncludeTest(Arg.INCLUDE.find("include"), INCLUDE_ARGS);
+    }
+
+    protected void inputIncludeTest() {
+        execIncludeTest(Arg.INCLUDE.find("input-include"), INCLUDE_ARGS);
+    }
+
+    protected void inputIncludeStdTest() {
+        ImmutablePair<Option, String[]> excludes = ImmutablePair.of(Arg.EXCLUDE.find("input-exclude"),
+                new String[] { "*~more", "*~" });
+        Option option = Arg.INCLUDE_STD.find("input-include-std");
+        String[] args = { StandardCollection.MISC.name() };
+        String[] excluded = { "afile~more" };
+        String[] notExcluded = { "afile~", ".#afile", "%afile%", "._afile", "what.#afile", "%afile%withMore", "well._afile" };
+        try {
+            TracablePathMatcher.setTraceEnabled(true);
+
+            ReportConfiguration config = generateConfig(excludes, ImmutablePair.of(option, args));
+            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            for (String fname : excluded) {
+                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+            }
+            for (String fname : notExcluded) {
+                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+            }
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
     // LICENSE tests
     protected void execLicensesApprovedTest(Option option, String[] args) {
         Pair<Option,String[]>  arg1 = ImmutablePair.of(option, args);

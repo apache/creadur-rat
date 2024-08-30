@@ -58,11 +58,6 @@ public class DirectoryWalkerTest {
         reportConfiguration = new ReportConfiguration();
     }
 
-    public Document toWalk() {
-        DocumentName documentName = new DocumentName(tempDir);
-        return new FileDocument(documentName, tempDir, reportConfiguration.getNameMatcher(documentName));
-    }
-
     @BeforeAll
     public static void setUp() throws Exception {
 
