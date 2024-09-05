@@ -213,6 +213,7 @@
             <excludes>
               <!-- These files do not have license headers -->
               <exclude>src/test/resources/</exclude>
+              <exclude>src/site/apt/*.txt</exclude>
             </excludes>
           </configuration>
         </plugin>

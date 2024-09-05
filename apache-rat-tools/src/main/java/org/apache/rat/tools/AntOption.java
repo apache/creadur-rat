@@ -22,6 +22,7 @@ import static java.lang.String.format;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 
 /**
@@ -79,7 +80,7 @@ public class AntOption extends AbstractOption{
      */
     public String getComment(final boolean addParam) {
         StringBuilder sb = new StringBuilder()
-                .append(format("    /**%n     * %s%n", getDescription()));
+                .append(format("    /**%n     * %s%n", StringEscapeUtils.escapeHtml4(getDescription())));
         if (option.isDeprecated()) {
             sb.append(format("     * %s%n     * @deprecated%n", option.getDeprecated()));
         }
