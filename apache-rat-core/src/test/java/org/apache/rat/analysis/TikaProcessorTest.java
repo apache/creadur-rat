@@ -125,7 +125,7 @@ public class TikaProcessorTest {
             File typeDir = new File(dir, docType.name().toLowerCase(Locale.ROOT));
             if (typeDir.isDirectory()) {
                 for (File file : Objects.requireNonNull(typeDir.listFiles())) {
-                    Document doc = mkDocument(file);
+                    Document doc = new FileDocument(file, pathMatcher);
                     String mimeType = TikaProcessor.process(doc);
                     statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
                     assertEquals( docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for " +file.toString());

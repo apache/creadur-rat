@@ -130,16 +130,6 @@ public abstract class AbstractHelp {
         }
 
         @Override
-        /**
-         * Renders an option into a string buffer.
-         * @param sb The StringBuffer to place the rendered Options into.
-         * @param width The number of characters to display per line
-         * @param options The command line Options
-         * @param leftPad the number of characters of padding to be prefixed to each line
-         * @param descPad the number of characters of padding to be prefixed to each description line
-         *
-         * @return the {@code sb} parameter with text appended.
-         */
         protected StringBuffer renderOptions(final StringBuffer sb, final int width, final Options options, final int leftPad, final int descPad) {
             final String lpad = createPadding(leftPad);
             final String dpad = createPadding(descPad);

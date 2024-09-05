@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class OptionMojoTest   {
+public class OptionMojoTest {
     static Path testPath = FileSystems.getDefault().getPath("target", "optionTest");
     static String POM_FMT;
 

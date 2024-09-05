@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -190,9 +189,7 @@ public enum Arg {
             .desc("The denied License family IDs. These license families will be removed from the list of approved licenses.")
             .build())),
 
-    /**
-     * Option to read a list of license families to remove from the approved list
-     */
+    /** Option to read a list of license families to remove from the approved list. */
     FAMILIES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied-file").hasArg().argName("File")
             .desc("Name of file containing the denied license IDs.")
             .type(File.class)
@@ -247,10 +244,10 @@ public enum Arg {
                     .desc("Includes files matching <Expression>.  Will override excluded files.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include")).get())
-            .build())
-            ),
+                    .build())
+    ),
 
-    /** Excludes files based on content of file */
+    /** Includes files based on content of file */
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
                     .argName("File").hasArg().type(File.class)
@@ -259,11 +256,10 @@ public enum Arg {
             .addOption(Option.builder().longOpt("includes-file")
                     .argName("File").hasArg().type(File.class)
                     .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
-                            .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
+                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include-file")).get())
-
-            .build())),
-
+                    .build())),
+    /** includes files based on Standard groups */
     INCLUDE_STD(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
@@ -273,21 +269,16 @@ public enum Arg {
             .addOption(Option.builder().longOpt("scan-hidden-directories")
                     .desc("Scans hidden directories.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                    .setDescription(StdMsgs.useMsg("--input-include-std with 'HIDDEN_DIR' argument")).get()).build()
+                            .setDescription(StdMsgs.useMsg("--input-include-std with 'HIDDEN_DIR' argument")).get()).build()
             )
     ),
-
+    /** Excludes files based on SCM exclusion file processing */
     EXCLUDE_PARSE_SCM(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-parsed-scm")
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Parse SCM based exclusion files to exclude specified files.")
                     .build())
-//            .addOption(Option.builder().longOpt("parseSCMIgnoresAsExcludes")
-//                    .desc("Parse SCM based exclusion files to exclude specified files.")
-//                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-//                            .setDescription(StdMsgs.useMsg("--input-exclude-parsed-scm with 'ALL' argument, or with specific SCM name")).get()).build()
-//            )
     ),
 
     /** Stop processing an input stream and declare an input file */
@@ -810,6 +801,23 @@ public enum Arg {
                     if (key.equals(candidate.getKey()) || key.equals(candidate.getLongOpt())) {
                         return arg;
                     }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds the Arg that contains an Option with the specified key.
+     *
+     * @param key the key for the Option to locate.
+     * @return The Arg or {@code null} if no Arg is found.
+     */
+    public static Arg findArg(final String key) {
+        for (Arg arg : Arg.values()) {
+            for (Option candidate : arg.group.getOptions()) {
+                if (key.equals(candidate.getKey()) || key.equals(candidate.getLongOpt())) {
+                    return arg;
                 }
             }
         }

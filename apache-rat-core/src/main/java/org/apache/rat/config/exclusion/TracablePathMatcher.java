@@ -18,39 +18,57 @@
  */
 package org.apache.rat.config.exclusion;
 
-import org.apache.rat.utils.DefaultLog;
-
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.function.Supplier;
 
+import org.apache.rat.utils.DefaultLog;
+
 import static java.lang.String.format;
 
+/**
+ * A PatternMatcher that will emit trace messages during execution if the environment variable is set.
+ * Also provides a printable name for general logging
+ */
 public class TracablePathMatcher implements PathMatcher {
-    private static boolean traceEnabled;
-
+    /** The envrionment variable to set to enable tracing for the PatternMatcher execution */
+    public static final String ENV_VAR = "TracablePathMatcher";
+    /** The delegate that will do all the work */
     private final PathMatcher delegate;
+    /** The {@code true} if the environment variable has been set to "true" */
+    private static final boolean TRACE_ENABLED = Boolean.valueOf(System.getenv(ENV_VAR));
+    /** The supplier for the name */
     protected final Supplier<String> name;
+    /** A TracablePathMatcher that alwasys return {@code true} */
+    public static final TracablePathMatcher TRUE = TracablePathMatcher.make(() -> "True", pth -> true);
+    /** A TracablePathMatcher that alwasys return {@code false} */
+    public static final TracablePathMatcher FALSE = TracablePathMatcher.make(() -> "False", pth -> false);
 
-    public final static TracablePathMatcher TRUE = TracablePathMatcher.make(() -> "True", pth -> true );
-    public final static TracablePathMatcher FALSE = TracablePathMatcher.make(() -> "False", pth -> false );
-
-    public static void setTraceEnabled(boolean traceEnabled) {
-        TracablePathMatcher.traceEnabled = traceEnabled;
-    }
-
-    static TracablePathMatcher make(Supplier<String> name, PathMatcher delegate) {
+    /**
+     * Creates a TracablePathMatcher from a PathMatcher.
+     * If the {@code delegate} is already a TracablePathMatcher it will be returned un modified.
+     * @param name the name of the tracable path matcher.
+     * @param delegate the PathMatcher that will actually do the work.
+     * @return the new TracablePathMatcher
+     */
+    static TracablePathMatcher make(final Supplier<String> name, final PathMatcher delegate) {
         if (delegate instanceof TracablePathMatcher) {
             return (TracablePathMatcher) delegate;
         }
         return new TracablePathMatcher(name, delegate);
     }
 
-    TracablePathMatcher(Supplier<String> name, PathMatcher delegate) {
+    /**
+     * Creates a tracable patter nmatcher with the specified name.
+     * @param name the nmae of the pattern matcher.
+     * @param delegate the delegate that actually does the work.
+     */
+    TracablePathMatcher(final Supplier<String> name, final PathMatcher delegate) {
         this.name = name;
         this.delegate = delegate;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(name.get());
         if (delegate instanceof TracablePathMatcher) {
@@ -60,9 +78,9 @@ public class TracablePathMatcher implements PathMatcher {
     }
 
     @Override
-    public boolean matches(Path path) {
+    public boolean matches(final Path path) {
         boolean result = delegate.matches(path);
-        if (traceEnabled) {
+        if (TRACE_ENABLED) {
             DefaultLog.getInstance().debug(format("{%s} %s %s", path, result, toString()));
         }
         return result;
