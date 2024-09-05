@@ -180,7 +180,7 @@ public final class MavenGenerator {
         }
         StringBuilder sb = new StringBuilder()
             .append(format("    /**%n     * %s%n     * @param %s %s%n", StringEscapeUtils.escapeHtml4(desc),
-                    option.getName(),  arg));
+                    option.getName(),  StringEscapeUtils.escapeHtml4(arg)));
         if (option.isDeprecated()) {
             sb.append(format("     * @deprecated %s%n", StringEscapeUtils.escapeHtml4(option.getDeprecated())));
         }
