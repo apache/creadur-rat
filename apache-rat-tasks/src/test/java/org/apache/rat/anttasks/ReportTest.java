@@ -38,10 +38,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -49,6 +51,13 @@ import org.w3c.dom.Document;
 public class ReportTest extends AbstractRatAntTaskTest {
     private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
 
+    @Before
+    public void setUp() {
+        String pth = antFile.getAbsolutePath();
+        pth = pth.substring(0, pth.lastIndexOf("src/test/resources/antunit/"));
+        System.setProperty(MagicNames.PROJECT_BASEDIR, pth);
+        super.setUp();
+    }
     @Override
     protected File getAntFile() {
         return antFile;
@@ -138,10 +147,9 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testCopyrightBuild() throws Exception {
         try {
-            String fileName = new File(getAntFile().getParent(), "index.apt").getPath().replace('\\', '/');
             buildRule.executeTarget("testCopyrightBuild");
-            assertLogMatches(logLine(fileName,"YASL1"));
-            assertLogDoesNotMatch(logLine(fileName,"AL"));
+            assertLogMatches(logLine("/src/test/resources/antunit/index.apt","YASL1"));
+            assertLogDoesNotMatch(logLine("/index.apt","AL"));
         } catch (BuildException e) {
             final String expect = "You must specify at least one file";
             assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
@@ -176,7 +184,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     private String getAntFileName() {
-        return getAntFile().getPath().replace('\\', '/');
+        return "/src/test/resources/antunit/"+getAntFile().getName();
     }
 
     private String getFirstLine(File pFile) throws IOException {

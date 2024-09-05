@@ -28,7 +28,7 @@ public class ReporterTestUtils {
     /** The default license output for an unknown license */
     public static final String UNKNOWN_LICENSE = licenseOut("?????", "Unknown license (Unapproved)");
     /** The default license output for an Apache 2 license */
-    public static final String APACHE_LICENSE = licenseOut("AL", "Apache License Version 2.0");
+    public static final String APACHE_LICENSE = licenseOut("AL", "AL", "Apache License Version 2.0");
 
     /**
      * Generates the regex string for a document output line.  Suitable for regex query.

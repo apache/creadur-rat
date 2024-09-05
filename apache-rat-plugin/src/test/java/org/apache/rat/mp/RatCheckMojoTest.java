@@ -100,7 +100,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final RatCheckMojo mojo = newRatCheckMojo("it1");
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = { 
-                ReporterTestUtils.documentOut(true, Document.Type.STANDARD,  getDir(mojo) + "pom.xml") +
+                ReporterTestUtils.documentOut(true, Document.Type.STANDARD,  "/pom.xml") +
                 ReporterTestUtils.APACHE_LICENSE,
                 "Notes: 0", "Binaries: 0", "Archives: 0",
                 "Standards: 1$", "Apache Licensed: 1$", "Generated Documents: 0", "^0 Unknown Licenses" };
@@ -121,15 +121,14 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         final RatCheckMojo mojo = newRatCheckMojo("it2");
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String dir = getDir(mojo);
-        final String[] expected = { 
-                "^Files with unapproved licenses:\\s+\\Q" + dir + "src.txt\\E\\s+", 
+        final String[] expected = {
+                "^Files with unapproved licenses:\\s+\\Q/src.txt\\E\\s+",
                 "Notes: 0", 
                 "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
                 "^1 Unknown Licenses", 
-                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "src.txt") +
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.txt") +
                 ReporterTestUtils.UNKNOWN_LICENSE,
-                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
+                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
                 ReporterTestUtils.APACHE_LICENSE
                 };
         try {
@@ -149,13 +148,12 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testIt3() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it3", "check", true);
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String dir = getDir(mojo);
-        final String[] expected = { "^Files with unapproved licenses:\\s+\\Q" + dir + "src.apt\\E\\s+", "Notes: 0",
+        final String[] expected = { "^Files with unapproved licenses:\\s+\\Q/src.apt\\E\\s+", "Notes: 0",
                 "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
                 "^1 Unknown Licenses", 
-                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "src.apt") +
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.apt") +
                 ReporterTestUtils.UNKNOWN_LICENSE,
-                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
+                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
                 ReporterTestUtils.APACHE_LICENSE
         };
 
@@ -174,7 +172,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it5", "check", true);
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = { "Notes: 0", "Binaries: 0", "Archives: 0", "Standards: 0$", "Apache Licensed: 0$",
-                "Generated Documents: 0", "^0 Unknown Licenses" };
+                "Generated Documents: 1", "^0 Unknown Licenses" };
 
         ReportConfiguration config = mojo.getConfiguration();
         assertFalse("Should not be adding licenses", config.isAddingLicenses());
@@ -202,7 +200,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final File ratTxtFile = mojo.getRatTxtFile();
         // POM reports AL, BSD and CC BYas BSD because it contains the BSD and CC BY strings
         final String[] expected = { 
-                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "pom.xml") +
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/pom.xml") +
                 ReporterTestUtils.APACHE_LICENSE +
                 ReporterTestUtils.licenseOut("BSD", "BSD") +
                 ReporterTestUtils.licenseOut("CC BY", "Creative Commons Attribution (Unapproved)"),
@@ -230,22 +228,21 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testRAT335GitIgnore() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-335-GitIgnore");
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String dir = getDir(mojo);
         final String[] expected = {
             "Notes: 1",
             "Binaries: 0",
             "Archives: 0",
-            "Standards: 5$",
+            "Standards: 6$",
             "Apache Licensed: 2$",
             "Generated Documents: 0",
-            "^3 Unknown Licenses",
-            ReporterTestUtils.documentOut(true, Document.Type.STANDARD, getDir(mojo) + "pom.xml")+
+            "^4 Unknown Licenses",
+            ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml")+
             ReporterTestUtils.APACHE_LICENSE,
-            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "dir1/dir1.md")+
+            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir1/dir1.md")+
                 ReporterTestUtils.UNKNOWN_LICENSE,
-            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "dir2/dir2.txt")+
+            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir2/dir2.txt")+
                 ReporterTestUtils.UNKNOWN_LICENSE,
-            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "dir3/file3.log")+
+            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir3/file3.log")+
                 ReporterTestUtils.UNKNOWN_LICENSE,  
         };
         try {
@@ -293,7 +290,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 "Apache Licensed: 2$",
                 "Generated Documents: 0",
                 "^1 Unknown Licenses",
-                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, getDir(mojo) + "bar.md") +
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/bar.md") +
                         ReporterTestUtils.UNKNOWN_LICENSE
         };
         try {

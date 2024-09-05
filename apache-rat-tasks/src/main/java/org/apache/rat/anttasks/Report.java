@@ -21,7 +21,6 @@ package org.apache.rat.anttasks;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,13 +30,11 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ImplementationException;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
-import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory;
@@ -46,7 +43,6 @@ import org.apache.rat.utils.Log;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Resource;
@@ -361,7 +357,7 @@ public class Report extends BaseAntTask {
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
                 configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
             }
-            configuration.setReportable(new ResourceCollectionContainer(configuration, this.getProject().getBaseDir(), nestedResources));
+            configuration.setReportable(new ResourceCollectionContainer(configuration, nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
             if (deprecatedConfig.inputFileFilter != null) {
@@ -469,7 +465,8 @@ public class Report extends BaseAntTask {
      * A facade for the Logger provided by Ant.
      */
     private class Logger implements Log {
-        org.apache.tools.ant.DefaultLogger delegate = new org.apache.tools.ant.DefaultLogger();
+        /** the actual logger */
+        private final org.apache.tools.ant.DefaultLogger delegate = new org.apache.tools.ant.DefaultLogger();
 
         @Override
         public Level getLevel() {
@@ -494,7 +491,7 @@ public class Report extends BaseAntTask {
         }
 
         @Override
-        public void log(Level level, String message, Throwable throwable) {
+        public void log(final Level level, final String message, final Throwable throwable) {
             BuildEvent event = new BuildEvent(Report.this);
             switch (level) {
                 case DEBUG:

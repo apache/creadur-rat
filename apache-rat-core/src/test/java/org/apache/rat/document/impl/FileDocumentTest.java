@@ -20,6 +20,7 @@ package org.apache.rat.document.impl;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.test.utils.Resources;
+import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +37,9 @@ public class FileDocumentTest {
     
     @BeforeEach
     public void setUp() throws Exception {
+        String basedir = basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES).getPath();
         file = Resources.getResourceFile("elements/Source.java");
-        document = new FileDocument(file, p -> true);
+        document = new FileDocument(basedir, file, p -> true);
     }
 
     @Test

@@ -24,10 +24,14 @@ import org.apache.rat.config.exclusion.fileProcessors.GitFileProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreProcessor;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public enum StandardCollection {
     ALL("All of the Standard Excludes combined.", null, null, null),
@@ -86,7 +90,6 @@ public enum StandardCollection {
             Collections.singletonList("**/.DS_Store"), null, null),
     MAVEN("The files and directories created by Maven build system based project",
             Arrays.asList(//
-                    "pom.xml",
                     "target/**", //
                     "cobertura.ser", //
                     "**/MANIFEST.MF", // a MANIFEST.MF file cannot contain comment lines. In other words: It is not possible, to include a license.
@@ -98,11 +101,8 @@ public enum StandardCollection {
     MERCURIAL("The files and directories created by a Mercurial source code control based tool.",
             Arrays.asList("**/.hg/**", ".hgignore"), null, new HgIgnoreProcessor()), //
     MISC("The set of miscellaneous files generally left by editors and the like.",
-            Arrays.asList("**/%*%", "**/._*",
-                    "**/*~", "**/#*", "**/.#*", "**/,*", "**/_$*", "**/*$", "**/*.old", "**/*.bak", "**/*.BAK",
-                    "**/*.orig", "**/*.rej", "**/.del-*",
-                    "**/*.a", "**/*.olb", "**/*.o", "**/*.obj", "**/*.so", "**/*.exe",
-                    "**/*.Z", "**/*.elc", "**/*.ln", "**/core"), null, null),
+            Arrays.asList("**/*~", "**/#*#", "**/.#*", "**/%*%", "**/._*"),
+            null, null),
     MKS("The files and directories created by an MKS source code control based tool.",
             Collections.singletonList("**/project.pj"), null, null),
     RCS("The files and directories created by a RCS source code control based tool.",
@@ -111,6 +111,8 @@ public enum StandardCollection {
             Collections.singletonList("**/SCCS/**"), null, null),
     SERENA_DIMENSIONS_10("The files and directories created by a Serena Dimensions V10 change control system based tool.",
             Collections.singletonList("**/.metadata/**"), null, null),
+    STANDARD_PATTERNS("A standard collection of generally accepted patterns to ignore", null, null, null),
+    STANDARD_SCMS("A standard collection of SCMs", null, null, null),
     SUBVERSION("The files and directories created by a Subversion source code control based tool.",
             Collections.singletonList("**/.svn/**"), null, null),
     SURROUND_SCM("The files and directories created by a Surround SCM source code control based tool.",
@@ -118,10 +120,10 @@ public enum StandardCollection {
     VSS("The files and directories created by a Visual Source Safe source code control based tool.",
             Collections.singletonList("**/vssver.scc"), null, null);
 
-    final Collection<String> patterns;
-    final PathMatcherSupplier pathMatcherSupplier;
-    final FileProcessor fileProcessor;
-    final String desc;
+    private final Collection<String> patterns;
+    private final PathMatcherSupplier pathMatcherSupplier;
+    private final FileProcessor fileProcessor;
+    private final String desc;
 
     StandardCollection(String desc, Collection<String> ex, PathMatcherSupplier pathMatcherSupplier, FileProcessor fileProcessor) {
         this.desc = desc;
@@ -134,11 +136,95 @@ public enum StandardCollection {
         return desc;
     }
 
+    private Set<StandardCollection> getCollections() {
+        Set<StandardCollection> result = new HashSet<>();
+        switch (this) {
+            case ALL:
+                for (StandardCollection sc : StandardCollection.values()) {
+                    if (sc != ALL) {
+                        result.add(sc);
+                    }
+                }
+                break;
+            case STANDARD_PATTERNS:
+                result.addAll(Arrays.asList(MISC, CVS, RCS, SCCS, VSS, MKS, SUBVERSION, ARCH, BAZAAR, SURROUND_SCM, MAC,
+                        SERENA_DIMENSIONS_10, MERCURIAL, GIT, BITKEEPER, DARCS));
+                break;
+            case STANDARD_SCMS:
+                result.addAll(Arrays.asList(SUBVERSION, GIT, BAZAAR, MERCURIAL, CVS));
+                break;
+
+            default:
+                result.add(this);
+        }
+        return result;
+    }
+
+    public Collection<String> patterns() {
+        Set<String> result = new HashSet<>();
+        getCollections().forEach(sc -> result.addAll(sc.patterns));
+        return result;
+    }
+
+    public FileProcessor fileProcessor() {
+        List<FileProcessor> lst = new ArrayList<>();
+        for (StandardCollection sc : getCollections()) {
+            if (sc.hasFileProcessor()) {
+                lst.add(sc.fileProcessor);
+            }
+        }
+        if (lst.isEmpty()) {
+            return null;
+        }
+        if (lst.size() == 1) {
+            return lst.get(0);
+        }
+        return s -> {
+            List<String> result = new ArrayList<>();
+            lst.forEach(fp -> result.addAll(fp.apply(s)));
+            return result;
+        };
+    }
+
     public boolean hasFileProcessor() {
-        return fileProcessor != null;
+        for (StandardCollection sc : getCollections()) {
+            if (sc.fileProcessor != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public PathMatcherSupplier pathMatcherSupplier() {
+        List<PathMatcherSupplier> lst = new ArrayList<>();
+        for (StandardCollection sc : getCollections()) {
+            if (sc.pathMatcherSupplier != null) {
+                lst.add(sc.pathMatcherSupplier);
+            }
+        }
+        if (lst.isEmpty()) {
+            return null;
+        }
+        if (lst.size() == 1) {
+            return lst.get(0);
+        }
+
+        return (dir) -> path -> {
+            for (PathMatcherSupplier sup : lst) {
+                if (sup.get(dir).matches(path)) {
+                    return true;
+                }
+            }
+            return false;
+        };
     }
 
     public boolean hasPathMatchSupplier() {
-        return pathMatcherSupplier != null;
+        for (StandardCollection sc : getCollections()) {
+            if (sc.pathMatcherSupplier != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

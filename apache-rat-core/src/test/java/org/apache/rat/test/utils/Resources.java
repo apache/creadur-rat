@@ -70,7 +70,7 @@ public class Resources {
         if (!f.isFile()) {
             throw new FileNotFoundException("Unable to locate resource file: " + pResource);
         }
-        return f;
+        return f.getCanonicalFile();
     }
 
     /**
@@ -78,7 +78,7 @@ public class Resources {
      * add module names to fix behaviour from within IntelliJ.
      */
     public static File[] getResourceFiles(String pResource) throws IOException {
-        File f = new File(TEST_RESOURCE_BASE_PATH, pResource);
+        File f = new File(TEST_RESOURCE_BASE_PATH, pResource).getCanonicalFile();
         if (!f.isDirectory()) {
             throw new FileNotFoundException("Unable to locate resource directory: " + pResource);
         }

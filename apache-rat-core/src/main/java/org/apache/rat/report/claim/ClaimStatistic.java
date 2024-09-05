@@ -32,13 +32,13 @@ import org.apache.rat.api.Document;
 public class ClaimStatistic {
     /** The counter types */
     public enum Counter { 
-        /** count of approved files */
+        /** count of approved licenses */
         APPROVED, 
-        /** count of unapproved files */
+        /** count of unapproved licenses */
         UNAPPROVED, 
-        /** count of generated files */
+        /** count of generated licenses */
         GENERATED, 
-        /** count of unknown files */
+        /** count of unknown licenses */
         UNKNOWN }
     
     private final ConcurrentHashMap<String, IntCounter> licenseFamilyNameMap = new ConcurrentHashMap<>();

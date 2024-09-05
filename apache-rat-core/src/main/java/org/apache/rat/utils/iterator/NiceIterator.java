@@ -192,7 +192,7 @@ public class NiceIterator<T> implements ExtendedIterator<T> {
      * An iterator over no elements.
      * @return A class singleton which doesn't iterate.
      */
-    static public <T> ExtendedIterator<T> emptyIterator() {
+    public static <T> ExtendedIterator<T> emptyIterator() {
         return NullIterator.instance() ;
     }
 

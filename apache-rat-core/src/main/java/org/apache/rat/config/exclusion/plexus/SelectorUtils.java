@@ -60,7 +60,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static java.lang.String.format;
 
 /**
  * <p>This is a utility class used by selectors and DirectoryScanner. The functionality more properly belongs just to

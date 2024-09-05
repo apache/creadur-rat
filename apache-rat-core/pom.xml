@@ -53,6 +53,8 @@
             <excludes>
               <!-- These files have bad license headers because they are used to test bad license headers -->
               <exclude>src/test/resources/**</exclude>
+              <!-- this has a Apache-1.0 license which is not recognized -->
+              <excludes>**/org/apache/rat/config/exclusion/plexus/SelectorUtils.java</excludes>
             </excludes>
           </configuration>
         </plugin>

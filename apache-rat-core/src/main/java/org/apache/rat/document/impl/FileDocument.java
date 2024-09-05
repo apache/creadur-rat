@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl;
 
 import java.io.File;
@@ -44,11 +44,12 @@ public class FileDocument extends Document {
 
     /**
      * Creates a File document.
+     * @param basedirStr the base directory for this document.
      * @param file the file to wrap.
      * @param pathMatcher the path matcher to filter files/directories with.
      */
-    public FileDocument(final File file, final PathMatcher pathMatcher) {
-        super(normalizeFileName(file), pathMatcher);
+    public FileDocument(final String basedirStr, final File file, final PathMatcher pathMatcher) {
+        super(basedirStr, normalizeFileName(file), pathMatcher);
         this.file = file;
     }
 
@@ -78,7 +79,7 @@ public class FileDocument extends Document {
             SortedSet<Document> result = new TreeSet<>();
             File[] lst = file.listFiles(ExclusionUtils.asFileFilter(pathMatcher));
             if (lst != null && lst.length > 0) {
-                Arrays.stream(lst).map(f -> new FileDocument(f, pathMatcher)).forEach(result::add);
+                Arrays.stream(lst).map(f -> new FileDocument(getBasedir(), f, pathMatcher)).forEach(result::add);
             }
             return result;
         }

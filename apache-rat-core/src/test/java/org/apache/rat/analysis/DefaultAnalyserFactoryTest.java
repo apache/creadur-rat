@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
@@ -35,14 +37,21 @@ import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
+import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class DefaultAnalyserFactoryTest {
 
+    private final String basedir;
+
     private StringWriter out;
     private SimpleXmlClaimReporter reporter;
     private IDocumentAnalyser analyser;
+
+    DefaultAnalyserFactoryTest() throws IOException {
+        basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES).getPath();
+    }
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -56,7 +65,7 @@ public class DefaultAnalyserFactoryTest {
     @Test
     public void standardTypeAnalyser() throws Exception {
         String[] expected = {
-                "<resource name='src/test/resources/elements/Text.txt' type='STANDARD'>"
+                "<resource name='/elements/Text.txt' type='STANDARD'>"
                         + "<license id='?????' name='Unknown license' approval='false' family='?????'/>"
                         + "<sample><![CDATA[ /*", //
                 " * Licensed to the Apache Software Foundation (ASF) under one", //
@@ -75,7 +84,7 @@ public class DefaultAnalyserFactoryTest {
                 " * under the License.", //
                 " ]]></sample></resource>" };
 
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/Text.txt"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
@@ -87,25 +96,25 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void noteTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/LICENSE"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/LICENSE' type='NOTICE'/>", out.toString());
+        assertEquals("<resource name='/elements/LICENSE' type='NOTICE'/>", out.toString());
     }
 
     @Test
     public void binaryTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/Image.png"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/Image.png' type='BINARY'/>", out.toString());
+        assertEquals("<resource name='/elements/Image.png' type='BINARY'/>", out.toString());
     }
 
     @Test
     public void archiveTypeAnalyserTest() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/dummy.jar"), p -> true);
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
@@ -113,12 +122,12 @@ public class DefaultAnalyserFactoryTest {
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString());
+        assertEquals("<resource name='/elements/dummy.jar' type='ARCHIVE'/>", out.toString());
     }
 
     @Test
     public void archivesAbsenceTest() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/dummy.jar"), p -> true);
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
@@ -128,14 +137,14 @@ public class DefaultAnalyserFactoryTest {
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        TextUtils.assertContains("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'>", out.toString());
+        TextUtils.assertContains("<resource name='/elements/dummy.jar' type='ARCHIVE'>", out.toString());
         TextUtils.assertContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", out.toString());
         TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", out.toString());
     }
 
     @Test
     public void archivesPresenceTest() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/dummy.jar"), p -> true);
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
@@ -145,49 +154,49 @@ public class DefaultAnalyserFactoryTest {
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        TextUtils.assertContains("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'>", out.toString());
+        TextUtils.assertContains("<resource name='/elements/dummy.jar' type='ARCHIVE'>", out.toString());
         TextUtils.assertNotContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", out.toString());
         TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", out.toString());
     }
 
     @Test
     public void archiveTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/dummy.jar"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/elements/dummy.jar' type='ARCHIVE'/>", out.toString());
+        assertEquals("<resource name='/elements/dummy.jar' type='ARCHIVE'/>", out.toString());
     }
 
     @Test
     public void RAT211_bmp_Test() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/jira/RAT211/side_left.bmp"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
-        assertEquals("<resource name='src/test/resources/jira/RAT211/side_left.bmp' type='BINARY'/>", out.toString());
+        assertEquals("<resource name='/jira/RAT211/side_left.bmp' type='BINARY'/>", out.toString());
     }
 
     @Test
     public void RAT211_dia_Test() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/jira/RAT211/leader-election-message-arrives.dia"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
         assertEquals(
-                "<resource name='src/test/resources/jira/RAT211/leader-election-message-arrives.dia' type='ARCHIVE'/>",
+                "<resource name='/jira/RAT211/leader-election-message-arrives.dia' type='ARCHIVE'/>",
                 out.toString());
     }
 
     @Test
     public void RAT147_unix_Test() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
         TextUtils.assertPatternInTarget(
-                "<resource name='src/test/resources/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'",
+                "<resource name='/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'",
                 result);
         TextUtils.assertPatternInTarget("sentence 1.$", result);
         TextUtils.assertPatternInTarget("^sentence 2.$", result);
@@ -197,13 +206,13 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void RAT147_windows_Test() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"), p -> true);
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
         TextUtils.assertPatternInTarget(
-                "<resource name='src/test/resources/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'",
+                "<resource name='/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'",
                 result);
         TextUtils.assertPatternInTarget("sentence 1.$", result);
         TextUtils.assertPatternInTarget("^sentence 2.$", result);
@@ -220,12 +229,12 @@ public class DefaultAnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.NOTIFICATION);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
 
-        Document document = new FileDocument(
+        Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/Text.txt"), p -> true);
         analyser.analyse(document);
         assertFalse(document.getMetaData().detectedLicense());
 
-        document = new FileDocument(
+        document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/sub/Empty.txt"), p -> true);
         analyser.analyse(document);
         assertFalse(document.getMetaData().detectedLicense());
@@ -240,12 +249,12 @@ public class DefaultAnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
 
-        Document document = new FileDocument(
+        Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/Text.txt"), p -> true);
         analyser.analyse(document);
         assertTrue(document.getMetaData().detectedLicense());
 
-        document = new FileDocument(
+        document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/sub/Empty.txt"), p -> true);
         analyser.analyse(document);
         assertTrue(document.getMetaData().detectedLicense());
@@ -259,12 +268,12 @@ public class DefaultAnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.PRESENCE);
         analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
 
-        Document document = new FileDocument(
+        Document document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/Text.txt"), p -> true);
         analyser.analyse(document);
         assertTrue(document.getMetaData().detectedLicense());
 
-        document = new FileDocument(
+        document = new FileDocument(basedir, 
                 Resources.getResourceFile("/elements/sub/Empty.txt"), p -> true);
         analyser.analyse(document);
         assertFalse(document.getMetaData().detectedLicense());

@@ -18,8 +18,6 @@
  */
 package org.apache.rat;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -56,6 +54,8 @@ import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
+import static java.lang.String.format;
+
 /**
  * The collection of standard options for the CLI as well as utility methods to manage them and methods to create the
  * ReportConfiguration from the options and an array of arguments.
@@ -66,21 +66,16 @@ public final class OptionCollection {
         // do not instantiate
     }
 
-    public static final Comparator<Option> optionComparator = new OptionComparator();
+    /** The Option comparator to sort the help */
+    public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
 
-    /**
-     * Produce help
-     */
+    /** The Help option */
     public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
-    /**
-     * Provide license definition listing
-     */
+    /** Provide license definition listing */
     public static final Option HELP_LICENSES = Option.builder().longOpt("help-licenses").desc("Print help for the RAT command line interface and exit.").build();
 
-    /**
-     * A mapping of {@code argName(value)} values to a description of those values.
-     */
+    /** A mapping of {@code argName(value)} values to a description of those values. */
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
     static {
         ARGUMENT_TYPES = new TreeMap<>();
@@ -236,14 +231,14 @@ public final class OptionCollection {
         File base = new File(baseDirectory);
 
         if (!base.exists()) {
-            DefaultLog.getInstance().error( "Directory '" + baseDirectory + "' does not exist");
+            DefaultLog.getInstance().error("Directory '" + baseDirectory + "' does not exist");
             return null;
         }
         PathMatcher pathMatcher = config.getPathMatcher(baseDirectory);
 
-        Document doc = new FileDocument(base, pathMatcher);
+        Document doc = new FileDocument(baseDirectory, base, pathMatcher);
         if (!pathMatcher.matches(doc.getPath())) {
-            DefaultLog.getInstance().error( "Directory '" + baseDirectory + "' is excluded list.");
+            DefaultLog.getInstance().error("Directory '" + baseDirectory + "' is excluded list.");
             return null;
         }
 

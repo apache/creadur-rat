@@ -49,16 +49,22 @@ public abstract class Document implements Comparable<Document> {
         STANDARD;
     }
 
+    /** The path matcher used by this document */
     protected final PathMatcher pathMatcher;
+    /** THe metadata for this document */
     private final MetaData metaData;
+    /** The fully qualified name of this document */
     private final String name;
+    /** The base directory for this document */
+    private final String basedirStr;
 
     /**
      * Creates an instance.
      * @param name the name of the resource.
      * @param pathMatcher the path matcher to filter directories/files.
      */
-    protected Document(final String name, final PathMatcher pathMatcher) {
+    protected Document(final String basedirStr, final String name, final PathMatcher pathMatcher) {
+        this.basedirStr = basedirStr;
         this.name = name;
         this.pathMatcher = pathMatcher;
         this.metaData = new MetaData();
@@ -73,6 +79,29 @@ public abstract class Document implements Comparable<Document> {
     }
 
     /**
+     * Returns the base directory of the current document.
+     * @return the base directory of the current document.
+     */
+    public final String getBasedir() {
+        return basedirStr;
+    }
+
+    /**
+     * Returns the name of the document relatvie to the basedir.
+     * @return the name of the document
+     */
+    public final String localizedName() {
+        String result = name;
+        if (result.startsWith(basedirStr)) {
+            result = result.substring(basedirStr.length());
+        }
+        if (! result.startsWith("/")) {
+            result = "/" + result;
+        }
+        return result;
+    }
+
+    /**
      * Returns the file filter this document was created with.
      * @return the file filter this document was created with.
      */
@@ -81,7 +110,7 @@ public abstract class Document implements Comparable<Document> {
     }
 
     @Override
-    public int compareTo(Document doc) {
+    public int compareTo(final Document doc) {
         return getPath().compareTo(doc.getPath());
     }
 
@@ -108,7 +137,6 @@ public abstract class Document implements Comparable<Document> {
 
     /**
      * Reads the contents of this document.
-     * 
      * @return <code>Reader</code> not null
      * @throws IOException if this document cannot be read
      * composite archive
@@ -117,7 +145,6 @@ public abstract class Document implements Comparable<Document> {
 
     /**
      * Streams the document's contents.
-     * 
      * @return a non null input stream of the document.
      * @throws IOException when stream could not be opened
      */
@@ -125,7 +152,6 @@ public abstract class Document implements Comparable<Document> {
 
     /**
      * Gets data describing this resource.
-     * 
      * @return a non null MetaData object.
      */
     public final MetaData getMetaData() {

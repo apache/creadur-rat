@@ -36,6 +36,10 @@ import static java.lang.String.format;
  * Utilizes the same command line as the CLI based Report client so that additional licenses, etc. can be added.
  */
 public final class Documentation {
+
+    private Documentation() {
+        // do not instantiate.
+    }
     /**
      * Creates the documentation. Writes to the output specified by the -o or --out option. Defaults to System.out.
      * @param args the arguments. Try --help for help.
@@ -52,7 +56,7 @@ public final class Documentation {
 
     private static void printUsage(final Options opts) {
         HelpFormatter f = new HelpFormatter();
-        f.setOptionComparator(OptionCollection.optionComparator);
+        f.setOptionComparator(OptionCollection.OPTION_COMPARATOR);
         f.setWidth(AbstractHelp.HELP_WIDTH);
         String header = "\nAvailable options";
         String footer = "";

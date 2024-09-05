@@ -17,7 +17,6 @@
  */
 package org.apache.rat.utils.iterator;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -43,14 +42,16 @@ public class Map1Iterator<From, To> extends NiceIterator<To>
         this.base = base;
     }
 
-    public @Override To next()
+    @Override
+    public To next()
     { return map.apply( base.next() ); }
 
-    public @Override boolean hasNext()
+    @Override
+    public boolean hasNext()
     { return base.hasNext(); }
 
-
-    public @Override void forEachRemaining(Consumer<? super To> action) {
+    @Override
+    public void forEachRemaining(Consumer<? super To> action) {
         this.base.forEachRemaining(x -> action.accept( map.apply( x ) ) );
     }
 

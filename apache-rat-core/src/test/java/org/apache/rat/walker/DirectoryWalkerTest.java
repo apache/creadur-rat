@@ -58,7 +58,7 @@ public class DirectoryWalkerTest {
     }
 
     public Document toWalk() {
-        return new FileDocument(tempDir, reportConfiguration.getPathMatcher(tempDir.toString()));
+        return new FileDocument(tempDir.getPath(), tempDir, reportConfiguration.getPathMatcher(tempDir.toString()));
     }
 
     @BeforeAll

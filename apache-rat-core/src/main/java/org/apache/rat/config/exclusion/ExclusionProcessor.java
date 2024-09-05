@@ -18,9 +18,6 @@
  */
 package org.apache.rat.config.exclusion;
 
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
-import org.apache.rat.utils.iterator.WrappedIterator;
-
 import java.io.File;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
@@ -30,8 +27,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import org.apache.rat.config.exclusion.plexus.MatchPatterns;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.iterator.WrappedIterator;
+
+import static java.lang.String.format;
 
 /**
  * Processes the include and exclude patterns and applies the result against a base directory
@@ -57,47 +59,57 @@ public class ExclusionProcessor {
     /** the cases sensitive flag for matching -- should be set based on platform */
     private final boolean isCaseSensitive = true;
 
+    /** the last generated PathMatcher */
+    private PathMatcher lastMatcher;
+    /** The base dir for the last PathMatcher */
+    private String lastMatcherBaseDir;
+
+    /** Reset the pathmatcher to start again */
+    private void resetLastMatcher() {
+        lastMatcher = null;
+        lastMatcherBaseDir = null;
+    }
+
     /**
      * Add the Iterable of strings to the collection of file/directory patters to ignore.
      * @param patterns the patterns to add
+     * @return this
      */
-    public void addIncludedPatterns(Iterable<String> patterns) {
-        patterns.forEach(includedPatterns::add);
+    public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
+        List<String> lst = new ArrayList<>();
+        patterns.forEach(lst::add);
+        DefaultLog.getInstance().info(format("Including patterns: %s", String.join(", ", lst)));
+        includedPatterns.addAll(lst);
+        resetLastMatcher();
+        return this;
     }
 
     /**
      * Add a PathMatcherSupplier to the collection of file/directory patters to ignore.
      * @param pathMatcherSupplier the supplier of the pathMatcher to add (may be null).
+     * @return this
      */
-    public void addIncludedFilter(PathMatcherSupplier pathMatcherSupplier) {
+    public ExclusionProcessor addIncludedFilter(final PathMatcherSupplier pathMatcherSupplier) {
         if (pathMatcherSupplier != null) {
             includedPaths.add(pathMatcherSupplier);
+            resetLastMatcher();
         }
-    }
-
-    /**
-     * add All StandardCollections to the consumer
-     * @param consumer the consumer of StandardCollections.
-     */
-    private void addAllCollection(Consumer<StandardCollection> consumer) {
-        for (StandardCollection standardCollection : StandardCollection.values()) {
-            if (standardCollection != StandardCollection.ALL) {
-                consumer.accept(standardCollection);
-            }
-        }
+        return this;
     }
 
     /**
      * Add the file processor from a StandardCollection.
      * @param collection the collection to add the processor from.
+     * @return this
      */
-    public void addFileProcessor(StandardCollection collection) {
-        if (collection == StandardCollection.ALL) {
-            addAllCollection(this::addFileProcessor);
-        }
-        if (collection.fileProcessor != null) {
+    public ExclusionProcessor addFileProcessor(final StandardCollection collection) {
+        if (collection != null && collection.hasFileProcessor()) {
+            DefaultLog.getInstance().info(format("Processing exclude file from %s.", collection));
             fileProcessors.add(collection);
+            resetLastMatcher();
+
         }
+        return this;
     }
 
     /**
@@ -105,13 +117,11 @@ public class ExclusionProcessor {
      * @param collection the standard collection to add the includes from.
      * @return this
      */
-    public ExclusionProcessor addIncludedCollection(StandardCollection collection) {
-        if (collection == StandardCollection.ALL) {
-            addAllCollection(this::addIncludedCollection);
-        }
+    public ExclusionProcessor addIncludedCollection(final StandardCollection collection) {
         if (collection != null) {
+            DefaultLog.getInstance().info(format("Including %s collection.", collection));
             includedCollections.add(collection);
-            includedPatterns.addAll(collection.patterns);
+            resetLastMatcher();
         }
         return this;
     }
@@ -121,8 +131,12 @@ public class ExclusionProcessor {
      * @param patterns the strings to add to the excluded patterns.
      * @return this
      */
-    public ExclusionProcessor addExcludedPatterns(Iterable<String> patterns) {
-        patterns.forEach(excludedPatterns::add);
+    public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
+        List<String> lst = new ArrayList<>();
+        patterns.forEach(lst::add);
+        DefaultLog.getInstance().info(format("Excluding patterns: %s", String.join(", ", lst)));
+        excludedPatterns.addAll(lst);
+        resetLastMatcher();
         return this;
     }
 
@@ -131,9 +145,10 @@ public class ExclusionProcessor {
      * @param pathMatcherSupplier the supplier of the path matcher to add.
      * @return this
      */
-    public ExclusionProcessor addExcludedFilter(PathMatcherSupplier pathMatcherSupplier) {
+    public ExclusionProcessor addExcludedFilter(final PathMatcherSupplier pathMatcherSupplier) {
         if (pathMatcherSupplier != null) {
             excludedPaths.add(pathMatcherSupplier);
+            resetLastMatcher();
         }
         return this;
     }
@@ -143,13 +158,11 @@ public class ExclusionProcessor {
      * @param collection the StandardCollection to that identifies the files to exclude.
      * @return this.
      */
-    public ExclusionProcessor addExcludedCollection(StandardCollection collection) {
-        if (collection == StandardCollection.ALL) {
-            addAllCollection(this::addExcludedCollection);
-        }
+    public ExclusionProcessor addExcludedCollection(final StandardCollection collection) {
         if (collection != null) {
+            DefaultLog.getInstance().info(format("Excluding %s collection.", collection));
             excludedCollections.add(collection);
-            excludedPatterns.addAll(collection.patterns);
+            resetLastMatcher();
         }
         return this;
     }
@@ -184,7 +197,7 @@ public class ExclusionProcessor {
                             final File basedir, final Set<StandardCollection> standardCollections) {
         if (!standardCollections.isEmpty()) {
             for (StandardCollection collection : standardCollections) {
-                appendList(matching, notMatching, basedir, collection.patterns);
+                appendList(matching, notMatching, basedir, collection.patterns());
             }
         }
     }
@@ -194,67 +207,77 @@ public class ExclusionProcessor {
      * @param basedir the base directory to make everything relative to.
      * @return A container of files, which are being checked.
      */
-    public PathMatcher getPathMatcher(String basedir) {
+    public PathMatcher getPathMatcher(final String basedir) {
         final String dirStr = basedir.replace('/', File.separatorChar).replace('\\', File.separatorChar);
         final String basedirStr = dirStr.endsWith(File.separator) ? dirStr.substring(0, dirStr.length() - 1) : dirStr;
-        final File basedirFile = new File(basedirStr);
 
-        final Set<String> incl = new TreeSet<>();
-        final Set<String> excl = new TreeSet<>();
+        if (!basedirStr.equals(lastMatcherBaseDir) || lastMatcher == null) {
+            lastMatcherBaseDir = basedirStr;
 
-        // add the file processors to the excluded paths.
-        for (StandardCollection sc : fileProcessors) {
-            if (sc.hasFileProcessor()) {
-                Collection<String> patterns = sc.fileProcessor.apply(basedirStr);
-                if (!patterns.isEmpty()) {
-                    WrappedIterator.create(patterns.iterator()).filter(ExclusionUtils.MATCH_FILTER)
-                            .map(s -> ExclusionUtils.localizeFileName(basedirStr, s))
-                            .map(ExclusionUtils::normalizePattern).forEach(excl::add);
-                    WrappedIterator.create(patterns.iterator()).filter(ExclusionUtils.NOT_MATCH_FILTER)
-                            .map(s -> ExclusionUtils.localizeFileName(basedirStr, s.substring(1)))
-                            .map(ExclusionUtils::normalizePattern).forEach(incl::add);
+            final File basedirFile = new File(basedirStr);
+
+            final Set<String> incl = new TreeSet<>();
+            final Set<String> excl = new TreeSet<>();
+
+            // add the file processors to the excluded paths.
+            for (StandardCollection sc : fileProcessors) {
+                if (sc.hasFileProcessor()) {
+                    Collection<String> patterns = sc.fileProcessor().apply(basedirStr);
+                    if (!patterns.isEmpty()) {
+                        WrappedIterator.create(patterns.iterator()).filter(ExclusionUtils.MATCH_FILTER)
+                                .map(s -> ExclusionUtils.localizeFileName(basedirStr, s))
+                                .map(ExclusionUtils::normalizePattern).forEach(excl::add);
+                        WrappedIterator.create(patterns.iterator()).filter(ExclusionUtils.NOT_MATCH_FILTER)
+                                .map(s -> ExclusionUtils.localizeFileName(basedirStr, s.substring(1)))
+                                .map(ExclusionUtils::normalizePattern).forEach(incl::add);
+                    }
                 }
             }
-        }
 
-        appendList(incl, excl, basedirFile, includedPatterns);
-        appendList(incl, excl, basedirFile, includedCollections);
+            appendList(incl, excl, basedirFile, includedPatterns);
+            appendList(incl, excl, basedirFile, includedCollections);
 
-        appendList(excl, incl, basedirFile, excludedPatterns);
-        appendList(excl, incl, basedirFile, excludedCollections);
+            appendList(excl, incl, basedirFile, excludedPatterns);
+            appendList(excl, incl, basedirFile, excludedCollections);
 
-        List<TracablePathMatcher> inclMatchers = WrappedIterator.create(includedCollections.iterator())
-                .filter(StandardCollection::hasPathMatchSupplier)
-                .map(s -> TracablePathMatcher.make(() -> "Path match "+s.name(), s.pathMatcherSupplier.get(basedirStr)))
-                .toList();
+            List<TracablePathMatcher> inclMatchers = WrappedIterator.create(includedCollections.iterator())
+                    .filter(StandardCollection::hasPathMatchSupplier)
+                    .map(s -> TracablePathMatcher.make(() -> "Path match " + s.name(), s.pathMatcherSupplier().get(basedirStr)))
+                    .toList();
 
-        List<TracablePathMatcher> exclMatchers = WrappedIterator.create(excludedCollections.iterator())
-                .filter(StandardCollection::hasPathMatchSupplier)
-                .map(s -> TracablePathMatcher.make(() -> "Path match "+s.name(), s.pathMatcherSupplier.get(basedirStr)))
-                .toList();
+            List<TracablePathMatcher> exclMatchers = WrappedIterator.create(excludedCollections.iterator())
+                    .filter(StandardCollection::hasPathMatchSupplier)
+                    .map(s -> TracablePathMatcher.make(() -> "Path match " + s.name(), s.pathMatcherSupplier().get(basedirStr)))
+                    .toList();
 
-        if (!incl.isEmpty()) {
-            inclMatchers.add(makeMatcher(() -> "included patterns", MatchPatterns.from(incl),
-                    isCaseSensitive, basedirStr));
-        }
-        if (!excl.isEmpty()) {
-            exclMatchers.add(makeMatcher(() -> "excluded patterns", MatchPatterns.from(excl),
-                    isCaseSensitive, basedirStr));
-        }
-
-        if (!includedPaths.isEmpty()) {
-            for (PathMatcherSupplier supplier : includedPaths) {
-                inclMatchers.add(TracablePathMatcher.make(supplier::toString, supplier.get(basedirStr)));
+            if (!incl.isEmpty()) {
+                inclMatchers.add(makeMatcher(() -> "included patterns", MatchPatterns.from(incl),
+                        isCaseSensitive, basedirStr));
             }
-        }
-        if (!excludedPaths.isEmpty()) {
-            for (PathMatcherSupplier supplier : excludedPaths) {
-                exclMatchers.add(TracablePathMatcher.make(supplier::toString, supplier.get(basedirStr)));
+            if (!excl.isEmpty()) {
+                exclMatchers.add(makeMatcher(() -> "excluded patterns", MatchPatterns.from(excl),
+                        isCaseSensitive, basedirStr));
             }
-        }
 
-        return exclMatchers.isEmpty() ? TracablePathMatcher.TRUE :
-                inclMatchers.isEmpty() ? not(or(exclMatchers)) : not(and(or(exclMatchers), not(or(inclMatchers))));
+            if (!includedPaths.isEmpty()) {
+                for (PathMatcherSupplier supplier : includedPaths) {
+                    TracablePathMatcher pathMatcher = TracablePathMatcher.make(supplier::toString, supplier.get(basedirStr));
+                    DefaultLog.getInstance().info(format("Including path matcher %s", pathMatcher.name.get()));
+                    inclMatchers.add(pathMatcher);
+                }
+            }
+            if (!excludedPaths.isEmpty()) {
+                for (PathMatcherSupplier supplier : excludedPaths) {
+                    TracablePathMatcher pathMatcher = TracablePathMatcher.make(supplier::toString, supplier.get(basedirStr));
+                    DefaultLog.getInstance().info(format("Excluding path matcher %s", pathMatcher.name.get()));
+                    exclMatchers.add(pathMatcher);
+                }
+            }
+
+            lastMatcher = exclMatchers.isEmpty() ? TracablePathMatcher.TRUE :
+                    inclMatchers.isEmpty() ? not(or(exclMatchers)) : not(and(or(exclMatchers), not(or(inclMatchers))));
+        }
+        return lastMatcher;
     }
 
 
@@ -266,7 +289,8 @@ public class ExclusionProcessor {
      * @param basedirStr the base directory for the scanning.
      * @return The matcher
      */
-    TracablePathMatcher makeMatcher(Supplier<String> name, MatchPatterns patterns, boolean isCaseSensitive, String basedirStr) {
+    TracablePathMatcher makeMatcher(final Supplier<String> name, final MatchPatterns patterns,
+                                    final boolean isCaseSensitive, final String basedirStr) {
         return TracablePathMatcher.make(name, p -> {
             String part = p.toString();
             if (part.startsWith(basedirStr)) {
@@ -279,7 +303,12 @@ public class ExclusionProcessor {
         });
     }
 
-    TracablePathMatcher not(TracablePathMatcher pathMatcher) {
+    /**
+     * Performs a logical "not" on a pathMatcher.
+     * @param pathMatcher the matcher to negate.
+     * @return a PathMatcher that is the negation of the argument.
+     */
+    TracablePathMatcher not(final TracablePathMatcher pathMatcher) {
         if (pathMatcher == TracablePathMatcher.TRUE) {
             return TracablePathMatcher.FALSE;
         }
@@ -294,7 +323,12 @@ public class ExclusionProcessor {
         };
     }
 
-    TracablePathMatcher or(Collection<TracablePathMatcher> matchers) {
+    /**
+     * Performs a logical "OR" across the collection of matchers.
+     * @param matchers the matchers to check.
+     * @return a matcher that returns TRUE if any of the enclosed matchers returns true.
+     */
+    TracablePathMatcher or(final Collection<TracablePathMatcher> matchers) {
         if (matchers.isEmpty()) {
             return TracablePathMatcher.FALSE;
         }
@@ -316,12 +350,17 @@ public class ExclusionProcessor {
             public String toString() {
                 List<String> children = new ArrayList<>();
                 matchers.forEach(s -> children.add(s.toString()));
-                return String.format("%s(%s)", name.get(), String.join(", ", children));
+                return format("%s(%s)", name.get(), String.join(", ", children));
             }
         };
     }
 
-    TracablePathMatcher and(TracablePathMatcher... matchers) {
+    /**
+     * Performs a logical "AND" across the collection of matchers.
+     * @param matchers the matchers to check.
+     * @return a matcher that returns TRUE if all of the enclosed matchers returns true.
+     */
+    TracablePathMatcher and(final TracablePathMatcher... matchers) {
         if (matchers.length == 0) {
             return TracablePathMatcher.FALSE;
         }
@@ -344,7 +383,7 @@ public class ExclusionProcessor {
             public String toString() {
                 List<String> children = new ArrayList<>();
                 Arrays.asList(matchers).forEach(s -> children.add(s.toString()));
-                return String.format("%s(%s)", name, String.join(", ", children));
+                return format("%s(%s)", name, String.join(", ", children));
             }
         };
     }

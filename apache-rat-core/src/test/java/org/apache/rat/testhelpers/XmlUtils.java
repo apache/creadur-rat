@@ -110,7 +110,7 @@ public final class XmlUtils {
 
     public static Node getNode(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         NodeList nodeList = getNodeList(source, xPath, xpath);
-        assertEquals(1, nodeList.getLength(), "Could not find " + xpath);
+        assertEquals(1, nodeList.getLength(), "Could not find exactly one" + xpath);
         return nodeList.item(0);
     }
 

@@ -78,14 +78,14 @@ public class TikaProcessorTest {
 
     @Test
     public void UTF8_input() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/UTF8_with_signature.xml"), pathMatcher);
+        FileDocument doc = new FileDocument("", Resources.getResourceFile("/binaries/UTF8_with_signature.xml"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void missNamedBinaryTest() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/binaries/Image-png.not"), pathMatcher);
+        FileDocument doc = new FileDocument("", Resources.getResourceFile("/binaries/Image-png.not"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.BINARY, doc.getMetaData().getDocumentType());
     }
@@ -93,21 +93,21 @@ public class TikaProcessorTest {
 
     @Test
     public void plainTextTest() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/elements/Text.txt"), pathMatcher);
+        FileDocument doc = new FileDocument("", Resources.getResourceFile("/elements/Text.txt"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void emptyFileTest() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/elements/sub/Empty.txt"), pathMatcher);
+        FileDocument doc = new FileDocument("", Resources.getResourceFile("/elements/sub/Empty.txt"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void javaFileWithChineseCharacters_RAT301() throws Exception {
-        FileDocument doc = new FileDocument(Resources.getResourceFile("/tikaFiles/standard/ChineseCommentsJava.java"), pathMatcher);
+        FileDocument doc = new FileDocument("", Resources.getResourceFile("/tikaFiles/standard/ChineseCommentsJava.java"), pathMatcher);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
@@ -121,7 +121,7 @@ public class TikaProcessorTest {
             File typeDir = new File(dir, docType.name().toLowerCase(Locale.ROOT));
             if (typeDir.isDirectory()) {
                 for (File file : Objects.requireNonNull(typeDir.listFiles())) {
-                    Document doc = new FileDocument(file, pathMatcher);
+                    Document doc = new FileDocument("", file, pathMatcher);
                     String mimeType = TikaProcessor.process(doc);
                     statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
                     assertEquals( docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for " +file.toString());
@@ -143,7 +143,7 @@ public class TikaProcessorTest {
      */
     private static Document getDocument(final InputStream stream, PathMatcher pathMatcher) {
 
-        Document doc = new Document("Testing Document", pathMatcher) {
+        Document doc = new Document("","Testing Document", pathMatcher) {
 
             @Override
             public Reader reader() throws IOException {

@@ -18,21 +18,6 @@
  */
 package org.apache.rat.tools;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ConfigurationException;
-import org.apache.rat.DeprecationReporter;
-import org.apache.rat.OptionCollection;
-import org.apache.rat.ReportConfiguration;
-import org.apache.rat.commandline.Arg;
-import org.apache.rat.help.AbstractHelp;
-import org.apache.rat.utils.DefaultLog;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,6 +34,20 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.DeprecationReporter;
+import org.apache.rat.OptionCollection;
+import org.apache.rat.commandline.Arg;
+import org.apache.rat.help.AbstractHelp;
+import org.apache.rat.utils.DefaultLog;
+
 import static java.lang.String.format;
 
 /**
@@ -57,6 +56,7 @@ import static java.lang.String.format;
 public final class AntDocumentation {
 
     private final ReportConfiguration config;
+    /** The directory to write to. */
     private final File outputDir;
 
 
@@ -113,7 +113,7 @@ public final class AntDocumentation {
 
     private static void printUsage(final Options opts) {
         HelpFormatter f = new HelpFormatter();
-        f.setOptionComparator(OptionCollection.optionComparator);
+        f.setOptionComparator(OptionCollection.OPTION_COMPARATOR);
         f.setWidth(AbstractHelp.HELP_WIDTH);
         String header = "\nAvailable options";
         String footer = "";
@@ -129,7 +129,6 @@ public final class AntDocumentation {
     }
 
     public void execute() throws IOException {
-
         List<AntOption> options = Arg.getOptions().getOptions().stream().filter(AntGenerator.getFilter()).map(AntOption::new)
                 .collect(Collectors.toList());
 
@@ -159,7 +158,8 @@ public final class AntDocumentation {
             throw new RuntimeException(e);
         }
     }
-    private void printOptions(final Writer out, final List<AntOption> options, final Predicate<AntOption> typeFilter, final String tableCaption) throws IOException {
+    private void printOptions(final Writer out, final List<AntOption> options,
+                              final Predicate<AntOption> typeFilter, final String tableCaption) throws IOException {
         boolean hasDeprecated = options.stream().anyMatch(typeFilter.and(AntOption::isDeprecated));
 
         if (hasDeprecated) {
@@ -169,7 +169,7 @@ public final class AntDocumentation {
         List<List<String>> table = new ArrayList<>();
         table.add(Arrays.asList("Name", "Description", "Value Type", "Required"));
         options.stream().filter(typeFilter.and(o -> !o.isDeprecated()))
-                .map( o -> Arrays.asList( o.getName(), o.getDescription(),
+                .map(o -> Arrays.asList(o.getName(), o.getDescription(),
                         o.hasArg() ? StringUtils.defaultIfEmpty(o.getArgName(), "String") : "boolean",
                         o.isRequired() ? "true" : "false"))
                 .forEach(table::add);
@@ -183,7 +183,7 @@ public final class AntDocumentation {
             table.add(Arrays.asList("Name", "Description", "Argument Type", "Deprecated"));
 
             options.stream().filter(typeFilter.and(AntOption::isDeprecated))
-                    .map( o -> Arrays.asList( o.getName(), o.getDescription(),
+                    .map(o -> Arrays.asList(o.getName(), o.getDescription(),
                             o.hasArg() ? StringUtils.defaultIfEmpty(o.getArgName(), "String") : "boolean",
                             o.getDeprecated()))
                     .forEach(table::add);
@@ -211,22 +211,49 @@ public final class AntDocumentation {
         }
     }
 
+    /**
+     * A class to write APT formatted text.
+     */
     private static class AptFormat  {
 
+        /**
+         * copy the "license.apt" from the resources to the writer.
+         * @param writer the writer to write to.
+         * @throws IOException on error.
+         */
         public static void writeLicense(final Writer writer) throws IOException {
             try (InputStream in = AntDocumentation.class.getResourceAsStream("/license.apt")) {
                 IOUtils.copy(in, writer);
             }
         }
 
+        /**
+         * Write a title.
+         * @param writer the writer to write to.
+         * @param title the title to write.
+         * @throws IOException on error.
+         */
         public static void writeTitle(final Writer writer, final String title) throws IOException {
             writer.write(format("        -----%n        %1$s%n        -----%n%n%1$s%n%n", title));
         }
 
+        /**
+         * Write a paragraph.
+         * @param writer the writer to write to.
+         * @param paragraph the paragraph to write.
+         * @throws IOException on error.
+         */
         public static void writePara(final Writer writer, final String paragraph) throws IOException {
             writer.write(format("  %s%n%n", paragraph));
         }
 
+        /**
+         * Write a header.
+         * @param writer the writer to write to.
+         * @param level the level of the header
+         * @param text the text for the header
+         * @throws IOException on error.
+         */
         public static void writeHeader(final Writer writer, final int level, final String text) throws IOException {
             writer.write(System.lineSeparator());
             for (int i = 0; i < level; i++) {
@@ -235,6 +262,12 @@ public final class AntDocumentation {
             writer.write(format(" %s%n%n", text));
         }
 
+        /**
+         * Write a list .
+         * @param writer the writer to write to.
+         * @param list the list to write.
+         * @throws IOException on error.
+         */
         public static void writeList(final Writer writer, final Collection<String> list) throws IOException {
             for (String s : list) {
                 writer.write(format("    * %s%n", s));
@@ -242,11 +275,20 @@ public final class AntDocumentation {
             writer.write(System.lineSeparator());
         }
 
-        public static void writeTable(final Writer writer, final Collection<? extends Collection<String>> table, final String pattern, final String caption) throws IOException {
+        /**
+         * Write a table.
+         * @param writer the Writer to write to.
+         * @param table the Table to write.  A collections of collectons of Strings.
+         * @param pattern the pattern before and after a the table.
+         * @param caption the caption for the table.
+         * @throws IOException on error.
+         */
+        public static void writeTable(final Writer writer, final Collection<? extends Collection<String>> table,
+                                      final String pattern, final String caption) throws IOException {
             writer.write(format("%s%n", pattern));
             for (Collection<String> row : table) {
                 for (String cell : row) {
-                    writer.write(format("| %s ", cell ));
+                    writer.write(format("| %s ", cell));
                 }
                 writer.write(format("|%n%s%n", pattern));
             }
@@ -256,7 +298,15 @@ public final class AntDocumentation {
             writer.write(System.lineSeparator());
         }
 
-        public static void writeTable(final Writer writer, final Collection<? extends Collection<String>> table, final String pattern) throws IOException {
+        /**
+         * Write a table entry.
+         * @param writer the Writer to write to.
+         * @param table the Table to write
+         * @param pattern the pattern before and after a the table.
+         * @throws IOException on error
+         */
+        public static void writeTable(final Writer writer, final Collection<? extends Collection<String>> table,
+                                      final String pattern) throws IOException {
             writeTable(writer, table, pattern, null);
         }
     }

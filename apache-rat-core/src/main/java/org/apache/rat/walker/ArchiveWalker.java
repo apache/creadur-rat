@@ -89,7 +89,7 @@ public class ArchiveWalker extends Walker {
                 if (!entry.isDirectory() && getDocument().getPathMatcher().matches(path) && input.canReadEntryData(entry)) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     IOUtils.copy(input, baos);
-                    result.add(new ArchiveEntryDocument(path, baos.toByteArray(), getDocument().getPathMatcher()));
+                    result.add(new ArchiveEntryDocument(getDocument().getBasedir(), path, baos.toByteArray(), getDocument().getPathMatcher()));
                 }
             }
         } catch (ArchiveException e) {

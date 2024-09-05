@@ -158,7 +158,7 @@ public class ReportOptionTest  {
     /* $1 = target name
        $2 = attributes
        $3 = file name to read
-       $4 = classname.
+       $4 = classname
      */
     final static String ANT_FILE = "<?xml version='1.0'?>\n" +
             "\n" +

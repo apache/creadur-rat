@@ -45,11 +45,12 @@ public class ArchiveEntryDocument extends Document {
 
     /**
      * Creates an Archive entry.
+     * @param basedirStr the base dir for this document.
      * @param path The path for the entry.
      * @param contents the contents of the entry.
      */
-    public ArchiveEntryDocument(Path path, byte[] contents, PathMatcher pathMatcher) {
-        super(FileDocument.normalizeFileName(path.toFile()), pathMatcher);
+    public ArchiveEntryDocument(final String basedirStr, final Path path, final byte[] contents, final PathMatcher pathMatcher) {
+        super(basedirStr, FileDocument.normalizeFileName(path.toFile()), pathMatcher);
         this.path = path;
         this.contents = contents;
     }

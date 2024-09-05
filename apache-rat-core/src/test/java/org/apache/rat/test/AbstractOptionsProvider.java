@@ -162,7 +162,6 @@ public abstract class AbstractOptionsProvider {
         argNames.addAll(testMap.keySet());
         argNames.remove("help");
         Arg.getOptions().getOptions().forEach( o -> {
-            System.out.format("[%s]%n",  o.getLongOpt() );
             if (o.getLongOpt() != null) {
                 argNames.remove(o.getLongOpt());
             }
@@ -194,7 +193,6 @@ public abstract class AbstractOptionsProvider {
         String notExcluded[] = { "notbaz", "well._afile"  };
         String excluded[] = { "some.foo", "B.bar", "justbaz"};
         try {
-            TracablePathMatcher.setTraceEnabled(true);
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
             for (String fname : notExcluded) {
@@ -236,7 +234,6 @@ public abstract class AbstractOptionsProvider {
         String[] excluded = { "afile~", ".#afile", "%afile%", "._afile" };
         String[] notExcluded = { "afile~more",   "what.#afile", "%afile%withMore", "well._afile" };
         try {
-            TracablePathMatcher.setTraceEnabled(true);
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
             for (String fname : excluded) {
@@ -268,9 +265,7 @@ public abstract class AbstractOptionsProvider {
         List<String> expected = WrappedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
                 .map(s -> new File(baseDir, s).getPath()).toList();
         expected.add(0, "!"+new File(baseDir, "thingone").getPath());
-        // "thingone",
         try {
-            TracablePathMatcher.setTraceEnabled(true);
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
             for (String fname : excluded) {
@@ -291,7 +286,6 @@ public abstract class AbstractOptionsProvider {
         String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
         String[] excluded = {"some.foo"};
         try {
-            TracablePathMatcher.setTraceEnabled(true);
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args),
                     ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
@@ -334,8 +328,6 @@ public abstract class AbstractOptionsProvider {
         String[] excluded = { "afile~more" };
         String[] notExcluded = { "afile~", ".#afile", "%afile%", "._afile", "what.#afile", "%afile%withMore", "well._afile" };
         try {
-            TracablePathMatcher.setTraceEnabled(true);
-
             ReportConfiguration config = generateConfig(excludes, ImmutablePair.of(option, args));
             PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
             for (String fname : excluded) {

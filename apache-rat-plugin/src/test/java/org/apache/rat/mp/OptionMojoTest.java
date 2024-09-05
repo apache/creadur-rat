@@ -59,10 +59,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class    OptionMojoTest   {
-
     static Path testPath = FileSystems.getDefault().getPath("target", "optionTest");
     static String POM_FMT;
-
 
     @BeforeAll
     public static void makeDirs() throws IOException {
@@ -195,7 +193,7 @@ public class    OptionMojoTest   {
  */
     }
 
-    public static abstract class SimpleMojoTestcase extends BetterAbstractMojoTestCase {
+    public abstract static abstract class SimpleMojoTestcase extends BetterAbstractMojoTestCase {
         public RatCheckMojo getMojo(File pomFile) throws Exception {
             setUp();
             ProjectBuildingRequest buildingRequest = newMavenSession().getProjectBuildingRequest();
