@@ -123,8 +123,7 @@ public final class AntDocumentation {
         System.exit(0);
     }
 
-    private AntDocumentation(final ReportConfiguration config, final File outputDir) {
-        this.config = config;
+    private AntDocumentation(final File outputDir) {
         this.outputDir = outputDir;
     }
 
@@ -150,10 +149,8 @@ public final class AntDocumentation {
     public void writeElements(final List<AntOption> options) {
         File f = new File(outputDir, "report_elements.txt");
         try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
-
             printOptions(out, options, AntOption::isElement,
                     "The element value types are listed in a table at the bottom of this page.");
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
