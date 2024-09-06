@@ -158,15 +158,5 @@
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>nl.basjes.gitignore</groupId>
-      <artifactId>gitignore-reader</artifactId>
-      <version>1.6.0</version>
-    </dependency>
   </dependencies>
 </project>

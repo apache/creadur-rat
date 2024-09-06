@@ -208,9 +208,9 @@ public final class ExclusionUtils {
 
         if (pattern.startsWith(SelectorUtils.REGEX_HANDLER_PREFIX)) {
             if (File.separatorChar == '\\') {
-                pattern = org.codehaus.plexus.util.StringUtils.replace(pattern, "/", "\\\\");
+                pattern = StringUtils.replace(pattern, "/", "\\\\");
             } else {
-                pattern = org.codehaus.plexus.util.StringUtils.replace(pattern, "\\\\", "/");
+                pattern = StringUtils.replace(pattern, "\\\\", "/");
             }
         } else {
             pattern = pattern.replace(File.separatorChar == '/' ? '\\' : '/', File.separatorChar);

@@ -697,7 +697,7 @@ public enum Arg {
      * Process the arguments.
      *
      * @param ctxt the context in which to process the args.
-     * @throws IOException if input files can not be read.
+     * @throws ConfigurationException on error
      */
     public static void processArgs(final ArgumentContext ctxt) throws ConfigurationException {
         processOutputArgs(ctxt);
