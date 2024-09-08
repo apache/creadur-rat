@@ -62,7 +62,7 @@ public final class OptionCollection {
         // do not instantiate
     }
 
-    public static final  Comparator<Option> optionComparator = new OptionComparator();
+    public static final Comparator<Option> optionComparator = new OptionComparator();
 
     /**
      * Produce help
