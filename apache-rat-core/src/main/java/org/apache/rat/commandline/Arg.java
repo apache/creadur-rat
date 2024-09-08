@@ -124,7 +124,7 @@ public enum Arg {
             .build())
             .addOption(Option.builder().longOpt("licenses").hasArgs().argName("File")
             .desc("File names for system configuration.")
-            .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription(StdMsgs.useMsg("--config")).get())
+            .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--config")).get())
             .build())),
 
     /** Group of options that skip the default configuration file */
