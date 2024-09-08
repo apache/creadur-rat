@@ -637,7 +637,7 @@ public class TestLicenseAppender {
     }
 
     @Test
-    public void TestOverwrite() throws IOException {
+    public void testOverwrite() throws IOException {
         String filename = "tmp.php";
         final String firstLine = "<?php";
 

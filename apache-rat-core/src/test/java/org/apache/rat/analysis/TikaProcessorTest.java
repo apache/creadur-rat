@@ -115,7 +115,7 @@ public class TikaProcessorTest {
                     Document doc = new FileDocument(file);
                     String mimeType = TikaProcessor.process(doc);
                     statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
-                    assertEquals( docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for "+file.toString());
+                    assertEquals( docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for " +file.toString());
                     unseenMime.remove(mimeType);
                 }
             }
