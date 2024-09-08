@@ -719,7 +719,7 @@ public enum Arg {
         /**
          * Gets the standard "use instead" message for the specific name.
          * @param name the name of the option to use instead.
-         * @return
+         * @return combined "use instead" message.
          */
         public static String useMsg(String name) {
             return format("Use %s instead.", name);
@@ -735,6 +735,5 @@ public enum Arg {
        DEFAULT_VALUES.put(OUTPUT_STANDARD, Defaults.STANDARD_PROCESSING.name());
        DEFAULT_VALUES.put(OUTPUT_LICENSES, Defaults.LIST_LICENSES.name());
        DEFAULT_VALUES.put(OUTPUT_FAMILIES, Defaults.LIST_FAMILIES.name());
-
    }
 }
