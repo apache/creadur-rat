@@ -92,9 +92,9 @@ public class DirectoryWalkerTest {
 
         File hidden = new File(tempDir, ".hidden");
         hidden.mkdir();
-        makeHidden(hidden);
         fileWriter(hidden, "regularFile", "regular file");
         makeHidden(fileWriter(regular, ".hiddenFile", "hidden file"));
+        makeHidden(hidden);
     }
     
     @Test
