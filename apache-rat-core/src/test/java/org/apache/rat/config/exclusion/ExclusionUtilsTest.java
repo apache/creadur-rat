@@ -48,6 +48,17 @@ public class ExclusionUtilsTest {
     @TempDir
     private File testDir;
 
+
+    /**
+     * This method is a known workaround for
+     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
+     */
+    @AfterEach
+    @EnabledOnOs(OS.WINDOWS)
+    void cleanUp() {
+        System.gc();
+    }
+    
     int fileCount = 0;
 
     private static final String[] COMMENTS = {

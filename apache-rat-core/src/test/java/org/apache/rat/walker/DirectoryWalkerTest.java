@@ -24,9 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.bytebuddy.utility.FileSystem;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
@@ -82,6 +85,7 @@ public class DirectoryWalkerTest {
         fileWriter(regular, ".hiddenFile", "hidden file");
 
         File hidden = new File(tempDir, ".hidden");
+        Files.setAttribute(hidden.toPath(), "dos:hidden", true);
         hidden.mkdir();
         fileWriter(hidden, "regularFile", "regular file");
         fileWriter(hidden, ".hiddenFile", "hidden file");
