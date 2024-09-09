@@ -49,11 +49,17 @@ public class DirectoryWalkerTest {
     @TempDir
     private static File tempDir;
 
-    private static void fileWriter(File dir, String name, String contents) throws IOException {
-        try (FileWriter writer = new FileWriter(new File(dir, name))) {
+    private static void makeHidden(File file) {
+        Files.setAttribute(file.toPath(), "dos:hidden", true);
+    }
+
+    private static File fileWriter(File dir, String name, String contents) throws IOException {
+        File result = new File(dir, name);
+        try (FileWriter writer = new FileWriter(result)) {
             writer.write(contents);
             writer.flush();
         }
+        return result;
     }
 
     @BeforeEach
@@ -82,13 +88,13 @@ public class DirectoryWalkerTest {
         File regular = new File(tempDir, "regular");
         regular.mkdir();
         fileWriter(regular, "regularFile", "regular file");
-        fileWriter(regular, ".hiddenFile", "hidden file");
+        makeHidden(fileWriter(regular, ".hiddenFile", "hidden file"));
 
         File hidden = new File(tempDir, ".hidden");
-        Files.setAttribute(hidden.toPath(), "dos:hidden", true);
         hidden.mkdir();
+        makeHidden(hidden);
         fileWriter(hidden, "regularFile", "regular file");
-        fileWriter(hidden, ".hiddenFile", "hidden file");
+        makeHidden(fileWriter(regular, ".hiddenFile", "hidden file"));
     }
     
     @Test
