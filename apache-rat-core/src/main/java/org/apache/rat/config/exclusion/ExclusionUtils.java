@@ -210,6 +210,34 @@ public final class ExclusionUtils {
     }
 
     /**
+     * Creates an iterator of Strings from a file of patterns.
+     * Removes comment lines.
+     * @param patternFile the file to read.
+     * @param commentPrefix the prefix string for comments.
+     * @return the iterable of Strings from the file.
+     */
+    public static ExtendedIterator<String> asIterator(final File patternFile, String commentPrefix) {
+        return asIterator(patternFile, commentFilter(commentPrefix));
+    }
+
+    /**
+     * Creates an iterator of Strings from a file of patterns.
+     * Removes comment lines.
+     * @param patternFile the file to read.
+     * @param commentFilters A predicate return true for non-comment lines
+     * @return the iterable of Strings from the file.
+     */
+    public static ExtendedIterator<String> asIterator(final File patternFile, final Predicate<String> commentFilters) {
+        validatePatternFile(patternFile);
+        Objects.requireNonNull(commentFilters, "commentFilters");
+        try {
+            return WrappedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
+        } catch (FileNotFoundException e) {
+            throw new ConfigurationException(format( "%s is not a valid file.",patternFile));
+        }
+    }
+
+    /**
      * Normalize a match pattern to the standard that MatchPatern expects
      * @param pattern the raw pattern text.
      * @return the pattern text for MatchPattern.

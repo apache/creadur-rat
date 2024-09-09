@@ -226,9 +226,6 @@ public class ReporterTest {
 
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
-        configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new FileDocument(new File(elementsPath),
-                configuration.getPathMatcher(elementsPath))));
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));

@@ -49,7 +49,6 @@ import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
-import org.apache.rat.help.Licenses;
 import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.FileDocument;
