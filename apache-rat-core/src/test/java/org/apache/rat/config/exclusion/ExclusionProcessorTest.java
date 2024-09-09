@@ -22,8 +22,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -51,6 +54,16 @@ public class ExclusionProcessorTest {
     @BeforeEach
     public void setup() {
         basedir = new DocumentName(basedirFile);
+    }
+
+    /**
+     * This method is a known workaround for
+     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
+     */
+    @AfterEach
+    @EnabledOnOs(OS.WINDOWS)
+    void cleanUp() {
+        System.gc();
     }
 
     private void testParseExclusion(DocumentNameMatcher nameMatcher, DocumentName name, boolean expected) {
