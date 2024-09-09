@@ -682,10 +682,12 @@ public enum Arg {
      * @return The Arg or {@code null} if no Arg is found.
      */
     public static Arg findArg(Option optionToFind) {
-        for (Arg arg : Arg.values()) {
-            for (Option candidate : arg.group.getOptions()) {
-                if (optionToFind.equals(candidate)) {
-                    return arg;
+        if (optionToFind != null) {
+            for (Arg arg : Arg.values()) {
+                for (Option candidate : arg.group.getOptions()) {
+                    if (optionToFind.equals(candidate)) {
+                        return arg;
+                    }
                 }
             }
         }
@@ -698,10 +700,12 @@ public enum Arg {
      * @return The Arg or {@code null} if no Arg is found.
      */
     public static Arg findArg(String key) {
-        for (Arg arg : Arg.values()) {
-            for (Option candidate : arg.group.getOptions()) {
-                if (key.equals(candidate.getKey()) || key.equals(candidate.getLongOpt())) {
-                    return arg;
+        if (key != null) {
+            for (Arg arg : Arg.values()) {
+                for (Option candidate : arg.group.getOptions()) {
+                    if (key.equals(candidate.getKey()) || key.equals(candidate.getLongOpt())) {
+                        return arg;
+                    }
                 }
             }
         }
