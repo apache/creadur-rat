@@ -42,11 +42,10 @@ public class HgIgnoreProcessorTest extends AbstractIgnoreProcessorTest {
                 .map(s -> new File(baseDir, s).getPath()).toList();
         expected.add(format("%%regex[\\Q%s%s\\E%s]", baseDir.getPath(), File.separatorChar, "\\.pc/"));
 
-
         writeFile(".hgignore", Arrays.asList(lines));
 
         HgIgnoreProcessor processor = new HgIgnoreProcessor();
-        List<String> actual = processor.apply(baseDir.toString());
+        List<String> actual = processor.apply(baseName);
         assertEquals(expected, actual);
 
     }
@@ -61,7 +60,7 @@ public class HgIgnoreProcessorTest extends AbstractIgnoreProcessorTest {
         writeFile(".hgignore", Arrays.asList(lines));
 
         HgIgnoreProcessor processor = new HgIgnoreProcessor();
-        List<String> actual = processor.apply(baseDir.toString());
+        List<String> actual = processor.apply(baseName);
         assertEquals(expected, actual);
     }
 }

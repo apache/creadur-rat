@@ -37,8 +37,8 @@ public class StandardCollectionTest {
     @ParameterizedTest
     @MethodSource("collectionData")
     public void testState(StandardCollection scm, boolean hasFileProcessor, boolean hasPathMatchSupplier, boolean hasPatterns) {
-        assertEquals(hasFileProcessor, scm.hasFileProcessor(), () -> scm.name()+" FileProcessor state wrong.");
-        assertEquals(hasPathMatchSupplier, scm.hasPathMatchSupplier(), () -> scm.name()+" PathMatcherSupplier state wrong.");
+        assertEquals(hasFileProcessor, scm.fileProcessor().hasNext(), () -> scm.name()+" FileProcessor state wrong.");
+        assertEquals(hasPathMatchSupplier, scm.hasDocumentNameMatchSupplier(), () -> scm.name()+" PathMatcherSupplier state wrong.");
         assertEquals(hasPatterns, !scm.patterns().isEmpty(), () -> scm.name()+" patterns state wrong.");
     }
 

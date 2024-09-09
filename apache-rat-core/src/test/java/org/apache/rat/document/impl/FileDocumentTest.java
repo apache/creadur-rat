@@ -37,9 +37,9 @@ public class FileDocumentTest {
     
     @BeforeEach
     public void setUp() throws Exception {
-        String basedir = basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES).getPath();
+        File basedir = basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES);
         file = Resources.getResourceFile("elements/Source.java");
-        document = new FileDocument(basedir, file, p -> true);
+        document = new FileDocument(new DocumentName(basedir), file, p -> true);
     }
 
     @Test
@@ -52,8 +52,7 @@ public class FileDocumentTest {
 
     @Test
     public void getName() {
-        final String name = document.getName();
-        assertNotNull("Name is set", name);
-        assertEquals(FileDocument.normalizeFileName(file), name, "Name is filename");
+        final DocumentName name = document.getName();
+        assertNotNull(name, "Name is set");
     }
 }

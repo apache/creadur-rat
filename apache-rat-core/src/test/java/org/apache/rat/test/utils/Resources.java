@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.DocumentName;
 
 /**
  * Utility class, which provides static methods for creating test cases.
@@ -125,8 +125,6 @@ public class Resources {
      * Locates the name of a directory, which contains the given resource file.
      */
     public static String getResourceDirectory(String pResource) throws IOException {
-        final File resource = getResourceFile(pResource);
-        final File dir = resource.getParentFile();
-        return FileDocument.normalizeFileName(dir);
+        return getResourceFile(pResource).getParentFile().getAbsolutePath();
     }
 }

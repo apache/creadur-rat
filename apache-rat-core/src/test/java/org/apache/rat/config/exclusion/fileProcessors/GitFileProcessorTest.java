@@ -47,7 +47,7 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
         writeFile(".gitignore", Arrays.asList(lines));
 
         GitFileProcessor processor = new GitFileProcessor();
-        List<String> actual = processor.apply(baseDir.toString());
+        List<String> actual = processor.apply(baseName);
         assertEquals(expected, actual);
     }
 }

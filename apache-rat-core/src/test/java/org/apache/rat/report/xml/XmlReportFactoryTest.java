@@ -33,6 +33,7 @@ import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReport;
@@ -72,8 +73,9 @@ public class XmlReportFactoryTest {
         final ReportConfiguration configuration = new ReportConfiguration();
         final TestingLicense testingLicense = new TestingLicense("TEST", new TestingMatcher(true), family);
         configuration.setFrom(Defaults.builder().build());
-        DirectoryWalker directory = new DirectoryWalker(new FileDocument(elementsDir.getPath(), elementsDir,
-                configuration.getPathMatcher(elementsDir.getPath())));
+        DocumentName documentName = new DocumentName(elementsDir);
+        DirectoryWalker directory = new DirectoryWalker(new FileDocument(documentName, elementsDir,
+                configuration.getNameMatcher(documentName)));
         final ClaimStatistic statistic = new ClaimStatistic();
 
         configuration.addLicense(testingLicense);

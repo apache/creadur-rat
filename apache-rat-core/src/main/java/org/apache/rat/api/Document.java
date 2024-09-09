@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.util.SortedSet;
+import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.impl.DocumentName;
 
 /**
  * The representation of a document being scanned.
@@ -50,23 +50,20 @@ public abstract class Document implements Comparable<Document> {
     }
 
     /** The path matcher used by this document */
-    protected final PathMatcher pathMatcher;
+    protected final DocumentNameMatcher nameMatcher;
     /** THe metadata for this document */
     private final MetaData metaData;
     /** The fully qualified name of this document */
-    private final String name;
-    /** The base directory for this document */
-    private final String basedirStr;
+    protected final DocumentName name;
 
     /**
      * Creates an instance.
-     * @param name the name of the resource.
-     * @param pathMatcher the path matcher to filter directories/files.
+     * @param name the natvie NameSet of the resource.
+     * @param nameMatcher the document name matcher to filter directories/files.
      */
-    protected Document(final String basedirStr, final String name, final PathMatcher pathMatcher) {
-        this.basedirStr = basedirStr;
+    protected Document(final DocumentName name, final DocumentNameMatcher nameMatcher) {
         this.name = name;
-        this.pathMatcher = pathMatcher;
+        this.nameMatcher = nameMatcher;
         this.metaData = new MetaData();
     }
 
@@ -74,49 +71,26 @@ public abstract class Document implements Comparable<Document> {
      * Returns the name of the current document.
      * @return the name of the current document.
      */
-    public final String getName() {
+    public final DocumentName getName() {
         return name;
-    }
-
-    /**
-     * Returns the base directory of the current document.
-     * @return the base directory of the current document.
-     */
-    public final String getBasedir() {
-        return basedirStr;
-    }
-
-    /**
-     * Returns the name of the document relatvie to the basedir.
-     * @return the name of the document
-     */
-    public final String localizedName() {
-        String result = name;
-        if (result.startsWith(basedirStr)) {
-            result = result.substring(basedirStr.length());
-        }
-        if (! result.startsWith("/")) {
-            result = "/" + result;
-        }
-        return result;
     }
 
     /**
      * Returns the file filter this document was created with.
      * @return the file filter this document was created with.
      */
-    public final PathMatcher getPathMatcher() {
-        return pathMatcher;
+    public final DocumentNameMatcher getNameMatcher() {
+        return nameMatcher;
     }
 
     @Override
     public int compareTo(final Document doc) {
-        return getPath().compareTo(doc.getPath());
+        return name.compareTo(doc.name);
     }
 
     @Override
     public int hashCode() {
-        return getPath().hashCode();
+        return name.hashCode();
     }
 
     @Override
@@ -124,15 +98,7 @@ public abstract class Document implements Comparable<Document> {
         if (!(obj instanceof Document)) {
             return false;
         }
-        return getPath().equals(((Document) obj).getPath());
-    }
-
-    /**
-     * Get the path that identifies the document.
-     * @return the path for the document.
-     */
-    public Path getPath() {
-        return Paths.get(getName());
+        return name.equals(((Document) obj).name);
     }
 
     /**
@@ -165,7 +131,7 @@ public abstract class Document implements Comparable<Document> {
      */
     @Override
     public String toString() {
-        return String.format("%s( name = %s metaData = %s )", this.getClass().getSimpleName(), getName(), getMetaData());
+        return String.format("%s( name = %s metaData = %s )", this.getClass().getSimpleName(), getName().localized(), getMetaData());
     }
 
     /**

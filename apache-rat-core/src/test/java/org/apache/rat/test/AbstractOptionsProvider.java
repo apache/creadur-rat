@@ -28,7 +28,8 @@ import org.apache.rat.ReportTest;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
-import org.apache.rat.config.exclusion.TracablePathMatcher;
+import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -51,7 +52,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -87,6 +87,9 @@ public abstract class AbstractOptionsProvider {
      */
     protected final File baseDir;
 
+    protected DocumentName baseName() {
+        return new DocumentName(baseDir);
+    }
     protected AbstractOptionsProvider(Collection<String> unsupportedArgs) {
         baseDir = new File("target/optionTools");
         baseDir.mkdirs();
@@ -184,6 +187,10 @@ public abstract class AbstractOptionsProvider {
         return file;
     }
 
+    protected DocumentName mkDocName(String name) {
+        return new DocumentName(new File(baseDir, name), new DocumentName(baseDir));
+    }
+
     /* tests to be implemented */
     protected abstract void helpTest();
 
@@ -194,12 +201,12 @@ public abstract class AbstractOptionsProvider {
         String excluded[] = { "some.foo", "B.bar", "justbaz"};
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());
             for (String fname : notExcluded) {
-                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
             }
             for (String fname : excluded) {
-                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -235,12 +242,12 @@ public abstract class AbstractOptionsProvider {
         String[] notExcluded = { "afile~more",   "what.#afile", "%afile%withMore", "well._afile" };
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
             for (String fname : excluded) {
-                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
             }
             for (String fname : notExcluded) {
-                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -267,12 +274,12 @@ public abstract class AbstractOptionsProvider {
         expected.add(0, "!"+new File(baseDir, "thingone").getPath());
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
             for (String fname : excluded) {
-                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
             }
             for (String fname : notExcluded) {
-                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -288,12 +295,12 @@ public abstract class AbstractOptionsProvider {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args),
                     ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
-            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
             for (String fname : excluded) {
-                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" " + fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" " + fname);
             }
             for (String fname : notExcluded) {
-                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" " + fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" " + fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -329,12 +336,12 @@ public abstract class AbstractOptionsProvider {
         String[] notExcluded = { "afile~", ".#afile", "%afile%", "._afile", "what.#afile", "%afile%withMore", "well._afile" };
         try {
             ReportConfiguration config = generateConfig(excludes, ImmutablePair.of(option, args));
-            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
             for (String fname : excluded) {
-                assertFalse(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
             }
             for (String fname : notExcluded) {
-                assertTrue(pathMatcher.matches(new File(baseDir, fname).toPath()), () -> option.getKey()+" "+fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -751,8 +758,8 @@ public abstract class AbstractOptionsProvider {
     protected void scanHiddenDirectoriesTest() {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.INCLUDE_STD.find("scan-hidden-directories"), null));
-            PathMatcher pathMatcher = config.getPathMatcher(baseDir.toString());
-            assertTrue(pathMatcher.matches(new File(baseDir, ".file").toPath()), ".file");
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
+            assertTrue(matcher.matches(mkDocName(".file")), ".file");
         } catch (IOException e) {
             fail(e.getMessage());
         }

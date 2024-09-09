@@ -18,10 +18,14 @@
  */
 package org.apache.rat.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * A default implementation of Log that writes to System.out and System.err
  */
 public final class DefaultLog implements Log {
+
+    public static final String ENV_VAR = DefaultLog.class.getName();
 
     /**
      * The instance of the default log.
@@ -52,7 +56,13 @@ public final class DefaultLog implements Log {
     private Level level;
 
     private DefaultLog() {
-        level = Level.WARN;
+        try {
+            level = StringUtils.isNotEmpty(System.getenv(ENV_VAR)) ?
+                    Level.valueOf(System.getenv(ENV_VAR).toUpperCase()) : Level.WARN;
+        } catch (IllegalArgumentException e) {
+            level = Level.WARN;
+            log(Level.WARN, "Invalid Level set in environment", e);
+        }
     }
 
     /**

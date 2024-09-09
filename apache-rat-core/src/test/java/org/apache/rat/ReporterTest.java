@@ -39,6 +39,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
@@ -207,17 +208,24 @@ public class ReporterTest {
         }
     }
 
+    private ReportConfiguration initializeConfiguration() throws IOException {
+        Defaults defaults = Defaults.builder().build();
+        final File elementsFile = new File(Resources.getResourceDirectory("elements/Source.java"));
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setFrom(defaults);
+        DocumentName documentName = new DocumentName(elementsFile);
+        configuration.setReportable(new DirectoryWalker(new FileDocument(documentName, elementsFile,
+                configuration.getNameMatcher(documentName))));
+        return configuration;
+    }
+
     @Test
     public void xmlReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final ReportConfiguration configuration = new ReportConfiguration();
+
+        ReportConfiguration configuration = initializeConfiguration();
         configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
-        configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new FileDocument(elementsPath, new File(elementsPath),
-                configuration.getPathMatcher(elementsPath))));
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
@@ -261,13 +269,8 @@ public class ReporterTest {
 
     @Test
     public void plainReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new FileDocument(elementsPath, new File(elementsPath),
-                configuration.getPathMatcher(elementsPath))));
+        ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(() -> out);
         new Reporter(configuration).output();
 
@@ -319,14 +322,8 @@ public class ReporterTest {
 
     @Test
     public void UnapprovedLicensesReportTest() throws Exception {
-        Defaults defaults = Defaults.builder().build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
-        final ReportConfiguration configuration = new ReportConfiguration();
-        configuration.setFrom(defaults);
-        configuration.setReportable(new DirectoryWalker(new FileDocument(basedir, new File(elementsPath),
-                configuration.getPathMatcher(elementsPath))));
+        ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(() -> out);
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
         new Reporter(configuration).output();

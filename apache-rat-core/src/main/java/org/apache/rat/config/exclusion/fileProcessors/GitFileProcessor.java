@@ -22,6 +22,8 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.rat.config.exclusion.ExclusionUtils;
+import org.apache.rat.config.exclusion.FileProcessor;
+import org.apache.rat.document.impl.DocumentName;
 
 /**
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
@@ -32,15 +34,9 @@ public class GitFileProcessor extends DescendingFileProcessor {
         super(".gitignore", "#");
     }
 
-    /**
-     * Maps the simple file name {@code simpleFileName} to the fully qualified file name while handling
-     * the conversions to the MatchPattern format.
-     * @param basedir the base directory for the file
-     * @param simpleFileName
-     * @return
-     */
-    private String mapFileName(final File basedir, final String simpleFileName) {
-        String pattern = simpleFileName;
+    @Override
+    public String modifyEntry(final DocumentName documentName, final String entry) {
+        String pattern = entry;
         String prefix = "";
         // An optional prefix "!" which negates the pattern;
         if (pattern.startsWith("!")) {
@@ -59,13 +55,14 @@ public class GitFileProcessor extends DescendingFileProcessor {
         if (pattern.endsWith("/")) {
             pattern = pattern + "**";
         }
-        return prefix + new File(basedir, pattern).getPath();
+        DocumentName result = FileProcessor.localizePattern(documentName, pattern);
+        return prefix + result.name();
     }
 
     @Override
-    protected List<String> process(final File file) {
-        final File dir = file.getParentFile();
-        return ExclusionUtils.asIterator(file, commentFilter)
-                .map(s -> mapFileName(dir, s)).toList();
+    protected List<String> process(final DocumentName documentName) {
+        return ExclusionUtils.asIterator(new File(documentName.name()), commentFilter)
+                .map(entry -> modifyEntry(documentName, entry))
+                .toList();
     }
 }

@@ -21,6 +21,7 @@ package org.apache.rat.document.impl.guesser;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.Locale;
 import org.apache.rat.api.Document;
 
 public class NoteGuesser {
@@ -55,16 +56,18 @@ public class NoteGuesser {
     };
 
     /**
-     * @return Is a file by that name a note file?
-     * @param name file name.
+     * Determines if the document is a note.
+     *
+     * @param document the document to check.
+     * @return {@code true} if the document is a note.
      */
-    public static boolean isNote(final String name) {
-        if (name == null) {return false;}
+    public static boolean isNote(final Document document) {
+        if (document == null) {return false;}
 
         List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
-        String normalisedName = GuessUtils.normalise(name);
+        String normalisedName = document.getName().shortName().toUpperCase(Locale.US);
 
-        if (l.contains(name) || l.contains(normalisedName)) {
+        if (Arrays.asList(NoteGuesser.NOTE_FILE_NAMES).contains(normalisedName)) {
             return true;
         }
 
@@ -75,10 +78,6 @@ public class NoteGuesser {
         }
 
         return false;
-    }
-
-    public static boolean isNote(final Document document) {
-        return isNote(document.getName());
     }
 
 }

@@ -20,6 +20,7 @@ package org.apache.rat.anttasks;
 
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -49,10 +50,8 @@ class ResourceCollectionContainer implements IReportable {
         for (Resource r : resources) {
             if (r.isFilesystemOnly()) {
                 FileResource fr = (FileResource) r;
-                String baseDir = fr.getProject().getBaseDir().getPath();
-                fr.getProject().log("BaseDir: " + baseDir);
-                DefaultLog.getInstance().debug("xBaseDir: " + baseDir);
-                FileDocument document = new FileDocument(baseDir, fr.getFile(), configuration.getPathMatcher(baseDir));
+                DocumentName dirName = new DocumentName(fr.getFile(), new DocumentName(fr.getProject().getBaseDir()));
+                FileDocument document = new FileDocument(dirName, fr.getFile(), configuration.getNameMatcher(dirName));
                 report.report(document);
             }
         }

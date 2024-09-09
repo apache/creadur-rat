@@ -18,12 +18,15 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import org.apache.rat.config.exclusion.ExclusionUtils;
-import org.apache.rat.utils.iterator.ExtendedIterator;
-
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.rat.config.exclusion.ExclusionUtils;
+import org.apache.rat.config.exclusion.FileProcessor;
+import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.utils.iterator.ExtendedIterator;
 
 import static java.lang.String.format;
 
@@ -33,20 +36,13 @@ public class BazaarIgnoreProcessor extends DescendingFileProcessor {
         super(".bzignore", "#");
     }
 
-    protected List<String> process(File f) {
-        final File dir = f.getParentFile();
-        final List<String> result = new ArrayList<>();
-        ExtendedIterator<String> iter = ExclusionUtils.asIterator(f, commentFilter);
-        while (iter.hasNext()) {
-            String line = iter.next();
-            if (line.startsWith("RE:")) {
-                line = line.substring("RE:".length()).trim();
-                String pattern = line.startsWith("^") ? line.substring(1) : line;
-                result.add(format("%%regex[%s]", new File(dir, pattern).getPath()));
-            } else {
-                result.add(new File(dir, line).getPath());
-            }
+    @Override
+    public String modifyEntry(DocumentName baseName, String entry) {
+        if (entry.startsWith("RE:")) {
+            String line = entry.substring("RE:".length()).trim();
+            String pattern = line.startsWith("^") ? line.substring(1) : line;
+            return format(REGEX_FMT, pattern);
         }
-        return result;
+        return entry;
     }
 }

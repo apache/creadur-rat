@@ -32,6 +32,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.report.RatReport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +59,8 @@ public class DirectoryWalkerTest {
     }
 
     public Document toWalk() {
-        return new FileDocument(tempDir.getPath(), tempDir, reportConfiguration.getPathMatcher(tempDir.toString()));
+        DocumentName documentName = new DocumentName(tempDir);
+        return new FileDocument(documentName, tempDir, reportConfiguration.getNameMatcher(documentName));
     }
 
     @BeforeAll
@@ -84,10 +86,6 @@ public class DirectoryWalkerTest {
         fileWriter(hidden, "regularFile", "regular file");
         fileWriter(hidden, ".hiddenFile", "hidden file");
     }
-
-    private String expectedName(String name) {
-        return toWalk().getName() + name;
-    }
     
     @Test
     public void noFiltersTest() throws IOException, RatException {
@@ -97,7 +95,7 @@ public class DirectoryWalkerTest {
         String[] expected = {"/regular/regularFile", "/regular/.hiddenFile", "/.hidden/regularFile", "/.hidden/.hiddenFile"};
         assertEquals(4, scanned.size());
         for (String ex : expected) {
-            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
+            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
         }
     }
 
@@ -110,7 +108,7 @@ public class DirectoryWalkerTest {
         String[] expected = {"/regular/regularFile", "/.hidden/regularFile"};
         assertEquals(2, scanned.size());
         for (String ex : expected) {
-            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
+            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
         }
     }
 
@@ -123,7 +121,7 @@ public class DirectoryWalkerTest {
         String[] expected = {"/regular/regularFile", "/regular/.hiddenFile"};
          assertEquals(2, scanned.size());
         for (String ex : expected) {
-            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
+            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
         }
     }
 
@@ -137,7 +135,7 @@ public class DirectoryWalkerTest {
         String[] expected = {"/regular/regularFile"};
         assertEquals(1, scanned.size());
         for (String ex : expected) {
-            assertTrue(scanned.contains(expectedName(ex)), ()-> String.format("Missing %s", expectedName(ex)));
+            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
         }
     }
 
@@ -156,7 +154,7 @@ public class DirectoryWalkerTest {
 
         @Override
         public void report(Document document) throws RatException {
-            scanned.add(document.getName());
+            scanned.add(document.getName().localized());
         }
 
         @Override

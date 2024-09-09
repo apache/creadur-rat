@@ -16,33 +16,21 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
+package org.apache.rat.document.impl;
 
-package org.apache.rat.walker;
+import java.io.File;
+import java.io.FileFilter;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.report.IReportable;
-
-/**
- * Abstract walker.
- */
-public abstract class Walker implements IReportable {
-
-    /** The document this walker is walking */
-    private final Document document;
+@FunctionalInterface
+public interface DocumentNameMatcher {
+    boolean matches(DocumentName documentName);
 
     /**
-     * Creates  the walker
-     * @param document The document the walker is walking.
+     * Creates a DocumentNameMatcher from a File filter.
+     * @param fileFilter the file filter to execute
+     * @return a DocumentNameMatcher
      */
-    protected Walker(final Document document) {
-        this.document = document;
-    }
-
-    /**
-     * Retrieves the document from the constructor.
-     * @return the document from the constructor.
-     */
-    protected Document getDocument() {
-        return document;
+    static DocumentNameMatcher from(FileFilter fileFilter) {
+        return  docName -> fileFilter.accept(new File(docName.name()));
     }
 }

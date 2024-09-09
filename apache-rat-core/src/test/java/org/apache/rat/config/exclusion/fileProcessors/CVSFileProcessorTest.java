@@ -42,7 +42,7 @@ public class CVSFileProcessorTest extends AbstractIgnoreProcessorTest {
         writeFile(".cvsignore", Arrays.asList(lines));
 
         CVSFileProcessor processor = new CVSFileProcessor();
-        List<String> actual = processor.apply(baseDir.toString());
+        List<String> actual = processor.apply(baseName);
         assertEquals(expected, actual);
     }
 }

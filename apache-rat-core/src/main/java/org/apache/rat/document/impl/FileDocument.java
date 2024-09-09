@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.SortedSet;
@@ -44,28 +43,13 @@ public class FileDocument extends Document {
 
     /**
      * Creates a File document.
-     * @param basedirStr the base directory for this document.
+     * @param basedir the base directory for this document.
      * @param file the file to wrap.
-     * @param pathMatcher the path matcher to filter files/directories with.
+     * @param nameMatcher the path matcher to filter files/directories with.
      */
-    public FileDocument(final String basedirStr, final File file, final PathMatcher pathMatcher) {
-        super(basedirStr, normalizeFileName(file), pathMatcher);
+    public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameMatcher) {
+        super(new DocumentName(file, basedir), nameMatcher);
         this.file = file;
-    }
-
-    /**
-     * Normalizes a file name to linux style.  Accounts for Windows to Unix conversion.
-     * @param file The file to normalize
-     * @return the String for the file name.
-     */
-    public static String normalizeFileName(final File file) {
-        String path = file.getPath();
-        return path.replace('\\', '/');
-    }
-
-    @Override
-    public Path getPath() {
-        return file.toPath();
     }
 
     @Override
@@ -77,9 +61,9 @@ public class FileDocument extends Document {
     public SortedSet<Document> listChildren() {
         if (isDirectory()) {
             SortedSet<Document> result = new TreeSet<>();
-            File[] lst = file.listFiles(ExclusionUtils.asFileFilter(pathMatcher));
+            File[] lst = file.listFiles(ExclusionUtils.asFileFilter(name, nameMatcher));
             if (lst != null && lst.length > 0) {
-                Arrays.stream(lst).map(f -> new FileDocument(getBasedir(), f, pathMatcher)).forEach(result::add);
+                Arrays.stream(lst).map(f -> new FileDocument(name, f, nameMatcher)).forEach(result::add);
             }
             return result;
         }

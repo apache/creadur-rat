@@ -144,7 +144,7 @@ public final class SelectorUtils {
         }
     }
 
-    static boolean isAntPrefixedPattern(String pattern) {
+    public static boolean isAntPrefixedPattern(String pattern) {
         return pattern.length() > (ANT_HANDLER_PREFIX.length() + PATTERN_HANDLER_SUFFIX.length() + 1)
                 && pattern.startsWith(ANT_HANDLER_PREFIX)
                 && pattern.endsWith(PATTERN_HANDLER_SUFFIX);
@@ -232,6 +232,17 @@ public final class SelectorUtils {
         return matchPath(pattern, str, File.separator, isCaseSensitive);
     }
 
+    public static String extractPattern(String pattern, String separator) {
+        if (isRegexPrefixedPattern(pattern)) {
+            return pattern.substring(
+                    REGEX_HANDLER_PREFIX.length(), pattern.length() - PATTERN_HANDLER_SUFFIX.length());
+        } else {
+            String localPattern = isAntPrefixedPattern(pattern)
+                    ? pattern.substring(ANT_HANDLER_PREFIX.length(), pattern.length() - PATTERN_HANDLER_SUFFIX.length())
+                    : pattern;
+            return toOSRelatedPath(localPattern, separator);
+        }
+    }
     public static boolean matchPath(String pattern, String str, String separator, boolean isCaseSensitive) {
         if (isRegexPrefixedPattern(pattern)) {
             String localPattern = pattern.substring(
@@ -258,7 +269,7 @@ public final class SelectorUtils {
         return pattern;
     }
 
-    static boolean isRegexPrefixedPattern(String pattern) {
+    public static boolean isRegexPrefixedPattern(String pattern) {
         return pattern.length() > (REGEX_HANDLER_PREFIX.length() + PATTERN_HANDLER_SUFFIX.length() + 1)
                 && pattern.startsWith(REGEX_HANDLER_PREFIX)
                 && pattern.endsWith(PATTERN_HANDLER_SUFFIX);

@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,7 +44,9 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
@@ -205,7 +206,7 @@ public final class OptionCollection {
         final ReportConfiguration configuration = new ReportConfiguration();
         new ArgumentContext(configuration, cl).processArgs();
         if (StringUtils.isNotBlank(baseDirectory)) {
-            configuration.setReportable(getDirectory(baseDirectory, configuration));
+            configuration.setReportable(getDirectory(new File(baseDirectory), configuration));
         }
         return configuration;
     }
@@ -223,22 +224,21 @@ public final class OptionCollection {
      * Creates an IReportable object from the directory name and ReportConfiguration
      * object.
      *
-     * @param baseDirectory the directory that contains the files to report on.
+     * @param base the directory that contains the files to report on.
      * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    private static IReportable getDirectory(final String baseDirectory, final ReportConfiguration config) {
-        File base = new File(baseDirectory);
-
+    private static IReportable getDirectory(final File base, final ReportConfiguration config) {
+        DocumentName documentName = new DocumentName(base);
         if (!base.exists()) {
-            DefaultLog.getInstance().error("Directory '" + baseDirectory + "' does not exist");
+            DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist");
             return null;
         }
-        PathMatcher pathMatcher = config.getPathMatcher(baseDirectory);
+        DocumentNameMatcher documentNameMatcher = config.getNameMatcher(documentName);
 
-        Document doc = new FileDocument(baseDirectory, base, pathMatcher);
-        if (!pathMatcher.matches(doc.getPath())) {
-            DefaultLog.getInstance().error("Directory '" + baseDirectory + "' is excluded list.");
+        Document doc = new FileDocument(documentName, base, documentNameMatcher);
+        if (!documentNameMatcher.matches(doc.getName())) {
+            DefaultLog.getInstance().error("Directory '" + documentName + "' is excluded list.");
             return null;
         }
 
@@ -246,7 +246,7 @@ public final class OptionCollection {
             return new DirectoryWalker(doc);
         }
 
-        return new ArchiveWalker(config, doc);
+        return new ArchiveWalker(doc);
     }
 
     /**

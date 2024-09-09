@@ -17,32 +17,7 @@
  * under the License.                                           *
  */
 
-package org.apache.rat.walker;
-
-import org.apache.rat.api.Document;
-import org.apache.rat.report.IReportable;
-
 /**
- * Abstract walker.
+ * Classes walk directory trees and return documents.
  */
-public abstract class Walker implements IReportable {
-
-    /** The document this walker is walking */
-    private final Document document;
-
-    /**
-     * Creates  the walker
-     * @param document The document the walker is walking.
-     */
-    protected Walker(final Document document) {
-        this.document = document;
-    }
-
-    /**
-     * Retrieves the document from the constructor.
-     * @return the document from the constructor.
-     */
-    protected Document getDocument() {
-        return document;
-    }
-}
+package org.apache.rat.walker;

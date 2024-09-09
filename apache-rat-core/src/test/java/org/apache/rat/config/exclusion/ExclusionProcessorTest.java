@@ -19,19 +19,18 @@
 package org.apache.rat.config.exclusion;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -39,26 +38,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.apache.rat.config.exclusion.TracablePathMatcher.TRUE;
-import static org.apache.rat.config.exclusion.TracablePathMatcher.FALSE;
+import static org.apache.rat.document.impl.TraceableDocumentNameMatcher.TRUE;
+import static org.apache.rat.document.impl.TraceableDocumentNameMatcher.FALSE;
 
 public class ExclusionProcessorTest {
 
     /** The base directory for the test. */
     @TempDir
     File basedirFile;
-    String basedir;
+    DocumentName basedir;
 
     @BeforeEach
     public void setup() {
-        basedir = basedirFile.toString();
+        basedir = new DocumentName(basedirFile);
     }
 
-    private void testParseExclusion(PathMatcher pathMatcher, String basedir, Path path, boolean expected) {
-        assertEquals(expected, pathMatcher.matches(path), () -> format("Failed on [%s %s]", basedir, path));
+    private void testParseExclusion(DocumentNameMatcher nameMatcher, DocumentName name, boolean expected) {
+        assertEquals(expected, nameMatcher.matches(name), () -> format("Failed on [%s %s]", basedir, name));
     }
 
-    private Path mkPth(String pth) {
+    private DocumentName mkName(String pth) {
         File f = new File(basedirFile, pth);
         try {
             FileUtils.cleanDirectory(basedirFile);
@@ -66,51 +65,51 @@ public class ExclusionProcessorTest {
         } catch (IOException e) {
             fail(e);
         }
-        return f.toPath();
+        return new DocumentName(f, basedir);
     }
 
     @Test
     public void defaultTest()  {
         ExclusionProcessor p = new ExclusionProcessor();
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("hello"), true);
+        testParseExclusion(p.getNameMatcher(basedir), mkName("hello"), true);
     }
 
     @Test
     public void addExcludedCollectionTest() {
         ExclusionProcessor p = new ExclusionProcessor().addExcludedCollection(StandardCollection.MISC);
         // "**/*~", "**/#*#", "**/.#*", "**/%*%", "**/._*"
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("hello"), true);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("hello~"), false);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("#hello#"), false);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth(".#hello"), false);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("%hello%"), false);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("._hello"), false);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("hello"), true);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("hello~"), false);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("#hello#"), false);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName(".#hello"), false);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("%hello%"), false);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("._hello"), false);
     }
 
     @Test
     public void addExcludedAndIncludedCollectionTest() {
         ExclusionProcessor p = new ExclusionProcessor().addExcludedCollection(StandardCollection.MISC)
                 .addIncludedCollection(StandardCollection.HIDDEN_FILE);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("hello"), true);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("hello~"), false);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("#hello#"), false);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth(".#hello"), true);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("%hello%"), false);
-        testParseExclusion(p.getPathMatcher(basedir), basedir, mkPth("._hello"), true);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("hello"), true);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("hello~"), false);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("#hello#"), false);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName(".#hello"), true);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("%hello%"), false);
+        testParseExclusion(p.getNameMatcher(basedir),  mkName("._hello"), true);
     }
 
     private void assertExclusions(String pattern, Map<String,Boolean> expectedMap) {
         String[] paths = {"a/b/foo", "b/foo", "foo", "foo/x", "foo/x/y", "b/foo/x",
                 "b/foo/x/y", "a/b/foo/x", "a/b/foo/x/y"};
         ExclusionProcessor p = new ExclusionProcessor().addExcludedPatterns(Collections.singletonList(pattern));
-        PathMatcher pathMatcher = p.getPathMatcher(basedir);
+        DocumentNameMatcher pathMatcher = p.getNameMatcher(basedir);
         for (String pth : paths) {
             Boolean expected = expectedMap.get(pth);
             if (expected == null) {
                 throw new RuntimeException("Missing expected value for " + pth+" in pattern "+pattern);
             }
-            Path path = mkPth(pth);
-            assertEquals(expected, pathMatcher.matches(path),
+            DocumentName dn = mkName(pth);
+            assertEquals(expected, pathMatcher.matches(dn),
                     () -> format("%s failed on [%s]", pattern, pth));
         }
     }
@@ -232,28 +231,25 @@ public class ExclusionProcessorTest {
     @Test
     public void orTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        Path p = new File(".").toPath();
-        assertTrue(underTest.or(Arrays.asList(TRUE, FALSE)).matches(p));
-        assertTrue(underTest.or(Arrays.asList(FALSE, TRUE)).matches(p));
-        assertTrue(underTest.or(Arrays.asList(TRUE, TRUE)).matches(p));
-        assertFalse(underTest.or(Arrays.asList(FALSE, FALSE)).matches(p));
+        assertTrue(TraceableDocumentNameMatcher.or(Arrays.asList(TRUE, FALSE)).matches(basedir));
+        assertTrue(TraceableDocumentNameMatcher.or(Arrays.asList(FALSE, TRUE)).matches(basedir));
+        assertTrue(TraceableDocumentNameMatcher.or(Arrays.asList(TRUE, TRUE)).matches(basedir));
+        assertFalse(TraceableDocumentNameMatcher.or(Arrays.asList(FALSE, FALSE)).matches(basedir));
     }
 
     @Test
     public void andTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        Path p = new File(".").toPath();
-        assertFalse(underTest.and(TRUE, FALSE).matches(p));
-        assertFalse(underTest.and(FALSE, TRUE).matches(p));
-        assertTrue(underTest.and(TRUE, TRUE).matches(p));
-        assertFalse(underTest.and(FALSE, FALSE).matches(p));
+        assertFalse(TraceableDocumentNameMatcher.and(TRUE, FALSE).matches(basedir));
+        assertFalse(TraceableDocumentNameMatcher.and(FALSE, TRUE).matches(basedir));
+        assertTrue(TraceableDocumentNameMatcher.and(TRUE, TRUE).matches(basedir));
+        assertFalse(TraceableDocumentNameMatcher.and(FALSE, FALSE).matches(basedir));
     }
 
     @Test
     public void notTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        Path p = new File(".").toPath();
-        assertFalse(underTest.not(TRUE).matches(p));
-        assertTrue(underTest.not(FALSE).matches(p));
+        assertFalse(TraceableDocumentNameMatcher.not(TRUE).matches(basedir));
+        assertTrue(TraceableDocumentNameMatcher.not(FALSE).matches(basedir));
     }
 }

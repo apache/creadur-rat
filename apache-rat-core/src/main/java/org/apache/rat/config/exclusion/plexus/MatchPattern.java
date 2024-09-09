@@ -21,6 +21,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
+
+import static java.lang.String.format;
 
 /**
  * <p>Describes a match target for SelectorUtils.</p>
@@ -71,11 +75,16 @@ public class MatchPattern {
     }
 
     boolean matchPath(String str, char[][] strDirs, boolean isCaseSensitive) {
+        boolean result;
         if (regexPattern != null) {
-            return str.matches(regexPattern);
+            result = str.matches(regexPattern);
         } else {
-            return SelectorUtils.matchAntPathPattern(getTokenizedPathChars(), strDirs, isCaseSensitive);
+            result = SelectorUtils.matchAntPathPattern(getTokenizedPathChars(), strDirs, isCaseSensitive);
         }
+        if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+            DefaultLog.getInstance().debug(format("%s match %s -> %s", this, str, result));
+        }
+        return result;
     }
 
     public boolean matchPatternStart(String str, boolean isCaseSensitive) {
@@ -111,7 +120,7 @@ public class MatchPattern {
         return source;
     }
 
-    static String[] tokenizePathToString(String path, String separator) {
+    public static String[] tokenizePathToString(String path, String separator) {
         List<String> ret = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(path, separator);
         while (st.hasMoreTokens()) {

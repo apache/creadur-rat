@@ -18,6 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.utils.iterator.WrappedIterator;
 import org.junit.jupiter.api.Test;
 
@@ -40,9 +41,10 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
                 .map(s -> new File(baseDir, s).getPath()).toList();
 
         writeFile("test.txt", Arrays.asList(lines));
+        DocumentName documentName = new DocumentName(baseDir);
 
         DescendingFileProcessor processor = new DescendingFileProcessor("test.txt", "#");
-        List<String> actual = processor.apply(baseDir.toString());
+        List<String> actual = processor.apply(baseName);
         assertEquals(expected, actual);
     }
 
@@ -62,7 +64,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
         expected.add(new File(subdir, "foo.*").getPath());
 
         DescendingFileProcessor processor = new DescendingFileProcessor("test.txt", "#");
-        List<String> actual = processor.apply(baseDir.toString());
+        List<String> actual = processor.apply(baseName);
         assertEquals(expected, actual);
     }
 }

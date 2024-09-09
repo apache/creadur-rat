@@ -49,6 +49,8 @@ import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
+import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -538,8 +540,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                             .map(x -> x.setLicenseFamilies(families).build()).forEach(process);
                     getLicenses().map(x -> x.build(families)).forEach(process);
                 }
-
-                config.setReportable(new DirectoryWalker(new FileDocument(basedir.getPath(), basedir, config.getPathMatcher(basedir.getPath()))));
+                DocumentName dirName = new DocumentName(basedir);
+                config.setReportable(new DirectoryWalker(new FileDocument(dirName, basedir, config.getNameMatcher(dirName))));
 
                 if (helpLicenses) {
                     new org.apache.rat.help.Licenses(config, new PrintWriter(log.asWriter())).printHelp();

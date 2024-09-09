@@ -18,15 +18,6 @@
  */
 package org.apache.rat.config.exclusion;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ConfigurationException;
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
-import org.apache.rat.utils.iterator.ExtendedIterator;
-import org.apache.rat.utils.iterator.WrappedIterator;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -38,6 +29,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
+import org.apache.rat.config.exclusion.plexus.MatchPatterns;
+import org.apache.rat.config.exclusion.plexus.SelectorUtils;
+import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.iterator.WrappedIterator;
 
 import static java.lang.String.format;
 
@@ -74,7 +76,7 @@ public final class ExclusionUtils {
                 while (StringUtils.isBlank(s.substring(0, i))) {
                     i++;
                 }
-                String trimmed = i > 0 ? s.substring(i-1) : s;
+                String trimmed = i > 0 ? s.substring(i - 1) : s;
                 for (String prefix : commentPrefixes) {
                     if (trimmed.startsWith(prefix)) {
                         return false;
@@ -121,20 +123,41 @@ public final class ExclusionUtils {
 
     /**
      * Create a FileFilter from a PathMatcher.
-     * @param pathMatcher the path matcher to convert
+     * @param parent the document name for the parent of the file to be filtered.
+     * @param nameMatcher the path matcher to convert
      * @return a FileFilter.
      */
-    public static FileFilter asFileFilter(final PathMatcher pathMatcher) {
-        return pathname -> pathMatcher.matches(pathname.toPath());
+    public static FileFilter asFileFilter(final DocumentName parent, final DocumentNameMatcher nameMatcher) {
+        return file -> nameMatcher.matches(new DocumentName(file, parent));
     }
 
-    private static void validatePatternFile(final File patternFile) {
-        if (patternFile == null || !patternFile.exists() || !patternFile.isFile()) {
-            throw new ConfigurationException(format( "%s is not a valid file.",patternFile));
+    /**
+     * Creates an iterator of Strings from a file of patterns.
+     * Removes comment lines.
+     * @param patternFile the file to read.
+     * @param commentPrefix the prefix string for comments.
+     * @return the iterable of Strings from the file.
+     */
+    public static ExtendedIterator<String> asIterator(final File patternFile, final String commentPrefix) {
+        return asIterator(patternFile, ExclusionUtils.commentFilter(commentPrefix));
+    }
+
+    /**
+     * Creates an iterator of Strings from a file of patterns.
+     * Removes comment lines.
+     * @param patternFile the file to read.
+     * @param commentFilters A predicate return true for non-comment lines
+     * @return the iterable of Strings from the file.
+     */
+    public static ExtendedIterator<String> asIterator(final File patternFile, final Predicate<String> commentFilters) {
+        verifyFile(patternFile);
+        Objects.requireNonNull(commentFilters, "commentFilters");
+        try {
+            return WrappedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
+        } catch (FileNotFoundException e) {
+            throw new ConfigurationException(format("%s is not a valid file.",patternFile));
         }
     }
-
-
     /**
      * Creates an iterable of Strings from a file of patterns.
      * Removes comment lines.
@@ -154,13 +177,14 @@ public final class ExclusionUtils {
      * @return the iterable of Strings from the file.
      */
     public static Iterable<String> asIterable(final File patternFile, final Predicate<String> commentFilters)  {
-        validatePatternFile(patternFile);
+        verifyFile(patternFile);
         Objects.requireNonNull(commentFilters, "commentFilters");
+
         return () -> {
             try {
                 return new LineIterator(new FileReader(patternFile)) {
                     @Override
-                    protected boolean isValidLine(String line) {
+                    protected boolean isValidLine(final String line) {
                         return commentFilters.test(line);
                     }
                 };
@@ -170,31 +194,9 @@ public final class ExclusionUtils {
         };
     }
 
-    /**
-     * Creates an iterator of Strings from a file of patterns.
-     * Removes comment lines.
-     * @param patternFile the file to read.
-     * @param commentPrefix the prefix string for comments.
-     * @return the iterable of Strings from the file.
-     */
-    public static ExtendedIterator<String> asIterator(final File patternFile, String commentPrefix) {
-        return asIterator(patternFile, commentFilter(commentPrefix));
-    }
-
-    /**
-     * Creates an iterator of Strings from a file of patterns.
-     * Removes comment lines.
-     * @param patternFile the file to read.
-     * @param commentFilters A predicate return true for non-comment lines
-     * @return the iterable of Strings from the file.
-     */
-    public static ExtendedIterator<String> asIterator(final File patternFile, final Predicate<String> commentFilters) {
-        validatePatternFile(patternFile);
-        Objects.requireNonNull(commentFilters, "commentFilters");
-        try {
-            return WrappedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
-        } catch (FileNotFoundException e) {
-            throw new ConfigurationException(format( "%s is not a valid file.",patternFile));
+    private static void verifyFile(File file) {
+        if (file == null || !file.exists() || !file.isFile()) {
+            throw new ConfigurationException(format("%s is not a valid file.", file));
         }
     }
 
@@ -203,23 +205,23 @@ public final class ExclusionUtils {
      * @param pattern the raw pattern text.
      * @return the pattern text for MatchPattern.
      */
-    public static String normalizePattern(String pattern) {
-        pattern = pattern.trim();
+    public static String normalizePattern(final String pattern) {
+        String cleanPattern = pattern.trim();
 
-        if (pattern.startsWith(SelectorUtils.REGEX_HANDLER_PREFIX)) {
+        if (cleanPattern.startsWith(SelectorUtils.REGEX_HANDLER_PREFIX)) {
             if (File.separatorChar == '\\') {
-                pattern = StringUtils.replace(pattern, "/", "\\\\");
+                cleanPattern = StringUtils.replace(cleanPattern, "/", "\\\\");
             } else {
-                pattern = StringUtils.replace(pattern, "\\\\", "/");
+                cleanPattern = StringUtils.replace(cleanPattern, "\\\\", "/");
             }
         } else {
-            pattern = pattern.replace(File.separatorChar == '/' ? '\\' : '/', File.separatorChar);
+            cleanPattern = cleanPattern.replace(File.separatorChar == '/' ? '\\' : '/', File.separatorChar);
 
-            if (pattern.endsWith(File.separator)) {
-                pattern += "**";
+            if (cleanPattern.endsWith(File.separator)) {
+                cleanPattern += "**";
             }
         }
-        return pattern;
+        return cleanPattern;
     }
 
     /**
@@ -227,7 +229,7 @@ public final class ExclusionUtils {
      * @param iterable the collectin of strings.
      * @return The match patterns from the strings.
      */
-    public static Optional<MatchPatterns> matchPattern(Iterable<String> iterable) {
+    public static Optional<MatchPatterns> matchPattern(final Iterable<String> iterable) {
         return iterable == null ? Optional.empty() : matchPattern(iterable.iterator());
     }
 
@@ -236,7 +238,7 @@ public final class ExclusionUtils {
      * @param iter the iterator of strings.
      * @return The match patterns from the strings.
      */
-    public static Optional<MatchPatterns> matchPattern(Iterator<String> iter) {
+    public static Optional<MatchPatterns> matchPattern(final Iterator<String> iter) {
         ExtendedIterator<String> eIter = WrappedIterator.create(iter).filter(MATCH_FILTER)
                 .map(ExclusionUtils::normalizePattern);
         return iter.hasNext() ?  Optional.of(MatchPatterns.from(() -> eIter))
@@ -249,7 +251,7 @@ public final class ExclusionUtils {
      * @param iterable the collection of strings.
      * @return The match patterns from the strings.
      */
-    public static Optional<MatchPatterns> notMatchPattern(Iterable<String> iterable) {
+    public static Optional<MatchPatterns> notMatchPattern(final Iterable<String> iterable) {
         return iterable == null ? Optional.empty() : notMatchPattern(iterable.iterator());
     }
 
@@ -259,14 +261,19 @@ public final class ExclusionUtils {
      * @param iter the collection of strings.
      * @return The match patterns from the strings.
      */
-    public static Optional<MatchPatterns> notMatchPattern(Iterator<String> iter) {
+    public static Optional<MatchPatterns> notMatchPattern(final Iterator<String> iter) {
         ExtendedIterator<String> eIter =  WrappedIterator.create(iter).filter(NOT_MATCH_FILTER)
                 .map(s -> normalizePattern(s.substring(1)));
         return eIter.hasNext() ? Optional.of(MatchPatterns.from(() -> eIter))
                 : Optional.empty();
     }
 
-    public static String localizeFileName(String basedirStr, String filename) {
+    /**
+     *
+     * @param filename
+     * @return
+     */
+    public static String localizeFileName(final String filename) {
         String part = filename;
         boolean regexHandlerPrefix = part.startsWith(SelectorUtils.REGEX_HANDLER_PREFIX);
         boolean antHandlerPrefix = part.startsWith(SelectorUtils.REGEX_HANDLER_PREFIX);
@@ -279,9 +286,6 @@ public final class ExclusionUtils {
                     part.lastIndexOf(SelectorUtils.PATTERN_HANDLER_SUFFIX));
         }
 
-        if (part.startsWith(basedirStr)) {
-            part = part.substring(basedirStr.length());
-        }
         if (part.startsWith(File.separator)) {
             if (File.separator.equals("\\")) {
                 // remove an escaped backslash.  Otherwise leave it alone.

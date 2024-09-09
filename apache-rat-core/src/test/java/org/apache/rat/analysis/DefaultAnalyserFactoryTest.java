@@ -31,6 +31,7 @@ import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
@@ -43,14 +44,14 @@ import org.junit.jupiter.api.Test;
 
 public class DefaultAnalyserFactoryTest {
 
-    private final String basedir;
+    private final DocumentName basedir;
 
     private StringWriter out;
     private SimpleXmlClaimReporter reporter;
     private IDocumentAnalyser analyser;
 
     DefaultAnalyserFactoryTest() throws IOException {
-        basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES).getPath();
+        basedir = new DocumentName(new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES));
     }
 
     @BeforeEach

@@ -16,14 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.config.exclusion;
+package org.apache.rat.document.impl;
 
-import java.nio.file.PathMatcher;
+import java.io.File;
+import java.io.FileFilter;
 
 /**
  * Creates a patch matcher based on the directory.
  */
 @FunctionalInterface
-public interface PathMatcherSupplier {
-    PathMatcher get(String dir);
+public interface DocumentNameMatcherSupplier {
+    DocumentNameMatcher get(DocumentName dir);
+
+    static DocumentNameMatcherSupplier from(FileFilter fileFilter) {
+        DocumentNameMatcher nameMatcher = TraceableDocumentNameMatcher.from(fileFilter);
+        return documentName -> docName -> nameMatcher.matches(documentName.resolve(docName.localized()));
+    }
 }

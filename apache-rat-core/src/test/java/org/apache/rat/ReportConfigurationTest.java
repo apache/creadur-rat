@@ -48,9 +48,9 @@ import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
-import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.XMLConfigurationReaderTest;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -334,30 +334,33 @@ public class ReportConfigurationTest {
         assertThat(underTest.getCopyrightMessage()).isEqualTo("This is the message");
     }
 
+    DocumentName mkDocumentName(File f) {
+        return new DocumentName(f, new DocumentName(tempDir));
+    }
     @Test
     public void exclusionTest() {
-        String baseDir = tempDir.getAbsolutePath();
-        assertTrue(underTest.getPathMatcher(baseDir).matches(new File(tempDir,"foo").toPath()));
-        assertTrue(underTest.getPathMatcher(baseDir).matches(new File("foo").toPath()));
+        DocumentName baseDir = new DocumentName(tempDir);
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File("foo"))));
 
         underTest.setFrom(Defaults.builder().build());
         {
             File f = new File(tempDir, ".hiddenDir");
             assertTrue(f.mkdir(), () -> "Could not create directory " + f.toString());
         }
-        assertFalse(underTest.getPathMatcher(baseDir).matches(new File(tempDir, ".hiddenDir").toPath()));
+        assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
         underTest.addIncludedCollection(StandardCollection.HIDDEN_DIR);
-        assertTrue(underTest.getPathMatcher(baseDir).matches(new File(tempDir, ".hiddenDir").toPath()));
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
         underTest.addExcludedCollection(StandardCollection.HIDDEN_DIR);
-        assertTrue(underTest.getPathMatcher(baseDir).matches(new File(tempDir, ".hiddenDir").toPath()));
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
         underTest.addExcludedFilter(DirectoryFileFilter.DIRECTORY);
         {
             File f = new File(tempDir, "newDir");
-            assertTrue(f.mkdirs(), () -> "Could not create directory " + f.toString());
-            assertFalse(underTest.getPathMatcher(baseDir).matches(f.toPath()));
+            assertTrue(f.mkdirs(), () -> "Could not create directory " + f);
+            assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(f)));
         }
     }
 

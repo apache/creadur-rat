@@ -31,7 +31,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.PathMatcher;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.SortedSet;
@@ -42,6 +41,9 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -81,7 +83,7 @@ public class ReportConfiguration {
 
         /**
          * Gets the description of the processing type.
-         * @return
+         * @return the description of the processing type.
          */
         public String desc() {
             return description;
@@ -286,7 +288,7 @@ public class ReportConfiguration {
      * @param fileFilter the file filter to match.
      */
     public void addExcludedFilter(FileFilter fileFilter) {
-        exclusionProcessor.addExcludedFilter( str -> pth -> fileFilter.accept(new File(str).toPath().resolve(pth).toFile()));
+        exclusionProcessor.addExcludedFilter(DocumentNameMatcherSupplier.from(fileFilter));
     }
 
     /**
@@ -303,17 +305,31 @@ public class ReportConfiguration {
         exclusionProcessor.addIncludedCollection(collection);
     }
 
+    /**
+     * Add the file filter to filter files that should be included, this overrides any
+     * exclusion of the same files.
+     * @param fileFilter the filter to identify files that should be included.
+     */
     public void addIncludedFilter(FileFilter fileFilter) {
-        exclusionProcessor.addIncludedFilter( str -> pth -> fileFilter.accept(new File(str).toPath().resolve(pth).toFile()));
-
+        exclusionProcessor.addIncludedFilter(DocumentNameMatcherSupplier.from(fileFilter));
     }
 
+    /**
+     * Add file patterns that are to be included.  These patterns override any exclusion of
+     * the same files.
+     * @param patterns The iterable of Strings containing the patterns.
+     */
     public void addIncludedPatterns(Iterable<String> patterns) {
         exclusionProcessor.addIncludedPatterns(patterns);
     }
 
-    public PathMatcher getPathMatcher(String dir) {
-        return exclusionProcessor.getPathMatcher(dir);
+    /**
+     * Get the DocumentNameMatcher based on the directory.
+     * @param baseDir the DocumentName for the base directory.
+     * @return the DocumentNameMatcher for the base directory.
+     */
+    public DocumentNameMatcher getNameMatcher(DocumentName baseDir) {
+        return exclusionProcessor.getNameMatcher(baseDir);
     }
 
     /**

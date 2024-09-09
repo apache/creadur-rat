@@ -21,11 +21,12 @@ package org.apache.rat.testhelpers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.nio.file.PathMatcher;
 import java.util.Collections;
 import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.impl.DocumentName;
 
 public class TestingDocument extends Document {
 
@@ -39,15 +40,14 @@ public class TestingDocument extends Document {
         this(null, name);
     }
 
-    public TestingDocument(String name, PathMatcher pathMatcher) {
-        super("", name, pathMatcher);
+    public TestingDocument(String name, DocumentNameMatcher matcher) {
+        super(new DocumentName(name, "", "/", true), matcher);
         this.reader = null;
     }
 
     public TestingDocument(Reader reader, String name) {
-        super("", name, p -> true);
+        super(new DocumentName(name, ".", "/", true), p -> true);
         this.reader = reader;
-
     }
 
     @Override

@@ -18,6 +18,8 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
+import org.apache.rat.document.impl.DocumentName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -29,6 +31,13 @@ public class AbstractIgnoreProcessorTest {
 
     @TempDir
     protected File baseDir;
+    protected DocumentName baseName;
+
+    @BeforeEach
+    public void setup() {
+        baseName = new DocumentName(baseDir);
+    }
+
 
     protected File writeFile(String name, Iterable<String> lines) throws IOException {
         File file = new File(baseDir, name);

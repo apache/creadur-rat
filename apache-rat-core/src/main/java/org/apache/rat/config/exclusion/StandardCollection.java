@@ -18,11 +18,6 @@
  */
 package org.apache.rat.config.exclusion;
 
-import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreProcessor;
-import org.apache.rat.config.exclusion.fileProcessors.CVSFileProcessor;
-import org.apache.rat.config.exclusion.fileProcessors.GitFileProcessor;
-import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreProcessor;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +26,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
+
+import java.util.function.Supplier;
+import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreProcessor;
+import org.apache.rat.config.exclusion.fileProcessors.CVSFileProcessor;
+import org.apache.rat.config.exclusion.fileProcessors.GitFileProcessor;
+import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreProcessor;
+import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
+import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
+import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.iterator.WrappedIterator;
 
 public enum StandardCollection {
     ALL("All of the Standard Excludes combined.", null, null, null),
@@ -68,15 +72,15 @@ public enum StandardCollection {
     ),
     HIDDEN_DIR("The hidden directories",
             null,
-            str -> TracablePathMatcher.make(() -> "HIDDEN_DIR", pth -> {
-                File f = pth.toFile();
+            str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_DIR", documentName -> {
+                File f = new File(documentName.name());
                 return f.isHidden() && f.isDirectory();
             }), null
     ),
     HIDDEN_FILE("The hidden files",
             null,
-            str -> TracablePathMatcher.make(() -> "HIDDEN_FILE", pth -> {
-                File f = pth.toFile();
+            str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_FILE", documentName -> {
+                File f = new File(documentName.name());
                 return f.isHidden() && f.isFile();
             }), null
     ),
@@ -121,14 +125,14 @@ public enum StandardCollection {
             Collections.singletonList("**/vssver.scc"), null, null);
 
     private final Collection<String> patterns;
-    private final PathMatcherSupplier pathMatcherSupplier;
+    private final DocumentNameMatcherSupplier documentNameMatcherSupplier;
     private final FileProcessor fileProcessor;
     private final String desc;
 
-    StandardCollection(String desc, Collection<String> ex, PathMatcherSupplier pathMatcherSupplier, FileProcessor fileProcessor) {
+    StandardCollection(String desc, Collection<String> patterns, DocumentNameMatcherSupplier matcherSupplier, FileProcessor fileProcessor) {
         this.desc = desc;
-        this.patterns = ex == null ? Collections.emptyList() : new HashSet<>(ex);
-        this.pathMatcherSupplier = pathMatcherSupplier;
+        this.patterns = patterns == null ? Collections.emptyList() : new HashSet<>(patterns);
+        this.documentNameMatcherSupplier = matcherSupplier;
         this.fileProcessor = fileProcessor;
     }
 
@@ -166,40 +170,30 @@ public enum StandardCollection {
         return result;
     }
 
-    public FileProcessor fileProcessor() {
+    /**
+     * Returns the fileProcessor if it exists.
+     * @return the fileProcessor if it exists, {@code null} otherwise.
+     */
+    public ExtendedIterator<FileProcessor> fileProcessor() {
         List<FileProcessor> lst = new ArrayList<>();
         for (StandardCollection sc : getCollections()) {
-            if (sc.hasFileProcessor()) {
+            if (sc.fileProcessor != null) {
                 lst.add(sc.fileProcessor);
             }
         }
-        if (lst.isEmpty()) {
-            return null;
-        }
-        if (lst.size() == 1) {
-            return lst.get(0);
-        }
-        return s -> {
-            List<String> result = new ArrayList<>();
-            lst.forEach(fp -> result.addAll(fp.apply(s)));
-            return result;
-        };
+        return WrappedIterator.create(lst.iterator());
     }
 
-    public boolean hasFileProcessor() {
+    /**
+     * Returns the documentNameMatchSupplier if it exists.
+     * @return the documentNameMatchSupplier if it exists, {@code null} otherwise.
+     */
+    public DocumentNameMatcherSupplier documentNameMatcherSupplier() {
+        // account for cases where this has more than one supplier.
+        List<DocumentNameMatcherSupplier> lst = new ArrayList<>();
         for (StandardCollection sc : getCollections()) {
-            if (sc.fileProcessor != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public PathMatcherSupplier pathMatcherSupplier() {
-        List<PathMatcherSupplier> lst = new ArrayList<>();
-        for (StandardCollection sc : getCollections()) {
-            if (sc.pathMatcherSupplier != null) {
-                lst.add(sc.pathMatcherSupplier);
+            if (sc.documentNameMatcherSupplier != null) {
+                lst.add(sc.documentNameMatcherSupplier);
             }
         }
         if (lst.isEmpty()) {
@@ -208,20 +202,27 @@ public enum StandardCollection {
         if (lst.size() == 1) {
             return lst.get(0);
         }
+        Supplier<String> nameSupplier = () -> String.join(", ", WrappedIterator.create(getCollections().iterator())
+                    .map(StandardCollection::name).toList());
 
-        return (dir) -> path -> {
-            for (PathMatcherSupplier sup : lst) {
-                if (sup.get(dir).matches(path)) {
+        return dirName -> TraceableDocumentNameMatcher.make(nameSupplier, documentName -> {
+            for (DocumentNameMatcherSupplier supplier : lst) {
+                if (supplier.get(dirName).matches(documentName)) {
                     return true;
                 }
             }
             return false;
-        };
+        });
     }
 
-    public boolean hasPathMatchSupplier() {
+    /**
+     * Returns {@code true} if the collections has a document name match supplier.
+     * @return  {@code true} if the collections has a document name match supplier.
+     */
+    public boolean hasDocumentNameMatchSupplier() {
+        // account for cases where this has more than one supplier.
         for (StandardCollection sc : getCollections()) {
-            if (sc.pathMatcherSupplier != null) {
+            if (sc.documentNameMatcherSupplier != null) {
                 return true;
             }
         }
