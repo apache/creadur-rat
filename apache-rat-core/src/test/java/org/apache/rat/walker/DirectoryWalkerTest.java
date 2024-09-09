@@ -49,7 +49,7 @@ public class DirectoryWalkerTest {
     @TempDir
     private static File tempDir;
 
-    private static void makeHidden(File file) {
+    private static void makeHidden(File file) throws IOException{
         Files.setAttribute(file.toPath(), "dos:hidden", true);
     }
 
