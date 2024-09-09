@@ -48,7 +48,7 @@ import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
@@ -61,6 +61,8 @@ public final class OptionCollection {
     private OptionCollection() {
         // do not instantiate
     }
+
+    public static final Comparator<Option> optionComparator = new OptionComparator();
 
     /**
      * Produce help
@@ -78,7 +80,7 @@ public final class OptionCollection {
         ARGUMENT_TYPES.put("Expression", () -> "A wildcard file matching pattern. example: *-test-*.txt");
         ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
                 asString(LicenseSetFactory.LicenseFilter.values())));
-        ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Log.Level.values())));
+        ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Level.values())));
         ARGUMENT_TYPES.put("ProcessingType", () -> format("Specifies how to process file types. Valid values are: %s",
                 Arrays.stream(ReportConfiguration.Processing.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
@@ -132,19 +134,18 @@ public final class OptionCollection {
     public static ReportConfiguration parseCommands(final String[] args, final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
         Options opts = buildOptions();
         CommandLine commandLine;
-        Log log = DefaultLog.getInstance();
         try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter(log))
+            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
                     .setAllowPartialMatching(true).build().parse(opts, args);
         } catch (ParseException e) {
-            log.error(e.getMessage());
-            log.error("Please use the \"--help\" option to see a list of valid commands and options", e);
+            DefaultLog.getInstance().error(e.getMessage());
+            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
         }
 
-        Arg.processLogLevel(commandLine, log);
+        Arg.processLogLevel(commandLine);
 
         if (commandLine.hasOption(HELP)) {
             helpCmd.accept(opts);
@@ -166,13 +167,12 @@ public final class OptionCollection {
         if (!lst.isEmpty()) {
             clArgs[0] = lst.get(0);
         }
-        return createConfiguration(log, clArgs[0], commandLine);
+        return createConfiguration(clArgs[0], commandLine);
     }
 
     /**
      * Create the report configuration.
      * Note: this method is package private for testing. You probably want one of the {@code ParseCommands} methods.
-     * @param log The log to log errors to.
      * @param baseDirectory the base directory where files will be found.
      * @param cl the parsed command line.
      * @return a ReportConfiguration
@@ -180,8 +180,8 @@ public final class OptionCollection {
      * @see #parseCommands(String[], Consumer)
      * @see #parseCommands(String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final Log log, final String baseDirectory, final CommandLine cl) throws IOException {
-        final ReportConfiguration configuration = new ReportConfiguration(log);
+    static ReportConfiguration createConfiguration(final String baseDirectory, final CommandLine cl) throws IOException {
+        final ReportConfiguration configuration = new ReportConfiguration();
         new ArgumentContext(configuration, cl).processArgs();
         if (StringUtils.isNotBlank(baseDirectory)) {
             configuration.setReportable(getDirectory(baseDirectory, configuration));
@@ -210,7 +210,7 @@ public final class OptionCollection {
         File base = new File(baseDirectory);
 
         if (!base.exists()) {
-            config.getLog().log(Log.Level.ERROR, "Directory '" + baseDirectory + "' does not exist");
+            DefaultLog.getInstance().error( "Directory '" + baseDirectory + "' does not exist");
             return null;
         }
 
@@ -225,7 +225,7 @@ public final class OptionCollection {
     /**
      * This class implements the {@code Comparator} interface for comparing Options.
      */
-    public static class OptionComparator implements Comparator<Option>, Serializable {
+    private static class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
         private static final long serialVersionUID = 5305467873966684014L;
 

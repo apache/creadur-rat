@@ -28,7 +28,9 @@ import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.PatternSyntaxException;
 
@@ -71,10 +73,11 @@ public enum Arg {
             .addOption(Option.builder("c")
                             .longOpt("copyright").hasArg()
                             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                                    .setDescription("Use '--edit-copyright' instead.").get())
+                                    .setDescription(StdMsgs.useMsg("--edit-copyright")).get())
+                            .desc("The copyright message to use in the license headers.")
                             .build())
                     .addOption(Option.builder().longOpt("edit-copyright").hasArg()
-                            .desc("The copyright message to use in the license headers, usually in the form of \"Copyright 2008 Foo\".  "
+                            .desc("The copyright message to use in the license headers. Usually in the form of \"Copyright 2008 Foo\".  "
                                     + "Only valid with --edit-license")
                             .build())),
 
@@ -84,10 +87,11 @@ public enum Arg {
     EDIT_OVERWRITE(new OptionGroup()
             .addOption(Option.builder("f").longOpt("force")
                             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                                    .setDescription("Use '--edit-overwrite' instead.").get())
+                                    .setDescription(StdMsgs.useMsg("--edit-overwrite")).get())
+                    .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created).")
                             .build())
                     .addOption(Option.builder().longOpt("edit-overwrite")
-                            .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created).  "
+                            .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created). "
                                     + "Only valid with --edit-license")
                             .build())),
 
@@ -97,11 +101,12 @@ public enum Arg {
     EDIT_ADD(new OptionGroup()
             .addOption(Option.builder("a")
                             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                                    .setDescription("Use '--edit-license' instead.").get())
+                                    .setDescription(StdMsgs.useMsg("--edit-license")).get())
                             .build())
                     .addOption(Option.builder("A").longOpt("addLicense")
                             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                                    .setDescription("Use '--edit-license' instead.").get())
+                                    .setDescription(StdMsgs.useMsg("--edit-license")).get())
+                            .desc("Add the default license header to any file with an unknown license that is not in the exclusion list.")
                             .build())
                     .addOption(Option.builder().longOpt("edit-license").desc(
                             "Add the default license header to any file with an unknown license that is not in the exclusion list. "
@@ -115,13 +120,11 @@ public enum Arg {
     /** Group of options that read a configuration file */
     CONFIGURATION(new OptionGroup()
             .addOption(Option.builder().longOpt("config").hasArgs().argName("File")
-            .desc("File names for system configuration.  May be followed by multiple arguments. "
-                          + "Note that '--' or a following option is required when using this parameter.")
+            .desc("File names for system configuration.")
             .build())
             .addOption(Option.builder().longOpt("licenses").hasArgs().argName("File")
-            .desc("File names for system configuration.  May be followed by multiple arguments. "
-                          + "Note that '--' or a following option is required when using this parameter.")
-            .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --config").get())
+            .desc("File names for system configuration.")
+            .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--config")).get())
             .build())),
 
     /** Group of options that skip the default configuration file */
@@ -129,13 +132,13 @@ public enum Arg {
             .addOption(Option.builder().longOpt("configuration-no-defaults")
                     .desc("Ignore default configuration.").build())
             .addOption(Option.builder().longOpt("no-default-licenses")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --configuration-no-defaults").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--configuration-no-defaults")).get())
+                    .desc("Ignore default configuration.")
                     .build())),
 
     /** Option that adds approved licenses to the list */
     LICENSES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. "
-                    + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+            .desc("The approved License IDs. These licenses will be added to the list of approved licenses.")
             .build())),
 
     /** Option that adds approved licenses from a file */
@@ -146,8 +149,7 @@ public enum Arg {
 
     /** Option that specifies approved license families */
     FAMILIES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved").hasArgs().argName("FamilyID")
-            .desc("The approved License Family IDs.  These licenses families will be added to the list of approved licenses families "
-                    + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+            .desc("The approved License Family IDs. These licenses families will be added to the list of approved licenses families.")
             .build())),
 
     /** Option that specifies approved license families from a file */
@@ -158,8 +160,8 @@ public enum Arg {
 
     /** Option to remove licenses from the approved list */
     LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs.  These licenses will be added to the list of approved licenses. "
-                    + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+            .desc("The denied License IDs. These licenses will be removed to the list of approved licenses. " +
+                    "Once licenses are removed they can not be added back.")
             .build())),
 
     /** Option to read a file licenses to be removed from the approved list */
@@ -170,8 +172,7 @@ public enum Arg {
 
     /** Option to list license families to remove from the approved list */
     FAMILIES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied").hasArgs().argName("FamilyID")
-            .desc("The denied License family IDs.  These license families will be removed from the list of approved licenses. "
-                    + "May be followed by multiple arguments. Note that '--' or a following option is required when using this parameter.")
+            .desc("The denied License family IDs. These license families will be removed from the list of approved licenses.")
             .build())),
 
     /** Option to read a list of license families to remove from the approved list */
@@ -186,11 +187,11 @@ public enum Arg {
     EXCLUDE(new OptionGroup()
             .addOption(Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription("Use '--input-exclude' instead.").get())
+                            .setDescription(StdMsgs.useMsg("--input-exclude")).get())
+                    .desc("Excludes files matching wildcard <Expression>.")
             .build())
             .addOption(Option.builder().longOpt("input-exclude").hasArgs().argName("Expression")
-                    .desc("Excludes files matching wildcard <Expression>. May be followed by multiple arguments. "
-                                  + "Note that '--' or a following option is required when using this parameter.")
+                    .desc("Excludes files matching wildcard <Expression>.")
                     .build())),
 
     /** Excludes files based on content of file */
@@ -199,7 +200,8 @@ public enum Arg {
                     .argName("File")
                     .hasArg()
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription("Use '--input-exclude-file' instead.").get())
+                            .setDescription(StdMsgs.useMsg("--input-exclude-file")).get())
+                    .desc("Excludes files matching regular expression in the input file.")
                     .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
                     .argName("File")
@@ -208,13 +210,13 @@ public enum Arg {
 
     /** Scan hidden directories */
     SCAN_HIDDEN_DIRECTORIES(new OptionGroup().addOption(new Option(null, "scan-hidden-directories", false,
-            "Scan hidden directories"))),
+            "Scans hidden directories."))),
 
     /** Stop processing an input stream and declare an input file */
     DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
-            .desc("Used to indicate end of list when using --exclude.").argName("DirOrArchive")
+            .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                    .setDescription("Use '--'").get()).build())),
+                    .setDescription("Use the standard '--' to signal the end of arguments.").get()).build())),
 
     /////////////// OUTPUT OPTIONS
 
@@ -226,34 +228,36 @@ public enum Arg {
                             + "Either an external xsl file may be specified or one of the internal named sheets.")
                     .build())
             .addOption(Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --output-style").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-style")).get())
+                    .desc("XSLT stylesheet to use when creating the report.")
                     .build())
             .addOption(Option.builder("x").longOpt("xml")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --output-style xml").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-style with the 'xml' argument")).get())
+                    .desc("forces XML output rather than the report.")
                     .build())),
 
     /** Specifies the license definitions that should be included in the output */
     OUTPUT_LICENSES(new OptionGroup()
             .addOption(Option.builder().longOpt("output-licenses").hasArg().argName("LicenseFilter")
-                    .desc("List the defined licenses (default is NONE).")
+                    .desc("List the defined licenses.")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
                     .build())
             .addOption(Option.builder().longOpt("list-licenses").hasArg().argName("LicenseFilter")
-                    .desc("List the defined licenses (default is NONE).")
+                    .desc("List the defined licenses.")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --output-licenses").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-licenses")).get())
                     .build())),
 
     /** Specifies the license families that should be included in the output */
     OUTPUT_FAMILIES(new OptionGroup()
             .addOption(Option.builder().longOpt("output-families").hasArg().argName("LicenseFilter")
-                    .desc("List the defined license families (default is NONE).")
+                    .desc("List the defined license families.")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
                     .build())
             .addOption(Option.builder().longOpt("list-families").hasArg().argName("LicenseFilter")
-                    .desc("List the defined license families (default is NONE).")
+                    .desc("List the defined license families.")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription("Use --output-families").get())
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-families")).get())
                     .build())),
 
     /** Specifies the log level to log messages at. */
@@ -272,32 +276,38 @@ public enum Arg {
     /** Specifies where the output should be written. */
     OUTPUT_FILE(new OptionGroup()
             .addOption(Option.builder().option("o").longOpt("out").hasArg().argName("File")
-                    .desc("Define the output file where to write a report to (default is System.out).")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17.0").setForRemoval(true).setDescription("Use --output-file").get())
+                    .desc("Define the output file where to write a report to.")
+                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-file")).get())
                     .type(File.class).build())
             .addOption(Option.builder().longOpt("output-file").hasArg().argName("File")
-                    .desc("Define the output file where to write a report to (default is System.out).")
+                    .desc("Define the output file where to write a report to.")
                     .type(File.class).build())),
 
     /** Specifies the level of reporting detail for archive files. */
     OUTPUT_ARCHIVE(new OptionGroup()
             .addOption(Option.builder().longOpt("output-archive").hasArg().argName("ProcessingType")
-                    .desc(format("Specifies the level of detail in ARCHIVE file reporting. (default is %s)",
-                            Defaults.ARCHIVE_PROCESSING))
+                    .desc("Specifies the level of detail in ARCHIVE file reporting.")
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build())),
 
     /** Specifies the level of reporting detail for standard files. */
     OUTPUT_STANDARD(new OptionGroup()
             .addOption(Option.builder().longOpt("output-standard").hasArg().argName("ProcessingType")
-                    .desc(format("Specifies the level of detail in STANDARD file reporting. (default is %s)",
-                            Defaults.STANDARD_PROCESSING))
+                    .desc("Specifies the level of detail in STANDARD file reporting.")
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
-                    .build()));
+                    .build())),
+
+    /** Provide license definition listing */
+    HELP_LICENSES(new OptionGroup()
+    .addOption(Option.builder().longOpt("help-licenses").desc("Print information about registered licenses.").build()));
 
     /** The option group for the argument */
     private final OptionGroup group;
 
+    /**
+     * Creates an Arg from an Option group.
+     * @param group The option group.
+     */
     Arg(final OptionGroup group) {
         this.group = group;
     }
@@ -339,6 +349,10 @@ public enum Arg {
             }
         }
         throw new IllegalArgumentException("Can not find " + key);
+    }
+
+    public String defaultValue() {
+        return DEFAULT_VALUES.get(this);
     }
 
     /**
@@ -408,7 +422,7 @@ public enum Arg {
             ctxt.getCommandLine().hasOption(CONFIGURATION.getSelected());
             defaultBuilder.noDefault();
         }
-        ctxt.getConfiguration().setFrom(defaultBuilder.build(ctxt.getLog()));
+        ctxt.getConfiguration().setFrom(defaultBuilder.build());
 
         if (FAMILIES_APPROVED.isSelected()) {
             for (String cat : ctxt.getCommandLine().getOptionValues(FAMILIES_APPROVED.getSelected())) {
@@ -476,11 +490,10 @@ public enum Arg {
     /**
      * Creates a filename filter from patterns to exclude.
      * Package provide for use in testing.
-     * @param log the Logger to use.
      * @param excludes the list of patterns to exclude.
      * @return the FilenameFilter tht excludes the patterns or an empty optional.
      */
-    static Optional<IOFileFilter> parseExclusions(final Log log, final List<String> excludes) {
+    static Optional<IOFileFilter> parseExclusions(final List<String> excludes) {
         final OrFileFilter orFilter = new OrFileFilter();
         int ignoredLines = 0;
         for (String exclude : excludes) {
@@ -505,7 +518,7 @@ public enum Arg {
             }
         }
         if (ignoredLines > 0) {
-            log.info("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
+            DefaultLog.getInstance().info("Ignored " + ignoredLines + " lines in your exclusion files as comments or empty lines.");
         }
         return orFilter.getFileFilters().isEmpty() ? Optional.empty() : Optional.of(orFilter);
     }
@@ -525,13 +538,13 @@ public enum Arg {
         if (EXCLUDE.isSelected()) {
             String[] excludes = ctxt.getCommandLine().getOptionValues(EXCLUDE.getSelected());
             if (excludes != null) {
-                parseExclusions(ctxt.getConfiguration().getLog(), Arrays.asList(excludes)).ifPresent(ctxt.getConfiguration()::setFilesToIgnore);
+                parseExclusions(Arrays.asList(excludes)).ifPresent(ctxt.getConfiguration()::setFilesToIgnore);
             }
         }
         if (EXCLUDE_FILE.isSelected()) {
             String excludeFileName = ctxt.getCommandLine().getOptionValue(EXCLUDE_FILE.getSelected());
             if (excludeFileName != null) {
-                parseExclusions(ctxt.getConfiguration().getLog(), FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8))
+                parseExclusions(FileUtils.readLines(new File(excludeFileName), StandardCharsets.UTF_8))
                         .ifPresent(ctxt.getConfiguration()::setFilesToIgnore);
             }
         }
@@ -554,27 +567,27 @@ public enum Arg {
     /**
      * Process the log level setting.
      * @param commandLine The command line to process.
-     * @param log The log to set.
      */
-    public static void processLogLevel(final CommandLine commandLine, final Log log) {
+    public static void processLogLevel(final CommandLine commandLine) {
         if (LOG_LEVEL.getSelected() != null) {
-            if (log instanceof DefaultLog) {
-                DefaultLog dLog = (DefaultLog) log;
+            if (DefaultLog.getInstance() instanceof DefaultLog) {
+                DefaultLog dLog = (DefaultLog) DefaultLog.getInstance();
                 try {
                     dLog.setLevel(commandLine.getParsedOptionValue(LOG_LEVEL.getSelected()));
                 } catch (ParseException e) {
-                    logParseException(log, e, LOG_LEVEL.getSelected(), commandLine, dLog.getLevel());
+                    logParseException(DefaultLog.getInstance(), e, LOG_LEVEL.getSelected(), commandLine, dLog.getLevel());
                 }
             } else {
-                log.error("Given log was not a DefaultLog instance. LogLevel not set.");
+                DefaultLog.getInstance().error("log was not a DefaultLog instance. LogLevel not set.");
             }
         }
     }
 
     /**
-    * Process the arguments.
-    * @param ctxt the context in which to process the args.
-    */
+     * Process the arguments.
+     * @param ctxt the context in which to process the args.
+     * @throws IOException if input files can not be read.
+     */
     public static void processArgs(final ArgumentContext ctxt) throws IOException {
         processOutputArgs(ctxt);
         processEditArgs(ctxt);
@@ -625,7 +638,7 @@ public enum Arg {
             try {
                 File f = ctxt.getCommandLine().getParsedOptionValue(OUTPUT_FILE.getSelected());
                 if (f.getParentFile().mkdirs() && !f.isDirectory()) {
-                    ctxt.getLog().error("Could not create report parent directory " + f);
+                    DefaultLog.getInstance().error("Could not create report parent directory " + f);
                 }
                 ctxt.getConfiguration().setOut(f);
             } catch (ParseException e) {
@@ -642,7 +655,7 @@ public enum Arg {
             } else {
                 String[] style = ctxt.getCommandLine().getOptionValues(OUTPUT_STYLE.getSelected());
                 if (style.length != 1) {
-                    ctxt.getLog().error("Please specify a single stylesheet");
+                    DefaultLog.getInstance().error("Please specify a single stylesheet");
                     throw new ConfigurationException("Please specify a single stylesheet");
                 }
                 ctxt.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
@@ -650,6 +663,9 @@ public enum Arg {
         }
     }
 
+    /**
+     * Resets the groups in the Args so that they are unused and ready to detect the next set of arguments.
+     */
     public static void reset() {
         for (Arg a : Arg.values()) {
             try {
@@ -659,4 +675,69 @@ public enum Arg {
             }
         }
     }
+
+    /**
+     * Finds the Arg that an Option is in.
+     * @param optionToFind the Option to locate.
+     * @return The Arg or {@code null} if no Arg is found.
+     */
+    public static Arg findArg(Option optionToFind) {
+        if (optionToFind != null) {
+            for (Arg arg : Arg.values()) {
+                for (Option candidate : arg.group.getOptions()) {
+                    if (optionToFind.equals(candidate)) {
+                        return arg;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds the Arg that contains an Option with the specified key.
+     * @param key the key for the Option to locate.
+     * @return The Arg or {@code null} if no Arg is found.
+     */
+    public static Arg findArg(String key) {
+        if (key != null) {
+            for (Arg arg : Arg.values()) {
+                for (Option candidate : arg.group.getOptions()) {
+                    if (key.equals(candidate.getKey()) || key.equals(candidate.getLongOpt())) {
+                        return arg;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Standard messages used in descriptions.
+     */
+    public static class StdMsgs {
+        private StdMsgs() {
+            // do not instantiate
+        }
+
+        /**
+         * Gets the standard "use instead" message for the specific name.
+         * @param name the name of the option to use instead.
+         * @return combined "use instead" message.
+         */
+        public static String useMsg(String name) {
+            return format("Use %s instead.", name);
+        }
+    }
+
+   private static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
+
+   static {
+       DEFAULT_VALUES.put(OUTPUT_FILE, "System.out");
+       DEFAULT_VALUES.put(LOG_LEVEL, Log.Level.WARN.name());
+       DEFAULT_VALUES.put(OUTPUT_ARCHIVE, Defaults.ARCHIVE_PROCESSING.name());
+       DEFAULT_VALUES.put(OUTPUT_STANDARD, Defaults.STANDARD_PROCESSING.name());
+       DEFAULT_VALUES.put(OUTPUT_LICENSES, Defaults.LIST_LICENSES.name());
+       DEFAULT_VALUES.put(OUTPUT_FAMILIES, Defaults.LIST_FAMILIES.name());
+   }
 }

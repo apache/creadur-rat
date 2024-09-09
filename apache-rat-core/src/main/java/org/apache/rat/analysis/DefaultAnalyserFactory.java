@@ -31,6 +31,7 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.ArchiveWalker;
 
 /**
@@ -49,8 +50,8 @@ public class DefaultAnalyserFactory {
         if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
-        configuration.getLog().debug("Licenses in Test");
-        licenses.forEach(configuration.getLog()::debug);
+        DefaultLog.getInstance().debug("Licenses in Test");
+        licenses.forEach(DefaultLog.getInstance()::debug);
         return new DefaultAnalyser(configuration, licenses);
     }
 
@@ -96,13 +97,13 @@ public class DefaultAnalyserFactory {
         @Override
         public void analyse(Document document) throws RatDocumentAnalysisException {
 
-            TikaProcessor.process(configuration.getLog(), document);
-            Predicate<ILicense> licensePredicate = null;
+            TikaProcessor.process(document);
+            Predicate<ILicense> licensePredicate;
 
             switch (document.getMetaData().getDocumentType()) {
             case STANDARD:
                 licensePredicate = licenseFilter(configuration.getStandardProcessing()).negate();
-                new DocumentHeaderAnalyser(configuration.getLog(), licenses).analyse(document);
+                new DocumentHeaderAnalyser(licenses).analyse(document);
                 if (configuration.getStandardProcessing() != Defaults.STANDARD_PROCESSING) {
                     document.getMetaData().removeLicenses(licensePredicate);
                 }
@@ -112,7 +113,7 @@ public class DefaultAnalyserFactory {
                 if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
                     ArchiveWalker archiveWalker = new ArchiveWalker(configuration, document);
                     try {
-                        for (Document doc : archiveWalker.getDocuments(configuration.getLog())) {
+                        for (Document doc : archiveWalker.getDocuments()) {
                             analyse(doc);
                             doc.getMetaData().licenses().filter(licensePredicate).forEach(lic -> document.getMetaData().reportOnLicense(lic));
                         }

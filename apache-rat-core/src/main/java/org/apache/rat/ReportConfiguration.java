@@ -46,7 +46,8 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet;
 
 /**
@@ -131,10 +132,7 @@ public class ReportConfiguration {
      * A file filter that matches directories to ignore.
      */
     private IOFileFilter directoriesToIgnore;
-    /**
-     * the log to write messages to.
-     */
-    private final Log log;
+
     /**
      * The default filter for displaying families.
      */
@@ -158,13 +156,11 @@ public class ReportConfiguration {
 
     /**
      * Constructor
-     * @param log The Log implementation that messages will be written to.
      */
-    public ReportConfiguration(final Log log) {
-        this.log = log;
-        families = new ReportingSet<>(new TreeSet<ILicenseFamily>()).setLog(log)
+    public ReportConfiguration() {
+        families = new ReportingSet<>(new TreeSet<ILicenseFamily>())
                 .setMsgFormat(s -> String.format("Duplicate LicenseFamily category: %s", s.getFamilyCategory()));
-        licenses = new ReportingSet<>(new TreeSet<ILicense>()).setLog(log)
+        licenses = new ReportingSet<>(new TreeSet<ILicense>())
                 .setMsgFormat(s -> String.format("Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
         licenseSetFactory = new LicenseSetFactory(families, licenses);
         listFamilies = Defaults.LIST_FAMILIES;
@@ -205,18 +201,11 @@ public class ReportConfiguration {
     }
 
     /**
-     * Retrieves the Log that was provided in the constructor.
-     * @return the Log for the system.
-     */
-    public Log getLog() {
-        return log;
-    }
-    /**
      * Set the log level for reporting collisions in the set of license families.
      * <p>NOTE: should be set before licenses or license families are added.</p>
      * @param level The log level to use.
      */
-    public void logFamilyCollisions(final Log.Level level) {
+    public void logFamilyCollisions(final Level level) {
         families.setLogLevel(level);
     }
 
@@ -232,7 +221,7 @@ public class ReportConfiguration {
      * Sets the log level for reporting license collisions.
      * @param level The log level.
      */
-    public void logLicenseCollisions(final Log.Level level) {
+    public void logLicenseCollisions(final Level level) {
         licenses.setLogLevel(level);
     }
 
@@ -440,11 +429,11 @@ public class ReportConfiguration {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
-                log.warn("Unable to delete file: " + file);
+                DefaultLog.getInstance().warn("Unable to delete file: " + file);
             }
         }
         if (!file.getParentFile().mkdirs()) {
-            log.warn("Unable to create directory: " + file.getParentFile());
+            DefaultLog.getInstance().warn("Unable to create directory: " + file.getParentFile());
         }
         setOut(() -> new FileOutputStream(file, true));
     }

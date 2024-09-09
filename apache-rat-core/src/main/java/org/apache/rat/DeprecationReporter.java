@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 
 import org.apache.commons.cli.Option;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
 
 /**
  * Reporting methods for deprecated objects.
@@ -42,7 +41,11 @@ public final class DeprecationReporter {
      * Deprecated Command line option consumer.
      */
 
-    public static Consumer<Option> getLogReporter(final Log log) {
+    /**
+     * Creates the consumer that will log usage of deprecated operations to the default log.
+     * @return The consumer that will log usage of deprecated operations to the default log.
+     */
+    public static Consumer<Option> getLogReporter() {
         return  o -> {
             StringBuilder buff = new StringBuilder();
             if (o.getOpt() != null) {
@@ -53,7 +56,7 @@ public final class DeprecationReporter {
             } else {
                 buff.append("--").append(o.getLongOpt());
             }
-            log.warn(format("Option [%s] used.  %s", buff, o.getDeprecated().toString()));
+            DefaultLog.getInstance().warn(format("Option [%s] used.  %s", buff, o.getDeprecated().toString()));
         };
     }
 

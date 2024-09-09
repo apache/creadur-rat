@@ -27,7 +27,7 @@ import java.util.Collection;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.DefaultLog;
 
 /**
  * A Document analyzer that analyses document headers for a license.
@@ -36,32 +36,28 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
     /** The license to analyse */
     private final Collection<ILicense> licenses;
-    /** the logger to use */
-    private final Log log;
+
 
     /**
      * Constructs the HeaderAnalyser for the specific license.
-     *
-     * @param log The log to write message to.
      * @param licenses The licenses to analyse
      */
-    public DocumentHeaderAnalyser(final Log log, final Collection<ILicense> licenses) {
+    public DocumentHeaderAnalyser(final Collection<ILicense> licenses) {
         super();
         this.licenses = licenses;
-        this.log = log;
     }
 
     @Override
     public void analyse(Document document) {
         try (Reader reader = document.reader()) {
-            log.debug(format("Processing: %s", document));
+            DefaultLog.getInstance().debug(format("Processing: %s", document));
             HeaderCheckWorker worker = new HeaderCheckWorker(reader, licenses, document);
             worker.read();
         } catch (IOException e) {
-            log.warn(String.format("Cannot read header of %s", document));
+            DefaultLog.getInstance().warn(String.format("Cannot read header of %s", document));
             document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
         } catch (RatHeaderAnalysisException e) {
-            log.warn(String.format("Cannot process header of %s", document));
+            DefaultLog.getInstance().warn(String.format("Cannot process header of %s", document));
             document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
         }
     }

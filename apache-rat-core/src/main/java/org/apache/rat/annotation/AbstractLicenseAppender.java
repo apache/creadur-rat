@@ -19,7 +19,7 @@
 package org.apache.rat.annotation;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.rat.utils.Log;
+import org.apache.rat.utils.DefaultLog;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -201,17 +201,13 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("yml", TYPE_YAML);
     }
 
-    private boolean isForced;
-    /** The log to use */
-    private final Log log;
+    private boolean isOverwrite;
 
     /**
      * Constructor
-     * @param log The log to use.
      */
-    public AbstractLicenseAppender(final Log log) {
+    public AbstractLicenseAppender() {
         super();
-        this.log = log;
     }
 
     /**
@@ -255,16 +251,16 @@ public abstract class AbstractLicenseAppender {
             }
         } 
 
-        if (isForced) {
+        if (isOverwrite) {
             try {
                 Path docPath = document.toPath();
                 boolean isExecutable = Files.isExecutable(docPath);
                 Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
                 if (isExecutable && !document.setExecutable(true)) {
-                    log.warn(String.format("Could not set %s as executable.", document));
+                    DefaultLog.getInstance().warn(String.format("Could not set %s as executable.", document));
                 }
             } catch (InvalidPathException | IOException e) {
-                log.error(String.format("Failed to rename new file to %s, Original file is unchanged.", document), e);
+                DefaultLog.getInstance().error(String.format("Failed to rename new file to %s, Original file is unchanged.", document), e);
             }
         }
     }
@@ -391,13 +387,14 @@ public abstract class AbstractLicenseAppender {
      * to true then files will be modified directly, otherwise
      * new files will be created alongside the existing files.
      *
-     * @param force force flag.
+     * @param overwrite force flag.
      */
-    public void setForce(boolean force) {
-        isForced = force;
+    public void setOverwrite(boolean overwrite) {
+        isOverwrite = overwrite;
     }
 
     /**
+     * Gets the header text to insert into the file.
      * @param document document to extract from.
      * @return Get the license header of a document.
      */

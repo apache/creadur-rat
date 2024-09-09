@@ -18,8 +18,10 @@
  */
 package org.apache.rat.utils;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * The definition of logging for the core.  UIs are expected to provide an implementation of
@@ -149,5 +151,45 @@ public interface Log {
      */
     default void error(Object message, Throwable throwable) {
         log(Level.ERROR, message, throwable);
+    }
+
+    /**
+     * Returns a Writer backed by this log.  All messages are logged at "INFO" level.
+     * @return the Writer backed by this log.
+     */
+    default Writer asWriter() {
+        return new Writer() {
+            private StringBuilder sb = new StringBuilder();
+
+            @Override
+            public void write(final char[] cbuf, final int off, final int len) throws IOException {
+                String txt = String.copyValueOf(cbuf, off, len);
+                int pos = txt.indexOf(System.lineSeparator());
+                if (pos == -1) {
+                    sb.append(txt);
+                } else {
+                    while (pos > -1) {
+                        Log.this.info(sb.append(txt.substring(0, pos)).toString());
+                        sb.delete(0, sb.length());
+                        txt = txt.substring(pos + 1);
+                        pos = txt.indexOf(System.lineSeparator());
+                    }
+                    sb.append(txt);
+                }
+            }
+
+            @Override
+            public void flush() throws IOException {
+                if (sb.length() > 0) {
+                    Log.this.info(sb.toString());
+                }
+                sb = new StringBuilder();
+            }
+
+            @Override
+            public void close() throws IOException {
+                flush();
+            }
+        };
     }
 }
