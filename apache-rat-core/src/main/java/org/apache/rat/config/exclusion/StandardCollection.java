@@ -70,18 +70,18 @@ public enum StandardCollection {
             null,
             new GitFileProcessor()
     ),
-    HIDDEN_DIR("The hidden directories",
+    HIDDEN_DIR("The hidden directories. Directories with names that start with '.'",
             null,
             str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_DIR", documentName -> {
                 File f = new File(documentName.name());
-                return f.isHidden() && f.isDirectory();
+                return f.getName().startsWith(".") && f.isDirectory();
             }), null
     ),
-    HIDDEN_FILE("The hidden files",
+    HIDDEN_FILE("The hidden files. Directories with names that start with '.'",
             null,
             str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_FILE", documentName -> {
                 File f = new File(documentName.name());
-                return f.isHidden() && f.isFile();
+                return f.getName().startsWith(".")  && f.isFile();
             }), null
     ),
     IDEA("The files and directories created by an IDEA IDE based tool.",
