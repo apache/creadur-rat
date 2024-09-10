@@ -148,11 +148,7 @@ public class ReportConfiguration {
      * Constructor
      */
     public ReportConfiguration() {
-        families = new ReportingSet<>(new TreeSet<ILicenseFamily>())
-                .setMsgFormat(s -> String.format("Duplicate LicenseFamily category: %s", s.getFamilyCategory()));
-        licenses = new ReportingSet<>(new TreeSet<ILicense>())
-                .setMsgFormat(s -> String.format("Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
-        licenseSetFactory = new LicenseSetFactory(families, licenses);
+        licenseSetFactory = new LicenseSetFactory();
         listFamilies = Defaults.LIST_FAMILIES;
         listLicenses = Defaults.LIST_LICENSES;
         dryRun = false;
