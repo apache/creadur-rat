@@ -713,22 +713,6 @@ public enum Arg {
     }
 
     /**
-     * Finds the Arg that contains an Option with the specified key.
-     * @param key the key for the Option to locate.
-     * @return The Arg or {@code null} if no Arg is found.
-     */
-    public static Arg findArg(String key) {
-        for (Arg arg : Arg.values()) {
-            for (Option candidate : arg.group.getOptions()) {
-                if (key.equals(candidate.getKey()) || key.equals(candidate.getLongOpt())) {
-                    return arg;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Standard messages used in descriptions.
      */
     public static class StdMsgs {
