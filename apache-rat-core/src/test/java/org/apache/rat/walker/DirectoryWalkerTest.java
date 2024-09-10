@@ -24,12 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.bytebuddy.utility.FileSystem;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
@@ -49,17 +46,11 @@ public class DirectoryWalkerTest {
     @TempDir
     private static File tempDir;
 
-    private static void makeHidden(File file) throws IOException{
-        Files.setAttribute(file.toPath(), "dos:hidden", true);
-    }
-
-    private static File fileWriter(File dir, String name, String contents) throws IOException {
-        File result = new File(dir, name);
-        try (FileWriter writer = new FileWriter(result)) {
+    private static void fileWriter(File dir, String name, String contents) throws IOException {
+        try (FileWriter writer = new FileWriter(new File(dir, name))) {
             writer.write(contents);
             writer.flush();
         }
-        return result;
     }
 
     @BeforeEach
@@ -88,13 +79,12 @@ public class DirectoryWalkerTest {
         File regular = new File(tempDir, "regular");
         regular.mkdir();
         fileWriter(regular, "regularFile", "regular file");
-        makeHidden(fileWriter(regular, ".hiddenFile", "hidden file"));
+        fileWriter(regular, ".hiddenFile", "hidden file");
 
         File hidden = new File(tempDir, ".hidden");
         hidden.mkdir();
         fileWriter(hidden, "regularFile", "regular file");
-        makeHidden(fileWriter(regular, ".hiddenFile", "hidden file"));
-        makeHidden(hidden);
+        fileWriter(hidden, ".hiddenFile", "hidden file");
     }
     
     @Test
@@ -164,7 +154,7 @@ public class DirectoryWalkerTest {
 
         @Override
         public void report(Document document) throws RatException {
-            scanned.add(document.getName().localized("/"));
+            scanned.add(document.getName().localized());
         }
 
         @Override

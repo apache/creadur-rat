@@ -84,7 +84,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 
     private void writeDocumentClaims(final Document subject) throws IOException {
         final MetaData metaData = subject.getMetaData();
-        writer.openElement(RESOURCE).attribute(NAME, subject.getName().localized("/")).attribute(TYPE,
+        writer.openElement(RESOURCE).attribute(NAME, subject.getName().localized()).attribute(TYPE,
                 metaData.getDocumentType().toString());
         for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext();) {
             writeLicenseClaims(iter.next(), metaData);

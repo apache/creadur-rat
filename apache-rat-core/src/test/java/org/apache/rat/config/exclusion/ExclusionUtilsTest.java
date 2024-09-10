@@ -22,10 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.apache.rat.utils.iterator.WrappedIterator;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileWriter;
@@ -48,17 +45,6 @@ public class ExclusionUtilsTest {
     @TempDir
     private File testDir;
 
-
-    /**
-     * This method is a known workaround for
-     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
-     */
-    @AfterEach
-    @EnabledOnOs(OS.WINDOWS)
-    void cleanUp() {
-        System.gc();
-    }
-    
     int fileCount = 0;
 
     private static final String[] COMMENTS = {

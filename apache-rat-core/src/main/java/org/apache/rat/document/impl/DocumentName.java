@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringTokenizer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -161,23 +160,13 @@ public final class DocumentName implements Comparable<DocumentName> {
         return String.join(dirSeparator, tokenize(localized()));
     }
 
-
     /**
      * Tokenizes the string based on the dirSeparator
      * @param source  the source to tokenize
      * @return the array of tokenized strings.
      */
-    private String[] tokenize(String source) {
-        String[] result = source.split("\\Q"+dirSeparator+"\\E");
-        return result;
-        /*List<String> ret = new ArrayList<String>();
-        StringTokenizer st = new StringTokenizer(source, dirSeparator);
-        while (st.hasMoreTokens()) {
-            ret.add(st.nextToken());
-        }
-        return ret.toArray(new String[0]);
-        */
-
+    public String[] tokenize(String source) {
+        return source.split("\\Q"+dirSeparator+"\\E");
     }
 
     /**
