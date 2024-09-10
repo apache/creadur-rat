@@ -19,10 +19,7 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import org.apache.rat.document.impl.DocumentName;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;

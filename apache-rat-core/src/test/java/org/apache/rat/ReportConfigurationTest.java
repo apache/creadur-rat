@@ -37,7 +37,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -339,7 +338,7 @@ public class ReportConfigurationTest {
         return new DocumentName(f, new DocumentName(tempDir));
     }
     @Test
-    public void exclusionTest() throws IOException {
+    public void exclusionTest() {
         DocumentName baseDir = new DocumentName(tempDir);
         assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
         assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File("foo"))));
@@ -348,7 +347,6 @@ public class ReportConfigurationTest {
         {
             File f = new File(tempDir, ".hiddenDir");
             assertTrue(f.mkdir(), () -> "Could not create directory " + f.toString());
-            Files.setAttribute(f.toPath(), "dos:hidden", true);
         }
         assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
