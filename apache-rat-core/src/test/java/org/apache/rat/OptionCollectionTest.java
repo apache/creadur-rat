@@ -141,7 +141,7 @@ public class OptionCollectionTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { ".", "./", "lib", "./lib" })
+    @ValueSource(strings = { ".", "./", "target", "./target" })
     public void getReportableTest(String fName) throws IOException {
         File expected = new File(fName);
         ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
