@@ -16,39 +16,16 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
+package org.apache.rat.commandline;
 
-package org.apache.rat.walker;
+import org.apache.commons.cli.Converter;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.report.IReportable;
+import java.io.File;
 
 /**
- * Abstract walker.
+ * Customized converters for Arg processing
  */
-public abstract class Walker implements IReportable {
-
-    /** The document this walker is walking */
-    private final Document document;
-
-    /**
-     * Creates  the walker
-     * @param document The document the walker is walking.
-     */
-    protected Walker(final Document document) {
-        this.document = document;
-    }
-
-    /**
-     * Retrieves the document from the constructor.
-     * @return the document from the constructor.
-     */
-    protected Document getDocument() {
-        return document;
-    }
-
-    @Override
-    public DocumentName name() {
-        return document.getName();
-    }
+final public class Converters {
+    /** Creates a File with fully qualified name */
+    public static Converter<File, NullPointerException> fileConverter = s -> new File(s).getAbsoluteFile();
 }

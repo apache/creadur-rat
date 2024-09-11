@@ -22,6 +22,7 @@ package org.apache.rat.commandline;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
@@ -146,6 +148,7 @@ public enum Arg {
      */
     LICENSES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
             .desc("Name of file containing the approved license IDs.")
+            .converter(Converters.fileConverter)
             .type(File.class)
             .build())),
 
@@ -161,6 +164,7 @@ public enum Arg {
      */
     FAMILIES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved-file").hasArg().argName("File")
             .desc("Name of file containing the approved family IDs.")
+            .converter(Converters.fileConverter)
             .type(File.class)
             .build())),
 
@@ -177,6 +181,7 @@ public enum Arg {
      */
     LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
             .hasArg().argName("File").type(File.class)
+            .converter(Converters.fileConverter)
             .desc("Name of File containing the approved license IDs.")
             .build())),
 
@@ -194,6 +199,7 @@ public enum Arg {
     FAMILIES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied-file").hasArg().argName("File")
             .desc("Name of file containing the denied license IDs.")
             .type(File.class)
+            .converter(Converters.fileConverter)
             .build())),
 
 ////////////////// INPUT OPTIONS
@@ -217,12 +223,14 @@ public enum Arg {
     EXCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
                     .argName("File").hasArg().type(File.class)
+                    .converter(Converters.fileConverter)
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-exclude-file")).get())
                     .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
                     .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
                     .argName("File").hasArg().type(File.class)
+                    .converter(Converters.fileConverter)
                     .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
                     .build())),
     /** Excludes files based on standard groupgins */
@@ -253,10 +261,12 @@ public enum Arg {
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
                     .argName("File").hasArg().type(File.class)
+                    .converter(Converters.fileConverter)
                     .desc("Reads <Expression> entries from a file.  Entries will override excluded files.")
                     .build())
             .addOption(Option.builder().longOpt("includes-file")
                     .argName("File").hasArg().type(File.class)
+                    .converter(Converters.fileConverter)
                     .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include-file")).get())
@@ -366,10 +376,14 @@ public enum Arg {
             .addOption(Option.builder().option("o").longOpt("out").hasArg().argName("File")
                     .desc("Define the output file where to write a report to.")
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-file")).get())
-                    .type(File.class).build())
+                    .type(File.class)
+                    .converter(Converters.fileConverter)
+                    .build())
             .addOption(Option.builder().longOpt("output-file").hasArg().argName("File")
                     .desc("Define the output file where to write a report to.")
-                    .type(File.class).build())),
+                    .type(File.class)
+                    .converter(Converters.fileConverter)
+                    .build())),
 
     /**
      * Specifies the level of reporting detail for archive files.
@@ -749,12 +763,14 @@ public enum Arg {
         if (OUTPUT_FILE.isSelected()) {
             try {
                 File f = ctxt.getCommandLine().getParsedOptionValue(OUTPUT_FILE.getSelected());
-                if (f.getParentFile().mkdirs() && !f.isDirectory()) {
+                File parent = f.getParentFile();
+                if (!parent.mkdirs() && !parent.isDirectory()) {
                     DefaultLog.getInstance().error("Could not create report parent directory " + f);
                 }
                 ctxt.getConfiguration().setOut(f);
             } catch (ParseException e) {
                 ctxt.logParseException(e, OUTPUT_FILE.getSelected(), "System.out");
+                ctxt.getConfiguration().setOut((IOSupplier<OutputStream>)null);
             }
         }
 

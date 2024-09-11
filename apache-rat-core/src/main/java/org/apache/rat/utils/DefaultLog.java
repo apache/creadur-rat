@@ -58,9 +58,9 @@ public final class DefaultLog implements Log {
     private DefaultLog() {
         try {
             level = StringUtils.isNotEmpty(System.getenv(ENV_VAR)) ?
-                    Level.valueOf(System.getenv(ENV_VAR).toUpperCase()) : Level.WARN;
+                    Level.valueOf(System.getenv(ENV_VAR).toUpperCase()) : Level.INFO;
         } catch (IllegalArgumentException e) {
-            level = Level.WARN;
+            level = Level.INFO;
             log(Level.WARN, "Invalid Level set in environment", e);
         }
     }

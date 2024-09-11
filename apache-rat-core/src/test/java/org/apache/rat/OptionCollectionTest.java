@@ -24,6 +24,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,6 +136,15 @@ public class OptionCollectionTest {
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
         ReportConfiguration config = OptionCollection.createConfiguration("", cl);
         ReportConfigurationTest.validateDefault(config);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { ".", "./", "lib", "./lib" })
+    public void getReportableTest(String fName) throws IOException {
+        File expected = new File(fName);
+        ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
+        IReportable reportable = OptionCollection.getReportable(expected, config);
+        assertThat(reportable.name().name()).isEqualTo(expected.getAbsolutePath());
     }
 
     /**

@@ -206,7 +206,7 @@ public final class OptionCollection {
         final ReportConfiguration configuration = new ReportConfiguration();
         new ArgumentContext(configuration, cl).processArgs();
         if (StringUtils.isNotBlank(baseDirectory)) {
-            configuration.setReportable(getDirectory(new File(baseDirectory), configuration));
+            configuration.setReportable(getReportable(new File(baseDirectory), configuration));
         }
         return configuration;
     }
@@ -228,21 +228,22 @@ public final class OptionCollection {
      * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    private static IReportable getDirectory(final File base, final ReportConfiguration config) {
-        DocumentName documentName = new DocumentName(base);
-        if (!base.exists()) {
+    static IReportable getReportable(final File base, final ReportConfiguration config) {
+        File absBase = base.getAbsoluteFile();
+        DocumentName documentName = new DocumentName(absBase);
+        if (!absBase.exists()) {
             DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist");
             return null;
         }
         DocumentNameMatcher documentNameMatcher = config.getNameMatcher(documentName);
 
-        Document doc = new FileDocument(documentName, base, documentNameMatcher);
+        Document doc = new FileDocument(documentName, absBase, documentNameMatcher);
         if (!documentNameMatcher.matches(doc.getName())) {
-            DefaultLog.getInstance().error("Directory '" + documentName + "' is excluded list.");
+            DefaultLog.getInstance().error("Directory '" + documentName + "' is in excluded list.");
             return null;
         }
 
-        if (base.isDirectory()) {
+        if (absBase.isDirectory()) {
             return new DirectoryWalker(doc);
         }
 

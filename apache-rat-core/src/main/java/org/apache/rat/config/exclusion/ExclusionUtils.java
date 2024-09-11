@@ -57,7 +57,6 @@ public final class ExclusionUtils {
     /** A predicate that filters out lines that  start with "!" */
     public static final Predicate<String> MATCH_FILTER = s -> !s.startsWith("!");
 
-
     private ExclusionUtils() {
         // do not instantiate
     }
@@ -192,6 +191,16 @@ public final class ExclusionUtils {
                 throw new ConfigurationException("Unable to read file " + patternFile, e);
             }
         };
+    }
+
+    /**
+     * Returns {@code trye} if the file name represents a hidden file
+     * @param f the file to check.
+     * @return true if it is the name of a hidden file.
+     */
+    public static boolean isHidden(File f) {
+        String s = f.getName();
+        return s.startsWith(".") && !(s.equals(".") || s.equals(".."));
     }
 
     private static void verifyFile(File file) {

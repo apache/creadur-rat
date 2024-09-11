@@ -37,6 +37,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -357,7 +358,8 @@ public class Report extends BaseAntTask {
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
                 configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
             }
-            configuration.setReportable(new ResourceCollectionContainer(configuration, nestedResources));
+            DocumentName name = new DocumentName(getProject().getBaseDir());
+            configuration.setReportable(new ResourceCollectionContainer(name, configuration, nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
             if (deprecatedConfig.inputFileFilter != null) {

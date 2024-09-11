@@ -61,6 +61,9 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     private static final String ONE_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s";
     private static final String TWO_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s,?\\s+%s";
 
+    private static final String DOUBLE_DATE_FMT = "%s\\s*-\\s*%s";
+    private static final String ARBITRARY_DATE = "[0-9]{4}";
+
     private final Pattern dateOwnerPattern;
     private final Pattern ownerDatePattern;
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The initial date of the copyright")
@@ -115,7 +118,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
         String dateDefn = "";
         if (StringUtils.isNotEmpty(start)) {
             if (StringUtils.isNotEmpty(end)) {
-                dateDefn = String.format("%s\\s*-\\s*%s", this.start, this.end);
+                dateDefn = String.format(DOUBLE_DATE_FMT, this.start, this.end);
             } else {
                 dateDefn = this.start;
             }
@@ -123,15 +126,15 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
         if (StringUtils.isEmpty(owner)) {
             // no owner
             if (StringUtils.isEmpty(dateDefn)) {
-                dateDefn = "[0-9]{4}";
+                dateDefn = ARBITRARY_DATE;
             }
             dateOwnerPattern = Pattern.compile(String.format(ONE_PART, dateDefn));
             ownerDatePattern = null;
         } else {
             if (StringUtils.isEmpty(dateDefn)) {
-                // no date
-                dateOwnerPattern = Pattern.compile(String.format(ONE_PART, owner));
-                ownerDatePattern = null;
+                dateDefn = String.format(DOUBLE_DATE_FMT, "(((" + ARBITRARY_DATE, ")?" + ARBITRARY_DATE + "))?");
+                dateOwnerPattern = Pattern.compile(String.format(TWO_PART, dateDefn, owner));
+                ownerDatePattern = Pattern.compile(String.format(ONE_PART, owner));
             } else {
                 dateOwnerPattern = Pattern.compile(String.format(TWO_PART, dateDefn, owner));
                 ownerDatePattern = Pattern.compile(String.format(TWO_PART, owner, dateDefn));

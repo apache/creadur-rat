@@ -38,11 +38,13 @@ class ResourceCollectionContainer implements IReportable {
     private final ResourceCollection resources;
     /** The report configuration being used for the report */
     private final ReportConfiguration configuration;
+    /** The document name */
+    private final DocumentName name;
 
-
-    ResourceCollectionContainer(final ReportConfiguration configuration, final ResourceCollection resources) {
+    ResourceCollectionContainer(final DocumentName name, final ReportConfiguration configuration, final ResourceCollection resources) {
         this.resources = resources;
         this.configuration = configuration;
+        this.name = name;
     }
 
     @Override
@@ -55,5 +57,10 @@ class ResourceCollectionContainer implements IReportable {
                 report.report(document);
             }
         }
+    }
+
+    @Override
+    public DocumentName name() {
+        return name;
     }
 }
