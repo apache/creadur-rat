@@ -812,7 +812,7 @@ public enum Arg {
      * @param key the key for the Option to locate.
      * @return The Arg or {@code null} if no Arg is found.
      */
-    public static Arg findArg(String key) {
+    public static Arg findArg(final String key) {
         if (key != null) {
             for (Arg arg : Arg.values()) {
                 for (Option candidate : arg.group.getOptions()) {
