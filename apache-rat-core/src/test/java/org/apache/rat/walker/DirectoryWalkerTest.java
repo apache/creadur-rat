@@ -154,7 +154,7 @@ public class DirectoryWalkerTest {
 
         @Override
         public void report(Document document) throws RatException {
-            scanned.add(document.getName().localized());
+            scanned.add(document.getName().localized("/"));
         }
 
         @Override
