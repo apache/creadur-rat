@@ -45,7 +45,7 @@ Report Task
 
 * Argument Types
 
-#include( "report_arg_types.txt" )
+#include( "argument_types.txt" )
 
 * Examples
 

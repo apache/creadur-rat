@@ -178,7 +178,8 @@
                 <mainClass>org.apache.rat.tools.Naming</mainClass>
               <classpathScope>test</classpathScope>
               <arguments>
-                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
+                <argument>--maven</argument>
+                <argument>${project.basedir}/src/site/apt/options.txt</argument>
               </arguments>
             </configuration>
           </execution>
