@@ -39,7 +39,6 @@ public final class Help extends AbstractHelp {
             "Rat relies on heuristics: it may miss issues"
     };
 
-
     public Help() {
         super();
     }
@@ -61,7 +60,6 @@ public final class Help extends AbstractHelp {
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                     argumentPadding + argInfo.getValue().get());
         }
-
 
         writer.println(header("Notes"));
         int idx = 1;

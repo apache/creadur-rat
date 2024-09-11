@@ -78,5 +78,4 @@ public abstract class AbstractHelp {
     public static String header(final String txt) {
         return String.format("%n====== %s ======%n", WordUtils.capitalizeFully(txt));
     }
-
 }

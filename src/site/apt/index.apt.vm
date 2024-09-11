@@ -111,12 +111,12 @@ Apache Rat&#8482;
 java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 +------------------------------------------+
 
- Where "[options]" are one or more of the options listed in for CLI int the table above, and "[Directory or Archive]" is the directory or archive you want to process.
+ Where "[options]" are one or more of the options listed in for CLI in the table above, and "[Directory or Archive]" is the directory or archive you want to process.
  There is more detailed information found in the {{{./apache-rat/index.html}CLI documentation}}.
 
 ** Apache Ant
 
- Ant support is provided via a task library.  This requires {{{https://ant.apache.org/}Apache Ant 1.7}} or later.  The {{{./apache-rat-tasks/index.html}Ant library documentation}}
+ Ant support is provided via a task library. This requires {{{https://ant.apache.org/}Apache Ant 1.7}} or later.  The {{{./apache-rat-tasks/index.html}Ant library documentation}}
  provides detailed information concerning how to load the library and how to use the custom elements and properties for the Rat tasks.
 
 ** Apache Maven
@@ -164,7 +164,7 @@ java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 
 ** Checkout the code
 
-  Rat uses the a Git repository.  You can clone it using:
+  Rat uses a Git repository.  You can clone it using:
 
 +------------------------------------------+
 git clone https://gitbox.apache.org/repos/asf/creadur-rat.git

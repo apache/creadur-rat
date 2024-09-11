@@ -82,7 +82,7 @@ Usage
 
 Options
 
-  The Rat maven plugin has a number of options as is shown in the table below.
+  The Rat Maven plugin has a number of options as is shown in the table below.
 
 ------------------------------------------------------------------
 #include( "plugin_help.txt" )

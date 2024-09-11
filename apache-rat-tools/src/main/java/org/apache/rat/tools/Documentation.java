@@ -66,7 +66,6 @@ public final class Documentation {
     HelpFormatter formatter;
     PrintWriter printWriter;
 
-
     Documentation(ReportConfiguration config, Writer writer) {
         this.config = config;
         this.licenses = config.getLicenses(LicenseFilter.ALL);
@@ -80,18 +79,17 @@ public final class Documentation {
 
     void print(int indent, String text) {
         StringBuilder sb = new StringBuilder();
-        int leftMargin = indent*INDENT_SIZE;
-        for (int i=0;i<leftMargin;i++) {
+        int leftMargin = indent * INDENT_SIZE;
+        for (int i = 0; i < leftMargin; i++) {
             sb.append(' ');
         }
         sb.append(text);
-        int tabStop = leftMargin+(INDENT_SIZE/2);
+        int tabStop = leftMargin + (INDENT_SIZE / 2);
         formatter.printWrapped( printWriter, WIDTH, tabStop, sb.toString());
     }
 
     /**
      * Output the ReportConfiguration to a writer.
-
      * @throws IOException on error.
      */
     public void output() throws IOException {
@@ -127,7 +125,6 @@ public final class Documentation {
             print(1, format("'%s' - %s%n", family.getFamilyCategory().trim(), family.getFamilyName()));
         }
     }
-
 
     private void printObject(int indent, final Object object) throws IOException {
         if (object == null) {
@@ -199,8 +196,8 @@ public final class Documentation {
     }
 
     /**
-     * Creates the documentation.  Writes to the output specified by the -o or --out option.  Defaults to System.out.
-     * @param args the arguments.  Try --help for help.
+     * Creates the documentation. Writes to the output specified by the -o or --out option. Defaults to System.out.
+     * @param args the arguments. Try --help for help.
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {

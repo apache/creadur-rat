@@ -47,7 +47,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -306,7 +305,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Deprecated // remove this for version 1.0
     private void reportDeprecatedProcessing() {
         if (getDeprecatedConfigs().findAny().isPresent()) {
-            getLog().warn("Configuration uses deprecated configuration.  Please upgrade to v0.17 configuration options");
+            getLog().warn("Configuration uses deprecated configuration. Please upgrade to v0.17 configuration options");
         }
     }
 

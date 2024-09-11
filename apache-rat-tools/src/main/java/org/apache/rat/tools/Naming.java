@@ -52,8 +52,8 @@ import org.apache.rat.help.AbstractHelp;
  *
  * Options
  * <ul>
- *     <li>--ant   Produces ant options in result</li>
- *     <li>--maven Produces maven options in result</li>
+ *     <li>--ant   Produces Ant options in result</li>
+ *     <li>--maven Produces Maven options in result</li>
  *     <li>--csv   Produces CSV output text is produced</li>
  * </ul>
  * Note: if neither --ant nor --maven are included both will be listed.
@@ -114,7 +114,7 @@ public final class Naming {
         columns.add("Description");
         columns.add("Argument Type");
 
-        try (Writer underWriter =cl.getArgs().length != 0 ? new FileWriter(cl.getArgs()[0]) : new OutputStreamWriter(System.out)) {
+        try (Writer underWriter = cl.getArgs().length != 0 ? new FileWriter(cl.getArgs()[0]) : new OutputStreamWriter(System.out)) {
             if (cl.hasOption(CSV)) {
                 printCSV(columns, filter, cl.hasOption(CLI), mavenFilter, antFilter, underWriter);
             }
@@ -163,7 +163,7 @@ public final class Naming {
     private static int[] calculateColumnWidth(int width, int columnCount, List<List<String>> page) {
         int[] columnWidth = new int[columnCount];
         for (List<String> row : page) {
-            for (int i=0; i<columnCount; i++) {
+            for (int i = 0; i < columnCount; i++) {
                 columnWidth[i] = Math.max(columnWidth[i], row.get(i).length());
             }
         }
@@ -215,7 +215,7 @@ public final class Naming {
             entries.clear();
             PrintWriter writer = new PrintWriter(cWriter);
             // print each column into a block of strings.
-            for (int i=0; i<columnCount; i++) {
+            for (int i = 0; i < columnCount; i++) {
                 String col = cols.get(i);
                 // split on end of line within a column
                 for (String line : col.split("\\v")) {
@@ -233,7 +233,7 @@ public final class Naming {
             boolean cont = true;
             while (cont) {
                 cont = false;
-                for (int columnNumber = 0; columnNumber<entries.size(); columnNumber++) {
+                for (int columnNumber = 0; columnNumber < entries.size(); columnNumber++) {
                     Deque<String> queue = entries.get(columnNumber);
                     if (queue.isEmpty()) {
                         underWriter.append(AbstractHelp.createPadding(columnWidth[columnNumber] + 2));

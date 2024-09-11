@@ -44,7 +44,7 @@ public class NamingTest {
     @Test
     public void testAnt() throws IOException, ParseException {
         file.delete();
-        Naming.main(  new String[]{"--ant", file.getAbsolutePath()});
+        Naming.main(new String[]{"--ant", file.getAbsolutePath()});
         String result = readFile(file);
         TextUtils.assertContains("Ant", result);
         TextUtils.assertContains("Description", result);
@@ -56,7 +56,7 @@ public class NamingTest {
     @Test
     public void testMaven() throws IOException, ParseException {
         file.delete();
-        Naming.main(  new String[]{"--maven", file.getAbsolutePath()});
+        Naming.main(new String[]{"--maven", file.getAbsolutePath()});
         String result = readFile(file);
         TextUtils.assertContains("Maven", result);
         TextUtils.assertContains("Description", result);
@@ -68,7 +68,7 @@ public class NamingTest {
     @Test
     public void testCli() throws IOException, ParseException {
         file.delete();
-        Naming.main(  new String[]{"--cli", file.getAbsolutePath()});
+        Naming.main(new String[]{"--cli", file.getAbsolutePath()});
         String result = readFile(file);
         TextUtils.assertContains("CLI", result);
         TextUtils.assertContains("Description", result);
@@ -80,7 +80,7 @@ public class NamingTest {
     @Test
     public void testCLiDeprecated() throws IOException, ParseException {
         file.delete();
-        Naming.main(  new String[]{"--cli", "--include-deprecated", file.getAbsolutePath()});
+        Naming.main(new String[]{"--cli", "--include-deprecated", file.getAbsolutePath()});
         String result = readFile(file);
         TextUtils.assertContains("CLI", result);
         TextUtils.assertContains("Description", result);
@@ -92,7 +92,7 @@ public class NamingTest {
     @Test
     public void testAntCsv() throws IOException, ParseException {
         file.delete();
-        Naming.main(  new String[]{"--ant", "--csv", file.getAbsolutePath()});
+        Naming.main(new String[]{"--ant", "--csv", file.getAbsolutePath()});
         String result = readFile(file);
         TextUtils.assertContains("Ant", result);
         TextUtils.assertContains("Description", result);
@@ -100,7 +100,7 @@ public class NamingTest {
         TextUtils.assertNotContains("CLI", result);
         TextUtils.assertNotContains("[Deprecated ", result);
         try (CSVParser parser = readCSV(file)) {
-            assertContains( "Ant", parser.getHeaderNames());
+            assertContains("Ant", parser.getHeaderNames());
             assertContains("Description", parser.getHeaderNames());
             assertNotContains("Maven", parser.getHeaderNames());
             assertNotContains("CLI", parser.getHeaderNames());
@@ -111,7 +111,7 @@ public class NamingTest {
     @Test
     public void testMavenCsv() throws IOException, ParseException {
         file.delete();
-        Naming.main(  new String[]{"--maven", "--csv", file.getAbsolutePath()});
+        Naming.main(new String[]{"--maven", "--csv", file.getAbsolutePath()});
         String result = readFile(file);
         TextUtils.assertContains("Maven", result);
         TextUtils.assertContains("Description", result);
@@ -119,7 +119,7 @@ public class NamingTest {
         TextUtils.assertNotContains("CLI", result);
         TextUtils.assertNotContains("[Deprecated ", result);
         try (CSVParser parser = readCSV(file)) {
-            assertContains( "Maven", parser.getHeaderNames());
+            assertContains("Maven", parser.getHeaderNames());
             assertContains("Description", parser.getHeaderNames());
             assertNotContains("Ant", parser.getHeaderNames());
             assertNotContains("CLI", parser.getHeaderNames());
@@ -130,7 +130,7 @@ public class NamingTest {
     @Test
     public void testCliCsv() throws IOException, ParseException {
         file.delete();
-        Naming.main(  new String[]{"--cli", "--csv", file.getAbsolutePath()});
+        Naming.main(new String[]{"--cli", "--csv", file.getAbsolutePath()});
         String result = readFile(file);
         TextUtils.assertContains("CLI", result);
         TextUtils.assertContains("Description", result);
@@ -138,7 +138,7 @@ public class NamingTest {
         TextUtils.assertNotContains("Maven", result);
         TextUtils.assertNotContains("[Deprecated ", result);
         try (CSVParser parser = readCSV(file)) {
-            assertContains( "CLI", parser.getHeaderNames());
+            assertContains("CLI", parser.getHeaderNames());
             assertContains("Description", parser.getHeaderNames());
             assertNotContains("Maven", parser.getHeaderNames());
             assertNotContains("Ant", parser.getHeaderNames());
@@ -149,7 +149,7 @@ public class NamingTest {
     @Test
     public void testCLiCsvDeprecated() throws IOException, ParseException {
         file.delete();
-        Naming.main(  new String[]{"--cli", "--csv", "--include-deprecated", file.getAbsolutePath()});
+        Naming.main(new String[]{"--cli", "--csv", "--include-deprecated", file.getAbsolutePath()});
         String result = readFile(file);
         TextUtils.assertContains("CLI", result);
         TextUtils.assertContains("Description", result);
@@ -157,7 +157,7 @@ public class NamingTest {
         TextUtils.assertNotContains("Ant", result);
         TextUtils.assertContains("[Deprecated ", result);
         try (CSVParser parser = readCSV(file)) {
-            assertContains( "CLI", parser.getHeaderNames());
+            assertContains("CLI", parser.getHeaderNames());
             assertContains("Description", parser.getHeaderNames());
             assertNotContains("Maven", parser.getHeaderNames());
             assertNotContains("Ant", parser.getHeaderNames());
@@ -165,7 +165,6 @@ public class NamingTest {
             assertTrue( parser.stream().anyMatch( rec -> rec.stream().anyMatch(s -> s.startsWith("[Deprecated"))), "Missing Deprecated data");
         }
     }
-
 
     private String readFile(File f) throws FileNotFoundException {
         return String.join("\n", IOUtils.readLines(new FileInputStream(f), StandardCharsets.UTF_8));

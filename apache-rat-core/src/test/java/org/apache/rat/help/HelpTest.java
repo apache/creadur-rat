@@ -35,7 +35,6 @@ public class HelpTest {
         Help  help = new Help();
         help.printUsage(new PrintWriter(out), opts);
 
-
         String result = out.toString();
 
         TextUtils.assertContains("-a ", result);

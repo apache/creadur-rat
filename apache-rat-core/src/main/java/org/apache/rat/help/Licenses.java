@@ -76,7 +76,6 @@ public final class Licenses extends AbstractHelp{
 
     /**
      * Output the License information to the help.
-
      * @throws IOException on error.
      */
     public void output() throws IOException {
@@ -131,7 +130,6 @@ public final class Licenses extends AbstractHelp{
         }
         printWriter.flush();
     }
-
 
     private void printObject(int indent, final Object object) throws IOException {
         if (object == null) {
