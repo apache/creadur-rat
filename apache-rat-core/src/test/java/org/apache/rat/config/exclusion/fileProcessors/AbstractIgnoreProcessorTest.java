@@ -19,7 +19,10 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import org.apache.rat.document.impl.DocumentName;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -38,7 +41,16 @@ public class AbstractIgnoreProcessorTest {
         baseName = new DocumentName(baseDir);
     }
 
-
+    /**
+     * This method is a known workaround for
+     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
+     */
+    @AfterEach
+    @EnabledOnOs(OS.WINDOWS)
+    void cleanUp() {
+        System.gc();
+    }
+    
     protected File writeFile(String name, Iterable<String> lines) throws IOException {
         File file = new File(baseDir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
