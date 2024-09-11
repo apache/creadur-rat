@@ -44,8 +44,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -144,6 +146,7 @@ public class OptionCollectionTest {
         File expected = new File(fName);
         ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(expected, config);
+        assertNotNull(reportable, () -> format("'%s' returnedn null", fName));
         assertThat(reportable.name().name()).isEqualTo(expected.getAbsolutePath());
     }
 
