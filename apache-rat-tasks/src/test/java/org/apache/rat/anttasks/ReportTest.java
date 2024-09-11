@@ -50,16 +50,15 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 public class ReportTest extends AbstractRatAntTaskTest {
-    private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
+    private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","antunit"});
+    private final File antFile = new File(new File(baseNameStr), "report-junit.xml").getAbsoluteFile();
     private DocumentName documentName;
 
     @Before
-    public void setUp() {
-        String pth = antFile.getAbsolutePath();
-        documentName = new DocumentName(antFile);
-        pth = pth.substring(0, documentName.name().lastIndexOf("src/test/resources/antunit/"));
-        DocumentName baseDir = new DocumentName(pth, pth, File.separator, DocumentName.fsIsCaseSensitive);
-        documentName = new DocumentName(antFile, baseDir);
+    public void setUp()  {
+        String antFileName = antFile.getAbsolutePath();
+        String baseName = antFileName.substring(0, antFileName.indexOf(baseNameStr));
+        documentName = new DocumentName(antFile, new DocumentName(new File(baseName)));
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.baseName());
         super.setUp();
     }
