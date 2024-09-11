@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.Target;
@@ -50,12 +51,16 @@ import org.w3c.dom.Document;
 
 public class ReportTest extends AbstractRatAntTaskTest {
     private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
+    private DocumentName documentName;
 
     @Before
     public void setUp() {
         String pth = antFile.getAbsolutePath();
-        pth = pth.substring(0, pth.lastIndexOf("src/test/resources/antunit/"));
-        System.setProperty(MagicNames.PROJECT_BASEDIR, pth);
+        documentName = new DocumentName(antFile);
+        pth = pth.substring(0, documentName.name().lastIndexOf("src/test/resources/antunit/"));
+        DocumentName baseDir = new DocumentName(pth, pth, File.separator, DocumentName.fsIsCaseSensitive);
+        documentName = new DocumentName(antFile, baseDir);
+        System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.baseName());
         super.setUp();
     }
     @Override
@@ -64,15 +69,15 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     private String logLine(String id) {
-        return logLine(true, getAntFileName(), id);
+        return logLine(true, documentName.localized("/"), id);
     }
     
-    private String logLine(String antFile, String id) {
-        return logLine(true, antFile, id);
+    private String logLine(String fileText, String id) {
+        return logLine(true, fileText, id);
     }
     
-    private String logLine(boolean approved, String antFile, String id) {
-        return String.format( "%sS \\Q%s\\E\\s+\\Q%s\\E ", approved?" ":"!", antFile, id);
+    private String logLine(boolean approved, String fileText, String id) {
+        return String.format( "%sS \\Q%s\\E\\s+\\Q%s\\E ", approved?" ":"!", fileText, id);
     }
     
     @Test
@@ -84,7 +89,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
-        final String alLine = " S \\Q" + getAntFileName() + "\\E";
+        final String alLine = " S \\Q" + documentName.localized("/") + "\\E";
 
         if (!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
             throw new IOException("Could not create temporary directory " + getTempDir());
@@ -102,7 +107,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     public void testWithALUnknown() throws Exception {
         buildRule.executeTarget("testWithALUnknown");
         assertLogDoesNotMatch(logLine("AL"));
-        assertLogMatches(logLine(false, getAntFileName(), "?????"));
+        assertLogMatches(logLine(false, documentName.localized("/"), "?????"));
     }
 
     @Test

@@ -50,7 +50,7 @@ public class AbstractIgnoreProcessorTest {
     void cleanUp() {
         System.gc();
     }
-    
+
     protected File writeFile(String name, Iterable<String> lines) throws IOException {
         File file = new File(baseDir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
