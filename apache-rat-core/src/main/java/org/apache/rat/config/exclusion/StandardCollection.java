@@ -74,14 +74,14 @@ public enum StandardCollection {
             null,
             str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_DIR", documentName -> {
                 File f = new File(documentName.name());
-                return f.getName().startsWith(".") && f.isDirectory();
+                return f.isDirectory() && ExclusionUtils.isHidden(f);
             }), null
     ),
     HIDDEN_FILE("The hidden files. Directories with names that start with '.'",
             null,
             str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_FILE", documentName -> {
                 File f = new File(documentName.name());
-                return f.getName().startsWith(".")  && f.isFile();
+                return f.isFile() && ExclusionUtils.isHidden(f);
             }), null
     ),
     IDEA("The files and directories created by an IDEA IDE based tool.",

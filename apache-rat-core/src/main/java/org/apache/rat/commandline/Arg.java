@@ -179,6 +179,7 @@ public enum Arg {
     /** Option to read a file licenses to be removed from the approved list */
     LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
             .hasArg().argName("File").type(File.class)
+            .converter(Converters.fileConverter)
             .desc("Name of File containing the approved license IDs.")
             .converter(Converters.fileConverter)
             .build())),
@@ -251,10 +252,12 @@ public enum Arg {
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
                     .argName("File").hasArg().type(File.class)
+                    .converter(Converters.fileConverter)
                     .desc("Reads <Expression> entries from a file.  Entries will override excluded files.")
                     .build())
             .addOption(Option.builder().longOpt("includes-file")
                     .argName("File").hasArg().type(File.class)
+                    .converter(Converters.fileConverter)
                     .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include-file")).get())
