@@ -111,8 +111,8 @@ Apache Rat&#8482;
 java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 +------------------------------------------+
 
- Where "[options]" are one or more of the options listed in for CLI in the table above, and "[Directory or Archive]" is the directory or archive you want to process.
- There is more detailed information found in the {{{./apache-rat/index.html}CLI documentation}}.
+ Where "[options]" are one or more of the options listed in the table above (for CLI), and "[Directory or Archive]" is the directory or archive you want to process.
+ There is more detailed information in the {{{./apache-rat/index.html}CLI documentation}}.
 
 ** Apache Ant
 
@@ -121,7 +121,7 @@ java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 
 ** Apache Maven
 
- To use Maven the Rat Maven plugin must be used.  The plugin supports {{{https://maven.apache.org}Apache Maven}} ${mavenVersion} or later.
+ Within the Maven ecosystem the Rat Maven plugin can be used. The plugin supports {{{https://maven.apache.org}Apache Maven}} ${mavenVersion} or later.
 
  <<ATTENTION!>> Maven4 is based on Java 17 and thus cannot be used with RAT, that relies on Java 8.
 
@@ -153,7 +153,7 @@ java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 
 ** Standard license and matcher definitions.
 
-  Rat ships with a number of licenses, license families, adn matcher definitions.  Additional definitions/implementations of these objects may be added to the system.
+  Rat ships with a number of licenses, license families, and matcher definitions.  Additional definitions/implementations of these objects may be added to the system.
   The list of standard libraries is available from the user interface and is listed below:
 
 +------------------------------------------+
@@ -170,7 +170,7 @@ java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 +------------------------------------------+
 
- For more information about how to access our repository please read out {{{./scm.html}source code management}} documentation.
+ For more information about how to access our repository please read our {{{./scm.html}source code management}} documentation.
 
 ** Building Rat
 
@@ -183,7 +183,7 @@ cd creadur-rat
 mvn clean install
 +------------------------------------------+
 
-or
+or with the included Maven wrapper
 
 +------------------------------------------+
 cd creadur-rat
