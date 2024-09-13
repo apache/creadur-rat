@@ -683,7 +683,7 @@ public enum Arg {
      */
     public static Arg findArg(final Option optionToFind) {
         if (optionToFind != null) {
-            if (optionToFind != null) {for (Arg arg : Arg.values()) {
+            for (Arg arg : Arg.values()) {
                 for (Option candidate : arg.group.getOptions()) {
                     if (optionToFind.equals(candidate)) {
                         return arg;
