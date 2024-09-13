@@ -194,6 +194,7 @@ public final class MavenGenerator {
                     .append(getBody(option))
                     .append("    }").append(System.lineSeparator());
             if (option.hasArgs()) {
+                // create multi argument method
                 writer.append(getComment(option))
                         .append(option.getMethodSignature("    ", false)).append(" {").append(System.lineSeparator())
                         .append(getBody(option))
