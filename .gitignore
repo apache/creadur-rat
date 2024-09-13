@@ -22,4 +22,3 @@
 **/bin
 **/.mvn/.develocity*
 **/src/site/apt/*.txt
-src/site/apt/naming_help.txt
