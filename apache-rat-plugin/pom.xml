@@ -95,6 +95,8 @@
               <exclude>src/it/**/src.apt</exclude>
               <exclude>src/test/resources/unit/**</exclude>
               <exclude>**/*.iml</exclude>
+              <!-- these files are generated -->
+              <exclude>src/site/apt/plugin_help.txt</exclude>
               <!-- These files have a custom license header (non Apache) to test validating custom licenses -->
               <exclude>src/it/CustomLicense/src/**/</exclude>
               <!-- RAT-171: needs to be added since SCM ignores are only parsed in project root -->
@@ -142,18 +144,37 @@
               <goal>java</goal>
             </goals>
             <phase>generate-sources</phase>
+            <configuration>
+              <mainClass>org.apache.rat.tools.MavenGenerator</mainClass>
+              <classpathScope>test</classpathScope>
+              <arguments>
+                <argument>org.apache.rat.plugin</argument>
+                <argument>BaseRatMojo</argument>
+                <argument>${project.build.directory}/generated/src/main/java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Maven help generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.apache.rat.tools.Naming</mainClass>
+              <classpathScope>test</classpathScope>
+              <arguments>
+                <argument>--maven</argument>
+                <argument>${project.basedir}/src/site/apt/plugin_help.txt</argument>
+              </arguments>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <mainClass>org.apache.rat.tools.MavenGenerator</mainClass>
-          <!-- tools are in test scope only.  We don't want them packaged with plugin -->
-          <classpathScope>test</classpathScope>
-          <arguments>
-            <argument>org.apache.rat.plugin</argument>
-            <argument>BaseRatMojo</argument>
-            <argument>${project.build.directory}/generated/src/main/java</argument>
-          </arguments>
-        </configuration>
+       <configuration>
+         <environmentVariables>
+           <LANG>en_US</LANG>
+         </environmentVariables>
+       </configuration>
       </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -222,7 +243,7 @@
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
     </dependency>
-    <!-- rat tools in test scope so that it does not get bundles into the plugin -->
+    <!-- rat tools in test scope so that it does not get bundled into the plugin -->
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tools</artifactId>

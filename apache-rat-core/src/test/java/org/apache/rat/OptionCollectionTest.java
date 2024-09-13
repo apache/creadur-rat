@@ -111,7 +111,7 @@ public class OptionCollectionTest {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "foo"};
             config = OptionCollection.parseCommands(args, (o) -> {
-            });
+            }, true);
         } finally {
             DefaultLog.setInstance(null);
         }

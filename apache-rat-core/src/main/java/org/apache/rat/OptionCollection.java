@@ -22,6 +22,7 @@ import static java.lang.String.format;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +46,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
@@ -149,6 +151,11 @@ public final class OptionCollection {
 
         if (commandLine.hasOption(HELP)) {
             helpCmd.accept(opts);
+            return null;
+        }
+
+        if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
+            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
             return null;
         }
 

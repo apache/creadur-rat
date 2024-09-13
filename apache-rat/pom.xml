@@ -24,7 +24,7 @@
   </parent>
   <artifactId>apache-rat</artifactId>
   <packaging>jar</packaging>
-  <name>Apache Creadur Rat::Command Line</name>
+  <name>Apache Creadur Rat::Packaging</name>
   <description>
     This library provides upwards compatibility for projects,
     which are based on Apache Rat versions up to 0.5: Basically, it
@@ -127,17 +127,55 @@
             <goals>
               <goal>exec</goal>
             </goals>
+            <configuration>
+              <executable>java</executable>
+              <outputFile>${project.basedir}/src/site/apt/cli_help.txt</outputFile>
+              <arguments>
+                <argument>-cp</argument>
+                <argument>target/apache-rat-${project.version}.jar</argument>
+                <argument>org.apache.rat.Report</argument>
+                <argument>--help</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Naming help generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <outputFile>${project.basedir}/../src/site/apt/naming_help.txt</outputFile>
+              <arguments>
+                <argument>-cp</argument>
+                <argument>target/apache-rat-${project.version}.jar</argument>
+                <argument>org.apache.rat.tools.Naming</argument>
+                <argument>--maven</argument>
+                <argument>--ant</argument>
+                <argument>--cli</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>License help generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <outputFile>${project.basedir}/../src/site/apt/license_help.txt</outputFile>
+              <arguments>
+                <argument>-cp</argument>
+                <argument>target/apache-rat-${project.version}.jar</argument>
+                <argument>org.apache.rat.Report</argument>
+                <argument>--help-licenses</argument>
+              </arguments>
+            </configuration>
           </execution>
         </executions>
         <configuration>
-          <executable>java</executable>
-          <outputFile>${project.basedir}/src/site/apt/cli_help.txt</outputFile>
-          <arguments>
-            <argument>-cp</argument>
-            <argument>target/apache-rat-${project.version}.jar</argument>
-            <argument>org.apache.rat.Report</argument>
-            <argument>--help</argument>
-          </arguments>
           <environmentVariables>
             <LANG>en_US</LANG>
           </environmentVariables>
