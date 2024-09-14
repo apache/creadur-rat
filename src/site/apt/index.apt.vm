@@ -183,7 +183,7 @@ cd creadur-rat
 mvn clean install
 +------------------------------------------+
 
-or with the included Maven wrapper
+ or with the included Maven wrapper
 
 +------------------------------------------+
 cd creadur-rat
