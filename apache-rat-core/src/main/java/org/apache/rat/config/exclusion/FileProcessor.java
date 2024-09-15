@@ -37,7 +37,7 @@ import static java.lang.String.format;
  */
 @FunctionalInterface
 public interface FileProcessor extends Function<DocumentName, List<String>> {
-    /** A String.format pattern to print a regex string */
+    /** A String format pattern to print a regex string */
     String REGEX_FMT = "%%regex[%s]";
 
     /** an Empty file processor -- return no entries.*/
@@ -78,16 +78,22 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
      * @return the completely formatted pattern
      */
     static DocumentName localizePattern(final DocumentName baseName, final String pattern) {
-        String normalizedPattern = SelectorUtils.extractPattern(pattern, baseName.dirSeparator());
-        if (SelectorUtils.isRegexPrefixedPattern(pattern)) {
-            StringBuilder sb = new StringBuilder();
+        boolean prefix = pattern.startsWith("!");
+        String workingPattern = prefix ? pattern.substring(1) : pattern;
+        String normalizedPattern = SelectorUtils.extractPattern(workingPattern, baseName.dirSeparator());
+        StringBuilder sb = new StringBuilder(prefix ? "!" : "");
+        if (SelectorUtils.isRegexPrefixedPattern(workingPattern)) {
             sb.append(SelectorUtils.REGEX_HANDLER_PREFIX)
                     .append("\\Q").append(baseName.baseName())
                     .append(baseName.dirSeparator())
                     .append("\\E").append(normalizedPattern)
                     .append(SelectorUtils.PATTERN_HANDLER_SUFFIX);
-            return new DocumentName(sb.toString(), baseName.baseName(), baseName.dirSeparator(), baseName.isCaseSensitive());
+
+        } else {
+            sb.append(baseName.baseName())
+                    .append(baseName.dirSeparator())
+                    .append(normalizedPattern);
         }
-        return baseName.baseDocumentName().resolve(normalizedPattern);
+        return new DocumentName(sb.toString(), baseName.baseName(), baseName.dirSeparator(), baseName.isCaseSensitive());
     }
 }
