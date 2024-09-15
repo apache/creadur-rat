@@ -36,13 +36,10 @@ public class GitFileProcessor extends DescendingFileProcessor {
 
     @Override
     public String modifyEntry(final DocumentName documentName, final String entry) {
-        String pattern = entry;
-        String prefix = "";
         // An optional prefix "!" which negates the pattern;
-        if (pattern.startsWith("!")) {
-            prefix = "!";
-            pattern = pattern.substring(1);
-        }
+        boolean prefix = entry.startsWith("!");
+        String pattern = prefix ? entry.substring(1) : entry;
+
         // If there is a separator at the beginning or middle (or both) of the pattern, then
         // the pattern is relative to the directory level of the particular .gitignore file itself.
         // Otherwise, the pattern may also match at any level below the .gitignore level.
@@ -55,8 +52,7 @@ public class GitFileProcessor extends DescendingFileProcessor {
         if (pattern.endsWith("/")) {
             pattern = pattern + "**";
         }
-        DocumentName result = FileProcessor.localizePattern(documentName, pattern);
-        return prefix + result.name();
+        return prefix ? "!" + pattern : pattern;
     }
 
 }

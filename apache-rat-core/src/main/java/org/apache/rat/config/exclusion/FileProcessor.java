@@ -37,7 +37,7 @@ import static java.lang.String.format;
  */
 @FunctionalInterface
 public interface FileProcessor extends Function<DocumentName, List<String>> {
-    /** A String.format pattern to print a regex string */
+    /** A String format pattern to print a regex string */
     String REGEX_FMT = "%%regex[%s]";
 
     /** an Empty file processor -- return no entries.*/
