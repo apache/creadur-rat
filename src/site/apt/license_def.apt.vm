@@ -21,16 +21,16 @@
 
 How to define licenses in Apache Rat
 
- All licenses in Apache Rat are defined in configuration files.  There is a default 
+ All licenses in Apache Rat are defined in configuration files. There is a default 
  {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}
  XML based configuration file}} that can serve as a good example of various definitions.
 
- It is possible to create new parsers for different configuration formats.  But that task is beyond the 
- scope of this document.  In this document we will address how to define licenses in the default XML format.
+ It is possible to create new parsers for different configuration formats. But that task is beyond the 
+ scope of this document. In this document we will address how to define licenses in the default XML format.
  
  The XML document has a root node named "rat-config" which comprises 4 major sections: "Families", 
- "Licenses", "Approved" and "Matchers".  There is an {{{./apache-rat/rat.xsd}}XSD} that can be used to validate
- configuration files.  If custom matchers have been added it will be necessary to {{{./apache-rat/xsd.html}generate a
+ "Licenses", "Approved" and "Matchers". There is an {{{./apache-rat/rat.xsd}}XSD} that can be used to validate
+ configuration files. If custom matchers have been added it will be necessary to {{{./apache-rat/xsd.html}generate a
   new XSD file}} that includes the new matchers.
  
 * Families
@@ -131,11 +131,10 @@ How to define licenses in Apache Rat
 
  Multiple configuration files can be read by using the <<<--config>>> argument.  Later definitions override earlier definitions.
 
-
 * Listing components
 
  All the defined components (Licenses, License Families, and Matchers) defined in the system can be displayed using the <<<--help-licenses>>>
- to argument.  This will produce a textual report of all the components.
+ argument. This will produce a textual report of all the components.
 
  License definitions and license family definitions can be added to the XML output by using the <<<--output-licenses>>> and <<<--output-families>>> options.
  these options output directly to the XML and are ignored by the standard XSLT reports.  To see the output either a custom XSLT will need to be

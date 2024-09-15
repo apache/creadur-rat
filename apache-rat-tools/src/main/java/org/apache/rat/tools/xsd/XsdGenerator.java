@@ -52,7 +52,7 @@ import javax.xml.transform.stream.StreamSource;
  * Generates the XSD for a configuration.
  */
 public class XsdGenerator {
-    /** The Configuration to generate the XSD for */
+    /** The configuration to generate the XSD for. */
     private ReportConfiguration cfg;
     /** The XsdWriter being written to. */
     private XsdWriter writer;
@@ -66,7 +66,7 @@ public class XsdGenerator {
     }
 
     /**
-     * Command line that accepts standard RAT CLI command line options and generated an XSD from the
+     * Command line that accepts standard RAT CLI command line options and generates an XSD from the
      * configuration.
      * @param args the arguments for RAT CLI.
      * @throws IOException on IO errors.
@@ -196,6 +196,7 @@ public class XsdGenerator {
                 .close(Type.ELEMENT)
                 .close(Type.ELEMENT);
     }
+
     private void writeMatcherElements() throws IOException {
         MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
         writer.open(Type.ELEMENT, "name", XMLConfig.MATCHER, "abstract", "true").close(Type.ELEMENT);

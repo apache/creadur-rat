@@ -40,7 +40,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
 /**
  * Run Rat to perform a violation check.
  * <p>
- *     This documentation mentiones data types for some of the arguments.  An <a href="data_types.html">explanation of the data types</a> is included
+ *     This documentation mentions data types for some of the arguments. An <a href="data_types.html">explanation of the data types</a> is included
  *     in ths documentation package.
  * </p>
  */

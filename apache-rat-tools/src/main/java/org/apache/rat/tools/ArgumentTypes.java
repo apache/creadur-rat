@@ -53,8 +53,8 @@ import static java.lang.String.format;
  *
  * Options
  * <ul>
- *     <li>--ant   Produces ant options in result</li>
- *     <li>--maven Produces maven options in result</li>
+ *     <li>--ant   Produces Ant options in result</li>
+ *     <li>--maven Produces Maven options in result</li>
  *     <li>--csv   Produces CSV output text is produced</li>
  * </ul>
  * Note: if neither --ant nor --maven are included both will be listed.

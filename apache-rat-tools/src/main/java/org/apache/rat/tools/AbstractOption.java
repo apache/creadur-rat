@@ -48,7 +48,6 @@ public abstract class AbstractOption {
         this.name = name;
     }
 
-
     public String getDefaultValue() {
         Arg arg = Arg.findArg(option);
         return arg == null ? null : arg.defaultValue();
@@ -139,7 +138,7 @@ public abstract class AbstractOption {
     }
 
     /**
-     * the key value for the option.
+     * The key value for the option.
      * @return the key value for the CLI argument map.
      */
     final public String keyValue() {
@@ -147,8 +146,8 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Gets the deprecated string if the option is deprecated, or and empty string otherwise.
-     * @return the deprecated string if the option is deprecated, or and empty string otherwise.
+     * Gets the deprecated string if the option is deprecated, or an empty string otherwise.
+     * @return the deprecated string if the option is deprecated, or an empty string otherwise.
      */
     final public String getDeprecated() {
         return  option.isDeprecated() ? cleanup(StringUtils.defaultIfEmpty(option.getDeprecated().toString(), StringUtils.EMPTY)) : StringUtils.EMPTY;

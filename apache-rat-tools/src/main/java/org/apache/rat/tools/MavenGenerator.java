@@ -57,7 +57,6 @@ public final class MavenGenerator {
     /** List of CLI Options that are not supported by Maven. */
     private static final List<Option> MAVEN_FILTER_LIST = new ArrayList<>();
 
-
     static {
         RENAME_MAP.put("addLicense", "add-license");
 
@@ -65,8 +64,6 @@ public final class MavenGenerator {
         MAVEN_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
         MAVEN_FILTER_LIST.add(OptionCollection.HELP);
     }
-
-
 
     /**
      * Filter to remove Options not supported by Maven.
@@ -223,5 +220,4 @@ public final class MavenGenerator {
         name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
         return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
     }
-
 }
