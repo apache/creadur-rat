@@ -18,6 +18,6 @@
  */
 
 /**
- * classes that perform that analysis of files.
+ * Classes that perform analyses of files.
  */
 package org.apache.rat.analysis;
