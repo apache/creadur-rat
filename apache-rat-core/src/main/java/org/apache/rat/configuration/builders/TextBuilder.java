@@ -25,7 +25,7 @@ import org.apache.rat.analysis.matchers.SimpleTextMatcher;
 import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
- * Builds text matcher.  The specific implementation is based on the complexity of the text to match.
+ * Builds a text matcher. The specific implementation is based on the complexity of the text to match.
  */
 @MatcherBuilder(SimpleTextMatcher.class)
 public class TextBuilder extends AbstractBuilder {
@@ -40,7 +40,7 @@ public class TextBuilder extends AbstractBuilder {
     public TextBuilder setSimpleText(String text) {
         this.text = text.trim();
         if (StringUtils.isBlank(text)) {
-            throw new ConfigurationException("'text' may not be null");
+            throw new ConfigurationException("'text' may not be empty");
         }
         return this;
     }

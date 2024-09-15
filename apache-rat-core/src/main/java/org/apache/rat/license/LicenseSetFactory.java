@@ -76,10 +76,10 @@ public class LicenseSetFactory {
     /** The set of defined licenses */
     private final ReportingSet<ILicense> licenses;
 
-    /** The set of approved license family categories. If the category is not listed the family is not approved.  */
+    /** The set of approved license family categories. If the category is not listed, the family is not approved. */
     private final SortedSet<String> approvedLicenseCategories;
     /**
-     * The set of license categories that are to be removed from consideration.  These are categories that were
+     * The set of license categories that are to be removed from consideration. These are categories that were
      * added but should now be removed.
      */
     private final SortedSet<String> removedLicenseCategories;
@@ -89,7 +89,7 @@ public class LicenseSetFactory {
      */
     private final SortedSet<String> approvedLicenseIds;
     /**
-     * The set of license ids that are to be removed from consideration.  This set contains licenses that are to be
+     * The set of license ids that are to be removed from consideration. This set contains licenses that are to be
      * removed even if the family is approved or if an earlier license approval was granted.
      */
     private final SortedSet<String> removedLicenseIds;
@@ -162,7 +162,6 @@ public class LicenseSetFactory {
     public void licenseDuplicateOption(final ReportingSet.Options state) {
         licenses.setDuplicateOption(state);
     }
-
 
     /**
      * Create a sorted set of licenses families from the collection.

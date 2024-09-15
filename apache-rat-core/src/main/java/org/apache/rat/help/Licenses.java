@@ -96,7 +96,7 @@ public final class Licenses extends AbstractHelp {
     }
 
     /**
-     * print the help text with the version information.
+     * Print the help text with the version information.
      * @throws IOException on output error.
      */
     public void printHelp() throws IOException {
@@ -167,7 +167,7 @@ public final class Licenses extends AbstractHelp {
 
     /**
      * Print the description of an object.
-     * @param indent the number of spaces to indent the pring.
+     * @param indent the number of spaces to indent the print.
      * @param object the object to print.
      * @throws IOException on output error.
      */

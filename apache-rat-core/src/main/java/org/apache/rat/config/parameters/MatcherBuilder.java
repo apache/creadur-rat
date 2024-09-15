@@ -27,7 +27,6 @@ import java.lang.annotation.Target;
 
 /**
  * An annotation that marks a configuration component.
- * 
  */
 @Target({ElementType.FIELD, ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -37,5 +36,4 @@ public @interface MatcherBuilder {
      * @return the component name.
      */
     Class<? extends IHeaderMatcher> value();
-
 }

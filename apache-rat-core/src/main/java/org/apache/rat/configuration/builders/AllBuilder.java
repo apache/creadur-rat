@@ -22,7 +22,7 @@ import org.apache.rat.analysis.matchers.AndMatcher;
 import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
- * Constructs a All matcher.
+ * Constructs an All matcher.
  */
 @MatcherBuilder(AndMatcher.class)
 public class AllBuilder extends ChildContainerBuilder {

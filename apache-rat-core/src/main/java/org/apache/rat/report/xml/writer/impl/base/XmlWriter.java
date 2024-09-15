@@ -571,7 +571,6 @@ public final class XmlWriter implements IXmlWriter {
         return this;
     }
 
-
     private void writeEscaped(final CharSequence content, boolean isAttributeContent) throws IOException {
         final int length = content.length();
         for (int i = 0; i < length; i++) {

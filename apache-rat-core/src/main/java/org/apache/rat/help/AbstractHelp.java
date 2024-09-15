@@ -41,7 +41,7 @@ public abstract class AbstractHelp {
 
     /** The width of the help report in chars. */
     public static final int HELP_WIDTH = 120;
-    /** The number of chars to indent output with */
+    /** The number of chars to indent output with. */
     public static final int HELP_PADDING = 4;
 
     protected final RatHelpFormatter helpFormatter;
@@ -105,13 +105,12 @@ public abstract class AbstractHelp {
             }
         }
 
-
         protected StringBuffer renderOptions(final StringBuffer sb, final int width, final Options options, final int leftPad, final int descPad) {
             final String lpad = createPadding(leftPad);
             final String dpad = createPadding(descPad);
             // first create list containing only <lpad>-a,--aaa where
             // -a is opt and --aaa is long opt; in parallel look for
-            // the longest opt string this list will be then used to
+            // the longest opt string; this list will be used then to
             // sort options ascending
             int max = 0;
             final List<StringBuffer> prefixList = new ArrayList<>();

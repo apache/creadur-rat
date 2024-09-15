@@ -28,7 +28,7 @@ import java.io.File;
  * already.
  */
 public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
-    /** The copyright message to insert.  May be null. */
+    /** The copyright message to insert. May be null. */
     private String copyright;
 
     /**

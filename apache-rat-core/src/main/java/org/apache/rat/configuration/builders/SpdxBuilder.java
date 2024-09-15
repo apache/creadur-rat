@@ -26,7 +26,7 @@ import org.apache.rat.analysis.matchers.SPDXMatcherFactory;
 import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
- * A build for SPDX matchers.
+ * A builder for SPDX matchers.
  */
 @MatcherBuilder(SPDXMatcherFactory.Match.class)
 public class SpdxBuilder extends AbstractBuilder {
