@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -628,14 +629,15 @@ public final class XmlWriter implements IXmlWriter {
     }
 
     /**
-     * Closes back to and including the last instance of the specified element nema.
-     * @param name The name of the element to close.
+     * Closes back to and including the last instance of the specified element name.
+     * @param name The name of the element to close.  My not be {@code null}
      * @return this object
      * @throws OperationNotAllowedException if called before any call to
      * {@link #openElement} or after the first element has been closed
      */
     @Override
     public IXmlWriter closeElement(CharSequence name) throws IOException {
+        Objects.requireNonNull(name);
         if (elementNames.isEmpty()) {
             if (elementsWritten) {
                 throw new OperationNotAllowedException("Root element has already been closed.");

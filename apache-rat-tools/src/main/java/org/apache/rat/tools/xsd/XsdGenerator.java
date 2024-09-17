@@ -131,7 +131,7 @@ public class XsdGenerator {
 
         writeMatcherElements();
 
-        writer.fini();
+        writer.finish();
     }
 
     private void writeFamilies() throws IOException {

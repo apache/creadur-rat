@@ -18,11 +18,9 @@
  */
 package org.apache.rat.tools.xsd;
 
-import org.apache.rat.ReportConfiguration;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 public class XsdWriter {
@@ -51,7 +49,7 @@ public class XsdWriter {
         return this;
     }
 
-    public void fini() throws IOException {
+    public void finish() throws IOException {
         writer.closeDocument();
     }
 

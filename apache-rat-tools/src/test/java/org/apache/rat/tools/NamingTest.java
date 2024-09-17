@@ -181,4 +181,10 @@ public class NamingTest {
     private void assertNotContains(String expected, List<String> actual) {
         assertFalse(actual.contains(expected), () -> "Contains "+expected);
     }
+
+    @Test
+    public void testNamingGenerationWithoutParameters() throws IOException {
+        assertDoesNotThrow(() -> Naming.main(null));
+        assertDoesNotThrow(() -> Naming.main(new String[]{}));
+    }
 }
