@@ -11,3 +11,7 @@ github:
     - rat
 notifications:
   commits: commits@creadur.apache.org
+  autolink_jira:
+    - RAT
+    - WHISKER
+    - TENTACLES
