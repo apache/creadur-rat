@@ -72,7 +72,7 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-38r" type="add" dev="claudenw">
+      <action issue="RAT-384" type="add" dev="claudenw">
         As part of the usage harmonization XSD generation was added.
       </action>
       <action issue="RAT-378" type="add" dev="claudenw">
