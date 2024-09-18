@@ -207,7 +207,7 @@ public abstract class AbstractOptionsProvider {
         }
     }
 
-    public void helpLicenses() {
+    protected void helpLicenses() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)){

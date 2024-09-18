@@ -17,14 +17,12 @@
 package org.apache.rat.anttasks;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.testhelpers.TestingLog;
-import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,11 +30,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
