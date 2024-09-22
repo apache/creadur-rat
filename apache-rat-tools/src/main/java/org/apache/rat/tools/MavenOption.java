@@ -23,15 +23,24 @@ import static java.lang.String.format;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.commandline.Arg;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A representation of a CLI option as a Maven option
  */
-public class MavenOption {
-    /** The CLI that the Maven option is wrapping */
-    private final Option option;
-    /** The Maven name for the option */
-    private final String name;
+public class MavenOption extends AbstractOption {
+
+    private static final Map<Arg,String> DEFAULT_VALUES = new HashMap<>();
+
+    static {
+        DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
+    }
 
     /**
      * Constructor.
@@ -39,73 +48,57 @@ public class MavenOption {
      * @param option The CLI option
      */
     MavenOption(final Option option) {
-        this.option = option;
-        this.name = MavenGenerator.createName(option);
+        super(option, MavenGenerator.createName(option));
     }
 
-    /**
-     * Gets the Maven name for the CLI option.
-     * @return The Maven name for the CLI option.
-     */
-    public String getName() {
-        return name;
+    private String getPropertyValue() {
+        StringBuilder sb = new StringBuilder("A ");
+        if (option.hasArg()) {
+            if (option.hasArgs()) {
+                sb.append("collection of ");
+            }
+            if (option.getArgName() == null) {
+                sb.append("String");
+            } else {
+                sb.append(option.getArgName());
+            }
+            sb.append(option.hasArgs() ? "s." : ".");
+        } else {
+            sb.append("boolean value.");
+        }
+        return sb.toString();
     }
 
-    /**
-     * Get the description escaped for XML format.
-     *
-     * @return the description or an empty string.
-     */
-    public String getDescription() {
-        return StringUtils.defaultIfEmpty(option.getDescription(), "")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
+    @Override
+    protected String cleanupName(Option option) {
+        return format("<%s>", MavenGenerator.createName(option));
     }
 
-    /**
-     * Returns the value as an POM xml node.
-     *
-     * @param value the value
-     * @return the pom xml node.
-     */
-    public String xmlNode(final String value) {
-        return format("<%1$s>%2$s</%1$s>%n", name, value == null ? "false" : value);
+    @Override
+    public String getDefaultValue() {
+        Arg arg = Arg.findArg(option);
+        String result = DEFAULT_VALUES.get(arg);
+        if (result == null) {
+            result = arg.defaultValue();
+        }
+        return result;
     }
 
-    /**
-     * Gets the simple class name for the data type for this option.
-     * Normally "String".
-     *
-     * @return the simple class name for the type.
-     */
-    public Class<?> getType() {
-        return option.hasArg() ? ((Class<?>) option.getType()) : boolean.class;
-    }
-
-    public boolean isDeprecated() {
-        return option.isDeprecated();
-    }
-
-    /**
-     * Determine if true if the enclosed option expects an argument.
-     *
-     * @return {@code true} if the enclosed option expects at least one argument.
-     */
-    public boolean hasArg() {
-        return option.hasArg();
-    }
-
-    /**
-     * the key value for the option.
-     *
-     * @return the key value for the CLI argument map.
-     */
-    public String keyValue() {
-        return "\"" + option.getLongOpt() + "\"";
-    }
-
-    public String getDeprecated() {
-        return option.getDeprecated().toString();
+    public String getPropertyAnnotation(String fname) {
+        StringBuilder sb = new StringBuilder("@Parameter");
+        String property = option.hasArgs() ? null : format("property = \"rat.%s\"", fname);
+        String defaultValue = option.isDeprecated() ? null : getDefaultValue();
+        if (property != null || defaultValue != null) {
+            sb.append("(");
+            if (property != null) {
+                sb.append(property).append(defaultValue != null ? ", " : StringUtils.EMPTY);
+            }
+            if (defaultValue != null) {
+                sb.append(format("defaultValue = \"%s\"", defaultValue));
+            }
+            sb.append(")");
+        }
+        return sb.toString();
     }
 
     public String getMethodSignature(final String indent, final boolean multiple) {
@@ -115,24 +108,15 @@ public class MavenOption {
         }
         String fname = WordUtils.capitalize(name);
         String args = option.hasArg() ? "String" : "boolean";
-        String parmArgs = "";
         if (multiple) {
-            fname = fname + "s";
+            if (!(fname.endsWith("s") || fname.endsWith("Approved") || fname.endsWith("Denied"))) {
+                fname = fname + "s";
+            }
             args = args + "[]";
-        } else {
-            parmArgs = format("(property = \"rat.%s\")", name);
         }
 
-        return sb.append(format("%1$s@Parameter%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
-                        indent, name, fname, args, parmArgs))
+        return sb.append(format("%1$s%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
+                        indent, name, fname, args, getPropertyAnnotation(fname)))
                 .toString();
-    }
-
-    /**
-     * Returns {@code true} if the option has multiple arguments.
-     * @return {@code true} if the option has multiple arguments.
-     */
-    public boolean hasArgs() {
-        return option.hasArgs();
     }
 }

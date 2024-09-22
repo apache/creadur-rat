@@ -89,8 +89,8 @@ public interface IXmlWriter extends AutoCloseable {
     
     /**
      * Writes CDATA content.
-     * This method DOES NOT automatically escapes characters.
-     * It will removed enclosed CDATA closing strings (e.g. {@code ]]>}
+     * This method DOES NOT automatically escape characters.
+     * It will remove enclosed CDATA closing strings (e.g. {@code ]]>}
      *
      * @param content the content to write
      * @return this object
@@ -109,7 +109,18 @@ public interface IXmlWriter extends AutoCloseable {
      * or after the first element has been closed
      */
     IXmlWriter closeElement() throws IOException;
-    
+
+    /**
+     * Closes all open elements back to and including the named element.
+     *
+     * @param name  the last element to close
+     * @return this object
+     * @throws OperationNotAllowedException
+     * if called before any call to {@link #openElement}
+     * or after the first element has been closed
+     */
+    IXmlWriter closeElement(CharSequence name) throws IOException;
+
     /**
      * Closes all pending elements.
      * When appropriate, resources are also flushed and closed.

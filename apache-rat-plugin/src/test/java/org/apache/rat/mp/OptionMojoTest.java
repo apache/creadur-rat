@@ -49,12 +49,14 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -171,7 +173,7 @@ public class OptionMojoTest   {
                 assertThat(ds.getExcludedList()).contains("justbaz");
                 assertThat(ds.getIncludedList()).contains("notbaz");
             } catch (IOException | MojoExecutionException e) {
-                fail(e.getMessage());
+                fail(e.getMessage(), e);
             }
         }
 

@@ -18,6 +18,11 @@
  */
 package org.apache.rat.report.xml;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
@@ -35,16 +40,13 @@ import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
 import org.apache.rat.report.claim.util.LicenseAddingReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 /**
  * A factory to create reports from a writer and a configuration.
  */
 public final class XmlReportFactory {
+    /** The name of the report element */
     private static final String RAT_REPORT = "rat-report";
+    /** The timestamp attribute */
     private static final String TIMESTAMP = "timestamp";
 
     private XmlReportFactory() {

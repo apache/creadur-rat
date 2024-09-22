@@ -85,5 +85,13 @@ Options
   The Rat Maven plugin has a number of options as is shown in the table below.
 
 ------------------------------------------------------------------
-#include( "plugin_help.txt" )
+#include( "options.txt" )
+------------------------------------------------------------------
+
+Argument Types
+
+  The Rat maven plugin uses the standard argument types as shown below.
+
+------------------------------------------------------------------
+#include( "argument_types.txt" )
 ------------------------------------------------------------------

@@ -33,7 +33,6 @@ import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
@@ -90,16 +89,7 @@ public class ReportConfiguration {
     /** The LicenseSetFactory for the configuration */
     private final LicenseSetFactory licenseSetFactory;
 
-    /**
-     * The set of defined families.
-     */
-    private final ReportingSet<ILicenseFamily> families;
-    /**
-     * The set of defined licenses
-     */
-    private final ReportingSet<ILicense> licenses;
-
-    /**
+       /**
      * {@code true} if we are adding license headers to the files.
      */
     private boolean addingLicenses;
@@ -158,11 +148,7 @@ public class ReportConfiguration {
      * Constructor
      */
     public ReportConfiguration() {
-        families = new ReportingSet<>(new TreeSet<ILicenseFamily>())
-                .setMsgFormat(s -> String.format("Duplicate LicenseFamily category: %s", s.getFamilyCategory()));
-        licenses = new ReportingSet<>(new TreeSet<ILicense>())
-                .setMsgFormat(s -> String.format("Duplicate License %s (%s) of type %s", s.getName(), s.getId(), s.getLicenseFamily().getFamilyCategory()));
-        licenseSetFactory = new LicenseSetFactory(families, licenses);
+        licenseSetFactory = new LicenseSetFactory();
         listFamilies = Defaults.LIST_FAMILIES;
         listLicenses = Defaults.LIST_LICENSES;
         dryRun = false;
@@ -206,7 +192,7 @@ public class ReportConfiguration {
      * @param level The log level to use.
      */
     public void logFamilyCollisions(final Level level) {
-        families.setLogLevel(level);
+        licenseSetFactory.logFamilyCollisions(level);
     }
 
     /**
@@ -214,7 +200,7 @@ public class ReportConfiguration {
      * @param state The ReportingSet.Option to use for reporting.
      */
     public void familyDuplicateOption(final ReportingSet.Options state) {
-        families.setDuplicateOption(state);
+        licenseSetFactory.familyDuplicateOption(state);
     }
 
     /**
@@ -222,7 +208,7 @@ public class ReportConfiguration {
      * @param level The log level.
      */
     public void logLicenseCollisions(final Level level) {
-        licenses.setLogLevel(level);
+        licenseSetFactory.logLicenseCollisions(level);
     }
 
     /**
@@ -230,7 +216,7 @@ public class ReportConfiguration {
      * @param state the ReportingSt.Option to use for reporting.
      */
     public void licenseDuplicateOption(final ReportingSet.Options state) {
-        licenses.setDuplicateOption(state);
+        licenseSetFactory.licenseDuplicateOption(state);
     }
 
     /**
@@ -462,10 +448,7 @@ public class ReportConfiguration {
      * @param license The license to add to the list of licenses.
      */
     public void addLicense(final ILicense license) {
-        if (license != null) {
-            this.licenses.add(license);
-            this.families.addIfNotPresent(license.getLicenseFamily());
-        }
+        licenseSetFactory.addLicense(license);
     }
 
     /**
@@ -475,12 +458,7 @@ public class ReportConfiguration {
      * @return The ILicense implementation that was added.
      */
     public ILicense addLicense(final ILicense.Builder builder) {
-        if (builder != null) {
-            ILicense license = builder.setLicenseFamilies(families).build();
-            this.licenses.add(license);
-            return license;
-        }
-        return null;
+        return licenseSetFactory.addLicense(builder);
     }
 
     /**
@@ -489,18 +467,7 @@ public class ReportConfiguration {
      * @param licenses The licenses to add.
      */
     public void addLicenses(final Collection<ILicense> licenses) {
-        this.licenses.addAll(licenses);
-        licenses.stream().map(ILicense::getLicenseFamily).forEach(families::add);
-    }
-
-    /**
-     * Adds multiple licenses to the list of licenses. Does not add the licenses to
-     * the list of approved licenses.
-     * @param licenses The licenses to add.
-     */
-    public void addLicensesIfNotPresent(final Collection<ILicense> licenses) {
-        this.licenses.addAllIfNotPresent(licenses);
-        licenses.stream().map(ILicense::getLicenseFamily).forEach(families::addIfNotPresent);
+        licenseSetFactory.addLicenses(licenses);
     }
 
     /**
@@ -509,9 +476,7 @@ public class ReportConfiguration {
      * @param family The license family to add to the list of license families.
      */
     public void addFamily(final ILicenseFamily family) {
-        if (family != null) {
-            this.families.add(family);
-        }
+       licenseSetFactory.addFamily(family);
     }
 
     /**
@@ -521,9 +486,7 @@ public class ReportConfiguration {
      * licenses.
      */
     public void addFamily(final ILicenseFamily.Builder builder) {
-        if (builder != null) {
-            this.families.add(builder.build());
-        }
+        licenseSetFactory.addFamily(builder);
     }
 
     /**
@@ -740,7 +703,7 @@ public class ReportConfiguration {
         if (reportable == null) {
             throw new ConfigurationException("Reportable may not be null");
         }
-        if (licenses.isEmpty()) {
+        if (licenseSetFactory.getLicenses(LicenseFilter.ALL).isEmpty()) {
             throw new ConfigurationException("You must specify at least one license");
         }
     }

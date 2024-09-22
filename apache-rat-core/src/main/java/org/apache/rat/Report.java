@@ -50,7 +50,7 @@ public final class Report {
      * @param opts The defined options.
      */
     private static void printUsage(final Options opts) {
-        new Help().printUsage(new PrintWriter(System.out), opts);
+        new Help(System.out).printUsage(opts);
     }
 
     private Report() {

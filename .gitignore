@@ -21,5 +21,4 @@
 **/lib/
 **/bin
 **/.mvn/.develocity*
-**/*_help.txt
-
+**/src/site/apt/*.txt

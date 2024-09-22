@@ -18,6 +18,7 @@
  */
 package org.apache.rat.help;
 
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.Report;
@@ -26,63 +27,44 @@ import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Set;
+
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HelpTest {
     @Test
-    public void helpTest() {
+    public void verifyAllOptionsListed() {
         Options opts = OptionCollection.buildOptions();
         StringWriter out = new StringWriter();
-        Help  help = new Help();
-        help.printUsage(new PrintWriter(out), opts);
+        new Help(out).printUsage(opts);
 
         String result = out.toString();
 
-        TextUtils.assertContains("-a ", result);
-        TextUtils.assertContains("-A,--addLicense ", result);
-        TextUtils.assertContains("-c,--copyright <arg> ", result);
-        TextUtils.assertContains("--config <File> ", result);
-        TextUtils.assertContains("--configuration-no-defaults", result);
-        TextUtils.assertContains("-d,--dir <DirOrArchive> ", result);
-        TextUtils.assertContains("--dry-run ", result);
-        TextUtils.assertContains("-e,--exclude <Expression> ", result);
-        TextUtils.assertContains("-E,--exclude-file <File> ", result);
-        TextUtils.assertContains("--edit-copyright <arg> ", result);
-        TextUtils.assertContains("--edit-license ", result);
-        TextUtils.assertContains("--edit-overwrite ", result);
-        TextUtils.assertContains("-f,--force ", result);
-        TextUtils.assertContains("-?,--help ", result);
-        TextUtils.assertContains("--input-exclude <Expression> ", result);
-        TextUtils.assertContains("--input-exclude-file <File> ", result);
-        TextUtils.assertContains("--license-families-approved <FamilyID> ", result);
-        TextUtils.assertContains("--license-families-approved-file <File> ", result);
-        TextUtils.assertContains("--license-families-denied <FamilyID> ", result);
-        TextUtils.assertContains("--license-families-denied-file <File> ", result);
-        TextUtils.assertContains("--licenses <File> ", result);
-        TextUtils.assertContains("--licenses-approved <LicenseID> ", result);
-        TextUtils.assertContains("--licenses-approved-file <File> ", result);
-        TextUtils.assertContains("--licenses-denied <LicenseID> ", result);
-        TextUtils.assertContains("--licenses-denied-file <File> ", result);
-        TextUtils.assertContains("--list-families <LicenseFilter> ", result);
-        TextUtils.assertContains("--list-licenses <LicenseFilter> ", result);
-        TextUtils.assertContains("--log-level <LogLevel> ", result);
-        TextUtils.assertContains("--no-default-licenses ", result);
-        TextUtils.assertContains("-o,--out <File> ", result);
-        TextUtils.assertContains("--output-archive <ProcessingType> ", result);
-        TextUtils.assertContains("--output-families <LicenseFilter> ", result);
-        TextUtils.assertContains("--output-file <File> ", result);
-        TextUtils.assertContains("--output-licenses <LicenseFilter> ", result);
-        TextUtils.assertContains("--output-standard <ProcessingType> ", result);
-        TextUtils.assertContains("--output-style <StyleSheet> ", result);
-        TextUtils.assertContains("-s,--stylesheet <StyleSheet> ", result);
-        TextUtils.assertContains("--scan-hidden-directories ", result);
-        TextUtils.assertContains("-x,--xml ", result);
-        TextUtils.assertPatternInTarget("^<DirOrArchive>", result);
-        TextUtils.assertPatternInTarget("^<Expression>", result);
-        TextUtils.assertPatternInTarget("^<FamilyID>", result);
-        TextUtils.assertPatternInTarget("^<File>", result);
-        TextUtils.assertPatternInTarget("^<LicenseFilter>", result);
-        TextUtils.assertPatternInTarget("^<LicenseID>", result);
-        TextUtils.assertPatternInTarget("^<ProcessingType>", result);
-        TextUtils.assertPatternInTarget("^<StyleSheet>", result);
+        for (Option option : opts.getOptions()) {
+            if (option.getOpt() != null) {
+                TextUtils.assertContains("-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","), result);
+            }
+            if (option.getLongOpt() != null) {
+                TextUtils.assertContains("--" + option.getLongOpt() + " ", result);
+            }
+        }
+    }
+
+    @Test
+    public void verifyArgumentsListed() {
+        Options opts = OptionCollection.buildOptions();
+        Set<String> argTypes = OptionCollection.getArgumentTypes().keySet();
+        StringWriter out = new StringWriter();
+        new Help(out).printUsage(opts);
+
+        String result = out.toString();
+
+        for (Option option : opts.getOptions()) {
+            if (option.getArgName() != null) {
+                assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument 's' is missing from list", option.getArgName()));
+                TextUtils.assertPatternInTarget(format("^<%s>", option.getArgName()), result);
+            }
+        }
     }
 }

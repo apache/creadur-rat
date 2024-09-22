@@ -681,7 +681,7 @@ public enum Arg {
      * @param optionToFind the Option to locate.
      * @return The Arg or {@code null} if no Arg is found.
      */
-    public static Arg findArg(Option optionToFind) {
+    public static Arg findArg(final Option optionToFind) {
         if (optionToFind != null) {
             for (Arg arg : Arg.values()) {
                 for (Option candidate : arg.group.getOptions()) {

@@ -1,0 +1,33 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+--------------------------
+XML Schema Definition
+--------------------------
+
+  There is a standard {{{./rat.xsd}Rat XSD file}} that describes the configuration file options and can be used to verify
+  any configuration file that only depends on the matchers shipped with Rat.
+
+  If new matchers are implemented and properly documented the system can generate the XSD for it as well. To generate
+  a XSD execute the following:
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar org.apache.rat.tools.xsd.XsdGenerator [options]
++------------------------------------------+
+
+  Where '[options]' are the options used to add the new definitions to Rat. Specifically these will include configurations
+  that define new matchers.

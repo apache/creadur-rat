@@ -16,27 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.mp;
+package org.apache.rat.tools;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.Builder;
-import org.apache.rat.config.parameters.MatcherBuilder;
-import org.apache.rat.configuration.builders.AllBuilder;
+import org.apache.commons.cli.DeprecatedAttributes;
+import org.apache.commons.cli.Option;
+import org.apache.rat.commandline.Arg;
+import org.apache.rat.testhelpers.TextUtils;
 
-public class All extends EnclosingMatcher implements IHeaderMatcher.Builder {
+import org.junit.jupiter.api.Test;
 
-    AllBuilder builder = Builder.all();
+public class MavenOptionTest {
 
-    public All() {
-    }
-
-    @Override
-    protected void setMatcher(IHeaderMatcher.Builder builder) {
-        this.builder.addEnclosed(builder);
-    }
-
-    @Override
-    public IHeaderMatcher build() {
-        return builder.build();
+    @Test
+    public void getDeprecatedTest() {
+        for (Option option : Arg.getOptions().getOptions()) {
+            if (option.isDeprecated()) {
+                MavenOption mavenOption = new MavenOption(option);
+                String deprecated = mavenOption.getDeprecated();
+                TextUtils.assertPatternNotInTarget("\\-\\- ", deprecated);
+            }
+        }
     }
 }

@@ -146,7 +146,7 @@
             </goals>
             <configuration>
               <executable>java</executable>
-              <outputFile>${project.basedir}/../src/site/apt/naming_help.txt</outputFile>
+              <outputFile>${project.basedir}/src/site/apt/name_xref.txt</outputFile>
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
@@ -165,12 +165,28 @@
             </goals>
             <configuration>
               <executable>java</executable>
-              <outputFile>${project.basedir}/../src/site/apt/license_help.txt</outputFile>
+              <outputFile>${project.basedir}/src/site/apt/default_licenses.txt</outputFile>
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
                 <argument>org.apache.rat.Report</argument>
                 <argument>--help-licenses</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>XSD generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <outputFile>${project.basedir}/target/site/rat.xsd</outputFile>
+              <arguments>
+                <argument>-cp</argument>
+                <argument>target/apache-rat-${project.version}.jar</argument>
+                <argument>org.apache.rat.tools.xsd.XsdGenerator</argument>
               </arguments>
             </configuration>
           </execution>
@@ -209,7 +225,7 @@
               <exclude>README-CLI.txt</exclude>
               <!-- files that are examples of output from the tool -->
               <exclude>src/site/examples/**</exclude>
-              <exclude>src/site/apt/cli_help.txt</exclude>
+              <exclude>src/site/apt/*.txt</exclude>
             </excludes>
           </configuration>
         </plugin>

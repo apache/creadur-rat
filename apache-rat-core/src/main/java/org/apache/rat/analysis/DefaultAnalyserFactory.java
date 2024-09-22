@@ -37,11 +37,13 @@ import org.apache.rat.walker.ArchiveWalker;
 /**
  * Creates default analysers.
  */
-public class DefaultAnalyserFactory {
+public final class DefaultAnalyserFactory {
 
+    private DefaultAnalyserFactory() {
+        // do not instantiate
+    }
     /**
      * Creates a DocumentAnalyser from a collection of ILicenses.
-     * 
      * @param configuration the ReportConfiguration
      * @return A document analyser that uses the provides licenses.
      */
@@ -58,7 +60,7 @@ public class DefaultAnalyserFactory {
     /**
      * A DocumentAnalyser a collection of licenses
      */
-    private final static class DefaultAnalyser implements IDocumentAnalyser {
+    private static final class DefaultAnalyser implements IDocumentAnalyser {
 
         /** The licenses to analyze */
         private final Collection<ILicense> licenses;
@@ -71,7 +73,7 @@ public class DefaultAnalyserFactory {
          * @param config the ReportConfiguration
          * @param licenses The licenses to analyse
          */
-        public DefaultAnalyser(ReportConfiguration config, final Collection<ILicense> licenses) {
+        DefaultAnalyser(final ReportConfiguration config, final Collection<ILicense> licenses) {
             this.licenses = licenses;
             this.configuration = config;
         }
@@ -81,7 +83,7 @@ public class DefaultAnalyserFactory {
          * @param proc the processing status to filter.
          * @return a Predicate to do the filtering.
          */
-        private  Predicate<ILicense> licenseFilter(ReportConfiguration.Processing proc)  {
+        private Predicate<ILicense> licenseFilter(final ReportConfiguration.Processing proc)  {
             return license -> {
                 switch (proc) {
                     case PRESENCE:
@@ -95,7 +97,7 @@ public class DefaultAnalyserFactory {
         }
 
         @Override
-        public void analyse(Document document) throws RatDocumentAnalysisException {
+        public void analyse(final Document document) throws RatDocumentAnalysisException {
 
             TikaProcessor.process(document);
             Predicate<ILicense> licensePredicate;

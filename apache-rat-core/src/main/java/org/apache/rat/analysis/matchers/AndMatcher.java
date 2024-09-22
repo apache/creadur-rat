@@ -24,6 +24,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
+import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
  * A matcher that performs a logical {@code AND} across all the contained

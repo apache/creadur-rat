@@ -42,13 +42,13 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
      * Constructs the HeaderAnalyser for the specific license.
      * @param licenses The licenses to analyse
      */
-    public DocumentHeaderAnalyser(final Collection<ILicense> licenses) {
+    DocumentHeaderAnalyser(final Collection<ILicense> licenses) {
         super();
         this.licenses = licenses;
     }
 
     @Override
-    public void analyse(Document document) {
+    public void analyse(final Document document) {
         try (Reader reader = document.reader()) {
             DefaultLog.getInstance().debug(format("Processing: %s", document));
             HeaderCheckWorker worker = new HeaderCheckWorker(reader, licenses, document);
@@ -61,5 +61,4 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
             document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
         }
     }
-
 }

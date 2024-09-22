@@ -16,19 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.configuration.builders;
-
-import org.apache.rat.analysis.matchers.AndMatcher;
-import org.apache.rat.config.parameters.MatcherBuilder;
-
 /**
- * Constructs an All matcher.
+ * Classes that update the files
  */
-@MatcherBuilder(AndMatcher.class)
-public class AllBuilder extends ChildContainerBuilder {
-
-    @Override
-    public AndMatcher build() {
-        return new AndMatcher(getId(), getEnclosed(), resource);
-    }
-}
+package org.apache.rat.annotation;
