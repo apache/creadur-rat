@@ -48,6 +48,10 @@ public abstract class AbstractOption {
         this.name = name;
     }
 
+    /**
+     * Return default value.
+     * @return default value or {@code null} if no argument given.
+     */
     public String getDefaultValue() {
         Arg arg = Arg.findArg(option);
         return arg == null ? null : arg.defaultValue();
@@ -56,7 +60,7 @@ public abstract class AbstractOption {
     abstract protected String cleanupName(final Option option);
 
     /**
-     * replaces CLI pattern options with Maven pattern options.
+     * Replaces CLI pattern options with Maven pattern options.
      * @param str the string to clean.
      * @return the string with CLI names replaced with Maven names.
      */
@@ -88,7 +92,7 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Get the description escaped for XML format.
+     * Gets the description escaped for XML format.
      *
      * @return the description or an empty string.
      */
@@ -114,7 +118,7 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Determins if the option is deprecated.
+     * Determines if the option is deprecated.
      * @return {@code true} if the option is deprecated
      */
     final public boolean isDeprecated() {
@@ -122,7 +126,7 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Determine if true if the enclosed option expects an argument.
+     * Determine if the enclosed option expects an argument.
      * @return {@code true} if the enclosed option expects at least one argument.
      */
     final public boolean hasArg() {
