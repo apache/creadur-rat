@@ -629,7 +629,7 @@ public final class XmlWriter implements IXmlWriter {
 
     /**
      * Closes back to and including the last instance of the specified element name.
-     * @param name The name of the element to close.  My not be {@code null}
+     * @param name The name of the element to close.  Must not be {@code null}.
      * @return this object
      * @throws OperationNotAllowedException if called before any call to
      * {@link #openElement} or after the first element has been closed
