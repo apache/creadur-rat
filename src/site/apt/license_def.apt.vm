@@ -137,5 +137,5 @@ How to define licenses in Apache Rat
  argument. This will produce a textual report of all the components.
 
  License definitions and license family definitions can be added to the XML output by using the <<<--output-licenses>>> and <<<--output-families>>> options.
- these options output directly to the XML and are ignored by the standard XSLT reports.  To see the output either a custom XSLT will need to be
+ These options output directly to the XML and are ignored by the standard XSLT reports.  To see the output either a custom XSLT will need to be
  created or use the <<<--output-style xml>>> option.

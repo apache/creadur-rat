@@ -56,7 +56,7 @@ public class XsdGenerator {
     private ReportConfiguration cfg;
     /** The XsdWriter being written to. */
     private XsdWriter writer;
-    /** AS map of component type to XML element name / property type */
+    /** A map of component type to XML element name / property type */
     private static Map<ComponentType, String> typeMap = new HashMap<ComponentType, String>();
 
     static {
