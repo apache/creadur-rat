@@ -213,7 +213,7 @@ public final class MavenGenerator {
     /**
      * Creates the Maven element name for the specified option.
      * @param option The option to process.
-     * @return the Maven based name.
+     * @return the Maven based name in camel-case syntax.
      */
     static String createName(final Option option) {
         String name = StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
