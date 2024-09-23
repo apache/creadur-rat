@@ -159,16 +159,6 @@ public final class OptionCollection {
             return null;
         }
 
-        if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
-            return null;
-        }
-
-        if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
-            return null;
-        }
-
         // DIR or end of command line can provide args.
         String[] clArgs = {null};
         List<String> lst = new ArrayList<>();

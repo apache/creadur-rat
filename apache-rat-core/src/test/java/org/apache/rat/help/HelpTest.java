@@ -58,7 +58,6 @@ public class HelpTest {
         StringWriter out = new StringWriter();
         new Help(out).printUsage(opts);
         String result = out.toString();
-        System.out.println(result);
 
         for (Option option : opts.getOptions()) {
             if (option.getArgName() != null) {

@@ -175,7 +175,7 @@
               <goal>java</goal>
             </goals>
             <configuration>
-                <mainClass>org.apache.rat.tools.Naming</mainClass>
+              <mainClass>org.apache.rat.tools.Naming</mainClass>
               <classpathScope>test</classpathScope>
               <arguments>
                 <argument>--maven</argument>
