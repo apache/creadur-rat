@@ -59,9 +59,8 @@ public final class AntDocumentation {
     private final ReportConfiguration config;
     private final File outputDir;
 
-
     /**
-     * Creates a apt documentation files for Ant.
+     * Creates apt documentation fileis for Ant.
      * Requires 1 argument:
      * <ol>
      *     <li>the directory in which to write the documentation files.</li>
@@ -100,7 +99,7 @@ public final class AntDocumentation {
                 System.exit(1);
             }
         }
-        // remove an excess arguments and create the configuration.
+        // remove any excess arguments and create the configuration.
         List<String> argsList = new ArrayList<>();
         argsList.addAll(Arrays.asList(args));
         argsList.removeAll(Arrays.asList(remainingArgs));
@@ -141,8 +140,8 @@ public final class AntDocumentation {
     public void writeAttributes(List<AntOption> options) {
         File f = new File(outputDir, "report_attributes.txt");
         try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
-            printOptions(out, options, AntOption::isAttribute,"The attribute value types are listed in a table at the " +
-                    "bottom of this page.");
+            printOptions(out, options, AntOption::isAttribute,
+                    "The attribute value types are listed in a table at the bottom of this page.");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -152,8 +151,8 @@ public final class AntDocumentation {
         File f = new File(outputDir, "report_elements.txt");
         try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
 
-            printOptions(out, options, AntOption::isElement, "The element value types are listed in a table at the " +
-                    "bottom of this page.");
+            printOptions(out, options, AntOption::isElement,
+                    "The element value types are listed in a table at the bottom of this page.");
 
         } catch (IOException e) {
             throw new RuntimeException(e);

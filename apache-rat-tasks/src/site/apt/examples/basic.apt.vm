@@ -118,7 +118,7 @@ java -jar apache-rat-${project.version}.jar --edit-license
 * Make Rat only detect your custom license and mark this license
   approved.
 
-  Create a configuration file containing only your definition(s)).
+  Create a configuration file containing only your definition(s).
 
 ---
 <rat:report addDefaultLicenseMatchers="false">
