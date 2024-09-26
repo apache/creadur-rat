@@ -25,8 +25,7 @@ Examples
   that provides the Report task in the XML namespace associated with
   the prefix <<<rat>>>.
 
-* Run Rat in default configuration on all files in directory
-  <<<src>>>.
+* Run Rat in default configuration on all files in directory <<<src>>>.
 
 ---
 <rat:report>
@@ -73,7 +72,29 @@ java -jar apache-rat-${project.version}.jar --edit-license
 </rat:report>
 ---
 
-* Create a styled HTML report
+* Create a styled report
+
+ There are two types of styled reports, both are activated by using the "outputStyled" attribute on the "rat:report" element.
+
+ The first is the standard report type.  This uses one of the standard reports shipped with Rat which are activated by setting the value of "outputStyled" to the name of the report.
+
+         *  plain-rat: The default style
+
+         * missing-headers: Produces a report of files that are missing headers
+
+         * unapproved-licenses: Produces a report of the files with unapproved licenses
+
+         * xml: The default style.
+
+ An example using the "unapproved-licenses" styling and writing it to a file called "rat-unapproved.txt" is:
+
+---
+<rat:report outputStyle="unapproved-licenses" outputFile="rat-unapproved.txt">
+    <fileset dir="src"/>
+</rat:report>
+---
+
+ The second type is the user defined XSLT.  In this case the user provides the path to the xslt document as shown below.  There is a report XSD and the standard report XSLT files are listed in the Rat Output documentation.  In the example below the user has provided a "rat-xml-2-html.xslt" transformation and the output will be written to "rat.html"
 
 ---
 <rat:report outputStyle="my/rat-xml-2-html.xslt" outputFile="rat.html">

@@ -96,11 +96,8 @@ Apache Rat&#8482;
 
 * Quick Start: Running Rat
 
-  Rat ships with a number of licenses, license families, and matcher definitions.  Additional definitions/implementations
-  of these objects may be added to the system as noted in {{{./license_def.html}}the license definition document}.  A
-  {{./apache-rat/default_licenses.html}}{list of default licenses} is also available.
-
-
+  There are three user interfaces for Rat: from the command line, from Ant, and from Maven.
+  All three of the interfaces {{{./apache-rat/name_xref.html}support standard options}}.
 
 ** Command Line
 
