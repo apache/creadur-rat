@@ -84,7 +84,7 @@ java -jar apache-rat-${project.version}.jar --edit-license
 
          * unapproved-licenses: Produces a report of the files with unapproved licenses
 
-         * xml: The default style.
+         * xml: Produces output in pretty-printed XML.
 
  An example using the "unapproved-licenses" styling and writing it to a file called "rat-unapproved.txt" is:
 
