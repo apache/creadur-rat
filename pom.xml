@@ -69,7 +69,10 @@ agnostic home for software distribution comprehension and audit tools.
   <distributionManagement>
     <site>
       <id>staging</id>
-      <url>file:bogus</url>
+      <!-- For the URL to resovle to the default URL as described in the Apache Site Plugin documentation this URL
+      must be invlaid.  A ticket is open to resovle this issue.  See  https://issues.apache.org/jira/browse/MSITE-1016
+      -->
+      <url>invalid:url</url>
     </site>
   </distributionManagement>
   <dependencyManagement>
