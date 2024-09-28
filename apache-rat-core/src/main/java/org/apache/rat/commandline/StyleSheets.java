@@ -33,19 +33,19 @@ public enum StyleSheets {
     /**
      * The plain style sheet. The current default.
      */
-    PLAIN("plain-rat", "The default style"),
+    PLAIN("plain-rat", "The default style."),
     /**
      * The missing header report style sheet
      */
-    MISSING_HEADERS("missing-headers", "Produces a report of files that are missing headers"),
+    MISSING_HEADERS("missing-headers", "Produces a report of files that are missing headers."),
     /**
      * The unapproved licenses report
      */
-    UNAPPROVED_LICENSES("unapproved-licenses", "Produces a report of the files with unapproved licenses"),
+    UNAPPROVED_LICENSES("unapproved-licenses", "Produces a report of the files with unapproved licenses."),
     /**
      * The plain style sheet. The current default.
      */
-    XML("xml", "Produces output in pretty-printed XML");
+    XML("xml", "Produces output in pretty-printed XML.");
     /**
      * The name of the style sheet. Must map to bundled resource xslt file
      */
