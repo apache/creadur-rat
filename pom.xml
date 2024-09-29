@@ -69,8 +69,8 @@ agnostic home for software distribution comprehension and audit tools.
   <distributionManagement>
     <site>
       <id>staging</id>
-      <!-- For the URL to resovle to the default URL as described in the Apache Site Plugin documentation this URL
-      must be invlaid.  A ticket is open to resovle this issue.  See  https://issues.apache.org/jira/browse/MSITE-1016
+      <!-- RAT-409: For the URL to resolve to the default URL as described in the Apache Site Plugin documentation this URL
+      must be invalid. A ticket is open to resolve this issue. See https://issues.apache.org/jira/browse/MSITE-1016
       -->
       <url>invalid:url</url>
     </site>
