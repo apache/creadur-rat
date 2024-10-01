@@ -182,7 +182,7 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Creates an Document name matcher that will return false on any
+     * Creates a Document name matcher that will return false on any
      * document that is excluded.
      * @param basedir the base directory to make everything relative to.
      * @return A container of files, which are being checked.
@@ -265,9 +265,7 @@ public class ExclusionProcessor {
      * @return The matcher
      */
     TraceableDocumentNameMatcher makeMatcher(final Supplier<String> name, final MatchPatterns patterns, final DocumentName basedir) {
-        return TraceableDocumentNameMatcher.make(name, p -> {
-            return patterns.matches(p.name(), MatchPattern.tokenizePathToString(p.name(), basedir.dirSeparator()), basedir.isCaseSensitive());
-        });
+        return TraceableDocumentNameMatcher.make(name, p -> patterns.matches(p.name(), MatchPattern.tokenizePathToString(p.name(), basedir.dirSeparator()), basedir.isCaseSensitive()));
     }
 
 
