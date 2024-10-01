@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 # DEVHINT: RAT-302: Do not use modern JDK due to the javadoc problem; JDK8 and 16 are okay
-./mvnw clean site:site site:stage
+# DEVHINT: package build is required as site target requires access to the completed jar package.
+./mvnw clean package site site:stage
 cp -rvf target/staging/* ../creadur-site/rat/
 cp -rvf src/site/javadocFont/* ../creadur-site/rat/apidocs/
