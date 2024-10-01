@@ -155,7 +155,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>Maven help generation</id>
+            <id>Maven argument types generation</id>
             <phase>pre-site</phase>
             <goals>
               <goal>java</goal>
@@ -169,7 +169,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>Naming help generation</id>
+            <id>Maven options generation</id>
             <phase>pre-site</phase>
             <goals>
               <goal>java</goal>

@@ -96,8 +96,8 @@ Apache Rat&#8482;
 
 * Quick Start: Running Rat
 
-  There are three user interfaces for Rat: from the command line, from Ant, and from Maven.  All three of the interfaces
-  support standard options as noted in the list below.
+  There are three user interfaces for Rat: from the command line, from Ant, and from Maven.
+  All three of the interfaces {{{./apache-rat/name_xref.html}support standard options}}.
 
 ** Command Line
 

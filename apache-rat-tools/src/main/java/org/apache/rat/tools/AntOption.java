@@ -58,7 +58,7 @@ public class AntOption extends AbstractOption{
     protected String cleanupName(Option option) {
         AntOption antOption = new AntOption(option);
         String fmt = antOption.isAttribute() ? "%s attribute" : "<%s>";
-        return  format(fmt, MavenGenerator.createName(option));
+        return  format(fmt, AntGenerator.createName(option));
     }
 
     /**

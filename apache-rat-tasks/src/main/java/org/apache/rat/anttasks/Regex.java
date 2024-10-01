@@ -22,6 +22,11 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.SimpleRegexMatcher;
 import org.apache.rat.configuration.builders.RegexBuilder;
 
+/**
+ * Creates a Regex matcher.
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class Regex implements IHeaderMatcher.Builder {
 
     private final RegexBuilder builder = new RegexBuilder();

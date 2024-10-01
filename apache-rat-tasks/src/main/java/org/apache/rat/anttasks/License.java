@@ -25,6 +25,11 @@ import java.util.SortedSet;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ * Creates a License definition.
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class License {
 
     private final ILicense.Builder builder = ILicense.builder();

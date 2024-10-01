@@ -22,6 +22,11 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.configuration.builders.NotBuilder;
 
+/**
+ * Creates a Not matcher.
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class Not implements IHeaderMatcher.Builder {
 
     private final NotBuilder builder = Builder.not();

@@ -57,7 +57,6 @@ public class HelpTest {
         Set<String> argTypes = OptionCollection.getArgumentTypes().keySet();
         StringWriter out = new StringWriter();
         new Help(out).printUsage(opts);
-
         String result = out.toString();
 
         for (Option option : opts.getOptions()) {

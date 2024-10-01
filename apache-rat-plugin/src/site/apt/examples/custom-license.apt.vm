@@ -31,7 +31,7 @@ Custom License Matchers
   Unlike earlier version (before 0.16) no custom implementations are required to define
   custom licenses.
 
-  There is a file that defines all of the standard licenses: {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}
+  There is a file that defines all of the standard licenses: {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}
 
   Please be aware that custom licenses need to have <<unique names>>, otherwise a warning is issued and your custom definitions are ignored in favour of the standard license definitions.
 

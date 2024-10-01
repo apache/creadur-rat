@@ -61,6 +61,15 @@
       <item name="Option Name Cross Reference" href="apache-rat/name_xref.html" />
       <item name="Default Licenses, etc" href="apache-rat/default_licenses.html" />
       <item name="Configuration XSD" href="apache-rat/xsd.html" />
+      <item name="Default Configuration" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml" />
+    </menu>
+
+    <menu name="Rat Output" inherit="bottom">
+      <item name="Standard Output Example" href="apache-rat/output/example.html"/>
+      <item name="Output XSD" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/rat-report.xsd" />
+      <item name ="XSLT - Plain text" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl" />
+      <item name ="XSLT - Missing headers list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl" />
+      <item name ="XSLT - Unapproved licenses list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl" />
     </menu>
 
     <menu name="Apache Creadur&#8482;" inherit="bottom">

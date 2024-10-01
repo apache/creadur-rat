@@ -21,6 +21,11 @@ package org.apache.rat.anttasks;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.configuration.builders.TextBuilder;
 
+/**
+ * Creates a text matcher.
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class Text implements IHeaderMatcher.Builder {
     
     private final TextBuilder builder = new TextBuilder();

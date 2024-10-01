@@ -21,7 +21,7 @@
 
 How to define matchers in Apache Rat
 
- Matchers in Apache Rat are paired with builders.  A matcher must implement the {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/IHeaderMatcher.java}IHeaderMatcher}}
+ Matchers in Apache Rat are paired with builders.  A matcher must implement the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/IHeaderMatcher.java}IHeaderMatcher}}
  interface and its associated builder must implement the IHeaderMatcher.Builder interface.
 
 * A simple example
@@ -29,12 +29,12 @@ How to define matchers in Apache Rat
 ** The Matcher implementation
 
  For our example we will implement a Matcher that implements the phrase "Quality, speed and cost, pick any two” by looking for the occurrence of all three words anywhere in the header.  
- In most cases is it simplest to extend the {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AbstractHeaderMatcher.java}AbstractHeaderMatcher}}
+ In most cases is it simplest to extend the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AbstractHeaderMatcher.java}AbstractHeaderMatcher}}
  class as this class will handle setting of the unique id for instances that do not otherwise have a unique id.
 
 
  So lets start by creating our matcher class and implementing the matches method.  The matches method takes an 
- {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/IHeaders.java}IHeaders}} argument.  IHeaders is an object that contains the header text in two formats:
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/IHeaders.java}IHeaders}} argument.  IHeaders is an object that contains the header text in two formats:
  
   * raw - just as read from the file.
   
@@ -63,7 +63,7 @@ public class QSCMatcher extends AbstractHeaderMatcher {
 }
 +------------------------------------------+
 
- In the above example we use the {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/config/parameters/ConfigComponent.java}ConfigComponent}} annotation to 
+ In the above example we use the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/config/parameters/ConfigComponent.java}ConfigComponent}} annotation to
  identify that this is a MATCHER component, that it has the name 'QSC' and a description of what it does.  
  If the "name" was not specified the name would have been extracted from the class name by removing the "Matcher" from "QSCMatcher" and making the first character lowercase: "qSC".
 
@@ -79,7 +79,7 @@ public class QSCMatcher extends AbstractHeaderMatcher {
   The builder must implement the IHeaderMatcher.Builder interface.
 
   The work of handling the id and some other tasks is handled by the 
-  {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/configuration/builders/AbstractBuilder.java}AbstractBuilder}}.
+  {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/configuration/builders/AbstractBuilder.java}AbstractBuilder}}.
   
   So we have:
 
@@ -228,11 +228,11 @@ public class TPBuilder extends AbstractBuilder {
 * Embedded matchers.
 
  It is possible to create matchers that embed other matchers.  The examples in the codebase are the 
- {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AndMatcher.java}All}}, 
- {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/OrMatcher.java}Any}} and 
- {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/NotMatcher.java}Not}} matchers and their associated builders.  As an 
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AndMatcher.java}All}},
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/OrMatcher.java}Any}} and
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/NotMatcher.java}Not}} matchers and their associated builders.  As an
  example we will build a "Highlander" matcher that will be true if one and only one enclosed matcher is true; there can be only one.  The Highlander matcher will extend 
- {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AbstractMatcherContainer}AbstractMatcherContainer}} which will handle the
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AbstractMatcherContainer}AbstractMatcherContainer}} which will handle the
  enclosed resources and the option of reading text matchers from a file.
  
 +------------------------------------------+
@@ -269,7 +269,7 @@ public class HighlanderMatcher extends AbstractMatcherContainer {
 +------------------------------------------+  
  
  We create a simple builder that extends 
- {{{https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/configuration/builders/ChildContainerBuilder.java}ChildContainerBuilder}}
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/configuration/builders/ChildContainerBuilder.java}ChildContainerBuilder}}
  which will handle setting the id, enclosed matchers, and the resource.
  
 +------------------------------------------+
@@ -319,5 +319,3 @@ Add the above to the configuration and we have:
  The last "license" entry does not have an id or name set so it will have the id of "Joke" and the name of "A joke license" inherited from the family.
  
  Since there is no "approved" section of the rat-conf all the licenses are assumed to be approved.
-
-

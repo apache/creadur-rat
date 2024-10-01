@@ -72,6 +72,9 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-383" type="add" dev="claudenw">
+        As part of the usage the harmonization generation of Ant documentation was added.
+      </action>
       <action issue="RAT-409" type="fix" dev="claudenw">
         Clarify how our site is generated and adapt Maven build lifecycles and parameters accordingly to include package phase.
       </action>

@@ -135,17 +135,45 @@
               <goal>java</goal>
             </goals>
             <phase>generate-sources</phase>
+            <configuration>
+              <classpathScope>test</classpathScope>
+              <mainClass>org.apache.rat.tools.AntGenerator</mainClass>
+              <arguments>
+                <argument>org.apache.rat.anttasks</argument>
+                <argument>BaseAntTask</argument>
+                <argument>${project.build.directory}/generated/src/main/java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Ant argument types generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.apache.rat.tools.ArgumentTypes</mainClass>
+              <classpathScope>test</classpathScope>
+              <arguments>
+                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Ant documentation generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.apache.rat.tools.AntDocumentation</mainClass>
+              <classpathScope>test</classpathScope>
+              <arguments>
+                <argument>${project.basedir}/src/site/apt/</argument>
+              </arguments>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <classpathScope>test</classpathScope>
-          <mainClass>org.apache.rat.tools.AntGenerator</mainClass>
-          <arguments>
-            <argument>org.apache.rat.anttasks</argument>
-            <argument>BaseAntTask</argument>
-            <argument>${project.build.directory}/generated/src/main/java</argument>
-          </arguments>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

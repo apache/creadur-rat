@@ -126,6 +126,14 @@ public abstract class AbstractOption {
     }
 
     /**
+     * Determines if the option is required.
+     * @return {@code true} if the option is required.
+     */
+    final public boolean isRequired() {
+        return option.isRequired();
+    }
+
+    /**
      * Determine if the enclosed option expects an argument.
      * @return {@code true} if the enclosed option expects at least one argument.
      */

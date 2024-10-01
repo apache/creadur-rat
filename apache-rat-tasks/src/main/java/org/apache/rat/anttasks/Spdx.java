@@ -21,6 +21,11 @@ package org.apache.rat.anttasks;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.configuration.builders.SpdxBuilder;
 
+/**
+ * Creates a SPDX matcher.
+ * @deprecated use configuration file.
+ */
+@Deprecated // since 0.17
 public class Spdx implements IHeaderMatcher.Builder  {
     
     private final SpdxBuilder builder = new SpdxBuilder();
