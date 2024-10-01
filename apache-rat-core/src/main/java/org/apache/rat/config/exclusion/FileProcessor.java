@@ -18,8 +18,6 @@
  */
 package org.apache.rat.config.exclusion;
 
-import java.io.File;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -27,8 +25,6 @@ import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.utils.iterator.WrappedIterator;
-
-import static java.lang.String.format;
 
 /**
  * An interface that defines the FileProcessor.  The file priocessor reads the file specified in the DocumentName.

@@ -155,6 +155,7 @@ public final class ExclusionUtils {
             return WrappedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
         } catch (FileNotFoundException e) {
             throw new ConfigurationException(format("%s is not a valid file.",patternFile));
+        }
     }
 
     /**
@@ -198,42 +199,14 @@ public final class ExclusionUtils {
      * @param f the file to check.
      * @return true if it is the name of a hidden file.
      */
-    public static boolean isHidden(File f) {
+    public static boolean isHidden(final File f) {
         String s = f.getName();
         return s.startsWith(".") && !(s.equals(".") || s.equals(".."));
     }
 
-    private static void verifyFile(File file) {
+    private static void verifyFile(final File file) {
         if (file == null || !file.exists() || !file.isFile()) {
             throw new ConfigurationException(format("%s is not a valid file.", file));
-        }
-    }
-
-    /**
-     * Creates an iterator of Strings from a file of patterns.
-     * Removes comment lines.
-     * @param patternFile the file to read.
-     * @param commentPrefix the prefix string for comments.
-     * @return the iterable of Strings from the file.
-     */
-    public static ExtendedIterator<String> asIterator(final File patternFile, String commentPrefix) {
-        return asIterator(patternFile, commentFilter(commentPrefix));
-    }
-
-    /**
-     * Creates an iterator of Strings from a file of patterns.
-     * Removes comment lines.
-     * @param patternFile the file to read.
-     * @param commentFilters A predicate return true for non-comment lines
-     * @return the iterable of Strings from the file.
-     */
-    public static ExtendedIterator<String> asIterator(final File patternFile, final Predicate<String> commentFilters) {
-        validatePatternFile(patternFile);
-        Objects.requireNonNull(commentFilters, "commentFilters");
-        try {
-            return WrappedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
-        } catch (FileNotFoundException e) {
-            throw new ConfigurationException(format( "%s is not a valid file.",patternFile));
         }
     }
 

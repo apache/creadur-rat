@@ -44,7 +44,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.DeprecationReporter;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.help.AbstractHelp;
 

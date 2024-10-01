@@ -18,11 +18,6 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.io.File;
-import java.util.List;
-
-import org.apache.rat.config.exclusion.ExclusionUtils;
-import org.apache.rat.config.exclusion.FileProcessor;
 import org.apache.rat.document.impl.DocumentName;
 
 /**

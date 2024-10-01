@@ -18,19 +18,12 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.rat.ConfigurationException;
-import org.apache.rat.config.exclusion.FileProcessor;
 import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.iterator.ExtendedIterator;
 
 import static java.lang.String.format;
 

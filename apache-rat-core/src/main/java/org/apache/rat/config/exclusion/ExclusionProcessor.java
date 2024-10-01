@@ -18,12 +18,10 @@
  */
 package org.apache.rat.config.exclusion;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
@@ -36,7 +34,6 @@ import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
 import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.iterator.WrappedIterator;
-import org.apache.rat.utils.iterator.ExtendedIterator;
 
 import static java.lang.String.format;
 

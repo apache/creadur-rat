@@ -24,7 +24,6 @@ import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.utils.DefaultLog;
 import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;

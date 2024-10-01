@@ -20,7 +20,6 @@ package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
@@ -32,7 +31,6 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.FileProcessor;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.impl.DocumentName;
 
 /**

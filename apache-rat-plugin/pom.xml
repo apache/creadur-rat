@@ -175,38 +175,10 @@
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.apache.rat.tools.ArgumentTypes</mainClass>
-              <classpathScope>test</classpathScope>
-              <arguments>
-                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>Naming help generation</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>org.apache.rat.tools.ArgumentTypes</mainClass>
-              <classpathScope>test</classpathScope>
-              <arguments>
-                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>Naming help generation</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
               <mainClass>org.apache.rat.tools.Naming</mainClass>
               <classpathScope>test</classpathScope>
               <arguments>
-                <arguments>--maven</arguments>
+                <argument>--maven</argument>
                 <argument>${project.basedir}/src/site/apt/options.txt</argument>
               </arguments>
             </configuration>

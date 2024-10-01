@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.utils.DefaultLog;
@@ -58,7 +59,6 @@ public final class AntDocumentation {
     private final ReportConfiguration config;
     /** The directory to write to. */
     private final File outputDir;
-
 
     /**
      * Creates apt documentation files for Ant.
