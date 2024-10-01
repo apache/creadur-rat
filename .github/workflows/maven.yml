@@ -68,4 +68,4 @@ jobs:
         run: ./mvnw -e -B -V -ntp javadoc:javadoc
 
       - name: Build site
-        run: ./mvnw -e -B -V -ntp site
+        run: ./mvnw -e -B -V -ntp site site:stage
