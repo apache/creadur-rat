@@ -18,9 +18,11 @@
  */
 package org.apache.rat;
 
+import java.io.PrintWriter;
+
 import org.apache.commons.cli.Options;
-import org.apache.rat.help.Help;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.help.Help;
 
 /**
  * The CLI based configuration object for report generation.

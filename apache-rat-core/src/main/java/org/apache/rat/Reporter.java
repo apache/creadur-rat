@@ -29,6 +29,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -131,7 +132,7 @@ public class Reporter {
      *
      * @param stylesheet the style sheet to use for XSLT formatting, may be null for XML output.
      * @param output the output stream to write to.
-     * @throws RatException on error.
+     * @throws RatException one error.
      */
     public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
         init();
