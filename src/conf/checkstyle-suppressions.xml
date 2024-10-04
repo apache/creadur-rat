@@ -42,4 +42,8 @@
   <suppress checks="HideUtilityClassConstructor" files="OptionValidator.java" />
   <suppress checks="HideUtilityClassConstructor" files="Util.java" />
 
+  <!-- Suppress magic numbers in XMLWriter code -->
+  <suppress checks="MagicNumber|JavadocVariable" files="XmlWriter.java" />
+
+
 </suppressions>
