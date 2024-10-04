@@ -22,9 +22,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.List;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
@@ -38,15 +38,28 @@ import org.apache.rat.document.impl.DocumentName;
  * localized for the fileName.
  */
 public class DescendingFileProcessor implements FileProcessor {
+    /** The name of the file being processed */
     private final String fileName;
+    /** the predicate that will return {@code false} for any comment line in the file. */
     protected final Predicate<String> commentFilter;
+    /** The system dependant file name separator.  e.g. "/" on linux. */
     protected final String separator;
 
-    public DescendingFileProcessor(String fileName, String commentPrefix) {
+    /**
+     * Constructor.
+     * @param fileName The name of the file to process.
+     * @param commentPrefix the compent prefix
+     */
+    public DescendingFileProcessor(final String fileName, final String commentPrefix) {
         this(fileName, commentPrefix == null ? null : Collections.singletonList(commentPrefix), null);
     }
 
-    public DescendingFileProcessor(String fileName, Iterable<String> commentPrefixes) {
+    /**
+     * Constructor.
+     * @param fileName name of the file to process
+     * @param commentPrefixes a collection of comment prefixes.
+     */
+    public DescendingFileProcessor(final String fileName, final Iterable<String> commentPrefixes) {
         this(fileName, commentPrefixes, null);
     }
 
@@ -56,7 +69,7 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param commentPrefixes the list of commong prefixes
      * @param separator the file separator string. (e.g. "/")
      */
-    DescendingFileProcessor(String fileName, Iterable<String> commentPrefixes, String separator) {
+    DescendingFileProcessor(final String fileName, final Iterable<String> commentPrefixes, final String separator) {
         this.fileName = fileName;
         this.commentFilter = commentPrefixes == null ? StringUtils::isNotBlank : ExclusionUtils.commentFilter(commentPrefixes);
         this.separator = StringUtils.isEmpty(separator) ? File.separator : separator;
@@ -74,7 +87,7 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param documentName the file to read.
      * @return the list of properly formatted patterns
      */
-    protected List<String> process(DocumentName documentName) {
+    protected List<String> process(final DocumentName documentName) {
         return ExclusionUtils.asIterator(new File(documentName.name()), commentFilter)
                 .map(entry -> modifyEntry(documentName, entry))
                 .filter(Objects::nonNull)
@@ -89,7 +102,7 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param filter the filter.
      * @return a list of files.  May be empty but will not be null.
      */
-    private File[] listFiles(File dir, FileFilter filter) {
+    private File[] listFiles(final File dir, final FileFilter filter) {
         File[] result = dir.listFiles(filter);
         return result == null ? new File[0] : result;
     }
@@ -101,11 +114,10 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param fileFilter the filter to detect processable files with.
      * @return the list of fully qualified file patterns.
      */
-    private List<String> checkdirectory(DocumentName directory, FileFilter fileFilter) {
+    private List<String> checkdirectory(final DocumentName directory, final FileFilter fileFilter) {
         List<String> fileNames = new ArrayList<>();
         File dirFile = new File(directory.name());
-        for (File f : listFiles(dirFile, fileFilter))
-        {
+        for (File f : listFiles(dirFile, fileFilter)) {
             fileNames.addAll(process(new DocumentName(f, directory)));
         }
         for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
@@ -115,7 +127,7 @@ public class DescendingFileProcessor implements FileProcessor {
     }
 
     @Override
-    public List<String> apply(DocumentName dir) {
+    public List<String> apply(final DocumentName dir) {
        return checkdirectory(dir, new NameFileFilter(fileName));
     }
 }

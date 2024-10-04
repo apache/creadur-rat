@@ -16,30 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.config.exclusion.fileProcessors;
-
-import org.apache.rat.document.impl.DocumentName;
-
-import static java.lang.String.format;
-
 /**
- * A processor for {@code .bzignore} files.
+ * Custom file processors to handles exlcusion defined in various formats.
  */
-public final class BazaarIgnoreProcessor extends DescendingFileProcessor {
-    /**
-     * Constructor.
-     */
-    public BazaarIgnoreProcessor() {
-        super(".bzignore", "#");
-    }
-
-    @Override
-    public String modifyEntry(final DocumentName baseName, final String entry) {
-        if (entry.startsWith("RE:")) {
-            String line = entry.substring("RE:".length()).trim();
-            String pattern = line.startsWith("^") ? line.substring(1) : line;
-            return format(REGEX_FMT, pattern);
-        }
-        return entry;
-    }
-}
+package org.apache.rat.config.exclusion.fileProcessors;

@@ -27,30 +27,46 @@ import org.apache.rat.document.impl.DocumentName;
 
 import static java.lang.String.format;
 
-public class HgIgnoreProcessor extends DescendingFileProcessor {
-    enum Type {REGEXP, GLOB};
+/**
+ * A processor for the {@code .hdignore} files.
+ */
+public final class HgIgnoreProcessor extends DescendingFileProcessor {
+    /**
+     * The state enumeration for the processor.  When processing the file the processor changes
+     * syntax state depending on the input.
+     */
+    enum Syntax {
+        /** Regular expression processing */
+        REGEXP,
+        /** Glob processing */
+        GLOB };
+    /** The line that changes the syntax processing state.*/
     private static final Pattern SYNTAX_CHECK = Pattern.compile("^\\s?syntax:\\s+(glob|regexp)\\s?");
-    private Type state;
+    /** the syntax state */
+    private Syntax state;
 
+    /**
+     * Constructs the .hgignore processor.
+     */
     public HgIgnoreProcessor() {
         super(".hgignore", "#");
-        state = Type.REGEXP;
+        state = Syntax.REGEXP;
     }
 
     @Override
-    protected List<String> process(DocumentName baseName) {
-        state = Type.REGEXP;
+    protected List<String> process(final DocumentName baseName) {
+        state = Syntax.REGEXP;
         return super.process(baseName);
     }
 
     @Override
-    public String modifyEntry(DocumentName baseName, String entry) {
+    public String modifyEntry(final DocumentName baseName, final String entry) {
         Matcher m = SYNTAX_CHECK.matcher(entry.toLowerCase(Locale.ROOT));
         if (m.matches()) {
-            state = Type.valueOf(m.group(1).toUpperCase());
+            state = Syntax.valueOf(m.group(1).toUpperCase());
             return null;
         }
-        if (state == Type.REGEXP) {
+        if (state == Syntax.REGEXP) {
             String pattern = entry.startsWith("^") ? entry.substring(1) : ".*" + entry;
             return format(REGEX_FMT, pattern);
         }
