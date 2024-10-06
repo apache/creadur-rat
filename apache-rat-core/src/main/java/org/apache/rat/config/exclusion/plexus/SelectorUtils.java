@@ -70,12 +70,11 @@ import java.util.StringTokenizer;
  * <p>This is a Singleton.</p>
  * <p>Based on code from plexus-utils.</p>
  *
- * @see <a href="https://github.com/codehaus-plexus/plexus-utils/blob/master/src/main/java/org/codehaus/plexus/util/SelectorUtils.java">
- *     plexus-utils SelectorUtils</a>
  * @author Arnout J. Kuiper <a href="mailto:ajkuiper@wxs.nl">ajkuiper@wxs.nl</a>
  * @author Magesh Umasankar
  * @author <a href="mailto:bruce@callenish.com">Bruce Atherton</a>
- *
+ * @see <a href="https://github.com/codehaus-plexus/plexus-utils/blob/master/src/main/java/org/codehaus/plexus/util/SelectorUtils.java">
+ * plexus-utils SelectorUtils</a>
  */
 public final class SelectorUtils {
 
@@ -87,18 +86,19 @@ public final class SelectorUtils {
 
     public static final String ANT_HANDLER_PREFIX = "%ant" + PATTERN_HANDLER_PREFIX;
 
-    private static SelectorUtils instance = new SelectorUtils();
+    private static final SelectorUtils INSTANCE = new SelectorUtils();
 
     /**
      * Private Constructor
      */
-    private SelectorUtils() {}
+    private SelectorUtils() {
+    }
 
     /**
      * @return Retrieves the manager of the Singleton.
      */
     public static SelectorUtils getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     /**
@@ -111,7 +111,7 @@ public final class SelectorUtils {
      * @param str The path to match, as a String. Must not be <code>null</code>.
      * @return whether or not a given path matches the start of a given pattern up to the first "**".
      */
-    public static boolean matchPatternStart(String pattern, String str) {
+    public static boolean matchPatternStart(final String pattern, final String str) {
         return matchPatternStart(pattern, str, true);
     }
 
@@ -126,33 +126,31 @@ public final class SelectorUtils {
      * @param isCaseSensitive Whether or not matching should be performed case sensitively.
      * @return whether or not a given path matches the start of a given pattern up to the first "**".
      */
-    public static boolean matchPatternStart(String pattern, String str, boolean isCaseSensitive) {
+    public static boolean matchPatternStart(final String pattern, final String str, final boolean isCaseSensitive) {
         if (isRegexPrefixedPattern(pattern)) {
             // FIXME: ICK! But we can't do partial matches for regex, so we have to reserve judgement until we have
             // a file to deal with, or we can definitely say this is an exclusion...
             return true;
-        } else {
-            if (isAntPrefixedPattern(pattern)) {
-                pattern = pattern.substring(
-                        ANT_HANDLER_PREFIX.length(), pattern.length() - PATTERN_HANDLER_SUFFIX.length());
-            }
-
-            String altStr = str.replace('\\', '/');
-
-            return matchAntPathPatternStart(pattern, str, File.separator, isCaseSensitive)
-                    || matchAntPathPatternStart(pattern, altStr, "/", isCaseSensitive);
         }
+        String workingPattern = isAntPrefixedPattern(pattern) ?
+            pattern.substring(ANT_HANDLER_PREFIX.length(), pattern.length() - PATTERN_HANDLER_SUFFIX.length())
+                : pattern;
+
+        String altStr = str.replace('\\', '/');
+
+        return matchAntPathPatternStart(workingPattern, str, File.separator, isCaseSensitive)
+                || matchAntPathPatternStart(workingPattern, altStr, "/", isCaseSensitive);
+
     }
 
-    public static boolean isAntPrefixedPattern(String pattern) {
+    public static boolean isAntPrefixedPattern(final String pattern) {
         return pattern.length() > (ANT_HANDLER_PREFIX.length() + PATTERN_HANDLER_SUFFIX.length() + 1)
                 && pattern.startsWith(ANT_HANDLER_PREFIX)
                 && pattern.endsWith(PATTERN_HANDLER_SUFFIX);
     }
 
     @SuppressWarnings("SimplifiableIfStatement")
-    static boolean matchAntPathPatternStart(
-            MatchPattern pattern, String str, String separator, boolean isCaseSensitive) {
+    static boolean matchAntPathPatternStart(final MatchPattern pattern, final String str, final String separator, final boolean isCaseSensitive) {
         if (separatorPatternStartSlashMismatch(pattern, str, separator)) {
             return false;
         }
@@ -160,7 +158,7 @@ public final class SelectorUtils {
         return matchAntPathPatternStart(pattern.getTokenizedPathString(), str, separator, isCaseSensitive);
     }
 
-    static boolean matchAntPathPatternStart(String pattern, String str, String separator, boolean isCaseSensitive) {
+    static boolean matchAntPathPatternStart(final String pattern, final String str, final String separator, final boolean isCaseSensitive) {
         // When str starts with a File.separator, pattern has to start with a
         // File.separator.
         // When pattern starts with a File.separator, str has to start with a
@@ -177,15 +175,15 @@ public final class SelectorUtils {
     // File.separator.
     // When pattern starts with a File.separator, str has to start with a
     // File.separator.
-    private static boolean separatorPatternStartSlashMismatch(String pattern, String str, String separator) {
+    private static boolean separatorPatternStartSlashMismatch(final String pattern, final String str, final String separator) {
         return str.startsWith(separator) != pattern.startsWith(separator);
     }
 
-    private static boolean separatorPatternStartSlashMismatch(MatchPattern matchPattern, String str, String separator) {
+    private static boolean separatorPatternStartSlashMismatch(final MatchPattern matchPattern, final String str, final String separator) {
         return str.startsWith(separator) != matchPattern.startsWith(separator);
     }
 
-    static boolean matchAntPathPatternStart(String[] patDirs, String str, String separator, boolean isCaseSensitive) {
+    static boolean matchAntPathPatternStart(final String[] patDirs, final String str, final String separator, final boolean isCaseSensitive) {
         String[] strDirs = tokenizePathToString(str, separator);
 
         int patIdxStart = 0;
@@ -216,7 +214,7 @@ public final class SelectorUtils {
      * @param str The path to match, as a String. Must not be <code>null</code>.
      * @return <code>true</code> if the pattern matches against the string, or <code>false</code> otherwise.
      */
-    public static boolean matchPath(String pattern, String str) {
+    public static boolean matchPath(final String pattern, final String str) {
         return matchPath(pattern, str, true);
     }
 
@@ -228,11 +226,11 @@ public final class SelectorUtils {
      * @param isCaseSensitive Whether or not matching should be performed case sensitively.
      * @return <code>true</code> if the pattern matches against the string, or <code>false</code> otherwise.
      */
-    public static boolean matchPath(String pattern, String str, boolean isCaseSensitive) {
+    public static boolean matchPath(final String pattern, final String str, final boolean isCaseSensitive) {
         return matchPath(pattern, str, File.separator, isCaseSensitive);
     }
 
-    public static String extractPattern(String pattern, String separator) {
+    public static String extractPattern(final String pattern, final String separator) {
         if (isRegexPrefixedPattern(pattern)) {
             return pattern.substring(
                     REGEX_HANDLER_PREFIX.length(), pattern.length() - PATTERN_HANDLER_SUFFIX.length());
@@ -243,7 +241,8 @@ public final class SelectorUtils {
             return toOSRelatedPath(localPattern, separator);
         }
     }
-    public static boolean matchPath(String pattern, String str, String separator, boolean isCaseSensitive) {
+
+    public static boolean matchPath(final String pattern, final String str, final String separator, final boolean isCaseSensitive) {
         if (isRegexPrefixedPattern(pattern)) {
             String localPattern = pattern.substring(
                     REGEX_HANDLER_PREFIX.length(), pattern.length() - PATTERN_HANDLER_SUFFIX.length());
@@ -259,7 +258,7 @@ public final class SelectorUtils {
         }
     }
 
-    private static String toOSRelatedPath(String pattern, String separator) {
+    private static String toOSRelatedPath(final String pattern, final String separator) {
         if ("/".equals(separator)) {
             return pattern.replace("\\", separator);
         }
@@ -269,14 +268,13 @@ public final class SelectorUtils {
         return pattern;
     }
 
-    public static boolean isRegexPrefixedPattern(String pattern) {
+    public static boolean isRegexPrefixedPattern(final String pattern) {
         return pattern.length() > (REGEX_HANDLER_PREFIX.length() + PATTERN_HANDLER_SUFFIX.length() + 1)
                 && pattern.startsWith(REGEX_HANDLER_PREFIX)
                 && pattern.endsWith(PATTERN_HANDLER_SUFFIX);
     }
 
-    static boolean matchAntPathPattern(
-            MatchPattern matchPattern, String str, String separator, boolean isCaseSensitive) {
+    static boolean matchAntPathPattern(final MatchPattern matchPattern, final String str, final String separator, final boolean isCaseSensitive) {
         if (separatorPatternStartSlashMismatch(matchPattern, str, separator)) {
             return false;
         }
@@ -285,7 +283,7 @@ public final class SelectorUtils {
         return matchAntPathPattern(patDirs, strDirs, isCaseSensitive);
     }
 
-    static boolean matchAntPathPattern(String pattern, String str, String separator, boolean isCaseSensitive) {
+    static boolean matchAntPathPattern(final String pattern, final String str, final String separator, final boolean isCaseSensitive) {
         if (separatorPatternStartSlashMismatch(pattern, str, separator)) {
             return false;
         }
@@ -294,7 +292,7 @@ public final class SelectorUtils {
         return matchAntPathPattern(patDirs, strDirs, isCaseSensitive);
     }
 
-    static boolean matchAntPathPattern(String[] patDirs, String[] strDirs, boolean isCaseSensitive) {
+    static boolean matchAntPathPattern(final String[] patDirs, final String[] strDirs, final boolean isCaseSensitive) {
         int patIdxStart = 0;
         int patIdxEnd = patDirs.length - 1;
         int strIdxStart = 0;
@@ -364,8 +362,8 @@ public final class SelectorUtils {
             }
             // Find the pattern between padIdxStart & padIdxTmp in str between
             // strIdxStart & strIdxEnd
-            int patLength = (patIdxTmp - patIdxStart - 1);
-            int strLength = (strIdxEnd - strIdxStart + 1);
+            int patLength = patIdxTmp - patIdxStart - 1;
+            int strLength = strIdxEnd - strIdxStart + 1;
             int foundIdx = -1;
             strLoop:
             for (int i = 0; i <= strLength - patLength; i++) {
@@ -398,7 +396,7 @@ public final class SelectorUtils {
         return true;
     }
 
-    static boolean matchAntPathPattern(char[][] patDirs, char[][] strDirs, boolean isCaseSensitive) {
+    static boolean matchAntPathPattern(final char[][] patDirs, final char[][] strDirs, final boolean isCaseSensitive) {
         int patIdxStart = 0;
         int patIdxEnd = patDirs.length - 1;
         int strIdxStart = 0;
@@ -468,8 +466,8 @@ public final class SelectorUtils {
             }
             // Find the pattern between padIdxStart & padIdxTmp in str between
             // strIdxStart & strIdxEnd
-            int patLength = (patIdxTmp - patIdxStart - 1);
-            int strLength = (strIdxEnd - strIdxStart + 1);
+            int patLength = patIdxTmp - patIdxStart - 1;
+            int strLength = strIdxEnd - strIdxStart + 1;
             int foundIdx = -1;
             strLoop:
             for (int i = 0; i <= strLength - patLength; i++) {
@@ -502,7 +500,7 @@ public final class SelectorUtils {
         return true;
     }
 
-    private static boolean isDoubleStar(char[] patDir) {
+    private static boolean isDoubleStar(final char[] patDir) {
         return patDir != null && patDir.length == 2 && patDir[0] == '*' && patDir[1] == '*';
     }
 
@@ -515,7 +513,7 @@ public final class SelectorUtils {
      * @param str The string which must be matched against the pattern. Must not be <code>null</code>.
      * @return <code>true</code> if the string matches against the pattern, or <code>false</code> otherwise.
      */
-    public static boolean match(String pattern, String str) {
+    public static boolean match(final String pattern, final String str) {
         return match(pattern, str, true);
     }
 
@@ -529,13 +527,13 @@ public final class SelectorUtils {
      * @param isCaseSensitive Whether or not matching should be performed case sensitively.
      * @return <code>true</code> if the string matches against the pattern, or <code>false</code> otherwise.
      */
-    public static boolean match(String pattern, String str, boolean isCaseSensitive) {
+    public static boolean match(final String pattern, final String str, final boolean isCaseSensitive) {
         char[] patArr = pattern.toCharArray();
         char[] strArr = str.toCharArray();
         return match(patArr, strArr, isCaseSensitive);
     }
 
-    public static boolean match(char[] patArr, char[] strArr, boolean isCaseSensitive) {
+    public static boolean match(final char[] patArr, final char[] strArr, final boolean isCaseSensitive) {
         int patIdxStart = 0;
         int patIdxEnd = patArr.length - 1;
         int strIdxStart = 0;
@@ -623,8 +621,8 @@ public final class SelectorUtils {
             }
             // Find the pattern between padIdxStart & padIdxTmp in str between
             // strIdxStart & strIdxEnd
-            int patLength = (patIdxTmp - patIdxStart - 1);
-            int strLength = (strIdxEnd - strIdxStart + 1);
+            int patLength = patIdxTmp - patIdxStart - 1;
+            int strLength = strIdxEnd - strIdxStart + 1;
             int foundIdx = -1;
             strLoop:
             for (int i = 0; i <= strLength - patLength; i++) {
@@ -660,21 +658,19 @@ public final class SelectorUtils {
     /**
      * Tests whether two characters are equal.
      */
-    private static boolean equals(char c1, char c2, boolean isCaseSensitive) {
+    private static boolean equals(final char c1, final char c2, final boolean isCaseSensitive) {
         if (c1 == c2) {
             return true;
         }
         if (!isCaseSensitive) {
             // NOTE: Try both upper case and lower case as done by String.equalsIgnoreCase()
-            if (Character.toUpperCase(c1) == Character.toUpperCase(c2)
-                    || Character.toLowerCase(c1) == Character.toLowerCase(c2)) {
-                return true;
-            }
+            return Character.toUpperCase(c1) == Character.toUpperCase(c2)
+                    || Character.toLowerCase(c1) == Character.toLowerCase(c2);
         }
         return false;
     }
 
-    private static String[] tokenizePathToString(String path, String separator) {
+    private static String[] tokenizePathToString(final String path, final String separator) {
         List<String> ret = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(path, separator);
         while (st.hasMoreTokens()) {
@@ -694,17 +690,14 @@ public final class SelectorUtils {
      * @param granularity the amount in seconds of slack we will give in determining out of dateness
      * @return whether the target is out of date
      */
-    public static boolean isOutOfDate(File src, File target, int granularity) {
+    public static boolean isOutOfDate(final File src, final File target, final int granularity) {
         if (!src.exists()) {
             return false;
         }
         if (!target.exists()) {
             return true;
         }
-        if ((src.lastModified() - granularity) > target.lastModified()) {
-            return true;
-        }
-        return false;
+        return (src.lastModified() - granularity) > target.lastModified();
     }
 
     /**
@@ -714,7 +707,7 @@ public final class SelectorUtils {
      * @param input a String to remove all whitespace.
      * @return a String that has had all whitespace removed.
      */
-    public static String removeWhitespace(String input) {
+    public static String removeWhitespace(final String input) {
         StringBuilder result = new StringBuilder();
         if (input != null) {
             StringTokenizer st = new StringTokenizer(input);

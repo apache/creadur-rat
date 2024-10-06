@@ -60,7 +60,7 @@
   <suppress checks="MagicNumber|JavadocVariable" files="XmlWriter.java" />
 
   <!-- Suppress errors in imported plexus code -->
-  <suppress checks="FinalParameters|JavadocVariable|WhitespaceAround|UnnecessaryParentheses|FinalClass|WhitespaceAfter|ParenPad"
+  <suppress checks="JavadocVariable"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]config[/\\]exclusion[/\\]plexus[/\\].*" />
 
   <!-- Suppress errors in imported iterator code -->

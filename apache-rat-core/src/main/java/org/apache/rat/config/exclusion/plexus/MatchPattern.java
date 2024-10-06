@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
@@ -32,11 +33,12 @@ import static java.lang.String.format;
  * <p>Significantly more efficient than using strings, since re-evaluation and re-tokenizing is avoided.</p>
  *
  * <p>Based on code from plexus-utils.</p>
- * @see <a href="https://github.com/codehaus-plexus/plexus-utils/blob/master/src/main/java/org/codehaus/plexus/util/MatchPattern.java">
- *     plexus-utils MatchPattern</a>
+ *
  * @author Kristian Rosenvold
+ * @see <a href="https://github.com/codehaus-plexus/plexus-utils/blob/master/src/main/java/org/codehaus/plexus/util/MatchPattern.java">
+ * plexus-utils MatchPattern</a>
  */
-public class MatchPattern {
+public final class MatchPattern {
     private final String source;
 
     private final String regexPattern;
@@ -47,7 +49,7 @@ public class MatchPattern {
 
     private final char[][] tokenizedChar;
 
-    private MatchPattern(String source, String separator) {
+    private MatchPattern(final String source, final String separator) {
         regexPattern = SelectorUtils.isRegexPrefixedPattern(source)
                 ? source.substring(
                 SelectorUtils.REGEX_HANDLER_PREFIX.length(),
@@ -66,7 +68,7 @@ public class MatchPattern {
         }
     }
 
-    public boolean matchPath(String str, boolean isCaseSensitive) {
+    public boolean matchPath(final String str, final boolean isCaseSensitive) {
         if (regexPattern != null) {
             return str.matches(regexPattern);
         } else {
@@ -74,7 +76,7 @@ public class MatchPattern {
         }
     }
 
-    boolean matchPath(String str, char[][] strDirs, boolean isCaseSensitive) {
+    boolean matchPath(final String str, final char[][] strDirs, final boolean isCaseSensitive) {
         boolean result;
         if (regexPattern != null) {
             result = str.matches(regexPattern);
@@ -87,7 +89,7 @@ public class MatchPattern {
         return result;
     }
 
-    public boolean matchPatternStart(String str, boolean isCaseSensitive) {
+    public boolean matchPatternStart(final String str, final boolean isCaseSensitive) {
         if (regexPattern != null) {
             // FIXME: ICK! But we can't do partial matches for regex, so we have to reserve judgement until we have
             // a file to deal with, or we can definitely say this is an exclusion...
@@ -108,7 +110,7 @@ public class MatchPattern {
         return tokenizedChar;
     }
 
-    public boolean startsWith(String string) {
+    public boolean startsWith(final String string) {
         return source.startsWith(string);
     }
 
@@ -116,11 +118,12 @@ public class MatchPattern {
     public String toString() {
         return source;
     }
+
     public String source() {
         return source;
     }
 
-    public static String[] tokenizePathToString(String path, String separator) {
+    public static String[] tokenizePathToString(final String path, final String separator) {
         List<String> ret = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(path, separator);
         while (st.hasMoreTokens()) {
@@ -129,7 +132,7 @@ public class MatchPattern {
         return ret.toArray(new String[0]);
     }
 
-    static char[][] tokenizePathToCharArray(String path, String separator) {
+    static char[][] tokenizePathToCharArray(final String path, final String separator) {
         String[] tokenizedName = tokenizePathToString(path, separator);
         char[][] tokenizedNameChar = new char[tokenizedName.length][];
         for (int i = 0; i < tokenizedName.length; i++) {
@@ -138,7 +141,7 @@ public class MatchPattern {
         return tokenizedNameChar;
     }
 
-    public static MatchPattern fromString(String source) {
+    public static MatchPattern fromString(final     String source) {
         return new MatchPattern(source, File.separator);
     }
 }

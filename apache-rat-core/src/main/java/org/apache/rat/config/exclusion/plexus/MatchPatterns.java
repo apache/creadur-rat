@@ -31,10 +31,10 @@ import java.util.function.Predicate;
  *
  * @author Kristian Rosenvold
  */
-public class MatchPatterns {
+public final class MatchPatterns {
     private final MatchPattern[] patterns;
 
-    private MatchPatterns(MatchPattern[] patterns) {
+    private MatchPatterns(final MatchPattern[] patterns) {
         this.patterns = patterns;
     }
 
@@ -45,10 +45,10 @@ public class MatchPatterns {
 
     public String source() {
         List<String> sources = new ArrayList<>();
-                for(MatchPattern pattern : patterns) {
-                    sources.add(pattern.source());
-                }
-        return "[" + String.join(", ", sources ) + "]";
+        for (MatchPattern pattern : patterns) {
+            sources.add(pattern.source());
+        }
+        return "[" + String.join(", ", sources) + "]";
     }
 
     /**
@@ -60,12 +60,12 @@ public class MatchPatterns {
      * @param isCaseSensitive If the comparison is case sensitive
      * @return true if any of the supplied patterns match
      */
-    public boolean matches(String name, boolean isCaseSensitive) {
+    public boolean matches(final String name, final boolean isCaseSensitive) {
         String[] tokenized = MatchPattern.tokenizePathToString(name, File.separator);
         return matches(name, tokenized, isCaseSensitive);
     }
 
-    public boolean matches(String name, String[] tokenizedName, boolean isCaseSensitive) {
+    public boolean matches(final String name, final String[] tokenizedName, final boolean isCaseSensitive) {
         char[][] tokenizedNameChar = new char[tokenizedName.length][];
         for (int i = 0; i < tokenizedName.length; i++) {
             tokenizedNameChar[i] = tokenizedName[i].toCharArray();
@@ -73,7 +73,7 @@ public class MatchPatterns {
         return matches(name, tokenizedNameChar, isCaseSensitive);
     }
 
-    public boolean matches(String name, char[][] tokenizedNameChar, boolean isCaseSensitive) {
+    public boolean matches(final String name, final char[][] tokenizedNameChar, final boolean isCaseSensitive) {
         for (MatchPattern pattern : patterns) {
             if (pattern.matchPath(name, tokenizedNameChar, isCaseSensitive)) {
                 return true;
@@ -82,11 +82,11 @@ public class MatchPatterns {
         return false;
     }
 
-    public Predicate<String> asPredicate(boolean isCaseSensitive) {
+    public Predicate<String> asPredicate(final boolean isCaseSensitive) {
         return name -> matches(name, isCaseSensitive);
     }
 
-    public boolean matchesPatternStart(String name, boolean isCaseSensitive) {
+    public boolean matchesPatternStart(final String name, final boolean isCaseSensitive) {
         for (MatchPattern includesPattern : patterns) {
             if (includesPattern.matchPatternStart(name, isCaseSensitive)) {
                 return true;
@@ -95,7 +95,7 @@ public class MatchPatterns {
         return false;
     }
 
-    public static MatchPatterns from(String... sources) {
+    public static MatchPatterns from(final String... sources) {
         final int length = sources.length;
         MatchPattern[] result = new MatchPattern[length];
         for (int i = 0; i < length; i++) {
@@ -104,11 +104,11 @@ public class MatchPatterns {
         return new MatchPatterns(result);
     }
 
-    public static MatchPatterns from(Iterable<String> strings) {
+    public static MatchPatterns from(final Iterable<String> strings) {
         return new MatchPatterns(getMatchPatterns(strings));
     }
 
-    private static MatchPattern[] getMatchPatterns(Iterable<String> items) {
+    private static MatchPattern[] getMatchPatterns(final Iterable<String> items) {
         List<MatchPattern> result = new ArrayList<MatchPattern>();
         for (String string : items) {
             result.add(MatchPattern.fromString(string));
