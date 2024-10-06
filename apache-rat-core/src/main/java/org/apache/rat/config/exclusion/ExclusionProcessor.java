@@ -256,7 +256,6 @@ public class ExclusionProcessor {
         return lastMatcher;
     }
 
-
     /**
      * Creates a TracablePathMatcher
      * @param name the name of the matcher.
@@ -265,7 +264,8 @@ public class ExclusionProcessor {
      * @return The matcher
      */
     TraceableDocumentNameMatcher makeMatcher(final Supplier<String> name, final MatchPatterns patterns, final DocumentName basedir) {
-        return TraceableDocumentNameMatcher.make(name, p -> patterns.matches(p.name(), MatchPattern.tokenizePathToString(p.name(), basedir.dirSeparator()), basedir.isCaseSensitive()));
+        return TraceableDocumentNameMatcher.make(name,
+                p -> patterns.matches(p.name(), MatchPattern.tokenizePathToString(p.name(), basedir.dirSeparator()), basedir.isCaseSensitive()));
     }
 
 

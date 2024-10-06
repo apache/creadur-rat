@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import java.util.function.Supplier;
+
 import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.CVSFileProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.GitFileProcessor;
@@ -38,13 +38,28 @@ import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.apache.rat.utils.iterator.WrappedIterator;
 
 public enum StandardCollection {
+    /**
+     * All of the standard excludes combined
+     */
     ALL("All of the Standard Excludes combined.", null, null, null),
+    /**
+     * The files and directories created by an ARCH source code control based tool.
+     */
     ARCH("The files and directories created by an ARCH source code control based tool.",
             Collections.singletonList("**/.arch-ids/**"), null, null),
+    /**
+     * The files and directories created by a Bazaar source code control based tool.
+     */
     BAZAAR("The files and directories created by a Bazaar source code control based tool.",
             Arrays.asList("**/.bzr/**", ".bzrignore"), null, new BazaarIgnoreProcessor()),
+    /**
+     * The files and directories created by a Bitkeeper source code control based tool.
+     */
     BITKEEPER("The files and directories created by a Bitkeeper source code control based tool.",
             Arrays.asList("**/BitKeeper/**", "**/ChangeSet/**"), null, null),
+    /**
+     * The files and directories created by a CVS source code control based tool.
+     */
     CVS("The files and directories created by a CVS source code control based tool.",
             Arrays.asList("**/.cvsignore",
                     "**/RCS/**", "**/SCCS/**", "**/CVS/**", "**/CVS.adm/**",
@@ -55,21 +70,28 @@ public enum StandardCollection {
                     "**/*.a", "**/*.old", "**/*.o", "**/*.obj", "**/*.so", "**/*.exe",
                     "**/*.Z", "**/*.elc", "**/*.ln", "**/core"),
             null, new CVSFileProcessor()),
+    /**
+     * The files and directories created by a DARCS source code control based tool.
+     */
     DARCS("The files and directories created by a DARCS source code control based tool.",
             Arrays.asList("**/_darcs/**", "**/.darcsrepo/**", "**/-darcs-backup*", "**/.darcs-temp-mail"), null, null),
+    /**
+     * The files and directories created by an Eclipse IDE based tool.
+     */
     ECLIPSE("The files and directories created by an Eclipse IDE based tool.",
-            Arrays.asList(
-                    ".checkstyle",//
-                    ".classpath",//
-                    ".factorypath",//
-                    ".project", //
-                    ".settings/**"),
+            Arrays.asList(".checkstyle", ".classpath", ".factorypath", ".project", ".settings/**"),
             null, null),
+    /**
+     * The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.
+     */
     GIT("The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.",
             Arrays.asList("**/.git/**", "**/.gitignore"),
             null,
             new GitFileProcessor()
     ),
+    /**
+     * The hidden directories. Directories with names that start with '.'
+     */
     HIDDEN_DIR("The hidden directories. Directories with names that start with '.'",
             null,
             str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_DIR", documentName -> {
@@ -77,6 +99,9 @@ public enum StandardCollection {
                 return f.isDirectory() && ExclusionUtils.isHidden(f);
             }), null
     ),
+    /**
+     * The hidden files. Directories with names that start with '.'
+     */
     HIDDEN_FILE("The hidden files. Directories with names that start with '.'",
             null,
             str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_FILE", documentName -> {
@@ -84,15 +109,24 @@ public enum StandardCollection {
                 return f.isFile() && ExclusionUtils.isHidden(f);
             }), null
     ),
+    /**
+     * The files and directories created by an IDEA IDE based tool.
+     */
     IDEA("The files and directories created by an IDEA IDE based tool.",
             Arrays.asList(
                     "*.iml",
                     "*.ipr",
                     "*.iws",
                     ".idea/**"), null, null),
+    /**
+     * The .DS_Store files MAC computer.
+     */
     MAC("The .DS_Store files MAC computer.",
             Collections.singletonList("**/.DS_Store"), null, null),
-    MAVEN("The files and directories created by Maven build system based project",
+    /**
+     * The files and directories created by Maven build system based project.
+     */
+    MAVEN("The files and directories created by Maven build system based project.",
             Arrays.asList(//
                     "target/**", //
                     "cobertura.ser", //
@@ -102,34 +136,72 @@ public enum StandardCollection {
                     "build.log", // RAT-160: until now maven-invoker-plugin runs create a build.log that is not part of a release
                     ".mvn/**", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
                     "pom.xml.releaseBackup"), null, null),
+    /**
+     * The files and directories created by a Mercurial source code control based tool.
+     */
     MERCURIAL("The files and directories created by a Mercurial source code control based tool.",
-            Arrays.asList("**/.hg/**", ".hgignore"), null, new HgIgnoreProcessor()), //
+            Arrays.asList("**/.hg/**", ".hgignore"), null, new HgIgnoreProcessor()),
+    /**
+     * The set of miscellaneous files generally left by editors and the like.
+     */
     MISC("The set of miscellaneous files generally left by editors and the like.",
             Arrays.asList("**/*~", "**/#*#", "**/.#*", "**/%*%", "**/._*"),
             null, null),
+    /**
+     * The files and directories created by an MKS source code control based tool.
+     */
     MKS("The files and directories created by an MKS source code control based tool.",
             Collections.singletonList("**/project.pj"), null, null),
+    /**
+     * The files and directories created by a RCS source code control based tool.
+     */
     RCS("The files and directories created by a RCS source code control based tool.",
             Collections.singletonList("**/RCS/**"), null, null),
+    /**
+     * The files and directories created by a SCCS source code control based tool.
+     */
     SCCS("The files and directories created by a SCCS source code control based tool.",
             Collections.singletonList("**/SCCS/**"), null, null),
+    /**
+     * The files and directories created by a Serena Dimensions V10 change control system based tool.
+     */
     SERENA_DIMENSIONS_10("The files and directories created by a Serena Dimensions V10 change control system based tool.",
             Collections.singletonList("**/.metadata/**"), null, null),
-    STANDARD_PATTERNS("A standard collection of generally accepted patterns to ignore", null, null, null),
+    /**
+     * A standard collection of generally accepted patterns to ignore.
+     */
+    STANDARD_PATTERNS("A standard collection of generally accepted patterns to ignore.", null, null, null),
+    /**
+     * A standard collection of SCMs
+     */
     STANDARD_SCMS("A standard collection of SCMs", null, null, null),
+    /**
+     * The files and directories created by a Subversion source code control based tool.
+     */
     SUBVERSION("The files and directories created by a Subversion source code control based tool.",
             Collections.singletonList("**/.svn/**"), null, null),
+    /**
+     * The files and directories created by a Surround SCM source code control based tool.
+     */
     SURROUND_SCM("The files and directories created by a Surround SCM source code control based tool.",
             Collections.singletonList("**/.MySCMServerInfo"), null, null),
+    /**
+     * The files and directories created by a Visual Source Safe source code control based tool.
+     */
     VSS("The files and directories created by a Visual Source Safe source code control based tool.",
             Collections.singletonList("**/vssver.scc"), null, null);
 
+    /** The collections of patterns to be excluded.  may be eompy*/
     private final Collection<String> patterns;
+    /** A document name matcher supplier to create a document name matcher.  May be null */
     private final DocumentNameMatcherSupplier documentNameMatcherSupplier;
+    /** The FileProcessor to process the exclude file associated with this exclusion.  May be null. */
     private final FileProcessor fileProcessor;
+    /** The description of this collection */
     private final String desc;
 
-    StandardCollection(String desc, Collection<String> patterns, DocumentNameMatcherSupplier matcherSupplier, FileProcessor fileProcessor) {
+    StandardCollection(final String desc, final Collection<String> patterns, final DocumentNameMatcherSupplier matcherSupplier,
+                       final FileProcessor fileProcessor) {
         this.desc = desc;
         this.patterns = patterns == null ? Collections.emptyList() : new HashSet<>(patterns);
         this.documentNameMatcherSupplier = matcherSupplier;
@@ -172,6 +244,7 @@ public enum StandardCollection {
 
     /**
      * Returns the fileProcessor if it exists.
+     *
      * @return the fileProcessor if it exists, {@code null} otherwise.
      */
     public ExtendedIterator<FileProcessor> fileProcessor() {
@@ -186,6 +259,7 @@ public enum StandardCollection {
 
     /**
      * Returns the documentNameMatchSupplier if it exists.
+     *
      * @return the documentNameMatchSupplier if it exists, {@code null} otherwise.
      */
     public DocumentNameMatcherSupplier documentNameMatcherSupplier() {
@@ -203,7 +277,7 @@ public enum StandardCollection {
             return lst.get(0);
         }
         Supplier<String> nameSupplier = () -> String.join(", ", WrappedIterator.create(getCollections().iterator())
-                    .map(StandardCollection::name).toList());
+                .map(StandardCollection::name).toList());
 
         return dirName -> TraceableDocumentNameMatcher.make(nameSupplier, documentName -> {
             for (DocumentNameMatcherSupplier supplier : lst) {
@@ -217,7 +291,8 @@ public enum StandardCollection {
 
     /**
      * Returns {@code true} if the collections has a document name match supplier.
-     * @return  {@code true} if the collections has a document name match supplier.
+     *
+     * @return {@code true} if the collections has a document name match supplier.
      */
     public boolean hasDocumentNameMatchSupplier() {
         // account for cases where this has more than one supplier.

@@ -21,6 +21,7 @@ package org.apache.rat.config.exclusion;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.impl.DocumentName;
@@ -44,10 +45,10 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
      * @param patterns the patterns to simulate the file from.
      * @return A file processor that processes the patterns.
      */
-    static FileProcessor from(Iterable<String> patterns) {
+    static FileProcessor from(final Iterable<String> patterns) {
         return new FileProcessor() {
             @Override
-            public List<String> apply(DocumentName documentName) {
+            public List<String> apply(final DocumentName documentName) {
                 return WrappedIterator.create(patterns.iterator())
                         .map(entry -> FileProcessor.localizePattern(documentName, entry))
                         .map(DocumentName::name)

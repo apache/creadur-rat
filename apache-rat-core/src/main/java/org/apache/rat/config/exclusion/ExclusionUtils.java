@@ -36,8 +36,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
-import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.apache.rat.utils.iterator.WrappedIterator;
 
@@ -154,7 +154,7 @@ public final class ExclusionUtils {
         try {
             return WrappedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
         } catch (FileNotFoundException e) {
-            throw new ConfigurationException(format("%s is not a valid file.",patternFile));
+            throw new ConfigurationException(format("%s is not a valid file.", patternFile));
         }
     }
 
