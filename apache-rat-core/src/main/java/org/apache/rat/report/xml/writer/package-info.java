@@ -16,22 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.report.xml.writer;
-
-import java.io.IOException;
-
 /**
- * Indicates that the requested document is not well formed.
+ * Classes to handle writing well formed XML documents.
  */
-public class InvalidXmlException extends IOException {
-
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiate exception with given message.
-     * @param message more context when this exception happens.
-     */
-    public InvalidXmlException(final String message) {
-        super(message);
-    }
-}
+package org.apache.rat.report.xml.writer;
