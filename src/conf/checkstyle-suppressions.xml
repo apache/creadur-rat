@@ -21,6 +21,20 @@
 
 <suppressions>
 
+  <!-- Suppress errors in deprecated code -->
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]header[/\\]*" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]analysis[/\\]license[/\\]*" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]license[/\\]SimpleLicenseFamily.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\][A-Q]*.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]Regex.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\][S-Z]*.java" />
+
   <!-- Suppress some test checks-->
   <suppress checks="JavadocMethod" files="src[/\\]test[/\\]java[/\\]" />
   <suppress checks="JavadocPackage" files="src[/\\]test[/\\]java[/\\]" />
