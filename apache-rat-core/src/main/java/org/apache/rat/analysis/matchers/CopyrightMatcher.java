@@ -54,22 +54,31 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 @ConfigComponent(type = ComponentType.MATCHER, name = "copyright", desc = "Matches copyright statements.")
 public class CopyrightMatcher extends AbstractHeaderMatcher {
-
+    /** String to build a pattern to match the various recognized copyright symbols */
     private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©|\\&[Cc][Oo][Pp][Yy]\\;";
+    /** String to build a pattern to match symbols or word "copyright" */
     private static final String COPYRIGHT_PATTERN_DEFN = "(\\b)?" + COPYRIGHT_SYMBOL_DEFN + "|Copyright\\b";
+    /** The compiled pattern from {@link #COPYRIGHT_PATTERN_DEFN} */
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile(COPYRIGHT_PATTERN_DEFN);
+    /** The string to build a Pattern to match a copyright with a single part (date or name) */
     private static final String ONE_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s";
+    /** The string to build a Pattern to match a copyright iwth both name and date */
     private static final String TWO_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s,?\\s+%s";
-
+    /** Format string to build a pattern to match two dates */
     private static final String DOUBLE_DATE_FMT = "%s\\s*-\\s*%s";
+    /** String to build pattern to match an arbitrary date (year) */
     private static final String ARBITRARY_DATE = "[0-9]{4}";
-
+    /** The built Pattern for matching "Copyright date owner" */
     private final Pattern dateOwnerPattern;
+    /** The built pattern for matching "Copyright owner date" */
     private final Pattern ownerDatePattern;
+    /** The start date of the copyright.  May be null. */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The initial date of the copyright")
     private final String start;
+    /** The end date of the copyright.  May be null. */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The last date the copyright was modifed")
     private final String end;
+    /** The owner of the copyright. May be null */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The owner of the copyright")
     private final String owner;
 
@@ -82,11 +91,11 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
      * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
      */
-    public CopyrightMatcher(String start, String end, String owner) {
+    public CopyrightMatcher(final String start, final String end, final String owner) {
         this(null, start, end, owner);
     }
 
-    private static void assertNumber(String label, String value) {
+    private static void assertNumber(final String label, final String value) {
         try {
             if (StringUtils.isNotEmpty(value)) {
                 Integer.parseInt(value);
@@ -105,7 +114,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
      * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
      */
-    public CopyrightMatcher(String id, String start, String end, String owner) {
+    public CopyrightMatcher(final String id, final String start, final String end, final String owner) {
         super(id);
         if (StringUtils.isBlank(start) && !StringUtils.isBlank(end)) {
             throw new ConfigurationException("'end' may not be set if 'start' is not set.");
@@ -167,7 +176,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
+    public boolean matches(final IHeaders headers) {
         String lowerLine = headers.raw().toLowerCase();
         if (lowerLine.contains("copyright") || lowerLine.contains("(c)") || lowerLine.contains("©") ||
                 lowerLine.contains("&copy;")) {
