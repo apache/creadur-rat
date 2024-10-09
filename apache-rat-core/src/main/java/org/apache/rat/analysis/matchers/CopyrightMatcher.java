@@ -72,10 +72,10 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     private final Pattern dateOwnerPattern;
     /** The built pattern for matching "Copyright owner date" */
     private final Pattern ownerDatePattern;
-    /** The start date of the copyright.  May be null. */
+    /** The start date of the copyright. May be null. */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The initial date of the copyright")
     private final String start;
-    /** The end date of the copyright.  May be null. */
+    /** The end date of the copyright. May be null. */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The last date the copyright was modifed")
     private final String end;
     /** The owner of the copyright. May be null */
@@ -84,12 +84,12 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
 
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
-     * strings and a unique random id..
+     * strings and a unique random id.
      *
-     * @param start the start date for the copyright may be null.
+     * @param start the start date for the copyright, may be null.
      * @param end the stop date for the copyright, may be null. May not be
      * specified if start is not specified.
-     * @param owner the owner of the copyright. may be null.
+     * @param owner the owner of the copyright, may be null.
      */
     public CopyrightMatcher(final String start, final String end, final String owner) {
         this(null, start, end, owner);
@@ -109,7 +109,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
      * strings.
      *
      * @param id the id for the matcher.
-     * @param start the start date for the copyright may be null.
+     * @param start the start date for the copyright, may be null.
      * @param end the end date for the copyright, may be null. May not be
      * specified if start is not specified.
      * @param owner the owner of the copyright. may be null.
