@@ -48,9 +48,10 @@ public class ExclusionProcessor {
     private final List<DocumentNameMatcherSupplier> excludedPaths = new ArrayList<>();
     /** Strings that identify the files/directories to include (overrides exclude) */
     private final Set<String> includedPatterns = new HashSet<>();
-    /** Path matchers that identify the  files/directories to include (overrides exclude) */
+    /** Path matchers that identify the files/directories to include (overrides exclude) */
     private final List<DocumentNameMatcherSupplier> includedPaths = new ArrayList<>();
-    /** Collections of StandardCollections that have file processors that should be
+    /**
+     * Collections of StandardCollections that have file processors that should be
      * used to add additional exclude files to the process
      */
     private final Set<StandardCollection> fileProcessors = new HashSet<>();
@@ -58,7 +59,7 @@ public class ExclusionProcessor {
     private final Set<StandardCollection> includedCollections = new HashSet<>();
     /** Standard collections that contribute to the exclusion procession */
     private final Set<StandardCollection> excludedCollections = new HashSet<>();
-    /** the last generated PathMatcher */
+    /** The last generated PathMatcher */
     private TraceableDocumentNameMatcher lastMatcher;
     /** The base dir for the last PathMatcher */
     private DocumentName lastMatcherBaseDir;
@@ -153,8 +154,8 @@ public class ExclusionProcessor {
 
     /**
      * Excludes the files/directories specified by a StandardCollection.
-     * @param collection the StandardCollection to that identifies the files to exclude.
-     * @return this.
+     * @param collection the StandardCollection that identifies the files to exclude.
+     * @return this
      */
     public ExclusionProcessor addExcludedCollection(final StandardCollection collection) {
         if (collection != null) {
@@ -182,7 +183,7 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Creates a Document name matcher that will return false on any
+     * Creates a Document name matcher that will return {@code false} on any
      * document that is excluded.
      * @param basedir the base directory to make everything relative to.
      * @return A container of files, which are being checked.
@@ -212,7 +213,6 @@ public class ExclusionProcessor {
             }
 
             // add the matchers
-
             List<TraceableDocumentNameMatcher> inclMatchers = WrappedIterator.create(includedCollections.iterator())
                     .filter(StandardCollection::hasDocumentNameMatchSupplier)
                     .map(s -> TraceableDocumentNameMatcher.make(() -> "Path match " + s.name(), s.documentNameMatcherSupplier().get(basedir)))
@@ -257,9 +257,9 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Creates a TracablePathMatcher
+     * Creates a TraceablePathMatcher
      * @param name the name of the matcher.
-     * @param patterns the patterns in the matcher
+     * @param patterns the patterns in the matcher.
      * @param basedir the base directory for the scanning.
      * @return The matcher
      */
@@ -267,6 +267,4 @@ public class ExclusionProcessor {
         return TraceableDocumentNameMatcher.make(name,
                 p -> patterns.matches(p.name(), MatchPattern.tokenizePathToString(p.name(), basedir.dirSeparator()), basedir.isCaseSensitive()));
     }
-
-
 }
