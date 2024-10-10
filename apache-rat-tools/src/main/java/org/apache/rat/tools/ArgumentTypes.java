@@ -18,35 +18,13 @@
  */
 package org.apache.rat.tools;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.OptionCollection;
-import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.help.Help;
 
-import java.io.CharArrayWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
 
 /**
  * A simple tool to convert CLI options to Maven and Ant format and produce a CSV file.

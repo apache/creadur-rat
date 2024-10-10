@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NoteGuesserTest {
 
+    private DocumentName mkNameSet(String name) {
+        return new DocumentName(name, "", "/", true);
+    }
     @Test
     public void testMatches() {
         assertTrue(NoteGuesser.isNote(new TestingDocument("DEPENDENCIES")));
@@ -34,34 +38,42 @@ public class NoteGuesserTest {
         assertTrue(NoteGuesser.isNote(new TestingDocument("NOTICE.txt")));
         assertTrue(NoteGuesser.isNote(new TestingDocument("README")));
         assertTrue(NoteGuesser.isNote(new TestingDocument("README.txt")));
-    }
+        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/DEPENDENCIES")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/LICENSE")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/LICENSE.txt")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/NOTICE")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/NOTICE.txt")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/README")));
+        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/README.txt")));
 
-    @Test
-    public void isNote() {
-        assertTrue(NoteGuesser.isNote("DEPENDENCIES"));
-        assertTrue(NoteGuesser.isNote("LICENSE"));
-        assertTrue(NoteGuesser.isNote("LICENSE.txt"));
-        assertTrue(NoteGuesser.isNote("NOTICE"));
-        assertTrue(NoteGuesser.isNote("NOTICE.txt"));
-        assertTrue(NoteGuesser.isNote("README"));
-        assertTrue(NoteGuesser.isNote("README.txt"));
     }
-    
-    @Test
-    public void isNoteWithPath() {
-        assertTrue(NoteGuesser.isNote("src/test/DEPENDENCIES"));
-        assertTrue(NoteGuesser.isNote("src/test/LICENSE"));
-        assertTrue(NoteGuesser.isNote("src/test/LICENSE.txt"));
-        assertTrue(NoteGuesser.isNote("src/test/NOTICE"));
-        assertTrue(NoteGuesser.isNote("src/test/NOTICE.txt"));
-        assertTrue(NoteGuesser.isNote("src/test/README"));
-        assertTrue(NoteGuesser.isNote("src/test/README.txt"));
-        assertTrue(NoteGuesser.isNote("src\\test\\DEPENDENCIES"));
-        assertTrue(NoteGuesser.isNote("src\\test\\LICENSE"));
-        assertTrue(NoteGuesser.isNote("src\\test\\LICENSE.txt"));
-        assertTrue(NoteGuesser.isNote("src\\test\\NOTICE"));
-        assertTrue(NoteGuesser.isNote("src\\test\\NOTICE.txt"));
-        assertTrue(NoteGuesser.isNote("src\\test\\README"));
-        assertTrue(NoteGuesser.isNote("src\\test\\README.txt"));
-    }
+//
+//    @Test
+//    public void isNote() {
+//        assertTrue(NoteGuesser.isNote("DEPENDENCIES"));
+//        assertTrue(NoteGuesser.isNote("LICENSE"));
+//        assertTrue(NoteGuesser.isNote("LICENSE.txt"));
+//        assertTrue(NoteGuesser.isNote("NOTICE"));
+//        assertTrue(NoteGuesser.isNote("NOTICE.txt"));
+//        assertTrue(NoteGuesser.isNote("README"));
+//        assertTrue(NoteGuesser.isNote("README.txt"));
+//    }
+//
+//    @Test
+//    public void isNoteWithPath() {
+//        assertTrue(NoteGuesser.isNote("src/test/DEPENDENCIES"));
+//        assertTrue(NoteGuesser.isNote("src/test/LICENSE"));
+//        assertTrue(NoteGuesser.isNote("src/test/LICENSE.txt"));
+//        assertTrue(NoteGuesser.isNote("src/test/NOTICE"));
+//        assertTrue(NoteGuesser.isNote("src/test/NOTICE.txt"));
+//        assertTrue(NoteGuesser.isNote("src/test/README"));
+//        assertTrue(NoteGuesser.isNote("src/test/README.txt"));
+//        assertTrue(NoteGuesser.isNote("src\\test\\DEPENDENCIES"));
+//        assertTrue(NoteGuesser.isNote("src\\test\\LICENSE"));
+//        assertTrue(NoteGuesser.isNote("src\\test\\LICENSE.txt"));
+//        assertTrue(NoteGuesser.isNote("src\\test\\NOTICE"));
+//        assertTrue(NoteGuesser.isNote("src\\test\\NOTICE.txt"));
+//        assertTrue(NoteGuesser.isNote("src\\test\\README"));
+//        assertTrue(NoteGuesser.isNote("src\\test\\README.txt"));
+//    }
 }

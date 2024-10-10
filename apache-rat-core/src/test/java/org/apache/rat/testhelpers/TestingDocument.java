@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.impl.DocumentName;
 
 public class TestingDocument extends Document {
 
@@ -38,10 +40,14 @@ public class TestingDocument extends Document {
         this(null, name);
     }
 
-    public TestingDocument(Reader reader, String name) {
-        super(name);
-        this.reader = reader;
+    public TestingDocument(String name, DocumentNameMatcher matcher) {
+        super(new DocumentName(name, "", "/", true), matcher);
+        this.reader = null;
+    }
 
+    public TestingDocument(Reader reader, String name) {
+        super(new DocumentName(name, ".", "/", true), p -> true);
+        this.reader = reader;
     }
 
     @Override
