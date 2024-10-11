@@ -47,7 +47,7 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
     <project.build.outputTimestamp>1706130018</project.build.outputTimestamp>
     <ant.version>1.10.15</ant.version>
-    <mockito.version>4.11.0</mockito.version>
+    <mockito.version>5.0.0</mockito.version>
     <javaVersion>1.8</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
