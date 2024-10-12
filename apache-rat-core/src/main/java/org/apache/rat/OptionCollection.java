@@ -99,7 +99,7 @@ public final class OptionCollection {
                         .collect(Collectors.joining(System.lineSeparator()))));
         ARGUMENT_TYPES.put("LicenseID", () -> "The ID for a license.");
         ARGUMENT_TYPES.put("FamilyID", () -> "The ID for a license family.");
-        ARGUMENT_TYPES.put("StandardCollection", () -> format("Defines standard Expression patterns (see Above). Valid values are: %s%n",
+        ARGUMENT_TYPES.put("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %s%n",
                 Arrays.stream(StandardCollection.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator()))));

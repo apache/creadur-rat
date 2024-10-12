@@ -41,24 +41,24 @@ public abstract class Document implements Comparable<Document> {
         UNKNOWN,
         /** An archive type document. */
         ARCHIVE,
-        /** A notice document (e.g. LICENSE file) */
+        /** A notice document (e.g. LICENSE file). */
         NOTICE,
-        /** A binary file */
+        /** A binary file. */
         BINARY,
-        /** A standard document */
+        /** A standard document. */
         STANDARD;
     }
 
     /** The path matcher used by this document */
     protected final DocumentNameMatcher nameMatcher;
-    /** THe metadata for this document */
+    /** The metadata for this document */
     private final MetaData metaData;
     /** The fully qualified name of this document */
     protected final DocumentName name;
 
     /**
      * Creates an instance.
-     * @param name the natvie NameSet of the resource.
+     * @param name the native NameSet of the resource.
      * @param nameMatcher the document name matcher to filter directories/files.
      */
     protected Document(final DocumentName name, final DocumentNameMatcher nameMatcher) {
@@ -105,7 +105,6 @@ public abstract class Document implements Comparable<Document> {
      * Reads the contents of this document.
      * @return <code>Reader</code> not null
      * @throws IOException if this document cannot be read
-     * composite archive
      */
     public abstract Reader reader() throws IOException;
 
@@ -142,7 +141,7 @@ public abstract class Document implements Comparable<Document> {
 
     /**
      * Gets a sorted set of Documents that are children of this document.
-     * @return A sorted set of child Documents.  May  be empty
+     * @return A sorted set of child Documents. May be empty.
      */
     public abstract SortedSet<Document> listChildren();
 }

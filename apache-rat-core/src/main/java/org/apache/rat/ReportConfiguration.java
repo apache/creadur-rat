@@ -275,7 +275,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Excludes the file processor defined in the  StandardCollection.
+     * Excludes the file processor defined in the StandardCollection.
      * @param collection the StandardCollection to exclude.
      * @see ExclusionProcessor#addFileProcessor(StandardCollection)
      */
@@ -315,7 +315,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Add file patterns that are to be included.  These patterns override any exclusion of
+     * Add file patterns that are to be included. These patterns override any exclusion of
      * the same files.
      * @param patterns The iterable of Strings containing the patterns.
      */
