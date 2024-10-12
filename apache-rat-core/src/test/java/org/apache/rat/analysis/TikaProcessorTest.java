@@ -147,7 +147,7 @@ public class TikaProcessorTest {
      */
     private static Document mkDocument(final InputStream stream, DocumentNameMatcher nameMatcher) {
 
-        return new Document(new DocumentName("Testing Document", "/", File.pathSeparator, DocumentName.fsIsCaseSensitive), nameMatcher) {
+        return new Document(new DocumentName("Testing Document", "/", File.pathSeparator, DocumentName.FS_IS_CASE_SENSITIVE), nameMatcher) {
 
             @Override
             public Reader reader() throws IOException {

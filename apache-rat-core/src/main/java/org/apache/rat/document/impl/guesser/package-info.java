@@ -15,22 +15,8 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
+/**
+ * Classes that attempt to determine if a file is a specific type of file.
+ */
 package org.apache.rat.document.impl.guesser;
-
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class GuessUtilsTest {
-
-    @Test
-    public void normalise() throws Exception {
-        assertEquals("LICENSE", GuessUtils.normalise("license"));
-        assertEquals("LICENSE.TXT", GuessUtils.normalise("license.txt"));
-        assertEquals("LICENSE.TXT", GuessUtils.normalise("some/path/license.txt"));
-        assertEquals("LICENSE.TXT", GuessUtils.normalise("/license.txt"));
-        assertEquals("LICENSE.TXT", GuessUtils.normalise("some\\path\\license.txt"));
-        assertEquals("", GuessUtils.normalise("/"));
-    }
-}

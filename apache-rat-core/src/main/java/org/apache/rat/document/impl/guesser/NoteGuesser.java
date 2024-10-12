@@ -20,14 +20,20 @@ package org.apache.rat.document.impl.guesser;
 
 import java.util.Arrays;
 import java.util.List;
-
 import java.util.Locale;
+
 import org.apache.rat.api.Document;
 
-public class NoteGuesser {
-
+/**
+ * A class that determines if a file is a Note file. e.g. NOTICE, README, CHANGELOG, etc.
+ */
+public final class NoteGuesser {
+    /** The character called a  dot, fullstop, or period. */
     private static final String DOT = ".";
 
+    /**
+     * The list of note file names.
+     */
     private static final String[] NOTE_FILE_NAMES = {
         "NOTICE", "LICENSE",
         "LICENSE.TXT", "NOTICE.TXT",
@@ -46,14 +52,21 @@ public class NoteGuesser {
         "THIRD_PARTY_NOTICES", "THIRD_PARTY_NOTICES.TXT",
         "COPYRIGHT", "COPYRIGHT.TXT",
         "BUILDING", "BUILDING.TXT",
-        "BUILD", "BUILT.TXT",//
+        "BUILD", "BUILT.TXT",
         "DEPENDENCIES"
     };
 
+    /**
+     * List of note file extensions.  Extensions that indicate a file is a note file.
+     */
     private static final String[] NOTE_FILE_EXTENSIONS = {
         "LICENSE", "LICENSE.TXT",
         "NOTICE", "NOTICE.TXT",
     };
+
+    private NoteGuesser() {
+        // do not instantiate.
+    }
 
     /**
      * Determines if the document is a note.
@@ -62,7 +75,9 @@ public class NoteGuesser {
      * @return {@code true} if the document is a note.
      */
     public static boolean isNote(final Document document) {
-        if (document == null) {return false;}
+        if (document == null) {
+            return false;
+        }
 
         List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
         String normalisedName = document.getName().shortName().toUpperCase(Locale.US);

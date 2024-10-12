@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,15 +36,16 @@ import org.apache.commons.lang3.StringUtils;
  * either Rat (Linux like) or Native (OS specific).
  */
 public final class DocumentName implements Comparable<DocumentName> {
-    public static final boolean fsIsCaseSensitive;
+    /** True if the file system on which we are operating is case-sensitive */
+    public static final boolean FS_IS_CASE_SENSITIVE;
     /** The full name for the document */
     private final String name;
     /** The name of the base directory for the document */
     private final String baseName;
     /** The directory separator for this document. */
-    final String dirSeparator;
+    private final String dirSeparator;
     /** The case-sensitive flag */
-    final boolean isCaseSensitive;
+    private final boolean isCaseSensitive;
 
     static {
         boolean fsSensitive = true;
@@ -55,7 +57,7 @@ public final class DocumentName implements Comparable<DocumentName> {
         } catch (IOException e) {
             fsSensitive = true;
         }
-        fsIsCaseSensitive = fsSensitive;
+        FS_IS_CASE_SENSITIVE = fsSensitive;
     }
 
     /**
@@ -65,7 +67,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * @param dirSeparator the directory separator used in the name.
      * @param isCaseSensitive {@code true} if the name is case-sensitive.
      */
-    public DocumentName(String name, String baseName, String dirSeparator, boolean isCaseSensitive) {
+    public DocumentName(final String name, final String baseName, final String dirSeparator, final boolean isCaseSensitive) {
         this.name = Objects.requireNonNull(name);
         this.baseName = Objects.requireNonNull(StringUtils.defaultIfEmpty(baseName, null));
         this.dirSeparator = Objects.requireNonNull(dirSeparator);
@@ -77,16 +79,16 @@ public final class DocumentName implements Comparable<DocumentName> {
      * @param file the file to name the document from.
      * @param baseName the DocumentName to provide the baseName.
      */
-    public DocumentName(File file, DocumentName baseName) {
-        this(file.getAbsolutePath(), baseName.baseName, File.separator, fsIsCaseSensitive);
+    public DocumentName(final File file, final DocumentName baseName) {
+        this(file.getAbsolutePath(), baseName.baseName, File.separator, FS_IS_CASE_SENSITIVE);
     }
 
     /**
      * Creates a document name with the name and basename equal to the file name
      * @param file the file name to use.
      */
-    public DocumentName(File file) {
-        this(file.getAbsolutePath(), file.getAbsolutePath(), File.separator, fsIsCaseSensitive);
+    public DocumentName(final File file) {
+        this(file.getAbsolutePath(), file.getAbsolutePath(), File.separator, FS_IS_CASE_SENSITIVE);
     }
 
     /**
@@ -94,7 +96,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * @param child the child to add (must use directory separator from this document name.
      * @return the new document name with the same base name, directory separator and case sensitivity as this one.
      */
-    public DocumentName resolve(String child) {
+    public DocumentName resolve(final String child) {
         List<String> parts = new ArrayList<>();
         parts.addAll(Arrays.asList(tokenize(name)));
         parts.addAll(Arrays.asList(tokenize(child)));
@@ -156,7 +158,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * @param dirSeparator The character to use to separate directories in the result.
      * @return the portion of the name that is not part of the base name.
      */
-    public String localized(String dirSeparator) {
+    public String localized(final String dirSeparator) {
         return String.join(dirSeparator, tokenize(localized()));
     }
 
@@ -165,8 +167,8 @@ public final class DocumentName implements Comparable<DocumentName> {
      * @param source  the source to tokenize
      * @return the array of tokenized strings.
      */
-    public String[] tokenize(String source) {
-        return source.split("\\Q"+dirSeparator+"\\E");
+    public String[] tokenize(final String source) {
+        return source.split("\\Q" + dirSeparator + "\\E");
     }
 
     /**
@@ -192,17 +194,20 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     @Override
-    public int compareTo(DocumentName o) {
-        return fsIsCaseSensitive ? name.compareTo(o.name) : name.compareToIgnoreCase(o.name);
+    public int compareTo(final DocumentName o) {
+        return FS_IS_CASE_SENSITIVE ? name.compareTo(o.name) : name.compareToIgnoreCase(o.name);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DocumentName that = (DocumentName) o;
-        if (isCaseSensitive() == that.isCaseSensitive() &&  Objects.equals(dirSeparator, that.dirSeparator))
-        {
+        if (isCaseSensitive() == that.isCaseSensitive() &&  Objects.equals(dirSeparator, that.dirSeparator)) {
             return isCaseSensitive ? name.equalsIgnoreCase(that.name) : name.equals(that.name);
         }
         return false;
