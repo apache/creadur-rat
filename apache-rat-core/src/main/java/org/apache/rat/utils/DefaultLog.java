@@ -24,7 +24,11 @@ import org.apache.commons.lang3.StringUtils;
  * A default implementation of Log that writes to System.out and System.err
  */
 public final class DefaultLog implements Log {
-
+    /**
+     * The environment variable to set the default log level that Rat should log at.
+     * If not specified INFO is used.
+     * @see #setLevel(Level)
+     */
     public static final String ENV_VAR = DefaultLog.class.getName();
 
     /**
@@ -66,7 +70,8 @@ public final class DefaultLog implements Log {
     }
 
     /**
-     * Sets the level.
+     * Sets the level.  Log messages below the specified level will
+     * not be written to the log.
      * @param level the level to use when writing messages.
      */
     public void setLevel(final Level level) {
