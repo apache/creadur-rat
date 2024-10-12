@@ -18,14 +18,18 @@
  */
 package org.apache.rat.commandline;
 
-import org.apache.commons.cli.Converter;
-
 import java.io.File;
+
+import org.apache.commons.cli.Converter;
 
 /**
  * Customized converters for Arg processing
  */
-final public class Converters {
+public final class Converters {
+
+    private Converters() {
+        // do not instantiate
+    }
     /** Creates a File with fully qualified name */
-    public static Converter<File, NullPointerException> fileConverter = s -> new File(s).getAbsoluteFile();
+    public static final Converter<File, NullPointerException> FILE_CONVERTER = s -> new File(s).getAbsoluteFile();
 }

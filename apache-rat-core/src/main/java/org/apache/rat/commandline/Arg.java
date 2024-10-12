@@ -148,7 +148,7 @@ public enum Arg {
      */
     LICENSES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
             .desc("Name of file containing the approved license IDs.")
-            .converter(Converters.fileConverter)
+            .converter(Converters.FILE_CONVERTER)
             .type(File.class)
             .build())),
 
@@ -164,7 +164,7 @@ public enum Arg {
      */
     FAMILIES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved-file").hasArg().argName("File")
             .desc("Name of file containing the approved family IDs.")
-            .converter(Converters.fileConverter)
+            .converter(Converters.FILE_CONVERTER)
             .type(File.class)
             .build())),
 
@@ -179,9 +179,9 @@ public enum Arg {
     /** Option to read a file licenses to be removed from the approved list */
     LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
             .hasArg().argName("File").type(File.class)
-            .converter(Converters.fileConverter)
+            .converter(Converters.FILE_CONVERTER)
             .desc("Name of File containing the approved license IDs.")
-            .converter(Converters.fileConverter)
+            .converter(Converters.FILE_CONVERTER)
             .build())),
 
     /** Option to list license families to remove from the approved list */
@@ -194,7 +194,7 @@ public enum Arg {
     FAMILIES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied-file").hasArg().argName("File")
             .desc("Name of file containing the denied license IDs.")
             .type(File.class)
-            .converter(Converters.fileConverter)
+            .converter(Converters.FILE_CONVERTER)
             .build())),
 
 ////////////////// INPUT OPTIONS
@@ -218,14 +218,14 @@ public enum Arg {
     EXCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
                     .argName("File").hasArg().type(File.class)
-                    .converter(Converters.fileConverter)
+                    .converter(Converters.FILE_CONVERTER)
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-exclude-file")).get())
                     .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
                     .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
                     .argName("File").hasArg().type(File.class)
-                    .converter(Converters.fileConverter)
+                    .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
                     .build())),
     /** Excludes files based on standard groupgins */
@@ -252,12 +252,12 @@ public enum Arg {
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
                     .argName("File").hasArg().type(File.class)
-                    .converter(Converters.fileConverter)
+                    .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file.  Entries will override excluded files.")
                     .build())
             .addOption(Option.builder().longOpt("includes-file")
                     .argName("File").hasArg().type(File.class)
-                    .converter(Converters.fileConverter)
+                    .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file.  Entries will be excluded from processing.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include-file")).get())
@@ -354,12 +354,12 @@ public enum Arg {
                     .desc("Define the output file where to write a report to.")
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-file")).get())
                     .type(File.class)
-                    .converter(Converters.fileConverter)
+                    .converter(Converters.FILE_CONVERTER)
                     .build())
             .addOption(Option.builder().longOpt("output-file").hasArg().argName("File")
                     .desc("Define the output file where to write a report to.")
                     .type(File.class)
-                    .converter(Converters.fileConverter)
+                    .converter(Converters.FILE_CONVERTER)
                     .build())),
 
     /** Specifies the level of reporting detail for archive files. */
@@ -739,7 +739,7 @@ public enum Arg {
                 ctxt.getConfiguration().setOut(f);
             } catch (ParseException e) {
                 ctxt.logParseException(e, OUTPUT_FILE.getSelected(), "System.out");
-                ctxt.getConfiguration().setOut((IOSupplier<OutputStream>)null);
+                ctxt.getConfiguration().setOut((IOSupplier<OutputStream>) null);
             }
         }
 
