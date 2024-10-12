@@ -87,7 +87,7 @@ public class ArchiveWalker extends Walker {
             while ((entry = input.getNextEntry()) != null) {
                 if (!entry.isDirectory() && input.canReadEntryData(entry)) {
                     DocumentName innerName = new DocumentName(entry.getName(), ".", "/", true);
-                    if (this.getDocument().getNameMatcher().matches(innerName) ) {
+                    if (this.getDocument().getNameMatcher().matches(innerName)) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         IOUtils.copy(input, baos);
                         String outerNameStr = format("%s#%s", getDocument().getName(), entry.getName());

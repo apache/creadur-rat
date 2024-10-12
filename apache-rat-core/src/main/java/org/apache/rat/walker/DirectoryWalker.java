@@ -20,6 +20,7 @@
 package org.apache.rat.walker;
 
 import java.util.SortedSet;
+
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.RatReport;
