@@ -18,6 +18,6 @@
  */
 
 /**
- * Classes that manage the inclusion and exclusion of files
+ * Classes that manage the inclusion and exclusion of files.
  */
 package org.apache.rat.config.exclusion;

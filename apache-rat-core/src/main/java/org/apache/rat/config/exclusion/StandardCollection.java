@@ -191,11 +191,11 @@ public enum StandardCollection {
     VSS("The files and directories created by a Visual Source Safe source code control based tool.",
             Collections.singletonList("**/vssver.scc"), null, null);
 
-    /** The collections of patterns to be excluded.  may be eompy*/
+    /** The collections of patterns to be excluded. May be empty.*/
     private final Collection<String> patterns;
-    /** A document name matcher supplier to create a document name matcher.  May be null */
+    /** A document name matcher supplier to create a document name matcher. May be null */
     private final DocumentNameMatcherSupplier documentNameMatcherSupplier;
-    /** The FileProcessor to process the exclude file associated with this exclusion.  May be null. */
+    /** The FileProcessor to process the exclude file associated with this exclusion. May be null. */
     private final FileProcessor fileProcessor;
     /** The description of this collection */
     private final String desc;
@@ -208,6 +208,9 @@ public enum StandardCollection {
         this.fileProcessor = fileProcessor;
     }
 
+    /**
+     * @return the description of the given collection.
+     */
     public String desc() {
         return desc;
     }
@@ -236,6 +239,9 @@ public enum StandardCollection {
         return result;
     }
 
+    /**
+     * @return the combined and deduped collection of patterns in the given collection.
+     */
     public Collection<String> patterns() {
         Set<String> result = new HashSet<>();
         getCollections().forEach(sc -> result.addAll(sc.patterns));

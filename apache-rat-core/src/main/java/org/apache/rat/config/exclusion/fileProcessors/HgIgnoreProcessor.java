@@ -28,21 +28,22 @@ import org.apache.rat.document.impl.DocumentName;
 import static java.lang.String.format;
 
 /**
- * A processor for the {@code .hdignore} files.
+ * A processor for the {@code .hgignore} files.
  */
 public final class HgIgnoreProcessor extends DescendingFileProcessor {
     /**
-     * The state enumeration for the processor.  When processing the file the processor changes
+     * The state enumeration for the processor. When processing the file the processor changes
      * syntax state depending on the input.
      */
     enum Syntax {
         /** Regular expression processing */
         REGEXP,
         /** Glob processing */
-        GLOB };
+        GLOB
+    };
     /** The line that changes the syntax processing state.*/
     private static final Pattern SYNTAX_CHECK = Pattern.compile("^\\s?syntax:\\s+(glob|regexp)\\s?");
-    /** the syntax state */
+    /** The syntax state */
     private Syntax state;
 
     /**

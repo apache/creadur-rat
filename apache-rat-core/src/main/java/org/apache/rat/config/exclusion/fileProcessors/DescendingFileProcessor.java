@@ -34,13 +34,13 @@ import org.apache.rat.config.exclusion.FileProcessor;
 import org.apache.rat.document.impl.DocumentName;
 
 /**
- * A FileProcessor that assumes the files contains the already formatted strings and just need to be
+ * A FileProcessor that assumes the files contain the already formatted strings and just need to be
  * localized for the fileName.
  */
 public class DescendingFileProcessor implements FileProcessor {
     /** The name of the file being processed */
     private final String fileName;
-    /** the predicate that will return {@code false} for any comment line in the file. */
+    /** The predicate that will return {@code false} for any comment line in the file. */
     protected final Predicate<String> commentFilter;
     /** The system dependant file name separator.  e.g. "/" on linux. */
     protected final String separator;
@@ -48,7 +48,7 @@ public class DescendingFileProcessor implements FileProcessor {
     /**
      * Constructor.
      * @param fileName The name of the file to process.
-     * @param commentPrefix the compent prefix
+     * @param commentPrefix the comment prefix
      */
     public DescendingFileProcessor(final String fileName, final String commentPrefix) {
         this(fileName, commentPrefix == null ? null : Collections.singletonList(commentPrefix), null);
@@ -65,7 +65,7 @@ public class DescendingFileProcessor implements FileProcessor {
 
     /**
      * Package private for testing.
-     * @param fileName the file name,
+     * @param fileName the file name
      * @param commentPrefixes the list of commong prefixes
      * @param separator the file separator string. (e.g. "/")
      */
@@ -76,13 +76,13 @@ public class DescendingFileProcessor implements FileProcessor {
     }
 
     /**
-     * Process the read the file and return a list of properly formatted patterns.
+     * Process by reading the file and return a list of properly formatted patterns.
      * The default implementation does the following:
      * <ul>
      *     <li>reads lines from the file specified by documentName</li>
      *     <li>modifies those entries by calling {@link FileProcessor#modifyEntry(DocumentName, String)}</li>
-     *     <li>further modifies the entry my calling {@link FileProcessor#localizePattern(DocumentName, String)}</li>
-     *     <li>retrieving the name from the reulting DocumentName</li>
+     *     <li>further modifies the entry by calling {@link FileProcessor#localizePattern(DocumentName, String)}</li>
+     *     <li>retrieving the name from the resulting DocumentName</li>
      * </ul>
      * @param documentName the file to read.
      * @return the list of properly formatted patterns
@@ -100,7 +100,7 @@ public class DescendingFileProcessor implements FileProcessor {
      * Create a list of files by applying the filter to the specified directory.
      * @param dir the directory.
      * @param filter the filter.
-     * @return a list of files.  May be empty but will not be null.
+     * @return a list of files. May be empty but will not be null.
      */
     private File[] listFiles(final File dir, final FileFilter filter) {
         File[] result = dir.listFiles(filter);
@@ -108,7 +108,7 @@ public class DescendingFileProcessor implements FileProcessor {
     }
 
     /**
-     * Process the directory tree looking for files that match the filter.  Process any matching file and return
+     * Process the directory tree looking for files that match the filter. Process any matching file and return
      * a list of fully qualified patterns.
      * @param directory The name of the directory to process.
      * @param fileFilter the filter to detect processable files with.
