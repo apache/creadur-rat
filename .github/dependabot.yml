@@ -19,6 +19,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+# as we run on JDK8 we must not update mockito as it dropped JDK8 beginning from v4.x
+      - dependency-name: "org.mockito:mockito-core"
+        versions: ["4.x", "5.x"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
