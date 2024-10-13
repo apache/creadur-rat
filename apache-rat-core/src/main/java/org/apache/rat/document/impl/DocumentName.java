@@ -32,8 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 
 
 /**
- * A collection of names for a document.  All names in the set are
- * either Rat (Linux like) or Native (OS specific).
+ * A collection of names for a document. All names in the set are
+ * either Rat (Linux like) or native (OS specific).
  */
 public final class DocumentName implements Comparable<DocumentName> {
     /** True if the file system on which we are operating is case-sensitive */
@@ -61,7 +61,7 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a Dcoument name.
+     * Creates a Document name.
      * @param name the name of the document
      * @param baseName the base name of the document.
      * @param dirSeparator the directory separator used in the name.
@@ -93,7 +93,7 @@ public final class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Creates a new document name by adding the child to the current name.
-     * @param child the child to add (must use directory separator from this document name.
+     * @param child the child to add (must use directory separator from this document name).
      * @return the new document name with the same base name, directory separator and case sensitivity as this one.
      */
     public DocumentName resolve(final String child) {
@@ -138,7 +138,7 @@ public final class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Gets the portion of the name that is not part of the base name.
-     * The resulting name will always start wit the directory separator.
+     * The resulting name will always start with the directory separator.
      * @return the portion of the name that is not part of the base name.
      */
     public String localized() {
@@ -154,7 +154,7 @@ public final class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Gets the portion of the name that is not part of the base name.
-     * The resulting name will always start wit the directory separator.
+     * The resulting name will always start with the directory separator.
      * @param dirSeparator The character to use to separate directories in the result.
      * @return the portion of the name that is not part of the base name.
      */
@@ -164,7 +164,7 @@ public final class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Tokenizes the string based on the dirSeparator
-     * @param source  the source to tokenize
+     * @param source the source to tokenize
      * @return the array of tokenized strings.
      */
     public String[] tokenize(final String source) {
@@ -172,7 +172,7 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Gets the last segment of the name.  This is the part after the last directory separator.
+     * Gets the last segment of the name. This is the part after the last directory separator.
      * @return the last segment of the name.
      */
     public String shortName() {
