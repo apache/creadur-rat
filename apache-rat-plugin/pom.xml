@@ -421,7 +421,7 @@
     <dependency>
       <groupId>nl.basjes.gitignore</groupId>
       <artifactId>gitignore-reader</artifactId>
-      <version>1.6.0</version>
+      <version>1.9.0</version>
     </dependency>
   </dependencies>
   <reporting>
