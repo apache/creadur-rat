@@ -28,7 +28,7 @@ import org.apache.rat.api.Document;
  * A class that determines if a file is a Note file. e.g. NOTICE, README, CHANGELOG, etc.
  */
 public final class NoteGuesser {
-    /** The character called a  dot, fullstop, or period. */
+    /** The character called a dot, fullstop, or period. */
     private static final String DOT = ".";
 
     /**
@@ -57,7 +57,7 @@ public final class NoteGuesser {
     };
 
     /**
-     * List of note file extensions.  Extensions that indicate a file is a note file.
+     * List of note file extensions. Extensions that indicate a file is a note file.
      */
     private static final String[] NOTE_FILE_EXTENSIONS = {
         "LICENSE", "LICENSE.TXT",
@@ -79,15 +79,13 @@ public final class NoteGuesser {
             return false;
         }
 
-        List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
         String normalisedName = document.getName().getShortName().toUpperCase(Locale.US);
-
         if (Arrays.asList(NoteGuesser.NOTE_FILE_NAMES).contains(normalisedName)) {
             return true;
         }
 
-        for (int i = 0; i < NoteGuesser.NOTE_FILE_EXTENSIONS.length; i++) {
-            if (normalisedName.endsWith(DOT + NoteGuesser.NOTE_FILE_EXTENSIONS[i])) {
+        for(String extension : NoteGuesser.NOTE_FILE_EXTENSIONS) {
+            if (normalisedName.endsWith(DOT + extension)) {
                 return true;
             }
         }
