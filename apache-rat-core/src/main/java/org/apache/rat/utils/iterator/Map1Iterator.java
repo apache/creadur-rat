@@ -22,12 +22,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- An iterator that consumes an underlying iterator and maps its results before
- delivering them; supports remove if the underlying iterator does.
+ * An iterator that consumes an underlying iterator and maps its results before
+ * delivering them; supports remove if the underlying iterator does.
  */
-
-public class Map1Iterator<From, To> extends NiceIterator<To>
-{
+public class Map1Iterator<From, To> extends NiceIterator<To> {
     private Function<From, To> map;
     private Iterator<From> base;
 
@@ -36,23 +34,24 @@ public class Map1Iterator<From, To> extends NiceIterator<To>
      * @param map The conversion to apply.
      * @param base the iterator of elements to convert
      */
-    public Map1Iterator( Function<From, To> map, Iterator<From> base )
-    {
+    public Map1Iterator(Function<From, To> map, Iterator<From> base) {
         this.map = map;
         this.base = base;
     }
 
     @Override
-    public To next()
-    { return map.apply( base.next() ); }
+    public To next() {
+        return map.apply(base.next());
+    }
 
     @Override
-    public boolean hasNext()
-    { return base.hasNext(); }
+    public boolean hasNext() {
+        return base.hasNext();
+    }
 
     @Override
     public void forEachRemaining(Consumer<? super To> action) {
-        this.base.forEachRemaining(x -> action.accept( map.apply( x ) ) );
+        this.base.forEachRemaining(x -> action.accept(map.apply(x)));
     }
 
     @Override

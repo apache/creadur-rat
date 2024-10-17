@@ -24,56 +24,57 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
-    a WrappedIterator is an ExtendedIterator wrapping around a plain (or
-    presented as plain) Iterator. The wrapping allows the usual extended
-    operations (filtering, concatenating) to be done on an Iterator derived
-    from some other source.
-<br>
+ * A WrappedIterator is an ExtendedIterator wrapping around a plain
+ * (or presented as plain) Iterator. The wrapping allows the usual extended
+ * operations (filtering, concatenating) to be done on an Iterator derived
+ * from some other source.
 */
-
-public class WrappedIterator<T> extends NiceIterator<T>
-    {
+public class WrappedIterator<T> extends NiceIterator<T> {
     /**
-         set to <code>true</code> if this wrapping doesn't permit the use of
-         .remove(). Otherwise the .remove() is delegated to the base iterator.
-    */
+     * Set to <code>true</code> if this wrapping doesn't permit the use of
+     * {@link #remove()}, otherwise removal is delegated to the base iterator.
+     */
     protected boolean removeDenied;
 
     /**
-        Answer an ExtendedIterator returning the elements of <code>it</code>.
-        If <code>it</code> is itself an ExtendedIterator, return that; otherwise
-        wrap <code>it</code>.
-    */
-    public static <T> ExtendedIterator<T> create( Iterator<T> it ) {
-        return it instanceof ExtendedIterator<?> ? (ExtendedIterator<T>) it :
-                new WrappedIterator<>( it, false );
+     * Answer an ExtendedIterator returning the elements of <code>it</code>.
+     * If <code>it</code> is itself an ExtendedIterator, return that;
+     * otherwise wrap <code>it</code>.
+     */
+    public static <T> ExtendedIterator<T> create(Iterator<T> it) {
+        return it instanceof ExtendedIterator<?>
+                ? (ExtendedIterator<T>) it
+                : new WrappedIterator<>(it, false);
     }
 
     /**
-        Answer an ExtendedIterator wrapped round <code>it</code> which does not
-        permit <code>.remove()</code> even if <code>it</code> does.
-    */
-    public static <T> WrappedIterator<T> createNoRemove( Iterator<T> it ) {
-        return new WrappedIterator<>( it, true );
+     * Answer an ExtendedIterator wrapped round <code>it</code>,
+     * which does not permit <code>.remove()</code>
+     * even if <code>it</code> does.
+     */
+    public static <T> WrappedIterator<T> createNoRemove(Iterator<T> it) {
+        return new WrappedIterator<>(it, true);
     }
 
     /**
-     * Answer an ExtendedIterator wrapped round a {@link Stream}. The extended
-     * iterator does not permit <code>.remove()</code>.
+     * Answer an ExtendedIterator wrapped round a {@link Stream}.
+     * The extended iterator does not permit <code>.remove()</code>.
      * <p>
      * The stream should not be used directly. The effect of doing so is
      * undefined.
      */
     public static <T> WrappedIterator<T> ofStream(Stream<T> stream) {
         return new WrappedIterator<T>(stream.iterator(), true) {
+            // do nothing
         };
     }
 
-    /** Given an Iterator that returns Iterator's, this creates an
+    /**
+     * Given an Iterator that returns Iterators, this creates an
      * Iterator over the next level values.
      * Similar to list splicing in lisp.
      */
-    public static <T> ExtendedIterator<T> createIteratorIterator( Iterator<Iterator<T>> it ) {
+    public static <T> ExtendedIterator<T> createIteratorIterator(Iterator<Iterator<T>> it) {
         ExtendedIterator<T> retval = NullIterator.instance();
         while (it.hasNext()) {
             retval = retval.andThen(it.next());
@@ -88,46 +89,53 @@ public class WrappedIterator<T> extends NiceIterator<T>
         return base;
     }
 
-    /** constructor: remember the base iterator */
-    protected WrappedIterator( Iterator<? extends T> base ) {
-        this( base, false );
+    /**
+     * Constructor: remember the base iterator
+     */
+    protected WrappedIterator(Iterator<? extends T> base) {
+        this(base, false);
     }
 
     /**
-         Initialise this wrapping with the given base iterator and remove-control.
-         @param base the base iterator that this iterator wraps
-         @param removeDenied true if .remove() must throw an exception
-    */
-    protected WrappedIterator( Iterator<? extends T> base, boolean removeDenied ) {
+     * Initialise this wrapping with the given base iterator and remove-control.
+     * @param base the base iterator that this iterator wraps
+     * @param removeDenied true if .remove() must throw an exception
+     */
+    protected WrappedIterator(Iterator<? extends T> base, boolean removeDenied) {
         this.base = base;
         this.removeDenied = removeDenied;
     }
 
-    /** hasNext: defer to the base iterator */
+    /**
+     * hasNext: defer to the base iterator
+     */
     @Override public boolean hasNext() {
         return base.hasNext();
     }
 
-    /** next: defer to the base iterator */
-    @Override public T next() { return base.next();
+    /**
+     * next: defer to the base iterator
+     */
+    @Override public T next() {
+        return base.next();
     }
 
-    /** forEachRemaining: defer to the base iterator */
+    /**
+     * forEachRemaining: defer to the base iterator
+     */
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
         base.forEachRemaining(action);
     }
 
     @Override public void remove() {
-        if (removeDenied) throw new UnsupportedOperationException();
+        if (removeDenied) {
+            throw new UnsupportedOperationException();
+        }
         base.remove();
     }
 
-    /**
-        if <code>it</code> is a Closableiterator, close it. Abstracts away from
-        tests [that were] scattered through the code.
-    */
-    public static void close( Iterator<?> it ) throws IOException {
-        NiceIterator.close( it );
+    public static void close(Iterator<?> it) throws IOException {
+        NiceIterator.close(it);
     }
 }

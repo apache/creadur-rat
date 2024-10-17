@@ -20,8 +20,8 @@ package org.apache.rat.utils.iterator;
 import java.util.Iterator;
 
 /**
- An empty iterator. The specialised versions of andThen() eliminate left operands
- that are empty iterators from cascaded sequences.
+ * An empty iterator. The specialised version of {@link #andThen(Iterator)} eliminate left operands
+ * that are empty iterators from cascaded sequences.
  */
 public class NullIterator<T> extends NiceIterator<T>
 {
@@ -30,7 +30,7 @@ public class NullIterator<T> extends NiceIterator<T>
     }
 
     @SuppressWarnings("unchecked")
-    @Override public <X extends T> ExtendedIterator<T> andThen( Iterator<X> it ) {
+    @Override public <X extends T> ExtendedIterator<T> andThen(Iterator<X> it) {
         return it instanceof ExtendedIterator
                 ? (ExtendedIterator<T>) it
                 : super.andThen( it )

@@ -24,9 +24,9 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- Creates a sub-Iterator by filtering. This class should not be used
- directly any more; the subclasses FilterKeepIterator and FilterDropIterator
- should be used instead.
+ * Creates a sub-Iterator by filtering. This class should not be used
+ * directly anymore; the subclasses FilterKeepIterator and FilterDropIterator
+ * should be used instead.
  */
 public class FilterIterator<T> extends WrappedIterator<T> {
     protected final Predicate<T> f;
@@ -35,46 +35,52 @@ public class FilterIterator<T> extends WrappedIterator<T> {
     protected boolean hasCurrent;
 
     /**
-     Initialises a FilterIterator with its filter and base.
-     @param fl An object is included if it is accepted by this Filter.
-     @param e The base Iterator.
+     * Initialises a FilterIterator with its filter and base.
+     * @param fl An object is included if it is accepted by this Filter.
+     * @param e The base Iterator.
      */
-    public FilterIterator( Predicate<T> fl, Iterator<T> e ) {
-        super( e );
+    public FilterIterator(Predicate<T> fl, Iterator<T> e) {
+        super(e);
         f = fl;
     }
 
     /**
-     Answer true iff there is at least one more acceptable object.
-     [Stores reference into <code>current</code>, sets <code>canRemove</code>
-     false; answer preserved in `hasCurrent`]
+     * Implementation
+     * <ol>
+     *     <li>stores reference into <code>current</code></li>
+     *     <li>sets <code>canRemove</code> to false</li>
+     *     <li>answer preserved in `hasCurrent`</li>
+     * </ol>
+     * @return {@code true} iff there is at least one more acceptable object.
      */
     @Override public boolean hasNext() {
-        while (!hasCurrent && super.hasNext())
-            hasCurrent = f.test( current = super.next() );
+        while (!hasCurrent && super.hasNext()) {
+            hasCurrent = f.test(current = super.next());
+        }
         canRemove = false;
         return hasCurrent;
     }
 
     /**
-     Remove the current member from the underlying iterator. Legal only
-     after a .next() but before any subsequent .hasNext(), because that
-     may advance the underlying iterator.
+     * Remove the current member from the underlying iterator. Legal only
+     * after a {@code .next()} but before any subsequent {@code .hasNext()}, because that
+     * may advance the underlying iterator.
      */
     @Override public void remove() {
-        if (!canRemove ) throw new IllegalStateException
-                ( "FilterIterators do not permit calls to hasNext between calls to next and remove." );
+        if (!canRemove) {
+            throw new IllegalStateException
+                    ("FilterIterators do not permit calls to hasNext() between calls to next() and remove().");
+        }
         super.remove();
     }
 
     /**
-     Answer the next acceptable object from the base iterator. The redundant
-     test of `hasCurrent` appears to make a detectable speed difference.
-     Crazy.
+     * Answer the next acceptable object from the base iterator.
+     * Implementation detail: the redundant test of {@link #hasCurrent}
+     * appears to make a detectable speed difference. Crazy!
      */
     @Override public T next() {
-        if (hasCurrent || hasNext())
-        {
+        if (hasCurrent || hasNext()) {
             canRemove = true;
             hasCurrent = false;
             return current;

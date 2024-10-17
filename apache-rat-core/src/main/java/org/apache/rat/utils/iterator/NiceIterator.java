@@ -31,10 +31,10 @@ import java.util.function.Predicate;
 
 
 /**
- NiceIterator is the standard base class implementing ExtendedIterator. It provides
- the static methods for <code>andThen</code>, <code>filterKeep</code> and
- <code>filterDrop</code>; these can be reused from any other class. It defines
- equivalent instance methods for descendants and to satisfy ExtendedIterator.
+ * NiceIterator is the standard base class implementing ExtendedIterator. It provides
+ * the static methods for <code>andThen</code>, <code>filterKeep</code> and
+ * <code>filterDrop</code>; these can be reused from any other class. It defines
+ * equivalent instance methods for descendants and to satisfy ExtendedIterator.
  */
 
 public class NiceIterator<T> implements ExtendedIterator<T> {
@@ -42,9 +42,8 @@ public class NiceIterator<T> implements ExtendedIterator<T> {
         super();
     }
 
-
     /**
-     default hasNext: no elements, return false.
+     * default hasNext: no elements, return false.
      */
     @Override
     public boolean hasNext() {
@@ -57,35 +56,35 @@ public class NiceIterator<T> implements ExtendedIterator<T> {
     }
 
     /**
-     default next: throw an exception.
+     * default next: throw an exception.
      */
     @Override
     public T next() {
-        throw new NoSuchElementException( "empty NiceIterator" );
+        throw new NoSuchElementException("empty NiceIterator");
     }
 
     /**
-     Utility method for this and other (sub)classes: raise the appropriate
-     "no more elements" exception. I note that we raised the wrong exception
-     in at least one case ...
-
-     @param message the string to include in the exception
-     @return never - but we have a return type to please the compiler
+     * Utility method for this and other (sub)classes: raise the appropriate
+     * "no more elements" exception. I note that we raised the wrong exception
+     * in at least one case ...
+     *
+     * @param message the string to include in the exception
+     * @return never - but we have a return type to please the compiler
      */
-    protected T noElements( String message ) {
-        throw new NoSuchElementException( message );
+    protected T noElements(String message) {
+        throw new NoSuchElementException(message);
     }
 
     /**
-     default remove: we have no elements, so we can't remove any.
+     * default remove: we have no elements, so we can't remove any.
      */
     @Override
     public void remove() {
-        throw new UnsupportedOperationException( "remove not supported for this iterator" );
+        throw new UnsupportedOperationException("remove not supported for this iterator");
     }
 
     /**
-     Answer the next object, and remove it.
+     * Answer the next object, and remove it.
      */
     @Override
     public T removeNext() {
@@ -95,12 +94,11 @@ public class NiceIterator<T> implements ExtendedIterator<T> {
     }
 
     /**
-     concatenate two closable iterators.
+     * concatenate two closable iterators.
      */
-
-    public static <T> ExtendedIterator<T> andThen(final Iterator<T> a, final Iterator<? extends T> b ) {
-        final List<Iterator<? extends T>> pending = new ArrayList<>( 2 );
-        pending.add( b );
+    public static <T> ExtendedIterator<T> andThen(final Iterator<T> a, final Iterator<? extends T> b) {
+        final List<Iterator<? extends T>> pending = new ArrayList<>(2);
+        pending.add(b);
         return new NiceIterator<T>() {
             private int index = 0;
 
@@ -110,25 +108,32 @@ public class NiceIterator<T> implements ExtendedIterator<T> {
             boolean hasNext = false;
 
             @Override public boolean hasNext() {
-                if (hasNext) return true;
-                if (current.hasNext()) return hasNext = true;
-                while (index < pending.size())
-                {
+                if (hasNext) {
+                    return true;
+                }
+                if (current.hasNext()) {
+                    return hasNext = true;
+                }
+                while (index < pending.size()) {
                     current = advance();
-                    if(current.hasNext()) return hasNext = true;
+                    if(current.hasNext()) {
+                        return hasNext = true;
+                    }
                 }
                 return false;
             }
 
             private Iterator< ? extends T> advance() {
-                Iterator< ? extends T> result = pending.get( index );
-                pending.set( index, null );
+                Iterator< ? extends T> result = pending.get(index);
+                pending.set(index, null);
                 index += 1;
                 return result;
             }
 
             @Override public T next() {
-                if (!hasNext()) noElements( "concatenation" );
+                if (!hasNext()) {
+                    noElements("concatenation");
+                }
                 removeFrom = current;
                 hasNext = false;
                 return current.next();
@@ -136,97 +141,99 @@ public class NiceIterator<T> implements ExtendedIterator<T> {
 
             @Override public void forEachRemaining(Consumer<? super T> action) {
                 current.forEachRemaining(action);
-                while(index < pending.size())
-                {
+                while(index < pending.size()) {
                     current = advance();
                     current.forEachRemaining(action);
                 }
             }
 
             @Override public void remove() {
-                if (null == removeFrom)
+                if (null == removeFrom) {
                     throw new IllegalStateException("no calls to next() since last call to remove()");
+                }
                 removeFrom.remove();
                 removeFrom = null;
             }
 
-            @Override public <X extends T> ExtendedIterator<T> andThen( Iterator<X> other ) {
-                pending.add( other );
+            @Override public <X extends T> ExtendedIterator<T> andThen(Iterator<X> other) {
+                pending.add(other);
                 return this;
             }
         };
     }
 
     /**
-     make a new iterator, which is us then the other chap.
+     * make a new iterator, which is used on the other chap.
      */
     @Override
-    public <X extends T> ExtendedIterator<T> andThen( Iterator<X> other ) {
-        return andThen( this, other );
+    public <X extends T> ExtendedIterator<T> andThen(Iterator<X> other) {
+        return andThen(this, other);
     }
 
     /**
-     make a new iterator, which is our elements that pass the filter
+     * make a new iterator, which is our elements that pass the filter
      */
     @Override
-    public FilterIterator<T> filter( Predicate<T> f ) {
-        return new FilterIterator<>( f, this );
+    public FilterIterator<T> filter(Predicate<T> f) {
+        return new FilterIterator<>(f, this);
     }
 
     /**
-     make a new iterator which is the elementwise _map1_ of the base iterator.
+     * make a new iterator which is the elementwise _map1_ of the base iterator.
      */
     @Override
-    public <U> ExtendedIterator<U> map( Function<T, U> map1 ) {
-        return new Map1Iterator<>( map1, this );
+    public <U> ExtendedIterator<U> map(Function<T, U> map1) {
+        return new Map1Iterator<>(map1, this);
     }
 
     /**
-     If <code>it</code> is {@link Closeable}, close it.
+     * If <code>it</code> is {@link Closeable}, close it.
      */
-    public static void close( Iterator<?> it ) throws IOException {
-        if (it instanceof Closeable) ((Closeable) it).close();
+    public static void close(Iterator<?> it) throws IOException {
+        if (it instanceof Closeable) {
+            ((Closeable) it).close();
+        }
     }
 
     /**
      * An iterator over no elements.
      * @return A class singleton which doesn't iterate.
      */
-    public static <T> ExtendedIterator<T> emptyIterator() {
-        return NullIterator.instance() ;
+    public static final <T> ExtendedIterator<T> emptyIterator() {
+        return NullIterator.instance();
     }
 
     /**
-     Answer a list of the elements in order, consuming this iterator.
+     * Answer a list of the elements in order, consuming this iterator.
      */
     @Override
     public List<T> toList() {
-        return asList( this );
+        return asList(this);
     }
 
     /**
-     Answer a list of the elements in order, consuming this iterator.
+     * Answer a list of the elements in order, consuming this iterator.
      */
     @Override
     public Set<T> toSet() {
-        return asSet( this );
+        return asSet(this);
     }
 
     /**
-     Answer a list of the elements of <code>it</code> in order, consuming this iterator.
-     Canonical implementation of toSet().
+     * Answer a list of the elements of <code>it</code> in order, consuming this iterator.
+     * Canonical implementation of {@code toSet()}.
      */
-    public static <T> Set<T> asSet( ExtendedIterator<T> it ) {
+    public static <T> Set<T> asSet(ExtendedIterator<T> it) {
         Set<T> result = new HashSet<>();
         it.forEachRemaining(result::add);
         return result;
     }
 
     /**
-     Answer a list of the elements from <code>it</code>, in order, consuming
-     that iterator. Canonical implementation of toList().
+     * Answer a list of the elements from <code>it</code>, in order, consuming
+     * that iterator. Canonical implementation of {@code toList()}.
      */
-    public static <T> List<T> asList( ExtendedIterator<T> it ) {
+    public static <T> List<T> asList(ExtendedIterator<T> it) {
         List<T> result = new ArrayList<>();
         it.forEachRemaining(result::add);
         return result;
