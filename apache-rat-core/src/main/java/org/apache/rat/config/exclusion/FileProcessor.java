@@ -28,7 +28,7 @@ import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.utils.iterator.WrappedIterator;
 
 /**
- * An interface that defines the FileProcessor.  The file priocessor reads the file specified in the DocumentName.
+ * An interface that defines the FileProcessor.  The file processor reads the file specified in the DocumentName.
  * It must return a list of fully qualified stings for the {@link MatchPattern} to process.  It may return either
  * Ant or Regex style strings, or a mixture of both.  See {@link SelectorUtils} for a description of the formats.
  */

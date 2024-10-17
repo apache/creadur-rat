@@ -39,8 +39,9 @@ import org.apache.rat.utils.iterator.WrappedIterator;
 
 public enum StandardCollection {
     /**
-     * All of the standard excludes combined
+     * All the standard excludes combined
      */
+    // see getCollections() for loading
     ALL("All of the Standard Excludes combined.", null, null, null),
     /**
      * The files and directories created by an ARCH source code control based tool.
@@ -59,6 +60,7 @@ public enum StandardCollection {
             Arrays.asList("**/BitKeeper/**", "**/ChangeSet/**"), null, null),
     /**
      * The files and directories created by a CVS source code control based tool.
+     * @see <a href="https://www.gnu.org/software/trans-coord/manual/cvs/html_node/cvsignore.html#cvsignore">Ignoring files via cvsignore</a>
      */
     CVS("The files and directories created by a CVS source code control based tool.",
             Arrays.asList("**/.cvsignore",
@@ -170,10 +172,12 @@ public enum StandardCollection {
     /**
      * A standard collection of generally accepted patterns to ignore.
      */
+    // see getCollections() for loading
     STANDARD_PATTERNS("A standard collection of generally accepted patterns to ignore.", null, null, null),
     /**
-     * A standard collection of SCMs
+     * A standard collection of SCMs.
      */
+    // see getCollections() for loading
     STANDARD_SCMS("A standard collection of SCMs", null, null, null),
     /**
      * The files and directories created by a Subversion source code control based tool.

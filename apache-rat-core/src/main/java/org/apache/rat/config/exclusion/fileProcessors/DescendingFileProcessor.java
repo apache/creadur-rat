@@ -42,8 +42,6 @@ public class DescendingFileProcessor implements FileProcessor {
     private final String fileName;
     /** the predicate that will return {@code false} for any comment line in the file. */
     protected final Predicate<String> commentFilter;
-    /** The system dependant file name separator.  e.g. "/" on linux. */
-    protected final String separator;
 
     /**
      * Constructor.
@@ -51,7 +49,7 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param commentPrefix the compent prefix
      */
     public DescendingFileProcessor(final String fileName, final String commentPrefix) {
-        this(fileName, commentPrefix == null ? null : Collections.singletonList(commentPrefix), null);
+        this(fileName, commentPrefix == null ? null : Collections.singletonList(commentPrefix));
     }
 
     /**
@@ -60,19 +58,8 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param commentPrefixes a collection of comment prefixes.
      */
     public DescendingFileProcessor(final String fileName, final Iterable<String> commentPrefixes) {
-        this(fileName, commentPrefixes, null);
-    }
-
-    /**
-     * Package private for testing.
-     * @param fileName the file name,
-     * @param commentPrefixes the list of commong prefixes
-     * @param separator the file separator string. (e.g. "/")
-     */
-    DescendingFileProcessor(final String fileName, final Iterable<String> commentPrefixes, final String separator) {
         this.fileName = fileName;
         this.commentFilter = commentPrefixes == null ? StringUtils::isNotBlank : ExclusionUtils.commentFilter(commentPrefixes);
-        this.separator = StringUtils.isEmpty(separator) ? File.separator : separator;
     }
 
     /**
