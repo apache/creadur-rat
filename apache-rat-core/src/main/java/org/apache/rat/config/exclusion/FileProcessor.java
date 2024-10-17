@@ -28,16 +28,16 @@ import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.utils.iterator.WrappedIterator;
 
 /**
- * An interface that defines the FileProcessor.  The file processor reads the file specified in the DocumentName.
- * It must return a list of fully qualified stings for the {@link MatchPattern} to process.  It may return either
- * Ant or Regex style strings, or a mixture of both.  See {@link SelectorUtils} for a description of the formats.
+ * An interface that defines the FileProcessor. The file processor reads the file specified in the DocumentName.
+ * It must return a list of fully qualified strings for the {@link MatchPattern} to process. It may return either
+ * Ant or Regex style strings, or a mixture of both. See {@link SelectorUtils} for a description of the formats.
  */
 @FunctionalInterface
 public interface FileProcessor extends Function<DocumentName, List<String>> {
     /** A String format pattern to print a regex string */
     String REGEX_FMT = "%%regex[%s]";
 
-    /** an Empty file processor -- return no entries.*/
+    /** an empty file processor returning no entries.*/
     FileProcessor EMPTY = DocumentName -> Collections.emptyList();
 
     /**
@@ -69,8 +69,9 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
     }
 
     /**
-     * Modifies the {@link MatchPattern} formatted {@code pattern} argument by expanding the pattern in the
+     * Modifies the {@link MatchPattern} formatted {@code pattern} argument by expanding the pattern and
      * by adjusting the pattern to include the basename from the {@code basename} argument.
+     * @param baseName the base name top work on.
      * @param pattern the pattern to format.
      * @return the completely formatted pattern
      */

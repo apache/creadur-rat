@@ -173,7 +173,7 @@ public final class ExclusionUtils {
      * Creates an iterable of Strings from a file of patterns.
      * Removes comment lines.
      * @param patternFile the file to read.
-     * @param commentFilters A predicate return true for non-comment lines
+     * @param commentFilters A predicate returning true for non-comment lines
      * @return the iterable of Strings from the file.
      */
     public static Iterable<String> asIterable(final File patternFile, final Predicate<String> commentFilters)  {
@@ -195,7 +195,7 @@ public final class ExclusionUtils {
     }
 
     /**
-     * Returns {@code trye} if the file name represents a hidden file
+     * Returns {@code true} if the file name represents a hidden file
      * @param f the file to check.
      * @return true if it is the name of a hidden file.
      */
@@ -211,7 +211,7 @@ public final class ExclusionUtils {
     }
 
     /**
-     * Normalize a match pattern to the standard that MatchPatern expects
+     * Normalize a match pattern to the standard that MatchPattern expects
      * @param pattern the raw pattern text.
      * @return the pattern text for MatchPattern.
      */
@@ -236,7 +236,7 @@ public final class ExclusionUtils {
 
     /**
      * Create matching patterns from the collection of strings
-     * @param iterable the collectin of strings.
+     * @param iterable the collection of strings.
      * @return The match patterns from the strings.
      */
     public static Optional<MatchPatterns> matchPattern(final Iterable<String> iterable) {
@@ -279,8 +279,7 @@ public final class ExclusionUtils {
     }
 
     /**
-     *
-     * @param filename
+     * @param filename file name to cleanup.
      * @return
      */
     public static String localizeFileName(final String filename) {
@@ -298,7 +297,7 @@ public final class ExclusionUtils {
 
         if (part.startsWith(File.separator)) {
             if (File.separator.equals("\\")) {
-                // remove an escaped backslash.  Otherwise leave it alone.
+                // remove an escaped backslash. Otherwise leave it alone.
                 if (part.length() > 1 && part.charAt(1) == File.separatorChar) {
                         // an escaped backslash so remove both.
                         part = part.substring(2);

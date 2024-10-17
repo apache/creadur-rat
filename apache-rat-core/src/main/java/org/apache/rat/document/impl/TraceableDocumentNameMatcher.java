@@ -32,26 +32,26 @@ import static java.lang.String.format;
 
 /**
  * A PatternMatcher that will emit trace messages during execution if the environment variable is set.
- * Also provides a printable name for general logging
+ * Also provides a printable name for general logging.
  */
 public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
     /** The envrionment variable to set to enable tracing for the PatternMatcher execution */
     public static final String ENV_VAR = TraceableDocumentNameMatcher.class.getName();
     /** The delegate that will do all the work */
     private final DocumentNameMatcher delegate;
-    /** The {@code true} if the environment variable has been set to "true" */
+    /** Indicator is set to {@code true} if the environment variable has been set to "true" */
     private static final boolean TRACE_ENABLED = Boolean.valueOf(System.getenv(ENV_VAR));
     /** The supplier for the name */
     protected final Supplier<String> name;
-    /** A TraceableDocumentNameMatcher that alwasys return {@code true} */
+    /** A TraceableDocumentNameMatcher that always returns {@code true} */
     public static final TraceableDocumentNameMatcher TRUE = TraceableDocumentNameMatcher.make(() -> "True", pth -> true);
-    /** A TraceableDocumentNameMatcher that alwasys return {@code false} */
+    /** A TraceableDocumentNameMatcher that always returns {@code false} */
     public static final TraceableDocumentNameMatcher FALSE = TraceableDocumentNameMatcher.make(() -> "False", pth -> false);
 
     /**
      * Creates a TraceableDocumentNameMatcher from a PathMatcher.
-     * If the {@code delegate} is already a TraceableDocumentNameMatcher it will be returned un modified.
-     * @param name the name of the tracable path matcher.
+     * If the {@code delegate} is already a TraceableDocumentNameMatcher it will be returned unmodified.
+     * @param name the name of the traceable path matcher.
      * @param delegate the PathMatcher that will actually do the work.
      * @return the new TraceableDocumentNameMatcher
      */
@@ -68,8 +68,8 @@ public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
     }
 
     /**
-     * Creates a tracable patter nmatcher with the specified name.
-     * @param name the nmae of the pattern matcher.
+     * Creates a tracable patter matcher with the specified name.
+     * @param name the name of the pattern matcher.
      * @param delegate the delegate that actually does the work.
      */
     protected TraceableDocumentNameMatcher(final Supplier<String> name, final DocumentNameMatcher delegate) {

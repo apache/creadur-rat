@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Custom file processors to handles exlcusion defined in various formats.
+ * Custom file processors to handles exclusions defined in various formats.
  */
 package org.apache.rat.config.exclusion.fileProcessors;
