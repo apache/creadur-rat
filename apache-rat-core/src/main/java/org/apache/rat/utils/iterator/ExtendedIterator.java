@@ -32,10 +32,10 @@ import java.util.function.Predicate;
  * are defined for convenience in iterator composition: composition, filtering
  * in, filtering out, and element mapping.<br>
  * NOTE that the result of these operations consumes the base iterator(s); they
- * do not make independent copies. <br>
+ * do not make independent copies.<br>
  * The canonical implementation of ExtendedIterator is {@link NiceIterator},
  * which also defines static methods for these operations that will work on any
- * Iterator. <br>
+ * Iterator.<br>
  *
  * @param <T>
  *            the type of element over which an instance of ExtendedIterator
@@ -43,61 +43,61 @@ import java.util.function.Predicate;
  */
 public interface ExtendedIterator<T> extends Iterator<T> {
     /**
-     Answer the next object, and remove it. Equivalent to next(); remove().
+     * Answer the next object, and remove it. Equivalent to next(); remove().
      */
     T removeNext();
 
     /**
-     return a new iterator which delivers all the elements of this iterator and
-     then all the elements of the other iterator. Does not copy either iterator;
-     they are consumed as the result iterator is consumed.
+     * Return a new iterator which delivers all the elements of this iterator and
+     * then all the elements of the other iterator. Does not copy either iterator;
+     * they are consumed as the result iterator is consumed.
      */
     <X extends T> ExtendedIterator<T> andThen( Iterator<X> other );
 
     /**
-     return a new iterator containing only the elements of _this_ which
-     pass the filter _f_. The order of the elements is preserved. Does not
-     copy _this_, which is consumed as the result is consumed.
+     * Return a new iterator containing only the elements of _this_ which
+     * pass the filter _f_. The order of the elements is preserved. Does not
+     * copy _this_, which is consumed as the result is consumed.
      */
     ExtendedIterator<T> filter( Predicate<T> f );
 
     /**
-     return a new iterator where each element is the result of applying
-     _map1_ to the corresponding element of _this_. _this_ is not
-     copied; it is consumed as the result is consumed.
+     * Return a new iterator where each element is the result of applying
+     * _map1_ to the corresponding element of _this_. _this_ is not
+     * copied; it is consumed as the result is consumed.
      */
     <U> ExtendedIterator<U> map( Function<T, U> map1 );
 
     /**
      * Execute an action on each element of the iterator.
      * This operation ends and closes the {@code ExtendedIterator} even if there is an exception.
-     * Shorter name for "{@code Iterator.forEachRemaining}", adding exception handling.
+     * Shorter name for {@link java.util.Iterator#forEachRemaining(Consumer)}, adding exception handling.
      */
     default void forEach( Consumer<T> action) {
         forEachRemaining(action);
     }
 
     /**
-     Answer a list of the [remaining] elements of this iterator, in order,
-     consuming this iterator.
+     * Answer a list of the (remaining) elements of this iterator, in order,
+     * consuming this iterator.
      */
     List<T> toList();
 
     /**
-     Answer a set of the [remaining] elements of this iterator,
-     consuming this iterator.
+     * Answer a set of the (remaining) elements of this iterator,
+     * consuming this iterator.
      */
     Set<T> toSet();
 
     /**
-     Answer with an {@link Optional}.
-     This operation assumes that the {@code ExtendedIterator} does not return null for {@code next()}.
-     If it does,  {@code NullPointerException} is thrown.
-     <ul>
-     <li>If there is no next, return {@code Optional.empty()}
-     <li>If the next object exists, and is not null, return that in the {@link Optional}.
-     <li>If the next object exists, and is null, throw {@code NullPointerException}
-     </ul>
+     * Answer with an {@link Optional}.
+     * This operation assumes that the {@code ExtendedIterator} does not return {@code null} for {@code next()}.
+     * If it does, {@code NullPointerException} is thrown.
+     * <ul>
+     * <li>If there is no next, return {@code Optional.empty()}
+     * <li>If the next object exists, and is not null, return that in the {@link Optional}.
+     * <li>If the next object exists, and is null, throw {@code NullPointerException}
+     * </ul>
      */
     default Optional<T> nextOptional() {
         if ( ! hasNext() )
