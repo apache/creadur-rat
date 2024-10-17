@@ -113,7 +113,7 @@ public final class DefaultAnalyserFactory {
             case ARCHIVE:
                 licensePredicate = licenseFilter(configuration.getArchiveProcessing());
                 if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
-                    ArchiveWalker archiveWalker = new ArchiveWalker(configuration, document);
+                    ArchiveWalker archiveWalker = new ArchiveWalker(document);
                     try {
                         for (Document doc : archiveWalker.getDocuments()) {
                             analyse(doc);

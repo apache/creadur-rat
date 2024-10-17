@@ -52,14 +52,15 @@ public class CopyrightMatcherTest {
 
     private static final int TOTAL_TESTS = prefix.length * 9;
 
+    /* patterns are name, start, end, owner, pass results, fail results */
     static Arguments startStopOwner = Arguments.of("start-stop-owner", "1990", "1991", "an owner",
             expandResults(DO, OD, DOS, ODS), expandResults(D, S, O, OS, SO));
     static Arguments startOwner = Arguments.of("start-owner", "1990", null, "an owner", expandResults(OS, SO, OD, ODS),
             expandResults(D, DO, DOS, S, O));
     static Arguments start = Arguments.of("start", "1990", null, null, expandResults(D, DO, DOS, S, SO),
             expandResults(OD, ODS, O, OS));
-    static Arguments owner = Arguments.of("owner", null, null, "an owner", expandResults(O, OD, ODS, OS),
-            expandResults(DO, DOS, S, D, SO));
+    static Arguments owner = Arguments.of("owner", null, null, "an owner", expandResults(DO, DOS, O, OD, ODS, OS, SO),
+            expandResults(S, D));
     static Arguments nada = Arguments.of("nada", null, null, null, expandResults(D, DO, DOS, S, SO),
             expandResults(OD, ODS, O, OS));
 
@@ -94,7 +95,7 @@ public class CopyrightMatcherTest {
         CopyrightMatcher matcher = new CopyrightMatcher(start, stop, owner);
         for (String[] target : pass) {
             IHeaders headers = AbstractMatcherTest.makeHeaders(target[TEXT], null);
-            assertTrue(matcher.matches(headers), () -> String.format("%s:%s failed", testName, target[NAME]));
+            assertTrue(matcher.matches(headers), () -> String.format("%s:%s on '%s' failed", testName, target[TEXT], target[TEXT]));
             matcher.reset();
         }
     }
@@ -106,7 +107,7 @@ public class CopyrightMatcherTest {
         CopyrightMatcher matcher = new CopyrightMatcher(start, stop, owner);
         for (String[] target : fail) {
             IHeaders headers = AbstractMatcherTest.makeHeaders(target[TEXT], null);
-            assertFalse(matcher.matches(headers), String.format("%s:%s passed", testName, target[NAME]));
+            assertFalse(matcher.matches(headers), String.format("%s:%s on '%s' passed", testName, target[NAME], target[TEXT]));
             matcher.reset();
         }
     }

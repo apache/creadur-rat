@@ -50,11 +50,30 @@ ${class}
 ${static}
     }
 
+    /**
+     * Creates a Maven name from a long option.
+     * Will map excluded long options to null.
+     * @param longOpt the kebab name.
+     * @return The CamelCased name for Maven use.
+     */
     public static String createName(String longOpt) {
         String name = xlateName.get(longOpt);
         return name != null ? name : new CasedString(CasedString.StringCase.KEBAB, longOpt).toCase(CasedString.StringCase.CAMEL);
     }
 
+    /**
+     * Creates a kebab case name from a camel case name.
+     * @param camelCase the camel case name to convert.
+     * @return the kebab format.
+     */
+    public static String toKebabForm(String camelCase) {
+        return new CasedString(CasedString.StringCase.CAMEL, camelCase).toCase(CasedString.StringCase.KEBAB);
+    }
+
+    /**
+     * Returns the list of unsupported args.
+     * @return the list of kebab style names that are unsupported by the Maven ui.
+     */
     public static List<String> unsupportedArgs() {
         return Collections.unmodifiableList(unsupportedArgs);
     }

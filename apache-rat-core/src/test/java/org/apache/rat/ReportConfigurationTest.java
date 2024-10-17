@@ -44,14 +44,13 @@ import java.util.SortedSet;
 import java.util.function.Function;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.XMLConfigurationReaderTest;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -62,16 +61,19 @@ import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
-import org.apache.rat.walker.NameBasedHiddenFileFilter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 public class ReportConfigurationTest {
 
     private ReportConfiguration underTest;
     private TestingLog log;
+
+    @TempDir
+    private File tempDir;
 
     @BeforeEach
     public void setup() {
@@ -332,32 +334,34 @@ public class ReportConfigurationTest {
         assertThat(underTest.getCopyrightMessage()).isEqualTo("This is the message");
     }
 
-    @Test
-    public void filesToIgnoreTest() {
-
-        assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
-
-        underTest.setFrom(Defaults.builder().build());
-        assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
-
-        IOFileFilter filter = mock(IOFileFilter.class);
-        underTest.setFilesToIgnore(filter);
-        assertThat(underTest.getFilesToIgnore()).isEqualTo(filter);
+    DocumentName mkDocumentName(File f) {
+        return new DocumentName(f, new DocumentName(tempDir));
     }
-
     @Test
-    public void directoriesToIgnoreTest() {
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+    public void exclusionTest() {
+        DocumentName baseDir = new DocumentName(tempDir);
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File("foo"))));
 
         underTest.setFrom(Defaults.builder().build());
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+        {
+            File f = new File(tempDir, ".hiddenDir");
+            assertTrue(f.mkdir(), () -> "Could not create directory " + f.toString());
+        }
+        assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
-        underTest.setDirectoriesToIgnore(DirectoryFileFilter.DIRECTORY);
-        underTest.addDirectoryToIgnore(NameBasedHiddenFileFilter.HIDDEN);
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(OrFileFilter.class);
+        underTest.addIncludedCollection(StandardCollection.HIDDEN_DIR);
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
-        underTest.setDirectoriesToIgnore(null);
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
+        underTest.addExcludedCollection(StandardCollection.HIDDEN_DIR);
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+
+        underTest.addExcludedFilter(DirectoryFileFilter.DIRECTORY);
+        {
+            File f = new File(tempDir, "newDir");
+            assertTrue(f.mkdirs(), () -> "Could not create directory " + f);
+            assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(f)));
+        }
     }
 
     @Test
@@ -690,11 +694,8 @@ public class ReportConfigurationTest {
         assertThat(config.isAddingLicenses()).isFalse();
         assertThat(config.isAddingLicensesForced()).isFalse();
         assertThat(config.getCopyrightMessage()).isNull();
-        assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         assertThat(config.getStyleSheet()).withFailMessage("Stylesheet should not be null").isNotNull();
-        assertThat(config.getDirectoriesToIgnore()).withFailMessage("Directory filter should not be null").isNotNull();
-        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
-        
+
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);
         validateDefaultLicenses(config);

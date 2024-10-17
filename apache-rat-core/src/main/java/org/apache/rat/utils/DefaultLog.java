@@ -18,10 +18,18 @@
  */
 package org.apache.rat.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * A default implementation of Log that writes to System.out and System.err
  */
 public final class DefaultLog implements Log {
+    /**
+     * The environment variable to set the default log level that Rat should log at.
+     * If not specified INFO is used.
+     * @see #setLevel(Level)
+     */
+    public static final String ENV_VAR = DefaultLog.class.getName();
 
     /**
      * The instance of the default log.
@@ -52,11 +60,18 @@ public final class DefaultLog implements Log {
     private Level level;
 
     private DefaultLog() {
-        level = Level.WARN;
+        try {
+            level = StringUtils.isNotEmpty(System.getenv(ENV_VAR)) ?
+                    Level.valueOf(System.getenv(ENV_VAR).toUpperCase()) : Level.INFO;
+        } catch (IllegalArgumentException e) {
+            level = Level.INFO;
+            log(Level.WARN, "Invalid log level set in environment", e);
+        }
     }
 
     /**
-     * Sets the level.
+     * Sets the level. Log messages below the specified level will
+     * not be written to the log.
      * @param level the level to use when writing messages.
      */
     public void setLevel(final Level level) {
@@ -73,7 +88,7 @@ public final class DefaultLog implements Log {
 
     @Override
     public void log(final Level level, final String msg) {
-        if (this.level.ordinal() <= level.ordinal()) {
+        if (isEnabled(level)) {
             switch (level) {
                 case DEBUG:
                 case INFO:

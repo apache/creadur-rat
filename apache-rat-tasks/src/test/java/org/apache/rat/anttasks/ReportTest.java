@@ -29,7 +29,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,33 +36,49 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
 public class ReportTest extends AbstractRatAntTaskTest {
-    private static final File antFile = new File("src/test/resources/antunit/report-junit.xml").getAbsoluteFile();
+    private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","antunit"});
+    private final File antFile = new File(new File(baseNameStr), "report-junit.xml").getAbsoluteFile();
+    private DocumentName documentName;
 
+    @Before
+    public void setUp()  {
+        String antFileName = antFile.getAbsolutePath();
+        File baseFile = antFile.getParentFile();
+        for (int i=0; i<4; i++) {
+            baseFile = baseFile.getParentFile();
+        }
+        documentName = new DocumentName(antFile, new DocumentName(baseFile));
+        System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
+        super.setUp();
+    }
     @Override
     protected File getAntFile() {
         return antFile;
     }
 
     private String logLine(String id) {
-        return logLine(true, getAntFileName(), id);
+        return logLine(true, documentName.localized("/"), id);
     }
     
-    private String logLine(String antFile, String id) {
-        return logLine(true, antFile, id);
+    private String logLine(String fileText, String id) {
+        return logLine(true, fileText, id);
     }
     
-    private String logLine(boolean approved, String antFile, String id) {
-        return String.format( "%sS \\Q%s\\E\\s+\\Q%s\\E ", approved?" ":"!", antFile, id);
+    private String logLine(boolean approved, String fileText, String id) {
+        return String.format( "%sS \\Q%s\\E\\s+\\Q%s\\E ", approved?" ":"!", fileText, id);
     }
     
     @Test
@@ -75,7 +90,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
-        final String alLine = " S \\Q" + getAntFileName() + "\\E";
+        final String alLine = " S \\Q" + documentName.localized("/") + "\\E";
 
         if (!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
             throw new IOException("Could not create temporary directory " + getTempDir());
@@ -93,7 +108,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     public void testWithALUnknown() throws Exception {
         buildRule.executeTarget("testWithALUnknown");
         assertLogDoesNotMatch(logLine("AL"));
-        assertLogMatches(logLine(false, getAntFileName(), "?????"));
+        assertLogMatches(logLine(false, documentName.localized("/"), "?????"));
     }
 
     @Test
@@ -138,10 +153,9 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testCopyrightBuild() throws Exception {
         try {
-            String fileName = new File(getAntFile().getParent(), "index.apt").getPath().replace('\\', '/');
             buildRule.executeTarget("testCopyrightBuild");
-            assertLogMatches(logLine(fileName,"YASL1"));
-            assertLogDoesNotMatch(logLine(fileName,"AL"));
+            assertLogMatches(logLine("/src/test/resources/antunit/index.apt","YASL1"));
+            assertLogDoesNotMatch(logLine("/index.apt","AL"));
         } catch (BuildException e) {
             final String expect = "You must specify at least one file";
             assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
@@ -176,7 +190,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     private String getAntFileName() {
-        return getAntFile().getPath().replace('\\', '/');
+        return "/src/test/resources/antunit/"+getAntFile().getName();
     }
 
     private String getFirstLine(File pFile) throws IOException {

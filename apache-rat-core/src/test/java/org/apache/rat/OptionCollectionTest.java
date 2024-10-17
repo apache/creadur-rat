@@ -22,8 +22,9 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +44,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -121,11 +125,11 @@ public class OptionCollectionTest {
 
     @Test
     public void testShortenedOptions() throws IOException {
-        String[] args = {"--scan"};
+        String[] args = {"--output-lic", "ALL"};
         ReportConfiguration config = OptionCollection.parseCommands(args, (o) -> {
         }, true);
         assertThat(config).isNotNull();
-        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
+        assertThat(config.listLicenses()).isEqualTo(LicenseSetFactory.LicenseFilter.ALL);
     }
 
     @Test
@@ -134,6 +138,16 @@ public class OptionCollectionTest {
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
         ReportConfiguration config = OptionCollection.createConfiguration("", cl);
         ReportConfigurationTest.validateDefault(config);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { ".", "./", "target", "./target" })
+    public void getReportableTest(String fName) throws IOException {
+        File expected = new File(fName);
+        ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
+        IReportable reportable = OptionCollection.getReportable(expected, config);
+        assertNotNull(reportable, () -> format("'%s' returned null", fName));
+        assertThat(reportable.name().getName()).isEqualTo(expected.getAbsolutePath());
     }
 
     /**

@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.DocumentName;
 
 /**
  * Utility class, which provides static methods for creating test cases.
@@ -70,7 +70,7 @@ public class Resources {
         if (!f.isFile()) {
             throw new FileNotFoundException("Unable to locate resource file: " + pResource);
         }
-        return f;
+        return f.getCanonicalFile();
     }
 
     /**
@@ -78,7 +78,7 @@ public class Resources {
      * add module names to fix behaviour from within IntelliJ.
      */
     public static File[] getResourceFiles(String pResource) throws IOException {
-        File f = new File(TEST_RESOURCE_BASE_PATH, pResource);
+        File f = new File(TEST_RESOURCE_BASE_PATH, pResource).getCanonicalFile();
         if (!f.isDirectory()) {
             throw new FileNotFoundException("Unable to locate resource directory: " + pResource);
         }
@@ -125,8 +125,6 @@ public class Resources {
      * Locates the name of a directory, which contains the given resource file.
      */
     public static String getResourceDirectory(String pResource) throws IOException {
-        final File resource = getResourceFile(pResource);
-        final File dir = resource.getParentFile();
-        return FileDocument.normalizeFileName(dir);
+        return getResourceFile(pResource).getParentFile().getAbsolutePath();
     }
 }

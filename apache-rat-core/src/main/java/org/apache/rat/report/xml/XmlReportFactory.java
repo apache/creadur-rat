@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.VersionInfo;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
@@ -48,6 +49,12 @@ public final class XmlReportFactory {
     private static final String RAT_REPORT = "rat-report";
     /** The timestamp attribute */
     private static final String TIMESTAMP = "timestamp";
+    /** The version attribute */
+    private static final String VERSION = "version";
+    /** the product attribute */
+    private static final String PRODUCT = "product";
+    /** the vendor attribute */
+    private static final String VENDOR = "vendor";
 
     private XmlReportFactory() {
         // Do not instantiate
@@ -94,7 +101,13 @@ public final class XmlReportFactory {
      */
     public static void startReport(final IXmlWriter writer) throws RatException {
         try {
-            writer.openElement(RAT_REPORT).attribute(TIMESTAMP, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
+            VersionInfo versionInfo = new VersionInfo();
+            writer.openElement(RAT_REPORT)
+                    .attribute(TIMESTAMP, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()))
+                    .openElement(VERSION)
+                    .attribute(PRODUCT, versionInfo.getTitle())
+                    .attribute(VENDOR, versionInfo.getVendor())
+                    .attribute(VERSION, versionInfo.getVersion()).closeElement();
         } catch (IOException e) {
             throw new RatException("Cannot open start element", e);
         }
