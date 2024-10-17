@@ -87,7 +87,7 @@ public class DescendingFileProcessor implements FileProcessor {
      * Create a list of files by applying the filter to the specified directory.
      * @param dir the directory.
      * @param filter the filter.
-     * @return a list of files. May be empty but will not be null.
+     * @return an array of files. May be empty but will not be null.
      */
     private File[] listFiles(final File dir, final FileFilter filter) {
         File[] result = dir.listFiles(filter);
@@ -101,20 +101,20 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param fileFilter the filter to detect processable files with.
      * @return the list of fully qualified file patterns.
      */
-    private List<String> checkdirectory(final DocumentName directory, final FileFilter fileFilter) {
+    private List<String> checkDirectory(final DocumentName directory, final FileFilter fileFilter) {
         List<String> fileNames = new ArrayList<>();
         File dirFile = new File(directory.getName());
         for (File f : listFiles(dirFile, fileFilter)) {
             fileNames.addAll(process(new DocumentName(f, directory)));
         }
         for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
-            fileNames.addAll(checkdirectory(new DocumentName(dir), fileFilter));
+            fileNames.addAll(checkDirectory(new DocumentName(dir), fileFilter));
         }
         return fileNames;
     }
 
     @Override
     public List<String> apply(final DocumentName dir) {
-       return checkdirectory(dir, new NameFileFilter(fileName));
+       return checkDirectory(dir, new NameFileFilter(fileName));
     }
 }
