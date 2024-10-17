@@ -65,12 +65,12 @@ public final class DefaultLog implements Log {
                     Level.valueOf(System.getenv(ENV_VAR).toUpperCase()) : Level.INFO;
         } catch (IllegalArgumentException e) {
             level = Level.INFO;
-            log(Level.WARN, "Invalid Level set in environment", e);
+            log(Level.WARN, "Invalid log level set in environment", e);
         }
     }
 
     /**
-     * Sets the level.  Log messages below the specified level will
+     * Sets the level. Log messages below the specified level will
      * not be written to the log.
      * @param level the level to use when writing messages.
      */

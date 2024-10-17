@@ -93,7 +93,7 @@ public final class Help extends AbstractHelp {
                     argumentPadding + "Provides a file processor: " + sc.fileProcessor().hasNext());
         }
         writer.println("\nA path matcher will match specific information about the file.");
-        writer.println("\nA file processor will process the associated \"ignore\" file for include and esclude directives");
+        writer.println("\nA file processor will process the associated \"ignore\" file for include and exclude directives");
 
         writer.println(header("Notes"));
         int idx = 1;

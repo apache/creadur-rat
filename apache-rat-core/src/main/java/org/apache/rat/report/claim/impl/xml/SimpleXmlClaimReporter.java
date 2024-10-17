@@ -30,7 +30,7 @@ import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
- * A claim reporter to writhe the XML document.
+ * A claim reporter to write the XML document.
  */
 public class SimpleXmlClaimReporter extends AbstractReport {
     /** the resource element name */
