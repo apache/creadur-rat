@@ -114,7 +114,7 @@ public final class TikaProcessor {
     public static String process(final Document document) throws RatDocumentAnalysisException {
         Metadata metadata = new Metadata();
         try (InputStream stream = document.inputStream()) {
-            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().name());
+            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().getName());
             String result = TIKA.detect(stream, metadata);
             String[] parts = result.split("/");
             MediaType mediaType = new MediaType(parts[0], parts[1]);

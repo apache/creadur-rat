@@ -75,11 +75,11 @@ public class DescendingFileProcessor implements FileProcessor {
      * @return the list of properly formatted patterns
      */
     protected List<String> process(final DocumentName documentName) {
-        return ExclusionUtils.asIterator(new File(documentName.name()), commentFilter)
+        return ExclusionUtils.asIterator(new File(documentName.getName()), commentFilter)
                 .map(entry -> modifyEntry(documentName, entry))
                 .filter(Objects::nonNull)
                 .map(entry -> FileProcessor.localizePattern(documentName, entry))
-                .map(DocumentName::name)
+                .map(DocumentName::getName)
                 .toList();
     }
 
@@ -103,7 +103,7 @@ public class DescendingFileProcessor implements FileProcessor {
      */
     private List<String> checkdirectory(final DocumentName directory, final FileFilter fileFilter) {
         List<String> fileNames = new ArrayList<>();
-        File dirFile = new File(directory.name());
+        File dirFile = new File(directory.getName());
         for (File f : listFiles(dirFile, fileFilter)) {
             fileNames.addAll(process(new DocumentName(f, directory)));
         }

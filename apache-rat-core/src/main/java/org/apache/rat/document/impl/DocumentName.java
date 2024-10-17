@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.utils.DefaultLog;
 
 
 /**
@@ -49,13 +50,21 @@ public final class DocumentName implements Comparable<DocumentName> {
 
     static {
         boolean fsSensitive = true;
+        File f = null;
         try {
             Path p = Files.createTempDirectory("NameSet");
-            File f = p.toFile();
+            f = p.toFile();
             fsSensitive = !new File(f, "a").equals(new File(f, "A"));
-            FileUtils.deleteDirectory(f);
         } catch (IOException e) {
             fsSensitive = true;
+        } finally {
+            if (f != null) {
+                try {
+                    FileUtils.deleteDirectory(f);
+                } catch (IOException e) {
+                    DefaultLog.getInstance().warn("Unable to delete temporary directory: "+f, e);
+                }
+            }
         }
         FS_IS_CASE_SENSITIVE = fsSensitive;
     }
@@ -108,7 +117,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * Gets the fully qualified name of the document.
      * @return the fully qualified name of the document.
      */
-    public String name() {
+    public String getName() {
         return name;
     }
 
@@ -116,7 +125,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * Gets the fully qualified basename of the document.
      * @return the fully qualified basename of the document.
      */
-    public String baseName() {
+    public String getBaseName() {
         return baseName;
     }
 
@@ -124,7 +133,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * Gets the DocumentName for the basename of this document name.
      * @return the DocumentName for the basename of this document name.
      */
-    public DocumentName baseDocumentName() {
+    public DocumentName getBaseDocumentName() {
         return name.equals(baseName) ? this : new DocumentName(baseName, baseName, dirSeparator, isCaseSensitive);
     }
 
@@ -132,7 +141,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * Returns the directory separator.
      * @return the directory separator.
      */
-    public String dirSeparator() {
+    public String getDirectorySeparator() {
         return dirSeparator;
     }
 
@@ -175,7 +184,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * Gets the last segment of the name. This is the part after the last directory separator.
      * @return the last segment of the name.
      */
-    public String shortName() {
+    public String getShortName() {
         int pos = name.lastIndexOf(dirSeparator);
         return pos == -1 ? name : name.substring(pos + 1);
     }

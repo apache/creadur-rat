@@ -29,7 +29,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -62,7 +61,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             baseFile = baseFile.getParentFile();
         }
         documentName = new DocumentName(antFile, new DocumentName(baseFile));
-        System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.baseName());
+        System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
     @Override

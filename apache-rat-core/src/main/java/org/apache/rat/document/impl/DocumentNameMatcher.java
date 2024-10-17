@@ -31,6 +31,6 @@ public interface DocumentNameMatcher {
      * @return a DocumentNameMatcher
      */
     static DocumentNameMatcher from(FileFilter fileFilter) {
-        return  docName -> fileFilter.accept(new File(docName.name()));
+        return  docName -> fileFilter.accept(new File(docName.getName()));
     }
 }

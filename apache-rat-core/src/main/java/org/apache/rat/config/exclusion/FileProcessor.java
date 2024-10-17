@@ -51,7 +51,7 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
             public List<String> apply(final DocumentName documentName) {
                 return WrappedIterator.create(patterns.iterator())
                         .map(entry -> FileProcessor.localizePattern(documentName, entry))
-                        .map(DocumentName::name)
+                        .map(DocumentName::getName)
                         .toList();
             }
         };
@@ -78,20 +78,20 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
     static DocumentName localizePattern(final DocumentName baseName, final String pattern) {
         boolean prefix = pattern.startsWith("!");
         String workingPattern = prefix ? pattern.substring(1) : pattern;
-        String normalizedPattern = SelectorUtils.extractPattern(workingPattern, baseName.dirSeparator());
+        String normalizedPattern = SelectorUtils.extractPattern(workingPattern, baseName.getDirectorySeparator());
         StringBuilder sb = new StringBuilder(prefix ? "!" : "");
         if (SelectorUtils.isRegexPrefixedPattern(workingPattern)) {
             sb.append(SelectorUtils.REGEX_HANDLER_PREFIX)
-                    .append("\\Q").append(baseName.baseName())
-                    .append(baseName.dirSeparator())
+                    .append("\\Q").append(baseName.getBaseName())
+                    .append(baseName.getDirectorySeparator())
                     .append("\\E").append(normalizedPattern)
                     .append(SelectorUtils.PATTERN_HANDLER_SUFFIX);
 
         } else {
-            sb.append(baseName.baseName())
-                    .append(baseName.dirSeparator())
+            sb.append(baseName.getBaseName())
+                    .append(baseName.getDirectorySeparator())
                     .append(normalizedPattern);
         }
-        return new DocumentName(sb.toString(), baseName.baseName(), baseName.dirSeparator(), baseName.isCaseSensitive());
+        return new DocumentName(sb.toString(), baseName.getBaseName(), baseName.getDirectorySeparator(), baseName.isCaseSensitive());
     }
 }

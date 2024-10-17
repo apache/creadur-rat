@@ -97,7 +97,7 @@ public enum StandardCollection {
     HIDDEN_DIR("The hidden directories. Directories with names that start with '.'",
             null,
             str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_DIR", documentName -> {
-                File f = new File(documentName.name());
+                File f = new File(documentName.getName());
                 return f.isDirectory() && ExclusionUtils.isHidden(f);
             }), null
     ),
@@ -107,7 +107,7 @@ public enum StandardCollection {
     HIDDEN_FILE("The hidden files. Directories with names that start with '.'",
             null,
             str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_FILE", documentName -> {
-                File f = new File(documentName.name());
+                File f = new File(documentName.getName());
                 return f.isFile() && ExclusionUtils.isHidden(f);
             }), null
     ),

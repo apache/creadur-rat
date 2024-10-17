@@ -91,7 +91,7 @@ public class ArchiveWalker extends Walker {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         IOUtils.copy(input, baos);
                         String outerNameStr = format("%s#%s", getDocument().getName(), entry.getName());
-                        DocumentName outerName = new DocumentName(outerNameStr, getDocument().getName().name(), "/", true);
+                        DocumentName outerName = new DocumentName(outerNameStr, getDocument().getName().getName(), "/", true);
                         result.add(new ArchiveEntryDocument(outerName, baos.toByteArray(), getDocument().getNameMatcher()));
                     }
                 }

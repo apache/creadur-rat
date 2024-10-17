@@ -41,7 +41,7 @@ public class CVSFileProcessor extends DescendingFileProcessor {
 
     @Override
     protected List<String> process(final DocumentName documentName) {
-        final File dir = new File(documentName.name());
+        final File dir = new File(documentName.getName());
         List<String> result = new ArrayList<>();
         Iterator<String> iter = ExclusionUtils.asIterator(dir, StringUtils::isNotBlank);
         while (iter.hasNext()) {
@@ -49,7 +49,7 @@ public class CVSFileProcessor extends DescendingFileProcessor {
             String[] parts = line.split("\\s+");
             for (String part : parts) {
                 if (!part.isEmpty()) {
-                    result.add(FileProcessor.localizePattern(documentName, part).name());
+                    result.add(FileProcessor.localizePattern(documentName, part).getName());
                 }
             }
         }

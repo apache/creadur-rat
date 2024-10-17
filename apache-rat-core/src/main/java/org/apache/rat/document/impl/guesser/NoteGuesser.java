@@ -80,7 +80,7 @@ public final class NoteGuesser {
         }
 
         List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
-        String normalisedName = document.getName().shortName().toUpperCase(Locale.US);
+        String normalisedName = document.getName().getShortName().toUpperCase(Locale.US);
 
         if (Arrays.asList(NoteGuesser.NOTE_FILE_NAMES).contains(normalisedName)) {
             return true;
