@@ -62,7 +62,7 @@ public final class DocumentName implements Comparable<DocumentName> {
                 try {
                     FileUtils.deleteDirectory(f);
                 } catch (IOException e) {
-                    DefaultLog.getInstance().warn("Unable to delete temporary directory: "+f, e);
+                    DefaultLog.getInstance().warn("Unable to delete temporary directory: " + f, e);
                 }
             }
         }
