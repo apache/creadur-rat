@@ -68,7 +68,7 @@ public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
     }
 
     /**
-     * Creates a tracable patter matcher with the specified name.
+     * Creates a traceable pattern matcher with the specified name.
      * @param name the name of the pattern matcher.
      * @param delegate the delegate that actually does the work.
      */
