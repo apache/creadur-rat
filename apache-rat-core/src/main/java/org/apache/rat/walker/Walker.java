@@ -32,7 +32,7 @@ public abstract class Walker implements IReportable {
     private final Document document;
 
     /**
-     * Creates  the walker
+     * Creates the walker
      * @param document The document the walker is walking.
      */
     protected Walker(final Document document) {
@@ -48,7 +48,7 @@ public abstract class Walker implements IReportable {
     }
 
     @Override
-    public DocumentName name() {
+    public DocumentName getName() {
         return document.getName();
     }
 }

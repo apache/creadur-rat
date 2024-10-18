@@ -147,7 +147,7 @@ public class OptionCollectionTest {
         ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(expected, config);
         assertNotNull(reportable, () -> format("'%s' returned null", fName));
-        assertThat(reportable.name().getName()).isEqualTo(expected.getAbsolutePath());
+        assertThat(reportable.getName().getName()).isEqualTo(expected.getAbsolutePath());
     }
 
     /**

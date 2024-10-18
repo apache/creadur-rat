@@ -33,5 +33,5 @@ public interface IReportable {
      * Returns the DocumentName for the reportable.
      * @return the DocumentName for the reportable.
      */
-    DocumentName name();
+    DocumentName getName();
 }

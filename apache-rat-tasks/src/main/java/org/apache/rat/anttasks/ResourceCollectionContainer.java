@@ -59,7 +59,7 @@ class ResourceCollectionContainer implements IReportable {
     }
 
     @Override
-    public DocumentName name() {
+    public DocumentName getName() {
         return name;
     }
 }
