@@ -181,7 +181,7 @@ public final class ExclusionUtils {
     public static Iterable<String> asIterable(final File patternFile, final Predicate<String> commentFilters)  {
         verifyFile(patternFile);
         Objects.requireNonNull(commentFilters, "commentFilters");
-        // can not return LineIterator directly as the patternFile will not be closed leading 
+        // can not return LineIterator directly as the patternFile will not be closed leading
         // to a resource leak in some cases.
         try (FileReader reader = new FileReader(patternFile)) {
             List<String> result = new ArrayList<>();
