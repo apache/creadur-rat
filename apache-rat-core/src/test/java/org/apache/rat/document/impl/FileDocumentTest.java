@@ -37,7 +37,7 @@ public class FileDocumentTest {
     
     @BeforeEach
     public void setUp() throws Exception {
-        File basedir = basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES);
+        File basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES);
         file = Resources.getResourceFile("elements/Source.java");
         document = new FileDocument(new DocumentName(basedir), file, p -> true);
     }
