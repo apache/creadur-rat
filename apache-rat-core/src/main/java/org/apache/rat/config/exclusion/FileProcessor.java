@@ -46,15 +46,10 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
      * @return A file processor that processes the patterns.
      */
     static FileProcessor from(final Iterable<String> patterns) {
-        return new FileProcessor() {
-            @Override
-            public List<String> apply(final DocumentName documentName) {
-                return WrappedIterator.create(patterns.iterator())
-                        .map(entry -> FileProcessor.localizePattern(documentName, entry))
-                        .map(DocumentName::getName)
-                        .toList();
-            }
-        };
+        return documentName -> WrappedIterator.create(patterns.iterator())
+                .map(entry -> FileProcessor.localizePattern(documentName, entry))
+                .map(DocumentName::getName)
+                .toList();
     }
 
     /**

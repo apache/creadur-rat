@@ -82,13 +82,10 @@ public class TestLicenseAppender {
     }
 
     private static NewFileReader checkLines(final String... lines) {
-        return new NewFileReader() {
-            @Override
-            public void readFile(BufferedReader r) throws IOException {
-                for (int i = 0; i < lines.length; i++) {
-                    String line = r.readLine();
-                    assertEquals(lines[i], line, String.format("Line %s is incorrect", i));
-                }
+        return r -> {
+            for (int i = 0; i < lines.length; i++) {
+                String line = r.readLine();
+                assertEquals(lines[i], line, String.format("Line %s is incorrect", i));
             }
         };
     }
@@ -96,12 +93,7 @@ public class TestLicenseAppender {
     @Test
     public void addLicenseToUnknownFile() throws IOException {
         String filename = getTemporaryFileWithName(null);
-        createTestFile(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("Unknown file type\n");
-            }
-        });
+        createTestFile(filename, writer -> writer.write("Unknown file type\n"));
 
         File file = new File(filename);
         file.deleteOnExit();
@@ -119,14 +111,11 @@ public class TestLicenseAppender {
         final String firstLine = "package foo;";
         final String secondLine = "";
         final String thirdLine = "/*";
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("\n");
-                writer.write("public class test {\n");
-                writer.write("}\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("\n");
+            writer.write("public class test {\n");
+            writer.write("}\n");
         }, checkLines(firstLine, secondLine, thirdLine));
     }
 
@@ -134,12 +123,9 @@ public class TestLicenseAppender {
     public void addLicenseToJavaWithoutPackage() throws IOException {
         String filename = "tmp.java";
         String commentLine = "/*";
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("public class test {\n");
-                writer.write("}\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("public class test {\n");
+            writer.write("}\n");
         }, checkLines(commentLine));
     }
 
@@ -150,14 +136,11 @@ public class TestLicenseAppender {
         final String secondLine = "";
         final String thirdLine = "<!--";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("\n");
-                writer.write("<xml>\n");
-                writer.write("</xml>\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("\n");
+            writer.write("<xml>\n");
+            writer.write("</xml>\n");
         }, checkLines(firstLine, secondLine, thirdLine));
     }
 
@@ -167,12 +150,9 @@ public class TestLicenseAppender {
         final String firstLine = "<?xml version='1.0'?>";
         final String secondLine = "<!--";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("<xml>\n");
-                writer.write("</xml>\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("<xml>\n");
+            writer.write("</xml>\n");
         }, checkLines(firstLine, secondLine));
     }
 
@@ -181,13 +161,10 @@ public class TestLicenseAppender {
         String filename = "tmp.html";
         String commentLine = "<!--";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("<html>\n");
-                writer.write("\n");
-                writer.write("</html>\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("<html>\n");
+            writer.write("\n");
+            writer.write("</html>\n");
         }, checkLines(commentLine));
     }
 
@@ -196,13 +173,10 @@ public class TestLicenseAppender {
         String filename = "tmp.css";
         String firstLine = "/*";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(".class {\n");
-                writer.write(" background-color: red;");
-                writer.write("}\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(".class {\n");
+            writer.write(" background-color: red;");
+            writer.write("}\n");
         }, checkLines(firstLine));
     }
 
@@ -211,13 +185,10 @@ public class TestLicenseAppender {
         String filename = "tmp.js";
         String firstLine = "/*";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("if (a ==b) {>\n");
-                writer.write(" alert(\"how useful!\");");
-                writer.write("}\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("if (a ==b) {>\n");
+            writer.write(" alert(\"how useful!\");");
+            writer.write("}\n");
         }, checkLines(firstLine));
     }
 
@@ -226,13 +197,10 @@ public class TestLicenseAppender {
         String filename = "tmp.apt";
         String firstLine = "~~" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("A Simple APT file");
-                writer.write(" This file contains nothing\n");
-                writer.write(" of any importance\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("A Simple APT file");
+            writer.write(" This file contains nothing\n");
+            writer.write(" of any importance\n");
         }, checkLines(firstLine));
     }
 
@@ -241,13 +209,10 @@ public class TestLicenseAppender {
         String filename = "tmp.properties";
         String firstLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("property = value\n");
-                writer.write("fun = true\n");
-                writer.write("cool = true\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("property = value\n");
+            writer.write("fun = true\n");
+            writer.write("cool = true\n");
         }, checkLines(firstLine));
     }
 
@@ -257,27 +222,21 @@ public class TestLicenseAppender {
         final String firstLine = "package foo {";
         final String newFirstLine = "/*";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("\n");
-                writer.write("    object X { val x = 1; }\n");
-                writer.write("}\n");
-            }
-        }, new NewFileReader() {
-            @Override
-            public void readFile(BufferedReader reader) throws IOException {
-                String line = reader.readLine();
-                assertEquals(newFirstLine, line, "First line is incorrect");
-                while ((line = reader.readLine()) != null) {
-                    if (line.length() == 0) {
-                        line = reader.readLine();
-                        break;
-                    }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("\n");
+            writer.write("    object X { val x = 1; }\n");
+            writer.write("}\n");
+        }, reader -> {
+            String line = reader.readLine();
+            assertEquals(newFirstLine, line, "First line is incorrect");
+            while ((line = reader.readLine()) != null) {
+                if (line.length() == 0) {
+                    line = reader.readLine();
+                    break;
                 }
-                assertEquals(firstLine, line, "Package line is incorrect");
             }
+            assertEquals(firstLine, line, "Package line is incorrect");
         });
     }
 
@@ -286,12 +245,9 @@ public class TestLicenseAppender {
         String filename = "tmp.rb";
         String firstLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("class Foo\n");
-                writer.write("end\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("class Foo\n");
+            writer.write("end\n");
         }, checkLines(firstLine));
     }
 
@@ -301,13 +257,10 @@ public class TestLicenseAppender {
         final String firstLine = "#!/usr/bin/env ruby";
         String secondLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("class Foo\n");
-                writer.write("end\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("class Foo\n");
+            writer.write("end\n");
         }, checkLines(firstLine, secondLine));
     }
 
@@ -316,12 +269,7 @@ public class TestLicenseAppender {
         String filename = "tmp.pl";
         String firstLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("print \"Hello world\"\n");
-            }
-        }, checkLines(firstLine));
+        commonTestTemplate(filename, writer -> writer.write("print \"Hello world\"\n"), checkLines(firstLine));
     }
 
     @Test
@@ -330,12 +278,9 @@ public class TestLicenseAppender {
         final String firstLine = "#!/usr/bin/env perl";
         String secondLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("print \"Hello world\"\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("print \"Hello world\"\n");
         }, checkLines(firstLine, secondLine));
     }
 
@@ -346,12 +291,9 @@ public class TestLicenseAppender {
         final String secondLine = "";
         final String thirdLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("print \"Hello world\"\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("print \"Hello world\"\n");
         }, checkLines(firstLine, secondLine, thirdLine));
     }
 
@@ -360,12 +302,7 @@ public class TestLicenseAppender {
         String filename = "tmp.tcl";
         String firstLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("puts \"Hello world\"\n");
-            }
-        }, checkLines(firstLine));
+        commonTestTemplate(filename, writer -> writer.write("puts \"Hello world\"\n"), checkLines(firstLine));
     }
 
     @Test
@@ -374,12 +311,9 @@ public class TestLicenseAppender {
         final String firstLine = "#!/usr/bin/env tcl";
         String secondLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("puts \"Hello world\"\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("puts \"Hello world\"\n");
         }, checkLines(firstLine, secondLine));
     }
 
@@ -390,13 +324,10 @@ public class TestLicenseAppender {
         final String secondLine = "";
         final String thirdLine = "/*";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("echo 'Hello World'\n");
-                writer.write("?>\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("echo 'Hello World'\n");
+            writer.write("?>\n");
         }, checkLines(firstLine, secondLine, thirdLine));
     }
 
@@ -405,14 +336,11 @@ public class TestLicenseAppender {
         String filename = "tmp.cs";
         String firstLine = "/*";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("namespace org.example {\n");
-                writer.write("    public class Foo {\n");
-                writer.write("    }\n");
-                writer.write("}\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("namespace org.example {\n");
+            writer.write("    public class Foo {\n");
+            writer.write("    }\n");
+            writer.write("}\n");
         }, checkLines(firstLine));
     }
 
@@ -421,13 +349,10 @@ public class TestLicenseAppender {
         String filename = "tmp.groovy";
         String firstLine = "/*";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("package org.example \n");
-                writer.write("    class Foo {\n");
-                writer.write("    }\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("package org.example \n");
+            writer.write("    class Foo {\n");
+            writer.write("    }\n");
         }, checkLines(firstLine));
     }
 
@@ -436,14 +361,11 @@ public class TestLicenseAppender {
         String filename = "tmp.cpp";
         String firstLine = "/*";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("namespace org.example {\n");
-                writer.write("    public class Foo {\n");
-                writer.write("    }\n");
-                writer.write("}\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("namespace org.example {\n");
+            writer.write("    public class Foo {\n");
+            writer.write("    }\n");
+            writer.write("}\n");
         }, checkLines(firstLine));
     }
 
@@ -454,14 +376,11 @@ public class TestLicenseAppender {
         String secondLine = "";
         String thirdLine = "/*";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write("import (\n");
-                writer.write("    log\n");
-                writer.write(")\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write("import (\n");
+            writer.write("    log\n");
+            writer.write(")\n");
         }, checkLines(firstLine, secondLine, thirdLine));
     }
 
@@ -490,18 +409,15 @@ public class TestLicenseAppender {
         final String firstLine = "Microsoft Visual Studio Solution File," + " Format Version 8.0";
         String secondLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write(
-                        "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
-                writer.write("\tProjectSection(WebsiteProperties) = preProject\n");
-                writer.write("\t\tDebug.AspNetCompiler.Debug = \"True\"\n");
-                writer.write("\t\tRelease.AspNetCompiler.Debug = \"False\"\n");
-                writer.write("\tEndProjectSection\n");
-                writer.write("EndProject\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write(
+                    "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
+            writer.write("\tProjectSection(WebsiteProperties) = preProject\n");
+            writer.write("\t\tDebug.AspNetCompiler.Debug = \"True\"\n");
+            writer.write("\t\tRelease.AspNetCompiler.Debug = \"False\"\n");
+            writer.write("\tEndProjectSection\n");
+            writer.write("EndProject\n");
         }, checkLines(firstLine, secondLine));
     }
 
@@ -512,19 +428,16 @@ public class TestLicenseAppender {
         final String secondLine = "# Visual Studio 2005";
         final String thirdLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write(secondLine + "\n");
-                writer.write(
-                        "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
-                writer.write("\tProjectSection(WebsiteProperties) = preProject\n");
-                writer.write("\t\tDebug.AspNetCompiler.Debug = \"True\"\n");
-                writer.write("\t\tRelease.AspNetCompiler.Debug = \"False\"\n");
-                writer.write("\tEndProjectSection\n");
-                writer.write("EndProject\n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write(secondLine + "\n");
+            writer.write(
+                    "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"ConsoleApp\", \"Tutorials\\ConsoleApp\\cs\\src\\ConsoleApp.csproj\", \"{933969DF-2BC5-44E6-8B1A-400FC276A23F}\"\n");
+            writer.write("\tProjectSection(WebsiteProperties) = preProject\n");
+            writer.write("\t\tDebug.AspNetCompiler.Debug = \"True\"\n");
+            writer.write("\t\tRelease.AspNetCompiler.Debug = \"False\"\n");
+            writer.write("\tEndProjectSection\n");
+            writer.write("EndProject\n");
         }, checkLines(firstLine, secondLine, thirdLine));
     }
 
@@ -535,37 +448,34 @@ public class TestLicenseAppender {
         final String secondLine = "# Visual C# Express 2010";
         final String thirdLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write(secondLine + "\n");
-                writer.write(
-                        "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Lucene.Net\", \"..\\..\\..\\src\\core\\Lucene.Net.csproj\", \"{5D4AD9BE-1FFB-41AB-9943-25737971BF57}\"\n");
-                writer.write("EndProject\n");
-                writer.write(
-                        "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Contrib.Highlighter\", \"..\\..\\..\\src\\contrib\\Highlighter\\Contrib.Highlighter.csproj\", \"{901D5415-383C-4AA6-A256-879558841BEA}\"\n");
-                writer.write("EndProject\n");
-                writer.write("Global\n");
-                writer.write("GlobalSection(SolutionConfigurationPlatforms) = preSolution\n");
-                writer.write("Debug|Any CPU = Debug|Any CPU\n");
-                writer.write("Release|Any CPU = Release|Any CPU\n");
-                writer.write("EndGlobalSection\n");
-                writer.write("GlobalSection(ProjectConfigurationPlatforms) = postSolution\n");
-                writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
-                writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
-                writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
-                writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.Build.0 = Release|Any CPU\n");
-                writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
-                writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
-                writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
-                writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU\n");
-                writer.write("EndGlobalSection\n");
-                writer.write("GlobalSection(SolutionProperties) = preSolution\n");
-                writer.write("HideSolutionNode = FALSE\n");
-                writer.write("EndGlobalSection\n");
-                writer.write("EndGlobal \n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write(secondLine + "\n");
+            writer.write(
+                    "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Lucene.Net\", \"..\\..\\..\\src\\core\\Lucene.Net.csproj\", \"{5D4AD9BE-1FFB-41AB-9943-25737971BF57}\"\n");
+            writer.write("EndProject\n");
+            writer.write(
+                    "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Contrib.Highlighter\", \"..\\..\\..\\src\\contrib\\Highlighter\\Contrib.Highlighter.csproj\", \"{901D5415-383C-4AA6-A256-879558841BEA}\"\n");
+            writer.write("EndProject\n");
+            writer.write("Global\n");
+            writer.write("GlobalSection(SolutionConfigurationPlatforms) = preSolution\n");
+            writer.write("Debug|Any CPU = Debug|Any CPU\n");
+            writer.write("Release|Any CPU = Release|Any CPU\n");
+            writer.write("EndGlobalSection\n");
+            writer.write("GlobalSection(ProjectConfigurationPlatforms) = postSolution\n");
+            writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
+            writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
+            writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
+            writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.Build.0 = Release|Any CPU\n");
+            writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
+            writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
+            writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
+            writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU\n");
+            writer.write("EndGlobalSection\n");
+            writer.write("GlobalSection(SolutionProperties) = preSolution\n");
+            writer.write("HideSolutionNode = FALSE\n");
+            writer.write("EndGlobalSection\n");
+            writer.write("EndGlobal \n");
         }, checkLines(firstLine, secondLine, thirdLine));
     }
 
@@ -577,38 +487,35 @@ public class TestLicenseAppender {
         final String thirdLine = "# Visual C# Express 2010";
         final String forthLine = "#" + FIRST_LICENSE_LINE;
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write(firstLine + "\n");
-                writer.write(secondLine + "\n");
-                writer.write(thirdLine + "\n");
-                writer.write(
-                        "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Lucene.Net\", \"..\\..\\..\\src\\core\\Lucene.Net.csproj\", \"{5D4AD9BE-1FFB-41AB-9943-25737971BF57}\"\n");
-                writer.write("EndProject\n");
-                writer.write(
-                        "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Contrib.Highlighter\", \"..\\..\\..\\src\\contrib\\Highlighter\\Contrib.Highlighter.csproj\", \"{901D5415-383C-4AA6-A256-879558841BEA}\"\n");
-                writer.write("EndProject\n");
-                writer.write("Global\n");
-                writer.write("GlobalSection(SolutionConfigurationPlatforms) = preSolution\n");
-                writer.write("Debug|Any CPU = Debug|Any CPU\n");
-                writer.write("Release|Any CPU = Release|Any CPU\n");
-                writer.write("EndGlobalSection\n");
-                writer.write("GlobalSection(ProjectConfigurationPlatforms) = postSolution\n");
-                writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
-                writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
-                writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
-                writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.Build.0 = Release|Any CPU\n");
-                writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
-                writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
-                writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
-                writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU\n");
-                writer.write("EndGlobalSection\n");
-                writer.write("GlobalSection(SolutionProperties) = preSolution\n");
-                writer.write("HideSolutionNode = FALSE\n");
-                writer.write("EndGlobalSection\n");
-                writer.write("EndGlobal \n");
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write(firstLine + "\n");
+            writer.write(secondLine + "\n");
+            writer.write(thirdLine + "\n");
+            writer.write(
+                    "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Lucene.Net\", \"..\\..\\..\\src\\core\\Lucene.Net.csproj\", \"{5D4AD9BE-1FFB-41AB-9943-25737971BF57}\"\n");
+            writer.write("EndProject\n");
+            writer.write(
+                    "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Contrib.Highlighter\", \"..\\..\\..\\src\\contrib\\Highlighter\\Contrib.Highlighter.csproj\", \"{901D5415-383C-4AA6-A256-879558841BEA}\"\n");
+            writer.write("EndProject\n");
+            writer.write("Global\n");
+            writer.write("GlobalSection(SolutionConfigurationPlatforms) = preSolution\n");
+            writer.write("Debug|Any CPU = Debug|Any CPU\n");
+            writer.write("Release|Any CPU = Release|Any CPU\n");
+            writer.write("EndGlobalSection\n");
+            writer.write("GlobalSection(ProjectConfigurationPlatforms) = postSolution\n");
+            writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
+            writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
+            writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
+            writer.write("{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.Build.0 = Release|Any CPU\n");
+            writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n");
+            writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU\n");
+            writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU\n");
+            writer.write("{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU\n");
+            writer.write("EndGlobalSection\n");
+            writer.write("GlobalSection(SolutionProperties) = preSolution\n");
+            writer.write("HideSolutionNode = FALSE\n");
+            writer.write("EndGlobalSection\n");
+            writer.write("EndGlobal \n");
         }, checkLines(firstLine, secondLine, thirdLine, forthLine));
     }
 
@@ -616,22 +523,16 @@ public class TestLicenseAppender {
     public void addLicenseMarkdown() throws IOException {
         String filename = "tmp.md";
 
-        commonTestTemplate(filename, new FileCreator() {
-            @Override
-            public void createFile(Writer writer) throws IOException {
-                writer.write("## This is the first header\n");
-                writer.write(" * this is a list entry\n");
-                writer.write(" * this is another list entry\n");
-                writer.write(" <!-- this is a comment line -->");
-                writer.write("## This is the second header\n");
-            }
-        }, new NewFileReader() {
-            @Override
-            public void readFile(BufferedReader r) throws IOException {
-                String line = r.readLine();
-                assertEquals("<!--", line, "First line is incorrect");
-                line = r.readLine();
-            }
+        commonTestTemplate(filename, writer -> {
+            writer.write("## This is the first header\n");
+            writer.write(" * this is a list entry\n");
+            writer.write(" * this is another list entry\n");
+            writer.write(" <!-- this is a comment line -->");
+            writer.write("## This is the second header\n");
+        }, r -> {
+            String line = r.readLine();
+            assertEquals("<!--", line, "First line is incorrect");
+            line = r.readLine();
         });
     }
 

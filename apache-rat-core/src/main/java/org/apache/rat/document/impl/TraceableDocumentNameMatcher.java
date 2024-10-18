@@ -40,7 +40,7 @@ public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
     /** The delegate that will do all the work */
     private final DocumentNameMatcher delegate;
     /** Indicator is set to {@code true} if the environment variable has been set to "true" */
-    private static final boolean TRACE_ENABLED = Boolean.valueOf(System.getenv(ENV_VAR));
+    private static final boolean TRACE_ENABLED = Boolean.parseBoolean(System.getenv(ENV_VAR));
     /** The supplier for the name */
     protected final Supplier<String> name;
     /** A TraceableDocumentNameMatcher that always returns {@code true} */
@@ -63,7 +63,7 @@ public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
     }
 
     public static TraceableDocumentNameMatcher from(final FileFilter fileFilter) {
-        return new TraceableDocumentNameMatcher(() -> fileFilter.toString(),
+        return new TraceableDocumentNameMatcher(fileFilter::toString,
                 DocumentNameMatcher.from(fileFilter));
     }
 

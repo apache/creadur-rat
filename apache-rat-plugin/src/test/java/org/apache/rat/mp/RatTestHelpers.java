@@ -132,12 +132,9 @@ public final class RatTestHelpers {
      * @throws Exception Creating the object failed.
      */
     public static ArtifactFactory newArtifactFactory() throws Exception {
-        final InvocationHandler handler = new InvocationHandler() {
-            @Override
-            public Object invoke(Object pProxy, Method pMethod, Object[] pArgs) throws Throwable {
-                System.out.println("Invoking method " + pMethod);
-                throw new IllegalStateException("Not implemented");
-            }
+        final InvocationHandler handler = (pProxy, pMethod, pArgs) -> {
+            System.out.println("Invoking method " + pMethod);
+            throw new IllegalStateException("Not implemented");
         };
         return (ArtifactFactory) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                 new Class[] { ArtifactFactory.class }, handler);

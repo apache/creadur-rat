@@ -26,7 +26,7 @@ import org.apache.commons.cli.Option;
 import org.apache.rat.OptionCollection;
 
 public final class OptionsList {
-    private final static Map<String, Option> OPTIONS_MAP = new HashMap<String, Option>();
+    private final static Map<String, Option> OPTIONS_MAP = new HashMap<>();
 
     static {
         for (Option option : OptionCollection.buildOptions().getOptions()) {

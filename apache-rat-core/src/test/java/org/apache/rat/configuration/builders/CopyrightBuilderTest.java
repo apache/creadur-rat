@@ -225,7 +225,7 @@ public class CopyrightBuilderTest {
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
+        assertThrows(ConfigurationException.class, reader::readLicenses);
     }
 
     @Test
@@ -243,7 +243,7 @@ public class CopyrightBuilderTest {
                 + ""; //
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
+        assertThrows(ConfigurationException.class, reader::readLicenses);
     }
 
     @Test
@@ -262,6 +262,6 @@ public class CopyrightBuilderTest {
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
+        assertThrows(ConfigurationException.class, reader::readLicenses);
     }
 }
