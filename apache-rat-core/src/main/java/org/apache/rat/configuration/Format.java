@@ -115,9 +115,8 @@ public enum Format {
     * Determine the {@code Format} from a file.
     * @param file the File to check.
     * @return the Format
-    * @throws MalformedURLException in case the file cannot be found.
     */
-   public static Format from(final File file) throws MalformedURLException {
+   public static Format from(final File file) {
         return Format.from(file.getName());
     }
 }

@@ -700,7 +700,7 @@ public class ReportConfigurationTest {
         int closeCount = 0;
 
         @Override
-        public void write(int arg0) throws IOException {
+        public void write(int arg0) {
             throw new UnsupportedOperationException();
         }
         

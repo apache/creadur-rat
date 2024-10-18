@@ -189,7 +189,7 @@ public final class AntDocumentation {
         }
     }
 
-    private void printValueTypes() throws IOException {
+    private void printValueTypes() {
 
         File f = new File(outputDir, "report_arg_types.txt");
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {

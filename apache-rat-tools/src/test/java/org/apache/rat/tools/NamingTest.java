@@ -182,7 +182,7 @@ public class NamingTest {
     }
 
     @Test
-    public void testNamingGenerationWithoutParameters() throws IOException {
+    public void testNamingGenerationWithoutParameters() {
         assertDoesNotThrow(() -> Naming.main(null));
         assertDoesNotThrow(() -> Naming.main(new String[]{}));
     }

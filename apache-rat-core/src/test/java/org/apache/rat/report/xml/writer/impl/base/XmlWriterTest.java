@@ -39,7 +39,7 @@ public class XmlWriterTest {
     private StringWriter out;
     
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         out = new StringWriter();
         writer = new XmlWriter(out);
     }

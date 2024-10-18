@@ -202,9 +202,8 @@ public final class Defaults {
          * Adds a configuration file to be read.
          * @param file the File to add.
          * @return this Builder for chaining
-         * @throws MalformedURLException in case the file cannot be found.
          */
-        public Builder add(final File file) throws MalformedURLException {
+        public Builder add(final File file) {
             return add(file.toURI());
         }
 
@@ -232,9 +231,8 @@ public final class Defaults {
          * Removes a file from the list of configuration files to process.
          * @param file the File of the file to remove.
          * @return this Builder for chaining
-         * @throws MalformedURLException in case the file cannot be found.
          */
-        public Builder remove(final File file) throws MalformedURLException {
+        public Builder remove(final File file) {
             return remove(file.toURI());
         }
 

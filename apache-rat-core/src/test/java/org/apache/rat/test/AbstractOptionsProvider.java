@@ -772,7 +772,7 @@ public abstract class AbstractOptionsProvider {
         }
     }
 
-        final public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
+        final public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
                 List<Arguments> lst = new ArrayList<>();
                 List<String> missingTests = new ArrayList<>();
 

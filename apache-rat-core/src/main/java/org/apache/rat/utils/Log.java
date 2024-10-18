@@ -173,7 +173,7 @@ public interface Log {
             private StringBuilder sb = new StringBuilder();
 
             @Override
-            public void write(final char[] cbuf, final int off, final int len) throws IOException {
+            public void write(final char[] cbuf, final int off, final int len) {
                 String txt = String.copyValueOf(cbuf, off, len);
                 int pos = txt.indexOf(System.lineSeparator());
                 if (pos == -1) {
@@ -190,7 +190,7 @@ public interface Log {
             }
 
             @Override
-            public void flush() throws IOException {
+            public void flush() {
                 if (sb.length() > 0) {
                     Log.this.info(sb.toString());
                 }

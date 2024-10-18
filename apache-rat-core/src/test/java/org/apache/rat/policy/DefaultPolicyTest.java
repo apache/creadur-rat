@@ -60,7 +60,7 @@ public class DefaultPolicyTest {
     private Defaults defaults;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         defaults = Defaults.builder().build();
         policy = new DefaultPolicy(defaults.getLicenseSetFactory().getLicenseFamilies(LicenseFilter.APPROVED));
         document = new TestingDocument("subject");
@@ -112,7 +112,7 @@ public class DefaultPolicyTest {
     }
 
     @Test
-    public void testUnknownFamily() throws Exception {
+    public void testUnknownFamily() {
         setMetadata(makeFamily("?????", "Unknown document"));
         policy.analyse(document);
         assertApproval(false);

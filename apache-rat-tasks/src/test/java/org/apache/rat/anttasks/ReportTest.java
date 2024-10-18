@@ -82,7 +82,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
     
     @Test
-    public void testWithReportSentToAnt() throws Exception {
+    public void testWithReportSentToAnt() {
         buildRule.executeTarget("testWithReportSentToAnt");
         assertLogMatches(logLine("AL"));
     }
@@ -105,42 +105,42 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     @Test
-    public void testWithALUnknown() throws Exception {
+    public void testWithALUnknown() {
         buildRule.executeTarget("testWithALUnknown");
         assertLogDoesNotMatch(logLine("AL"));
         assertLogMatches(logLine(false, documentName.localized("/"), "?????"));
     }
 
     @Test
-    public void testCustomLicense() throws Exception {
+    public void testCustomLicense() {
         buildRule.executeTarget("testCustomLicense");
         assertLogDoesNotMatch(logLine("AL"));
         assertLogMatches(logLine("newFa"));
     }
 
     @Test
-    public void testCustomMatcher() throws Exception {
+    public void testCustomMatcher() {
         buildRule.executeTarget("testCustomMatcher");
         assertLogDoesNotMatch(logLine("AL"));
         assertLogMatches(logLine("YASL1"));
     }
 
     @Test
-    public void testInlineCustomMatcher() throws Exception {
+    public void testInlineCustomMatcher() {
         buildRule.executeTarget("testInlineCustomMatcher");
         assertLogDoesNotMatch(logLine("AL"));
         assertLogMatches(logLine("YASL1"));
     }
 
     @Test
-    public void testCustomMatcherBuilder() throws Exception {
+    public void testCustomMatcherBuilder() {
         buildRule.executeTarget("testCustomMatcherBuilder");
         assertLogDoesNotMatch(logLine("AL"));
         assertLogMatches(logLine("YASL1"));
     }
 
     @Test
-    public void testNoResources() throws Exception {
+    public void testNoResources() {
         try {
             buildRule.executeTarget("testNoResources");
             fail("Expected Exceptoin");
@@ -151,7 +151,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     @Test
-    public void testCopyrightBuild() throws Exception {
+    public void testCopyrightBuild() {
         try {
             buildRule.executeTarget("testCopyrightBuild");
             assertLogMatches(logLine("/src/test/resources/antunit/index.apt","YASL1"));
@@ -179,7 +179,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     @Test
-    public void testNoLicenseMatchers() throws Exception {
+    public void testNoLicenseMatchers() {
         try {
             buildRule.executeTarget("testNoLicenseMatchers");
             fail("Expected Exception");
@@ -230,7 +230,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
      */
     @Test
     @Ignore
-    public void testISO88591() throws Exception {
+    public void testISO88591() {
         // In previous versions of the JDK, it used to be possible to
         // change the value of file.encoding at runtime. As of Java 16,
         // this is no longer possible. Instead, at this point, we check,

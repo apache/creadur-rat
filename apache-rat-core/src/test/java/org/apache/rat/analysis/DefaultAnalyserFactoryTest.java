@@ -48,12 +48,12 @@ public class DefaultAnalyserFactoryTest {
     private SimpleXmlClaimReporter reporter;
     private IDocumentAnalyser analyser;
 
-    DefaultAnalyserFactoryTest() throws IOException {
+    DefaultAnalyserFactoryTest() {
         basedir = new DocumentName(new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES));
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         out = new StringWriter();
         reporter = new SimpleXmlClaimReporter(new XmlWriter(out));
         ReportConfiguration config = new ReportConfiguration();

@@ -155,11 +155,10 @@ public class OptionCollectionTest {
      * A paramaterized test for the options.
      * @param name The name of the test.
      * @param test the option test to execute.
-     * @throws Exception on unexpected error.
      */
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionTest test) throws Exception {
+    public void testOptionsUpdateConfig(String name, OptionTest test) {
         test.test();
     }
 

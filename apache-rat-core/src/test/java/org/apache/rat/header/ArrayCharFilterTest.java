@@ -32,7 +32,7 @@ public class ArrayCharFilterTest {
     private ArrayCharFilter filter;
     
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         filter = new ArrayCharFilter(filtered);
     }
 

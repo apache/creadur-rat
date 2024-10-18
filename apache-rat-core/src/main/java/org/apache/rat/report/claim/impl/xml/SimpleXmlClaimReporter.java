@@ -101,10 +101,10 @@ public class SimpleXmlClaimReporter extends AbstractReport {
     }
 
     @Override
-    public void startReport() throws RatException {
+    public void startReport() {
     }
 
     @Override
-    public void endReport() throws RatException {
+    public void endReport() {
     }
 }

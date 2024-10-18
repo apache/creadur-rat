@@ -71,11 +71,11 @@ public final class XmlUtils {
         return spf.newSAXParser().getXMLReader();
     }
 
-    public static boolean isWellFormedXml(final String string) throws Exception {
+    public static boolean isWellFormedXml(final String string) {
         return isWellFormedXml(new InputSource(new StringReader(string)));
     }
 
-    public static boolean isWellFormedXml(final InputStream in) throws Exception {
+    public static boolean isWellFormedXml(final InputStream in) {
         return isWellFormedXml(new InputSource(in));
     }
 

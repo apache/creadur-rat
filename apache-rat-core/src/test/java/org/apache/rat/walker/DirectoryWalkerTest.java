@@ -88,7 +88,7 @@ public class DirectoryWalkerTest {
     }
     
     @Test
-    public void noFiltersTest() throws IOException, RatException {
+    public void noFiltersTest() throws RatException {
         DirectoryWalker walker = new DirectoryWalker(toWalk());
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
@@ -100,7 +100,7 @@ public class DirectoryWalkerTest {
     }
 
     @Test
-    public void noHiddenFileFiltersTest() throws IOException, RatException {
+    public void noHiddenFileFiltersTest() throws RatException {
         reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_FILE);
         DirectoryWalker walker = new DirectoryWalker(toWalk());
         List<String> scanned = new ArrayList<>();
@@ -113,7 +113,7 @@ public class DirectoryWalkerTest {
     }
 
     @Test
-    public void noHiddenDirectoryFiltersTest() throws IOException, RatException {
+    public void noHiddenDirectoryFiltersTest() throws RatException {
         reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_DIR);
         DirectoryWalker walker = new DirectoryWalker(toWalk());
         List<String> scanned = new ArrayList<>();
@@ -126,7 +126,7 @@ public class DirectoryWalkerTest {
     }
 
     @Test
-    public void noHiddenDirectoryAndNoHiddenFileFiltersTest() throws IOException, RatException {
+    public void noHiddenDirectoryAndNoHiddenFileFiltersTest() throws RatException {
         reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_DIR);
         reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_FILE);
         DirectoryWalker walker = new DirectoryWalker(toWalk());
@@ -153,7 +153,7 @@ public class DirectoryWalkerTest {
         }
 
         @Override
-        public void report(Document document) throws RatException {
+        public void report(Document document) {
             scanned.add(document.getName().localized("/"));
         }
 

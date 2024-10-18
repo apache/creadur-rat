@@ -56,7 +56,7 @@ public class TestingDocument extends Document {
     }
 
     @Override
-    public Reader reader() throws IOException {
+    public Reader reader() {
         return reader;
     }
 
@@ -71,7 +71,7 @@ public class TestingDocument extends Document {
     }
 
     @Override
-    public InputStream inputStream() throws IOException {
+    public InputStream inputStream() {
         throw new UnsupportedOperationException();
     }
 }

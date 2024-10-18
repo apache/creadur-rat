@@ -41,7 +41,7 @@ public final class ArgumentTypes {
 
     private ArgumentTypes() { }
 
-    public static void main(final String[] args) throws IOException, ParseException {
+    public static void main(final String[] args) throws IOException {
         try (Writer writer = args.length > 0 ? new FileWriter(args[0]) : new OutputStreamWriter(System.out)) {
             new Help(writer).printArgumentTypes();
         }

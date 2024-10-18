@@ -54,7 +54,7 @@ public class ReportOptionTest  {
 
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) throws Exception {
+    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         test.test();
     }
 
@@ -76,7 +76,7 @@ public class ReportOptionTest  {
             super(BaseAntTask.unsupportedArgs());
         }
 
-        protected ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+        protected ReportConfiguration generateConfig(Pair<Option, String[]>... args) {
             BuildTask task = args[0].getKey() == null ? new BuildTask() : new BuildTask(args[0].getKey());
             task.setUp(args);
             task.buildRule.executeTarget(task.name);
@@ -94,8 +94,6 @@ public class ReportOptionTest  {
             Log oldLog = DefaultLog.setInstance(testLog);
             try {
                 ReportConfiguration config = generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
-            } catch (IOException e) {
-                fail(e.getMessage());
             } finally {
                 DefaultLog.setInstance(oldLog);
             }

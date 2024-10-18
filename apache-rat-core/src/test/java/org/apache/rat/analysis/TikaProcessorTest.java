@@ -50,11 +50,10 @@ public class TikaProcessorTest {
      * because the encoding of the stream was different from the
      * platform's default encoding.
      *
-     * @throws Exception
      * @see "RAT-81"
      */
     @Test
-    public void RAT81() throws Exception {
+    public void RAT81() {
         // create a document that throws a MalformedInputException
         Document doc = mkDocument(new InputStream() {
             @Override
@@ -73,7 +72,7 @@ public class TikaProcessorTest {
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
-    private FileDocument mkDocument(File f) throws IOException {
+    private FileDocument mkDocument(File f) {
         return new FileDocument(new DocumentName(f, new DocumentName(f.getParentFile())), f, nameMatcher);
     }
 
@@ -154,7 +153,7 @@ public class TikaProcessorTest {
             }
 
             @Override
-            public InputStream inputStream() throws IOException {
+            public InputStream inputStream() {
                 return stream;
             }
 

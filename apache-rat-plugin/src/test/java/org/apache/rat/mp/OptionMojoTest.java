@@ -62,7 +62,7 @@ public class OptionMojoTest {
 
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) throws Exception {
+    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         test.test();
     }
 

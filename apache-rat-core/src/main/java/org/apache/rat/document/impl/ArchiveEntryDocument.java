@@ -50,7 +50,7 @@ public class ArchiveEntryDocument extends Document {
     }
 
     @Override
-    public InputStream inputStream() throws IOException {
+    public InputStream inputStream() {
         return new ByteArrayInputStream(contents);
     }
 
@@ -65,7 +65,7 @@ public class ArchiveEntryDocument extends Document {
     }
 
     @Override
-    public Reader reader() throws IOException {
+    public Reader reader() {
         return new InputStreamReader(new ByteArrayInputStream(contents), StandardCharsets.UTF_8);
     }
 }

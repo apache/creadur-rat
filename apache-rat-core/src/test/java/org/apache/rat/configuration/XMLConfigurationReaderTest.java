@@ -107,7 +107,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void descriptionTest() throws NoSuchMethodException, SecurityException, URISyntaxException {
+    public void descriptionTest() throws SecurityException, URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());

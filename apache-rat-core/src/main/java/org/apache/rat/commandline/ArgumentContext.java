@@ -50,9 +50,8 @@ public class ArgumentContext {
 
     /**
      * Process the arguments specified in this context.
-     * @throws IOException if files can not be read.
      */
-    public void processArgs() throws IOException {
+    public void processArgs() {
         Arg.processArgs(this);
     }
 

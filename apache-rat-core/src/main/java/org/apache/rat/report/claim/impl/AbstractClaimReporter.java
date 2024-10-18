@@ -60,7 +60,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
     }
 
     @Override
-    public void report(Document subject) throws RatException {
+    public void report(Document subject) {
         final MetaData metaData = subject.getMetaData();
         metaData.licenses().forEach(this::handleLicenseClaim);
         handleDocumentCategoryClaim(metaData.getDocumentType());

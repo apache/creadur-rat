@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.util.List;
@@ -130,9 +129,8 @@ public final class RatTestHelpers {
      * Creates a new instance of {@link ArtifactFactory}.
      *
      * @return A configured instance of {@link DefaultArtifactFactory}.
-     * @throws Exception Creating the object failed.
      */
-    public static ArtifactFactory newArtifactFactory() throws Exception {
+    public static ArtifactFactory newArtifactFactory() {
         final InvocationHandler handler = (pProxy, pMethod, pArgs) -> {
             System.out.println("Invoking method " + pMethod);
             throw new IllegalStateException("Not implemented");

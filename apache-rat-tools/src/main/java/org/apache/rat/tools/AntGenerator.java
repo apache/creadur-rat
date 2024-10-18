@@ -177,12 +177,12 @@ public final class AntGenerator {
         }
     }
 
-    private static String getAttributeBody(final AntOption option) throws IOException {
+    private static String getAttributeBody(final AntOption option) {
         return option.hasArg() ? format("        setArg(%s, %s);%n", option.keyValue(), option.getName())
             : format("        if (%1$s) { setArg(%2$s, null); } else { removeArg(%2$s); }", option.getName(), option.keyValue());
     }
 
-    private static String getElementClass(final AntOption option) throws IOException {
+    private static String getElementClass(final AntOption option) {
         return format("    public class %1$s extends Child { %1$s() {super(%2$s);}}%n%n", WordUtils.capitalize(option.getName()),
                 option.keyValue());
     }

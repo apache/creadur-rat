@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -59,7 +58,7 @@ public class ReporterTest {
     File tempDirectory;
     final String basedir;
 
-    ReporterTest() throws IOException {
+    ReporterTest() {
         basedir = new File(Files.currentFolder(), "target/test-classes/elements").getPath();
     }
 
