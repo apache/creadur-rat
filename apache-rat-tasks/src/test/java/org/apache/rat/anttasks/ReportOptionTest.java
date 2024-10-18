@@ -43,11 +43,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Tests to ensure the option setting works correctly.
  */
 public class ReportOptionTest  {
-
     // devhint: we do want to keep data in case of test failures, thus do not use TempDir here
     static File baseDir = new File("target/optionTest");
     static ReportConfiguration reportConfiguration;
-
 
     @BeforeAll
     public static void makeDirs() {
@@ -73,7 +71,6 @@ public class ReportOptionTest  {
     static class OptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
-
 
         public OptionsProvider() {
             super(BaseAntTask.unsupportedArgs());

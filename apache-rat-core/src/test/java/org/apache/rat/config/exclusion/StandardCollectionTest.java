@@ -49,7 +49,7 @@ public class StandardCollectionTest {
     }
 
     private static Collection<Arguments> collectionData() {
-        List<Arguments> lst = new ArrayList<Arguments>();
+        List<Arguments> lst = new ArrayList<>();
         lst.add(Arguments.of(StandardCollection.ALL, true, true, true));
         lst.add(Arguments.of(StandardCollection.ARCH, false, false, true));
         lst.add(Arguments.of(StandardCollection.BAZAAR, true, false, true));

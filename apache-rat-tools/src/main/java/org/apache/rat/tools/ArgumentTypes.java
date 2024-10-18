@@ -28,7 +28,7 @@ import java.io.Writer;
 
 /**
  * A simple tool to convert CLI options to Maven and Ant format and produce a CSV file.
- *
+ * <br/>
  * Options
  * <ul>
  *     <li>--ant   Produces Ant options in result</li>

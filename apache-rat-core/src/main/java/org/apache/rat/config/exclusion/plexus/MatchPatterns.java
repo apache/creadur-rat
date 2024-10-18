@@ -109,7 +109,7 @@ public final class MatchPatterns {
     }
 
     private static MatchPattern[] getMatchPatterns(final Iterable<String> items) {
-        List<MatchPattern> result = new ArrayList<MatchPattern>();
+        List<MatchPattern> result = new ArrayList<>();
         for (String string : items) {
             result.add(MatchPattern.fromString(string));
         }

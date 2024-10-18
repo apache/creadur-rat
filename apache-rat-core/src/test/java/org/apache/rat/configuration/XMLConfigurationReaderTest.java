@@ -68,7 +68,7 @@ public class XMLConfigurationReaderTest {
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
 
-        Collection<String> readCategories = reader.readLicenses().stream().map(x -> x.getId())
+        Collection<String> readCategories = reader.readLicenses().stream().map(IHeaderMatcher::getId)
                 .collect(Collectors.toList());
         assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[readCategories.size()]));
     }

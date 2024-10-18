@@ -139,7 +139,7 @@ public class DirectoryWalkerTest {
         }
     }
 
-    class TestRatReport implements RatReport {
+    static class TestRatReport implements RatReport {
 
         private List<String> scanned;
 

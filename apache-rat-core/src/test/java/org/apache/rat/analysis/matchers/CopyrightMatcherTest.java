@@ -78,9 +78,9 @@ public class CopyrightMatcherTest {
 
     private static void verify(String testName, String[][] pass, String[][] fail) {
         assertEquals(TOTAL_TESTS, pass.length + fail.length, "Wrong number of pass/fail tests");
-        Set<String> passSet = new HashSet<String>();
+        Set<String> passSet = new HashSet<>();
         Arrays.stream(pass).forEach(s -> passSet.add(s[0]));
-        Set<String> failSet = new HashSet<String>();
+        Set<String> failSet = new HashSet<>();
         Arrays.stream(fail).forEach(s -> failSet.add(s[0]));
         for (String s : passSet) {
             assertFalse(failSet.contains(s),

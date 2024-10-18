@@ -114,8 +114,7 @@ public final class AntGenerator {
         try (InputStream template = AntGenerator.class.getResourceAsStream("/Ant.tpl");
              FileWriter writer = new FileWriter(file);
              ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             OutputStreamWriter customClasses = new OutputStreamWriter(bos);
-        ) {
+             OutputStreamWriter customClasses = new OutputStreamWriter(bos)) {
             if (template == null) {
                 throw new RuntimeException("Template /Ant.tpl not found");
             }

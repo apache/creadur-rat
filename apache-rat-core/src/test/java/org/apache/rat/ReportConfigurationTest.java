@@ -558,14 +558,14 @@ public class ReportConfigurationTest {
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
         assertTrue(log.getCaptured().toString().contains("CAT"));
         assertEquals("name", underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
-                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst().get());
         
         underTest.familyDuplicateOption(Options.OVERWRITE);
         // verify second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
         assertTrue(log.getCaptured().toString().contains("CAT"));
         assertEquals("name2", underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
-                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst().get());
 
         // verify fail throws exception
         underTest.familyDuplicateOption(Options.FAIL);

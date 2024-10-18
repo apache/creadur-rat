@@ -39,7 +39,6 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
-import org.apache.rat.api.Document.Type;
 import org.apache.rat.testhelpers.TextUtils;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -133,12 +132,9 @@ public final class RatTestHelpers {
      * @throws Exception Creating the object failed.
      */
     public static ArtifactFactory newArtifactFactory() throws Exception {
-        final InvocationHandler handler = new InvocationHandler() {
-            @Override
-            public Object invoke(Object pProxy, Method pMethod, Object[] pArgs) throws Throwable {
-                System.out.println("Invoking method " + pMethod);
-                throw new IllegalStateException("Not implemented");
-            }
+        final InvocationHandler handler = (pProxy, pMethod, pArgs) -> {
+            System.out.println("Invoking method " + pMethod);
+            throw new IllegalStateException("Not implemented");
         };
         return (ArtifactFactory) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                 new Class[] { ArtifactFactory.class }, handler);

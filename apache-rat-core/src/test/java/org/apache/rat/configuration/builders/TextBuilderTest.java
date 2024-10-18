@@ -35,7 +35,6 @@ import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 public class TextBuilderTest {

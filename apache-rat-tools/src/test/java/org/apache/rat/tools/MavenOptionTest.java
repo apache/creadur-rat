@@ -18,7 +18,6 @@
  */
 package org.apache.rat.tools;
 
-import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.Option;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.testhelpers.TextUtils;

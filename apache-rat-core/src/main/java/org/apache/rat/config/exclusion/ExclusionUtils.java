@@ -104,10 +104,7 @@ public final class ExclusionUtils {
                     i++;
                 }
                 String trimmed = i > 0 ? s.substring(i - 1) : s;
-                if (trimmed.startsWith(commentPrefix)) {
-                    return false;
-                }
-                return true;
+                return !trimmed.startsWith(commentPrefix);
             }
             return false;
         };
