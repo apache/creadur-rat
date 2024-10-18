@@ -20,7 +20,7 @@ package org.apache.rat.config.exclusion;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.PathMatcher;
 import java.util.Arrays;
