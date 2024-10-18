@@ -40,6 +40,11 @@ public class TestingDocument extends Document {
         this(null, name);
     }
 
+    public TestingDocument(DocumentName documentName) {
+        super(documentName, p -> true);
+        this.reader = null;
+    }
+
     public TestingDocument(String name, DocumentNameMatcher matcher) {
         super(new DocumentName(name, "", "/", true), matcher);
         this.reader = null;

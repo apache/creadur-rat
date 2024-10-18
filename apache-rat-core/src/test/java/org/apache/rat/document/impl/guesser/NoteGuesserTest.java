@@ -18,45 +18,67 @@
  */ 
 package org.apache.rat.document.impl.guesser;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NoteGuesserTest {
 
-    private DocumentName mkNameSet(String name) {
-        return new DocumentName(name, "", "/", true);
-    }
-    @Test
-    public void testMatches() {
-        assertTrue(NoteGuesser.isNote(new TestingDocument("DEPENDENCIES")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("LICENSE")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("LICENSE.txt")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("NOTICE")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("NOTICE.txt")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("README")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("README.txt")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/DEPENDENCIES")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/LICENSE")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/LICENSE.txt")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/NOTICE")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/NOTICE.txt")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/README")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src/test/README.txt")));
-
+    @ParameterizedTest
+    @MethodSource("nameData")
+    public void testMatches(DocumentName testingName, boolean expected) {
+        boolean actual = NoteGuesser.isNote(new TestingDocument(testingName));
+        assertEquals( expected, NoteGuesser.isNote(new TestingDocument(testingName)), () -> testingName.getName());
     }
 
-    @Disabled("RAT-390: old tests that do not work anymore")
-    public void isNoteWithPathWindowsLike() {
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src\\test\\DEPENDENCIES")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src\\test\\LICENSE")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src\\test\\LICENSE.txt")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src\\test\\NOTICE")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src\\test\\NOTICE.txt")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src\\test\\README")));
-        assertTrue(NoteGuesser.isNote(new TestingDocument("src\\test\\README.txt")));
+    private static Stream<Arguments> nameData() {
+        List<Arguments> lst = new ArrayList<>();
+
+        final DocumentName linuxBaseName = new DocumentName("/", "/", "/", true);
+        final DocumentName windowsBaseName = new DocumentName("\\", "\\", "\\", false);
+
+        lst.add(Arguments.of(linuxBaseName.resolve("DEPENDENCIES"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("LICENSE"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("LICENSE.txt"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("NOTICE"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("NOTICE.txt"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("README"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("README.txt"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("src/test/DEPENDENCIES"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("src/test/LICENSE"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("src/test/LICENSE.txt"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("src/test/NOTICE"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("src/test/NOTICE.txt"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("src/test/README"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("src/test/README.txt"), true));
+        lst.add(Arguments.of(linuxBaseName.resolve("src/test/README.shouldFail"), false));
+
+        lst.add(Arguments.of(windowsBaseName.resolve("DEPENDENCIES"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("LICENSE"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("LICENSE.txt"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("NOTICE"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("NOTICE.txt"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("README"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("README.txt"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\DEPENDENCIES"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\LICENSE"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\LICENSE.txt"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\NOTICE"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\NOTICE.txt"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\README"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\README.txt"), true));
+        lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\README.shouldFail"), false));
+
+        return lst.stream();
     }
 }
