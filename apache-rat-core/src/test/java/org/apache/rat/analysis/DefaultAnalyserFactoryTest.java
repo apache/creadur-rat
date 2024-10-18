@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
@@ -37,7 +36,6 @@ import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
-import org.apache.rat.utils.DefaultLog;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

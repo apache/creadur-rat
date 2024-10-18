@@ -29,7 +29,6 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.testhelpers.TestingMatcher;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 public class SimpleLicenseTest {

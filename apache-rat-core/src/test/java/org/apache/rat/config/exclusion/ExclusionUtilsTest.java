@@ -18,7 +18,6 @@
  */
 package org.apache.rat.config.exclusion;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.apache.rat.utils.iterator.WrappedIterator;

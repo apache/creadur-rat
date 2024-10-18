@@ -34,7 +34,6 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.test.utils.Resources;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
