@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.PathMatcher;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -179,19 +181,21 @@ public final class ExclusionUtils {
     public static Iterable<String> asIterable(final File patternFile, final Predicate<String> commentFilters)  {
         verifyFile(patternFile);
         Objects.requireNonNull(commentFilters, "commentFilters");
-
-        return () -> {
-            try {
-                return new LineIterator(new FileReader(patternFile)) {
-                    @Override
-                    protected boolean isValidLine(final String line) {
-                        return commentFilters.test(line);
-                    }
-                };
-            } catch (FileNotFoundException e) {
-                throw new ConfigurationException("Unable to read file " + patternFile, e);
-            }
-        };
+        // can not return LineIterator as the patternFile will not be closed leading to resrouce leak in
+        // some cases.
+        try (FileReader reader = new FileReader(patternFile)) {
+            List<String> result = new ArrayList<>();
+            Iterator<String> iter = new LineIterator(reader) {
+                @Override
+                protected boolean isValidLine(final String line) {
+                    return commentFilters.test(line);
+                }
+            };
+            iter.forEachRemaining(result::add);
+            return result;
+        } catch (IOException e) {
+            throw new ConfigurationException("Unable to read file " + patternFile, e);
+        }
     }
 
     /**
