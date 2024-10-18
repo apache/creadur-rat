@@ -29,7 +29,7 @@ How to define licenses in Apache Rat
  scope of this document. In this document we will address how to define licenses in the default XML format.
  
  The XML document has a root node named "rat-config" which comprises 4 major sections: "Families", 
- "Licenses", "Approved" and "Matchers". There is an {{{./apache-rat/rat.xsd}}XSD} that can be used to validate
+ "Licenses", "Approved" and "Matchers". There is an {{{./apache-rat/rat.xsd}XSD}} that can be used to validate
  configuration files. If custom matchers have been added it will be necessary to {{{./apache-rat/xsd.html}generate a
   new XSD file}} that includes the new matchers.
  
