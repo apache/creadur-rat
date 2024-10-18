@@ -37,9 +37,9 @@ public class StandardCollectionTest {
     @ParameterizedTest
     @MethodSource("collectionData")
     public void testState(StandardCollection scm, boolean hasFileProcessor, boolean hasPathMatchSupplier, boolean hasPatterns) {
-        assertEquals(hasFileProcessor, scm.fileProcessor().hasNext(), () -> scm.name()+" FileProcessor state wrong.");
-        assertEquals(hasPathMatchSupplier, scm.hasDocumentNameMatchSupplier(), () -> scm.name()+" PathMatcherSupplier state wrong.");
-        assertEquals(hasPatterns, !scm.patterns().isEmpty(), () -> scm.name()+" patterns state wrong.");
+        assertEquals(hasFileProcessor, scm.fileProcessor().hasNext(), () -> scm.name() + " FileProcessor state wrong.");
+        assertEquals(hasPathMatchSupplier, scm.hasDocumentNameMatchSupplier(), () -> scm.name() + " PathMatcherSupplier state wrong.");
+        assertEquals(hasPatterns, !scm.patterns().isEmpty(), () -> scm.name() + " patterns state wrong.");
     }
 
     @Test
@@ -48,7 +48,7 @@ public class StandardCollectionTest {
         assertEquals(StandardCollection.values().length, tests.size(), "Some StandardCollections are not listed in 'collectionData'");
     }
 
-    public static Collection<Arguments> collectionData() {
+    private static Collection<Arguments> collectionData() {
         List<Arguments> lst = new ArrayList<Arguments>();
         lst.add(Arguments.of(StandardCollection.ALL, true, true, true));
         lst.add(Arguments.of(StandardCollection.ARCH, false, false, true));

@@ -31,7 +31,7 @@ public class ReporterTestUtils {
     public static final String APACHE_LICENSE = licenseOut("AL", "AL", "Apache License Version 2.0");
 
     /**
-     * Generates the regex string for a document output line.  Suitable for regex query.
+     * Generates the regex string for a document output line. Suitable for regex query.
      * @param approved True if this license is approved
      * @param type The document type.
      * @param name Then name of the document
@@ -42,7 +42,7 @@ public class ReporterTestUtils {
     }
 
     /**
-     * Generates the regex string for a license output line.  Suitable for regex query.
+     * Generates the regex string for a license output line. Suitable for regex query.
      * @param family The license family category.
      * @param name The license name.
      * @return the regular expression string representing the license.
@@ -52,7 +52,7 @@ public class ReporterTestUtils {
     }
 
     /**
-     * Generates the regex string for a license output line.  Suitable for regex query.
+     * Generates the regex string for a license output line. Suitable for regex query.
      * @param family The license family category.
      * @param id The license id if different from family.
      * @param name The license name.

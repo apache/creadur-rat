@@ -45,8 +45,8 @@ public class ExclusionProcessorTest {
 
     /** The base directory for the test. */
     @TempDir
-    File basedirFile;
-    DocumentName basedir;
+    private File basedirFile;
+    private DocumentName basedir;
 
     @BeforeEach
     public void setup() {
@@ -106,7 +106,7 @@ public class ExclusionProcessorTest {
         for (String pth : paths) {
             Boolean expected = expectedMap.get(pth);
             if (expected == null) {
-                throw new RuntimeException("Missing expected value for " + pth+" in pattern "+pattern);
+                throw new RuntimeException("Missing expected value for " + pth + " in pattern " + pattern);
             }
             DocumentName dn = mkName(pth);
             assertEquals(expected, pathMatcher.matches(dn),
@@ -225,8 +225,6 @@ public class ExclusionProcessorTest {
         expectedMap.put("a/b/foo/x/y",false);
         assertExclusions("**/foo/**", expectedMap);
     }
-
-
 
     @Test
     public void orTest() {

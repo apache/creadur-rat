@@ -48,10 +48,12 @@ public class ExclusionUtilsTest {
     @TempDir
     private File testDir;
 
-    int fileCount = 0;
+    private int fileCount = 0;
 
     private static final String[] COMMENTS = {
-            "# comment that is", "## comment that is", "## comment that is ## ", "     // comment that is ## ", "",
+            "# comment that is", "## comment that is", //
+            "## comment that is ## ", //
+            "     // comment that is ## ", "", //
             "     /** comment that is **/ ", null
     };
 
@@ -73,7 +75,7 @@ public class ExclusionUtilsTest {
         File f = new File(testDir, "file" + fileCount);
         try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
             for (String content : contents) {
-                if (content != null){
+                if (content != null) {
                     pw.println(content);
                 }
             }
@@ -82,7 +84,6 @@ public class ExclusionUtilsTest {
         }
         return f;
     }
-
 
     @Test
     public void CommentFilterTest() {

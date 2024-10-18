@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -94,7 +95,6 @@ public class TikaProcessorTest {
         assertEquals(Document.Type.BINARY, doc.getMetaData().getDocumentType());
     }
 
-
     @Test
     public void plainTextTest() throws Exception {
         FileDocument doc = mkDocument("/elements/Text.txt");
@@ -128,7 +128,7 @@ public class TikaProcessorTest {
                     Document doc = mkDocument(file);
                     String mimeType = TikaProcessor.process(doc);
                     statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
-                    assertEquals( docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for " +file.toString());
+                    assertEquals(docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for " + file.toString());
                     unseenMime.remove(mimeType);
                 }
             }
@@ -136,10 +136,9 @@ public class TikaProcessorTest {
         System.out.println( "untested mime types");
         unseenMime.keySet().forEach(System.out::println);
         for (Document.Type type : Document.Type.values()) {
-            System.out.format("Tested %s %s files%n", statistic.getCounter(type), type );
+            System.out.format("Tested %s %s files%n", statistic.getCounter(type), type);
         }
     }
-
 
     /**
      * Build a document with the specific input stream
@@ -151,7 +150,7 @@ public class TikaProcessorTest {
 
             @Override
             public Reader reader() throws IOException {
-                return new InputStreamReader(inputStream());
+                return new InputStreamReader(inputStream(), StandardCharsets.UTF_8);
             }
 
             @Override

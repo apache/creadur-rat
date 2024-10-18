@@ -45,7 +45,7 @@ public class ArgTests {
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
     public void outputFleNameNoDirectoryTest(String name) throws ParseException {
         class OutputFileConfig extends ReportConfiguration  {
-            File actual = null;
+            private File actual = null;
             @Override
             public void setOut(File file) {
                 actual = file;

@@ -54,9 +54,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {
 
-    /** The base directory for the test.  We do not use TempFile because we want the evidence of the run to exist after
-     * a failure.*/
-    File baseDir;
+    /** The base directory for the test.
+     * We do not use TempFile because we want the evidence of the run
+     * to exist after a failure.*/
+    private File baseDir;
 
     /**
      * Constructor.
@@ -67,7 +68,7 @@ public class OptionCollectionTest {
     }
 
     /**
-     * Defines the Test method that is stored in a map.
+     * Defines the test method that is stored in a map.
      */
     @FunctionalInterface
     public interface OptionTest {
@@ -87,7 +88,7 @@ public class OptionCollectionTest {
     /**
      * Returns the command line format (with '--' prefix) for the Option.
      * @param opt the option to process.
-     * @return the command line option..
+     * @return the command line option.
      */
     private static String longOpt(Option opt) {
         return "--" + opt.getLongOpt();
@@ -103,8 +104,8 @@ public class OptionCollectionTest {
         } finally {
             DefaultLog.setInstance(null);
         }
-        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use the standard '--'");
-        log.assertContainsExactly(1, "WARN: Option [-a] used.  Deprecated for removal since 0.17: Use --edit-license");
+        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
+        log.assertContainsExactly(1, "WARN: Option [-a] used. Deprecated for removal since 0.17: Use --edit-license");
     }
 
     @Test
@@ -120,7 +121,7 @@ public class OptionCollectionTest {
             DefaultLog.setInstance(null);
         }
         assertThat(config).isNotNull();
-        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use the standard '--'");
+        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
     }
 
     @Test
@@ -153,7 +154,7 @@ public class OptionCollectionTest {
     /**
      * A paramaterized test for the options.
      * @param name The name of the test.
-     * @param test the option testt to execute.
+     * @param test the option test to execute.
      * @throws Exception on unexpected error.
      */
     @ParameterizedTest
@@ -183,10 +184,10 @@ public class OptionCollectionTest {
         }
 
         /**
-         * Constructor.  sets the baseDir and loads the testMap.
+         * Constructor. Sets the baseDir and loads the testMap.
          */
         public OptionsProvider() {
-           super(Collections.emptyList());
+            super(Collections.emptyList());
         }
 
         /**
