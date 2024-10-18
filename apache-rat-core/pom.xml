@@ -158,10 +158,5 @@
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-vfs2</artifactId>
-      <version>2.9.0</version>
-    </dependency>
   </dependencies>
 </project>
