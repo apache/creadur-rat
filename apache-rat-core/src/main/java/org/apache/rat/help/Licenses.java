@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
