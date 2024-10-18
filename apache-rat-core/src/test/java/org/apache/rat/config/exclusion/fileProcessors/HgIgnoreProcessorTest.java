@@ -18,7 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

@@ -25,7 +25,7 @@ import java.util.function.Function;
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.ExtendedIterator;
 
 /**
  * An interface that defines the FileProcessor. The file processor reads the file specified in the DocumentName.

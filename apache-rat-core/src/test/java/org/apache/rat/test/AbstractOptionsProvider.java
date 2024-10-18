@@ -36,7 +36,7 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
-import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 

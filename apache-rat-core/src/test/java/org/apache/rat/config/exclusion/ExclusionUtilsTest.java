@@ -19,7 +19,7 @@
 package org.apache.rat.config.exclusion;
 
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;

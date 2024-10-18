@@ -40,7 +40,7 @@ import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.DocumentNameMatcher;
-import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.ExtendedIterator;
 
 import static java.lang.String.format;
 

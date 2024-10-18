@@ -33,7 +33,7 @@ import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
 import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.ExtendedIterator;
 
 import static java.lang.String.format;
 

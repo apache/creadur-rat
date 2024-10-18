@@ -34,7 +34,7 @@ import org.apache.rat.config.exclusion.fileProcessors.GitFileProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreProcessor;
 import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
 import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
-import org.apache.rat.utils.iterator.ExtendedIterator;
+import org.apache.rat.utils.ExtendedIterator;
 
 public enum StandardCollection {
     /**

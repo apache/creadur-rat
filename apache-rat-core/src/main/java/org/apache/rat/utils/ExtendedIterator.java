@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.rat.utils.iterator;
+package org.apache.rat.utils;
 
 import java.io.Closeable;
 import java.io.IOException;
