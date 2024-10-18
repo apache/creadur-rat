@@ -33,7 +33,7 @@ import org.apache.tools.ant.types.resources.FileResource;
  * internally.
  */
 class ResourceCollectionContainer implements IReportable {
-    /** The  resources as collected by Ant */
+    /** The resources as collected by Ant */
     private final ResourceCollection resources;
     /** The report configuration being used for the report */
     private final ReportConfiguration configuration;

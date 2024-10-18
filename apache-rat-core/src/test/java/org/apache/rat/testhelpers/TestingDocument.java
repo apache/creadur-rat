@@ -65,7 +65,6 @@ public class TestingDocument extends Document {
         return Collections.emptySortedSet();
     }
 
-
     @Override
     public InputStream inputStream() throws IOException {
         throw new UnsupportedOperationException();

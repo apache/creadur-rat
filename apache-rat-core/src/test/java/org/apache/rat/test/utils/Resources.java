@@ -20,16 +20,13 @@ package org.apache.rat.test.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-
-import org.apache.rat.document.impl.DocumentName;
+import java.nio.file.Files;
 
 /**
  * Utility class, which provides static methods for creating test cases.
@@ -62,7 +59,7 @@ public class Resources {
     }
 
     /**
-     * Try to to load the given file from baseDir, in case of errors try to add
+     * Try to load the given file from baseDir, in case of errors try to add
      * module names to fix behaviour from within IntelliJ.
      */
     private static File getResourceFromBase(File baseDir, String pResource) throws IOException {
@@ -83,19 +80,14 @@ public class Resources {
             throw new FileNotFoundException("Unable to locate resource directory: " + pResource);
         }
 
-        return f.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isFile();
-            }
-        });
+        return f.listFiles(File::isFile);
     }
 
     /**
      * Locates a resource file in the class path and returns an {@link InputStream}.
      */
     public static InputStream getResourceStream(String pResource) throws IOException {
-        return new FileInputStream(getResourceFile(pResource));
+        return Files.newInputStream(getResourceFile(pResource).toPath());
     }
 
     /**
@@ -118,7 +110,7 @@ public class Resources {
      * {@link BufferedReader}.
      */
     public static BufferedReader getBufferedReader(File file) throws IOException {
-        return new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        return new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8));
     }
 
     /**

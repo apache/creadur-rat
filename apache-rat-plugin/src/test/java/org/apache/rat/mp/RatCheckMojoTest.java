@@ -303,5 +303,4 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
         }
     }
-
 }

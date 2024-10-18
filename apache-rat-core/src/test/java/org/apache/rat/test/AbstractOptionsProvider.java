@@ -72,9 +72,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A list of methods that an OptionsProvider in a test case must support.
- * Use of this interface ensures consistent testing across the UIs.  Each method
+ * Use of this interface ensures consistent testing across the UIs. Each method
  * tests an Option from OptionCollection that must be implemented in the UI.
- * Each method in this interface tests an Option in OptionCollection.
+ * Each method in this interface tests an Option in {@link org.apache.rat.OptionCollection}.
  */
 public abstract class AbstractOptionsProvider {
     /** A map of test Options to tests */
@@ -83,13 +83,15 @@ public abstract class AbstractOptionsProvider {
     protected static final String[] EXCLUDE_ARGS = { "*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
     protected static final String[] INCLUDE_ARGS = { "B.bar", "justbaz" };
     /**
-     * The directory to place test data in.  We do not use temp file here as we want the evidence to survive failure.
+     * The directory to place test data in.
+     * We do not use temp file here as we want the evidence to survive failure.
      */
     protected final File baseDir;
 
     protected DocumentName baseName() {
         return new DocumentName(baseDir);
     }
+
     protected AbstractOptionsProvider(Collection<String> unsupportedArgs) {
         baseDir = new File("target/optionTools");
         baseDir.mkdirs();
@@ -98,9 +100,7 @@ public abstract class AbstractOptionsProvider {
         testMap.put("config", this::configTest);
         testMap.put("configuration-no-defaults", this::configurationNoDefaultsTest);
         testMap.put("copyright", this::copyrightTest);
-        testMap.put("dir", () -> {
-            DefaultLog.getInstance().info("--dir has no valid test");
-        });
+        testMap.put("dir", () -> DefaultLog.getInstance().info("--dir has no valid test"));
         testMap.put("dry-run", this::dryRunTest);
         testMap.put("edit-copyright", this::editCopyrightTest);
         testMap.put("edit-license", this::editLicensesTest);
@@ -149,7 +149,7 @@ public abstract class AbstractOptionsProvider {
     private void verifyAllMethodsDefinedAndNeeded(Collection<String> unsupportedArgs) {
         // verify all options have functions.
         final List<String> argNames = new ArrayList<>();
-        Arg.getOptions().getOptions().forEach( o -> {
+        Arg.getOptions().getOptions().forEach(o -> {
             if (o.getLongOpt() != null) {
                 argNames.add(o.getLongOpt());
             }
@@ -157,20 +157,20 @@ public abstract class AbstractOptionsProvider {
         argNames.removeAll(unsupportedArgs);
         argNames.removeAll(testMap.keySet());
         if (!argNames.isEmpty()) {
-            fail("Missing methods for: "+String.join(", ", argNames));
+            fail("Missing methods for: " + String.join(", ", argNames));
         }
 
         // verify all functions have options.
         argNames.clear();
         argNames.addAll(testMap.keySet());
         argNames.remove("help");
-        Arg.getOptions().getOptions().forEach( o -> {
+        Arg.getOptions().getOptions().forEach(o -> {
             if (o.getLongOpt() != null) {
                 argNames.remove(o.getLongOpt());
             }
         });
         if (!argNames.isEmpty()) {
-            fail("Extra methods defined: "+String.join(", ", argNames));
+            fail("Extra methods defined: " + String.join(", ", argNames));
         }
         unsupportedArgs.forEach(testMap::remove);
     }
@@ -195,18 +195,17 @@ public abstract class AbstractOptionsProvider {
     protected abstract void helpTest();
 
     // exclude tests
-
     private void execExcludeTest(Option option, String[] args) {
-        String notExcluded[] = { "notbaz", "well._afile"  };
-        String excluded[] = { "some.foo", "B.bar", "justbaz"};
+        String[] notExcluded = { "notbaz", "well._afile"  };
+        String[] excluded = { "some.foo", "B.bar", "justbaz"};
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher matcher = config.getNameMatcher(baseName());
             for (String fname : notExcluded) {
-                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
             for (String fname : excluded) {
-                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -221,7 +220,6 @@ public abstract class AbstractOptionsProvider {
     protected void excludeFileTest() {
         excludeFileTest(Arg.EXCLUDE_FILE.find("exclude-file"));
     }
-
 
     protected void inputExcludeFileTest() {
         excludeFileTest(Arg.EXCLUDE_FILE.find("input-exclude-file"));
@@ -242,12 +240,12 @@ public abstract class AbstractOptionsProvider {
         String[] notExcluded = { "afile~more",   "what.#afile", "%afile%withMore", "well._afile" };
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());
             for (String fname : excluded) {
-                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
             for (String fname : notExcluded) {
-                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -256,7 +254,7 @@ public abstract class AbstractOptionsProvider {
 
     protected void inputExcludeParsedScmTest() {
         Option option = Arg.EXCLUDE_PARSE_SCM.find("input-exclude-parsed-scm");
-        String[] args = {"GIT"};
+        String[] args = { "GIT" };
         String[] lines = {
                 "# somethings",
                 "!thingone", "thing*", System.lineSeparator(),
@@ -271,15 +269,15 @@ public abstract class AbstractOptionsProvider {
 
         List<String> expected = WrappedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
                 .map(s -> new File(baseDir, s).getPath()).toList();
-        expected.add(0, "!"+new File(baseDir, "thingone").getPath());
+        expected.add(0, "!" + new File(baseDir, "thingone").getPath());
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());
             for (String fname : excluded) {
-                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
             for (String fname : notExcluded) {
-                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -287,7 +285,6 @@ public abstract class AbstractOptionsProvider {
     }
 
     // include tests
-
     private void execIncludeTest(Option option, String[] args) {
         Option excludeOption = Arg.EXCLUDE.option();
         String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
@@ -295,12 +292,12 @@ public abstract class AbstractOptionsProvider {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args),
                     ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
-            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());
             for (String fname : excluded) {
-                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" " + fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
             for (String fname : notExcluded) {
-                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" " + fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -336,12 +333,12 @@ public abstract class AbstractOptionsProvider {
         String[] notExcluded = { "afile~", ".#afile", "%afile%", "._afile", "what.#afile", "%afile%withMore", "well._afile" };
         try {
             ReportConfiguration config = generateConfig(excludes, ImmutablePair.of(option, args));
-            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());
             for (String fname : excluded) {
-                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
             for (String fname : notExcluded) {
-                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey()+" "+fname);
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -721,11 +718,11 @@ public abstract class AbstractOptionsProvider {
     }
 
     private void styleSheetTest(Option option) {
-        // copy the dummy stylesheet so that the we have a local file for users of the testing jar.
+        // copy the dummy stylesheet so that  we have a local file for users of the testing jar.
         File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
         try (
             InputStream in = ReportTest.class.getResourceAsStream("MatcherContainerResource.txt");
-            OutputStream out = new FileOutputStream(file)) {
+            OutputStream out = Files.newOutputStream(file.toPath())) {
             IOUtils.copy(in, out);
         } catch (IOException e) {
             fail("Could not copy MatcherContainerResource.txt: "+e.getMessage());
@@ -737,8 +734,7 @@ public abstract class AbstractOptionsProvider {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 try (InputStream expected = StyleSheets.getStyleSheet(sheet).get();
-                     InputStream actual = config.getStyleSheet().get();
-                ) {
+                     InputStream actual = config.getStyleSheet().get()) {
                     assertTrue(IOUtils.contentEquals(expected, actual), () -> String.format("'%s' does not match", sheet));
                 }
             }
@@ -758,7 +754,7 @@ public abstract class AbstractOptionsProvider {
     protected void scanHiddenDirectoriesTest() {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.INCLUDE_STD.find("scan-hidden-directories"), null));
-            DocumentNameMatcher matcher = config.getNameMatcher(baseName());;
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());
             assertTrue(matcher.matches(mkDocName(".file")), ".file");
         } catch (IOException e) {
             fail(e.getMessage());
@@ -769,8 +765,7 @@ public abstract class AbstractOptionsProvider {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
             try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
-                 InputStream actual = config.getStyleSheet().get();
-            ) {
+                 InputStream actual = config.getStyleSheet().get()) {
                 assertTrue(IOUtils.contentEquals(expected, actual), "'xml' does not match");
             }
         } catch (IOException e) {
@@ -778,21 +773,21 @@ public abstract class AbstractOptionsProvider {
         }
     }
 
-    final public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
-        List<Arguments> lst = new ArrayList<>();
-        List<String> missingTests = new ArrayList<>();
+        final public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
+                List<Arguments> lst = new ArrayList<>();
+                List<String> missingTests = new ArrayList<>();
 
-        for (String key : OptionsList.getKeys()) {
-            OptionCollectionTest.OptionTest test = testMap.get(key);
-            if (test == null) {
-                missingTests.add(key);
-            } else {
-                lst.add(Arguments.of(key, test));
+                        for (String key : OptionsList.getKeys()) {
+                        OptionCollectionTest.OptionTest test = testMap.get(key);
+                        if (test == null) {
+                                missingTests.add(key);
+                            } else {
+                                lst.add(Arguments.of(key, test));
+                            }
+                    }
+                if (!missingTests.isEmpty()) {
+                        System.out.println("The following tests are excluded: '"+String.join( "', '", missingTests )+"'");
+                    }
+                return lst.stream();
             }
-        }
-        if (!missingTests.isEmpty()) {
-            System.out.println("The following tests are excluded: '"+String.join( "', '", missingTests )+"'");
-        }
-        return lst.stream();
-    }
 }

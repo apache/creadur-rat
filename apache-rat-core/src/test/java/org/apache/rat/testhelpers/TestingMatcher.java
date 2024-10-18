@@ -27,7 +27,7 @@ import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * An Matcher for testing.
+ * A Matcher for testing.
  */
 @ConfigComponent(type = ComponentType.MATCHER, name = "TestingMatcher", desc = "Matcher used in testing")
 public class TestingMatcher extends AbstractHeaderMatcher {
@@ -35,7 +35,7 @@ public class TestingMatcher extends AbstractHeaderMatcher {
     private Queue<Boolean> results;
 
     /**
-     * Constructs a matcher with an ID of "dfltMtch" that does not match anyting.
+     * Constructs a matcher with an ID of "dfltMtch" that does not match anything.
      */
     public TestingMatcher() {
         this("dfltMtch", false);
@@ -43,12 +43,12 @@ public class TestingMatcher extends AbstractHeaderMatcher {
 
     /**
      * Constructs a matcher with the specified id and matching result.
-     * @param id the ID for this matcher
      * @param result if {@code true} will match everything, otherwise it matches nothing.
      */
     public TestingMatcher(boolean result) {
         this("dfltMtch", result);
     }
+
     /**
      * Constructs a matcher with the specified id and matching result.
      * @param id the ID for this matcher
@@ -73,7 +73,7 @@ public class TestingMatcher extends AbstractHeaderMatcher {
 
     @Override
     public final boolean matches(IHeaders headers) {
-        return results.poll();
+        return Boolean.TRUE.equals(results.poll());
     }
 
     @Override

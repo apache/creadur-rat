@@ -95,8 +95,8 @@ public class TestingLog implements Log {
     }
 
     /**
-     * Returns true if the log is empy.
-     * @return {@code  true} if the log is empty.
+     * Returns true if the log is empty.
+     * @return {@code true} if the log is empty.
      */
     public boolean isEmpty() {
         return captured.length() == 0;

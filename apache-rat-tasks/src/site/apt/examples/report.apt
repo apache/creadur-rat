@@ -37,7 +37,7 @@ Report Task
 
 * Report Task Attributes
 
-  This section lists the attributes for the report task.  The attribute value types are listed in a table at the bottom of this page.
+  This section lists the attributes for the report task. The attribute value types are listed in a table at the bottom of this page.
 
 
 ** Current
@@ -112,7 +112,7 @@ Report Task
 
 * Report Task Nested Elements
 
-  This section lists the child elements for the report task.  The element value types are listed in a table at the bottom of this page.
+  This section lists the child elements for the report task. The element value types are listed in a table at the bottom of this page.
 
 
 ** Current
@@ -122,17 +122,17 @@ Report Task
 *--+--+--+--+
 | config | File names for system configuration. | File | false |
 *--+--+--+--+
-| licensesApproved | The approved License IDs.  These licenses will be added to the list of approved licenses. | LicenseID | false |
+| licensesApproved | The approved License IDs. These licenses will be added to the list of approved licenses. | LicenseID | false |
 *--+--+--+--+
 | licensesApprovedFile | Name of file containing the approved license IDs. | File | false |
 *--+--+--+--+
-| licenseFamiliesApproved | The approved License Family IDs.  These licenses families will be added to the list of approved licenses families. | FamilyID | false |
+| licenseFamiliesApproved | The approved License Family IDs. These licenses families will be added to the list of approved licenses families. | FamilyID | false |
 *--+--+--+--+
 | licenseFamiliesApprovedFile | Name of file containing the approved family IDs. | File | false |
 *--+--+--+--+
-| licensesDenied | The denied License IDs.  These licenses will be removed to the list of approved licenses. Once licenses are removed they can not be added back. | LicenseID | false |
+| licensesDenied | The denied License IDs. These licenses will be removed to the list of approved licenses. Once licenses are removed they can not be added back. | LicenseID | false |
 *--+--+--+--+
-| licensesDeniedFile | Name of File containing the approved license IDs. | File | false |
+| licensesDeniedFile | Name of file containing the approved license IDs. | File | false |
 *--+--+--+--+
 | licenseFamiliesDenied | The denied License family IDs.  These license families will be removed from the list of approved licenses. | FamilyID | false |
 *--+--+--+--+
@@ -149,7 +149,7 @@ Report Task
 *--+--+--+--+
 | Name | Description | Argument Type | Deprecated |
 *--+--+--+--+
-| licenses | File names for system configuration. | File | Deprecated for removal since 0.17.0: Use <config> instead. |
+| licenses | File names for system configuration. | File | Deprecated for removal since 0.17: Use <config> instead. |
 *--+--+--+--+
 | exclude | Excludes files matching wildcard <Expression>. | Expression | Deprecated for removal since 0.17: Use <inputExclude> instead. |
 *--+--+--+--+
@@ -164,20 +164,19 @@ Report Task
 *--+--+
 | DirOrArchive | A directory or archive file to scan. |
 *--+--+
-| Expression | A wildcard file matching pattern. example: *-test-*.txt |
+| Expression | A wildcard file matching pattern. Example: *-test-*.txt |
 *--+--+
 | FamilyID | The ID for a license family. |
 *--+--+
 | File | A file name. |
 *--+--+
-| LicenseFilter | A defined filter for the licenses to include. Valid values: ALL, APPROVED, NONE. |
+| LicenseFilter | A defined filter for the licenses to include. Valid values are: ALL, APPROVED, NONE. |
 *--+--+
 | LicenseID | The ID for a license. |
 *--+--+
 | LogLevel | The log level to use. Valid values DEBUG, INFO, WARN, ERROR, OFF. |
 *--+--+
-| ProcessingType | Specifies how to process file types. Valid values are: 	NOTIFICATION: List file as present	PRESENCE: List any licenses found	ABSENCE: List licenses found and any unknown licences |
+| ProcessingType | Specifies how to process file types. Valid values are: NOTIFICATION: List file as present	PRESENCE: List any licenses found	ABSENCE: List licenses found and any unknown licences |
 *--+--+
 | StyleSheet | Either an external xsl file or maybe one of the internal named sheets. Internal sheets are: 	plain-rat: The default style	missing-headers: Produces a report of files that are missing headers	unapproved-licenses: Produces a report of the files with unapproved licenses	xml: The default style. |
 *--+--+
-

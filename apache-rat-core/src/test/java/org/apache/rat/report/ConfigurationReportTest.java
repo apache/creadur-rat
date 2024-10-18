@@ -37,7 +37,6 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
@@ -49,7 +48,8 @@ public class ConfigurationReportTest {
     private StringWriter sw;
     private IXmlWriter writer;
 
-    String[] FAMILY_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3", "MIT", "OASIS", "W3C", "W3CD", };
+    private final String[] FAMILY_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3", //
+     "MIT", "OASIS", "W3C", "W3CD", };
 
     @BeforeEach
     public void setup() {

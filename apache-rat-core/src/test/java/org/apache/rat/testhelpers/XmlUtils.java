@@ -26,8 +26,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,7 +144,7 @@ public final class XmlUtils {
     }
 
     /**
-     * Print the and XML document to the output stream
+     * Print the properties and XML document to the output stream
      * 
      * @param out the OutputStream to print the document to.
      * @param document The XML DOM document to print
@@ -161,10 +161,9 @@ public final class XmlUtils {
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
-            transformer.transform(new DOMSource(document), new StreamResult(new OutputStreamWriter(out, "UTF-8")));
-        } catch (TransformerException | UnsupportedEncodingException e) {
+            transformer.transform(new DOMSource(document), new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
+        } catch (TransformerException e) {
             e.printStackTrace(new PrintStream(out));
         }
     }
-
 }
