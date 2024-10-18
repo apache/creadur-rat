@@ -18,7 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import org.apache.rat.utils.iterator.WrappedIterator;
+import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class HgIgnoreProcessorTest extends AbstractIgnoreProcessorTest {
         "# use glob syntax.", "syntax: glob", "*.elc", "*.pyc", "*~", System.lineSeparator(),
             "# switch to regexp syntax.", "syntax: regexp", "^\\.pc/" };
 
-        List<String> expected = WrappedIterator.create(Arrays.asList("*.elc", "*.pyc", "*~").iterator())
+        List<String> expected = ExtendedIterator.create(Arrays.asList("*.elc", "*.pyc", "*~").iterator())
                 .map(s -> new File(baseDir, s).getPath()).toList();
         expected.add(format("%%regex[\\Q%s%s\\E%s]", baseDir.getPath(), File.separatorChar, "\\.pc/"));
 
@@ -53,7 +53,7 @@ public class HgIgnoreProcessorTest extends AbstractIgnoreProcessorTest {
     public void processDefaultFileTest() throws IOException {
         String[] lines = {"^[A-Z]*\\.txt", "[0-9]*\\.txt"};
 
-        List<String> expected = WrappedIterator.create(Arrays.asList("[A-Z]*\\.txt", ".*[0-9]*\\.txt").iterator())
+        List<String> expected = ExtendedIterator.create(Arrays.asList("[A-Z]*\\.txt", ".*[0-9]*\\.txt").iterator())
                 .map(s -> format("%%regex[\\Q%s%s\\E%s]", baseDir.getPath(), File.separatorChar, s)).toList();
 
         writeFile(".hgignore", Arrays.asList(lines));

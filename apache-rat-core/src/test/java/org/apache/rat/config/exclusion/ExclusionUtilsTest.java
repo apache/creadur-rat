@@ -20,7 +20,6 @@ package org.apache.rat.config.exclusion;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.utils.iterator.ExtendedIterator;
-import org.apache.rat.utils.iterator.WrappedIterator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -98,7 +97,7 @@ public class ExclusionUtilsTest {
     @Test
     public void fileCommentFilterTest() {
         List<String> notComments = new ArrayList<>(Arrays.asList(NOT_COMMENTS));
-        ExtendedIterator<String> iter = WrappedIterator.create(Arrays.asList(COMMENTS).iterator())
+        ExtendedIterator<String> iter = ExtendedIterator.create(Arrays.asList(COMMENTS).iterator())
                 .andThen(Arrays.asList(NOT_COMMENTS).iterator());
         Predicate<String> filter = ExclusionUtils.commentFilter(ExclusionUtils.COMMENT_PREFIXES);
         File f = createFile(() -> iter);

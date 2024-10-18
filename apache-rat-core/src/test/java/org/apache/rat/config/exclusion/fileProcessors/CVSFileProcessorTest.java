@@ -18,7 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import org.apache.rat.utils.iterator.WrappedIterator;
+import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class CVSFileProcessorTest extends AbstractIgnoreProcessorTest {
         String[] lines = {
                 "thingone thingtwo", System.lineSeparator(), "one_fish", "two_fish", "", "red_* blue_*"};
 
-        List<String> expected = WrappedIterator.create(Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_*", "blue_*").iterator())
+        List<String> expected = ExtendedIterator.create(Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_*", "blue_*").iterator())
                 .map(s -> new File(baseDir, s).getPath()).toList();
 
         writeFile(".cvsignore", Arrays.asList(lines));

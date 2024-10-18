@@ -18,92 +18,248 @@
 
 package org.apache.rat.utils.iterator;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import org.apache.commons.collections4.iterators.FilterIterator;
+import org.apache.commons.collections4.iterators.IteratorChain;
+import org.apache.commons.collections4.iterators.TransformIterator;
 
 /**
- * An ExtendedIterator is an Iterator on which other operations
- * are defined for convenience in iterator composition: composition, filtering
- * in, filtering out, and element mapping.<br>
- * NOTE that the result of these operations consumes the base iterator(s); they
- * do not make independent copies.<br>
- * The canonical implementation of ExtendedIterator is {@link NiceIterator},
- * which also defines static methods for these operations that will work on any
- * Iterator.<br>
- *
- * @param <T>
- *            the type of element over which an instance of ExtendedIterator
- *            iterates
- */
-public interface ExtendedIterator<T> extends Iterator<T> {
+ * A WrappedIterator is an ExtendedIterator wrapping around a plain
+ * (or presented as plain) Iterator. The wrapping allows the usual extended
+ * operations (filtering, concatenating) to be done on an Iterator derived
+ * from some other source.
+*/
+public class ExtendedIterator<T> implements Iterator<T> {
     /**
-     * Answer the next object, and remove it. Equivalent to next(); remove().
+     * Set to <code>true</code> if this wrapping doesn't permit the use of
+     * {@link #remove()}, otherwise removal is delegated to the base iterator.
      */
-    T removeNext();
+    protected boolean removeDenied;
+
+
 
     /**
-     * Return a new iterator which delivers all the elements of this iterator and
-     * then all the elements of the other iterator. Does not copy either iterator;
-     * they are consumed as the result iterator is consumed.
+     * Answer an ExtendedIterator wrapped round <code>it</code>,
+     * which does not permit <code>.remove()</code>
+     * even if <code>it</code> does.
      */
-    <X extends T> ExtendedIterator<T> andThen( Iterator<X> other );
-
-    /**
-     * Return a new iterator containing only the elements of _this_ which
-     * pass the filter _f_. The order of the elements is preserved. Does not
-     * copy _this_, which is consumed as the result is consumed.
-     */
-    ExtendedIterator<T> filter( Predicate<T> f );
-
-    /**
-     * Return a new iterator where each element is the result of applying
-     * _map1_ to the corresponding element of _this_. _this_ is not
-     * copied; it is consumed as the result is consumed.
-     */
-    <U> ExtendedIterator<U> map( Function<T, U> map1 );
-
-    /**
-     * Execute an action on each element of the iterator.
-     * This operation ends and closes the {@code ExtendedIterator} even if there is an exception.
-     * Shorter name for {@link java.util.Iterator#forEachRemaining(Consumer)}, adding exception handling.
-     */
-    default void forEach( Consumer<T> action) {
-        forEachRemaining(action);
+    public static <T> ExtendedIterator<T> createNoRemove(Iterator<T> it) {
+        return new ExtendedIterator<>(it, true);
     }
 
     /**
-     * Answer a list of the (remaining) elements of this iterator, in order,
-     * consuming this iterator.
+     * Answer an ExtendedIterator wrapped round a {@link Stream}.
+     * The extended iterator does not permit <code>.remove()</code>.
+     * <p>
+     * The stream should not be used directly. The effect of doing so is
+     * undefined.
      */
-    List<T> toList();
+    public static <T> ExtendedIterator<T> ofStream(Stream<T> stream) {
+        return new ExtendedIterator<T>(stream.iterator(), true) {
+            // do nothing
+        };
+    }
 
     /**
-     * Answer a set of the (remaining) elements of this iterator,
-     * consuming this iterator.
+     * Given an Iterator that returns Iterators, this creates an
+     * Iterator over the next level values.
+     * Similar to list splicing in lisp.
      */
-    Set<T> toSet();
+    public static <T> ExtendedIterator<T> unwindIterator(Iterator<Iterator<T>> it) {
+        return new ExtendedIterator(new UnwindingIterator<T>(it), false );
+    }
+
+    public static ExtendedIterator<?> emptyIterator() {
+        return new ExtendedIterator<>(Collections.emptyIterator(), false);
+    }
 
     /**
-     * Answer with an {@link Optional}.
-     * This operation assumes that the {@code ExtendedIterator} does not return {@code null} for {@code next()}.
-     * If it does, {@code NullPointerException} is thrown.
-     * <ul>
-     * <li>If there is no next, return {@code Optional.empty()}
-     * <li>If the next object exists, and is not null, return that in the {@link Optional}.
-     * <li>If the next object exists, and is null, throw {@code NullPointerException}
-     * </ul>
+     * Answer an ExtendedIterator returning the elements of <code>it</code>.
+     * If <code>it</code> is itself an ExtendedIterator, return that;
+     * otherwise wrap <code>it</code>.
      */
-    default Optional<T> nextOptional() {
-        if ( ! hasNext() )
-            return Optional.empty();
-        T obj = next();
-        Objects.requireNonNull(obj, "ExtendedIterator.next is null");
-        return Optional.of(obj);
+    public static <T> ExtendedIterator<T> create(Iterator<T> it) {
+        return it instanceof ExtendedIterator<?>
+                ? (ExtendedIterator<T>) it
+                : new ExtendedIterator<>(it, false);
+    }
+
+    /** the base iterator that we wrap */
+    protected final Iterator<? extends T> base;
+
+    public Iterator<? extends T> forTestingOnly_getBase() {
+        return base;
+    }
+
+    /**
+     * Constructor: remember the base iterator
+     */
+    protected ExtendedIterator(Iterator<? extends T> base) {
+        this(base, false);
+    }
+
+    /**
+     * Initialise this wrapping with the given base iterator and remove-control.
+     * @param base the base iterator that this iterator wraps
+     * @param removeDenied true if .remove() must throw an exception
+     */
+    protected ExtendedIterator(Iterator<? extends T> base, boolean removeDenied) {
+        this.base = base;
+        this.removeDenied = removeDenied;
+    }
+
+    /**
+     * hasNext: defer to the base iterator
+     */
+    @Override
+    public boolean hasNext() {
+        return base.hasNext();
+    }
+
+    /**
+     * next: defer to the base iterator
+     */
+    @Override
+    public T next() {
+        return base.next();
+    }
+
+    /**
+     * forEachRemaining: defer to the base iterator
+     */
+
+    public void forEachRemaining(Consumer<? super T> action) {
+        base.forEachRemaining(action);
+    }
+
+    public void remove() {
+        if (removeDenied) {
+            throw new UnsupportedOperationException();
+        }
+        base.remove();
+    }
+
+    public static void close(Iterator<?> it) throws IOException {
+        if (it instanceof Closeable) {
+            ((Closeable) it).close();
+        }
+    }
+
+    /**
+     * Answer the next object, and remove it.
+     */
+
+    public T removeNext() {
+        T result = next();
+        remove();
+        return result;
+    }
+
+
+    public <X extends T> ExtendedIterator<T> andThen(Iterator<X> other) {
+        if (base instanceof IteratorChain) {
+            ((IteratorChain<T>)base).addIterator(other);
+            return this;
+        }
+        return new ExtendedIterator<T>(new IteratorChain<T>(this.base, other), this.removeDenied);
+    }
+
+
+    public ExtendedIterator<T> filter(Predicate<T> f) {
+        return new ExtendedIterator<T>(new FilterIterator<>(this, f::test), this.removeDenied){};
+    }
+
+    public <U> ExtendedIterator<U> map(Function<T, U> map) {
+        return new ExtendedIterator<U>(new TransformIterator<>(this, map::apply), false);
+    }
+
+    public void forEach(Consumer<? super T> consumer) {
+        forEachRemaining(consumer);
+    }
+
+    protected <U extends Collection<T>> U populateCollection(U collection) {
+        this.forEachRemaining(collection::add);
+        return collection;
+    }
+
+    /**
+     * Answer a list of the elements of <code>it</code> in order, consuming this iterator.
+     * Canonical implementation of {@code toSet()}.
+     */
+    public Set<T> toSet() {
+        return populateCollection(new HashSet<>());
+    }
+
+    /**
+     * Answer a list of the elements from <code>it</code>, in order, consuming
+     * that iterator. Canonical implementation of {@code toList()}.
+     */
+    public List<T> toList() {
+        return populateCollection(new ArrayList<>());
+    }
+
+    protected void ensureHasNext() {
+        if (!hasNext())
+            throw new NoSuchElementException();
+    }
+
+    /**
+     * Utility method for this and other (sub)classes: raise the appropriate
+     * "no more elements" exception. I note that we raised the wrong exception
+     * in at least one case ...
+     *
+     * @param message the string to include in the exception
+     * @return never - but we have a return type to please the compiler
+     */
+    protected T noElements(String message) {
+        throw new NoSuchElementException(message);
+    }
+
+    private static class UnwindingIterator<T> implements Iterator<T> {
+        final private Iterator<Iterator<T>> inner;
+        private Iterator<T> outer;
+
+        UnwindingIterator(Iterator<Iterator<T>> inner) {
+            this.inner = inner;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (outer == null) {
+                if (!inner.hasNext()) {
+                    return false;
+                }
+                outer = inner.next();
+            }
+            while (!outer.hasNext()) {
+                if (!inner.hasNext()) {
+                    return false;
+                }
+                outer = inner.next();
+            }
+            return true;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return outer.next();
+        }
     }
 }

@@ -33,7 +33,7 @@ import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
 import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.iterator.WrappedIterator;
+import org.apache.rat.utils.iterator.ExtendedIterator;
 
 import static java.lang.String.format;
 
@@ -175,8 +175,8 @@ public class ExclusionProcessor {
     private void segregateList(final Set<String> matching, final Set<String> notMatching,
                                final Collection<String> patterns) {
         if (!patterns.isEmpty()) {
-            WrappedIterator.create(patterns.iterator()).filter(ExclusionUtils.MATCH_FILTER).forEach(matching::add);
-            WrappedIterator.create(patterns.iterator()).filter(ExclusionUtils.NOT_MATCH_FILTER)
+            ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.MATCH_FILTER).forEach(matching::add);
+            ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.NOT_MATCH_FILTER)
                     .map(s -> s.substring(1))
                     .forEach(notMatching::add);
         }
@@ -213,12 +213,12 @@ public class ExclusionProcessor {
             }
 
             // add the matchers
-            List<TraceableDocumentNameMatcher> inclMatchers = WrappedIterator.create(includedCollections.iterator())
+            List<TraceableDocumentNameMatcher> inclMatchers = ExtendedIterator.create(includedCollections.iterator())
                     .filter(StandardCollection::hasDocumentNameMatchSupplier)
                     .map(s -> TraceableDocumentNameMatcher.make(() -> "Path match " + s.name(), s.documentNameMatcherSupplier().get(basedir)))
                     .toList();
 
-            List<TraceableDocumentNameMatcher> exclMatchers = WrappedIterator.create(excludedCollections.iterator())
+            List<TraceableDocumentNameMatcher> exclMatchers = ExtendedIterator.create(excludedCollections.iterator())
                     .filter(StandardCollection::hasDocumentNameMatchSupplier)
                     .map(s -> TraceableDocumentNameMatcher.make(() -> "Path match " + s.name(), s.documentNameMatcherSupplier().get(basedir)))
                     .toList();

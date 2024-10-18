@@ -25,7 +25,7 @@ import java.util.function.Function;
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.utils.iterator.WrappedIterator;
+import org.apache.rat.utils.iterator.ExtendedIterator;
 
 /**
  * An interface that defines the FileProcessor. The file processor reads the file specified in the DocumentName.
@@ -46,7 +46,7 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
      * @return A file processor that processes the patterns.
      */
     static FileProcessor from(final Iterable<String> patterns) {
-        return documentName -> WrappedIterator.create(patterns.iterator())
+        return documentName -> ExtendedIterator.create(patterns.iterator())
                 .map(entry -> FileProcessor.localizePattern(documentName, entry))
                 .map(DocumentName::getName)
                 .toList();

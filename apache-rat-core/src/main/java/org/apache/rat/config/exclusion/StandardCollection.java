@@ -35,7 +35,6 @@ import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreProcessor;
 import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
 import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
 import org.apache.rat.utils.iterator.ExtendedIterator;
-import org.apache.rat.utils.iterator.WrappedIterator;
 
 public enum StandardCollection {
     /**
@@ -264,7 +263,7 @@ public enum StandardCollection {
                 lst.add(sc.fileProcessor);
             }
         }
-        return WrappedIterator.create(lst.iterator());
+        return ExtendedIterator.create(lst.iterator());
     }
 
     /**
@@ -286,7 +285,7 @@ public enum StandardCollection {
         if (lst.size() == 1) {
             return lst.get(0);
         }
-        Supplier<String> nameSupplier = () -> String.join(", ", WrappedIterator.create(getCollections().iterator())
+        Supplier<String> nameSupplier = () -> String.join(", ", ExtendedIterator.create(getCollections().iterator())
                 .map(StandardCollection::name).toList());
 
         return dirName -> TraceableDocumentNameMatcher.make(nameSupplier, documentName -> {

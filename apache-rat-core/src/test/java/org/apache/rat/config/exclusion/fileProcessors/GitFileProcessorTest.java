@@ -18,7 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import org.apache.rat.utils.iterator.WrappedIterator;
+import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
                 "# some colorful directories",
                 "red/", "blue/*/"};
 
-        List<String> expected = WrappedIterator.create(Arrays.asList("**/thing*", "**/fish", "**/*_fish", "**/red/**", "blue/*/**").iterator())
+        List<String> expected = ExtendedIterator.create(Arrays.asList("**/thing*", "**/fish", "**/*_fish", "**/red/**", "blue/*/**").iterator())
                 .map(s -> new File(baseDir, s).getPath()).toList();
         expected.add(0, "!"+new File(baseDir, "**/thingone").getPath());
         // "thingone",

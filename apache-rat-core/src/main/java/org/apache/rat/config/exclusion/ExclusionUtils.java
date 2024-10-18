@@ -41,7 +41,6 @@ import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.utils.iterator.ExtendedIterator;
-import org.apache.rat.utils.iterator.WrappedIterator;
 
 import static java.lang.String.format;
 
@@ -151,7 +150,7 @@ public final class ExclusionUtils {
         verifyFile(patternFile);
         Objects.requireNonNull(commentFilters, "commentFilters");
         try {
-            return WrappedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
+            return ExtendedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
         } catch (FileNotFoundException e) {
             throw new ConfigurationException(format("%s is not a valid file.", patternFile));
         }
@@ -250,7 +249,7 @@ public final class ExclusionUtils {
      * @return The match patterns from the strings.
      */
     public static Optional<MatchPatterns> matchPattern(final Iterator<String> iter) {
-        ExtendedIterator<String> eIter = WrappedIterator.create(iter).filter(MATCH_FILTER)
+        ExtendedIterator<String> eIter = ExtendedIterator.create(iter).filter(MATCH_FILTER)
                 .map(ExclusionUtils::normalizePattern);
         return iter.hasNext() ?  Optional.of(MatchPatterns.from(() -> eIter))
         : Optional.empty();
@@ -273,7 +272,7 @@ public final class ExclusionUtils {
      * @return The match patterns from the strings.
      */
     public static Optional<MatchPatterns> notMatchPattern(final Iterator<String> iter) {
-        ExtendedIterator<String> eIter =  WrappedIterator.create(iter).filter(NOT_MATCH_FILTER)
+        ExtendedIterator<String> eIter =  ExtendedIterator.create(iter).filter(NOT_MATCH_FILTER)
                 .map(s -> normalizePattern(s.substring(1)));
         return eIter.hasNext() ? Optional.of(MatchPatterns.from(() -> eIter))
                 : Optional.empty();

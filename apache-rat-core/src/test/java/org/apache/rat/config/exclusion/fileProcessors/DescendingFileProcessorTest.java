@@ -19,7 +19,7 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.utils.iterator.WrappedIterator;
+import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
     public void singleDirectoryTest() throws IOException {
         String[] lines = {"*.ext", "fname.*", "**/fname.ext"};
 
-        List<String> expected = WrappedIterator.create(Arrays.asList(lines).iterator())
+        List<String> expected = ExtendedIterator.create(Arrays.asList(lines).iterator())
                 .map(s -> new File(baseDir, s).getPath()).toList();
 
         writeFile("test.txt", Arrays.asList(lines));
@@ -52,7 +52,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
     public void layeredDirectoryTest() throws IOException {
         String[] lines = {"*.ext", "fname.*", "**/fname.ext"};
 
-        List<String> expected = WrappedIterator.create(Arrays.asList(lines).iterator())
+        List<String> expected = ExtendedIterator.create(Arrays.asList(lines).iterator())
                 .map(s -> new File(baseDir, s).getPath()).toList();
 
         writeFile("test.txt", Arrays.asList(lines));

@@ -36,7 +36,7 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
-import org.apache.rat.utils.iterator.WrappedIterator;
+import org.apache.rat.utils.iterator.ExtendedIterator;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -266,7 +266,7 @@ public abstract class AbstractOptionsProvider {
 
         writeFile(".gitignore", Arrays.asList(lines));
 
-        List<String> expected = WrappedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
+        List<String> expected = ExtendedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
                 .map(s -> new File(baseDir, s).getPath()).toList();
         expected.add(0, "!" + new File(baseDir, "thingone").getPath());
         try {
