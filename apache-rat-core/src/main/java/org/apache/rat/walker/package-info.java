@@ -15,10 +15,9 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.report.claim.impl.xml;
+ */
 
-import org.apache.rat.report.AbstractReport;
-
-public class MockClaimReporter extends AbstractReport {
-}
+/**
+ * Classes that walk directory trees and return documents.
+ */
+package org.apache.rat.walker;

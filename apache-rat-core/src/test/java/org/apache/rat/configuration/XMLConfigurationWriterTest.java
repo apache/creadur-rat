@@ -37,7 +37,6 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

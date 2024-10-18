@@ -25,11 +25,11 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
-
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
@@ -117,7 +117,7 @@ public final class Licenses extends AbstractHelp {
             }
         }
         print(0, header("DEFINED MATCHERS"));
-        SortedSet<Description> matchers = new TreeSet<>((d1, d2) -> d1.getCommonName().compareTo(d2.getCommonName()));
+        SortedSet<Description> matchers = new TreeSet<>(Comparator.comparing(Description::getCommonName));
         for (Class<? extends AbstractBuilder> mClazz : MatcherBuilderTracker.instance().getClasses()) {
             try {
                 AbstractBuilder builder = mClazz.getConstructor().newInstance();

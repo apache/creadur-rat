@@ -24,7 +24,7 @@ import org.apache.rat.configuration.builders.AnyBuilder;
 
 public class Any extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
-    AnyBuilder builder = Builder.any();
+    final AnyBuilder builder = Builder.any();
 
     public Any() {
     }

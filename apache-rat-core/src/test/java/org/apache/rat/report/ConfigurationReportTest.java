@@ -18,6 +18,7 @@
  */
 package org.apache.rat.report;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,11 +32,11 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.configuration.MatcherBuilderTracker;
+import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
@@ -47,7 +48,8 @@ public class ConfigurationReportTest {
     private StringWriter sw;
     private IXmlWriter writer;
 
-    String[] FAMILY_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3", "MIT", "OASIS", "W3C", "W3CD", };
+    private final String[] FAMILY_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3", //
+     "MIT", "OASIS", "W3C", "W3CD", };
 
     @BeforeEach
     public void setup() {
@@ -73,26 +75,24 @@ public class ConfigurationReportTest {
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(result.getBytes()));
 
         // verify that all the families are there
-        for (String familyName : FAMILY_IDS) {
+        for (String familyId : FAMILY_IDS) {
             assertNotNull(
-                    XmlUtils.getNode(doc, xPath, String.format("/rat-config/families/family[@id='%s']", familyName)),
-                    () -> "Missing family " + familyName);
+                    XmlUtils.getNode(doc, xPath, String.format("/rat-config/families/family[@id='%s']", familyId)),
+                    () -> "Missing family " + familyId);
         }
 
         // verify that all the family ids are used in at least one license
-        for (String familyName : FAMILY_IDS) {
-            assertNotNull(
-                    XmlUtils.getNode(doc, xPath, String.format("/rat-config/licenses/license[@id='%s']", familyName)),
-                    () -> "Missing license " + familyName);
+        for (String familyId : FAMILY_IDS) {
+            assertFalse(
+                    XmlUtils.getNodes(doc, xPath, String.format("/rat-config/licenses/license[@family='%s']",
+                            ILicenseFamily.makeCategory(familyId))).isEmpty(),
+                    () -> "Missing license " + familyId);
         }
 
         // verify that all matchers listed in all licenses exist in the matcher list
-        for (String familyName : FAMILY_IDS) {
-            List<Node> nodes = XmlUtils.getNodes(doc, xPath,
-                    String.format("/rat-config/licenses/license/*", familyName));
-            nodes.stream().filter(n -> n.getNodeType() == Node.ELEMENT_NODE && !"note".equals(n.getNodeName()))
-                    .forEach(n -> assertNotNull(MatcherBuilderTracker.getMatcherBuilder(n.getNodeName()),
-                            () -> String.format("Missing matcher named '%s'", n.getNodeName())));
-        }
+        List<Node> nodes = XmlUtils.getNodes(doc, xPath, "/rat-config/licenses/license/*");
+        nodes.stream().filter(n -> n.getNodeType() == Node.ELEMENT_NODE && !"note".equals(n.getNodeName()))
+                .forEach(n -> assertNotNull(MatcherBuilderTracker.getMatcherBuilder(n.getNodeName()),
+                        () -> String.format("Missing matcher named '%s'", n.getNodeName())));
     }
 }

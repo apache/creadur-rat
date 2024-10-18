@@ -85,13 +85,18 @@ public class TestingLog implements Log {
     }
 
     @Override
+    public Level getLevel() {
+        return Level.DEBUG;
+    }
+
+    @Override
     public void log(Level level, String msg) {
         captured.append(String.format("%s: %s%n", level, msg));
     }
 
     /**
-     * Returns true if the log is empy.
-     * @return {@code  true} if the log is empty.
+     * Returns true if the log is empty.
+     * @return {@code true} if the log is empty.
      */
     public boolean isEmpty() {
         return captured.length() == 0;

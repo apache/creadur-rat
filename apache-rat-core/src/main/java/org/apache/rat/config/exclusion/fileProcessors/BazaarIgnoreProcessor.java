@@ -1,5 +1,3 @@
-package org.apache.rat.mp.util.ignore;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,20 +16,30 @@ package org.apache.rat.mp.util.ignore;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.util.Optional;
+import org.apache.rat.document.impl.DocumentName;
 
-public interface IgnoreMatcher {
+import static java.lang.String.format;
+
+/**
+ * A processor for {@code .bzignore} files.
+ */
+public final class BazaarIgnoreProcessor extends DescendingFileProcessor {
     /**
-     * Checks if the file matches the stored expressions.
-     * @param filename The filename to be checked
-     * @return empty: not matched, True: must be ignored, False: it must be UNignored
+     * Constructor.
      */
-    Optional<Boolean> isIgnoredFile(String filename);
+    public BazaarIgnoreProcessor() {
+        super(".bzignore", "#");
+    }
 
-    /**
-     * Returns {@code true} if this IgnoreMatcher contains no rules.
-     * @return {@code true} if this IgnoreMatcher contains no rules
-     */
-    boolean isEmpty();
+    @Override
+    public String modifyEntry(final DocumentName baseName, final String entry) {
+        if (entry.startsWith("RE:")) {
+            String line = entry.substring("RE:".length()).trim();
+            String pattern = line.startsWith("^") ? line.substring(1) : line;
+            return format(REGEX_FMT, pattern);
+        }
+        return entry;
+    }
 }

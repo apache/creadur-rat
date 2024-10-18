@@ -35,7 +35,7 @@ public class HeaderMatcherTest {
     private SimpleCharFilter filter;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         filter = new SimpleCharFilter();
         matcher = new HeaderMatcher(filter, 20);
     }

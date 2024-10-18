@@ -21,7 +21,6 @@ package org.apache.rat.tools;
 import static java.lang.String.format;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 
@@ -55,7 +54,7 @@ public class AntOption extends AbstractOption{
         return !isAttribute() || option.getType() != String.class;
     }
 
-    protected String cleanupName(Option option) {
+    protected String cleanupName(final Option option) {
         AntOption antOption = new AntOption(option);
         String fmt = antOption.isAttribute() ? "%s attribute" : "<%s>";
         return  format(fmt, AntGenerator.createName(option));

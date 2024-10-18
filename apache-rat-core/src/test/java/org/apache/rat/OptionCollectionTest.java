@@ -22,8 +22,9 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,17 +44,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {
 
-    /** The base directory for the test.  We do not use TempFile because we want the evidence of the run to exist after
-     * a failure.*/
-    File baseDir;
+    /** The base directory for the test.
+     * We do not use TempFile because we want the evidence of the run
+     * to exist after a failure.*/
+    private final File baseDir;
 
     /**
      * Constructor.
@@ -63,7 +68,7 @@ public class OptionCollectionTest {
     }
 
     /**
-     * Defines the Test method that is stored in a map.
+     * Defines the test method that is stored in a map.
      */
     @FunctionalInterface
     public interface OptionTest {
@@ -83,7 +88,7 @@ public class OptionCollectionTest {
     /**
      * Returns the command line format (with '--' prefix) for the Option.
      * @param opt the option to process.
-     * @return the command line option..
+     * @return the command line option.
      */
     private static String longOpt(Option opt) {
         return "--" + opt.getLongOpt();
@@ -99,8 +104,8 @@ public class OptionCollectionTest {
         } finally {
             DefaultLog.setInstance(null);
         }
-        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use the standard '--'");
-        log.assertContainsExactly(1, "WARN: Option [-a] used.  Deprecated for removal since 0.17: Use --edit-license");
+        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
+        log.assertContainsExactly(1, "WARN: Option [-a] used. Deprecated for removal since 0.17: Use --edit-license");
     }
 
     @Test
@@ -116,16 +121,16 @@ public class OptionCollectionTest {
             DefaultLog.setInstance(null);
         }
         assertThat(config).isNotNull();
-        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used.  Deprecated for removal since 0.17: Use the standard '--'");
+        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
     }
 
     @Test
     public void testShortenedOptions() throws IOException {
-        String[] args = {"--scan"};
+        String[] args = {"--output-lic", "ALL"};
         ReportConfiguration config = OptionCollection.parseCommands(args, (o) -> {
         }, true);
         assertThat(config).isNotNull();
-        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
+        assertThat(config.listLicenses()).isEqualTo(LicenseSetFactory.LicenseFilter.ALL);
     }
 
     @Test
@@ -136,15 +141,24 @@ public class OptionCollectionTest {
         ReportConfigurationTest.validateDefault(config);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = { ".", "./", "target", "./target" })
+    public void getReportableTest(String fName) throws IOException {
+        File expected = new File(fName);
+        ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
+        IReportable reportable = OptionCollection.getReportable(expected, config);
+        assertNotNull(reportable, () -> format("'%s' returned null", fName));
+        assertThat(reportable.getName().getName()).isEqualTo(expected.getAbsolutePath());
+    }
+
     /**
      * A paramaterized test for the options.
      * @param name The name of the test.
-     * @param test the option testt to execute.
-     * @throws Exception on unexpected error.
+     * @param test the option test to execute.
      */
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionTest test) throws Exception {
+    public void testOptionsUpdateConfig(String name, OptionTest test) {
         test.test();
     }
 
@@ -169,10 +183,10 @@ public class OptionCollectionTest {
         }
 
         /**
-         * Constructor.  sets the baseDir and loads the testMap.
+         * Constructor. Sets the baseDir and loads the testMap.
          */
         public OptionsProvider() {
-           super(Collections.emptyList());
+            super(Collections.emptyList());
         }
 
         /**

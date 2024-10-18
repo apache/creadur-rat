@@ -16,7 +16,6 @@
  */
 package org.apache.rat.configuration.builders;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -28,6 +27,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.license.ILicense;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CopyrightBuilderTest {
@@ -53,9 +53,9 @@ public class CopyrightBuilderTest {
         IHeaderMatcher matcher = licenses.first().getMatcher();
         assertEquals(CopyrightMatcher.class, matcher.getClass());
         CopyrightMatcher result = (CopyrightMatcher) matcher;
-        assertNull(result.getEnd());
-        assertNull(result.getStart());
-        assertNull(result.getOwner());
+        Assertions.assertNull(result.getEnd());
+        Assertions.assertNull(result.getStart());
+        Assertions.assertNull(result.getOwner());
     }
 
     @Test
@@ -78,8 +78,8 @@ public class CopyrightBuilderTest {
         IHeaderMatcher matcher = licenses.first().getMatcher();
         assertEquals(CopyrightMatcher.class, matcher.getClass());
         CopyrightMatcher result = (CopyrightMatcher) matcher;
-        assertNull(result.getEnd());
-        assertNull(result.getStart());
+        Assertions.assertNull(result.getEnd());
+        Assertions.assertNull(result.getStart());
         assertEquals("someone", result.getOwner());
     }
 
@@ -103,9 +103,9 @@ public class CopyrightBuilderTest {
         IHeaderMatcher matcher = licenses.first().getMatcher();
         assertEquals(CopyrightMatcher.class, matcher.getClass());
         CopyrightMatcher result = (CopyrightMatcher) matcher;
-        assertNull(result.getEnd());
+        Assertions.assertNull(result.getEnd());
         assertEquals("1989", result.getStart());
-        assertNull(result.getOwner());
+        Assertions.assertNull(result.getOwner());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class CopyrightBuilderTest {
         IHeaderMatcher matcher = licenses.first().getMatcher();
         assertEquals(CopyrightMatcher.class, matcher.getClass());
         CopyrightMatcher result = (CopyrightMatcher) matcher;
-        assertNull(result.getEnd());
+        Assertions.assertNull(result.getEnd());
         assertEquals("1989", result.getStart());
         assertEquals("someone", result.getOwner());
     }
@@ -155,7 +155,7 @@ public class CopyrightBuilderTest {
         CopyrightMatcher result = (CopyrightMatcher) matcher;
         assertEquals("1990", result.getEnd());
         assertEquals("1989", result.getStart());
-        assertNull(result.getOwner());
+        Assertions.assertNull(result.getOwner());
     }
 
     @Test
@@ -225,7 +225,7 @@ public class CopyrightBuilderTest {
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
+        assertThrows(ConfigurationException.class, reader::readLicenses);
     }
 
     @Test
@@ -243,7 +243,7 @@ public class CopyrightBuilderTest {
                 + ""; //
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
+        assertThrows(ConfigurationException.class, reader::readLicenses);
     }
 
     @Test
@@ -262,6 +262,6 @@ public class CopyrightBuilderTest {
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
-        assertThrows(ConfigurationException.class, () -> reader.readLicenses());
+        assertThrows(ConfigurationException.class, reader::readLicenses);
     }
 }

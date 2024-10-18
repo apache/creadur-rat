@@ -27,7 +27,7 @@ import org.apache.rat.analysis.IHeaders;
 
 public class AbstractMatcherTest {
 
-    private IHeaders dummyHeader = makeHeaders(null, null);
+    private final IHeaders dummyHeader = makeHeaders(null, null);
 
     protected void assertValues(IHeaderMatcher target, boolean... values) {
         for (int i = 0; i < values.length; i++) {

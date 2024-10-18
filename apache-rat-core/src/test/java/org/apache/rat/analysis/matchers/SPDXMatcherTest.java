@@ -28,9 +28,9 @@ import org.junit.jupiter.api.Test;
 
 public class SPDXMatcherTest {
 
-    IHeaderMatcher target1 = SPDXMatcherFactory.INSTANCE.create("hello");
-    IHeaderMatcher target2 = SPDXMatcherFactory.INSTANCE.create("world");
-    IHeaderMatcher target3 = SPDXMatcherFactory.INSTANCE.create("goodbye");
+    final IHeaderMatcher target1 = SPDXMatcherFactory.INSTANCE.create("hello");
+    final IHeaderMatcher target2 = SPDXMatcherFactory.INSTANCE.create("world");
+    final IHeaderMatcher target3 = SPDXMatcherFactory.INSTANCE.create("goodbye");
 
     @BeforeEach
     public void setup() {
@@ -39,11 +39,10 @@ public class SPDXMatcherTest {
 
     @Test
     public void testMatch() {
-        StringBuilder sb = new StringBuilder()
-                .append(SPDXMatcherFactory.LICENSE_IDENTIFIER).append(" world").append(System.lineSeparator())
-                .append(SPDXMatcherFactory.LICENSE_IDENTIFIER).append(" hello").append(System.lineSeparator());
+        String sb = SPDXMatcherFactory.LICENSE_IDENTIFIER + " world" + System.lineSeparator() +
+                SPDXMatcherFactory.LICENSE_IDENTIFIER + " hello" + System.lineSeparator();
 
-        IHeaders headers =  AbstractMatcherTest.makeHeaders(sb.toString(),null);
+        IHeaders headers =  AbstractMatcherTest.makeHeaders(sb,null);
 
         assertTrue(target1.matches(headers));
         assertTrue(target2.matches(headers));

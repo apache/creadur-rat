@@ -24,16 +24,14 @@ import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
-import java.util.Objects;
-
 /**
  * A class to quickly build testing licenses.
  */
 public class TestingLicense implements ILicense {
 
     private final ILicenseFamily family;
-    private IHeaderMatcher matcher;
-    private String note;
+    private final IHeaderMatcher matcher;
+    private final String note;
     private String name;
     private final String id;
 
@@ -48,7 +46,7 @@ public class TestingLicense implements ILicense {
 
     /**
      * Creates a testing license with the specified id and a default TestingMatcher
-     * @param family the Fmaily id
+     * @param family the Family id
      * @param id The ID to use.
      * @see TestingMatcher
      */

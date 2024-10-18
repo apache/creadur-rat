@@ -18,6 +18,13 @@
  */
 package org.apache.rat.help;
 
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -27,26 +34,29 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.VersionInfo;
 import org.apache.rat.commandline.Arg;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
-
 import static java.lang.String.format;
 
+/**
+ * The base class to perform Help processing for programs.
+ */
 public abstract class AbstractHelp {
-    private static final String END_OF_OPTION_MSG = " Multiple values may be specified.  Note that '--' or a following option is required when using this parameter.";
+    /** Text to display when multiple options are supported */
+    private static final String END_OF_OPTION_MSG = " Multiple values may be specified. " +
+            "Note that '--' or a following option is required when using this parameter.";
 
     /** The width of the help report in chars. */
     public static final int HELP_WIDTH = 120;
     /** The number of chars to indent output with. */
     public static final int HELP_PADDING = 4;
 
+    /** The help formatter for this instance */
     protected final RatHelpFormatter helpFormatter;
+    /** The version info for this instance */
     protected final VersionInfo versionInfo;
 
+    /**
+     * Base class to perform help output.
+     */
     protected AbstractHelp() {
         helpFormatter = new RatHelpFormatter();
         versionInfo = new VersionInfo();
@@ -81,27 +91,41 @@ public abstract class AbstractHelp {
         return String.format("%n====== %s ======%n", WordUtils.capitalizeFully(txt));
     }
 
+    /**
+     * Provides help for formatting text.
+     */
     public class RatHelpFormatter extends HelpFormatter {
 
+        /**
+         * Constructor
+         */
         RatHelpFormatter() {
             super();
-            this.optionComparator = OptionCollection.optionComparator;
+            this.optionComparator = OptionCollection.OPTION_COMPARATOR;
             this.setWidth(HELP_WIDTH);
         }
 
-        public void printHelp(final PrintWriter pw, final String cmdLineSyntax, final String header, final Options options, final String footer) {
+        /**
+         * Prints the help text.
+         * @param writer the writer to write to.
+         * @param cmdLineSyntax The command line syntax for the program.
+         * @param header Additional information to proceed the Options descriptions.
+         * @param options the Options to output help for.
+         * @param footer Additional information to follow the Options descriptions.
+         */
+        public void printHelp(final PrintWriter writer, final String cmdLineSyntax, final String header, final Options options, final String footer) {
             if (StringUtils.isEmpty(cmdLineSyntax)) {
                 throw new IllegalArgumentException("cmdLineSyntax not provided");
             }
 
-            helpFormatter.printUsage(pw, HELP_WIDTH, cmdLineSyntax);
+            helpFormatter.printUsage(writer, HELP_WIDTH, cmdLineSyntax);
 
             if (header != null && !header.isEmpty()) {
-                helpFormatter.printWrapped(pw, HELP_WIDTH, header);
+                helpFormatter.printWrapped(writer, HELP_WIDTH, header);
             }
-            printOptions(pw, HELP_WIDTH, options, helpFormatter.getLeftPadding(), helpFormatter.getDescPadding());
+            printOptions(writer, HELP_WIDTH, options, helpFormatter.getLeftPadding(), helpFormatter.getDescPadding());
             if (footer != null && !footer.isEmpty()) {
-                helpFormatter.printWrapped(pw, helpFormatter.getWidth(), footer);
+                helpFormatter.printWrapped(writer, helpFormatter.getWidth(), footer);
             }
         }
 
@@ -142,7 +166,7 @@ public abstract class AbstractHelp {
                 max = Math.max(optBuf.length(), max);
             }
             int x = 0;
-            for (final Iterator<Option> it = optList.iterator(); it.hasNext(); ) {
+            for (final Iterator<Option> it = optList.iterator(); it.hasNext();) {
                 final Option option = it.next();
                 final StringBuilder optBuf = new StringBuilder(prefixList.get(x++).toString());
                 if (optBuf.length() < max) {

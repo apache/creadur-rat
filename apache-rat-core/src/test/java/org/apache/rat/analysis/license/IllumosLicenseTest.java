@@ -23,9 +23,9 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.provider.Arguments;
 
 public class IllumosLicenseTest extends AbstractLicenseTest {
-    private static String id = "ILLUMOS";
-    private static String note = "Modified CDDL1 license";
-    private static String[][] targets = { { "illumos",
+    private static final String id = "ILLUMOS";
+    private static final String note = "Modified CDDL1 license";
+    private static final String[][] targets = { { "illumos",
             "The contents of this file are subject to the terms of the "
                     + "Common Development and Distribution License (the \"License\") "
                     + "You may not use this file except in compliance with the License. " } };

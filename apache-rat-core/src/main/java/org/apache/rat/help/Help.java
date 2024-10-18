@@ -18,24 +18,21 @@
  */
 package org.apache.rat.help;
 
-import static java.lang.String.format;
-
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
-
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.cli.Options;
+import org.apache.rat.OptionCollection;
+import org.apache.rat.config.exclusion.StandardCollection;
+
+import static java.lang.String.format;
+
+/**
+ * The help output for the command line client.
+ */
 public final class Help extends AbstractHelp {
 
     /**
@@ -48,14 +45,23 @@ public final class Help extends AbstractHelp {
             "Rat relies on heuristics: it may miss issues"
     };
 
+    /** The writer this instance writes to */
     private final PrintWriter writer;
 
-    public Help(Writer writer) {
+    /**
+     * Creates a Help instance to write to the specified writer.
+     * @param writer the writer to write to.
+     */
+    public Help(final Writer writer) {
         super();
         this.writer = writer instanceof PrintWriter ? (PrintWriter) writer : new PrintWriter(writer);
     }
 
-    public Help(PrintStream stream) {
+    /**
+     * Creates a Help instance to print to the specified stream.
+     * @param stream the PrintStream to write to.
+     */
+    public Help(final PrintStream stream) {
         this(new PrintWriter(stream));
     }
 
@@ -74,6 +80,21 @@ public final class Help extends AbstractHelp {
                     argumentPadding + argInfo.getValue().get());
         }
 
+        writer.println(header("Standard Collections"));
+        for (StandardCollection sc : StandardCollection.values()) {
+            writer.format("%n<%s>%n", sc.name());
+            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
+                    argumentPadding + sc.desc());
+            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
+                    argumentPadding + "File patterns: " + (sc.patterns().isEmpty() ? "<none>" : String.join(", ", sc.patterns())));
+            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
+                    argumentPadding + "Provides a path matcher: " + sc.hasDocumentNameMatchSupplier());
+            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
+                    argumentPadding + "Provides a file processor: " + sc.fileProcessor().hasNext());
+        }
+        writer.println("\nA path matcher will match specific information about the file.");
+        writer.println("\nA file processor will process the associated \"ignore\" file for include and exclude directives");
+
         writer.println(header("Notes"));
         int idx = 1;
         for (String note : NOTES) {
@@ -83,6 +104,9 @@ public final class Help extends AbstractHelp {
         writer.flush();
     }
 
+    /**
+     * Prints the list of argument types to the writer.
+     */
     public void printArgumentTypes() {
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);
         for (Map.Entry<String, Supplier<String>> argInfo : OptionCollection.getArgumentTypes().entrySet()) {
@@ -91,5 +115,4 @@ public final class Help extends AbstractHelp {
                     argumentPadding + argInfo.getValue().get());
         }
     }
-
 }

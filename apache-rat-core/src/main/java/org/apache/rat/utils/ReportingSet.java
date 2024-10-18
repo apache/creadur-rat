@@ -40,7 +40,7 @@ public class ReportingSet<T> implements SortedSet<T> {
     /** What level to log duplicate found messages */
     private Log.Level duplicateLogLevel = Log.Level.WARN;
     /** The message to log the duplicate with */
-    private Function<T, String> duplicateFmt = t -> String.format("Duplicate %s (%s) detected %s", t.getClass(), t);
+    private Function<T, String> duplicateFmt = t -> String.format("Duplicate %s detected %s", t.getClass(), t);
     /** The Options for duplicate processing */
     public enum Options { OVERWRITE, IGNORE, FAIL }
 

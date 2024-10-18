@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.io.FileUtils;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -43,7 +42,7 @@ public class ReportTest {
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         assertTrue(content.contains("2 Unknown Licenses"));
-        assertTrue(content.contains("target/test-classes/elements/Source.java"));
-        assertTrue(content.contains("target/test-classes/elements/sub/Empty.txt"));
+        assertTrue(content.contains("/Source.java"), "missing /Source.java");
+        assertTrue(content.contains("/sub/Empty.txt"), "missing /sub/Empty.txt");
     }
 }

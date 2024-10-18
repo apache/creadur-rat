@@ -36,7 +36,7 @@ public class HeaderMatcherWithBeansTest {
     private HeaderBean[] beans;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         HeaderBean[] beans = {
                 new HeaderBean(),
                 new HeaderBean(),

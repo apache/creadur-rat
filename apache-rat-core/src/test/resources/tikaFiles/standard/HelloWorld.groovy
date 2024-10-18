@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package tikaFiles.standard;
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello World");
+package tikaFiles.standard
+
+class HelloWorld {
+    static void main(String[] args) {
+        System.out.println("Hello World")
     }
 }

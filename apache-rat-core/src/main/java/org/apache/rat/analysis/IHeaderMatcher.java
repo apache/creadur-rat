@@ -18,7 +18,6 @@
  */
 package org.apache.rat.analysis;
 
-import org.apache.rat.ImplementationException;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;

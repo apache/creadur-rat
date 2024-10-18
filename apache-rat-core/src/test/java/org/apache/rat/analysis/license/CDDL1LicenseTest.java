@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.Arguments;
 public class CDDL1LicenseTest extends AbstractLicenseTest {
     public static final String id = "CDDL1";
     public static final String name = "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0";
-    private static String[][] targets = {
+    private static final String[][] targets = {
             { "fullTxt",
                     "The contents of this file are subject to the terms of the Common Development "
                             + "and Distribution License(\"CDDL\") (the \"License\"). You may not use this file "

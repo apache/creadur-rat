@@ -100,9 +100,7 @@ public class Description {
         }
         this.children = new TreeMap<>();
         if (children != null) {
-            children.forEach(d -> {
-                this.children.put(d.name, d);
-            });
+            children.forEach(d -> this.children.put(d.name, d));
         }
     }
 
@@ -171,7 +169,7 @@ public class Description {
     }
 
     /**
-     * Retrieve the value of a the described parameter from the specified object.
+     * Retrieve the value of the described parameter from the specified object.
      * If the parameter is a collection return {@code null}.
      * @param object the object that contains the value.
      * @return the string value.
@@ -297,7 +295,7 @@ public class Description {
      * @param attributes a Map of parameter names to values.
      */
     public void setChildren(final IHeaderMatcher.Builder builder, final Map<String, String> attributes) {
-        attributes.entrySet().forEach(entry -> setChild(builder, entry.getKey(), entry.getValue()));
+        attributes.forEach((key, value) -> setChild(builder, key, value));
     }
 
     /**
@@ -319,8 +317,7 @@ public class Description {
     @Override
     public String toString() {
         String childList = children.isEmpty() ? ""
-                : String.join(", ",
-                        children.values().stream().map(Description::getCommonName).collect(Collectors.toList()));
+                : children.values().stream().map(Description::getCommonName).collect(Collectors.joining(", "));
 
         return format("Description[%s t:%s c:%s %s children: [%s]] ", name, type, isCollection, childClass,
                 childList);

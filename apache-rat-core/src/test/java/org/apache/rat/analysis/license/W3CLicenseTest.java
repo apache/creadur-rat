@@ -24,16 +24,16 @@ import org.junit.jupiter.params.provider.Arguments;
 
 public class W3CLicenseTest extends AbstractLicenseTest {
 
-    private static String W3C_note = "Note that W3C requires a NOTICE.\n" + "All modifications require notes.\n"
+    private static final String W3C_note = "Note that W3C requires a NOTICE.\n" + "All modifications require notes.\n"
             + "See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.";
-    private static Arguments W3C = Arguments.of("W3C", "W3C", "W3C Software Copyright", W3C_note,
+    private static final Arguments W3C = Arguments.of("W3C", "W3C", "W3C Software Copyright", W3C_note,
             new String[][] { { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231" },
                     { "spdx-tab", "SPDX-License-Identifier:\tW3C" },
                     { "spdx-space", "SPDX-License-Identifier: W3C" }, });
 
-    private static String W3CD_note = "Note that W3CD does not allow modifications.\n"
+    private static final String W3CD_note = "Note that W3CD does not allow modifications.\n"
             + "See http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.";
-    private static Arguments W3CD = Arguments.of("W3CD", "W3CD", "W3C Document Copyright", W3CD_note,
+    private static final Arguments W3CD = Arguments.of("W3CD", "W3CD", "W3C Document Copyright", W3CD_note,
             new String[][] { { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231" }, });
 
     public static Stream<Arguments> parameterProvider() {

@@ -72,9 +72,7 @@ public abstract class AbstractOption {
                 String key = matcher.group();
                 String optKey = key.substring(2);
                 Optional<Option> maybeResult = Arg.getOptions().getOptions().stream().filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
-                if (maybeResult.isPresent()) {
-                    maps.put(key, cleanupName(maybeResult.get()));
-                }
+                maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
             }
             for (Map.Entry<String, String> entry : maps.entrySet()) {
                 str = str.replaceAll(Pattern.quote(format("%s", entry.getKey())), entry.getValue());

@@ -33,7 +33,7 @@ public class FilteringSequenceFactoryTest {
     private SimpleCharFilter filter;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         capacity = 50;
         filter = new SimpleCharFilter();
         factory = new FilteringSequenceFactory(capacity, filter);

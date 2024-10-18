@@ -36,7 +36,7 @@ public class AntGeneratorTest {
     }
 
     @Test
-    public void testGenerationWithoutParameters() throws IOException {
+    public void testGenerationWithoutParameters() {
         assertDoesNotThrow(() -> AntGenerator.main(null));
         assertDoesNotThrow(() -> AntGenerator.main(new String[]{}));
         assertDoesNotThrow(() -> AntGenerator.main(new String[]{"one"}));

@@ -18,17 +18,9 @@
  */
 package org.apache.rat.anttasks;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.SortedSet;
-
-import org.apache.rat.api.Document;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
@@ -41,67 +33,33 @@ import org.apache.tools.ant.types.resources.FileResource;
  * internally.
  */
 class ResourceCollectionContainer implements IReportable {
-    private final ResourceCollection rc;
+    /** The resources as collected by Ant */
+    private final ResourceCollection resources;
+    /** The report configuration being used for the report */
+    private final ReportConfiguration configuration;
+    /** The document name */
+    private final DocumentName name;
 
-    ResourceCollectionContainer(ResourceCollection rc) {
-        this.rc = rc;
+    ResourceCollectionContainer(final DocumentName name, final ReportConfiguration configuration, final ResourceCollection resources) {
+        this.resources = resources;
+        this.configuration = configuration;
+        this.name = name;
     }
 
     @Override
-    public void run(RatReport report) throws RatException {
-        ResourceDocument document = null;
-        for (Resource r : rc) {
-            if (!r.isDirectory()) {
-                document = new ResourceDocument(r);
+    public void run(final RatReport report) throws RatException {
+        for (Resource r : resources) {
+            if (r.isFilesystemOnly()) {
+                FileResource fr = (FileResource) r;
+                DocumentName dirName = new DocumentName(fr.getFile(), new DocumentName(fr.getProject().getBaseDir()));
+                FileDocument document = new FileDocument(dirName, fr.getFile(), configuration.getNameMatcher(dirName));
                 report.report(document);
             }
         }
     }
 
-    private static class ResourceDocument extends Document {
-
-        private final Resource resource;
-
-        private static String asName(Resource resource) {
-            return resource instanceof FileResource ?
-                    FileDocument.normalizeFileName(((FileResource) resource).getFile())
-                    : resource.getName();
-        }
-
-
-        private ResourceDocument(Resource resource) {
-            super(asName(resource));
-            this.resource = resource;
-        }
-
-        @Override
-        public Reader reader() throws IOException {
-            final InputStream in = resource.getInputStream();
-            return new InputStreamReader(in, StandardCharsets.UTF_8);
-        }
-
-        @Override
-        public boolean isDirectory() {
-            if (resource instanceof FileResource) {
-                final FileResource fileResource = (FileResource) resource;
-                final File file = fileResource.getFile();
-                return file.isDirectory();
-            }
-            return false;
-        }
-
-        @Override
-        public SortedSet<Document> listChildren() {
-            if (resource instanceof FileResource) {
-                final FileResource fileResource = (FileResource) resource;
-                return new FileDocument(fileResource.getFile()).listChildren();
-            }
-            return Collections.emptySortedSet();
-        }
-
-        @Override
-        public InputStream inputStream() throws IOException {
-            return resource.getInputStream();
-        }
+    @Override
+    public DocumentName getName() {
+        return name;
     }
 }

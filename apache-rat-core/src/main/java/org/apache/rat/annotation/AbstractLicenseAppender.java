@@ -18,9 +18,6 @@
  */
 package org.apache.rat.annotation;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.rat.utils.DefaultLog;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
