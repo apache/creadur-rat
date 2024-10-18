@@ -58,7 +58,7 @@ public class XsdGenerator {
     /** The XsdWriter being written to. */
     private XsdWriter writer;
     /** A map of component type to XML element name / property type */
-    private static Map<ComponentType, String> typeMap = new HashMap<>();
+    private static final Map<ComponentType, String> typeMap = new HashMap<>();
 
     static {
         typeMap.put(ComponentType.MATCHER, XMLConfig.MATCHER);

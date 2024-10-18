@@ -72,7 +72,7 @@ ${static}
 
     /**
      * Returns the list of unsupported args.
-     * @return the list of kebab style names that are unsupported by the Maven ui.
+     * @return the list of kebab style names that are unsupported by the Maven UI.
      */
     public static List<String> unsupportedArgs() {
         return Collections.unmodifiableList(unsupportedArgs);
