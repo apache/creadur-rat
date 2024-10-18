@@ -180,7 +180,7 @@ public interface Log {
                     sb.append(txt);
                 } else {
                     while (pos > -1) {
-                        Log.this.info(sb.append(txt.substring(0, pos)).toString());
+                        Log.this.info(sb.append(txt, 0, pos).toString());
                         sb.delete(0, sb.length());
                         txt = txt.substring(pos + 1);
                         pos = txt.indexOf(System.lineSeparator());

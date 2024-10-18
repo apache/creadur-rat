@@ -30,11 +30,10 @@ import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 public class NamingTest {
@@ -78,7 +77,7 @@ public class NamingTest {
     }
 
     @Test
-    public void testCLiDeprecated() throws IOException, ParseException {
+    public void testCliDeprecated() throws IOException, ParseException {
         file.delete();
         Naming.main(new String[]{"--cli", "--include-deprecated", file.getAbsolutePath()});
         String result = readFile(file);
@@ -147,7 +146,7 @@ public class NamingTest {
     }
 
     @Test
-    public void testCLiCsvDeprecated() throws IOException, ParseException {
+    public void testCliCsvDeprecated() throws IOException, ParseException {
         file.delete();
         Naming.main(new String[]{"--cli", "--csv", "--include-deprecated", file.getAbsolutePath()});
         String result = readFile(file);
@@ -166,20 +165,20 @@ public class NamingTest {
         }
     }
 
-    private String readFile(File f) throws FileNotFoundException {
-        return String.join("\n", IOUtils.readLines(new FileInputStream(f), StandardCharsets.UTF_8));
+    private String readFile(File f) throws IOException {
+        return String.join("\n", IOUtils.readLines(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8));
     }
 
     private CSVParser readCSV(File f) throws IOException {
-        return CSVFormat.DEFAULT.builder().setHeader().build().parse(new InputStreamReader(new FileInputStream(f)));
+        return CSVFormat.DEFAULT.builder().setHeader().build().parse(new InputStreamReader(Files.newInputStream(f.toPath())));
     }
 
     private void assertContains(String expected, List<String> actual) {
-        assertTrue(actual.contains(expected), () -> "Missing "+expected);
+        assertTrue(actual.contains(expected), () -> "Missing " + expected);
     }
 
     private void assertNotContains(String expected, List<String> actual) {
-        assertFalse(actual.contains(expected), () -> "Contains "+expected);
+        assertFalse(actual.contains(expected), () -> "Contains " + expected);
     }
 
     @Test

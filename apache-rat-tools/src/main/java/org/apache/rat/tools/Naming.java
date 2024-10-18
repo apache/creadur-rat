@@ -253,8 +253,7 @@ public final class Naming {
                 }
                 writer.flush();
                 // please the block of strings into a queue.
-                Deque<String> entryLines = new LinkedList<>();
-                entryLines.addAll(Arrays.asList(cWriter.toString().split("\\v")));
+                Deque<String> entryLines = new LinkedList<>(Arrays.asList(cWriter.toString().split("\\v")));
                 // put the queue into the entries for this line.
                 entries.add(entryLines);
                 cWriter.reset();

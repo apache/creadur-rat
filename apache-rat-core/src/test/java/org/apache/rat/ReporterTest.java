@@ -124,7 +124,7 @@ public class ReporterTest {
         new Reporter(config).output();
 
         assertTrue(output.exists());
-        Document doc = XmlUtils.toDom(new FileInputStream(output));
+        Document doc = XmlUtils.toDom(java.nio.file.Files.newInputStream(output.toPath()));
         XPath xPath = XPathFactory.newInstance().newXPath();
 
         NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@approval='false']");

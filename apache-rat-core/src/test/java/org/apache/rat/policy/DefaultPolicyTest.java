@@ -67,7 +67,7 @@ public class DefaultPolicyTest {
     }
 
     private void assertApproval(boolean pApproved) {
-        boolean state = document.getMetaData().approvedLicenses().count() > 0;
+        boolean state = document.getMetaData().approvedLicenses().findAny().isPresent();
         assertEquals(pApproved, state);
     }
 

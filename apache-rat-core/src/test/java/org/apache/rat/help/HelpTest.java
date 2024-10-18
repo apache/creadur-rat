@@ -59,7 +59,7 @@ public class HelpTest {
 
         for (Option option : opts.getOptions()) {
             if (option.getArgName() != null) {
-                assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument 's' is missing from list", option.getArgName()));
+                assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument '%s' is missing from list", option.getArgName()));
                 TextUtils.assertPatternInTarget(format("^<%s>", option.getArgName()), result);
             }
         }

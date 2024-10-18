@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -195,7 +196,7 @@ public final class RatTestHelpers {
      * in as parameter.
      */
     public static void ensureRatReportIsCorrect(File pRatTxtFile, String[] in, String[] notIn) throws IOException {
-        List<String> lines = IOUtils.readLines(new FileInputStream(pRatTxtFile), Charsets.UTF_8);
+        List<String> lines = IOUtils.readLines(Files.newInputStream(pRatTxtFile.toPath()), Charsets.UTF_8);
         String document = String.join("\n", lines);
         for (String pattern : in) {
             TextUtils.assertPatternInTarget(pattern, document);
