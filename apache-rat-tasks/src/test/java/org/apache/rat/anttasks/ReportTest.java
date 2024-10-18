@@ -57,7 +57,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     public void setUp()  {
         String antFileName = antFile.getAbsolutePath();
         File baseFile = antFile.getParentFile();
-        for (int i=0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             baseFile = baseFile.getParentFile();
         }
         documentName = new DocumentName(antFile, new DocumentName(baseFile));

@@ -19,12 +19,12 @@
 package org.apache.rat.tools;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -101,8 +101,7 @@ public final class AntDocumentation {
             }
         }
         // remove any excess arguments and create the configuration.
-        List<String> argsList = new ArrayList<>();
-        argsList.addAll(Arrays.asList(args));
+        List<String> argsList = new ArrayList<>(Arrays.asList(args));
         argsList.removeAll(Arrays.asList(remainingArgs));
 
         ReportConfiguration config = OptionCollection.parseCommands(argsList.toArray(new String[0]), AntDocumentation::printUsage, true);
@@ -139,7 +138,7 @@ public final class AntDocumentation {
 
     public void writeAttributes(final List<AntOption> options) {
         File f = new File(outputDir, "report_attributes.txt");
-        try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
+        try (Writer out = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
             printOptions(out, options, AntOption::isAttribute,
                     "The attribute value types are listed in a table at the bottom of this page.");
         } catch (IOException e) {
@@ -149,7 +148,7 @@ public final class AntDocumentation {
 
     public void writeElements(final List<AntOption> options) {
         File f = new File(outputDir, "report_elements.txt");
-        try (Writer out = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
+        try (Writer out = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
             printOptions(out, options, AntOption::isElement,
                     "The element value types are listed in a table at the bottom of this page.");
         } catch (IOException e) {
@@ -193,7 +192,7 @@ public final class AntDocumentation {
     private void printValueTypes() throws IOException {
 
         File f = new File(outputDir, "report_arg_types.txt");
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
 
         List<List<String>> table = new ArrayList<>();
         table.add(Arrays.asList("Value Type", "Description"));
@@ -221,7 +220,7 @@ public final class AntDocumentation {
          */
         public static void writeLicense(final Writer writer) throws IOException {
             try (InputStream in = AntDocumentation.class.getResourceAsStream("/license.apt")) {
-                IOUtils.copy(in, writer);
+                IOUtils.copy(in, writer, StandardCharsets.UTF_8);
             }
         }
 
@@ -261,7 +260,7 @@ public final class AntDocumentation {
         }
 
         /**
-         * Write a list .
+         * Write a list.
          * @param writer the writer to write to.
          * @param list the list to write.
          * @throws IOException on error.
@@ -276,8 +275,8 @@ public final class AntDocumentation {
         /**
          * Write a table.
          * @param writer the Writer to write to.
-         * @param table the Table to write.  A collections of collectons of Strings.
-         * @param pattern the pattern before and after a the table.
+         * @param table the Table to write. A collections of collectons of Strings.
+         * @param pattern the pattern before and after the table.
          * @param caption the caption for the table.
          * @throws IOException on error.
          */
@@ -300,7 +299,7 @@ public final class AntDocumentation {
          * Write a table entry.
          * @param writer the Writer to write to.
          * @param table the Table to write
-         * @param pattern the pattern before and after a the table.
+         * @param pattern the pattern before and after the table.
          * @throws IOException on error
          */
         public static void writeTable(final Writer writer, final Collection<? extends Collection<String>> table,

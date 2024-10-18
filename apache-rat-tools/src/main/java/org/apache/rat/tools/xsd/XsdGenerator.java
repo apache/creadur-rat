@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class XsdGenerator {
     /** The XsdWriter being written to. */
     private XsdWriter writer;
     /** A map of component type to XML element name / property type */
-    private static Map<ComponentType, String> typeMap = new HashMap<ComponentType, String>();
+    private static Map<ComponentType, String> typeMap = new HashMap<>();
 
     static {
         typeMap.put(ComponentType.MATCHER, XMLConfig.MATCHER);
@@ -88,7 +89,7 @@ public class XsdGenerator {
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new StreamSource(in),
-                    new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
+                    new StreamResult(new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
         }
     }
 
@@ -107,7 +108,7 @@ public class XsdGenerator {
      */
     public InputStream getInputStream() throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             Writer writer = new OutputStreamWriter(baos);) {
+             Writer writer = new OutputStreamWriter(baos)) {
             write(writer);
             return new ByteArrayInputStream(baos.toByteArray());
         }
