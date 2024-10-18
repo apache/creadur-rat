@@ -38,7 +38,7 @@ public class CopyrightMatcherTest {
     private final static int NAME = 0;
     private final static int TEXT = 1;
     // to be added
-    private static String[] prefix = { "Copyright", "©", "(C)", "(c)", "&copy;" };
+    private static final String[] prefix = { "Copyright", "©", "(C)", "(c)", "&copy;" };
 
     private final static String[] D = { "-d", " 1990-1991" };
     private final static String[] DO = { "-d-o", " 1990-1991 an owner" };
@@ -53,15 +53,15 @@ public class CopyrightMatcherTest {
     private static final int TOTAL_TESTS = prefix.length * 9;
 
     /* patterns are name, start, end, owner, pass results, fail results */
-    static Arguments startStopOwner = Arguments.of("start-stop-owner", "1990", "1991", "an owner",
+    static final Arguments startStopOwner = Arguments.of("start-stop-owner", "1990", "1991", "an owner",
             expandResults(DO, OD, DOS, ODS), expandResults(D, S, O, OS, SO));
-    static Arguments startOwner = Arguments.of("start-owner", "1990", null, "an owner", expandResults(OS, SO, OD, ODS),
+    static final Arguments startOwner = Arguments.of("start-owner", "1990", null, "an owner", expandResults(OS, SO, OD, ODS),
             expandResults(D, DO, DOS, S, O));
-    static Arguments start = Arguments.of("start", "1990", null, null, expandResults(D, DO, DOS, S, SO),
+    static final Arguments start = Arguments.of("start", "1990", null, null, expandResults(D, DO, DOS, S, SO),
             expandResults(OD, ODS, O, OS));
-    static Arguments owner = Arguments.of("owner", null, null, "an owner", expandResults(DO, DOS, O, OD, ODS, OS, SO),
+    static final Arguments owner = Arguments.of("owner", null, null, "an owner", expandResults(DO, DOS, O, OD, ODS, OS, SO),
             expandResults(S, D));
-    static Arguments nada = Arguments.of("nada", null, null, null, expandResults(D, DO, DOS, S, SO),
+    static final Arguments nada = Arguments.of("nada", null, null, null, expandResults(D, DO, DOS, S, SO),
             expandResults(OD, ODS, O, OS));
 
     public static Stream<Arguments> parameterProvider() {

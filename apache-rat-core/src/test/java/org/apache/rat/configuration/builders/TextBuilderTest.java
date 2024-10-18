@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 
 public class TextBuilderTest {
 
-    Map<String, String> attributes;
+    final Map<String, String> attributes;
 
     TextBuilderTest() {
         attributes = new HashMap<>();

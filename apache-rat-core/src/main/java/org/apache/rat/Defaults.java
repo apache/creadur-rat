@@ -166,7 +166,7 @@ public final class Defaults {
     public static final class Builder {
         /** The list of URIs that we wil read to configure the Defaults */
         private final Set<URI> fileNames = new TreeSet<>();
-        private Supplier<ExclusionProcessor> exclusionSupplier;
+        private final Supplier<ExclusionProcessor> exclusionSupplier;
 
         private Builder() {
             if (DEFAULT_CONFIG_URI == null) {

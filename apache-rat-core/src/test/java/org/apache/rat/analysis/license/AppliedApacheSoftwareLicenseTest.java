@@ -24,8 +24,8 @@ import org.junit.jupiter.params.provider.Arguments;
 
 public class AppliedApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
-    private static String ID = "ASL";
-    private static String[][] targets = { { "simple", "/*\n" + " *  Copyright 2012-2013 FooBar.\n" + " *\n"
+    private static final String ID = "ASL";
+    private static final String[][] targets = { { "simple", "/*\n" + " *  Copyright 2012-2013 FooBar.\n" + " *\n"
             + " *  Licensed under the Apache License, Version 2.0 (the \"License\");\n"
             + " *  you may not use this file except in compliance with the License.\n" + " *\n"
             + " *  You may obtain a copy of the License at\n" + " *       http://www.apache.org/licenses/LICENSE-2.0\n"

@@ -38,7 +38,7 @@ import java.util.List;
 
 public class NamingTest {
 
-    private  File file = new File("target/testNaming.txt");
+    private final File file = new File("target/testNaming.txt");
 
     @Test
     public void testAnt() throws IOException, ParseException {

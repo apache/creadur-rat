@@ -22,4 +22,4 @@ content = f.text
 
 assert content.contains( ' G /src.apt' )
 assert content.contains( '    YAL      MyLicense     Yet another license' )
-assert content.contains( '    GEN      Not           Not ');
+assert content.contains( '    GEN      Not           Not ')

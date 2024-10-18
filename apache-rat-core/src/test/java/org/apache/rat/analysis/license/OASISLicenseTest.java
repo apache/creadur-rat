@@ -24,10 +24,10 @@ import org.junit.jupiter.params.provider.Arguments;
 
 public class OASISLicenseTest extends AbstractLicenseTest {
 
-    private static String id = "OASIS";
-    private static String name = "OASIS Open License";
-    private static String notes = "No modifications allowed";
-    private static String[][] targets = { { "fulltext",
+    private static final String id = "OASIS";
+    private static final String name = "OASIS Open License";
+    private static final String notes = "No modifications allowed";
+    private static final String[][] targets = { { "fulltext",
             "This document and translations of it may be copied and furnished to "
                     + "others and derivative works that comment on or otherwise explain it or assist "
                     + "in its implementation may be prepared copied published and distributed"

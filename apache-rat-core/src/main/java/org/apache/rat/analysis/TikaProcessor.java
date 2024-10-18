@@ -41,7 +41,7 @@ public final class TikaProcessor {
     /** A map of mime type string to non BINARY types.
      * "text" types are already handled everything else
      * BINARY unless listed here*/
-    private static Map<String, Document.Type> documentTypeMap;
+    private static final Map<String, Document.Type> documentTypeMap;
 
     static {
         documentTypeMap = new HashMap<>();

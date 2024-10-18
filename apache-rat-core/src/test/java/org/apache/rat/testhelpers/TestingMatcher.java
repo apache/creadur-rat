@@ -32,7 +32,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
 @ConfigComponent(type = ComponentType.MATCHER, name = "TestingMatcher", desc = "Matcher used in testing")
 public class TestingMatcher extends AbstractHeaderMatcher {
     private final boolean[] initialResults;
-    private Queue<Boolean> results;
+    private final Queue<Boolean> results;
 
     /**
      * Constructs a matcher with an ID of "dfltMtch" that does not match anything.

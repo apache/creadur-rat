@@ -57,7 +57,7 @@ public class OptionCollectionTest {
     /** The base directory for the test.
      * We do not use TempFile because we want the evidence of the run
      * to exist after a failure.*/
-    private File baseDir;
+    private final File baseDir;
 
     /**
      * Constructor.

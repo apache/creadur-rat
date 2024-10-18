@@ -141,7 +141,7 @@ public class DirectoryWalkerTest {
 
     static class TestRatReport implements RatReport {
 
-        private List<String> scanned;
+        private final List<String> scanned;
 
         public TestRatReport(List<String> scanned) {
             this.scanned = scanned;

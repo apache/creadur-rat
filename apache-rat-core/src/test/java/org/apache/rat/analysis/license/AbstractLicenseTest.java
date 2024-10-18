@@ -43,8 +43,8 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  */
 abstract public class AbstractLicenseTest {
-    private static int NAME = 0;
-    private static int TEXT = 1;
+    private static final int NAME = 0;
+    private static final int TEXT = 1;
 
     private Defaults defaults;
     protected MetaData data;

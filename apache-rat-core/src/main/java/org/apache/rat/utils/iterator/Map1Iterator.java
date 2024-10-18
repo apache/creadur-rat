@@ -26,8 +26,8 @@ import java.util.function.Function;
  * delivering them; supports remove if the underlying iterator does.
  */
 public class Map1Iterator<From, To> extends NiceIterator<To> {
-    private Function<From, To> map;
-    private Iterator<From> base;
+    private final Function<From, To> map;
+    private final Iterator<From> base;
 
     /**
      * Construct a list of the converted.

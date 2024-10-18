@@ -338,10 +338,10 @@ public class ReporterTest {
     }
 
     private static class LicenseInfo {
-        String id;
-        String family;
-        boolean approval;
-        boolean hasNotes;
+        final String id;
+        final String family;
+        final boolean approval;
+        final boolean hasNotes;
 
         LicenseInfo(String id, boolean approval, boolean hasNotes) {
             this(id, id, approval, hasNotes);

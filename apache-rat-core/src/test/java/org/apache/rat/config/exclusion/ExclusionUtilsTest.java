@@ -47,7 +47,7 @@ public class ExclusionUtilsTest {
     @TempDir
     private File testDir;
 
-    private int fileCount = 0;
+    private final int fileCount = 0;
 
     private static final String[] COMMENTS = {
             "# comment that is", "## comment that is", //

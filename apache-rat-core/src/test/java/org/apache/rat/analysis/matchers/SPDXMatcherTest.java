@@ -28,9 +28,9 @@ import org.junit.jupiter.api.Test;
 
 public class SPDXMatcherTest {
 
-    IHeaderMatcher target1 = SPDXMatcherFactory.INSTANCE.create("hello");
-    IHeaderMatcher target2 = SPDXMatcherFactory.INSTANCE.create("world");
-    IHeaderMatcher target3 = SPDXMatcherFactory.INSTANCE.create("goodbye");
+    final IHeaderMatcher target1 = SPDXMatcherFactory.INSTANCE.create("hello");
+    final IHeaderMatcher target2 = SPDXMatcherFactory.INSTANCE.create("world");
+    final IHeaderMatcher target3 = SPDXMatcherFactory.INSTANCE.create("goodbye");
 
     @BeforeEach
     public void setup() {
