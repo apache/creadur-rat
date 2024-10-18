@@ -19,4 +19,4 @@
 /**
  * Iterator utility classes are taken from <a href="https://jena.apache.org/">Apache Jena</a>.
  */
-package org.apache.rat.utils;
+package org.apache.rat.utils.iterator;
