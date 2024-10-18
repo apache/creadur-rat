@@ -18,6 +18,6 @@
  */
 
 /**
- * Classes walk directory trees and return documents.
+ * Classes that walk directory trees and return documents.
  */
 package org.apache.rat.walker;
