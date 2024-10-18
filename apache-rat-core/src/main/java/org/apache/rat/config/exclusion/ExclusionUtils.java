@@ -44,7 +44,7 @@ import org.apache.rat.utils.iterator.WrappedIterator;
 import static java.lang.String.format;
 
 /**
- * Utilities for exclusion processing.
+ * Utilities for Exclusion processing.
  */
 public final class ExclusionUtils {
 
@@ -181,14 +181,14 @@ public final class ExclusionUtils {
         Objects.requireNonNull(commentFilters, "commentFilters");
 
         return () -> {
-            try (FileReader reader = new FileReader(patternFile)) {
-                return new LineIterator(reader) {
+            try {
+                return new LineIterator(new FileReader(patternFile)) {
                     @Override
                     protected boolean isValidLine(final String line) {
                         return commentFilters.test(line);
                     }
                 };
-            } catch (IOException e) {
+            } catch (FileNotFoundException e) {
                 throw new ConfigurationException("Unable to read file " + patternFile, e);
             }
         };
