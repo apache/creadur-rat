@@ -21,7 +21,6 @@ package org.apache.rat.report.claim.impl;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
-import org.apache.rat.api.RatException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.report.AbstractReport;
 

@@ -18,7 +18,6 @@
  */
 package org.apache.rat.tools;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.rat.help.Help;
 
 import java.io.FileWriter;
