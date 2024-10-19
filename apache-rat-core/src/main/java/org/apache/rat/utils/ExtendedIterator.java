@@ -18,16 +18,10 @@
 
 package org.apache.rat.utils;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -38,11 +32,12 @@ import org.apache.commons.collections4.iterators.IteratorChain;
 import org.apache.commons.collections4.iterators.TransformIterator;
 
 /**
- * A WrappedIterator is an ExtendedIterator wrapping around a plain
- * (or presented as plain) Iterator. The wrapping allows the usual extended
- * operations (filtering, concatenating) to be done on an Iterator derived
- * from some other source.
-*/
+ * A ExtendedIterator is an Iterator wrapping around a plain
+ * (or presented as plain) Iterator. The wrapping allows the usual
+ * operations found on streams (filtering, concatenating, mapping) to be done on an Iterator derived
+ * from some other source.  It also provides convenience methods for common operations.
+ * @param <T> The type of object returned from the iterator.
+ */
 public class ExtendedIterator<T> implements Iterator<T> {
     /**
      * Set to <code>true</code> if this wrapping doesn't permit the use of
@@ -50,14 +45,14 @@ public class ExtendedIterator<T> implements Iterator<T> {
      */
     protected boolean removeDenied;
 
-
-
     /**
      * Answer an ExtendedIterator wrapped round <code>it</code>,
      * which does not permit <code>.remove()</code>
      * even if <code>it</code> does.
+     * @param it The Iterator to wrap.
+     * @return an Extended iterator on {@Code it}
      */
-    public static <T> ExtendedIterator<T> createNoRemove(Iterator<T> it) {
+    public static <T> ExtendedIterator<T> createNoRemove(final Iterator<T> it) {
         return new ExtendedIterator<>(it, true);
     }
 
@@ -67,8 +62,11 @@ public class ExtendedIterator<T> implements Iterator<T> {
      * <p>
      * The stream should not be used directly. The effect of doing so is
      * undefined.
+     * </p>
+     * @param stream the Stream to create an iterator from.
+     * @return an Extended iterator on the {@code stream} iterator.
      */
-    public static <T> ExtendedIterator<T> ofStream(Stream<T> stream) {
+    public static <T> ExtendedIterator<T> ofStream(final Stream<T> stream) {
         return new ExtendedIterator<T>(stream.iterator(), true) {
             // do nothing
         };
@@ -78,11 +76,17 @@ public class ExtendedIterator<T> implements Iterator<T> {
      * Given an Iterator that returns Iterators, this creates an
      * Iterator over the next level values.
      * Similar to list splicing in lisp.
+     * @param it An iterator of iterators.
+     * @return An iterator over the logical concatentation of the inner iterators.
      */
-    public static <T> ExtendedIterator<T> unwindIterator(Iterator<Iterator<T>> it) {
-        return new ExtendedIterator(new UnwindingIterator<T>(it), false );
+    public static <T> ExtendedIterator<T> unwindIterator(final Iterator<Iterator<T>> it) {
+        return new ExtendedIterator(new UnwindingIterator<T>(it), false);
     }
 
+    /**
+     * An empty Extended iterator
+     * @return An empty Extended iterator.
+     */
     public static ExtendedIterator<?> emptyIterator() {
         return new ExtendedIterator<>(Collections.emptyIterator(), false);
     }
@@ -91,8 +95,10 @@ public class ExtendedIterator<T> implements Iterator<T> {
      * Answer an ExtendedIterator returning the elements of <code>it</code>.
      * If <code>it</code> is itself an ExtendedIterator, return that;
      * otherwise wrap <code>it</code>.
+     * @param it The iterator to wrap.
+     * @return An Extended iterator wrapping {@code it}
      */
-    public static <T> ExtendedIterator<T> create(Iterator<T> it) {
+    public static <T> ExtendedIterator<T> create(final Iterator<T> it) {
         return it instanceof ExtendedIterator<?>
                 ? (ExtendedIterator<T>) it
                 : new ExtendedIterator<>(it, false);
@@ -101,14 +107,11 @@ public class ExtendedIterator<T> implements Iterator<T> {
     /** the base iterator that we wrap */
     protected final Iterator<? extends T> base;
 
-    public Iterator<? extends T> forTestingOnly_getBase() {
-        return base;
-    }
-
     /**
-     * Constructor: remember the base iterator
+     * Constructor.
+     * @param base The iterator to wrap.
      */
-    protected ExtendedIterator(Iterator<? extends T> base) {
+    protected ExtendedIterator(final Iterator<? extends T> base) {
         this(base, false);
     }
 
@@ -117,35 +120,27 @@ public class ExtendedIterator<T> implements Iterator<T> {
      * @param base the base iterator that this iterator wraps
      * @param removeDenied true if .remove() must throw an exception
      */
-    protected ExtendedIterator(Iterator<? extends T> base, boolean removeDenied) {
+    protected ExtendedIterator(final Iterator<? extends T> base, final boolean removeDenied) {
         this.base = base;
         this.removeDenied = removeDenied;
     }
 
-    /**
-     * hasNext: defer to the base iterator
-     */
     @Override
     public boolean hasNext() {
         return base.hasNext();
     }
 
-    /**
-     * next: defer to the base iterator
-     */
     @Override
     public T next() {
         return base.next();
     }
 
-    /**
-     * forEachRemaining: defer to the base iterator
-     */
-
-    public void forEachRemaining(Consumer<? super T> action) {
+    @Override
+    public void forEachRemaining(final Consumer<? super T> action) {
         base.forEachRemaining(action);
     }
 
+    @Override
     public void remove() {
         if (removeDenied) {
             throw new UnsupportedOperationException();
@@ -153,88 +148,78 @@ public class ExtendedIterator<T> implements Iterator<T> {
         base.remove();
     }
 
-    public static void close(Iterator<?> it) throws IOException {
-        if (it instanceof Closeable) {
-            ((Closeable) it).close();
-        }
-    }
-
     /**
-     * Answer the next object, and remove it.
+     * Returns the next item and removes it from the iterator.
+     * @return the next item from the iterator.
      */
-
     public T removeNext() {
         T result = next();
         remove();
         return result;
     }
 
-
-    public <X extends T> ExtendedIterator<T> andThen(Iterator<X> other) {
+    /**
+     * Chains the {@code other} iterator to the end of this one.
+     * @param other the other iterator to extend this iterator with.
+     * @return A new iterator returning the contenst of {@code this} iterator followed by the contents of {@code other{ iterator.}}
+     * @param <X> The type of object returned from the other iterator.
+     */
+    public <X extends T> ExtendedIterator<T> andThen(final Iterator<X> other) {
         if (base instanceof IteratorChain) {
-            ((IteratorChain<T>)base).addIterator(other);
+            ((IteratorChain<T>) base).addIterator(other);
             return this;
         }
         return new ExtendedIterator<T>(new IteratorChain<T>(this.base, other), this.removeDenied);
     }
 
-
-    public ExtendedIterator<T> filter(Predicate<T> f) {
-        return new ExtendedIterator<T>(new FilterIterator<>(this, f::test), this.removeDenied){};
+    /**
+     * Filter this iterator using a predicate.  Only items for which the predicate returns true will
+     * be included in the result.
+     * @param predicate The predicate to filter the items with.
+     * @return An iterator filtered by the predicate.
+     */
+    public ExtendedIterator<T> filter(final Predicate<T> predicate) {
+        return new ExtendedIterator<T>(new FilterIterator<>(this, predicate::test), this.removeDenied);
     }
 
-    public <U> ExtendedIterator<U> map(Function<T, U> map) {
-        return new ExtendedIterator<U>(new TransformIterator<>(this, map::apply), false);
+    /**
+     * Map the elements of the iterator to a now type.
+     * @param function The function to map elements of {@code <T>} to type {@code <U>}.
+     * @return An Extended iterator that returns a {@code <U>} for very {@code <T>} in the original iterator.
+     * @param <U> The object type to return.
+     */
+    public <U> ExtendedIterator<U> map(final Function<T, U> function) {
+        return new ExtendedIterator<U>(new TransformIterator<>(this, function::apply), false);
     }
 
-    public void forEach(Consumer<? super T> consumer) {
-        forEachRemaining(consumer);
-    }
-
-    protected <U extends Collection<T>> U populateCollection(U collection) {
+    /**
+     * A method to populate an arbitrary collection with elements from this iterator.
+     * This method consumes the iterator.
+     * @param collection THe collection to add elements to.
+     * @return the {@code collection} with the elements added.
+     * @param <U> A collection of objects of type {@code <T>}.
+     */
+    public <U extends Collection<T>> U populateCollection(final U collection) {
         this.forEachRemaining(collection::add);
         return collection;
     }
 
     /**
-     * Answer a list of the elements of <code>it</code> in order, consuming this iterator.
-     * Canonical implementation of {@code toSet()}.
+     * A class to unwind an iterator of iterators.
+     * @param <T> The type of the object returned from the iterator.
      */
-    public Set<T> toSet() {
-        return populateCollection(new HashSet<>());
-    }
-
-    /**
-     * Answer a list of the elements from <code>it</code>, in order, consuming
-     * that iterator. Canonical implementation of {@code toList()}.
-     */
-    public List<T> toList() {
-        return populateCollection(new ArrayList<>());
-    }
-
-    protected void ensureHasNext() {
-        if (!hasNext())
-            throw new NoSuchElementException();
-    }
-
-    /**
-     * Utility method for this and other (sub)classes: raise the appropriate
-     * "no more elements" exception. I note that we raised the wrong exception
-     * in at least one case ...
-     *
-     * @param message the string to include in the exception
-     * @return never - but we have a return type to please the compiler
-     */
-    protected T noElements(String message) {
-        throw new NoSuchElementException(message);
-    }
-
     private static class UnwindingIterator<T> implements Iterator<T> {
-        final private Iterator<Iterator<T>> inner;
+        /** The innermost iterator */
+        private final Iterator<Iterator<T>> inner;
+        /** The iterator extracted from the inner iterator */
         private Iterator<T> outer;
 
-        UnwindingIterator(Iterator<Iterator<T>> inner) {
-            this.inner = inner;
+        /**
+         * Constructs an iterator from an iterator of iterators.
+         * @param it The iterator of iterators to unwind.
+         */
+        UnwindingIterator(final Iterator<Iterator<T>> it) {
+            this.inner = it;
         }
 
         @Override

@@ -175,10 +175,10 @@ public class ExclusionProcessor {
     private void segregateList(final Set<String> matching, final Set<String> notMatching,
                                final Collection<String> patterns) {
         if (!patterns.isEmpty()) {
-            ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.MATCH_FILTER).forEach(matching::add);
+            ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.MATCH_FILTER).forEachRemaining(matching::add);
             ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.NOT_MATCH_FILTER)
                     .map(s -> s.substring(1))
-                    .forEach(notMatching::add);
+                    .forEachRemaining(notMatching::add);
         }
     }
 
@@ -197,7 +197,7 @@ public class ExclusionProcessor {
 
             // add the file processors
             for (StandardCollection sc : fileProcessors) {
-                sc.fileProcessor().forEach(fp -> segregateList(excl, incl, fp.apply(basedir)));
+                sc.fileProcessor().forEachRemaining(fp -> segregateList(excl, incl, fp.apply(basedir)));
             }
 
             // add the standard patterns
@@ -216,12 +216,12 @@ public class ExclusionProcessor {
             List<TraceableDocumentNameMatcher> inclMatchers = ExtendedIterator.create(includedCollections.iterator())
                     .filter(StandardCollection::hasDocumentNameMatchSupplier)
                     .map(s -> TraceableDocumentNameMatcher.make(() -> "Path match " + s.name(), s.documentNameMatcherSupplier().get(basedir)))
-                    .toList();
+                    .populateCollection(new ArrayList<>());
 
             List<TraceableDocumentNameMatcher> exclMatchers = ExtendedIterator.create(excludedCollections.iterator())
                     .filter(StandardCollection::hasDocumentNameMatchSupplier)
                     .map(s -> TraceableDocumentNameMatcher.make(() -> "Path match " + s.name(), s.documentNameMatcherSupplier().get(basedir)))
-                    .toList();
+                    .populateCollection(new ArrayList<>());
 
             if (!incl.isEmpty()) {
                 inclMatchers.add(makeMatcher(() -> "included patterns", MatchPatterns.from(incl), basedir));

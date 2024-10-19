@@ -18,6 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
+import java.util.ArrayList;
 import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
         String[] lines = {"*.ext", "fname.*", "**/fname.ext"};
 
         List<String> expected = ExtendedIterator.create(Arrays.asList(lines).iterator())
-                .map(s -> new File(baseDir, s).getPath()).toList();
+                .map(s -> new File(baseDir, s).getPath()).populateCollection(new ArrayList<>());
 
         writeFile("test.txt", Arrays.asList(lines));
         DocumentName documentName = new DocumentName(baseDir);
@@ -53,7 +54,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
         String[] lines = {"*.ext", "fname.*", "**/fname.ext"};
 
         List<String> expected = ExtendedIterator.create(Arrays.asList(lines).iterator())
-                .map(s -> new File(baseDir, s).getPath()).toList();
+                .map(s -> new File(baseDir, s).getPath()).populateCollection(new ArrayList<>());
 
         writeFile("test.txt", Arrays.asList(lines));
 

@@ -286,7 +286,7 @@ public enum StandardCollection {
             return lst.get(0);
         }
         Supplier<String> nameSupplier = () -> String.join(", ", ExtendedIterator.create(getCollections().iterator())
-                .map(StandardCollection::name).toList());
+                .map(StandardCollection::name).populateCollection(new ArrayList<>()));
 
         return dirName -> TraceableDocumentNameMatcher.make(nameSupplier, documentName -> {
             for (DocumentNameMatcherSupplier supplier : lst) {

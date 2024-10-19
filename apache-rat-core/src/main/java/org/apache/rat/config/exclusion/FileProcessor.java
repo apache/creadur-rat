@@ -18,6 +18,7 @@
  */
 package org.apache.rat.config.exclusion;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -49,7 +50,7 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
         return documentName -> ExtendedIterator.create(patterns.iterator())
                 .map(entry -> FileProcessor.localizePattern(documentName, entry))
                 .map(DocumentName::getName)
-                .toList();
+                .populateCollection(new ArrayList<>());
     }
 
     /**
