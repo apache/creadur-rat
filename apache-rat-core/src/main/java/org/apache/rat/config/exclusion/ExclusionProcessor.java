@@ -216,12 +216,12 @@ public class ExclusionProcessor {
             List<TraceableDocumentNameMatcher> inclMatchers = ExtendedIterator.create(includedCollections.iterator())
                     .filter(StandardCollection::hasDocumentNameMatchSupplier)
                     .map(s -> TraceableDocumentNameMatcher.make(() -> "Path match " + s.name(), s.documentNameMatcherSupplier().get(basedir)))
-                    .populateCollection(new ArrayList<>());
+                    .addTo(new ArrayList<>());
 
             List<TraceableDocumentNameMatcher> exclMatchers = ExtendedIterator.create(excludedCollections.iterator())
                     .filter(StandardCollection::hasDocumentNameMatchSupplier)
                     .map(s -> TraceableDocumentNameMatcher.make(() -> "Path match " + s.name(), s.documentNameMatcherSupplier().get(basedir)))
-                    .populateCollection(new ArrayList<>());
+                    .addTo(new ArrayList<>());
 
             if (!incl.isEmpty()) {
                 inclMatchers.add(makeMatcher(() -> "included patterns", MatchPatterns.from(incl), basedir));

@@ -39,7 +39,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
         String[] lines = {"*.ext", "fname.*", "**/fname.ext"};
 
         List<String> expected = ExtendedIterator.create(Arrays.asList(lines).iterator())
-                .map(s -> new File(baseDir, s).getPath()).populateCollection(new ArrayList<>());
+                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
 
         writeFile("test.txt", Arrays.asList(lines));
         DocumentName documentName = new DocumentName(baseDir);
@@ -54,7 +54,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
         String[] lines = {"*.ext", "fname.*", "**/fname.ext"};
 
         List<String> expected = ExtendedIterator.create(Arrays.asList(lines).iterator())
-                .map(s -> new File(baseDir, s).getPath()).populateCollection(new ArrayList<>());
+                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
 
         writeFile("test.txt", Arrays.asList(lines));
 

@@ -80,7 +80,7 @@ public class DescendingFileProcessor implements FileProcessor {
                 .filter(Objects::nonNull)
                 .map(entry -> FileProcessor.localizePattern(documentName, entry))
                 .map(DocumentName::getName)
-                .populateCollection(new ArrayList<>());
+                .addTo(new ArrayList<>());
     }
 
     /**

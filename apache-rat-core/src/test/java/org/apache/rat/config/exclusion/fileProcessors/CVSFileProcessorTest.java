@@ -37,7 +37,7 @@ public class CVSFileProcessorTest extends AbstractIgnoreProcessorTest {
                 "thingone thingtwo", System.lineSeparator(), "one_fish", "two_fish", "", "red_* blue_*"};
 
         List<String> expected = ExtendedIterator.create(Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_*", "blue_*").iterator())
-                .map(s -> new File(baseDir, s).getPath()).populateCollection(new ArrayList<>());
+                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
 
         writeFile(".cvsignore", Arrays.asList(lines));
 

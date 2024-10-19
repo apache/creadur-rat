@@ -267,7 +267,7 @@ public abstract class AbstractOptionsProvider {
         writeFile(".gitignore", Arrays.asList(lines));
 
         List<String> expected = ExtendedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
-                .map(s -> new File(baseDir, s).getPath()).populateCollection(new ArrayList<>());
+                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
         expected.add(0, "!" + new File(baseDir, "thingone").getPath());
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));

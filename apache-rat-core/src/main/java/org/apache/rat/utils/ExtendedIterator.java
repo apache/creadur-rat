@@ -77,10 +77,10 @@ public class ExtendedIterator<T> implements Iterator<T> {
      * Iterator over the next level values.
      * Similar to list splicing in lisp.
      * @param it An iterator of iterators.
-     * @return An iterator over the logical concatentation of the inner iterators.
+     * @return An iterator over the logical concatenation of the inner iterators.
      */
-    public static <T> ExtendedIterator<T> unwindIterator(final Iterator<Iterator<T>> it) {
-        return new ExtendedIterator(new UnwindingIterator<T>(it), false);
+    public static <T> ExtendedIterator<T> unwind(final Iterator<Iterator<T>> it) {
+        return new ExtendedIterator<>(new UnwindingIterator<T>(it), false);
     }
 
     /**
@@ -193,13 +193,13 @@ public class ExtendedIterator<T> implements Iterator<T> {
     }
 
     /**
-     * A method to populate an arbitrary collection with elements from this iterator.
+     * A method to add the remaining elements in the iterator an arbitrary collection.
      * This method consumes the iterator.
      * @param collection THe collection to add elements to.
      * @return the {@code collection} with the elements added.
      * @param <U> A collection of objects of type {@code <T>}.
      */
-    public <U extends Collection<T>> U populateCollection(final U collection) {
+    public <U extends Collection<T>> U addTo(final U collection) {
         this.forEachRemaining(collection::add);
         return collection;
     }

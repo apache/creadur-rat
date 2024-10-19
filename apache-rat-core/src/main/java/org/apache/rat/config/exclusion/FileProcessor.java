@@ -50,7 +50,7 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
         return documentName -> ExtendedIterator.create(patterns.iterator())
                 .map(entry -> FileProcessor.localizePattern(documentName, entry))
                 .map(DocumentName::getName)
-                .populateCollection(new ArrayList<>());
+                .addTo(new ArrayList<>());
     }
 
     /**
