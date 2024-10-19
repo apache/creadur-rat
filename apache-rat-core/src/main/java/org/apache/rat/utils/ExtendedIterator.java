@@ -43,7 +43,7 @@ public class ExtendedIterator<T> implements Iterator<T> {
      * Set to <code>true</code> if this wrapping doesn't permit the use of
      * {@link #remove()}, otherwise removal is delegated to the base iterator.
      */
-    protected boolean removeDenied;
+    protected final boolean removeDenied;
 
     /**
      * Answer an ExtendedIterator wrapped round <code>it</code>,

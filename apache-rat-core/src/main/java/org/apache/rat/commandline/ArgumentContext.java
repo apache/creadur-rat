@@ -20,8 +20,6 @@ package org.apache.rat.commandline;
 
 import static java.lang.String.format;
 
-import java.io.IOException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
