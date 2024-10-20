@@ -33,7 +33,7 @@ public class TextUtils {
     public static final String[] EMPTY = {};
 
     /**
-     * Asserts a regular expression pattern is in a string
+     * Asserts a regular expression pattern is in a string.
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
@@ -43,7 +43,7 @@ public class TextUtils {
     }
 
     /**
-     * Asserts a regular expression pattern is not in a string
+     * Asserts a regular expression pattern is not in a string.
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
@@ -81,7 +81,6 @@ public class TextUtils {
     public static void assertContainsExactly(int times, String find, String target) {
         String t = target;
         for (int i = 0; i < times; i++) {
-            final int j = i + 1;
             assertTrue(t.contains(find), () -> format("Target does not contain %s copies fo %s%n%s", times, find, target));
             t = t.substring(t.indexOf(find) + find.length());
         }

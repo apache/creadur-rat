@@ -34,7 +34,7 @@
         <version>@pom.version@</version>
         <configuration>
           <excludes>
-            <exclude>src.apt</exclude>
+            <exclude>**/src.apt</exclude>
           </excludes>
         </configuration>
       </plugin>

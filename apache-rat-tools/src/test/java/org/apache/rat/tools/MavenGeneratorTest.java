@@ -36,7 +36,7 @@ public class MavenGeneratorTest {
     }
 
     @Test
-    public void testGenerationWithoutParameters() throws IOException {
+    public void testGenerationWithoutParameters() {
         assertDoesNotThrow(() -> MavenGenerator.main(null));
         assertDoesNotThrow(() -> MavenGenerator.main(new String[]{}));
         assertDoesNotThrow(() -> MavenGenerator.main(new String[]{"one"}));

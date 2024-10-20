@@ -357,8 +357,8 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.6.4</version>
           <configuration>
-            <!-- RAT-369: JDK21 finds 70 errors, while older releases find 63 -->
-            <maxAllowedViolations>72</maxAllowedViolations>
+            <!-- RAT-369: JDK21 finds 55 errors, while older releases find less -->
+            <maxAllowedViolations>55</maxAllowedViolations>
             <failOnError>true</failOnError>
             <!-- we only want to see our own problems and in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
@@ -595,6 +595,19 @@ agnostic home for software distribution comprehension and audit tools.
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
+            <id>enforce-no-package-cycles</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <skip>true</skip>
+              <rules>
+                <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule"/>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
             <!-- This checks the bytecode version of the dependencies transitively -->
             <id>enforce-bytecode-version</id>
             <goals>
@@ -619,6 +632,11 @@ agnostic home for software distribution comprehension and audit tools.
             <artifactId>extra-enforcer-rules</artifactId>
             <version>1.9.0</version>
           </dependency>
+            <dependency>
+              <groupId>org.apache.ws.commons.axiom</groupId>
+              <artifactId>no-package-cycles-enforcer-rule</artifactId>
+              <version>1.2.20</version>
+            </dependency>
         </dependencies>
       </plugin>
       <plugin>

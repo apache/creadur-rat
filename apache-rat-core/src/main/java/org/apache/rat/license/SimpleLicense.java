@@ -41,19 +41,19 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 public class SimpleLicense implements ILicense {
     /** The license family for this license */
     @ConfigComponent(type = ComponentType.BUILD_PARAMETER, desc = "The defined license families.", name = "licenseFamilies")
-    private ILicenseFamily family;
+    private final ILicenseFamily family;
     /** The matcher for this license */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The matcher for this license.", required = true)
-    private IHeaderMatcher matcher;
+    private final IHeaderMatcher matcher;
     /** The notes for this license */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The notes about this license.")
-    private String note;
+    private final String note;
     /** The name of this license */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The name of this license.")
-    private String name;
+    private final String name;
     /** The ID for this license.  Must be unique */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The ID for this license.")
-    private String id;
+    private final String id;
 
     SimpleLicense(final ILicenseFamily family, final IHeaderMatcher matcher, final String notes, final String name, final String id) {
         Objects.requireNonNull(matcher, "Matcher must not be null");
@@ -131,7 +131,7 @@ public class SimpleLicense implements ILicense {
         /** The matcher builder in use for this license */
         private IHeaderMatcher.Builder matcher;
         /** The notes for the license */
-        private List<String> notes = new ArrayList<>();
+        private final List<String> notes = new ArrayList<>();
         /** The name of this license */
         private String name;
         /** The ID of this license */

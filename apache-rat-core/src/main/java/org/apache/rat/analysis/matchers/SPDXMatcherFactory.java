@@ -61,12 +61,12 @@ public class SPDXMatcherFactory {
      * The regular expression to locate the SPDX license identifier in the text
      * stream
      */
-    private static Pattern groupSelector = Pattern.compile(".*"+LICENSE_IDENTIFIER+"\\s([A-Za-z0-9\\.\\-]+)");
+    private static final Pattern groupSelector = Pattern.compile(".*" + LICENSE_IDENTIFIER + "\\s([A-Za-z0-9\\.\\-]+)");
 
     /**
      * The last matcer to match the line.
      */
-    private Set<String> lastMatch;
+    private final Set<String> lastMatch;
 
     private boolean checked;
 
@@ -125,7 +125,7 @@ public class SPDXMatcherFactory {
     @ConfigComponent(type = ComponentType.MATCHER, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
     public class Match extends AbstractHeaderMatcher {
         @ConfigComponent(type = ComponentType.PARAMETER, name = "name", desc = "The SPDX identifier string")
-        String spdxId;
+        final String spdxId;
 
         public String getName() {
             return spdxId;

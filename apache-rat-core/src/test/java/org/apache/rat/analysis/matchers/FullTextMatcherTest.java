@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class FullTextMatcherTest {
 
-    FullTextMatcher target = new FullTextMatcher("Hello world");
+    final FullTextMatcher target = new FullTextMatcher("Hello world");
 
     @BeforeEach
     public void setup() {

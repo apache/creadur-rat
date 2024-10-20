@@ -33,7 +33,6 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.testhelpers.TestingMatcher;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,14 +60,14 @@ public class DefaultPolicyTest {
     private Defaults defaults;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         defaults = Defaults.builder().build();
         policy = new DefaultPolicy(defaults.getLicenseSetFactory().getLicenseFamilies(LicenseFilter.APPROVED));
         document = new TestingDocument("subject");
     }
 
     private void assertApproval(boolean pApproved) {
-        boolean state = document.getMetaData().approvedLicenses().count() > 0;
+        boolean state = document.getMetaData().approvedLicenses().findAny().isPresent();
         assertEquals(pApproved, state);
     }
 
@@ -113,7 +112,7 @@ public class DefaultPolicyTest {
     }
 
     @Test
-    public void testUnknownFamily() throws Exception {
+    public void testUnknownFamily() {
         setMetadata(makeFamily("?????", "Unknown document"));
         policy.analyse(document);
         assertApproval(false);

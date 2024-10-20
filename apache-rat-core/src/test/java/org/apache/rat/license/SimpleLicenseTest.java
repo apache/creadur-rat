@@ -19,9 +19,6 @@
 
 package org.apache.rat.license;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -29,8 +26,9 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.testhelpers.TestingMatcher;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleLicenseTest {
 
@@ -57,7 +55,7 @@ public class SimpleLicenseTest {
         assertTrue(children.containsKey("matcher"));
         assertEquals(ComponentType.PARAMETER, children.get("matcher").getType());
         Object matcherObj = children.get("matcher").getter(lic.getClass()).invoke(lic);
-        assertTrue(matcherObj instanceof IHeaderMatcher);
+        assertInstanceOf(IHeaderMatcher.class, matcherObj);
         Description matcherDesc = ((IHeaderMatcher) matcherObj).getDescription();
         assertEquals(ComponentType.MATCHER, matcherDesc.getType());
         assertEquals("TestingMatcher", matcherDesc.getCommonName());

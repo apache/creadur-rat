@@ -30,13 +30,13 @@ public class ReportFormatTest {
     @Test
     public void isANullSafe() {
         for (String optionType : Arrays.asList(null, "")) {
-            assertFalse(ReportFormat.PLAIN.is(optionType), ()->"Must not equal PLAIN, was " + optionType);
+            assertFalse(ReportFormat.PLAIN.is(optionType), () -> "Must not equal PLAIN, was " + optionType);
         }
     }
     @Test
     public void isAConfigurationOption() {
         for (String optionType : Arrays.asList("PLAIN", "pLain", "plain", ReportFormat.PLAIN.name())) {
-            assertTrue(ReportFormat.PLAIN.is(optionType), ()->"Must equal PLAIN, was " + optionType);
+            assertTrue(ReportFormat.PLAIN.is(optionType), () -> "Must equal PLAIN, was " + optionType);
         }
         assertFalse(ReportFormat.PLAIN.is(ReportFormat.XML.name()));
     }

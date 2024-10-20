@@ -27,9 +27,6 @@ import org.apache.rat.commandline.Arg;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A representation of a CLI option as a Maven option
@@ -51,26 +48,8 @@ public class MavenOption extends AbstractOption {
         super(option, MavenGenerator.createName(option));
     }
 
-    private String getPropertyValue() {
-        StringBuilder sb = new StringBuilder("A ");
-        if (option.hasArg()) {
-            if (option.hasArgs()) {
-                sb.append("collection of ");
-            }
-            if (option.getArgName() == null) {
-                sb.append("String");
-            } else {
-                sb.append(option.getArgName());
-            }
-            sb.append(option.hasArgs() ? "s." : ".");
-        } else {
-            sb.append("boolean value.");
-        }
-        return sb.toString();
-    }
-
     @Override
-    protected String cleanupName(Option option) {
+    protected String cleanupName(final Option option) {
         return format("<%s>", MavenGenerator.createName(option));
     }
 
@@ -84,7 +63,7 @@ public class MavenOption extends AbstractOption {
         return result;
     }
 
-    public String getPropertyAnnotation(String fname) {
+    public String getPropertyAnnotation(final String fname) {
         StringBuilder sb = new StringBuilder("@Parameter");
         String property = option.hasArgs() ? null : format("property = \"rat.%s\"", fname);
         String defaultValue = option.isDeprecated() ? null : getDefaultValue();

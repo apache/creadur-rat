@@ -28,12 +28,12 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.StringWriter;
 
-import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReport;
@@ -44,7 +44,6 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,12 +69,13 @@ public class XmlReportFactoryTest {
 
     @Test
     public void standardReport() throws Exception {
-        final String elementsPath = Resources.getResourceDirectory("elements/Source.java");
+        final File elementsDir = Resources.getResourceFile("elements/Source.java").getParentFile();
         final ReportConfiguration configuration = new ReportConfiguration();
         final TestingLicense testingLicense = new TestingLicense("TEST", new TestingMatcher(true), family);
         configuration.setFrom(Defaults.builder().build());
-        configuration.setDirectoriesToIgnore(HiddenFileFilter.HIDDEN);
-        DirectoryWalker directory = new DirectoryWalker(configuration, new FileDocument(new File(elementsPath)));
+        DocumentName documentName = new DocumentName(elementsDir);
+        DirectoryWalker directory = new DirectoryWalker(new FileDocument(documentName, elementsDir,
+                configuration.getNameMatcher(documentName)));
         final ClaimStatistic statistic = new ClaimStatistic();
 
         configuration.addLicense(testingLicense);

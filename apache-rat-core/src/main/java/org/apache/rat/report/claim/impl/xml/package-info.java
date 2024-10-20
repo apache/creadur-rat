@@ -15,29 +15,9 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.document.impl.guesser;
+ */
 
-import java.util.Locale;
-
-import org.apache.commons.lang3.StringUtils;
-
-public class GuessUtils {
-    
-    private static final String[] SEPARATORS = {"/", "\\"};
-    
-    /**
-     * Converts name to upper case and strips any path.
-     * @param name not null
-     * @return not null
-     */
-    public static String normalise(final String name) {
-        String result = name.toUpperCase(Locale.US);
-        final int lastSeparatorIndex = StringUtils.lastIndexOfAny(result, SEPARATORS);
-        final int length = result.length();
-        if (lastSeparatorIndex >= 0 && lastSeparatorIndex < length) {
-            result = result.substring(lastSeparatorIndex + 1);
-        }
-        return result;
-    }
-}
+/**
+ * Classes to write claims in XML format
+ */
+package org.apache.rat.report.claim.impl.xml;

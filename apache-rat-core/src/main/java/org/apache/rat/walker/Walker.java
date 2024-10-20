@@ -19,31 +19,24 @@
 
 package org.apache.rat.walker;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.rat.api.Document;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.report.IReportable;
-
-import java.io.FilenameFilter;
-import java.nio.file.Path;
 
 /**
  * Abstract walker.
  */
 public abstract class Walker implements IReportable {
 
-    /** The file name filter that the walker is applying */
-    private final FilenameFilter filesToIgnore;
     /** The document this walker is walking */
-    private  final Document document;
+    private final Document document;
 
     /**
-     * Creates  the walker
+     * Creates the walker
      * @param document The document the walker is walking.
-     * @param filesToIgnore the Files to ignore.  If {@code null} no files are ignored.
      */
-    protected Walker(final Document document, final FilenameFilter filesToIgnore) {
+    protected Walker(final Document document) {
         this.document = document;
-        this.filesToIgnore = filesToIgnore == null ? FalseFileFilter.FALSE : filesToIgnore;
     }
 
     /**
@@ -54,12 +47,8 @@ public abstract class Walker implements IReportable {
         return document;
     }
 
-    /**
-     * Tests if the specified path should be ignored.
-     * @param path the Path to test
-     * @return {@code true} if the file should not be ignored.
-     */
-    protected final boolean isNotIgnored(final Path path) {
-        return !filesToIgnore.accept(path.getParent().toFile(), path.toString());
+    @Override
+    public DocumentName getName() {
+        return document.getName();
     }
 }

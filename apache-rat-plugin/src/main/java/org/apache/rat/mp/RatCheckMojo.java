@@ -191,13 +191,13 @@ public class RatCheckMojo extends AbstractRatMojo {
         ClaimStatistic stats = reporter.getClaimsStatistic();
 
         int numApproved = stats.getCounter(ClaimStatistic.Counter.APPROVED);
-        StringBuilder statSummary = new StringBuilder("Rat check: Summary over all files. Unapproved: ")
-                .append(stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)).append(", unknown: ")
-                .append(stats.getCounter(ClaimStatistic.Counter.UNKNOWN)).append(", generated: ")
-                .append(stats.getCounter(ClaimStatistic.Counter.GENERATED)).append(", approved: ").append(numApproved)
-                .append(numApproved > 0 ? " licenses." : " license.");
+        String statSummary = "Rat check: Summary over all files. Unapproved: " +
+                stats.getCounter(ClaimStatistic.Counter.UNAPPROVED) + ", unknown: " +
+                stats.getCounter(ClaimStatistic.Counter.UNKNOWN) + ", generated: " +
+                stats.getCounter(ClaimStatistic.Counter.GENERATED) + ", approved: " + numApproved +
+                (numApproved > 0 ? " licenses." : " license.");
 
-        getLog().info(statSummary.toString());
+        getLog().info(statSummary);
         if (numUnapprovedLicenses < stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)) {
             if (consoleOutput) {
                 try {

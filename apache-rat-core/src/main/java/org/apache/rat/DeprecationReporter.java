@@ -56,7 +56,7 @@ public final class DeprecationReporter {
             } else {
                 buff.append("--").append(o.getLongOpt());
             }
-            DefaultLog.getInstance().warn(format("Option [%s] used.  %s", buff, o.getDeprecated().toString()));
+            DefaultLog.getInstance().warn(format("Option [%s] used. %s", buff, o.getDeprecated().toString()));
         };
     }
 

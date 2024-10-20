@@ -44,14 +44,13 @@ import java.util.SortedSet;
 import java.util.function.Function;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.XMLConfigurationReaderTest;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -62,16 +61,19 @@ import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
-import org.apache.rat.walker.NameBasedHiddenFileFilter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 public class ReportConfigurationTest {
 
     private ReportConfiguration underTest;
     private TestingLog log;
+
+    @TempDir
+    private File tempDir;
 
     @BeforeEach
     public void setup() {
@@ -216,7 +218,7 @@ public class ReportConfigurationTest {
     /**
      * Sets up underTest to have a set of licenses named after
      * <a href="https://en.wikipedia.org/wiki/List_of_fictional_cats_in_comics"></a>cartoon cats</a>
-     * all in the license family catz
+     * all in the license family 'catz'
      */
     private void addCatz() {
         underTest.addLicense(new TestingLicense("catz", "Garfield"));
@@ -231,7 +233,7 @@ public class ReportConfigurationTest {
     /**
      * Sets up underTest to have a set of licenses named after
      * <a href="https://en.wikipedia.org/wiki/List_of_fictional_dogs_in_comics"></a>cartoon cats</a>cartoon dogs</a>
-     * all in the license family dogz
+     * all in the license family 'dogz'
      */
     private void addDogz() {
         underTest.addLicense(new TestingLicense("dogz", "Odie"));
@@ -284,7 +286,6 @@ public class ReportConfigurationTest {
         assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(8);
     }
 
-
     @Test
     public void testRemoveBeforeAddApproveLicenseIds() {
         underTest.addLicense( new TestingLicense("TheCat"));
@@ -308,7 +309,6 @@ public class ReportConfigurationTest {
 
     @Test
     public void testAddLicense() {
-
         List<ILicense> expected = new ArrayList<>();
         assertThat(underTest.getLicenses(LicenseFilter.ALL)).isEmpty();
 
@@ -332,32 +332,33 @@ public class ReportConfigurationTest {
         assertThat(underTest.getCopyrightMessage()).isEqualTo("This is the message");
     }
 
-    @Test
-    public void filesToIgnoreTest() {
-
-        assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
-
-        underTest.setFrom(Defaults.builder().build());
-        assertThat(underTest.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
-
-        IOFileFilter filter = mock(IOFileFilter.class);
-        underTest.setFilesToIgnore(filter);
-        assertThat(underTest.getFilesToIgnore()).isEqualTo(filter);
+    DocumentName mkDocumentName(File f) {
+        return new DocumentName(f, new DocumentName(tempDir));
     }
-
     @Test
-    public void directoriesToIgnoreTest() {
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
+    public void exclusionTest() {
+        DocumentName baseDir = new DocumentName(tempDir);
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File("foo"))));
 
         underTest.setFrom(Defaults.builder().build());
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
 
-        underTest.setDirectoriesToIgnore(DirectoryFileFilter.DIRECTORY);
-        underTest.addDirectoryToIgnore(NameBasedHiddenFileFilter.HIDDEN);
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(OrFileFilter.class);
+        File f = new File(tempDir, ".hiddenDir");
+        assertTrue(f.mkdir(), () -> "Could not create directory " + f);
 
-        underTest.setDirectoriesToIgnore(null);
-        assertThat(underTest.getDirectoriesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
+        assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+
+        underTest.addIncludedCollection(StandardCollection.HIDDEN_DIR);
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+
+        underTest.addExcludedCollection(StandardCollection.HIDDEN_DIR);
+        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+
+        underTest.addExcludedFilter(DirectoryFileFilter.DIRECTORY);
+
+        File file = new File(tempDir, "newDir");
+        assertTrue(file.mkdirs(), () -> "Could not create directory " + file);
+        assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(file)));
     }
 
     @Test
@@ -540,32 +541,31 @@ public class ReportConfigurationTest {
         
         // verify level setting works.
         for (Level l : Level.values()) {
-        log.clear();
-        underTest.logFamilyCollisions(l);
-        underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.getCaptured().contains("CAT"), "'CAT' not found");
-        assertTrue(log.getCaptured().contains(l.name()), "logging not set to "+l);
+          log.clear();
+          underTest.logFamilyCollisions(l);
+          underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
+          assertTrue(log.getCaptured().contains("CAT"), "'CAT' not found");
+          assertTrue(log.getCaptured().contains(l.name()), "logging not set to "+l);
         }
-
     }
     
     @Test
     public void familyDuplicateOptionsTest() {
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
-        assertFalse(log.getCaptured().toString().contains("CAT"));
+        assertFalse(log.getCaptured().contains("CAT"));
         
         // verify default second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.getCaptured().toString().contains("CAT"));
+        assertTrue(log.getCaptured().contains("CAT"));
         assertEquals("name", underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
-                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst().get());
         
         underTest.familyDuplicateOption(Options.OVERWRITE);
         // verify second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.getCaptured().toString().contains("CAT"));
+        assertTrue(log.getCaptured().contains("CAT"));
         assertEquals("name2", underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
-                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(s -> s.getFamilyName()).findFirst().get());
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst().get());
 
         // verify fail throws exception
         underTest.familyDuplicateOption(Options.FAIL);
@@ -573,8 +573,7 @@ public class ReportConfigurationTest {
   
         underTest.familyDuplicateOption(Options.IGNORE);
     }
-    
-    
+
     @Test
     public void logLicenseCollisionTest() {
         // setup
@@ -601,7 +600,6 @@ public class ReportConfigurationTest {
                 .setMatcher( matcher ).setLicenseFamilies(underTest.getLicenseFamilies(LicenseFilter.ALL))
                 .build());
         assertTrue(log.getCaptured().contains("ERROR"));
-
     }
     
     @Test
@@ -619,7 +617,7 @@ public class ReportConfigurationTest {
         
         // verify default second setting ignores change
         underTest.addLicense(makeLicense.apply("license name2"));
-        assertTrue(log.getCaptured().toString().contains("WARN"));
+        assertTrue(log.getCaptured().contains("WARN"));
         assertEquals("license name",
                 underTest.getLicenses(LicenseFilter.ALL).stream().map(ILicense::getName).findFirst().get());
         
@@ -627,14 +625,12 @@ public class ReportConfigurationTest {
         underTest.addLicense(makeLicense.apply("license name2"));
         assertEquals("license name2",
                 underTest.getLicenses(LicenseFilter.ALL).stream().map(ILicense::getName).findFirst().get());
-        
-         
+
         // verify fail throws exception
         underTest.licenseDuplicateOption(Options.FAIL);
         assertThrows( IllegalArgumentException.class, ()-> underTest.addLicense(makeLicense.apply("another name")));
     }
 
-    
     /**
      * Validates that the configuration contains the default approved licenses.
      * @param config The configuration to test.
@@ -655,7 +651,7 @@ public class ReportConfigurationTest {
     }
 
     /**
-     * Validates that the configruation contains the default license families.
+     * Validates that the configuration contains the default license families.
      * @param config the configuration to test.
      */
     public static void validateDefaultLicenseFamilies(ReportConfiguration config, String...additionalIds) {
@@ -690,11 +686,8 @@ public class ReportConfigurationTest {
         assertThat(config.isAddingLicenses()).isFalse();
         assertThat(config.isAddingLicensesForced()).isFalse();
         assertThat(config.getCopyrightMessage()).isNull();
-        assertThat(config.getFilesToIgnore()).isExactlyInstanceOf(FalseFileFilter.class);
         assertThat(config.getStyleSheet()).withFailMessage("Stylesheet should not be null").isNotNull();
-        assertThat(config.getDirectoriesToIgnore()).withFailMessage("Directory filter should not be null").isNotNull();
-        assertThat(config.getDirectoriesToIgnore()).isExactlyInstanceOf(NameBasedHiddenFileFilter.class);
-        
+
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);
         validateDefaultLicenses(config);
@@ -704,11 +697,10 @@ public class ReportConfigurationTest {
      * A class to act as an output stream and count the number of close operations.
      */
     static class OutputStreamInterceptor extends OutputStream {
-        
         int closeCount = 0;
 
         @Override
-        public void write(int arg0) throws IOException {
+        public void write(int arg0) {
             throw new UnsupportedOperationException();
         }
         

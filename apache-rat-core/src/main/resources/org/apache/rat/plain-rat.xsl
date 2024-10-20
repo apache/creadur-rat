@@ -32,7 +32,7 @@ Archives: <xsl:value-of select='count(descendant::resource[attribute::type="ARCH
 Standards: <xsl:value-of select='count(descendant::resource[attribute::type="STANDARD"])'/>
 
 Apache Licensed: <xsl:value-of select='count(descendant::license[attribute::family="AL   "])'/>
-Generated Documents: <xsl:value-of select='count(descendant::license[attribute::family="GEN  "])'/>
+Generated Documents: <xsl:value-of select='count(descendant::resource[attribute::type="GENERATED"])'/>
 
 JavaDocs are generated, thus a license header is optional.
 Generated files do not require license headers.

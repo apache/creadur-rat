@@ -43,11 +43,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Tests to ensure the option setting works correctly.
  */
 public class ReportOptionTest  {
-
     // devhint: we do want to keep data in case of test failures, thus do not use TempDir here
-    static File baseDir = new File("target/optionTest");
+    static final File baseDir = new File("target/optionTest");
     static ReportConfiguration reportConfiguration;
-
 
     @BeforeAll
     public static void makeDirs() {
@@ -56,7 +54,7 @@ public class ReportOptionTest  {
 
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) throws Exception {
+    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         test.test();
     }
 
@@ -74,12 +72,11 @@ public class ReportOptionTest  {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
-
         public OptionsProvider() {
             super(BaseAntTask.unsupportedArgs());
         }
 
-        protected ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+        protected ReportConfiguration generateConfig(Pair<Option, String[]>... args) {
             BuildTask task = args[0].getKey() == null ? new BuildTask() : new BuildTask(args[0].getKey());
             task.setUp(args);
             task.buildRule.executeTarget(task.name);
@@ -97,8 +94,6 @@ public class ReportOptionTest  {
             Log oldLog = DefaultLog.setInstance(testLog);
             try {
                 ReportConfiguration config = generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
-            } catch (IOException e) {
-                fail(e.getMessage());
             } finally {
                 DefaultLog.setInstance(oldLog);
             }
@@ -158,7 +153,7 @@ public class ReportOptionTest  {
     /* $1 = target name
        $2 = attributes
        $3 = file name to read
-       $4 = classname.
+       $4 = classname
      */
     final static String ANT_FILE = "<?xml version='1.0'?>\n" +
             "\n" +

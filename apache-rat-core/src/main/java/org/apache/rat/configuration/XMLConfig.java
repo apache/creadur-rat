@@ -83,7 +83,7 @@ public class XMLConfig {
      * @return true if the child should be inlined.
      */
     public static boolean isInlineNode(String parent, String child) {
-        return Arrays.stream(INLINE_NODES).filter(s -> s[0].equals(parent) && s[1].equals(child)).findAny().isPresent();
+        return Arrays.stream(INLINE_NODES).anyMatch(s -> s[0].equals(parent) && s[1].equals(child));
     }
 
     /**
@@ -94,7 +94,7 @@ public class XMLConfig {
      * @return true if the child should be a child node.
      */
     public static boolean isLicenseChild(String child) {
-        return Arrays.stream(LICENSE_CHILDREN).filter(s -> s.equals(child)).findAny().isPresent();
+        return Arrays.asList(LICENSE_CHILDREN).contains(child);
     }
 
     /**
@@ -104,6 +104,6 @@ public class XMLConfig {
      * @return true if the child should be inlined.
      */
     public static boolean isLicenseInline(String child) {
-        return Arrays.stream(LICENSE_INLINE).filter(s -> s.equals(child)).findAny().isPresent();
+        return Arrays.asList(LICENSE_INLINE).contains(child);
     }
 }

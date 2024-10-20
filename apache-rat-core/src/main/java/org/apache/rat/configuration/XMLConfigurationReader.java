@@ -271,7 +271,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * Creates a child node processor for the builder described by the description.
      * @param builder The builder to set properties in.
      * @param description the description of the builder.
-     * @return
+     * @return child node.
      */
     private BiPredicate<Node, Description> matcherChildNodeProcessor(final AbstractBuilder builder, final Description description) {
         return (child, childDescription) -> {

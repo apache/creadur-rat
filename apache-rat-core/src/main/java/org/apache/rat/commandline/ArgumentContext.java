@@ -20,8 +20,6 @@ package org.apache.rat.commandline;
 
 import static java.lang.String.format;
 
-import java.io.IOException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
@@ -50,9 +48,8 @@ public class ArgumentContext {
 
     /**
      * Process the arguments specified in this context.
-     * @throws IOException if files can not be read.
      */
-    public void processArgs() throws IOException {
+    public void processArgs() {
         Arg.processArgs(this);
     }
 

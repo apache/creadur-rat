@@ -41,7 +41,7 @@ public final class TikaProcessor {
     /** A map of mime type string to non BINARY types.
      * "text" types are already handled everything else
      * BINARY unless listed here*/
-    private static Map<String, Document.Type> documentTypeMap;
+    private static final Map<String, Document.Type> documentTypeMap;
 
     static {
         documentTypeMap = new HashMap<>();
@@ -114,7 +114,7 @@ public final class TikaProcessor {
     public static String process(final Document document) throws RatDocumentAnalysisException {
         Metadata metadata = new Metadata();
         try (InputStream stream = document.inputStream()) {
-            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName());
+            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().getName());
             String result = TIKA.detect(stream, metadata);
             String[] parts = result.split("/");
             MediaType mediaType = new MediaType(parts[0], parts[1]);
