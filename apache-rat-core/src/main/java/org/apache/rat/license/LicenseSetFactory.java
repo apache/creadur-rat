@@ -68,7 +68,7 @@ public class LicenseSetFactory {
         /** Only approved licenses are returned */
         APPROVED,
         /** No licenses are returned */
-        NONE;
+        NONE
     }
 
     /** The set of defined families. */

@@ -616,7 +616,7 @@ public enum Arg {
      * Process the input setup.
      *
      * @param ctxt the context to work in.
-     * @throws IOException if an exclude file can not be read.
+     * @throws ConfigurationException if an exclude file can not be read.
      */
     private static void processInputArgs(final ArgumentContext ctxt) throws ConfigurationException {
         try {

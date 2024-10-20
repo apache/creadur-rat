@@ -54,7 +54,7 @@ import javax.xml.transform.stream.StreamSource;
  */
 public class XsdGenerator {
     /** The configuration to generate the XSD for. */
-    private ReportConfiguration cfg;
+    private final ReportConfiguration cfg;
     /** The XsdWriter being written to. */
     private XsdWriter writer;
     /** A map of component type to XML element name / property type */

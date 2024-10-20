@@ -46,7 +46,7 @@ public abstract class Document implements Comparable<Document> {
         /** A binary file. */
         BINARY,
         /** A standard document. */
-        STANDARD;
+        STANDARD
     }
 
     /** The path matcher used by this document */

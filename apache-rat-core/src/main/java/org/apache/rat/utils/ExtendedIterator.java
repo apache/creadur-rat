@@ -67,7 +67,7 @@ public final class ExtendedIterator<T> implements Iterator<T> {
      * @return an Extended iterator on the {@code stream} iterator.
      */
     public static <T> ExtendedIterator<T> create(final Stream<T> stream) {
-        return new ExtendedIterator<T>(stream.iterator(), true);
+        return new ExtendedIterator<>(stream.iterator(), true);
     }
 
     /**
@@ -78,7 +78,7 @@ public final class ExtendedIterator<T> implements Iterator<T> {
      * @return An iterator over the logical concatenation of the inner iterators.
      */
     public static <T> ExtendedIterator<T> flatten(final Iterator<Iterator<T>> it) {
-        return new ExtendedIterator<T>(new UnwindingIterator<T>(it), false);
+        return new ExtendedIterator<>(new UnwindingIterator<>(it), false);
     }
 
     /**
@@ -159,7 +159,7 @@ public final class ExtendedIterator<T> implements Iterator<T> {
             ((IteratorChain<T>) base).addIterator(other);
             return this;
         }
-        return new ExtendedIterator<T>(new IteratorChain<T>(this.base, other), this.removeDenied);
+        return new ExtendedIterator<>(new IteratorChain<>(this.base, other), this.removeDenied);
     }
 
     /**
@@ -169,7 +169,7 @@ public final class ExtendedIterator<T> implements Iterator<T> {
      * @return An iterator filtered by the predicate.
      */
     public ExtendedIterator<T> filter(final Predicate<T> predicate) {
-        return new ExtendedIterator<T>(new FilterIterator<>(this, predicate::test), this.removeDenied);
+        return new ExtendedIterator<>(new FilterIterator<>(this, predicate::test), this.removeDenied);
     }
 
     /**
@@ -179,7 +179,7 @@ public final class ExtendedIterator<T> implements Iterator<T> {
      * @param <U> The object type to return.
      */
     public <U> ExtendedIterator<U> map(final Function<T, U> function) {
-        return new ExtendedIterator<U>(new TransformIterator<>(this, function::apply), false);
+        return new ExtendedIterator<>(new TransformIterator<>(this, function::apply), false);
     }
 
     /**

@@ -19,7 +19,7 @@
 
 /**
  * The base package for the RAT tool.
- *
+ * <p>
  * In general UIs will use OptionsCollection to get the list of supported options and then create an instance of
  * ReportConfiguration that is then passed to the Reporter for processing and report generation.
  */

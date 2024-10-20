@@ -141,7 +141,7 @@ public class TikaProcessorTest {
 
     /**
      * Build a document with the specific input stream
-     * @return
+     * @return a document with the specific input stream
      */
     private static Document mkDocument(final InputStream stream, DocumentNameMatcher nameMatcher) {
 

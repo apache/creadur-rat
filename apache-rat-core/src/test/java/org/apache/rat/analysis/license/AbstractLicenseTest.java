@@ -99,7 +99,7 @@ abstract public class AbstractLicenseTest {
     @MethodSource("parameterProvider")
     public void testEmbeddedStrings(String id, String family, String name, String notes, String[][] targets)
             throws IOException {
-        String formats[] = { "%s", "now is not the time %s for copyright", "#%s", "##%s", "## %s", "##%s##", "## %s ##",
+        String[] formats = { "%s", "now is not the time %s for copyright", "#%s", "##%s", "## %s", "##%s##", "## %s ##",
                 "/*%s*/", "/* %s */" };
 
         ILicense license = extractCategory(family, id);

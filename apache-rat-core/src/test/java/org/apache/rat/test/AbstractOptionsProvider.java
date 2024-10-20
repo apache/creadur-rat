@@ -596,13 +596,13 @@ public abstract class AbstractOptionsProvider {
     protected void logLevelTest() {
         Option option = Arg.LOG_LEVEL.find("log-level");
         String[] args = {null};
-        Level logLevel = ((DefaultLog) DefaultLog.getInstance()).getLevel();
+        Level logLevel = DefaultLog.getInstance().getLevel();
         try {
             for (Level level : Level.values()) {
                 try {
                     args[0] = level.name();
                     ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                    assertEquals(level, ((DefaultLog) DefaultLog.getInstance()).getLevel());
+                    assertEquals(level, DefaultLog.getInstance().getLevel());
                 } catch (IOException e) {
                     fail(e.getMessage());
                 }

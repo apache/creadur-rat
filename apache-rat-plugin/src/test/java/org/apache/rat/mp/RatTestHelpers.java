@@ -97,7 +97,7 @@ public final class RatTestHelpers {
             }
         } else if (pSource.isFile()) {
             try (final FileInputStream fis = new FileInputStream(pSource);
-                    final FileOutputStream fos = new FileOutputStream(pTarget);) {
+                    final FileOutputStream fos = new FileOutputStream(pTarget)) {
                 final byte[] buffer = new byte[8192];
                 for (;;) {
                     int res = fis.read(buffer);

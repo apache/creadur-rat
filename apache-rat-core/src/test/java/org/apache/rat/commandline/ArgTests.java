@@ -50,7 +50,7 @@ public class ArgTests {
             public void setOut(File file) {
                 actual = file;
             }
-        };
+        }
 
         File expected = new File(name);
 

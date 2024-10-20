@@ -40,7 +40,8 @@ public final class HgIgnoreProcessor extends DescendingFileProcessor {
         REGEXP,
         /** Glob processing */
         GLOB
-    };
+    }
+
     /** The line that changes the syntax processing state.*/
     private static final Pattern SYNTAX_CHECK = Pattern.compile("^\\s?syntax:\\s+(glob|regexp)\\s?");
     /** The syntax state */

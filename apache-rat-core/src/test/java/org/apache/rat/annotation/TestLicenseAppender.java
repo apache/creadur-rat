@@ -231,7 +231,7 @@ public class TestLicenseAppender {
             String line = reader.readLine();
             assertEquals(newFirstLine, line, "First line is incorrect");
             while ((line = reader.readLine()) != null) {
-                if (line.length() == 0) {
+                if (line.isEmpty()) {
                     line = reader.readLine();
                     break;
                 }
@@ -395,7 +395,7 @@ public class TestLicenseAppender {
             assertEquals("/*", r.readLine());
             String line = null;
             while ((line = r.readLine()) != null) {
-                if (line.trim().length() == 0) {
+                if (line.trim().isEmpty()) {
                     break;
                 }
             }

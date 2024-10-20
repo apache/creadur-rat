@@ -159,7 +159,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @param name the name for the license
          * @return this builder for chaining.
          */
-        public Builder setName(String name);
+        Builder setName(String name);
 
         /**
          * Sets the set of license families to use duirng build.
@@ -167,7 +167,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @param licenseFamilies the license families to use
          * @return this builder.
          */
-        public Builder setLicenseFamilies(SortedSet<ILicenseFamily> licenseFamilies);
+        Builder setLicenseFamilies(SortedSet<ILicenseFamily> licenseFamilies);
 
         /**
          * Builds the license.
@@ -175,6 +175,6 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * @return A new License implementation.
          */
         @Override
-        public ILicense build();
+        ILicense build();
     }
 }

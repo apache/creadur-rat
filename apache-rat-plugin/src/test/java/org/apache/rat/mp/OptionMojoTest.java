@@ -96,7 +96,7 @@ public class OptionMojoTest {
            File pomFile = pomPath.toFile();
            pomFile.getParentFile().mkdirs();
            try (FileWriter writer = new FileWriter(pomFile)) {
-               writer.append(format(POM_FMT, keyOption.name, sb.toString()));
+               writer.append(format(POM_FMT, keyOption.name, sb));
                writer.flush();
            }
            try {

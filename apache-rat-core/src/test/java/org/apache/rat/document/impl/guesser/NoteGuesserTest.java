@@ -35,7 +35,7 @@ public class NoteGuesserTest {
     @MethodSource("nameData")
     public void testMatches(DocumentName testingName, boolean expected) {
         boolean actual = NoteGuesser.isNote(new TestingDocument(testingName));
-        assertEquals( expected, NoteGuesser.isNote(new TestingDocument(testingName)), () -> testingName.getName());
+        assertEquals( expected, NoteGuesser.isNote(new TestingDocument(testingName)), testingName::getName);
     }
 
     private static Stream<Arguments> nameData() {

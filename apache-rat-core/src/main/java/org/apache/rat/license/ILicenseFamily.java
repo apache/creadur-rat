@@ -24,10 +24,10 @@ package org.apache.rat.license;
 public interface ILicenseFamily extends Comparable<ILicenseFamily> {
 
     /** The category for generated files */
-    static final String GENTERATED_CATEGORY = "GEN  ";
+    String GENTERATED_CATEGORY = "GEN  ";
     
     /** The category for unknown licenses */
-    static final String UNKNOWN_CATEGORY = "?????";
+    String UNKNOWN_CATEGORY = "?????";
 
     /**
      * Gets the family name.

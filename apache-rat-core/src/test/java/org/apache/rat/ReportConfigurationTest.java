@@ -344,7 +344,7 @@ public class ReportConfigurationTest {
         underTest.setFrom(Defaults.builder().build());
 
         File f = new File(tempDir, ".hiddenDir");
-        assertTrue(f.mkdir(), () -> "Could not create directory " + f.toString());
+        assertTrue(f.mkdir(), () -> "Could not create directory " + f);
 
         assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
@@ -552,18 +552,18 @@ public class ReportConfigurationTest {
     @Test
     public void familyDuplicateOptionsTest() {
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
-        assertFalse(log.getCaptured().toString().contains("CAT"));
+        assertFalse(log.getCaptured().contains("CAT"));
         
         // verify default second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.getCaptured().toString().contains("CAT"));
+        assertTrue(log.getCaptured().contains("CAT"));
         assertEquals("name", underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
                 .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst().get());
         
         underTest.familyDuplicateOption(Options.OVERWRITE);
         // verify second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.getCaptured().toString().contains("CAT"));
+        assertTrue(log.getCaptured().contains("CAT"));
         assertEquals("name2", underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
                 .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst().get());
 
@@ -617,7 +617,7 @@ public class ReportConfigurationTest {
         
         // verify default second setting ignores change
         underTest.addLicense(makeLicense.apply("license name2"));
-        assertTrue(log.getCaptured().toString().contains("WARN"));
+        assertTrue(log.getCaptured().contains("WARN"));
         assertEquals("license name",
                 underTest.getLicenses(LicenseFilter.ALL).stream().map(ILicense::getName).findFirst().get());
         

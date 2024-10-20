@@ -42,7 +42,7 @@ public interface Log {
         /** Log error only. */
         ERROR,
         /** Log nothing. */
-        OFF };
+        OFF }
 
     /**
      * Gets the log level that is enabled. If encapsulated logger does not report level

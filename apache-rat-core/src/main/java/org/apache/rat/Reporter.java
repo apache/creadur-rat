@@ -79,7 +79,6 @@ public class Reporter {
 
     /**
      * Initializes the reporter.
-     * @return this reporter
      * @throws RatException on error.
      */
     private void init() throws RatException  {
@@ -138,7 +137,7 @@ public class Reporter {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         try (OutputStream out = output.get();
-             InputStream styleIn = stylesheet.get();) {
+             InputStream styleIn = stylesheet.get()) {
             transformer = tf.newTransformer(new StreamSource(styleIn));
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -146,7 +145,7 @@ public class Reporter {
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new DOMSource(document),
-                    new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+                    new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
         } catch (TransformerException | IOException e) {
             throw new RatException(e);
         }

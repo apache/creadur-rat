@@ -129,7 +129,7 @@ public final class Naming {
                 StringBuilder desc = new StringBuilder();
                 AntOption antOption = new AntOption(o);
                 if (antOption.isDeprecated()) {
-                    desc.append("[").append(antOption.getDeprecated().toString()).append("] ");
+                    desc.append("[").append(antOption.getDeprecated()).append("] ");
                 }
                 return desc.append(StringUtils.defaultIfEmpty(antOption.getDescription(), "")).toString();
             };
@@ -138,7 +138,7 @@ public final class Naming {
                 StringBuilder desc = new StringBuilder();
                 MavenOption mavenOption = new MavenOption(o);
                 if (mavenOption.isDeprecated()) {
-                    desc.append("[").append(mavenOption.getDeprecated().toString()).append("] ");
+                    desc.append("[").append(mavenOption.getDeprecated()).append("] ");
                 }
                 return desc.append(StringUtils.defaultIfEmpty(mavenOption.getDescription(), "")).toString();
             };

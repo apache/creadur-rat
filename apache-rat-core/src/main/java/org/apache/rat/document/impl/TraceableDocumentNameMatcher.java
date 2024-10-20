@@ -175,7 +175,7 @@ public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
     public String toString() {
         StringBuilder sb = new StringBuilder(name.get());
         if (delegate instanceof TraceableDocumentNameMatcher) {
-            sb.append(" ").append(delegate.toString());
+            sb.append(" ").append(delegate);
         }
         return sb.toString();
     }

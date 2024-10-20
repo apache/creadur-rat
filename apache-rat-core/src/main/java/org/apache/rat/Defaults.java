@@ -157,7 +157,7 @@ public final class Defaults {
      */
     public Collection<StandardCollection> getStandardExclusion() {
         return Arrays.asList(StandardCollection.MISC, StandardCollection.HIDDEN_DIR);
-    };
+    }
 
 
     /**
