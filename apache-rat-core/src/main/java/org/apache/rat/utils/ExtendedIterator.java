@@ -50,7 +50,7 @@ public final class ExtendedIterator<T> implements Iterator<T> {
      * which does not permit <code>.remove()</code>
      * even if <code>it</code> does.
      * @param it The Iterator to wrap.
-     * @return an Extended iterator on {@Code it}
+     * @return an Extended iterator on {@code it}
      */
     public static <T> ExtendedIterator<T> createNoRemove(final Iterator<T> it) {
         return new ExtendedIterator<>(it, true);
@@ -66,7 +66,7 @@ public final class ExtendedIterator<T> implements Iterator<T> {
      * @param stream the Stream to create an iterator from.
      * @return an Extended iterator on the {@code stream} iterator.
      */
-    public static <T> ExtendedIterator<T> ofStream(final Stream<T> stream) {
+    public static <T> ExtendedIterator<T> create(final Stream<T> stream) {
         return new ExtendedIterator<T>(stream.iterator(), true);
     }
 
