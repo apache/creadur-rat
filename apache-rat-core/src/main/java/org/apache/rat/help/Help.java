@@ -73,12 +73,7 @@ public final class Help extends AbstractHelp {
         String syntax = format("java -jar apache-rat/target/apache-rat-%s.jar [options] [DIR|ARCHIVE]", versionInfo.getVersion());
         helpFormatter.printHelp(writer, syntax, header("Available options"), opts, header("Argument Types"));
 
-        String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);
-        for (Map.Entry<String, Supplier<String>> argInfo : OptionCollection.getArgumentTypes().entrySet()) {
-            writer.format("%n<%s>%n", argInfo.getKey());
-            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
-                    argumentPadding + argInfo.getValue().get());
-        }
+        String argumentPadding = printArgumentTypes();
 
         writer.println(header("Standard Collections"));
         for (StandardCollection sc : StandardCollection.values()) {
@@ -107,12 +102,13 @@ public final class Help extends AbstractHelp {
     /**
      * Prints the list of argument types to the writer.
      */
-    public void printArgumentTypes() {
+    public String printArgumentTypes() {
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);
         for (Map.Entry<String, Supplier<String>> argInfo : OptionCollection.getArgumentTypes().entrySet()) {
             writer.format("%n<%s>%n", argInfo.getKey());
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                     argumentPadding + argInfo.getValue().get());
         }
+        return argumentPadding;
     }
 }

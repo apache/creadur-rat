@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.util.Set;
 
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HelpTest {
@@ -47,6 +48,8 @@ public class HelpTest {
                 TextUtils.assertContains("--" + option.getLongOpt() + " ", result);
             }
         }
+
+        assertThat(result).doesNotEndWith("..");
     }
 
     @Test
@@ -63,5 +66,6 @@ public class HelpTest {
                 TextUtils.assertPatternInTarget(format("^<%s>", option.getArgName()), result);
             }
         }
+        assertThat(result).doesNotEndWith("..");
     }
 }
