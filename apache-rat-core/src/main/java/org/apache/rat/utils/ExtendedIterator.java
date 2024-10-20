@@ -32,10 +32,10 @@ import org.apache.commons.collections4.iterators.IteratorChain;
 import org.apache.commons.collections4.iterators.TransformIterator;
 
 /**
- * A ExtendedIterator is an Iterator wrapping around a plain
+ * An ExtendedIterator is an Iterator wrapping around a plain
  * (or presented as plain) Iterator. The wrapping allows the usual
  * operations found on streams (filtering, concatenating, mapping) to be done on an Iterator derived
- * from some other source.  It also provides convenience methods for common operations.
+ * from some other source. It also provides convenience methods for common operations.
  * @param <T> The type of object returned from the iterator.
  */
 public final class ExtendedIterator<T> implements Iterator<T> {
@@ -151,7 +151,7 @@ public final class ExtendedIterator<T> implements Iterator<T> {
     /**
      * Chains the {@code other} iterator to the end of this one.
      * @param other the other iterator to extend this iterator with.
-     * @return A new iterator returning the contenst of {@code this} iterator followed by the contents of {@code other{ iterator.}}
+     * @return A new iterator returning the contents of {@code this} iterator followed by the contents of {@code other{ iterator.}}
      * @param <X> The type of object returned from the other iterator.
      */
     public <X extends T> ExtendedIterator<T> andThen(final Iterator<X> other) {
@@ -163,8 +163,8 @@ public final class ExtendedIterator<T> implements Iterator<T> {
     }
 
     /**
-     * Filter this iterator using a predicate.  Only items for which the predicate returns true will
-     * be included in the result.
+     * Filter this iterator using a predicate.
+     * Only items for which the predicate returns {@code true} will be included in the result.
      * @param predicate The predicate to filter the items with.
      * @return An iterator filtered by the predicate.
      */
