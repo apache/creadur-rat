@@ -141,7 +141,7 @@ public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
     /**
      * Performs a logical "AND" across the collection of matchers.
      * @param matchers the matchers to check.
-     * @return a matcher that returns TRUE if all of the enclosed matchers returns true.
+     * @return a matcher that returns TRUE if all the enclosed matchers return true.
      */
     public static TraceableDocumentNameMatcher and(final TraceableDocumentNameMatcher... matchers) {
         if (matchers.length == 0) {
