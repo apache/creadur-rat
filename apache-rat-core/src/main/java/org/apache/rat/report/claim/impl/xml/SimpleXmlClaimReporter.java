@@ -102,9 +102,11 @@ public class SimpleXmlClaimReporter extends AbstractReport {
 
     @Override
     public void startReport() {
+        // does nothing
     }
 
     @Override
     public void endReport() {
+        // does nothing
     }
 }

@@ -94,7 +94,7 @@ public class XMLConfig {
      * @return true if the child should be a child node.
      */
     public static boolean isLicenseChild(String child) {
-        return Arrays.stream(LICENSE_CHILDREN).anyMatch(s -> s.equals(child));
+        return Arrays.asList(LICENSE_CHILDREN).contains(child);
     }
 
     /**
@@ -104,6 +104,6 @@ public class XMLConfig {
      * @return true if the child should be inlined.
      */
     public static boolean isLicenseInline(String child) {
-        return Arrays.stream(LICENSE_INLINE).anyMatch(s -> s.equals(child));
+        return Arrays.asList(LICENSE_INLINE).contains(child);
     }
 }
