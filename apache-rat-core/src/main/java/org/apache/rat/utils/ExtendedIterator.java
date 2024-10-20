@@ -38,12 +38,12 @@ import org.apache.commons.collections4.iterators.TransformIterator;
  * from some other source.  It also provides convenience methods for common operations.
  * @param <T> The type of object returned from the iterator.
  */
-public class ExtendedIterator<T> implements Iterator<T> {
+public final class ExtendedIterator<T> implements Iterator<T> {
     /**
      * Set to <code>true</code> if this wrapping doesn't permit the use of
      * {@link #remove()}, otherwise removal is delegated to the base iterator.
      */
-    protected final boolean removeDenied;
+    private final boolean removeDenied;
 
     /**
      * Answer an ExtendedIterator wrapped round <code>it</code>,
@@ -67,9 +67,7 @@ public class ExtendedIterator<T> implements Iterator<T> {
      * @return an Extended iterator on the {@code stream} iterator.
      */
     public static <T> ExtendedIterator<T> ofStream(final Stream<T> stream) {
-        return new ExtendedIterator<T>(stream.iterator(), true) {
-            // do nothing
-        };
+        return new ExtendedIterator<T>(stream.iterator(), true);
     }
 
     /**
@@ -79,8 +77,8 @@ public class ExtendedIterator<T> implements Iterator<T> {
      * @param it An iterator of iterators.
      * @return An iterator over the logical concatenation of the inner iterators.
      */
-    public static <T> ExtendedIterator<T> unwind(final Iterator<Iterator<T>> it) {
-        return new ExtendedIterator<>(new UnwindingIterator<T>(it), false);
+    public static <T> ExtendedIterator<T> flatten(final Iterator<Iterator<T>> it) {
+        return new ExtendedIterator<T>(new UnwindingIterator<T>(it), false);
     }
 
     /**
@@ -105,22 +103,14 @@ public class ExtendedIterator<T> implements Iterator<T> {
     }
 
     /** the base iterator that we wrap */
-    protected final Iterator<? extends T> base;
-
-    /**
-     * Constructor.
-     * @param base The iterator to wrap.
-     */
-    protected ExtendedIterator(final Iterator<? extends T> base) {
-        this(base, false);
-    }
+    private final Iterator<? extends T> base;
 
     /**
      * Initialise this wrapping with the given base iterator and remove-control.
      * @param base the base iterator that this iterator wraps
      * @param removeDenied true if .remove() must throw an exception
      */
-    protected ExtendedIterator(final Iterator<? extends T> base, final boolean removeDenied) {
+    private ExtendedIterator(final Iterator<? extends T> base, final boolean removeDenied) {
         this.base = base;
         this.removeDenied = removeDenied;
     }

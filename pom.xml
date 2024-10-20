@@ -594,6 +594,19 @@ agnostic home for software distribution comprehension and audit tools.
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
+            <id>enforce-no-package-cycles</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <skip>trueq</skip>
+              <rules>
+                <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule"/>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
             <!-- This checks the bytecode version of the dependencies transitively -->
             <id>enforce-bytecode-version</id>
             <goals>
@@ -618,6 +631,11 @@ agnostic home for software distribution comprehension and audit tools.
             <artifactId>extra-enforcer-rules</artifactId>
             <version>1.9.0</version>
           </dependency>
+            <dependency>
+              <groupId>org.apache.ws.commons.axiom</groupId>
+              <artifactId>no-package-cycles-enforcer-rule</artifactId>
+              <version>1.2.20</version>
+            </dependency>
         </dependencies>
       </plugin>
       <plugin>
