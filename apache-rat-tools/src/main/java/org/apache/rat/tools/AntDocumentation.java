@@ -275,7 +275,7 @@ public final class AntDocumentation {
         /**
          * Write a table.
          * @param writer the Writer to write to.
-         * @param table the Table to write. A collections of collectons of Strings.
+         * @param table the Table to write. A collection of collections of Strings.
          * @param pattern the pattern before and after the table.
          * @param caption the caption for the table.
          * @throws IOException on error.
