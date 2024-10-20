@@ -15,11 +15,11 @@
 ~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
---------------------------
-Option Name Cross Reference
---------------------------
+                   ------------------------------
+                   Default Licenses and Matchers
+                   ------------------------------
 
-The following lists the Licenses, and Matchers that are available by default.
+ The following lists the Licenses, and Matchers that are available by default.
 
 +------------------------------------------+
 #include( "default_licenses.txt" )
