@@ -35,7 +35,7 @@ import static java.lang.String.format;
  * Also provides a printable name for general logging.
  */
 public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
-    /** The envrionment variable to set to enable tracing for the PatternMatcher execution */
+    /** The environment variable to set to enable tracing for the PatternMatcher execution */
     public static final String ENV_VAR = TraceableDocumentNameMatcher.class.getName();
     /** The delegate that will do all the work */
     private final DocumentNameMatcher delegate;
