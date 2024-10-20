@@ -600,7 +600,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <phase>test</phase>
             <configuration>
-              <skip>trueq</skip>
+              <skip>true</skip>
               <rules>
                 <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule"/>
               </rules>
