@@ -39,7 +39,7 @@ public class ArchiveEntryDocument extends Document {
 
     /**
      * Creates an Archive entry.
-     * @param outerName the name of this entry from outside the archive
+     * @param outerName the name of this entry from outside the archive.
      * @param contents the contents of the entry.
      * @param nameMatcher the name matcher to filter contents with.
      */
