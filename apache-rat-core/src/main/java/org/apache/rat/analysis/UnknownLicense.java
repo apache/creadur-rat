@@ -18,11 +18,11 @@
  */
 package org.apache.rat.analysis;
 
+import java.util.Objects;
+
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.ILicenseFamilyBuilder;
-
-import java.util.Objects;
 
 /**
  * An ILicense implementation that represents an unknown license.
@@ -38,6 +38,9 @@ public final class UnknownLicense implements ILicense {
      */
     public static final UnknownLicense INSTANCE = new UnknownLicense();
 
+    /**
+     * The license family for the unknown license.
+     */
     private final ILicenseFamily family;
 
     /**
@@ -64,7 +67,7 @@ public final class UnknownLicense implements ILicense {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         return super.equals(o);
     }
 

@@ -18,8 +18,6 @@
  */
 package org.apache.rat.analysis;
 
-import static java.lang.String.format;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
@@ -28,6 +26,8 @@ import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * A Document analyzer that analyses document headers for a license.
