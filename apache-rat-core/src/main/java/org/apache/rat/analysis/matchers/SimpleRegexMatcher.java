@@ -29,8 +29,10 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 @ConfigComponent(type = ComponentType.MATCHER, name = "regex", desc = "Performs a regex match using the enclosed the text")
 public class SimpleRegexMatcher extends AbstractHeaderMatcher {
-    
-    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The pattern to match", name="expr", parameterType = String.class)
+    /**
+     * The regular expression pattern to match.
+     */
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The pattern to match", name = "expr", parameterType = String.class)
     private final Pattern pattern;
 
     /**
@@ -41,7 +43,7 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
      * @param pattern the pattern to match. Pattern will only match a single line
      * from the input stream.
      */
-    public SimpleRegexMatcher(String id, Pattern pattern) {
+    public SimpleRegexMatcher(final String id, final Pattern pattern) {
         super(id);
         this.pattern = pattern;
     }
@@ -51,7 +53,7 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
+    public boolean matches(final IHeaders headers) {
         return pattern.matcher(headers.raw()).find();
     }
 }

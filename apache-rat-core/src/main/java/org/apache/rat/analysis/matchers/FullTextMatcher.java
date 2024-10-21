@@ -33,8 +33,10 @@ import org.apache.rat.analysis.IHeaders;
  * </p>
  */
 public class FullTextMatcher extends SimpleTextMatcher {
-
-    private final String fullText;
+    /**
+     * The text that we are searching for.  This text has been pruned and converted to lower case.
+     */
+    private final String prunedText;
 
     /**
      * Constructs the full text matcher with a unique random id and the specified
@@ -42,7 +44,7 @@ public class FullTextMatcher extends SimpleTextMatcher {
      *
      * @param simpleText the text to match
      */
-    public FullTextMatcher(String simpleText) {
+    public FullTextMatcher(final String simpleText) {
         this(null, simpleText);
     }
 
@@ -52,9 +54,9 @@ public class FullTextMatcher extends SimpleTextMatcher {
      * @param id the id for the matcher
      * @param simpleText the text to match
      */
-    public FullTextMatcher(String id, String simpleText) {
+    public FullTextMatcher(final String id, final String simpleText) {
         super(id, simpleText);
-        this.fullText = prune(simpleText).toLowerCase(Locale.ENGLISH);
+        this.prunedText = prune(simpleText).toLowerCase(Locale.ENGLISH);
     }
 
     /**
@@ -63,7 +65,7 @@ public class FullTextMatcher extends SimpleTextMatcher {
      * @param text The text to remove extra chars from.
      * @return the pruned text.
      */
-    public static String prune(String text) {
+    public static String prune(final String text) {
         final int length = text.length();
         final StringBuilder buffer = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
@@ -76,9 +78,9 @@ public class FullTextMatcher extends SimpleTextMatcher {
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
-        if (headers.pruned().length() >= fullText.length()) { // we have enough data to match
-            return headers.pruned().contains(fullText);
+    public boolean matches(final IHeaders headers) {
+        if (headers.pruned().length() >= prunedText.length()) { // we have enough data to match
+            return headers.pruned().contains(prunedText);
         }
         return false;
     }
