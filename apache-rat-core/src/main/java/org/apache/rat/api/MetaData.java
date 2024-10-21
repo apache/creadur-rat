@@ -30,7 +30,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.tika.mime.MediaType;
 
 /**
- * Data about the document under test..
+ * Data about the document under test.
  */
 public class MetaData {
 
@@ -38,9 +38,11 @@ public class MetaData {
     private final SortedSet<ILicense> matchedLicenses;
     /** The list of License Family Categories that are approved */
     private final Set<String> approvedLicenses;
-
+    /** The media type for this document */
     private MediaType mediaType;
+    /** The document thpe for this document */
     private Document.Type documentType;
+    /** The sample of the header for this document */
     private String sampleHeader;
 
     /**
@@ -63,7 +65,7 @@ public class MetaData {
      * Sets the defined media type.
      * @param mediaType the media type.
      */
-    public void setMediaType(MediaType mediaType) {
+    public void setMediaType(final MediaType mediaType) {
         this.mediaType = mediaType;
     }
 
@@ -79,7 +81,7 @@ public class MetaData {
      * Sets the set of approved licenses.
      * @param approvedLicenseFamilies the set of approved license families.
      */
-    public void setApprovedLicenses(Set<ILicenseFamily> approvedLicenseFamilies) {
+    public void setApprovedLicenses(final Set<ILicenseFamily> approvedLicenseFamilies) {
         licenses().filter(lic -> approvedLicenseFamilies.contains(lic.getLicenseFamily()))
                 .forEach(lic -> approvedLicenses.add(lic.getId()));
     }
@@ -105,7 +107,7 @@ public class MetaData {
      * @param license the license to check;
      * @return {@code true} if the license is in the list of approved licenses, {@code false} otherwise.
      */
-    public boolean isApproved(ILicense license) {
+    public boolean isApproved(final ILicense license) {
         return approvedLicenses.contains(license.getId());
     }
 
@@ -121,7 +123,7 @@ public class MetaData {
      * Sets the sample header.  This is the header that was collected during processing.
      * @param sampleHeader the sample header to use.
      */
-    public void setSampleHeader(String sampleHeader) {
+    public void setSampleHeader(final String sampleHeader) {
         this.sampleHeader = sampleHeader;
     }
 
@@ -133,11 +135,11 @@ public class MetaData {
         return sampleHeader;
     }
 
-    /** 
+    /**
      * Sets the document type.
      * @param type the document type for the document being recorded.
      */
-    public void setDocumentType(Document.Type type) {
+    public void setDocumentType(final Document.Type type) {
         this.documentType = type;
     }
 
@@ -153,16 +155,21 @@ public class MetaData {
      * Add the license information to the metadata.
      * @param license the license to add metadata for.
      */
-    public void reportOnLicense(ILicense license) {
+    public void reportOnLicense(final ILicense license) {
         this.matchedLicenses.add(license);
     }
 
-    public void removeLicenses(Predicate<ILicense> filter) {
+    /**
+     * Removed matched licenses based on a predicate. Will remove licenses for which the predicate
+     * returns true.
+     * @param filter the predicate to use.
+     */
+    public void removeLicenses(final Predicate<ILicense> filter) {
         this.matchedLicenses.removeIf(filter);
     }
-    
+
     @Override
     public String toString() {
-        return String.format( "MetaData[%s license, %s approved]", matchedLicenses.size(), approvedLicenses.size());
+        return String.format("MetaData[%s license, %s approved]", matchedLicenses.size(), approvedLicenses.size());
     }
 }

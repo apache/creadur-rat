@@ -102,7 +102,7 @@ public class Reporter {
                     statistic = new ClaimStatistic();
                 }
             }  catch (Exception e) {
-                throw RatException.makeInstance(e);
+                throw RatException.makeRatException(e);
             }
         }
     }
