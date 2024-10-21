@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-412" type="fix" dev="claudenw">
+        Fix checkstyle issues in analysis package.
+      </action>
       <action issue="RAT-390" type="add" dev="claudenw">
         Move and reimplement exclusion configuration from Maven plugin to RAT core. ExclusionProcessor is the central place to handle file inclusions and exclusions now.
       </action>
