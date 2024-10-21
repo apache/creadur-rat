@@ -35,7 +35,7 @@ public class OrMatcher extends AbstractMatcherContainer {
      * Constructs the matcher from the enclosed matchers.
      *
      * @param enclosed the enclosed matchers.
-     * @param resource the name of the resource if the collection of matchers was read from a file or resource.  May be {@code null}.
+     * @param resource the name of the resource if the collection of matchers was read from a file or resource. May be {@code null}.
      */
     public OrMatcher(final Collection<? extends IHeaderMatcher> enclosed, final String resource) {
         this(null, enclosed, resource);
@@ -46,7 +46,7 @@ public class OrMatcher extends AbstractMatcherContainer {
      *
      * @param id the id to use.
      * @param enclosed the enclosed matchers.
-     * @param resource the name of the resource if the collection of matchers was read from a file or resource.  May be {@code null}.
+     * @param resource the name of the resource if the collection of matchers was read from a file or resource. May be {@code null}.
      */
     public OrMatcher(final String id, final Collection<? extends IHeaderMatcher> enclosed, final String resource) {
         super(id, enclosed, resource);

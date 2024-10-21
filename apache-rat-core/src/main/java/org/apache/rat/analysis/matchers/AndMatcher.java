@@ -38,18 +38,18 @@ public class AndMatcher extends AbstractMatcherContainer {
      * @param id the to use. If null or an empty string a unique random id will be
      * created.
      * @param enclosed the enclosed collection.
-     * @param resource the name of the resource the collection was read from if any.  may be null.
+     * @param resource the name of the resource the collection was read from if any. May be null.
      */
     public AndMatcher(final String id, final Collection<? extends IHeaderMatcher> enclosed, final String resource) {
         super(id, enclosed, resource);
     }
 
     /**
-     * Constructs the AndMatcher with the a unique random id and the enclosed
+     * Constructs the AndMatcher with an unique random id and the enclosed
      * collection.
      *
      * @param enclosed the enclosed collection.
-     * @param resource the name of the resource the collection was read from if any.  may be null.
+     * @param resource the name of the resource the collection was read from if any. May be null.
      */
     public AndMatcher(final Collection<? extends IHeaderMatcher> enclosed, final String resource) {
         this(null, enclosed, resource);

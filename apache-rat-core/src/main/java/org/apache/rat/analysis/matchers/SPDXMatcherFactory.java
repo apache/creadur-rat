@@ -62,7 +62,7 @@ public final class SPDXMatcherFactory {
 
     /**
      * The regular expression to locate the SPDX license identifier in the text
-     * stream
+     * stream.
      */
     private static final Pattern GROUP_SELECTOR = Pattern.compile(".*" + LICENSE_IDENTIFIER + "\\s([A-Za-z0-9\\.\\-]+)");
 
@@ -72,7 +72,7 @@ public final class SPDXMatcherFactory {
     private final Set<String> lastMatch;
 
     /**
-     * Flag to indicate this document has been checkedfor SPDX tags.
+     * Flag to indicate this document has been checked for SPDX tags.
      */
     private boolean checked;
 
@@ -84,7 +84,7 @@ public final class SPDXMatcherFactory {
     }
 
     /**
-     * reset the matching for the next document.
+     * Reset the matching for the next document.
      */
     private void reset() {
         lastMatch.clear();
@@ -119,7 +119,7 @@ public final class SPDXMatcherFactory {
     private boolean check(final String documentText, final Match caller) {
         /*
         If the documentText has not been seen yet see if we can extract the SPDX id from the documentText.
-        If so then see for each match extract and add the name to lastMatch
+        If so then see for each match extract and add the name to lastMatch.
         */
         if (!checked) {
             checked = true;
@@ -146,8 +146,8 @@ public final class SPDXMatcherFactory {
         private final String spdxId;
 
         /**
-         * Gets the name of this matcher.  Same as the SPDX identifier.
-         * @return
+         * Gets the name of this matcher. Same as the SPDX identifier.
+         * @return name of this matcher, that equals the SPDX identifier.
          */
         public String getName() {
             return spdxId;
