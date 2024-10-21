@@ -28,8 +28,10 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 @ConfigComponent(type = ComponentType.MATCHER, name = "text", desc = "Matches the enclosed text")
 public class SimpleTextMatcher extends AbstractHeaderMatcher {
-    
-    @ConfigComponent(type = ComponentType.PARAMETER, name = "simpleText", desc = "The text to match", required=true)
+    /**
+     * The text to match.
+     */
+    @ConfigComponent(type = ComponentType.PARAMETER, name = "simpleText", desc = "The text to match", required = true)
     private final String simpleText;
 
     /**
@@ -38,7 +40,7 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
      * @param simpleText The pattern to match. Will only match a single line from
      * the input stream.
      */
-    public SimpleTextMatcher(String simpleText) {
+    public SimpleTextMatcher(final String simpleText) {
         this(null, simpleText);
     }
 
@@ -46,10 +48,9 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
      * Constructs the simple text matcher for the simple string.
      *
      * @param id The id for this matcher.
-     * @param simpleText The pattern to match. Will only match a single line from
-     * the input stream.
+     * @param simpleText The pattern to match.
      */
-    public SimpleTextMatcher(String id, String simpleText) {
+    public SimpleTextMatcher(final String id, final String simpleText) {
         super(id);
         if (StringUtils.isBlank(simpleText)) {
             throw new IllegalArgumentException("Simple text may not be null, empty or blank");
@@ -62,7 +63,7 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
+    public boolean matches(final IHeaders headers) {
         return headers.raw().contains(simpleText);
     }
 }
