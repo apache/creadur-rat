@@ -635,7 +635,7 @@ agnostic home for software distribution comprehension and audit tools.
             <dependency>
               <groupId>org.apache.ws.commons.axiom</groupId>
               <artifactId>no-package-cycles-enforcer-rule</artifactId>
-              <version>1.2.20</version>
+              <version>1.2.22</version>
             </dependency>
         </dependencies>
       </plugin>
