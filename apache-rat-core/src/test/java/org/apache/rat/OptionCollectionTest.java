@@ -152,7 +152,7 @@ public class OptionCollectionTest {
     }
 
     /**
-     * A paramaterized test for the options.
+     * A parameterized test for the options.
      * @param name The name of the test.
      * @param test the option test to execute.
      */
