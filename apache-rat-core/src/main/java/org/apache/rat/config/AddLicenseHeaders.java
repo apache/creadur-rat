@@ -24,24 +24,9 @@ package org.apache.rat.config;
  */
 public enum AddLicenseHeaders {
     /** Add license headers to a *.new file*/
-    TRUE, 
+    TRUE,
     /** Do not add headers */
-    FALSE, 
+    FALSE,
     /** Add headers and overwrite the old file */
     FORCED;
-
-    private static final char SEPARATOR = '|';
-
-    /**
-     * @return pretty-printed list of all available options.
-     */
-    public static String getValuesForHelp() {
-        StringBuilder sb = new StringBuilder();
-        for(AddLicenseHeaders headerOption : AddLicenseHeaders.values()) {
-            sb.append(headerOption.name().toLowerCase()).append(SEPARATOR);
-        }
-        // remove last separator
-        sb.setLength(sb.length() - 1);
-        return sb.toString();
-    }
 }
