@@ -78,6 +78,6 @@ The Options in the CLI have sufficient information for the Generator to provide 
 
 The class created by the Generator should have methods that represent all the options in the CLI.  In most cases there is a one-to-one correspondence between a method in the base class and the options in the CLI.
 
-#### [UI specific](ui/ui_specific.html) code
+#### [UI specific code](ui/ui_specific.html)
 
 The UI specific code uses extends the class created by the Generator and adds additional UI specific options and generally performs the necessary options to hook the new UI into the system being supported.  Examples of this type of code can be found in the `apache-rat-tasks` (Ant) and `apache-rat-plugin` (Maven) modules.
