@@ -18,8 +18,6 @@
  */
 package org.apache.rat.config.parameters;
 
-import static java.lang.String.format;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -34,6 +32,8 @@ import org.apache.rat.BuilderParams;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * A description of a component.
