@@ -42,7 +42,7 @@ public class HeaderCheckWorker {
     /*
      * TODO revisit this class. It is only used in one place and can be moved inline
      * as the DocumentHeaderAnalyser states. However, it may also be possible to
-     * make the entire set threadsafe so that multiple files can be checked
+     * make the entire set thread safe so that multiple files can be checked
      * simultaneously.
      */
     /**
@@ -61,7 +61,7 @@ public class HeaderCheckWorker {
 
     /**
      * Read the input and perform the header check.
-     *
+     * <p>
      * The number of lines indicates how many lines from the top of the file will be read for processing
      *
      * @param reader The reader for the document.

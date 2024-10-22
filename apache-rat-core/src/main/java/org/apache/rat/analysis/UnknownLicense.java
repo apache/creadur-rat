@@ -29,7 +29,6 @@ import org.apache.rat.license.ILicenseFamilyBuilder;
  * <p>
  * The UnknownLicense is used during processing to report that a document
  * license can not be determined.
- * </p>
  */
 public final class UnknownLicense implements ILicense {
 
