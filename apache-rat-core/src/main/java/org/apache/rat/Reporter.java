@@ -53,9 +53,6 @@ import org.w3c.dom.Document;
  */
 public class Reporter {
 
-    /** Format used for listing license families. */
-    private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s%n";
-
     /**  Format used for listing licenses. */
     private static final String LICENSE_FORMAT = "%s:\t%s%n\t\t%s%n";
 
@@ -102,7 +99,7 @@ public class Reporter {
                     statistic = new ClaimStatistic();
                 }
             }  catch (Exception e) {
-                throw RatException.makeInstance(e);
+                throw RatException.makeRatException(e);
             }
         }
     }
@@ -117,7 +114,7 @@ public class Reporter {
     }
 
     /**
-     * Outputs the report using the stylesheet and output specified in the configuraiton.
+     * Outputs the report using the stylesheet and output specified in the configuration.
      *
      * @throws RatException on error.
      */
@@ -126,7 +123,7 @@ public class Reporter {
     }
 
     /**
-     * Outputs the report to the specified output useing the optional stylesheet.
+     * Outputs the report to the specified output using the optional stylesheet.
      *
      * @param stylesheet the style sheet to use for XSLT formatting, may be null for XML output.
      * @param output the output stream to write to.
@@ -152,7 +149,7 @@ public class Reporter {
     }
 
     /**
-     * lists the licenses on the configured output stream.
+     * Lists the licenses on the configured output stream.
      * @param configuration The configuration for the system
      * @throws IOException if PrintWriter can not be retrieved from configuration.
      */
