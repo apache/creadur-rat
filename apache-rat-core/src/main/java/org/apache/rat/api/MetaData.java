@@ -104,7 +104,7 @@ public class MetaData {
 
     /**
      * Determine if the license is an approved license.
-     * @param license the license to check;
+     * @param license the license to check.
      * @return {@code true} if the license is in the list of approved licenses, {@code false} otherwise.
      */
     public boolean isApproved(final ILicense license) {
@@ -120,7 +120,7 @@ public class MetaData {
     }
 
     /**
-     * Sets the sample header.  This is the header that was collected during processing.
+     * Sets the sample header. This is the header that was collected during processing.
      * @param sampleHeader the sample header to use.
      */
     public void setSampleHeader(final String sampleHeader) {
@@ -129,7 +129,7 @@ public class MetaData {
 
     /**
      * Gets the sample header.
-     * @return the smaple header.
+     * @return the sample header.
      */
     public String getSampleHeader() {
         return sampleHeader;

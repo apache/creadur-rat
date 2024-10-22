@@ -110,14 +110,14 @@ public abstract class Document implements Comparable<Document> {
 
     /**
      * Streams the document's contents.
-     * @return a non null input stream of the document.
+     * @return a non-null input stream of the document.
      * @throws IOException when stream could not be opened
      */
     public abstract InputStream inputStream() throws IOException;
 
     /**
      * Gets data describing this resource.
-     * @return a non null MetaData object.
+     * @return a non-null MetaData object.
      */
     public final MetaData getMetaData() {
         return metaData;
