@@ -15,7 +15,7 @@
  limitations under the License.
 -->
 
-# The UI specific code.
+# The UI specific code
 
 > Up: [UI Implementation](../ui_implementation.html)
 > <br />[Options](./options.html)  | [Generator](./generator.html) | UI Specific
