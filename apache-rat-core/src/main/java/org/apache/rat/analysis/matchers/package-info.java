@@ -16,34 +16,8 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.api;
 
-public class RatException extends Exception {
-    /**
-     * Creates a RatException out of any other type of exception.
-     * If the exception is already a RatException, just return it.
-     * @param exception the exception to convert.
-     * @return A RatException.
-     */
-    public static RatException makeRatException(final Exception exception) {
-        return exception instanceof RatException ? (RatException) exception : new RatException(exception);
-    }
-
-    private static final long serialVersionUID = 4940711222435919034L;
-
-    public RatException() {
-        super();
-    }
-
-    public RatException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public RatException(final String message) {
-        super(message);
-    }
-
-    public RatException(final Throwable cause) {
-        super(cause);
-    }
-}
+/**
+ * Classes that perform specific matching operations.
+ */
+package org.apache.rat.analysis.matchers;

@@ -34,7 +34,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
 public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
 
     /** The collection of enclosed headers */
-    @ConfigComponent(desc = "enclosed Matchers", type = ComponentType.PARAMETER, parameterType = IHeaderMatcher.class, required=true)
+    @ConfigComponent(desc = "enclosed Matchers", type = ComponentType.PARAMETER, parameterType = IHeaderMatcher.class, required = true)
     private final Collection<IHeaderMatcher> enclosed;
 
     /** The resource the headers were read from.  May be null */
@@ -51,7 +51,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
      * @param enclosed the collection of enclosed matchers.
      * @param resource the name of the resource if this container was read from a file or URL.
      */
-    public AbstractMatcherContainer(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
+    public AbstractMatcherContainer(final String id, final Collection<? extends IHeaderMatcher> enclosed, final String resource) {
         super(id);
         Objects.requireNonNull(enclosed, "The collection of IHeaderMatcher may not be null");
         this.enclosed = new ArrayList<>(enclosed);
@@ -66,7 +66,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
      * @param enclosed the collection of enclosed matchers.
      * @param resource the name of the resource if this container was read from a file or URL.
      */
-    public AbstractMatcherContainer(Collection<? extends IHeaderMatcher> enclosed, String resource) {
+    public AbstractMatcherContainer(final Collection<? extends IHeaderMatcher> enclosed, final String resource) {
         this(null, enclosed, resource);
     }
 

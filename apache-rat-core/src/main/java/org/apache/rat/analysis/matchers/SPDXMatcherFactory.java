@@ -43,37 +43,49 @@ import org.apache.rat.config.parameters.ConfigComponent;
  *
  * @see <a href="https://spdx.dev/ids/">List of Ids at spdx.dev</a>
  */
-public class SPDXMatcherFactory {
+public final class SPDXMatcherFactory {
 
     /**
      * The collection of all matchers produced by this factory.
      */
-    private static final Map<String, SPDXMatcherFactory.Match> matchers = new HashMap<>();
+    private static final Map<String, SPDXMatcherFactory.Match> MATCHER_MAP = new HashMap<>();
 
     /**
      * The instance of this factory.
      */
     public static final SPDXMatcherFactory INSTANCE = new SPDXMatcherFactory();
 
+    /**
+     * The text for the group selector.
+     */
     static final String LICENSE_IDENTIFIER = "SPDX-License-Identifier:";
 
     /**
      * The regular expression to locate the SPDX license identifier in the text
-     * stream
+     * stream.
      */
-    private static final Pattern groupSelector = Pattern.compile(".*" + LICENSE_IDENTIFIER + "\\s([A-Za-z0-9\\.\\-]+)");
+    private static final Pattern GROUP_SELECTOR = Pattern.compile(".*" + LICENSE_IDENTIFIER + "\\s([A-Za-z0-9\\.\\-]+)");
 
     /**
-     * The last matcer to match the line.
+     * The set of SPDX Ids that matched the last text.
      */
     private final Set<String> lastMatch;
 
+    /**
+     * Flag to indicate this document has been checked for SPDX tags.
+     */
     private boolean checked;
 
+    /**
+     * Constructor.
+     */
     private SPDXMatcherFactory() {
         lastMatch = new HashSet<>();
     }
 
+    /**
+     * Reset the matching for the next document.
+     */
     private void reset() {
         lastMatch.clear();
         checked = false;
@@ -85,34 +97,34 @@ public class SPDXMatcherFactory {
      * @param spdxId the SPDX name to match.
      * @return a SPDX matcher.
      */
-    public Match create(String spdxId) {
+    public Match create(final String spdxId) {
         if (StringUtils.isBlank(spdxId)) {
             throw new ConfigurationException("'SPDX' type matcher requires a name");
         }
-        Match matcher = matchers.get(spdxId);
+        Match matcher = MATCHER_MAP.get(spdxId);
         if (matcher == null) {
             matcher = new Match(spdxId);
-            matchers.put(spdxId, matcher);
+            MATCHER_MAP.put(spdxId, matcher);
         }
         return matcher;
     }
 
     /**
-     * Each matcher calls this method to present the line it is working on.
+     * Each matcher calls this method to present the documentText it is working on.
      *
-     * @param line The line the caller is looking at.
+     * @param documentText The documentText the caller is looking at.
      * @param caller the Match that is calling this method.
      * @return true if the caller matches the text.
      */
-    private boolean check(String line, Match caller) {
+    private boolean check(final String documentText, final Match caller) {
         /*
-        If the line has not been seen yet see if we can extract the SPDX id from the line.
-        If so then see for each match extract and add the name to lastMatch
+        If the documentText has not been seen yet see if we can extract the SPDX id from the documentText.
+        If so then see for each match extract and add the name to lastMatch.
         */
         if (!checked) {
             checked = true;
-            if (line.contains(LICENSE_IDENTIFIER)) {
-                Matcher matcher = groupSelector.matcher(line);
+            if (documentText.contains(LICENSE_IDENTIFIER)) {
+                Matcher matcher = GROUP_SELECTOR.matcher(documentText);
                 while (matcher.find()) {
                     lastMatch.add(matcher.group(1));
                 }
@@ -122,11 +134,21 @@ public class SPDXMatcherFactory {
         return lastMatch.contains(caller.spdxId);
     }
 
+    /**
+     * Matches an SPDX identifier.
+     */
     @ConfigComponent(type = ComponentType.MATCHER, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
     public class Match extends AbstractHeaderMatcher {
+        /**
+         * The SPDX identifier.
+         */
         @ConfigComponent(type = ComponentType.PARAMETER, name = "name", desc = "The SPDX identifier string")
-        final String spdxId;
+        private final String spdxId;
 
+        /**
+         * Gets the name of this matcher. Same as the SPDX identifier.
+         * @return name of this matcher, that equals the SPDX identifier.
+         */
         public String getName() {
             return spdxId;
         }
@@ -144,7 +166,7 @@ public class SPDXMatcherFactory {
         }
 
         @Override
-        public boolean matches(IHeaders headers) {
+        public boolean matches(final IHeaders headers) {
             return SPDXMatcherFactory.this.check(headers.raw(), this);
         }
 
