@@ -17,8 +17,8 @@
 
 # The Generator
 
-> * > Up: [[UI Implementation]](../ui_implementation.html)
-> <br />[Options](/.options.html) | [enerator | [UI Specific](./ui_specific.html)
+> * > Up: [UI Implementation](../ui_implementation.html)
+> <br />[Options](/.options.html) | [Generator | [UI Specific](./ui_specific.html)
 
 
 The generator is the bit of code that ties the new UI to the Rat CLI. In this section we will explore how the Rat core module exposes the information necessary to build a valuable new UI.  We will be using the Maven tooling code in `apache-rat-tools` as the basis of the examples in this section.  As always, the current code base is the source of truth.
@@ -139,7 +139,7 @@ this template contains replaceable sections for :
 
  * package: The name of the java package that the generated class belongs to.
  * class: The line that defines the class for the Maven generated code it reads: `public abstract class BaseRatMojo extends AbstractMojo {`.  Note that the Maven example extends a Maven package class.
- * static: A section to initialize the static data like the translate name table and the unsupportedArgs list.
+ * static: A section to initialize the static data like the translation name table and the unsupportedArgs list.
  * commonArgs: A section where the "Args.tpl" is inserted.  This section contains the methods for argument manipulation that is common among all the UIs
  * constructor: The constructor for the class.  In the Maven case this is simply `protected BaseRatMojo() {}`.
  * methods: A section where the generator will insert the methods that map from the Maven framework into the Rat framework as specified in the "Args.tpl".
@@ -282,7 +282,7 @@ The `MavenGenerator` needs to generate method signatures based on the `org.apach
 4. Create the Maven `@Property` annotation with optional Maven command line property and defaults for the method.
 5. Write all the information into a string and prefix the method name with "set" as per the Maven standard.
 
-With the result being that a fully formed, Maven complient, Java method signature is developed.  Complete with documentation from the Option description.  For example "--copyright", which is a deprecated option, produces the following Maven mojo method signature:
+With the result being that a fully formed, Maven compliant, Java method signature is developed.  Complete with documentation from the Option description.  For example "--copyright", which is a deprecated option, produces the following Maven mojo method signature:
 
 ```java
 /**
@@ -311,5 +311,5 @@ Maven also supports the case where multiple values are accepted for one Property
 
 The AntGenerator follows the same design as the MavenGenerator. The main difference is that Ant allows attributes in the XML elements.
 
-> * > Up: [[UI Implementation]](../ui_implementation.html)
-    > <br />[Options](/.options.html) | [enerator | [UI Specific](./ui_specific.html)
+> * > Up: [UI Implementation](../ui_implementation.html)
+    > <br />[Options](/.options.html) | [Generator | [UI Specific](./ui_specific.html)
