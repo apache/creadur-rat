@@ -52,8 +52,9 @@ import static java.lang.String.format;
 
 /**
  * An enumeration of options.
- * Each Arg contains an OptionGroup that contains the individual options that all resolve to the same option.  This allows
- * us to deprecate options as we move forward in development.
+ * <p>
+ * Each Arg contains an OptionGroup that contains the individual options that all resolve to the same option.
+ * This allows us to deprecate options as we move forward in development.
  */
 public enum Arg {
 
@@ -107,8 +108,6 @@ public enum Arg {
             )),
 
     //////////////////////////// CONFIGURATION OPTIONS
-
-
     /**
      * Group of options that read a configuration file
      */
@@ -146,7 +145,7 @@ public enum Arg {
      * Option that adds approved licenses from a file
      */
     LICENSES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
-            .desc("Name of file containing the approved license IDs.")
+            .desc("Name of file containing the approved License IDs.")
             .converter(Converters.FILE_CONVERTER)
             .type(File.class)
             .build())),
@@ -171,7 +170,7 @@ public enum Arg {
      * Option to remove licenses from the approved list
      */
     LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArgs().argName("LicenseID")
-            .desc("The denied License IDs. These licenses will be removed to the list of approved licenses. " +
+            .desc("The denied License IDs. These licenses will be removed from the list of approved licenses. " +
                     "Once licenses are removed they can not be added back.")
             .build())),
 
@@ -181,7 +180,7 @@ public enum Arg {
     LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
             .hasArg().argName("File").type(File.class)
             .converter(Converters.FILE_CONVERTER)
-            .desc("Name of File containing the approved license IDs.")
+            .desc("Name of file containing the denied license IDs.")
             .converter(Converters.FILE_CONVERTER)
             .build())),
 
@@ -203,7 +202,6 @@ public enum Arg {
             .build())),
 
 ////////////////// INPUT OPTIONS
-
     /**
      * Excludes files by expression
      */
@@ -297,7 +295,7 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-exclude-parsed-scm")
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
-                    .desc("Parse SCM based exclusion files to exclude specified files.")
+                    .desc("Parse SCM based exclusion files to exclude specified files and directories.")
                     .build())
     ),
 
@@ -327,7 +325,7 @@ public enum Arg {
                             .setSince("0.17")
                             .setForRemoval(true)
                             .setDescription(StdMsgs.useMsg("--output-style with the 'xml' argument")).get())
-                    .desc("forces XML output rather than the report.")
+                    .desc("forces XML output rather than the textual report.")
                     .build())),
 
     /**
@@ -412,7 +410,8 @@ public enum Arg {
      * Provide license definition listing of registered licenses.
      */
     HELP_LICENSES(new OptionGroup()
-            .addOption(Option.builder().longOpt("help-licenses").desc("Print information about registered licenses.").build()));
+            .addOption(Option.builder().longOpt("help-licenses") //
+                    .desc("Print information about registered licenses.").build()));
 
     /** The option group for the argument */
     private final OptionGroup group;
@@ -468,6 +467,9 @@ public enum Arg {
         throw new IllegalArgumentException("Can not find " + key);
     }
 
+    /**
+     * @return default value of this arg.
+     */
     public String defaultValue() {
         return DEFAULT_VALUES.get(this);
     }
@@ -475,7 +477,7 @@ public enum Arg {
     /**
      * Gets the group for this arg.
      *
-     * @return the option gorup for this arg.
+     * @return the option group for this arg.
      */
     public OptionGroup group() {
         return group;
@@ -484,7 +486,7 @@ public enum Arg {
     /**
      * Returns the first non-deprecated option from the group.
      *
-     * @return the first non-deprecated option or null if no non-deprecated option is available.
+     * @return the first non-deprecated option or {@code null} if no non-deprecated option is available.
      */
     public Option option() {
         for (Option result : group.getOptions()) {
@@ -509,18 +511,18 @@ public enum Arg {
     /**
      * Processes the edit arguments.
      *
-     * @param ctxt the context to work with.
+     * @param context the context to work with.
      */
-    private static void processEditArgs(final ArgumentContext ctxt) {
+    private static void processEditArgs(final ArgumentContext context) {
         if (EDIT_ADD.isSelected()) {
-            ctxt.getCommandLine().hasOption(Arg.EDIT_ADD.getSelected());
+            context.getCommandLine().hasOption(Arg.EDIT_ADD.getSelected());
             boolean force = EDIT_OVERWRITE.isSelected();
             if (force) {
-                ctxt.getCommandLine().hasOption(EDIT_OVERWRITE.getSelected());
+                context.getCommandLine().hasOption(EDIT_OVERWRITE.getSelected());
             }
-            ctxt.getConfiguration().setAddLicenseHeaders(force ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
+            context.getConfiguration().setAddLicenseHeaders(force ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
             if (EDIT_COPYRIGHT.isSelected()) {
-                ctxt.getConfiguration().setCopyrightMessage(ctxt.getCommandLine().getOptionValue(EDIT_COPYRIGHT.getSelected()));
+                context.getConfiguration().setCopyrightMessage(context.getCommandLine().getOptionValue(EDIT_COPYRIGHT.getSelected()));
             }
         }
     }
@@ -528,49 +530,49 @@ public enum Arg {
     /**
      * Processes the configuration options.
      *
-     * @param ctxt the context to process.
+     * @param context the context to process.
      * @throws ConfigurationException if configuration files can not be read.
      */
-    private static void processConfigurationArgs(final ArgumentContext ctxt) throws ConfigurationException {
+    private static void processConfigurationArgs(final ArgumentContext context) throws ConfigurationException {
         try {
             Defaults.Builder defaultBuilder = Defaults.builder();
             if (CONFIGURATION.isSelected()) {
-                for (String fn : ctxt.getCommandLine().getOptionValues(CONFIGURATION.getSelected())) {
+                for (String fn : context.getCommandLine().getOptionValues(CONFIGURATION.getSelected())) {
                     defaultBuilder.add(fn);
                 }
             }
             if (CONFIGURATION_NO_DEFAULTS.isSelected()) {
                 // display deprecation log if needed.
-                ctxt.getCommandLine().hasOption(CONFIGURATION.getSelected());
+                context.getCommandLine().hasOption(CONFIGURATION.getSelected());
                 defaultBuilder.noDefault();
             }
-            ctxt.getConfiguration().setFrom(defaultBuilder.build());
+            context.getConfiguration().setFrom(defaultBuilder.build());
 
             if (FAMILIES_APPROVED.isSelected()) {
-                for (String cat : ctxt.getCommandLine().getOptionValues(FAMILIES_APPROVED.getSelected())) {
-                    ctxt.getConfiguration().addApprovedLicenseCategory(cat);
+                for (String cat : context.getCommandLine().getOptionValues(FAMILIES_APPROVED.getSelected())) {
+                    context.getConfiguration().addApprovedLicenseCategory(cat);
                 }
             }
             if (FAMILIES_APPROVED_FILE.isSelected()) {
                 try {
-                    File f = ctxt.getCommandLine().getParsedOptionValue(FAMILIES_APPROVED_FILE.getSelected());
+                    File f = context.getCommandLine().getParsedOptionValue(FAMILIES_APPROVED_FILE.getSelected());
                     try (InputStream in = Files.newInputStream(f.toPath())) {
-                        ctxt.getConfiguration().addApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
+                        context.getConfiguration().addApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
                 } catch (IOException | ParseException e) {
                     throw new ConfigurationException(e);
                 }
             }
             if (FAMILIES_DENIED.isSelected()) {
-                for (String cat : ctxt.getCommandLine().getOptionValues(FAMILIES_DENIED.getSelected())) {
-                    ctxt.getConfiguration().removeApprovedLicenseCategory(cat);
+                for (String cat : context.getCommandLine().getOptionValues(FAMILIES_DENIED.getSelected())) {
+                    context.getConfiguration().removeApprovedLicenseCategory(cat);
                 }
             }
             if (FAMILIES_DENIED_FILE.isSelected()) {
                 try {
-                    File f = ctxt.getCommandLine().getParsedOptionValue(FAMILIES_DENIED_FILE.getSelected());
+                    File f = context.getCommandLine().getParsedOptionValue(FAMILIES_DENIED_FILE.getSelected());
                     try (InputStream in = Files.newInputStream(f.toPath())) {
-                        ctxt.getConfiguration().removeApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
+                        context.getConfiguration().removeApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
                 } catch (IOException | ParseException e) {
                     throw new ConfigurationException(e);
@@ -578,30 +580,30 @@ public enum Arg {
             }
 
             if (LICENSES_APPROVED.isSelected()) {
-                for (String id : ctxt.getCommandLine().getOptionValues(LICENSES_APPROVED.getSelected())) {
-                    ctxt.getConfiguration().addApprovedLicenseId(id);
+                for (String id : context.getCommandLine().getOptionValues(LICENSES_APPROVED.getSelected())) {
+                    context.getConfiguration().addApprovedLicenseId(id);
                 }
             }
             if (LICENSES_APPROVED_FILE.isSelected()) {
                 try {
-                    File f = ctxt.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
+                    File f = context.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
                     try (InputStream in = Files.newInputStream(f.toPath())) {
-                        ctxt.getConfiguration().addApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
+                        context.getConfiguration().addApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
                 } catch (IOException | ParseException e) {
                     throw new ConfigurationException(e);
                 }
             }
             if (LICENSES_DENIED.isSelected()) {
-                for (String id : ctxt.getCommandLine().getOptionValues(LICENSES_DENIED.getSelected())) {
-                    ctxt.getConfiguration().removeApprovedLicenseId(id);
+                for (String id : context.getCommandLine().getOptionValues(LICENSES_DENIED.getSelected())) {
+                    context.getConfiguration().removeApprovedLicenseId(id);
                 }
             }
             if (LICENSES_DENIED_FILE.isSelected()) {
                 try {
-                    File f = ctxt.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
+                    File f = context.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
                     try (InputStream in = Files.newInputStream(f.toPath())) {
-                        ctxt.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
+                        context.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
                 } catch (IOException | ParseException e) {
                     throw new ConfigurationException(e);
@@ -615,58 +617,59 @@ public enum Arg {
     /**
      * Process the input setup.
      *
-     * @param ctxt the context to work in.
+     * @param context the context to work in.
      * @throws ConfigurationException if an exclude file can not be read.
      */
-    private static void processInputArgs(final ArgumentContext ctxt) throws ConfigurationException {
+    private static void processInputArgs(final ArgumentContext context) throws ConfigurationException {
         try {
             // TODO when include/exclude processing is updated check calling methods to ensure that all specified
             // directories are handled in the list of directories.
             if (EXCLUDE.isSelected()) {
-                String[] excludes = ctxt.getCommandLine().getOptionValues(EXCLUDE.getSelected());
+                String[] excludes = context.getCommandLine().getOptionValues(EXCLUDE.getSelected());
                 if (excludes != null) {
-                    ctxt.getConfiguration().addExcludedPatterns(Arrays.asList(excludes));
+                    context.getConfiguration().addExcludedPatterns(Arrays.asList(excludes));
                 }
             }
             if (EXCLUDE_FILE.isSelected()) {
-                File excludeFileName = ctxt.getCommandLine().getParsedOptionValue(EXCLUDE_FILE.getSelected());
+                File excludeFileName = context.getCommandLine().getParsedOptionValue(EXCLUDE_FILE.getSelected());
                 if (excludeFileName != null) {
-                    ctxt.getConfiguration().addExcludedPatterns(ExclusionUtils.asIterable(excludeFileName, "#"));
+                    context.getConfiguration().addExcludedPatterns(ExclusionUtils.asIterable(excludeFileName, "#"));
                 }
             }
             if (EXCLUDE_STD.isSelected()) {
-                for (String s : ctxt.getCommandLine().getOptionValues(EXCLUDE_STD.getSelected())) {
-                    ctxt.getConfiguration().addExcludedCollection(StandardCollection.valueOf(s));
+                for (String s : context.getCommandLine().getOptionValues(EXCLUDE_STD.getSelected())) {
+                    context.getConfiguration().addExcludedCollection(StandardCollection.valueOf(s));
                 }
             }
             if (EXCLUDE_PARSE_SCM.isSelected()) {
-                for (String s : ctxt.getCommandLine().getOptionValues(EXCLUDE_PARSE_SCM.getSelected())) {
+                for (String s : context.getCommandLine().getOptionValues(EXCLUDE_PARSE_SCM.getSelected())) {
                     StandardCollection sc = StandardCollection.valueOf(s);
                     if (sc == StandardCollection.ALL) {
-                        Arrays.asList(StandardCollection.values()).forEach(c -> ctxt.getConfiguration().addExcludedFileProcessor(c));
+                        Arrays.asList(StandardCollection.values()).forEach(c -> context.getConfiguration().addExcludedFileProcessor(c));
                     } else {
-                        ctxt.getConfiguration().addExcludedFileProcessor(StandardCollection.valueOf(s));
+                        context.getConfiguration().addExcludedFileProcessor(StandardCollection.valueOf(s));
                     }
                 }
             }
             if (INCLUDE.isSelected()) {
-                String[] includes = ctxt.getCommandLine().getOptionValues(INCLUDE.getSelected());
+                String[] includes = context.getCommandLine().getOptionValues(INCLUDE.getSelected());
                 if (includes != null) {
-                    ctxt.getConfiguration().addIncludedPatterns(Arrays.asList(includes));
+                    context.getConfiguration().addIncludedPatterns(Arrays.asList(includes));
                 }
             }
             if (INCLUDE_FILE.isSelected()) {
-                File includeFileName = ctxt.getCommandLine().getParsedOptionValue(INCLUDE_FILE.getSelected());
+                File includeFileName = context.getCommandLine().getParsedOptionValue(INCLUDE_FILE.getSelected());
                 if (includeFileName != null) {
-                    ctxt.getConfiguration().addIncludedPatterns(ExclusionUtils.asIterable(includeFileName, "#"));
+                    context.getConfiguration().addIncludedPatterns(ExclusionUtils.asIterable(includeFileName, "#"));
                 }
             }
             if (INCLUDE_STD.isSelected()) {
-                if ("scan-hidden-directories".equals(INCLUDE_STD.getSelected().getLongOpt())) {
-                    ctxt.getConfiguration().addIncludedCollection(StandardCollection.HIDDEN_DIR);
+                Option selected = INCLUDE_STD.getSelected();
+                if ("scan-hidden-directories".equals(selected.getLongOpt())) {
+                    context.getConfiguration().addIncludedCollection(StandardCollection.HIDDEN_DIR);
                 } else {
-                    for (String s : ctxt.getCommandLine().getOptionValues(INCLUDE_STD.getSelected())) {
-                        ctxt.getConfiguration().addIncludedCollection(StandardCollection.valueOf(s));
+                    for (String s : context.getCommandLine().getOptionValues(selected)) {
+                        context.getConfiguration().addIncludedCollection(StandardCollection.valueOf(s));
                     }
                 }
             }
@@ -682,11 +685,11 @@ public enum Arg {
      * @param exception the parse exception to log
      * @param opt       the option being processed
      * @param cl        the command line being processed
-     * @param dflt      The default value the option is being set to.
+     * @param defaultValue      The default value the option is being set to.
      */
-    private static void logParseException(final Log log, final ParseException exception, final Option opt, final CommandLine cl, final Object dflt) {
+    private static void logParseException(final Log log, final ParseException exception, final Option opt, final CommandLine cl, final Object defaultValue) {
         log.warn(format("Invalid %s specified: %s ", opt.getOpt(), cl.getOptionValue(opt)));
-        log.warn(format("%s set to: %s", opt.getOpt(), dflt));
+        log.warn(format("%s set to: %s", opt.getOpt(), defaultValue));
         log.debug(exception);
     }
 
@@ -705,7 +708,7 @@ public enum Arg {
                     logParseException(DefaultLog.getInstance(), e, LOG_LEVEL.getSelected(), commandLine, dLog.getLevel());
                 }
             } else {
-                DefaultLog.getInstance().error("log was not a DefaultLog instance. LogLevel not set.");
+                DefaultLog.getInstance().error("Log was not a DefaultLog instance. LogLevel not set.");
             }
         }
     }
@@ -713,67 +716,67 @@ public enum Arg {
     /**
      * Process the arguments.
      *
-     * @param ctxt the context in which to process the args.
+     * @param context the context in which to process the args.
      * @throws ConfigurationException on error
      */
-    public static void processArgs(final ArgumentContext ctxt) throws ConfigurationException {
-        processOutputArgs(ctxt);
-        processEditArgs(ctxt);
-        processInputArgs(ctxt);
-        processConfigurationArgs(ctxt);
+    public static void processArgs(final ArgumentContext context) throws ConfigurationException {
+        processOutputArgs(context);
+        processEditArgs(context);
+        processInputArgs(context);
+        processConfigurationArgs(context);
     }
 
     /**
      * Process the arguments that can be processed together.
      *
-     * @param ctxt the context in which to process the args.
+     * @param context the context in which to process the args.
      */
-    private static void processOutputArgs(final ArgumentContext ctxt) {
-        ctxt.getConfiguration().setDryRun(DRY_RUN.isSelected());
+    private static void processOutputArgs(final ArgumentContext context) {
+        context.getConfiguration().setDryRun(DRY_RUN.isSelected());
 
         if (OUTPUT_FAMILIES.isSelected()) {
             try {
-                ctxt.getConfiguration().listFamilies(ctxt.getCommandLine().getParsedOptionValue(OUTPUT_FAMILIES.getSelected()));
+                context.getConfiguration().listFamilies(context.getCommandLine().getParsedOptionValue(OUTPUT_FAMILIES.getSelected()));
             } catch (ParseException e) {
-                ctxt.logParseException(e, OUTPUT_FAMILIES.getSelected(), Defaults.LIST_FAMILIES);
+                context.logParseException(e, OUTPUT_FAMILIES.getSelected(), Defaults.LIST_FAMILIES);
             }
         }
 
         if (OUTPUT_LICENSES.isSelected()) {
             try {
-                ctxt.getConfiguration().listLicenses(ctxt.getCommandLine().getParsedOptionValue(OUTPUT_LICENSES.getSelected()));
+                context.getConfiguration().listLicenses(context.getCommandLine().getParsedOptionValue(OUTPUT_LICENSES.getSelected()));
             } catch (ParseException e) {
-                ctxt.logParseException(e, OUTPUT_LICENSES.getSelected(), Defaults.LIST_LICENSES);
+                context.logParseException(e, OUTPUT_LICENSES.getSelected(), Defaults.LIST_LICENSES);
             }
         }
 
         if (OUTPUT_ARCHIVE.isSelected()) {
             try {
-                ctxt.getConfiguration().setArchiveProcessing(ctxt.getCommandLine().getParsedOptionValue(OUTPUT_ARCHIVE.getSelected()));
+                context.getConfiguration().setArchiveProcessing(context.getCommandLine().getParsedOptionValue(OUTPUT_ARCHIVE.getSelected()));
             } catch (ParseException e) {
-                ctxt.logParseException(e, OUTPUT_ARCHIVE.getSelected(), Defaults.ARCHIVE_PROCESSING);
+                context.logParseException(e, OUTPUT_ARCHIVE.getSelected(), Defaults.ARCHIVE_PROCESSING);
             }
         }
 
         if (OUTPUT_STANDARD.isSelected()) {
             try {
-                ctxt.getConfiguration().setStandardProcessing(ctxt.getCommandLine().getParsedOptionValue(OUTPUT_STANDARD.getSelected()));
+                context.getConfiguration().setStandardProcessing(context.getCommandLine().getParsedOptionValue(OUTPUT_STANDARD.getSelected()));
             } catch (ParseException e) {
-                ctxt.logParseException(e, OUTPUT_STANDARD.getSelected(), Defaults.STANDARD_PROCESSING);
+                context.logParseException(e, OUTPUT_STANDARD.getSelected(), Defaults.STANDARD_PROCESSING);
             }
         }
 
         if (OUTPUT_FILE.isSelected()) {
             try {
-                File f = ctxt.getCommandLine().getParsedOptionValue(OUTPUT_FILE.getSelected());
+                File f = context.getCommandLine().getParsedOptionValue(OUTPUT_FILE.getSelected());
                 File parent = f.getParentFile();
                 if (!parent.mkdirs() && !parent.isDirectory()) {
                     DefaultLog.getInstance().error("Could not create report parent directory " + f);
                 }
-                ctxt.getConfiguration().setOut(f);
+                context.getConfiguration().setOut(f);
             } catch (ParseException e) {
-                ctxt.logParseException(e, OUTPUT_FILE.getSelected(), "System.out");
-                ctxt.getConfiguration().setOut((IOSupplier<OutputStream>) null);
+                context.logParseException(e, OUTPUT_FILE.getSelected(), "System.out");
+                context.getConfiguration().setOut((IOSupplier<OutputStream>) null);
             }
         }
 
@@ -781,15 +784,15 @@ public enum Arg {
             String selected = OUTPUT_STYLE.getSelected().getKey();
             if (selected.equals("x")) {
                 // display deprecated message.
-                ctxt.getCommandLine().hasOption("x");
-                ctxt.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
+                context.getCommandLine().hasOption("x");
+                context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
             } else {
-                String[] style = ctxt.getCommandLine().getOptionValues(OUTPUT_STYLE.getSelected());
+                String[] style = context.getCommandLine().getOptionValues(OUTPUT_STYLE.getSelected());
                 if (style.length != 1) {
                     DefaultLog.getInstance().error("Please specify a single stylesheet");
                     throw new ConfigurationException("Please specify a single stylesheet");
                 }
-                ctxt.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
+                context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
             }
         }
     }
@@ -875,6 +878,5 @@ public enum Arg {
         DEFAULT_VALUES.put(OUTPUT_STANDARD, Defaults.STANDARD_PROCESSING.name());
         DEFAULT_VALUES.put(OUTPUT_LICENSES, Defaults.LIST_LICENSES.name());
         DEFAULT_VALUES.put(OUTPUT_FAMILIES, Defaults.LIST_FAMILIES.name());
-
     }
 }
