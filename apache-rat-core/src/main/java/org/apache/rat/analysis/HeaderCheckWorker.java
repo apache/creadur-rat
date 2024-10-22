@@ -42,7 +42,7 @@ public class HeaderCheckWorker {
     /*
      * TODO revisit this class. It is only used in one place and can be moved inline
      * as the DocumentHeaderAnalyser states. However, it may also be possible to
-     * make the entire set threadsafe so that multiple files can be checked
+     * make the entire set thread safe so that multiple files can be checked
      * simultaneously.
      */
     /**
@@ -50,23 +50,26 @@ public class HeaderCheckWorker {
      * information.
      */
     public static final int DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES = 50;
-
+    /** The number of header lines to retain for processing */
     private final int numberOfRetainedHeaderLines;
+    /** The BufferedReader used to read the lines */
     private final BufferedReader reader;
+    /** The licenses to check for match */
     private final Collection<ILicense> licenses;
+    /** The document being processed */
     private final Document document;
 
     /**
      * Read the input and perform the header check.
-     *
+     * <p>
      * The number of lines indicates how many lines from the top of the file will be read for processing
-     * 
+     *
      * @param reader The reader for the document.
      * @param numberOfLines the number of lines to read from the header.
-     * @return The IHeaders instance for the header.  
+     * @return The IHeaders instance for the header.
      * @throws IOException on input failure
      */
-    public static IHeaders readHeader(BufferedReader reader, int numberOfLines) throws IOException {
+    public static IHeaders readHeader(final BufferedReader reader, final int numberOfLines) throws IOException {
         final StringBuilder headers = new StringBuilder();
         int headerLinesRead = 0;
         String line;
@@ -102,7 +105,7 @@ public class HeaderCheckWorker {
      * @param licenses The licenses to check against. not null.
      * @param name The document that is being checked. possibly null
      */
-    public HeaderCheckWorker(Reader reader, final Collection<ILicense> licenses, final Document name) {
+    public HeaderCheckWorker(final Reader reader, final Collection<ILicense> licenses, final Document name) {
         this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, licenses, name);
     }
 
@@ -115,7 +118,7 @@ public class HeaderCheckWorker {
      * @param licenses The licenses to check against. not null.
      * @param document The document that is being checked. possibly null
      */
-    public HeaderCheckWorker(Reader reader, int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,
+    public HeaderCheckWorker(final Reader reader, final int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,
             final Document document) {
         Objects.requireNonNull(reader, "Reader may not be null");
         Objects.requireNonNull(licenses, "Licenses may not be null");
