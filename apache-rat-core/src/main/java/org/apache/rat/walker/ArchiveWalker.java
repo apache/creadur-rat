@@ -23,7 +23,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,12 +32,14 @@ import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.io.IOUtils;
-import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.impl.ArchiveEntryDocument;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * Walks various kinds of archives files
@@ -47,11 +48,10 @@ public class ArchiveWalker extends Walker {
 
     /**
      * Constructs a walker.
-     * @param config the report configuration for this run.
      * @param document the document to process.
      */
-    public ArchiveWalker(final ReportConfiguration config, final Document document) {
-        super(document, config.getFilesToIgnore());
+    public ArchiveWalker(final Document document) {
+        super(document);
     }
 
     /**
@@ -85,17 +85,21 @@ public class ArchiveWalker extends Walker {
         try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
             ArchiveEntry entry = null;
             while ((entry = input.getNextEntry()) != null) {
-                Path path = this.getDocument().getPath().resolve("#" + entry.getName());
-                if (!entry.isDirectory() && this.isNotIgnored(path) && input.canReadEntryData(entry)) {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    IOUtils.copy(input, baos);
-                    result.add(new ArchiveEntryDocument(path, baos.toByteArray()));
+                if (!entry.isDirectory() && input.canReadEntryData(entry)) {
+                    DocumentName innerName = new DocumentName(entry.getName(), ".", "/", true);
+                    if (this.getDocument().getNameMatcher().matches(innerName)) {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        IOUtils.copy(input, baos);
+                        String outerNameStr = format("%s#%s", getDocument().getName(), entry.getName());
+                        DocumentName outerName = new DocumentName(outerNameStr, getDocument().getName().getName(), "/", true);
+                        result.add(new ArchiveEntryDocument(outerName, baos.toByteArray(), getDocument().getNameMatcher()));
+                    }
                 }
             }
         } catch (ArchiveException e) {
-            DefaultLog.getInstance().warn(String.format("Unable to process %s: %s", getDocument().getName(), e.getMessage()));
+            DefaultLog.getInstance().warn(format("Unable to process %s: %s", getDocument().getName(), e.getMessage()));
         } catch (IOException e) {
-            throw RatException.asRatException(e);
+            throw RatException.makeRatException(e);
         }
         return result;
     }

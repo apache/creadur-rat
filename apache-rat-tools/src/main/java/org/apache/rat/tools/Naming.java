@@ -44,13 +44,12 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.DeprecationReporter;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.help.AbstractHelp;
 
 /**
  * A simple tool to convert CLI options to Maven and Ant format and produce a CSV file.
- *
+ * <br>
  * Options
  * <ul>
  *     <li>--ant   Produces Ant options in result</li>
@@ -130,7 +129,7 @@ public final class Naming {
                 StringBuilder desc = new StringBuilder();
                 AntOption antOption = new AntOption(o);
                 if (antOption.isDeprecated()) {
-                    desc.append("[").append(antOption.getDeprecated().toString()).append("] ");
+                    desc.append("[").append(antOption.getDeprecated()).append("] ");
                 }
                 return desc.append(StringUtils.defaultIfEmpty(antOption.getDescription(), "")).toString();
             };
@@ -139,7 +138,7 @@ public final class Naming {
                 StringBuilder desc = new StringBuilder();
                 MavenOption mavenOption = new MavenOption(o);
                 if (mavenOption.isDeprecated()) {
-                    desc.append("[").append(mavenOption.getDeprecated().toString()).append("] ");
+                    desc.append("[").append(mavenOption.getDeprecated()).append("] ");
                 }
                 return desc.append(StringUtils.defaultIfEmpty(mavenOption.getDescription(), "")).toString();
             };
@@ -172,6 +171,8 @@ public final class Naming {
         }
 
         columns.add(descriptionFunction.apply(option));
+        columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
+        columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
         columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
         return columns;
     }
@@ -252,8 +253,7 @@ public final class Naming {
                 }
                 writer.flush();
                 // please the block of strings into a queue.
-                Deque<String> entryLines = new LinkedList<>();
-                entryLines.addAll(Arrays.asList(cWriter.toString().split("\\v")));
+                Deque<String> entryLines = new LinkedList<>(Arrays.asList(cWriter.toString().split("\\v")));
                 // put the queue into the entries for this line.
                 entries.add(entryLines);
                 cWriter.reset();

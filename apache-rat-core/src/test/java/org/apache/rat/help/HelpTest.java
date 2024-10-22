@@ -21,15 +21,14 @@ package org.apache.rat.help;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.Report;
 import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.Test;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Set;
 
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HelpTest {
@@ -49,6 +48,8 @@ public class HelpTest {
                 TextUtils.assertContains("--" + option.getLongOpt() + " ", result);
             }
         }
+
+        assertThat(result).doesNotContain("..");
     }
 
     @Test
@@ -61,9 +62,10 @@ public class HelpTest {
 
         for (Option option : opts.getOptions()) {
             if (option.getArgName() != null) {
-                assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument 's' is missing from list", option.getArgName()));
+                assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument '%s' is missing from list", option.getArgName()));
                 TextUtils.assertPatternInTarget(format("^<%s>", option.getArgName()), result);
             }
         }
+        assertThat(result).doesNotContain("..");
     }
 }

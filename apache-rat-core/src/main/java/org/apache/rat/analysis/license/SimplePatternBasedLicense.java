@@ -55,7 +55,7 @@ public class SimplePatternBasedLicense  extends BaseLicense {
             return new TextBuilder().setSimpleText(patterns[0]);
         } else {
             AnyBuilder any = new AnyBuilder();
-            Arrays.stream(patterns).map(s -> new TextBuilder().setSimpleText(s)).forEach(b-> any.addEnclosed(b));
+            Arrays.stream(patterns).map(s -> new TextBuilder().setSimpleText(s)).forEach(any::addEnclosed);
             return any;
         }
     }

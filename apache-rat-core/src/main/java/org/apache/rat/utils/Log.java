@@ -24,7 +24,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 /**
- * The definition of logging for the core.  UIs are expected to provide an implementation of
+ * The definition of logging for the core. UIs are expected to provide an implementation of
  * Log to log data to the appropriate system within the UI.
  */
 public interface Log {
@@ -42,19 +42,30 @@ public interface Log {
         /** Log error only. */
         ERROR,
         /** Log nothing. */
-        OFF };
+        OFF }
+
+    /**
+     * Gets the log level that is enabled. If encapsulated logger does not report level
+     * implementations should return DEBUG.
+     * @return the level that is enabled.
+     */
+    Level getLevel();
+
+    default boolean isEnabled(Level level) {
+        return getLevel().ordinal() <= level.ordinal();
+    }
 
     /**
      * Writes a message at a specific log level.
      * @param level The log level to write at.
-     * @param message the Message to write.
+     * @param message the message to write.
      */
     void log(Level level, String message);
 
     /**
-     * Write a log message at the specified level.
+     * Writes a log message at the specified level.
      * @param level the level to write the message at.
-     * @param message the mesage to write.
+     * @param message the message to write.
      */
     default void log(Level level, Object message) {
         log(level, message == null ? "NULL" : message.toString());
@@ -154,7 +165,7 @@ public interface Log {
     }
 
     /**
-     * Returns a Writer backed by this log.  All messages are logged at "INFO" level.
+     * Returns a Writer backed by this log. All messages are logged at "INFO" level.
      * @return the Writer backed by this log.
      */
     default Writer asWriter() {
@@ -162,14 +173,14 @@ public interface Log {
             private StringBuilder sb = new StringBuilder();
 
             @Override
-            public void write(final char[] cbuf, final int off, final int len) throws IOException {
+            public void write(final char[] cbuf, final int off, final int len) {
                 String txt = String.copyValueOf(cbuf, off, len);
                 int pos = txt.indexOf(System.lineSeparator());
                 if (pos == -1) {
                     sb.append(txt);
                 } else {
                     while (pos > -1) {
-                        Log.this.info(sb.append(txt.substring(0, pos)).toString());
+                        Log.this.info(sb.append(txt, 0, pos).toString());
                         sb.delete(0, sb.length());
                         txt = txt.substring(pos + 1);
                         pos = txt.indexOf(System.lineSeparator());
@@ -179,7 +190,7 @@ public interface Log {
             }
 
             @Override
-            public void flush() throws IOException {
+            public void flush() {
                 if (sb.length() > 0) {
                     Log.this.info(sb.toString());
                 }

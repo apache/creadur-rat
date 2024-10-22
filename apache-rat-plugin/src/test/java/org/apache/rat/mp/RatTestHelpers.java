@@ -6,8 +6,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -39,7 +39,6 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
-import org.apache.rat.api.Document.Type;
 import org.apache.rat.testhelpers.TextUtils;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -98,7 +97,7 @@ public final class RatTestHelpers {
             }
         } else if (pSource.isFile()) {
             try (final FileInputStream fis = new FileInputStream(pSource);
-                    final FileOutputStream fos = new FileOutputStream(pTarget);) {
+                    final FileOutputStream fos = new FileOutputStream(pTarget)) {
                 final byte[] buffer = new byte[8192];
                 for (;;) {
                     int res = fis.read(buffer);
@@ -130,15 +129,11 @@ public final class RatTestHelpers {
      * Creates a new instance of {@link ArtifactFactory}.
      *
      * @return A configured instance of {@link DefaultArtifactFactory}.
-     * @throws Exception Creating the object failed.
      */
-    public static ArtifactFactory newArtifactFactory() throws Exception {
-        final InvocationHandler handler = new InvocationHandler() {
-            @Override
-            public Object invoke(Object pProxy, Method pMethod, Object[] pArgs) throws Throwable {
-                System.out.println("Invoking method " + pMethod);
-                throw new IllegalStateException("Not implemented");
-            }
+    public static ArtifactFactory newArtifactFactory() {
+        final InvocationHandler handler = (pProxy, pMethod, pArgs) -> {
+            System.out.println("Invoking method " + pMethod);
+            throw new IllegalStateException("Not implemented");
         };
         return (ArtifactFactory) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                 new Class[] { ArtifactFactory.class }, handler);
@@ -199,7 +194,7 @@ public final class RatTestHelpers {
      * in as parameter.
      */
     public static void ensureRatReportIsCorrect(File pRatTxtFile, String[] in, String[] notIn) throws IOException {
-        List<String> lines = IOUtils.readLines(new FileInputStream(pRatTxtFile), Charsets.UTF_8);
+        List<String> lines = IOUtils.readLines(Files.newInputStream(pRatTxtFile.toPath()), Charsets.UTF_8);
         String document = String.join("\n", lines);
         for (String pattern : in) {
             TextUtils.assertPatternInTarget(pattern, document);

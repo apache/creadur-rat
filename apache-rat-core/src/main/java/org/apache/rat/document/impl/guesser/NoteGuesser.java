@@ -19,14 +19,20 @@
 package org.apache.rat.document.impl.guesser;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Locale;
 
 import org.apache.rat.api.Document;
 
-public class NoteGuesser {
-
+/**
+ * A class that determines if a file is a Note file. e.g. NOTICE, README, CHANGELOG, etc.
+ */
+public final class NoteGuesser {
+    /** The character called a dot, fullstop, or period. */
     private static final String DOT = ".";
 
+    /**
+     * The list of note file names.
+     */
     private static final String[] NOTE_FILE_NAMES = {
         "NOTICE", "LICENSE",
         "LICENSE.TXT", "NOTICE.TXT",
@@ -45,40 +51,45 @@ public class NoteGuesser {
         "THIRD_PARTY_NOTICES", "THIRD_PARTY_NOTICES.TXT",
         "COPYRIGHT", "COPYRIGHT.TXT",
         "BUILDING", "BUILDING.TXT",
-        "BUILD", "BUILT.TXT",//
+        "BUILD", "BUILT.TXT",
         "DEPENDENCIES"
     };
 
+    /**
+     * List of note file extensions. Extensions that indicate a file is a note file.
+     */
     private static final String[] NOTE_FILE_EXTENSIONS = {
         "LICENSE", "LICENSE.TXT",
         "NOTICE", "NOTICE.TXT",
     };
 
+    private NoteGuesser() {
+        // do not instantiate.
+    }
+
     /**
-     * @return Is a file by that name a note file?
-     * @param name file name.
+     * Determines if the document is a note.
+     *
+     * @param document the document to check.
+     * @return {@code true} if the document is a note.
      */
-    public static boolean isNote(final String name) {
-        if (name == null) {return false;}
+    public static boolean isNote(final Document document) {
+        if (document == null) {
+            return false;
+        }
 
-        List<String> l = Arrays.asList(NoteGuesser.NOTE_FILE_NAMES);
-        String normalisedName = GuessUtils.normalise(name);
-
-        if (l.contains(name) || l.contains(normalisedName)) {
+        String normalisedName = document.getName().getShortName().toUpperCase(Locale.US);
+        if (Arrays.asList(NoteGuesser.NOTE_FILE_NAMES).contains(normalisedName)) {
             return true;
         }
 
-        for (int i = 0; i < NoteGuesser.NOTE_FILE_EXTENSIONS.length; i++) {
-            if (normalisedName.endsWith(DOT + NoteGuesser.NOTE_FILE_EXTENSIONS[i])) {
+        for(String extension : NoteGuesser.NOTE_FILE_EXTENSIONS) {
+            if (normalisedName.endsWith(DOT + extension)) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    public static boolean isNote(final Document document) {
-        return isNote(document.getName());
     }
 
 }

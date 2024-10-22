@@ -15,11 +15,11 @@
 ~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
---------------------------
-Option Name Cross Reference
---------------------------
+                   ---------------
+                   Option Overview
+                   ---------------
 
-The following lists the options that are available in all clients.
+ The following lists the options that are available in all clients.
 
 +------------------------------------------+
 #include( "name_xref.txt" )

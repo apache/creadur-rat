@@ -33,8 +33,6 @@ then tweak the formatting if necessary
 and commit.
 Run with changes.version-parameter in order to not generate a SNAPSHOT changelog
 
-The <action> type attribute can be add,update,fix,remove.
-
     Please list action attributes in the following order:
     issue - required
     type - required
@@ -45,6 +43,8 @@ The <action> type attribute can be add,update,fix,remove.
 If you wonder which action types are available:
 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
 
+The <action> type attribute can be one of:
+
  * add: added functionality to the project.
  * fix: bug fix for the project
  * update: updated some part of the project.
@@ -53,7 +53,7 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
 -->
 <document xmlns="http://maven.apache.org/changes/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/xsd/changes-1.0.0.xsd">
   <properties>
     <title>Changes in Apache Creadur RAT</title>
     <author email="dev@creadur.apache.org">Apache Creadur RAT developers</author>
@@ -72,6 +72,27 @@ https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-415" type="fix" dev="pottlinger">
+        Fix checkstyle issues in commandline.
+      </action>
+      <action issue="RAT-412" type="fix" dev="claudenw">
+        Fix checkstyle issues in analysis package.
+      </action>
+      <action issue="RAT-414" type="fix" dev="claudenw">
+        Fix checkstyle issues in api package.
+      </action>
+      <action issue="RAT-413" type="fix" dev="claudenw">
+        Fix checkstyle issues in annotation package.
+      </action>
+      <action issue="RAT-411" type="fix" dev="claudenw">
+        Fix checkstyle issues in analysis/matchers.
+      </action>
+      <action issue="RAT-441" type="fix" dev="pottlinger">
+        Fix layout error when rendering available help options (double dot).
+      </action>
+      <action issue="RAT-390" type="add" dev="claudenw">
+        Move and reimplement exclusion configuration from Maven plugin to RAT core. ExclusionProcessor is the central place to handle file inclusions and exclusions now.
+      </action>
       <action issue="RAT-383" type="add" dev="claudenw">
         As part of the usage the harmonization generation of Ant documentation was added.
       </action>

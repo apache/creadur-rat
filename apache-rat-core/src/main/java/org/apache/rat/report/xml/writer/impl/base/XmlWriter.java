@@ -48,7 +48,7 @@ public final class XmlWriter implements IXmlWriter {
     private static final byte NAME_BODY_CHAR = NAME_MASK;
     private static final byte NAME_START_OR_BODY_CHAR = NAME_MASK | NAME_START_MASK;
 
-    private final static boolean[] ALLOWED_CHARACTERS = new boolean[1 << 16];
+    private static final boolean[] ALLOWED_CHARACTERS = new boolean[1 << 16];
 
     static {
         Arrays.fill(ALLOWED_CHARACTERS, false);
@@ -59,7 +59,7 @@ public final class XmlWriter implements IXmlWriter {
         Arrays.fill(ALLOWED_CHARACTERS, 0xE000, 0xFFFD, true);
     }
 
-    private final static byte[] CHARACTER_CODES = new byte[1 << 16];
+    private static final byte[] CHARACTER_CODES = new byte[1 << 16];
 
     static {
         // Name ::= (Letter | '_' | ':') (NameChar)*
@@ -408,9 +408,9 @@ public final class XmlWriter implements IXmlWriter {
     private final ArrayDeque<CharSequence> elementNames;
     private final Set<CharSequence> currentAttributes = new HashSet<>();
 
-    boolean elementsWritten = false;
-    boolean inElement = false;
-    boolean prologWritten = false;
+    private boolean elementsWritten;
+    private boolean inElement;
+    private boolean prologWritten;
 
     /**
      * Constructs an XmlWriter with the specified writer for output.
@@ -470,7 +470,7 @@ public final class XmlWriter implements IXmlWriter {
         currentAttributes.clear();
         return this;
     }
-    
+
     @Override
     public IXmlWriter comment(final CharSequence text) throws IOException {
         if (inElement) {
@@ -497,7 +497,7 @@ public final class XmlWriter implements IXmlWriter {
      * to {@link #openElement(CharSequence)}
      */
     @Override
-    public IXmlWriter attribute(CharSequence name, CharSequence value) throws IOException {
+    public IXmlWriter attribute(final CharSequence name, final CharSequence value) throws IOException {
         if (elementNames.isEmpty()) {
             if (elementsWritten) {
                 throw new OperationNotAllowedException("Root element has already been closed.");
@@ -523,7 +523,7 @@ public final class XmlWriter implements IXmlWriter {
         return this;
     }
 
-    private void writeAttributeContent(CharSequence content) throws IOException {
+    private void writeAttributeContent(final CharSequence content) throws IOException {
         writeEscaped(content, true);
     }
 
@@ -531,7 +531,7 @@ public final class XmlWriter implements IXmlWriter {
         if (elementNames.isEmpty()) {
             if (elementsWritten) {
                 throw new OperationNotAllowedException("Root element has already been closed.");
-            } 
+            }
             throw new OperationNotAllowedException("An element must be opened before content can be written.");
         }
         if (inElement) {
@@ -540,7 +540,7 @@ public final class XmlWriter implements IXmlWriter {
     }
 
     @Override
-    public IXmlWriter content(CharSequence content) throws IOException {
+    public IXmlWriter content(final CharSequence content) throws IOException {
         prepareForData();
         writeEscaped(content, false);
         inElement = false;
@@ -548,7 +548,7 @@ public final class XmlWriter implements IXmlWriter {
     }
 
     @Override
-    public IXmlWriter cdata(CharSequence content) throws IOException {
+    public IXmlWriter cdata(final CharSequence content) throws IOException {
         prepareForData();
         StringBuilder sb = new StringBuilder(content);
         int found;
@@ -556,11 +556,11 @@ public final class XmlWriter implements IXmlWriter {
             sb.replace(found, found + 3, "{rat:CDATA close}");
         }
 
-        writer.write("<![CDATA[ " );
-        for (int i=0;i<sb.length();i++) {
+        writer.write("<![CDATA[ ");
+        for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
             if (isOutOfRange(c)) {
-                writer.write(String.format("\\u%X", (int)c));
+                writer.write(String.format("\\u%X", (int) c));
             } else {
                 writer.write(c);
             }
@@ -571,7 +571,7 @@ public final class XmlWriter implements IXmlWriter {
         return this;
     }
 
-    private void writeEscaped(final CharSequence content, boolean isAttributeContent) throws IOException {
+    private void writeEscaped(final CharSequence content, final boolean isAttributeContent) throws IOException {
         final int length = content.length();
         for (int i = 0; i < length; i++) {
             char character = content.charAt(i);
@@ -609,7 +609,7 @@ public final class XmlWriter implements IXmlWriter {
         if (elementNames.isEmpty()) {
             if (elementsWritten) {
                 throw new OperationNotAllowedException("Root element has already been closed.");
-            } 
+            }
             throw new OperationNotAllowedException("Close called before an element has been opened.");
         }
         final CharSequence elementName = elementNames.pop();
@@ -635,7 +635,7 @@ public final class XmlWriter implements IXmlWriter {
      * {@link #openElement} or after the first element has been closed
      */
     @Override
-    public IXmlWriter closeElement(CharSequence name) throws IOException {
+    public IXmlWriter closeElement(final CharSequence name) throws IOException {
         Objects.requireNonNull(name);
         if (elementNames.isEmpty()) {
             if (elementsWritten) {

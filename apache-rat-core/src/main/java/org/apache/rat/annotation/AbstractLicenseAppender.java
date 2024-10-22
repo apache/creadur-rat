@@ -18,16 +18,11 @@
  */
 package org.apache.rat.annotation;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.rat.utils.DefaultLog;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.rat.utils.DefaultLog;
 
 /**
@@ -49,83 +45,152 @@ import org.apache.rat.utils.DefaultLog;
  * already.
  */
 public abstract class AbstractLicenseAppender {
+    /** The dot '.' character */
     private static final String DOT = ".";
+    /** unknown files */
     private static final int TYPE_UNKNOWN = 0;
+    /** Java files */
     private static final int TYPE_JAVA = 1;
+    /** XML files */
     private static final int TYPE_XML = 2;
+    /** HTML files */
     private static final int TYPE_HTML = 3;
+    /** CSS files */
     private static final int TYPE_CSS = 4;
+    /** javascript files */
     private static final int TYPE_JAVASCRIPT = 5;
+    /** Almost plain text files */
     private static final int TYPE_APT = 6;
+    /** Properties files */
     private static final int TYPE_PROPERTIES = 7;
+    /** Python files */
     private static final int TYPE_PYTHON = 8;
+    /** C files */
     private static final int TYPE_C = 9;
+    /** C Header files */
     private static final int TYPE_H = 10;
+    /** Shell script files */
     private static final int TYPE_SH = 11;
+    /** Batch files */
     private static final int TYPE_BAT = 12;
+    /** VM files */
     private static final int TYPE_VM = 13;
+    /** scala files */
     private static final int TYPE_SCALA = 14;
+    /** Ruby files */
     private static final int TYPE_RUBY = 15;
+    /** PERL files */
     private static final int TYPE_PERL = 16;
+    /** TCL files */
     private static final int TYPE_TCL = 17;
+    /** C++ files */
     private static final int TYPE_CPP = 18;
+    /** C# files */
     private static final int TYPE_CSHARP = 19;
+    /** PHP files */
     private static final int TYPE_PHP = 20;
+    /** Groovy files */
     private static final int TYPE_GROOVY = 21;
+    /** Visual studio solution files */
     private static final int TYPE_VISUAL_STUDIO_SOLUTION = 22;
+    /** BeanShell files */
     private static final int TYPE_BEANSHELL = 23;
+    /** JSP files */
     private static final int TYPE_JSP = 24;
+    /** FML files */
     private static final int TYPE_FML = 25;
+    /** GO files */
     private static final int TYPE_GO = 26;
+    /** PM files */
     private static final int TYPE_PM = 27;
+    /** markdown files */
     private static final int TYPE_MD = 28;
+    /** YAML files */
     private static final int TYPE_YAML = 29;
 
     /**
      * the line separator for this OS
      */
     private static final String LINE_SEP = System.lineSeparator();
-
+    /**
+     * Files that are in the C family
+     */
     private static final int[] FAMILY_C = new int[]{
             TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
             TYPE_CSS, TYPE_CPP, TYPE_CSHARP, TYPE_PHP, TYPE_GROOVY,
             TYPE_BEANSHELL, TYPE_GO,
     };
+    /**
+     * Files that are in the SGML family.
+     */
     private static final int[] FAMILY_SGML = new int[]{
             TYPE_XML, TYPE_HTML, TYPE_JSP, TYPE_FML, TYPE_MD,
     };
+    /**
+     * Files that are in the Shell family.
+     */
     private static final int[] FAMILY_SH = new int[]{
             TYPE_PROPERTIES, TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL,
             TYPE_TCL, TYPE_VISUAL_STUDIO_SOLUTION, TYPE_PM, TYPE_YAML,
     };
-    private static final int[] FAMILY_BAT = new int[]{
+    /**
+     * Files that are in the batch family.
+     */
+    private static final int[] FAMILY_BAT = new int[] {
             TYPE_BAT,
     };
-    private static final int[] FAMILY_APT = new int[]{
+    /**
+     * Files that are in the Almost Plain Text family.
+     */
+    private static final int[] FAMILY_APT = new int[] {
             TYPE_APT,
     };
-    private static final int[] FAMILY_VELOCITY = new int[]{
+    /**
+     * Files in the velocity family
+     */
+    private static final int[] FAMILY_VELOCITY = new int[] {
             TYPE_VM,
     };
-    private static final int[] EXPECTS_HASH_PLING = new int[]{
+    /**
+     * Files that expect "#/some/path"
+     */
+    private static final int[] EXPECTS_HASH_PLING = new int[] {
             TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL,
     };
+    /**
+     * Files that expect "@Echo"
+     */
     private static final int[] EXPECTS_AT_ECHO = new int[]{
             TYPE_BAT,
     };
+    /**
+     * Files that expact package names
+     */
     private static final int[] EXPECTS_PACKAGE = new int[]{
             TYPE_JAVA, TYPE_GO, TYPE_PM,
     };
+    /**
+     * Files that expect the XML Declaration.
+     */
     private static final int[] EXPECTS_XML_DECL = new int[]{
             TYPE_XML,
     };
-    private static final int[] EXPECTS_PHP_PI = new int[]{
+    /**
+     * Files that expect the PHP header
+     */
+    private static final int[] EXPECTS_PHP_PI = new int[] {
             TYPE_PHP,
     };
-    private static final int[] EXPECTS_MSVSSF_HEADER = new int[]{
+    /**
+     * Files that expect the Microsoft Visual Source Safe header.
+     */
+    private static final int[] EXPECTS_MSVSSF_HEADER = new int[] {
             TYPE_VISUAL_STUDIO_SOLUTION,
     };
 
+    /**
+     * Mapping of extension to fmaily type.
+     */
     private static final Map<String, Integer> EXT2TYPE = new HashMap<>();
 
     static {
@@ -202,6 +267,9 @@ public abstract class AbstractLicenseAppender {
         EXT2TYPE.put("yml", TYPE_YAML);
     }
 
+    /**
+     * if {@code true} overwrite the existing files.
+     */
     private boolean isOverwrite;
 
     /**
@@ -285,7 +353,8 @@ public abstract class AbstractLicenseAppender {
         BufferedReader br = null;
         try {
             fis = new FileInputStream(document);
-            br = new BufferedReader(new InputStreamReader(new BOMInputStream(fis), StandardCharsets.UTF_8));
+            BOMInputStream bos = BOMInputStream.builder().setInputStream(fis).get();
+            br = new BufferedReader(new InputStreamReader(bos, StandardCharsets.UTF_8));
 
             if (!expectsHashPling
                     && !expectsAtEcho
@@ -518,128 +587,5 @@ public abstract class AbstractLicenseAppender {
         writer.write(LINE_SEP);
         String l = br.readLine();
         return l == null ? "" : l;
-    }
-}
-
-/**
- * Stripped down version of Commons IO 2.0's BOMInputStream.
- */
-class BOMInputStream extends FilterInputStream {
-    private int[] firstBytes;
-    private int fbLength;
-    private int fbIndex;
-    private int markFbIndex;
-    private boolean markedAtStart;
-    /** Array of byte order marks */
-    private static final int[][] BOMS = {
-            new int[]{0xEF, 0xBB, 0xBF}, // UTF-8
-            new int[]{0xFE, 0xFF}, // UTF-16BE
-            new int[]{0xFF, 0xFE}, // UTF-16LE
-    };
-
-    BOMInputStream(final InputStream s) {
-        super(s);
-    }
-
-    @Override
-    public int read() throws IOException {
-        int b = readFirstBytes();
-        return (b >= 0) ? b : in.read();
-    }
-
-    @Override
-    public int read(byte[] buf, int off, int len) throws IOException {
-        int firstCount = 0;
-        int b = 0;
-        while (len > 0 && b >= 0) {
-            b = readFirstBytes();
-            if (b >= 0) {
-                buf[off++] = (byte) (b & 0xFF);
-                len--;
-                firstCount++;
-            }
-        }
-        int secondCount = in.read(buf, off, len);
-        return (secondCount < 0)
-                ? (firstCount > 0 ? firstCount : -1) : firstCount + secondCount;
-    }
-
-    @Override
-    public int read(final byte[] buf) throws IOException {
-        return read(buf, 0, buf.length);
-    }
-
-    private int readFirstBytes() throws IOException {
-        getBOM();
-        return (fbIndex < fbLength) ? firstBytes[fbIndex++] : -1;
-    }
-
-    private void getBOM() throws IOException {
-        if (firstBytes == null) {
-            int max = 0;
-            for (int[] bom : BOMS) {
-                max = Math.max(max, bom.length);
-            }
-            firstBytes = new int[max];
-            for (int i = 0; i < firstBytes.length; i++) {
-                firstBytes[i] = in.read();
-                fbLength++;
-                if (firstBytes[i] < 0) {
-                    break;
-                }
-
-                boolean found = find();
-                if (found) {
-                    fbLength = 0;
-                    break;
-                }
-            }
-        }
-    }
-
-    @Override
-    public synchronized void mark(final int readlimit) {
-        markFbIndex = fbIndex;
-        markedAtStart = firstBytes == null;
-        in.mark(readlimit);
-    }
-
-    @Override
-    public synchronized void reset() throws IOException {
-        fbIndex = markFbIndex;
-        if (markedAtStart) {
-            firstBytes = null;
-        }
-
-        in.reset();
-    }
-
-    @Override
-    public long skip(long n) throws IOException {
-        while (n > 0 && readFirstBytes() >= 0) {
-            n--;
-        }
-        return in.skip(n);
-    }
-
-    private boolean find() {
-        for (int[] bom : BOMS) {
-            if (matches(bom)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean matches(final int[] bom) {
-        if (bom.length != fbLength) {
-            return false;
-        }
-        for (int i = 0; i < bom.length; i++) {
-            if (bom[i] != firstBytes[i]) {
-                return false;
-            }
-        }
-        return true;
     }
 }

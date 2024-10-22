@@ -26,21 +26,23 @@ import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * An abstract class to simplify IHeaderMatcher creation. This class ensures
- * that the id is set
+ * An abstract class to simplify IHeaderMatcher creation.
+ * This class ensures that the id is set.
  */
 public abstract class AbstractHeaderMatcher implements IHeaderMatcher {
-
+    /**
+     * The id for this matcher. IDs must be unique.
+     */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The id of the matcher.")
     private final String id;
 
     /**
      * Constructs the IHeaderMatcher with an id value. If {@code id} is null then a
      * unique random id is created.
-     * 
-     * @param id the Id to use.
+     *
+     * @param id the id to use.
      */
-    protected AbstractHeaderMatcher(String id) {
+    protected AbstractHeaderMatcher(final String id) {
         this.id = StringUtils.isBlank(id) ? UUID.randomUUID().toString() : id;
     }
 

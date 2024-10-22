@@ -34,8 +34,6 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.testhelpers.TestingLicense;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -45,8 +43,8 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  */
 abstract public class AbstractLicenseTest {
-    private static int NAME = 0;
-    private static int TEXT = 1;
+    private static final int NAME = 0;
+    private static final int TEXT = 1;
 
     private Defaults defaults;
     protected MetaData data;
@@ -101,7 +99,7 @@ abstract public class AbstractLicenseTest {
     @MethodSource("parameterProvider")
     public void testEmbeddedStrings(String id, String family, String name, String notes, String[][] targets)
             throws IOException {
-        String formats[] = { "%s", "now is not the time %s for copyright", "#%s", "##%s", "## %s", "##%s##", "## %s ##",
+        String[] formats = { "%s", "now is not the time %s for copyright", "#%s", "##%s", "## %s", "##%s##", "## %s ##",
                 "/*%s*/", "/* %s */" };
 
         ILicense license = extractCategory(family, id);

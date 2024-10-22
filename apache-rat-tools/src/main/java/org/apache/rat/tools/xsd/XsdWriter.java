@@ -30,7 +30,7 @@ public class XsdWriter {
         ELEMENT("xs:element"), ATTRIBUTE("xs:attribute"),
         COMPLEX("xs:complexType"), SEQUENCE("xs:sequence"), SIMPLE("xs:simpleContent"),
         EXTENSION("xs:extension"), CHOICE("xs:choice"), COMPLEX_CONTENT("xs:complexContent");
-        private String elementName;
+        private final String elementName;
 
         Type(String name) {
             elementName = name;

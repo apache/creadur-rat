@@ -29,7 +29,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -54,9 +53,6 @@ import org.w3c.dom.Document;
  */
 public class Reporter {
 
-    /** Format used for listing license families. */
-    private static final String LICENSE_FAMILY_FORMAT = "\t%s: %s%n";
-
     /**  Format used for listing licenses. */
     private static final String LICENSE_FORMAT = "%s:\t%s%n\t\t%s%n";
 
@@ -80,7 +76,6 @@ public class Reporter {
 
     /**
      * Initializes the reporter.
-     * @return this reporter
      * @throws RatException on error.
      */
     private void init() throws RatException  {
@@ -104,7 +99,7 @@ public class Reporter {
                     statistic = new ClaimStatistic();
                 }
             }  catch (Exception e) {
-                throw RatException.makeInstance(e);
+                throw RatException.makeRatException(e);
             }
         }
     }
@@ -119,7 +114,7 @@ public class Reporter {
     }
 
     /**
-     * Outputs the report using the stylesheet and output specified in the configuraiton.
+     * Outputs the report using the stylesheet and output specified in the configuration.
      *
      * @throws RatException on error.
      */
@@ -128,7 +123,7 @@ public class Reporter {
     }
 
     /**
-     * Outputs the report to the specified output useing the optional stylesheet.
+     * Outputs the report to the specified output using the optional stylesheet.
      *
      * @param stylesheet the style sheet to use for XSLT formatting, may be null for XML output.
      * @param output the output stream to write to.
@@ -139,7 +134,7 @@ public class Reporter {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         try (OutputStream out = output.get();
-             InputStream styleIn = stylesheet.get();) {
+             InputStream styleIn = stylesheet.get()) {
             transformer = tf.newTransformer(new StreamSource(styleIn));
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -147,14 +142,14 @@ public class Reporter {
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new DOMSource(document),
-                    new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+                    new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
         } catch (TransformerException | IOException e) {
             throw new RatException(e);
         }
     }
 
     /**
-     * lists the licenses on the configured output stream.
+     * Lists the licenses on the configured output stream.
      * @param configuration The configuration for the system
      * @throws IOException if PrintWriter can not be retrieved from configuration.
      */

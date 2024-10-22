@@ -19,7 +19,6 @@
 package org.apache.rat.anttasks;
 
 import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 
 /**

@@ -33,30 +33,31 @@ public class OrMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the matcher from the enclosed matchers.
-     * 
+     *
      * @param enclosed the enclosed matchers.
+     * @param resource the name of the resource if the collection of matchers was read from a file or resource. May be {@code null}.
      */
-    public OrMatcher(Collection<? extends IHeaderMatcher> enclosed, String resource) {
+    public OrMatcher(final Collection<? extends IHeaderMatcher> enclosed, final String resource) {
         this(null, enclosed, resource);
     }
 
     /**
      * Constructs the matcher with the specified id from the enclosed matchers.
-     * 
+     *
      * @param id the id to use.
      * @param enclosed the enclosed matchers.
+     * @param resource the name of the resource if the collection of matchers was read from a file or resource. May be {@code null}.
      */
-    public OrMatcher(String id, Collection<? extends IHeaderMatcher> enclosed, String resource) {
+    public OrMatcher(final String id, final Collection<? extends IHeaderMatcher> enclosed, final String resource) {
         super(id, enclosed, resource);
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
+    public boolean matches(final IHeaders headers) {
         for (IHeaderMatcher matcher : getEnclosed()) {
             if (matcher.matches(headers)) {
                 return true;
             }
-
         }
         return false;
     }

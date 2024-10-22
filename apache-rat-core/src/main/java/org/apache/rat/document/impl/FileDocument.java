@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document.impl;
 
 import java.io.File;
@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.config.exclusion.ExclusionUtils;
 
 /**
  * Document wrapping a File object
@@ -42,26 +42,13 @@ public class FileDocument extends Document {
 
     /**
      * Creates a File document.
+     * @param basedir the base directory for this document.
      * @param file the file to wrap.
+     * @param nameMatcher the path matcher to filter files/directories with.
      */
-    public FileDocument(final File file) {
-        super(normalizeFileName(file));
+    public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameMatcher) {
+        super(new DocumentName(file, basedir), nameMatcher);
         this.file = file;
-    }
-
-    /**
-     * Normalizes a file name to linux style.  Accounts for Windows to Unix conversion.
-     * @param file The file to normalize
-     * @return the String for the file name.
-     */
-    public final static String normalizeFileName(final File file) {
-        String path = file.getPath();
-        return path.replace('\\', '/');
-    }
-
-    @Override
-    public Path getPath() {
-        return file.toPath();
     }
 
     @Override
@@ -73,7 +60,10 @@ public class FileDocument extends Document {
     public SortedSet<Document> listChildren() {
         if (isDirectory()) {
             SortedSet<Document> result = new TreeSet<>();
-            Arrays.stream(file.listFiles()).map(f -> new FileDocument(f)).forEach(result::add);
+            File[] lst = file.listFiles(ExclusionUtils.asFileFilter(name, nameMatcher));
+            if (lst != null && lst.length > 0) {
+                Arrays.stream(lst).map(f -> new FileDocument(name, f, nameMatcher)).forEach(result::add);
+            }
             return result;
         }
         return Collections.emptySortedSet();

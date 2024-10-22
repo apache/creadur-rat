@@ -20,12 +20,11 @@ package org.apache.rat.mp;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
-import org.apache.rat.config.parameters.MatcherBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
 
 public class All extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
-    AllBuilder builder = Builder.all();
+    final AllBuilder builder = Builder.all();
 
     public All() {
     }

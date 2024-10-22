@@ -18,8 +18,6 @@
  */
 package org.apache.rat;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,7 +43,10 @@ import org.apache.rat.api.Document;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
+import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
@@ -53,6 +54,8 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
+
+import static java.lang.String.format;
 
 /**
  * The collection of standard options for the CLI as well as utility methods to manage them and methods to create the
@@ -64,22 +67,25 @@ public final class OptionCollection {
         // do not instantiate
     }
 
-    public static final Comparator<Option> optionComparator = new OptionComparator();
+    /** The Option comparator to sort the help */
+    public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
 
-    /**
-     * Produce help
-     */
+    /** The Help option */
     public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
-    /**
-     * A mapping of {@code argName(value)} values to a description of those values.
-     */
+    /** Provide license definition listing */
+    public static final Option HELP_LICENSES = Option.builder().longOpt("help-licenses").desc("Print help for the RAT command line interface and exit.").build();
+
+    /** A mapping of {@code argName(value)} values to a description of those values. */
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
     static {
         ARGUMENT_TYPES = new TreeMap<>();
         ARGUMENT_TYPES.put("File", () -> "A file name.");
         ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan.");
-        ARGUMENT_TYPES.put("Expression", () -> "A wildcard file matching pattern. example: *-test-*.txt");
+        ARGUMENT_TYPES.put("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
+                "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples).  " +
+                "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']' " +
+                "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase latin letters.");
         ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
                 asString(LicenseSetFactory.LicenseFilter.values())));
         ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Level.values())));
@@ -87,12 +93,16 @@ public final class OptionCollection {
                 Arrays.stream(ReportConfiguration.Processing.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator()))));
-        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %s.",
+        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %s",
                 Arrays.stream(StyleSheets.values())
                         .map(v -> format("\t%s: %s", v.arg(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator()))));
         ARGUMENT_TYPES.put("LicenseID", () -> "The ID for a license.");
         ARGUMENT_TYPES.put("FamilyID", () -> "The ID for a license family.");
+        ARGUMENT_TYPES.put("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %s%n",
+                Arrays.stream(StandardCollection.values())
+                        .map(v -> format("\t%s: %s", v.name(), v.desc()))
+                        .collect(Collectors.joining(System.lineSeparator()))));
     }
 
     /**
@@ -154,6 +164,16 @@ public final class OptionCollection {
             return null;
         }
 
+        if (commandLine.hasOption(HELP_LICENSES)) {
+            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
+            return null;
+        }
+
+        if (commandLine.hasOption(HELP_LICENSES)) {
+            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
+            return null;
+        }
+
         if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
             new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
             return null;
@@ -191,7 +211,7 @@ public final class OptionCollection {
         final ReportConfiguration configuration = new ReportConfiguration();
         new ArgumentContext(configuration, cl).processArgs();
         if (StringUtils.isNotBlank(baseDirectory)) {
-            configuration.setReportable(getDirectory(baseDirectory, configuration));
+            configuration.setReportable(getReportable(new File(baseDirectory), configuration));
         }
         return configuration;
     }
@@ -209,24 +229,30 @@ public final class OptionCollection {
      * Creates an IReportable object from the directory name and ReportConfiguration
      * object.
      *
-     * @param baseDirectory the directory that contains the files to report on.
+     * @param base the directory that contains the files to report on.
      * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    private static IReportable getDirectory(final String baseDirectory, final ReportConfiguration config) {
-        File base = new File(baseDirectory);
+    static IReportable getReportable(final File base, final ReportConfiguration config) {
+        File absBase = base.getAbsoluteFile();
+        DocumentName documentName = new DocumentName(absBase);
+        if (!absBase.exists()) {
+            DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist");
+            return null;
+        }
+        DocumentNameMatcher documentNameMatcher = config.getNameMatcher(documentName);
 
-        if (!base.exists()) {
-            DefaultLog.getInstance().error( "Directory '" + baseDirectory + "' does not exist");
+        Document doc = new FileDocument(documentName, absBase, documentNameMatcher);
+        if (!documentNameMatcher.matches(doc.getName())) {
+            DefaultLog.getInstance().error("Directory '" + documentName + "' is in excluded list.");
             return null;
         }
 
-        Document doc = new FileDocument(base);
-        if (base.isDirectory()) {
-            return new DirectoryWalker(config, doc);
+        if (absBase.isDirectory()) {
+            return new DirectoryWalker(doc);
         }
 
-        return new ArchiveWalker(config, doc);
+        return new ArchiveWalker(doc);
     }
 
     /**

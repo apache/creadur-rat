@@ -18,7 +18,6 @@
  */
 package org.apache.rat.analysis;
 
-import org.apache.rat.ImplementationException;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.builders.AllBuilder;
@@ -41,14 +40,14 @@ public interface IHeaderMatcher {
      * <p>
      * All matchers must have unique identifiers
      * </p>
-     * 
-     * @return the Identifier for this matcher.
+     *
+     * @return the identifier for this matcher.
      */
     String getId();
 
     /**
      * Resets this state of this matcher to its initial state in preparation for
-     * use with another document scan.  In most cases this method does not need to 
+     * use with another document scan. In most cases this method does not need to
      * do anything.
      */
     default void reset() {
@@ -57,12 +56,12 @@ public interface IHeaderMatcher {
 
     /**
      * Attempts to match text in the IHeaders instance.
-     * 
+     *
      * @param headers the representations of the headers to check
      * @return {@code true} if the matcher matches the text, {@code false} otherwise.
      */
     boolean matches(IHeaders headers);
-    
+
     /**
      * Generates the component Description.
      * @return the component description.
@@ -78,16 +77,16 @@ public interface IHeaderMatcher {
     interface Builder {
         /**
          * Build the IHeaderMatcher.
-         * 
+         * <p>
          * Implementations of this interface should return a specific child class of IHeaderMatcher.
-         * 
+         *
          * @return a new IHeaderMatcher.
          */
         IHeaderMatcher build();
 
         /**
-         * Gets the Description for this builder.
-         * @return The description of the builder 
+         * Gets the description for this builder.
+         * @return The description of the builder
          */
         default Description getDescription() {
             return DescriptionBuilder.buildMap(this.getClass());

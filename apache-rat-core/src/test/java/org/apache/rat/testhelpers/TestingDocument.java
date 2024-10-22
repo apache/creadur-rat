@@ -18,13 +18,14 @@
  */
 package org.apache.rat.testhelpers;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.impl.DocumentName;
 
 public class TestingDocument extends Document {
 
@@ -38,14 +39,23 @@ public class TestingDocument extends Document {
         this(null, name);
     }
 
-    public TestingDocument(Reader reader, String name) {
-        super(name);
-        this.reader = reader;
+    public TestingDocument(DocumentName documentName) {
+        super(documentName, p -> true);
+        this.reader = null;
+    }
 
+    public TestingDocument(String name, DocumentNameMatcher matcher) {
+        super(new DocumentName(name, "", "/", true), matcher);
+        this.reader = null;
+    }
+
+    public TestingDocument(Reader reader, String name) {
+        super(new DocumentName(name, ".", "/", true), p -> true);
+        this.reader = reader;
     }
 
     @Override
-    public Reader reader() throws IOException {
+    public Reader reader() {
         return reader;
     }
 
@@ -59,9 +69,8 @@ public class TestingDocument extends Document {
         return Collections.emptySortedSet();
     }
 
-
     @Override
-    public InputStream inputStream() throws IOException {
+    public InputStream inputStream() {
         throw new UnsupportedOperationException();
     }
 }

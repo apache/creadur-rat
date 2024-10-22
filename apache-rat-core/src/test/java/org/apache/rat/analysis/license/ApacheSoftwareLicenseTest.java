@@ -30,7 +30,7 @@ public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
     public static final String id = "AL";
     public static final String name = "Apache License Version 2.0";
-    private static String[][] targets = {
+    private static final String[][] targets = {
             { "short", "Licensed under the Apache License, Version 2.0 (the \"License\")" },
             { "short2",
                     "Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0." },

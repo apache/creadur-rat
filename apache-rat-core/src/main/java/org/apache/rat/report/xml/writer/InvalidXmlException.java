@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report.xml.writer;
 
 import java.io.IOException;
@@ -29,10 +29,9 @@ public class InvalidXmlException extends IOException {
 
     /**
      * Instantiate exception with given message.
-     * @param message more context when this exception happens.  
+     * @param message more context when this exception happens.
      */
-    public InvalidXmlException(String message) {
+    public InvalidXmlException(final String message) {
         super(message);
     }
-
 }

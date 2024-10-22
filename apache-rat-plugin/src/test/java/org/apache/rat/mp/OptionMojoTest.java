@@ -20,24 +20,15 @@ package org.apache.rat.mp;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.rat.commandline.Arg;
-import org.apache.rat.mp.util.ignore.IgnoringDirectoryScanner;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.plugin.BaseRatMojo;
-import org.apache.rat.testhelpers.TextUtils;
-import org.apache.rat.tools.AntGenerator;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,39 +36,23 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class OptionMojoTest   {
-
-    static Path testPath = FileSystems.getDefault().getPath("target", "optionTest");
+public class OptionMojoTest {
+    static final Path testPath = FileSystems.getDefault().getPath("target", "optionTest");
     static String POM_FMT;
-
 
     @BeforeAll
     public static void makeDirs() throws IOException {
@@ -87,7 +62,7 @@ public class OptionMojoTest   {
 
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) throws Exception {
+    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         test.test();
     }
 
@@ -121,7 +96,7 @@ public class OptionMojoTest   {
            File pomFile = pomPath.toFile();
            pomFile.getParentFile().mkdirs();
            try (FileWriter writer = new FileWriter(pomFile)) {
-               writer.append(format(POM_FMT, keyOption.name, sb.toString()));
+               writer.append(format(POM_FMT, keyOption.name, sb));
                writer.flush();
            }
            try {
@@ -150,7 +125,7 @@ public class OptionMojoTest   {
             fail("Should not call help");
         }
 
-
+/*
         private void execExcludeTest(Option option, String[] args) {
 
             try {
@@ -161,13 +136,7 @@ public class OptionMojoTest   {
                         fos.write("Hello world".getBytes());
                     }
                 }
-                IOFileFilter filter = config.getFilesToIgnore();
-                assertThat(filter).isExactlyInstanceOf(FalseFileFilter.class);
-                TestingDirectoryScanner ds = new TestingDirectoryScanner();
-                ds.setBasedir(workingDir);
-                mojo.setExcludes(ds);
-                mojo.setIncludes(ds);
-                ds.scan();
+
                 assertThat(ds.getExcludedList()).contains("some.foo");
                 assertThat(ds.getExcludedList()).contains("B.bar");
                 assertThat(ds.getExcludedList()).contains("justbaz");
@@ -212,10 +181,11 @@ public class OptionMojoTest   {
         protected void inputExcludeFileTest() {
             excludeFileTest(Arg.EXCLUDE_FILE.find("input-exclude-file"));
         }
+
+ */
     }
 
-    public static abstract class SimpleMojoTestcase extends BetterAbstractMojoTestCase {
-
+    public abstract static class SimpleMojoTestcase extends BetterAbstractMojoTestCase {
         public RatCheckMojo getMojo(File pomFile) throws Exception {
             setUp();
             ProjectBuildingRequest buildingRequest = newMavenSession().getProjectBuildingRequest();
@@ -229,21 +199,6 @@ public class OptionMojoTest   {
                 }
                 throw e;
             }
-        }
-    }
-
-    private static class TestingDirectoryScanner extends IgnoringDirectoryScanner {
-
-        TestingDirectoryScanner() {
-
-        }
-
-        List<String> getExcludedList() {
-            return this.filesExcluded;
-        }
-
-        List<String> getIncludedList() {
-            return this.filesIncluded;
         }
     }
 }

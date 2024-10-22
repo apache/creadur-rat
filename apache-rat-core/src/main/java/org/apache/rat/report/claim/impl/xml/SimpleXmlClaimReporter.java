@@ -29,19 +29,36 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.report.AbstractReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
+/**
+ * A claim reporter to write the XML document.
+ */
 public class SimpleXmlClaimReporter extends AbstractReport {
+    /** the resource element name */
     private static final String RESOURCE = "resource";
+    /** the license element name */
     private static final String LICENSE = "license";
+    /** the approval attribute name */
     private static final String APPROVAL = "approval";
+    /** the family attribute name */
     private static final String FAMILY = "family";
+    /** the notes attribute name */
     private static final String NOTES = "notes";
+    /** the sample attribute name */
     private static final String SAMPLE = "sample";
+    /** the type attribute name */
     private static final String TYPE = "type";
+    /** the ID attribute name */
     private static final String ID = "id";
-
-    private final IXmlWriter writer;
+    /** name attribute name */
     private static final String NAME = "name";
 
+    /** the writer to write to */
+    private final IXmlWriter writer;
+
+    /**
+     * Constructor.
+     * @param writer The writer to write the report to.
+     */
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
         this.writer = writer;
     }
@@ -55,7 +72,7 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         }
     }
 
-    private void writeLicenseClaims(ILicense license, MetaData metaData) throws IOException {
+    private void writeLicenseClaims(final ILicense license, final MetaData metaData) throws IOException {
         writer.openElement(LICENSE).attribute(ID, license.getId()).attribute(NAME, license.getName())
                 .attribute(APPROVAL, Boolean.valueOf(metaData.isApproved(license)).toString())
                 .attribute(FAMILY, license.getLicenseFamily().getFamilyCategory());
@@ -65,9 +82,9 @@ public class SimpleXmlClaimReporter extends AbstractReport {
         writer.closeElement();
     }
 
-    private void writeDocumentClaims(final Document subject) throws IOException {
-        final MetaData metaData = subject.getMetaData();
-        writer.openElement(RESOURCE).attribute(NAME, subject.getName()).attribute(TYPE,
+    private void writeDocumentClaims(final Document document) throws IOException {
+        final MetaData metaData = document.getMetaData();
+        writer.openElement(RESOURCE).attribute(NAME, document.getName().localized("/")).attribute(TYPE,
                 metaData.getDocumentType().toString());
         for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext();) {
             writeLicenseClaims(iter.next(), metaData);
@@ -84,10 +101,12 @@ public class SimpleXmlClaimReporter extends AbstractReport {
     }
 
     @Override
-    public void startReport() throws RatException {
+    public void startReport() {
+        // does nothing
     }
 
     @Override
-    public void endReport() throws RatException {
+    public void endReport() {
+        // does nothing
     }
 }

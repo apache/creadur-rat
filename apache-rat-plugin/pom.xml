@@ -412,17 +412,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>2.0.16</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>nl.basjes.gitignore</groupId>
-      <artifactId>gitignore-reader</artifactId>
-      <version>1.6.0</version>
-    </dependency>
   </dependencies>
   <reporting>
     <plugins>

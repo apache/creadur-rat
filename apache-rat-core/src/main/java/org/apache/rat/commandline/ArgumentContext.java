@@ -18,15 +18,13 @@
  */
 package org.apache.rat.commandline;
 
-import static java.lang.String.format;
-
-import java.io.IOException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * Provides the context necessary to process various arguments.
@@ -50,9 +48,8 @@ public class ArgumentContext {
 
     /**
      * Process the arguments specified in this context.
-     * @throws IOException if files can not be read.
      */
-    public void processArgs() throws IOException {
+    public void processArgs() {
         Arg.processArgs(this);
     }
 
@@ -76,23 +73,11 @@ public class ArgumentContext {
      * Logs a ParseException as a warning.
      * @param exception the parse exception to log
      * @param opt the option being processed
-     * @param dflt The default value the option is being set to.
+     * @param defaultValue The default value the option is being set to.
      */
-    public void logParseException(final ParseException exception, final String opt, final Object dflt) {
+    public void logParseException(final ParseException exception, final Option opt, final Object defaultValue) {
         DefaultLog.getInstance().warn(format("Invalid %s specified: %s ", opt, commandLine.getOptionValue(opt)));
-        DefaultLog.getInstance().warn(format("%s set to: %s", opt, dflt));
-        DefaultLog.getInstance().debug(exception);
-    }
-
-    /**
-     * Logs a ParseException as a warning.
-     * @param exception the parse exception to log
-     * @param opt the option being processed
-     * @param dflt The default value the option is being set to.
-     */
-    public void logParseException(final ParseException exception, final Option opt, final Object dflt) {
-        DefaultLog.getInstance().warn(format("Invalid %s specified: %s ", opt, commandLine.getOptionValue(opt)));
-        DefaultLog.getInstance().warn(format("%s set to: %s", opt, dflt));
+        DefaultLog.getInstance().warn(format("%s set to: %s", opt, defaultValue));
         DefaultLog.getInstance().debug(exception);
     }
 }

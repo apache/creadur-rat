@@ -21,6 +21,20 @@
 
 <suppressions>
 
+  <!-- Suppress errors in deprecated code -->
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]header[/\\]*" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]analysis[/\\]license[/\\]*" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]license[/\\]SimpleLicenseFamily.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\][A-Q]*.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]Regex.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\][S-Z]*.java" />
+
   <!-- Suppress some test checks-->
   <suppress checks="JavadocMethod" files="src[/\\]test[/\\]java[/\\]" />
   <suppress checks="JavadocPackage" files="src[/\\]test[/\\]java[/\\]" />
@@ -42,4 +56,14 @@
   <suppress checks="HideUtilityClassConstructor" files="OptionValidator.java" />
   <suppress checks="HideUtilityClassConstructor" files="Util.java" />
 
+  <!-- Suppress magic numbers in old code -->
+  <suppress checks="MagicNumber|JavadocVariable" files="XmlWriter.java" />
+
+  <!-- Suppress errors in imported plexus code -->
+  <suppress checks="JavadocVariable"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]config[/\\]exclusion[/\\]plexus[/\\].*" />
+
+  <!-- Suppress errors in imported iterator code -->
+  <suppress checks="JavadocPackage|JavadocType|JavadocVariable|FinalParameters|VisibilityModifier|WhitespaceAfter|MethodName|NoWhitespaceBefore|NeedBraces|ParenPad|InnerAssignment|LeftCurly|ExplicitInitialization"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]utils[/\\]iterator[/\\].*" />
 </suppressions>

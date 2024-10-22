@@ -70,7 +70,7 @@
 
 		<license family="GEN">
 			<note>
-				Files that are autmoatically generated.</note>
+				Files that are automatically generated.</note>
 			<any resource="/org/apache/rat/generation-keywords.txt" />
 		</license>
 

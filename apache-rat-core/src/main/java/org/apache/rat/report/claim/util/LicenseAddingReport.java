@@ -49,7 +49,7 @@ public class LicenseAddingReport extends AbstractReport {
     @Override
     public void report(final Document document) throws RatException {
         if (document.getMetaData().licenses().anyMatch(lic -> lic.equals(UnknownLicense.INSTANCE))) {
-            final File file = new File(document.getName());
+            final File file = new File(document.getName().getName());
             if (file.isFile()) {
                 try {
                     appender.append(file);

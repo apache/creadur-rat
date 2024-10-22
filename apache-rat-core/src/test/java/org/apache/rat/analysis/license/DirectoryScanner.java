@@ -28,7 +28,6 @@ import org.apache.rat.analysis.HeaderCheckWorker;
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.test.utils.Resources;
-import org.junit.jupiter.api.Test;
 
 class DirectoryScanner {
 
@@ -41,7 +40,6 @@ class DirectoryScanner {
      * @param expected the expected result of the each scan
      * @throws Exception
      */
-    @Test
     public static void testFilesInDir(String directory, ILicense license, boolean expected) throws Exception {
         final File[] resourceFiles = Resources.getResourceFiles(directory);
         if (resourceFiles.length == 0) {
@@ -58,5 +56,4 @@ class DirectoryScanner {
             }
         }
     }
-
 }

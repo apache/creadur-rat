@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class SimpleCopyrightTests {
 
-    CopyrightMatcher target = new CopyrightMatcher(null, null, null);
+    final CopyrightMatcher target = new CopyrightMatcher(null, null, null);
 
     @Test
     public void testTrueIsAlwaysTrue() {

@@ -1,0 +1,182 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        -----
+        Report Task
+        -----
+
+Report Task
+
+
+  The Report task is the heart of the Apache Rat Ant Task Library, it
+  runs Rat on a given set of resources and generates the report.
+
+  The task can work on any Ant
+  {{{https://ant.apache.org/manual/Types/resources.html}resource or
+  resource collection}} and the usual Ant selectors can be applied to
+  restrict things even further.
+
+  Reports can use Rat's internal XML or plain text format or be styled
+  by a custom XSLT stylesheet.
+
+  It is possible to define custom matchers for licenses not directly supported
+  by Rat via nested elements to the Report task.
+
+* Report Task Attributes
+
+  This section lists the attributes for the report task. The attribute value types are listed in a table at the bottom of this page.
+
+
+** Current
+
+*--+--+--+--+
+| Name | Description | Value Type | Required |
+*--+--+--+--+
+| editCopyright | The copyright message to use in the license headers. Usually in the form of "Copyright 2008 Foo".  Only valid with editLicense attribute | String | false |
+*--+--+--+--+
+| editOverwrite | Forces any changes in files to be written directly to the source files (i.e. new files are not created). Only valid with editLicense attribute | boolean | false |
+*--+--+--+--+
+| editLicense | Add the default license header to any file with an unknown license that is not in the exclusion list. By default new files will be created with the license header, to force the modification of existing files use the editOverwrite attribute option. | boolean | false |
+*--+--+--+--+
+| configurationNoDefaults | Ignore default configuration. | boolean | false |
+*--+--+--+--+
+| licensesApprovedFile | Name of file containing the approved license IDs. | File | false |
+*--+--+--+--+
+| licenseFamiliesApprovedFile | Name of file containing the approved family IDs. | File | false |
+*--+--+--+--+
+| licensesDeniedFile | Name of File containing the approved license IDs. | File | false |
+*--+--+--+--+
+| licenseFamiliesDeniedFile | Name of file containing the denied license IDs. | File | false |
+*--+--+--+--+
+| inputExcludeFile | Excludes files matching regular expression in the input file. | File | false |
+*--+--+--+--+
+| scanHiddenDirectories | Scans hidden directories. | boolean | false |
+*--+--+--+--+
+| outputStyle | XSLT stylesheet to use when creating the report. Either an external xsl file may be specified or one of the internal named sheets. | StyleSheet | false |
+*--+--+--+--+
+| outputLicenses | List the defined licenses. | LicenseFilter | false |
+*--+--+--+--+
+| outputFamilies | List the defined license families. | LicenseFilter | false |
+*--+--+--+--+
+| dryRun | If set do not update the files but generate the reports. | boolean | false |
+*--+--+--+--+
+| outputFile | Define the output file where to write a report to. | File | false |
+*--+--+--+--+
+| outputArchive | Specifies the level of detail in ARCHIVE file reporting. | ProcessingType | false |
+*--+--+--+--+
+| outputStandard | Specifies the level of detail in STANDARD file reporting. | ProcessingType | false |
+*--+--+--+--+
+| helpLicenses | Print information about registered licenses. | boolean | false |
+*--+--+--+--+
+
+
+** Deprecated 
+
+*--+--+--+--+
+| Name | Description | Argument Type | Deprecated |
+*--+--+--+--+
+| copyright | The copyright message to use in the license headers. | String | Deprecated for removal since 0.17: Use editCopyright attribute instead. |
+*--+--+--+--+
+| force | Forces any changes in files to be written directly to the source files (i.e. new files are not created). | boolean | Deprecated for removal since 0.17: Use editOverwrite attribute instead. |
+*--+--+--+--+
+| addLicense | Add the default license header to any file with an unknown license that is not in the exclusion list. | boolean | Deprecated for removal since 0.17: Use editLicense attribute instead. |
+*--+--+--+--+
+| noDefaultLicenses | Ignore default configuration. | boolean | Deprecated for removal since 0.17: Use configurationNoDefaults attribute instead. |
+*--+--+--+--+
+| excludeFile | Excludes files matching regular expression in the input file. | File | Deprecated for removal since 0.17: Use inputExcludeFile attribute instead. |
+*--+--+--+--+
+| stylesheet | XSLT stylesheet to use when creating the report. | StyleSheet | Deprecated for removal since 0.17: Use outputStyle attribute instead. |
+*--+--+--+--+
+| xml | forces XML output rather than the report. | boolean | Deprecated for removal since 0.17: Use outputStyle attribute with the 'xml' argument instead. |
+*--+--+--+--+
+| listLicenses | List the defined licenses. | LicenseFilter | Deprecated for removal since 0.17: Use outputLicenses attribute instead. |
+*--+--+--+--+
+| listFamilies | List the defined license families. | LicenseFilter | Deprecated for removal since 0.17: Use outputFamilies attribute instead. |
+*--+--+--+--+
+| out | Define the output file where to write a report to. | File | Deprecated for removal since 0.17: Use outputFile attribute instead. |
+*--+--+--+--+
+
+
+* Report Task Nested Elements
+
+  This section lists the child elements for the report task. The element value types are listed in a table at the bottom of this page.
+
+
+** Current
+
+*--+--+--+--+
+| Name | Description | Value Type | Required |
+*--+--+--+--+
+| config | File names for system configuration. | File | false |
+*--+--+--+--+
+| licensesApproved | The approved License IDs. These licenses will be added to the list of approved licenses. | LicenseID | false |
+*--+--+--+--+
+| licensesApprovedFile | Name of file containing the approved license IDs. | File | false |
+*--+--+--+--+
+| licenseFamiliesApproved | The approved License Family IDs. These licenses families will be added to the list of approved licenses families. | FamilyID | false |
+*--+--+--+--+
+| licenseFamiliesApprovedFile | Name of file containing the approved family IDs. | File | false |
+*--+--+--+--+
+| licensesDenied | The denied License IDs. These licenses will be removed to the list of approved licenses. Once licenses are removed they can not be added back. | LicenseID | false |
+*--+--+--+--+
+| licensesDeniedFile | Name of file containing the approved license IDs. | File | false |
+*--+--+--+--+
+| licenseFamiliesDenied | The denied License family IDs.  These license families will be removed from the list of approved licenses. | FamilyID | false |
+*--+--+--+--+
+| licenseFamiliesDeniedFile | Name of file containing the denied license IDs. | File | false |
+*--+--+--+--+
+| inputExclude | Excludes files matching wildcard <Expression>. | Expression | false |
+*--+--+--+--+
+| outputFile | Define the output file where to write a report to. | File | false |
+*--+--+--+--+
+
+
+** Deprecated 
+
+*--+--+--+--+
+| Name | Description | Argument Type | Deprecated |
+*--+--+--+--+
+| licenses | File names for system configuration. | File | Deprecated for removal since 0.17: Use <config> instead. |
+*--+--+--+--+
+| exclude | Excludes files matching wildcard <Expression>. | Expression | Deprecated for removal since 0.17: Use <inputExclude> instead. |
+*--+--+--+--+
+| out | Define the output file where to write a report to. | File | Deprecated for removal since 0.17: Use outputFile attribute instead. |
+*--+--+--+--+
+
+
+* Argument Types
+
+*--+--+
+| Value Type | Description |
+*--+--+
+| DirOrArchive | A directory or archive file to scan. |
+*--+--+
+| Expression | A wildcard file matching pattern. Example: *-test-*.txt |
+*--+--+
+| FamilyID | The ID for a license family. |
+*--+--+
+| File | A file name. |
+*--+--+
+| LicenseFilter | A defined filter for the licenses to include. Valid values are: ALL, APPROVED, NONE. |
+*--+--+
+| LicenseID | The ID for a license. |
+*--+--+
+| LogLevel | The log level to use. Valid values DEBUG, INFO, WARN, ERROR, OFF. |
+*--+--+
+| ProcessingType | Specifies how to process file types. Valid values are: NOTIFICATION: List file as present	PRESENCE: List any licenses found	ABSENCE: List licenses found and any unknown licences |
+*--+--+
+| StyleSheet | Either an external xsl file or maybe one of the internal named sheets. Internal sheets are: 	plain-rat: The default style	missing-headers: Produces a report of files that are missing headers	unapproved-licenses: Produces a report of the files with unapproved licenses	xml: The default style. |
+*--+--+

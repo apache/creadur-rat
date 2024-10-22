@@ -20,6 +20,7 @@ package org.apache.rat.document.impl;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.test.utils.Resources;
+import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +37,9 @@ public class FileDocumentTest {
     
     @BeforeEach
     public void setUp() throws Exception {
+        File basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES);
         file = Resources.getResourceFile("elements/Source.java");
-        document = new FileDocument(file);
+        document = new FileDocument(new DocumentName(basedir), file, p -> true);
     }
 
     @Test
@@ -50,8 +52,7 @@ public class FileDocumentTest {
 
     @Test
     public void getName() {
-        final String name = document.getName();
-        assertNotNull("Name is set", name);
-        assertEquals(FileDocument.normalizeFileName(file), name, "Name is filename");
+        final DocumentName name = document.getName();
+        assertNotNull(name, "Name is set");
     }
 }

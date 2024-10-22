@@ -21,9 +21,10 @@ package org.apache.rat.api;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.SortedSet;
+
+import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.impl.DocumentNameMatcher;
 
 /**
  * The representation of a document being scanned.
@@ -31,7 +32,7 @@ import java.util.SortedSet;
 public abstract class Document implements Comparable<Document> {
 
     /**
-     * An enumeraton of document types.
+     * An enumeration of document types.
      */
     public enum Type {
         /** A generated document. */
@@ -40,41 +41,56 @@ public abstract class Document implements Comparable<Document> {
         UNKNOWN,
         /** An archive type document. */
         ARCHIVE,
-        /** A notice document (e.g. LICENSE file) */
+        /** A notice document (e.g. LICENSE file). */
         NOTICE,
-        /** A binary file */
+        /** A binary file. */
         BINARY,
-        /** A standard document */
-        STANDARD;;
+        /** A standard document. */
+        STANDARD
     }
 
+    /** The path matcher used by this document */
+    protected final DocumentNameMatcher nameMatcher;
+    /** The metadata for this document */
     private final MetaData metaData;
-    private final String name;
+    /** The fully qualified name of this document */
+    protected final DocumentName name;
 
     /**
      * Creates an instance.
-     * @param name the name of the resource.
+     * @param name the native NameSet of the resource.
+     * @param nameMatcher the document name matcher to filter directories/files.
      */
-    protected Document(String name) {
+    protected Document(final DocumentName name, final DocumentNameMatcher nameMatcher) {
         this.name = name;
+        this.nameMatcher = nameMatcher;
         this.metaData = new MetaData();
     }
 
     /**
+     * Gets the name of the current document.
      * @return the name of the current document.
      */
-    public final String getName() {
+    public final DocumentName getName() {
         return name;
     }
 
+    /**
+     * Gets the file filter this document was created with.
+     * @return the file filter this document was created with.
+     */
+    public final DocumentNameMatcher getNameMatcher() {
+        return nameMatcher;
+    }
+
     @Override
-    public int compareTo(Document doc) {
-        return getPath().compareTo(doc.getPath());
+    public int compareTo(final Document doc) {
+        return name.compareTo(doc.name);
     }
 
     @Override
     public int hashCode() {
-        return getPath().hashCode();
+        return name.hashCode();
     }
 
     @Override
@@ -82,38 +98,26 @@ public abstract class Document implements Comparable<Document> {
         if (!(obj instanceof Document)) {
             return false;
         }
-        return getPath().equals(((Document) obj).getPath());
-    }
-
-    /**
-     * Get the path that identifies the document.
-     * @return the path for the document.
-     */
-    public Path getPath() {
-        return Paths.get(getName());
+        return name.equals(((Document) obj).name);
     }
 
     /**
      * Reads the contents of this document.
-     * 
      * @return <code>Reader</code> not null
      * @throws IOException if this document cannot be read
-     * composite archive
      */
     public abstract Reader reader() throws IOException;
 
     /**
      * Streams the document's contents.
-     * 
-     * @return a non null input stream of the document.
+     * @return a non-null input stream of the document.
      * @throws IOException when stream could not be opened
      */
     public abstract InputStream inputStream() throws IOException;
 
     /**
      * Gets data describing this resource.
-     * 
-     * @return a non null MetaData object.
+     * @return a non-null MetaData object.
      */
     public final MetaData getMetaData() {
         return metaData;
@@ -126,7 +130,7 @@ public abstract class Document implements Comparable<Document> {
      */
     @Override
     public String toString() {
-        return String.format("%s( name = %s metaData = %s )", this.getClass().getSimpleName(), getName(), getMetaData());
+        return String.format("%s( name = %s metaData = %s )", this.getClass().getSimpleName(), getName().localized(), getMetaData());
     }
 
     /**
@@ -137,8 +141,7 @@ public abstract class Document implements Comparable<Document> {
 
     /**
      * Gets a sorted set of Documents that are children of this document.
-     * @return A sorted set of child Documents.  May  be empty
+     * @return A sorted set of child Documents. May be empty.
      */
     public abstract SortedSet<Document> listChildren();
-
 }

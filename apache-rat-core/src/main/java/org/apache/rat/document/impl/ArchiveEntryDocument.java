@@ -20,12 +20,10 @@
 package org.apache.rat.document.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.SortedSet;
 
@@ -39,22 +37,19 @@ public class ArchiveEntryDocument extends Document {
     /** The contents of the entry */
     private final byte[] contents;
 
-    /** The path for the entry */
-    private final Path path;
-
     /**
      * Creates an Archive entry.
-     * @param path The path for the entry.
+     * @param outerName the name of this entry from outside the archive.
      * @param contents the contents of the entry.
+     * @param nameMatcher the name matcher to filter contents with.
      */
-    public ArchiveEntryDocument(Path path, byte[] contents) {
-        super(FileDocument.normalizeFileName(path.toFile()));
-        this.path = path;
+    public ArchiveEntryDocument(final DocumentName outerName, final byte[] contents, final DocumentNameMatcher nameMatcher) {
+        super(outerName, nameMatcher);
         this.contents = contents;
     }
 
     @Override
-    public InputStream inputStream() throws IOException {
+    public InputStream inputStream() {
         return new ByteArrayInputStream(contents);
     }
 
@@ -69,7 +64,7 @@ public class ArchiveEntryDocument extends Document {
     }
 
     @Override
-    public Reader reader() throws IOException {
+    public Reader reader() {
         return new InputStreamReader(new ByteArrayInputStream(contents), StandardCharsets.UTF_8);
     }
 }
