@@ -30,17 +30,19 @@ import org.apache.rat.config.parameters.ConfigComponent;
  */
 @ConfigComponent(type = ComponentType.MATCHER, name = "not", desc = "Negates the enclosed matcher.")
 public class NotMatcher extends AbstractHeaderMatcher {
-
-    @ConfigComponent(desc = "enclosed Matcher", type = ComponentType.PARAMETER, parameterType = IHeaderMatcher.class, required=true)
+    /**
+     * The enclosed matcher to negate.
+     */
+    @ConfigComponent(desc = "enclosed Matcher", type = ComponentType.PARAMETER, parameterType = IHeaderMatcher.class, required = true)
     private final IHeaderMatcher enclosed;
 
     /**
      * Create the matcher with the enclosed matcher and id.
-     * 
+     *
      * @param id the id for this matcher. May be null
      * @param enclosed the enclosed matcher
      */
-    public NotMatcher(String id, IHeaderMatcher enclosed) {
+    public NotMatcher(final String id, final IHeaderMatcher enclosed) {
         super(id);
         Objects.requireNonNull(enclosed, "enclosed matcher may not be null");
         this.enclosed = enclosed;
@@ -51,7 +53,7 @@ public class NotMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
+    public boolean matches(final IHeaders headers) {
         return !enclosed.matches(headers);
     }
 
