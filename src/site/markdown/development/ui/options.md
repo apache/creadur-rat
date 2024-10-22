@@ -17,7 +17,7 @@
 
 # Options
 
-> Up: [[UI Implementation]](../ui_implementation.html)
+> Up: [UI Implementation](../ui_implementation.html)
 > <br />Options  | [Generator](./generator.html) | [UI Specific](./ui_specific.html)
 
 
@@ -73,5 +73,5 @@ The MavenGenerator needs to generate method signatures based on the `org.apache.
 
 The `AntOption` class is very similar to the `MavenOption` except that, as noted earlier, it creates XML Elements and Attributes depending on whether the option accepts more than one argument.
 
-> Up: [[UI Implementation]](../ui_implementation.html)
-> <br />Options  | [Generator](./generator.html) | [UI Specific](./ui_specific.html)
+> Up: [UI Implementation](../ui_implementation.html)
+> <br />Options | [Generator](./generator.html) | [UI Specific](./ui_specific.html)

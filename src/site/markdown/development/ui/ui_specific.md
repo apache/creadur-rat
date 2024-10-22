@@ -17,7 +17,7 @@
 
 # The UI specific code.
 
-> Up: [[UI Implementation]](../ui_implementation.html)
+> Up: [UI Implementation](../ui_implementation.html)
 > <br />[Options](./options.html)  | [Generator](./generator.html) | UI Specific
 
 In most cases the UI provides values for some of the CLI options, or have additional options that are not supported by CLI.  In the case of Maven there is a "skip" option that causes the Maven plugin to not execute.  This is not implemented in the CLI as it is assumed if you don't want to execute the CLI you won't call it.
@@ -84,5 +84,5 @@ try {
 }
 ```
 
-> Up: [[UI Implementation]](../ui_implementation.html)
+> Up: [UI Implementation](../ui_implementation.html)
 > <br />[Options](./options.html)  | [Generator](./generator.html) | UI Specific
