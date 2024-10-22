@@ -18,12 +18,12 @@
 
 Rat must be able to distinguish files in multiple file systems; most notably Windows&#174; and Linux&#174;. In addition, we want Rat to produce reports that are comparable across the platforms. To achieve these goals the `org.apache.rat.document.impl.DocumentName` class was developed.
 
-All documents in the Rat system have a base directory. Different UIs will set the base directory differently.  For example:
+All documents in the Rat system have a base directory. Different UIs will set the base directory differently. For example:
 
  * The command line sets the base directory to the directory or archive  specified on the command line.
- * Ant UI sets the base directory to the directory where the `build.xml` file is located. 
- * Maven UI sets the base director to the directory where the project is located.
- * Other UIs may define the base directory as fits the underlying build system.
+ * Ant UI sets the base directory to the directory where the `build.xml` file is located.
+ * Maven UI sets the base directory to the directory where the project is located.
+ * Other UIs may define the base directory as it fits the underlying build system.
 
 When reporting a document Rat will report the path from the base directory to the file; the path relative to the base directory.
 
