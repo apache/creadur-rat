@@ -53,7 +53,7 @@ Apache Rat&#8482;
 
    * {{{https://maven.apache.org}Apache Maven}} and
 
-   * the command line.
+   * the {{{./apache-rat/index.html}command line}}.
 
  Rat is extensible. If your build tool isn't supported, please contribute a
  {{{./issue-management.html}patch}} or

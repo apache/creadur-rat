@@ -40,16 +40,17 @@ The table below shows an example of how the `*` and `**` differ and interact.
 
 ## Inclusion/Exclusion Notes
 
-Patterns that are excluded may be superseded by patterns that are included.  For example: the exclusion pattern 'ca*' used in conjunction with the include 'cat' would result in the file 'cat' being included but 'can', 'call' and the abbreviation for california (or Canada) 'CA' being excluded.
+Patterns that are excluded may be superseded by patterns that are included.
+
+For example: the exclusion pattern 'ca*' used in conjunction with the include 'cat' would result in the file 'cat' being included but 'can', 'call' and the abbreviation for california (or Canada) 'CA' being excluded.
 
 When processed a negated exclusion results in an inclusion, and a negated inclusion results in an exclusion.
 
 **Once a file is explicitly included it can not be excluded.**
 
-
 ## Directory separation characters
 
-Patterns may use either '/' or '\\' as the path separation character.  '/' is recommended.
+Patterns may use either '/' or '\\' as the path separation character. '/' is recommended.
 
 ## Case sensitivity
 
