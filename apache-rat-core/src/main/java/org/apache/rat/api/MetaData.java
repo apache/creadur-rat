@@ -40,7 +40,7 @@ public class MetaData {
     private final Set<String> approvedLicenses;
     /** The media type for this document */
     private MediaType mediaType;
-    /** The document thpe for this document */
+    /** The document type for this document */
     private Document.Type documentType;
     /** The sample of the header for this document */
     private String sampleHeader;
@@ -160,7 +160,7 @@ public class MetaData {
     }
 
     /**
-     * Removed matched licenses based on a predicate. Will remove licenses for which the predicate
+     * Remove matched licenses based on a predicate. Will remove licenses for which the predicate
      * returns true.
      * @param filter the predicate to use.
      */
