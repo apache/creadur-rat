@@ -30,15 +30,15 @@ public class RatHeaderAnalysisException extends Exception {
         super();
     }
 
-    public RatHeaderAnalysisException(String msg, Throwable cause) {
+    public RatHeaderAnalysisException(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 
-    public RatHeaderAnalysisException(String msg) {
+    public RatHeaderAnalysisException(final String msg) {
         super(msg);
     }
 
-    public RatHeaderAnalysisException(Throwable cause) {
+    public RatHeaderAnalysisException(final Throwable cause) {
         super(cause);
     }
 }

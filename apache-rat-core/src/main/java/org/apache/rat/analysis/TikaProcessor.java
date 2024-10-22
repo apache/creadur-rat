@@ -38,58 +38,58 @@ public final class TikaProcessor {
 
     /** the Tika parser */
     private static final Tika TIKA = new Tika();
-    /** A map of mime type string to non BINARY types.
-     * "text" types are already handled everything else
+    /** A map of mime type string to non-BINARY types.
+     * "text" types are already handled somewhere else
      * BINARY unless listed here*/
-    private static final Map<String, Document.Type> documentTypeMap;
+    private static final Map<String, Document.Type> DOCUMENT_TYPE_MAP;
 
     static {
-        documentTypeMap = new HashMap<>();
+        DOCUMENT_TYPE_MAP = new HashMap<>();
 //        org.apache.tika.parser.epub.EpubParser
-        documentTypeMap.put("application/x-ibooks+zip", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/epub+zip", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-ibooks+zip", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/epub+zip", Document.Type.ARCHIVE);
 
-        documentTypeMap.put("application/vnd.wap.xhtml+xml", Document.Type.STANDARD);
-        documentTypeMap.put("application/x-asp", Document.Type.STANDARD);
-        documentTypeMap.put("application/xhtml+xml", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/vnd.wap.xhtml+xml", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/x-asp", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/xhtml+xml", Document.Type.STANDARD);
 
 //        org.apache.tika.parser.pdf.PDFParser", Type.BINARY);
-        documentTypeMap.put("application/pdf", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/pdf", Document.Type.STANDARD);
 //org.apache.tika.parser.pkg.CompressorParser
-        documentTypeMap.put("application/zlib", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-gzip", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-bzip2", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-compress", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-java-pack200", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-lzma", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/deflate64", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-lz4", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-snappy", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-brotli", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/gzip", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-bzip", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-xz", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/zlib", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-gzip", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-bzip2", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-compress", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-java-pack200", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-lzma", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/deflate64", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-lz4", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-snappy", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-brotli", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/gzip", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-bzip", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-xz", Document.Type.ARCHIVE);
 //org.apache.tika.parser.pkg.PackageParser
-        documentTypeMap.put("application/x-tar", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/java-archive", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-arj", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-archive", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/zip", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-cpio", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-tika-unix-dump", Document.Type.ARCHIVE);
-        documentTypeMap.put("application/x-7z-compressed", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-tar", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/java-archive", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-arj", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-archive", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/zip", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-cpio", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-tika-unix-dump", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-7z-compressed", Document.Type.ARCHIVE);
 //org.apache.tika.parser.pkg.RarParser
-        documentTypeMap.put("application/x-rar-compressed", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-rar-compressed", Document.Type.ARCHIVE);
 
 //        org.apache.tika.parser.xliff.XLIFF12Parser
-        documentTypeMap.put("application/x-xliff+xml", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/x-xliff+xml", Document.Type.STANDARD);
 //        org.apache.tika.parser.xliff.XLZParser
-        documentTypeMap.put("application/x-xliff+zip", Document.Type.ARCHIVE);
+        DOCUMENT_TYPE_MAP.put("application/x-xliff+zip", Document.Type.ARCHIVE);
 //        org.apache.tika.parser.xml.DcXMLParser
-        documentTypeMap.put("application/xml", Document.Type.STANDARD);
-        documentTypeMap.put("image/svg+xml", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/xml", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("image/svg+xml", Document.Type.STANDARD);
 //        org.apache.tika.parser.xml.FictionBookParser
-        documentTypeMap.put("application/x-fictionbook+xml", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/x-fictionbook+xml", Document.Type.STANDARD);
     }
 
     private TikaProcessor() {
@@ -102,7 +102,7 @@ public final class TikaProcessor {
      * @return a copy of the document type map.
      */
     static Map<String, Document.Type> getDocumentTypeMap() {
-        return new HashMap<>(documentTypeMap);
+        return new HashMap<>(DOCUMENT_TYPE_MAP);
     }
 
     /**
@@ -138,7 +138,7 @@ public final class TikaProcessor {
             return Document.Type.STANDARD;
         }
 
-        Document.Type result = documentTypeMap.get(mediaType.toString());
+        Document.Type result = DOCUMENT_TYPE_MAP.get(mediaType.toString());
         return result == null ? Document.Type.BINARY : result;
     }
 }

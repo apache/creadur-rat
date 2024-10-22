@@ -99,7 +99,7 @@ public class ArchiveWalker extends Walker {
         } catch (ArchiveException e) {
             DefaultLog.getInstance().warn(format("Unable to process %s: %s", getDocument().getName(), e.getMessage()));
         } catch (IOException e) {
-            throw RatException.asRatException(e);
+            throw RatException.makeRatException(e);
         }
         return result;
     }
