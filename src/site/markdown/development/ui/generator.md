@@ -18,7 +18,7 @@
 # The Generator
 
 > * > Up: [UI Implementation](../ui_implementation.html)
-> <br />[Options](/.options.html) | Generator | [UI Specific](./ui_specific.html)
+> <br />[Options](./options.html) | Generator | [UI Specific](./ui_specific.html)
 
 
 The generator is the bit of code that ties the new UI to the Rat CLI. In this section we will explore how the Rat core module exposes the information necessary to build a valuable new UI.  We will be using the Maven tooling code in `apache-rat-tools` as the basis of the examples in this section.  As always, the current code base is the source of truth.
@@ -312,4 +312,4 @@ Maven also supports the case where multiple values are accepted for one Property
 The AntGenerator follows the same design as the MavenGenerator. The main difference is that Ant allows attributes in the XML elements.
 
 > * > Up: [UI Implementation](../ui_implementation.html)
-    > <br />[Options](/.options.html) | Generator | [UI Specific](./ui_specific.html)
+    > <br />[Options](./options.html) | Generator | [UI Specific](./ui_specific.html)
