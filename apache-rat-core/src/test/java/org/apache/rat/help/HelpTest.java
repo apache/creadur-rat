@@ -49,7 +49,7 @@ public class HelpTest {
             }
         }
 
-        assertThat(result).doesNotEndWith("..");
+        assertThat(result).doesNotContain("..");
     }
 
     @Test
@@ -66,6 +66,6 @@ public class HelpTest {
                 TextUtils.assertPatternInTarget(format("^<%s>", option.getArgName()), result);
             }
         }
-        assertThat(result).doesNotEndWith("..");
+        assertThat(result).doesNotContain("..");
     }
 }
