@@ -31,8 +31,6 @@ Apache Rat&#8482;
 
  Apache Rat is a release audit tool, focused on licenses.
 
-** Rat Is Used To...?
-
  Use Rat to improve accuracy and efficiency
  when checking releases for licenses.
 
@@ -43,7 +41,23 @@ Apache Rat&#8482;
 
  Rat arises from the Apache style, but is used more widely.
  If your release style isn't supported,
+ {{{./mailing-lists.html}get in touch}}.
+
+** Who Develops Rat?
+
+ Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
+ language- and build-agnostic suite of tools for auditing and comprehending
+ software distributions. Our community develops
+ {{{https://opensource.org/} open source software}} the
+ {{{https://www.apache.org/foundation/how-it-works.html} Apache way}}.
+
+ Please feel free to contribute a
+ {{{./issue-management.html}patch}},
+ {{{https://wiki.c2.com/?TestDrivenDevelopment}demonstrate}} a
+ {{{./issue-management.html}bug}}, or
+ just
  {{{./mailing-lists.html}talk to us}}.
+ All welcome :-)
 
 ** How Do I Use Rat?
 
@@ -63,36 +77,20 @@ Apache Rat&#8482;
  {{{./issue-management.html}patch}} or
  {{{./mailing-lists.html}talk to us}}
  whenever Rat falls short.
- 
+
 ** How do I extend Rat
- 
+
  There are several standard ways to extend Rat.
- 
+
    * Add a {{{./license_def.html}license definition}} via an XML file.
-   
+
    * Add a new {{{./matcher_def.html}Matcher definition}}. Requires Java expertise.
-   
+
    * Add a new definition format.  Requires Java expertise as well as expertise with the format.
 
    * Write a new {{{./xslt_def.html}output report}}.  Requires XSLT knowledge.
 
    * Write a new {{{./ui_def.html}user interface}}.  Requires Java expertise, but there are tools to help.
-
-** Who Develops Rat?
-
-  Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
-  language- and build-agnostic suite of tools for auditing and comprehending
-  software distributions. Our community develops
-  {{{https://opensource.org/} open source software}} the
-  {{{https://www.apache.org/foundation/how-it-works.html} Apache way}}.
-
-  Please feel free to contribute a
-  {{{./issue-management.html}patch}},
-  {{{https://wiki.c2.com/?TestDrivenDevelopment}demonstrate}} a
-  {{{./issue-management.html}bug}}, or
-  just
-  {{{./mailing-lists.html}talk to us}}.
-  All welcome :-)
 
 * Quick Start: Running Rat
 
