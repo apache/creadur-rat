@@ -14,7 +14,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-# RAT Architecture notes.
+# RAT Architecture notes
 
 ## Source definition
 
@@ -25,12 +25,12 @@ configuration files, archives, etc.  The use of the term "source" does not speci
 
 Licenses comprise a unique ID, a name, and a series of tests.
 
- * The uniqueID and name are defined in the interface `ILicenseFamiy`
+ * The uniqueID and name are defined in the interface `ILicenseFamily`
  * The tests are defined in the interface `IHeaderMatcher`
  * If any of the tests are matched then the license is detected.
- * tests may be multiplexing tests that containt more than one test.  Multiplexing tests are either
- 	  * `AND` tests where all the the sub tests must be true for the test to be true; or
- 	  * `OR` tests where one the the sub-tests being true makes the entire test true.
+ * tests may be multiplexing tests that contains more than one test.  Multiplexing tests are either
+ 	  * `AND` tests where all the subtests must be true for the test to be true; or
+ 	  * `OR` tests where one of the subtests being true makes the entire test true.
  
  
  When source files are tested for the presence of a license all the license checks are performed in parallel.
@@ -46,8 +46,8 @@ Licenses comprise a unique ID, a name, and a series of tests.
  ### SPDX
  
  The SPDX keyword must be found within the source file.  SPDX keyword have the form `SPDX-License-Identifier:\\s([A-Za-z0-9\\.\\-]+)`
- when defining the SPDX matcher onlyt the variable alpha-numeric phrase may be specified (eg the 'Apache-2.0' in the SPDX
- identifier 'SPDX-License-Identifier: Apache-2.0`
+ when defining the SPDX matcher only the variable alphanumeric phrase may be specified (e.g. the 'Apache-2.0' in the SPDX
+ identifier `SPDX-License-Identifier: Apache-2.0`
  
  ### Copyright
  
@@ -61,7 +61,7 @@ Licenses comprise a unique ID, a name, and a series of tests.
  If any of the tests comprising the ANY-Multiplex test pass then the ANY-Multiplex test passes.
  
  #### ALL-Multiplex (aka AND-Multiplex)
-Only if all of the tests comprising the ALL-Multiplex test pass will the ALL-Multiplex test pass.
+Only if all the tests comprising the ALL-Multiplex test pass will the ALL-Multiplex test pass.
  
  ### License test
  All licenses are defined as ANY-Multiplex tests.  Licenses therefore be uses as tests within other tests.  However, this

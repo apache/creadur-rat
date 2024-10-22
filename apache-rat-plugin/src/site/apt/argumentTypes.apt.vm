@@ -12,15 +12,13 @@
 ~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ~~   See the License for the specific language governing permissions and
 ~~   limitations under the License.
-
 ------
 Argument Types
 ------
 
-Argument Types
+Available Argument Types
 
-Rat defines several argument types for the pom options. Available types are listed below
-
+  Rat defines several argument types for the pom options. Available types are listed below
 
 ------------------------------------------------------------------
 #include( "argument_types.txt" )
