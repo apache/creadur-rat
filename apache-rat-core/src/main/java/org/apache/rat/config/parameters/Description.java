@@ -106,7 +106,7 @@ public class Description {
 
     /**
      * Constructor
-     * @param configComponent the configuration component
+     * @param configComponent the configuration component.
      * @param isCollection the collection flag.
      * @param childClass the type of object that the method getter/setter expects.
      * @param children the collection of descriptions for all the components that

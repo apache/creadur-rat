@@ -42,7 +42,7 @@ public @interface ConfigComponent {
     String desc() default "";
 
     /**
-     * The component type
+     * The component type.
      * @return the component type.
      */
     ComponentType type();
@@ -54,8 +54,8 @@ public @interface ConfigComponent {
     Class<?> parameterType() default void.class;
 
     /**
-     * if {@code true} this component can be child of the containing component
-     * @return {@code true} if this component can be child of the containing component
+     * If {@code true} this component can be a child of the containing component.
+     * @return {@code true} if this component can be a child of the containing component.
      */
     boolean required() default false;
 }
