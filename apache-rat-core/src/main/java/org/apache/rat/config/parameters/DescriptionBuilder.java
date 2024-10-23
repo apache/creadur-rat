@@ -75,8 +75,8 @@ public final class DescriptionBuilder {
     }
     /**
      * Build the list of descriptions for children of the class.
-     * @param clazz
-     * @return the Descriptions. of the child elements.
+     * @param clazz source class.
+     * @return the Descriptions of the child elements.
      */
     private static List<Description> getConfigComponents(final Class<?> clazz) {
         if (clazz == null || clazz == String.class || clazz == Object.class) {
