@@ -28,5 +28,5 @@ public enum AddLicenseHeaders {
     /** Do not add headers */
     FALSE,
     /** Add headers and overwrite the old file */
-    FORCED;
+    FORCED
 }
