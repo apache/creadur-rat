@@ -61,15 +61,6 @@ public class Description {
     private final Map<String, Description> children;
 
     /**
-     * A predicate to filter Descriptions by component type.
-     * @param type The component type required in the filter.
-     * @return a predicate that will only return Descriptions with the specified component type.
-     */
-    public static Predicate<Description> typePredicate(final ComponentType type) {
-        return d -> d.getType() == type;
-    }
-
-    /**
      * Constructor.
      * @param type the type of the component.
      * @param name the name of the component.
@@ -210,9 +201,9 @@ public class Description {
     }
 
     /**
-     * Get a filtered collection of the child descriptions.
+     * Gets a filtered collection of the child descriptions.
      * @param filter the filter to apply to the child descriptions.
-     * @return the collection of children that matche the filter..
+     * @return the collection of children that matche the filter.
      */
     public Collection<Description> filterChildren(final Predicate<Description> filter) {
         return children.values().stream().filter(filter).collect(Collectors.toList());
@@ -321,26 +312,5 @@ public class Description {
 
         return format("Description[%s t:%s c:%s %s children: [%s]] ", name, type, isCollection, childClass,
                 childList);
-    }
-
-    /**
-     * Write a description with indentation.
-     * @param indent the number of spaces to indent.
-     * @return the string with the formatted data.
-     */
-    public String toString(final int indent) {
-        char[] spaces = new char[indent];
-        Arrays.fill(spaces, ' ');
-        String padding = String.copyValueOf(spaces);
-        String top = format("%sDescription[ t:%s n:%s c:%s %s%n%s   %s] ", padding, type, name, isCollection,
-                childClass, padding, desc);
-        if (children.isEmpty()) {
-            return top;
-        }
-        StringBuilder sb = new StringBuilder(top);
-        for (Description child : children.values()) {
-            sb.append(System.lineSeparator()).append(child.toString(indent + 2));
-        }
-        return sb.toString();
     }
 }
