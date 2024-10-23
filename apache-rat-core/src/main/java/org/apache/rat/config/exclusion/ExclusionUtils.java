@@ -280,7 +280,7 @@ public final class ExclusionUtils {
 
     /**
      * @param filename file name to cleanup.
-     * @return
+     * @return cleaned up file name.
      */
     public static String localizeFileName(final String filename) {
         String part = filename;
