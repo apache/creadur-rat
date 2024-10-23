@@ -37,7 +37,7 @@ public class RegexBuilderTest {
                 + "        </families>" //
                 + "        <licenses>" //
                 + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
-                + "                <regex expr='.' />" //
+                + "                <regex expression='.' />" //
                 + "            </license>" //
                 + "        </licenses>" //
                 + "    </rat-config>" //
@@ -61,7 +61,7 @@ public class RegexBuilderTest {
                 + "        </families>" //
                 + "        <licenses>" //
                 + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
-                + "                <regex id='foo' expr='.' />" //
+                + "                <regex id='foo' expression='.' />" //
                 + "            </license>" //
                 + "        </licenses>" //
                 + "    </rat-config>" //

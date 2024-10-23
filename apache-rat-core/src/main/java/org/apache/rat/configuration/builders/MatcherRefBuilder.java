@@ -39,30 +39,31 @@ import org.apache.rat.config.parameters.MatcherBuilder;
  */
 @MatcherBuilder(MatcherRefBuilder.IHeaderMatcherProxy.class)
 public class MatcherRefBuilder extends AbstractBuilder {
+    /** The matcher id that this references */
     private String referenceId;
+    /** The map of matcher id to matcher maintained by the system.  Used for lookup. */
     private Map<String, IHeaderMatcher> matchers;
-
-    /** the reference id attribute */
-    public static final String ATT_REF_ID = "refId";
 
     /**
      * Constructs the MatcherReferenceBuilder using the provided reference id.
-     * 
+     *
      * @param refId the reverence to the matcher id.
      * @return this builder for chaining.
      */
-    public MatcherRefBuilder setRefId(String refId) {
+    public MatcherRefBuilder setRefId(final String refId) {
+        // this method is called by reflection
         this.referenceId = refId;
         return this;
     }
 
     /**
      * Set the Map of matcher ids to matcher instances.
-     * 
+     *
      * @param matchers the Map of ids to instances.
      * @return this builder for chaining.
      */
-    public MatcherRefBuilder setMatcherMap(Map<String, IHeaderMatcher> matchers) {
+    public MatcherRefBuilder setMatcherMap(final Map<String, IHeaderMatcher> matchers) {
+        // this method is called by reflection
         this.matchers = matchers;
         return this;
     }
@@ -78,7 +79,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
 
     @Override
     public String toString() {
-        return "MathcerRefBuilder: " + referenceId;
+        return "MatcherRefBuilder: " + referenceId;
     }
 
     /**
@@ -90,33 +91,27 @@ public class MatcherRefBuilder extends AbstractBuilder {
      */
     @ConfigComponent(type = ComponentType.MATCHER, name = "matcherRef", desc = "A pointer to another Matcher")
     public static class IHeaderMatcherProxy implements IHeaderMatcher {
-
+        /**
+         * the reference id (aka proxyId) for the reference.
+         */
         @ConfigComponent(type = ComponentType.PARAMETER, name = "refId", desc = "Reference to an existing matcher", required = true)
         private final String proxyId;
+        /** The header matcher that this proxy points to */
         private IHeaderMatcher wrapped;
-
+        /** The map of reference IDs to matchers that is maintained in the build environment.  Used for lookup */
         @ConfigComponent(type = ComponentType.BUILD_PARAMETER, name = "matcherMap", desc = "Map of matcher names to matcher instances")
         private Map<String, IHeaderMatcher> matchers;
 
         /**
-         * Constuctor. The matchers map should be a reference to an object that will be
+         * Constructor. The matchers map should be a reference to an object that will be
          * updated by later processing of matcher definitions.
-         * 
+         *
          * @param proxyId the id of the matcher to find.
          * @param matchers a mapping of matchers that have been found.
          */
-        public IHeaderMatcherProxy(String proxyId, Map<String, IHeaderMatcher> matchers) {
+        public IHeaderMatcherProxy(final String proxyId, final Map<String, IHeaderMatcher> matchers) {
             this.proxyId = proxyId;
             this.matchers = matchers;
-        }
-
-        /**
-         * Get the reference ID that this proxy is using.
-         * 
-         * @return the reference id that points to the actual matcher.
-         */
-        public String getRefId() {
-            return proxyId;
         }
 
         private void checkProxy() {
@@ -142,10 +137,9 @@ public class MatcherRefBuilder extends AbstractBuilder {
         }
 
         @Override
-        public boolean matches(IHeaders header) {
+        public boolean matches(final IHeaders header) {
             checkProxy();
             return wrapped.matches(header);
         }
     }
-
 }

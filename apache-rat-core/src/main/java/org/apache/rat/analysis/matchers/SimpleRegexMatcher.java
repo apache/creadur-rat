@@ -32,7 +32,7 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
     /**
      * The regular expression pattern to match.
      */
-    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The pattern to match", name = "expr", parameterType = String.class)
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The pattern to match", name = "expression", parameterType = String.class)
     private final Pattern pattern;
 
     /**

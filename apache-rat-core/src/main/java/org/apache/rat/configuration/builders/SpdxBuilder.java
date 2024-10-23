@@ -30,17 +30,17 @@ import org.apache.rat.config.parameters.MatcherBuilder;
  */
 @MatcherBuilder(SPDXMatcherFactory.Match.class)
 public class SpdxBuilder extends AbstractBuilder {
-
+    /** The SPDX name */
     private String name;
 
     /**
      * Sets the name for the SPDX matcher.  This is the same as the identifier in the SPDX license list.
-     * 
+     *
      * @param name The text that follows the colon ':' in the SPDX tag.
      * @return this builder.
      * @see <a href="https://spdx.org/licenses/">SPDX license list</a>
      */
-    public SpdxBuilder setName(String name) {
+    public SpdxBuilder setName(final String name) {
         Objects.requireNonNull(name, "SPDX name must not be null");
         this.name = name;
         super.setId("SPDX:" + name);
@@ -49,12 +49,12 @@ public class SpdxBuilder extends AbstractBuilder {
 
     /**
      * Set the id for the matcher.
-     * 
+     *
      * @param id the id to use.
      * @return this builder.
      */
     @Override
-    public AbstractBuilder setId(String id) {
+    public AbstractBuilder setId(final String id) {
         if (StringUtils.isNotBlank(id)) {
             throw new ConfigurationException("'id' is not supported for SPDX matchers.  "
                     + "SPXD matchers always have 'SPDX:<name>' as their id");

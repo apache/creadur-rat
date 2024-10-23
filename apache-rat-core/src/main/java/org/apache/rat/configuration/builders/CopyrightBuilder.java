@@ -26,8 +26,11 @@ import org.apache.rat.config.parameters.MatcherBuilder;
  */
 @MatcherBuilder(CopyrightMatcher.class)
 public class CopyrightBuilder extends AbstractBuilder {
+    /** The start date of the copyright.  May be {@code null}. */
     private String start;
+    /** The end date of the copyright.  May be {@code null}. */
     private String end;
+    /** The owner of the copyright.  May be {@code null}. */
     private String owner;
 
     /**
@@ -35,7 +38,7 @@ public class CopyrightBuilder extends AbstractBuilder {
      * @param start the start date for the copyright
      * @return this for chaining
      */
-    public CopyrightBuilder setStart(String start) {
+    public CopyrightBuilder setStart(final String start) {
         this.start = start;
         return this;
     }
@@ -45,7 +48,7 @@ public class CopyrightBuilder extends AbstractBuilder {
      * @param end the End data for the copyright.
      * @return this for chaining.
      */
-    public CopyrightBuilder setEnd(String end) {
+    public CopyrightBuilder setEnd(final String end) {
         this.end = end;
         return this;
     }
@@ -55,7 +58,7 @@ public class CopyrightBuilder extends AbstractBuilder {
      * @param owner the owner for the copyright
      * @return this for chaining.
      */
-    public CopyrightBuilder setOwner(String owner) {
+    public CopyrightBuilder setOwner(final String owner) {
         this.owner = owner;
         return this;
     }

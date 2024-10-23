@@ -41,13 +41,13 @@ public class NotBuilder extends ChildContainerBuilder {
     public String toString() {
         return String.format("NotBuilder: %s", !children.isEmpty() ? children.get(0) : null);
     }
-    
+
     /**
      * Sets the enclosed matcher.  Prior to this call the builder is invalid and the {@code build()} will fail.
      * @param enclosed The matcher to negate.
      * @return this.
      */
-    public NotBuilder setEnclosed(IHeaderMatcher.Builder enclosed) {
+    public NotBuilder setEnclosed(final IHeaderMatcher.Builder enclosed) {
         if (children.isEmpty()) {
             children.add(enclosed);
         } else {
