@@ -42,8 +42,7 @@ public class SpdxBuilderTest {
                 + "                <spdx name='the-key' />" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -66,8 +65,7 @@ public class SpdxBuilderTest {
                 + "                <spdx id='foo' name='the-key' />" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));

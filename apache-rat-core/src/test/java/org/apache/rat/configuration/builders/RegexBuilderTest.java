@@ -40,8 +40,7 @@ public class RegexBuilderTest {
                 + "                <regex expression='.' />" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -64,8 +63,7 @@ public class RegexBuilderTest {
                 + "                <regex id='foo' expression='.' />" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));

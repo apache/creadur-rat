@@ -29,7 +29,7 @@ import org.apache.rat.config.parameters.MatcherBuilder;
  */
 @MatcherBuilder(SimpleTextMatcher.class)
 public class TextBuilder extends AbstractBuilder {
-    /** The absolute maximum display length */
+    /** The absolute maximum display length. */
     private static final int MAX_DISPLAY_LENGTH = 20;
     /** The text to match. */
     private String text;

@@ -43,7 +43,7 @@ public class NotBuilder extends ChildContainerBuilder {
     }
 
     /**
-     * Sets the enclosed matcher.  Prior to this call the builder is invalid and the {@code build()} will fail.
+     * Sets the enclosed matcher. Prior to this call the builder is invalid and the {@code build()} will fail.
      * @param enclosed The matcher to negate.
      * @return this.
      */

@@ -26,11 +26,11 @@ import org.apache.rat.config.parameters.MatcherBuilder;
  */
 @MatcherBuilder(CopyrightMatcher.class)
 public class CopyrightBuilder extends AbstractBuilder {
-    /** The start date of the copyright.  May be {@code null}. */
+    /** The start date of the copyright. May be {@code null}. */
     private String start;
-    /** The end date of the copyright.  May be {@code null}. */
+    /** The end date of the copyright. May be {@code null}. */
     private String end;
-    /** The owner of the copyright.  May be {@code null}. */
+    /** The owner of the copyright. May be {@code null}. */
     private String owner;
 
     /**

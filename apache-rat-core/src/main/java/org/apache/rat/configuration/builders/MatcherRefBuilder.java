@@ -39,9 +39,9 @@ import org.apache.rat.config.parameters.MatcherBuilder;
  */
 @MatcherBuilder(MatcherRefBuilder.IHeaderMatcherProxy.class)
 public class MatcherRefBuilder extends AbstractBuilder {
-    /** The matcher id that this references */
+    /** The matcher id that this builder references */
     private String referenceId;
-    /** The map of matcher id to matcher maintained by the system.  Used for lookup. */
+    /** The map of matcher id to matcher maintained by the system. Used for lookup. */
     private Map<String, IHeaderMatcher> matchers;
 
     /**
@@ -92,13 +92,13 @@ public class MatcherRefBuilder extends AbstractBuilder {
     @ConfigComponent(type = ComponentType.MATCHER, name = "matcherRef", desc = "A pointer to another Matcher")
     public static class IHeaderMatcherProxy implements IHeaderMatcher {
         /**
-         * the reference id (aka proxyId) for the reference.
+         * The reference id (aka proxyId) for the reference.
          */
         @ConfigComponent(type = ComponentType.PARAMETER, name = "refId", desc = "Reference to an existing matcher", required = true)
         private final String proxyId;
         /** The header matcher that this proxy points to */
         private IHeaderMatcher wrapped;
-        /** The map of reference IDs to matchers that is maintained in the build environment.  Used for lookup */
+        /** The map of reference IDs to matchers that is maintained in the build environment. Used for lookup */
         @ConfigComponent(type = ComponentType.BUILD_PARAMETER, name = "matcherMap", desc = "Map of matcher names to matcher instances")
         private Map<String, IHeaderMatcher> matchers;
 

@@ -34,7 +34,7 @@ public class SpdxBuilder extends AbstractBuilder {
     private String name;
 
     /**
-     * Sets the name for the SPDX matcher.  This is the same as the identifier in the SPDX license list.
+     * Sets the name for the SPDX matcher. This is the same as the identifier in the SPDX license list.
      *
      * @param name The text that follows the colon ':' in the SPDX tag.
      * @return this builder.
@@ -56,7 +56,7 @@ public class SpdxBuilder extends AbstractBuilder {
     @Override
     public AbstractBuilder setId(final String id) {
         if (StringUtils.isNotBlank(id)) {
-            throw new ConfigurationException("'id' is not supported for SPDX matchers.  "
+            throw new ConfigurationException("'id' is not supported for SPDX matchers. "
                     + "SPXD matchers always have 'SPDX:<name>' as their id");
         }
         return this;
