@@ -36,7 +36,7 @@ import org.apache.rat.license.ILicense;
 import static java.lang.String.format;
 
 /**
- * Builds Description objects for the various Component instances.
+ * Builds Description objects for the various component instances.
  */
 public final class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -45,7 +45,7 @@ public final class DescriptionBuilder {
 
     /**
      * Create the description for the object.
-     * The object must have a ConfigComponent annotation or null will be returned.
+     * The object must have a ConfigComponent annotation or {@code null} will be returned.
      * @param object the object to process.
      * @return the Description of the object.
      */
@@ -56,7 +56,7 @@ public final class DescriptionBuilder {
             ConfigComponent configComponent = clazz.getAnnotation(ConfigComponent.class);
             if (configComponent == null || configComponent.type() != ComponentType.LICENSE) {
                 throw new ConfigurationException(
-                        format("Licenses must have License type specified in ConfigComponent annotation.  Annotation missing or incorrect in %s", clazz));
+                        format("Licenses must have License type specified in ConfigComponent annotation. Annotation missing or incorrect in %s", clazz));
             }
             List<Description> children = getConfigComponents(object.getClass());
             return new Description(ComponentType.LICENSE, license.getId(), license.getName(), false, null, children, false);
