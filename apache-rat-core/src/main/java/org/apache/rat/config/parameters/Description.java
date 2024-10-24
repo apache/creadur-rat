@@ -18,8 +18,6 @@
  */
 package org.apache.rat.config.parameters;
 
-import static java.lang.String.format;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -34,6 +32,8 @@ import org.apache.rat.BuilderParams;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * A description of a component.
@@ -59,15 +59,6 @@ public class Description {
      * described component.
      */
     private final Map<String, Description> children;
-
-    /**
-     * A predicate to filter Descriptions by component type.
-     * @param type The component type required in the filter.
-     * @return a predicate that will only return Descriptions with the specified component type.
-     */
-    public static Predicate<Description> typePredicate(final ComponentType type) {
-        return d -> d.getType() == type;
-    }
 
     /**
      * Constructor.
@@ -106,7 +97,7 @@ public class Description {
 
     /**
      * Constructor
-     * @param configComponent the configuration component
+     * @param configComponent the configuration component.
      * @param isCollection the collection flag.
      * @param childClass the type of object that the method getter/setter expects.
      * @param children the collection of descriptions for all the components that

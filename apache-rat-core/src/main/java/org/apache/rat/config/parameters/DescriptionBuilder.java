@@ -27,57 +27,58 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ImplementationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
 
+import static java.lang.String.format;
+
 /**
- * Builds Description objects for the various Component instances.
+ * Builds Description objects for the various component instances.
  */
-public class DescriptionBuilder {
-    /* do not instantiate */
-    private DescriptionBuilder() {}
+public final class DescriptionBuilder {
+    private DescriptionBuilder() {
+        // do not instantiate
+    }
 
     /**
      * Create the description for the object.
-     * The object must have a ConfigComponent annotation or null will be returned.
-     * @param obj the object to process.
+     * The object must have a ConfigComponent annotation or {@code null} will be returned.
+     * @param object the object to process.
      * @return the Description of the object.
      */
-    public static Description build(Object obj) {
-        if (obj instanceof ILicense) {
-            ILicense license = (ILicense)obj;
-            Class<?> clazz = obj.getClass();
+    public static Description build(final Object object) {
+        if (object instanceof ILicense) {
+            ILicense license = (ILicense) object;
+            Class<?> clazz = object.getClass();
             ConfigComponent configComponent = clazz.getAnnotation(ConfigComponent.class);
             if (configComponent == null || configComponent.type() != ComponentType.LICENSE) {
-                throw new ConfigurationException(String.format("Licenses must have License type specified in ConfigComponent annotation.  Annotation missing or incorrect in %s", clazz));
+                throw new ConfigurationException(
+                        format("Licenses must have License type specified in ConfigComponent annotation. Annotation missing or incorrect in %s", clazz));
             }
-            List<Description> children = getConfigComponents(obj.getClass());
+            List<Description> children = getConfigComponents(object.getClass());
             return new Description(ComponentType.LICENSE, license.getId(), license.getName(), false, null, children, false);
         }
-        return buildMap(obj.getClass());
+        return buildMap(object.getClass());
     }
 
-    private static String fixupMethodName(Method method) {
+    private static String fixupMethodName(final Method method) {
         String name = method.getName();
         if (name.startsWith("get") || name.startsWith("set") || name.startsWith("add")) {
             if (name.length() > 3) {
-                String retval = name.substring(3,4).toLowerCase();
-                if (name.length() > 4) {
-                    retval+=name.substring(4);
-                }
-                return retval;
+                return WordUtils.uncapitalize(name.substring(3));
             }
-        } 
-        throw new ImplementationException(String.format("'%s' is not a recognized method name", name));
+        }
+        throw new ImplementationException(format("'%s' is not a recognized method name", name));
     }
     /**
      * Build the list of descriptions for children of the class.
-     * @param clazz
-     * @return the Descriptions. of the child elements.
+     * @param clazz source class.
+     * @return the Descriptions of the child elements.
      */
-    private static List<Description> getConfigComponents(Class<?> clazz) {
+    private static List<Description> getConfigComponents(final Class<?> clazz) {
         if (clazz == null || clazz == String.class || clazz == Object.class) {
             return Collections.emptyList();
         }
@@ -113,7 +114,7 @@ public class DescriptionBuilder {
         return result;
     }
 
-    private static ConfigComponent findConfigComponent(Class<?> clazz) {
+    private static ConfigComponent findConfigComponent(final Class<?> clazz) {
         if (clazz == null || clazz == String.class || clazz == Object.class) {
             return null;
         }
@@ -121,7 +122,7 @@ public class DescriptionBuilder {
         return configComponent == null ? findConfigComponent(clazz.getSuperclass()) : configComponent;
     }
 
-    public static Class<?> getBuiltClass(Class<? extends IHeaderMatcher.Builder> clazz) {
+    public static Class<?> getBuiltClass(final Class<? extends IHeaderMatcher.Builder> clazz) {
         try {
             MatcherBuilder matcherBuilder = clazz.getAnnotation(MatcherBuilder.class);
             if (matcherBuilder == null) {
@@ -139,18 +140,19 @@ public class DescriptionBuilder {
      * @param clazz the class to build the description for.
      * @return the Description of the class or null if no ConfigComponent annotation was found on the class.
      */
-    public static Description buildMap(Class<?> clazz) {
+    public static Description buildMap(final Class<?> clazz) {
         if (clazz == IHeaderMatcher.class) {
-            throw new ImplementationException("'clazz' parameter must not be IHeaderMatcher.class but may be a child of it"); 
+            throw new ImplementationException("'clazz' parameter must not be IHeaderMatcher.class but may be a child of it");
         }
-        if (IHeaderMatcher.Builder.class.isAssignableFrom(clazz)) {
-            clazz = getBuiltClass((Class<IHeaderMatcher.Builder>) clazz);
-        }
-        ConfigComponent configComponent = findConfigComponent(clazz);
+        Class<?> workingClass = IHeaderMatcher.Builder.class.isAssignableFrom(clazz)
+                    ? getBuiltClass((Class<IHeaderMatcher.Builder>) clazz)
+                    : clazz;
+
+        ConfigComponent configComponent = findConfigComponent(workingClass);
         if (configComponent == null) {
             return null;
         }
-        List<Description> children = getConfigComponents(clazz);
+        List<Description> children = getConfigComponents(workingClass);
 
         return new Description(configComponent, false, null, children);
     }

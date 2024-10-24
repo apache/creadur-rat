@@ -18,12 +18,12 @@
  */
 package org.apache.rat.config.parameters;
 
-import org.apache.rat.analysis.IHeaderMatcher;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.rat.analysis.IHeaderMatcher;
 
 /**
  * An annotation that marks a configuration component.
