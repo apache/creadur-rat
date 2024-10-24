@@ -25,7 +25,7 @@
     </families>
 	<licenses>
 		<license family="newFam" id="EXAMPLE" name="Example License">
-			<regex expr='.' />
+			<regex expression='.' />
 		</license>
 	</licenses>
 </rat-config>

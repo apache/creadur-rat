@@ -25,13 +25,13 @@ import org.apache.rat.configuration.builders.RegexBuilder;
 public class Regex extends RegexBuilder {
 
     @Named("expr")
-    public RegexBuilder setExpr(String exp) {
-        System.out.format("Calling setText() with %s\n", exp);
-        return super.setExpr(exp);
+    public RegexBuilder setExpression(String expression) {
+        System.out.format("Calling setText() with %s\n", expression);
+        return super.setExpression(expression);
     }
     public void set(String exp) {
         System.out.format("Calling set() with %s\n", exp);
-        setExpr(exp);
+        setExpression(exp);
     }
 
 }

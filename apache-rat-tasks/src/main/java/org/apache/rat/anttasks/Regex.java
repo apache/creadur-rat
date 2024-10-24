@@ -32,11 +32,11 @@ public class Regex implements IHeaderMatcher.Builder {
     private final RegexBuilder builder = new RegexBuilder();
 
     public void setExpr(String pattern) {
-        builder.setExpr(pattern);
+        builder.setExpression(pattern);
     }
 
     public void addText(String pattern) {
-        builder.setExpr(pattern);
+        builder.setExpression(pattern);
     }
 
     @Override
