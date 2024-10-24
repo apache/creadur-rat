@@ -201,9 +201,9 @@ public class Description {
     }
 
     /**
-     * Get a filtered collection of the child descriptions.
+     * Gets a filtered collection of the child descriptions.
      * @param filter the filter to apply to the child descriptions.
-     * @return the collection of children that matche the filter..
+     * @return the collection of children that matches the filter.
      */
     public Collection<Description> filterChildren(final Predicate<Description> filter) {
         return children.values().stream().filter(filter).collect(Collectors.toList());
@@ -238,9 +238,9 @@ public class Description {
      * <li>Parameter expects a {@code set(String)} method.</li>
      * <li>Unlabeled expects a {@code set(String)} method.</li>
      * <li>BuilderParam expects a {@code set} method that takes a
-     * {@code childeClass} argument.</li>
+     * {@code childClass} argument.</li>
      * </ul>
-     * @param clazz the Class to get the getter from, generally a Builder class..
+     * @param clazz the Class to get the getter from, generally a Builder class.
      * @return the getter Method.
      * @throws NoSuchMethodException if the class does not have the getter.
      * @throws SecurityException if the getter can not be accessed.
@@ -312,26 +312,5 @@ public class Description {
 
         return format("Description[%s t:%s c:%s %s children: [%s]] ", name, type, isCollection, childClass,
                 childList);
-    }
-
-    /**
-     * Write a description with indentation.
-     * @param indent the number of spaces to indent.
-     * @return the string with the formatted data.
-     */
-    public String toString(final int indent) {
-        char[] spaces = new char[indent];
-        Arrays.fill(spaces, ' ');
-        String padding = String.copyValueOf(spaces);
-        String top = format("%sDescription[ t:%s n:%s c:%s %s%n%s   %s] ", padding, type, name, isCollection,
-                childClass, padding, desc);
-        if (children.isEmpty()) {
-            return top;
-        }
-        StringBuilder sb = new StringBuilder(top);
-        for (Description child : children.values()) {
-            sb.append(System.lineSeparator()).append(child.toString(indent + 2));
-        }
-        return sb.toString();
     }
 }
