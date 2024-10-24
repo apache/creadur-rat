@@ -37,11 +37,10 @@ public class RegexBuilderTest {
                 + "        </families>" //
                 + "        <licenses>" //
                 + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
-                + "                <regex expr='.' />" //
+                + "                <regex expression='.' />" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -61,11 +60,10 @@ public class RegexBuilderTest {
                 + "        </families>" //
                 + "        <licenses>" //
                 + "            <license family='newFam' id='EXAMPLE' name='Example License'>" //
-                + "                <regex id='foo' expr='.' />" //
+                + "                <regex id='foo' expression='.' />" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
