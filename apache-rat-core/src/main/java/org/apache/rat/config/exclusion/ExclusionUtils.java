@@ -23,7 +23,6 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -216,24 +215,24 @@ public final class ExclusionUtils {
 
     /**
      * Create matching patterns from the iterator of strings
-     * @param iter the iterator of strings.
+     * @param iterator the iterator of strings.
      * @return The match patterns from the strings.
      */
-    public static Optional<MatchPatterns> matchPattern(final Iterator<String> iter) {
-        ExtendedIterator<String> eIter = ExtendedIterator.create(iter).filter(MATCH_FILTER)
+    public static Optional<MatchPatterns> matchPattern(final Iterator<String> iterator) {
+        ExtendedIterator<String> eIter = ExtendedIterator.create(iterator).filter(MATCH_FILTER)
                 .map(ExclusionUtils::normalizePattern);
-        return iter.hasNext() ?  Optional.of(MatchPatterns.from(() -> eIter))
+        return iterator.hasNext() ?  Optional.of(MatchPatterns.from(() -> eIter))
         : Optional.empty();
     }
 
     /**
      * Create not matching patterns from the iterator of strings
      * These are strings that start with "!".
-     * @param iter the collection of strings.
+     * @param iterator the collection of strings.
      * @return The match patterns from the strings.
      */
-    public static Optional<MatchPatterns> notMatchPattern(final Iterator<String> iter) {
-        ExtendedIterator<String> eIter =  ExtendedIterator.create(iter).filter(NOT_MATCH_FILTER)
+    public static Optional<MatchPatterns> notMatchPattern(final Iterator<String> iterator) {
+        ExtendedIterator<String> eIter =  ExtendedIterator.create(iterator).filter(NOT_MATCH_FILTER)
                 .map(s -> normalizePattern(s.substring(1)));
         return eIter.hasNext() ? Optional.of(MatchPatterns.from(() -> eIter))
                 : Optional.empty();

@@ -23,10 +23,10 @@ package org.apache.rat.config;
  * Value of addLicenseHeaders configuration option.
  */
 public enum AddLicenseHeaders {
-    /** Add license headers to a *.new file*/
+    /** Add license headers to a '.new' file. */
     TRUE,
-    /** Do not add headers */
+    /** Do not add headers. */
     FALSE,
-    /** Add headers and overwrite the old file */
+    /** Add headers and overwrite the existing file. */
     FORCED
 }
