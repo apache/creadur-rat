@@ -28,15 +28,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
@@ -187,54 +184,5 @@ public final class ExclusionUtils {
         if (file == null || !file.exists() || !file.isFile()) {
             throw new ConfigurationException(format("%s is not a valid file.", file));
         }
-    }
-
-    /**
-     * Normalize a match pattern to the standard that MatchPattern expects
-     * @param pattern the raw pattern text.
-     * @return the pattern text for MatchPattern.
-     */
-    public static String normalizePattern(final String pattern) {
-        String cleanPattern = pattern.trim();
-
-        if (cleanPattern.startsWith(SelectorUtils.REGEX_HANDLER_PREFIX)) {
-            if (File.separatorChar == '\\') {
-                cleanPattern = StringUtils.replace(cleanPattern, "/", "\\\\");
-            } else {
-                cleanPattern = StringUtils.replace(cleanPattern, "\\\\", "/");
-            }
-        } else {
-            cleanPattern = cleanPattern.replace(File.separatorChar == '/' ? '\\' : '/', File.separatorChar);
-
-            if (cleanPattern.endsWith(File.separator)) {
-                cleanPattern += "**";
-            }
-        }
-        return cleanPattern;
-    }
-
-    /**
-     * Create matching patterns from the iterator of strings
-     * @param iterator the iterator of strings.
-     * @return The match patterns from the strings.
-     */
-    public static Optional<MatchPatterns> matchPattern(final Iterator<String> iterator) {
-        ExtendedIterator<String> eIter = ExtendedIterator.create(iterator).filter(MATCH_FILTER)
-                .map(ExclusionUtils::normalizePattern);
-        return iterator.hasNext() ?  Optional.of(MatchPatterns.from(() -> eIter))
-        : Optional.empty();
-    }
-
-    /**
-     * Create not matching patterns from the iterator of strings
-     * These are strings that start with "!".
-     * @param iterator the collection of strings.
-     * @return The match patterns from the strings.
-     */
-    public static Optional<MatchPatterns> notMatchPattern(final Iterator<String> iterator) {
-        ExtendedIterator<String> eIter =  ExtendedIterator.create(iterator).filter(NOT_MATCH_FILTER)
-                .map(s -> normalizePattern(s.substring(1)));
-        return eIter.hasNext() ? Optional.of(MatchPatterns.from(() -> eIter))
-                : Optional.empty();
     }
 }
