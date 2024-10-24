@@ -18,8 +18,6 @@
  */
 package org.apache.rat.config.parameters;
 
-import static java.lang.String.format;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -34,6 +32,8 @@ import org.apache.rat.BuilderParams;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * A description of a component.
@@ -97,7 +97,7 @@ public class Description {
 
     /**
      * Constructor
-     * @param configComponent the configuration component
+     * @param configComponent the configuration component.
      * @param isCollection the collection flag.
      * @param childClass the type of object that the method getter/setter expects.
      * @param children the collection of descriptions for all the components that

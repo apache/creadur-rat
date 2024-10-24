@@ -117,9 +117,8 @@ public class TextBuilderTest {
                 + "                <text id='5'>The text to match</text>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
-        
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
@@ -146,9 +145,8 @@ public class TextBuilderTest {
                 + "                <text id='5'>The-text-to-match</text>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
-        
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();

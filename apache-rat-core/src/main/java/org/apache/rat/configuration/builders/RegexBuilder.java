@@ -29,18 +29,18 @@ import org.apache.rat.config.parameters.MatcherBuilder;
  */
 @MatcherBuilder(SimpleRegexMatcher.class)
 public class RegexBuilder extends AbstractBuilder {
-
+    /** The compiled Regex pattern */
     private Pattern pattern;
 
     /**
      * Sets the regex expression. This method compiles the string into a pattern and
      * may throw any exception thrown by the {@code Pattern.compile(String)} method.
-     * @param exp the expression as a string.
+     * @param expression the expression as a string.
      * @return this builder for chaining.
      * @see Pattern#compile(String)
      */
-    public RegexBuilder setExpr(String exp) {
-        this.pattern = exp == null ? null : Pattern.compile(exp);
+    public RegexBuilder setExpression(final String expression) {
+        this.pattern = expression == null ? null : Pattern.compile(expression);
         return this;
     }
 

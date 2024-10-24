@@ -25,7 +25,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
  * An abstract IHeaderMatcher.Builder.
  */
 public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
-
+    /** The unique ID for the Matcher. */
     private String id;
 
     /**
@@ -39,7 +39,7 @@ public abstract class AbstractBuilder implements IHeaderMatcher.Builder {
      * @param id the id to use.
      * @return this builder for chaining.
      */
-    public AbstractBuilder setId(String id) {
+    public AbstractBuilder setId(final String id) {
         this.id = id;
         return this;
     }

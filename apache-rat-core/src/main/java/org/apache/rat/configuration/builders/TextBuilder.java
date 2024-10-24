@@ -29,7 +29,9 @@ import org.apache.rat.config.parameters.MatcherBuilder;
  */
 @MatcherBuilder(SimpleTextMatcher.class)
 public class TextBuilder extends AbstractBuilder {
-
+    /** The absolute maximum display length. */
+    private static final int MAX_DISPLAY_LENGTH = 20;
+    /** The text to match. */
     private String text;
 
     /**
@@ -37,7 +39,7 @@ public class TextBuilder extends AbstractBuilder {
      * @param text the text to match
      * @return this builder.
      */
-    public TextBuilder setSimpleText(String text) {
+    public TextBuilder setSimpleText(final String text) {
         this.text = text.trim();
         if (StringUtils.isBlank(text)) {
             throw new ConfigurationException("'text' may not be empty");
@@ -58,8 +60,8 @@ public class TextBuilder extends AbstractBuilder {
 
     @Override
     public String toString() {
-        if (text.length() > 20) {
-            return "TextBuilder: " + text.substring(0, 20) + "...";
+        if (text.length() > MAX_DISPLAY_LENGTH) {
+            return "TextBuilder: " + text.substring(0, MAX_DISPLAY_LENGTH) + "...";
         }
         return "TextBuilder: " + text;
     }

@@ -57,9 +57,10 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
      * @param resourceName the name of the resource to read.
      * @return a List of Matchers, one for each non-empty line in the input file.
      */
-    public AbstractBuilder setResource(String resourceName) {
+    public AbstractBuilder setResource(final String resourceName) {
+        // this method is called by reflection
         URL url = this.getClass().getResource(resourceName);
-        try (final InputStream in = url.openStream();
+        try (InputStream in = url.openStream();
              BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             String txt;
             while (null != (txt = buffer.readLine())) {
@@ -77,27 +78,29 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
 
     /**
      * Adds a builder to the list of builders.
-     * 
+     *
      * @param child the child builder to add.
      * @return this for chaining.
      */
-    public AbstractBuilder addEnclosed(IHeaderMatcher.Builder child) {
+    public AbstractBuilder addEnclosed(final IHeaderMatcher.Builder child) {
         children.add(child);
         return this;
     }
 
     /**
      * Adds a collection of builders to the list of child builders.
-     * 
+     *
      * @param children the children to add.
      * @return this for chaining.
      */
-    public AbstractBuilder addEnclosed(Collection<IHeaderMatcher.Builder> children) {
+    public AbstractBuilder addEnclosed(final Collection<IHeaderMatcher.Builder> children) {
+        // this method is called by reflection
         this.children.addAll(children);
         return this;
     }
 
     public List<IHeaderMatcher.Builder> getEnclosedBuilders() {
+        // this method is called by reflection
         return Collections.unmodifiableList(children);
     }
     /**
@@ -113,5 +116,4 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
         children.stream().map(Object::toString).forEach(x -> sb.append(System.lineSeparator()).append(x));
         return sb.toString();
     }
-
 }
