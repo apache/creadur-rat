@@ -45,8 +45,7 @@ public class AllBuilderTest {
                 + "                </all>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -71,8 +70,7 @@ public class AllBuilderTest {
                 + "                <all resource='/org/apache/rat/MatcherContainerResource.txt'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -100,8 +98,7 @@ public class AllBuilderTest {
                 + "                </all>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));

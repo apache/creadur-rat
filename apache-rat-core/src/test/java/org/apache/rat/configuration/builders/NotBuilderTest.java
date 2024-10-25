@@ -44,8 +44,7 @@ public class NotBuilderTest {
                 + "                </not>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -71,8 +70,7 @@ public class NotBuilderTest {
                 + "                </not>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));

@@ -43,8 +43,7 @@ public class CopyrightBuilderTest {
                 + "                <copyright/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -69,8 +68,8 @@ public class CopyrightBuilderTest {
                 + "                <copyright owner='someone'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
@@ -94,8 +93,8 @@ public class CopyrightBuilderTest {
                 + "                <copyright start='1989'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
@@ -119,8 +118,8 @@ public class CopyrightBuilderTest {
                 + "                <copyright start='1989' owner='someone'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
@@ -144,8 +143,8 @@ public class CopyrightBuilderTest {
                 + "                <copyright start='1989' end='1990'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
@@ -169,8 +168,8 @@ public class CopyrightBuilderTest {
                 + "                <copyright start='1989' end='1990' owner='someone'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
@@ -194,8 +193,8 @@ public class CopyrightBuilderTest {
                 + "                <copyright id='foo' start='1989' end='1990' owner='someone'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         SortedSet<ILicense> licenses = reader.readLicenses();
@@ -220,8 +219,7 @@ public class CopyrightBuilderTest {
                 + "                <copyright end='1990'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
@@ -239,8 +237,8 @@ public class CopyrightBuilderTest {
                 + "                <copyright start='not a number'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
+
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));
         assertThrows(ConfigurationException.class, reader::readLicenses);
@@ -257,8 +255,7 @@ public class CopyrightBuilderTest {
                 + "                <copyright start='1989' end='not a number'/>" //
                 + "            </license>" //
                 + "        </licenses>" //
-                + "    </rat-config>" //
-                + ""; //
+                + "    </rat-config>";
 
         XMLConfigurationReader reader = new XMLConfigurationReader();
         reader.read(new StringReader(configStr));

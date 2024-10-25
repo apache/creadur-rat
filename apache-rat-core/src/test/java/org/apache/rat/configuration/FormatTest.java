@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class FormatTest {
     @Test
-    public void fromNameTest() throws MalformedURLException {
+    public void fromNameTest() {
         assertEquals(Format.XML, Format.from("foo/x.xml"));
         assertEquals(Format.XML, Format.from("x.xml"));
         assertThrows(IllegalArgumentException.class, () ->Format.from("junk"));
