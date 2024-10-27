@@ -23,36 +23,36 @@ import java.util.Arrays;
 /**
  * Configuration definitions for XMLConfiguration reader and writer.
  */
-public class XMLConfig {
+public final class XMLConfig {
 
     /** id attribute name */
-    public final static String ATT_ID = "id";
+    public static final String ATT_ID = "id";
     /** name attribute name */
-    public final static String ATT_NAME = "name";
+    public static final String ATT_NAME = "name";
     /** license reference attribute name */
-    public final static String ATT_LICENSE_REF = "license_ref";
+    public static final String ATT_LICENSE_REF = "license_ref";
     /** class name attribute name */
-    public final static String ATT_CLASS_NAME = "class";
+    public static final String ATT_CLASS_NAME = "class";
     /** resource file name attribute name. */
-    public final static String ATT_RESOURCE = "resource";
+    public static final String ATT_RESOURCE = "resource";
     /** root of the configuration file */
-    public final static String ROOT = "rat-config";
+    public static final String ROOT = "rat-config";
     /** families element name */
-    public final static String FAMILIES = "families";
+    public static final String FAMILIES = "families";
     /** licenses element name */
-    public final static String LICENSES = "licenses";
+    public static final String LICENSES = "licenses";
     /** license element name */
-    public final static String LICENSE = "license";
+    public static final String LICENSE = "license";
     /** approved element name */
-    public final static String APPROVED = "approved";
+    public static final String APPROVED = "approved";
     /** family element name */
-    public final static String FAMILY = "family";
+    public static final String FAMILY = "family";
     /** note element name */
-    public final static String NOTE = "note";
+    public static final String NOTE = "note";
     /** matchers element name */
-    public final static String MATCHERS = "matchers";
+    public static final String MATCHERS = "matchers";
     /** matcher element name */
-    public final static String MATCHER = "matcher";
+    public static final String MATCHER = "matcher";
 
     /** License property names that should be children */
     static final String[] LICENSE_CHILDREN = { "note", "matcher" };
@@ -77,33 +77,33 @@ public class XMLConfig {
     /**
      * Returns true if the specified child node should be placed inline in the XML
      * document.
-     * 
+     *
      * @param parent the parent node name.
      * @param child the child node name.
      * @return true if the child should be inlined.
      */
-    public static boolean isInlineNode(String parent, String child) {
+    public static boolean isInlineNode(final String parent, final String child) {
         return Arrays.stream(INLINE_NODES).anyMatch(s -> s[0].equals(parent) && s[1].equals(child));
     }
 
     /**
      * Returns true if the child should be a child node of a license node, as
      * opposed to a attribute of the license.
-     * 
+     *
      * @param child the name of the child node.
      * @return true if the child should be a child node.
      */
-    public static boolean isLicenseChild(String child) {
+    public static boolean isLicenseChild(final String child) {
         return Arrays.asList(LICENSE_CHILDREN).contains(child);
     }
 
     /**
      * Return true if the child should be inlined in the parent node.
-     * 
+     *
      * @param child the name of the child node.
      * @return true if the child should be inlined.
      */
-    public static boolean isLicenseInline(String child) {
+    public static boolean isLicenseInline(final String child) {
         return Arrays.asList(LICENSE_INLINE).contains(child);
     }
 }
