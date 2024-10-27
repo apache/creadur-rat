@@ -29,7 +29,7 @@ import org.apache.rat.VersionInfo;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.impl.util.DocumentAnalyserMultiplexer;
+import org.apache.rat.document.impl.DocumentAnalyserMultiplexer;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.ConfigurationReport;

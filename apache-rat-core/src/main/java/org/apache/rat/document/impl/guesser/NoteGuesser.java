@@ -83,7 +83,7 @@ public final class NoteGuesser {
             return true;
         }
 
-        for(String extension : NoteGuesser.NOTE_FILE_EXTENSIONS) {
+        for (String extension : NoteGuesser.NOTE_FILE_EXTENSIONS) {
             if (normalisedName.endsWith(DOT + extension)) {
                 return true;
             }
