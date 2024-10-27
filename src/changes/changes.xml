@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-423" type="fix" dev="claudenw">
+        Fix checkstyle issues in document subdirectories.
+      </action>
       <action issue="RAT-420" type="fix" dev="claudenw">
         Fix checkstyle issues in config.
       </action>
