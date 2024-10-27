@@ -49,7 +49,7 @@ public class RegexBuilderTest {
         IHeaderMatcher matcher = licenses.first().getMatcher();
         assertEquals(SimpleRegexMatcher.class, matcher.getClass());
         SimpleRegexMatcher result = (SimpleRegexMatcher) matcher;
-        assertEquals(".", result.getPattern());
+        assertEquals(".", result.getExpression());
     }
 
     @Test
@@ -73,6 +73,6 @@ public class RegexBuilderTest {
         assertEquals("foo", matcher.getId());
         assertEquals(SimpleRegexMatcher.class, matcher.getClass());
         SimpleRegexMatcher result = (SimpleRegexMatcher) matcher;
-        assertEquals(".", result.getPattern());
+        assertEquals(".", result.getExpression());
     }
 }

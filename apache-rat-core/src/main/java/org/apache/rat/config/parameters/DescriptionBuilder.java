@@ -78,7 +78,7 @@ public final class DescriptionBuilder {
      * @param clazz source class.
      * @return the Descriptions of the child elements.
      */
-    private static List<Description> getConfigComponents(final Class<?> clazz) {
+    static List<Description> getConfigComponents(final Class<?> clazz) {
         if (clazz == null || clazz == String.class || clazz == Object.class) {
             return Collections.emptyList();
         }

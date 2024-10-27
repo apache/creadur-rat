@@ -18,13 +18,32 @@
  */
 package org.apache.rat.config.parameters;
 
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.apache.rat.analysis.matchers.AndMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
+import org.apache.rat.api.Document;
+import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.impl.FileDocument;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class DescriptionBuilderTest {
 
@@ -50,7 +69,65 @@ public class DescriptionBuilderTest {
         assertTrue(underTest.getChildren().containsKey("resource"));
         assertTrue(underTest.getChildren().containsKey("enclosed"));
         Description desc = underTest.getChildren().get("enclosed");
-
     }
 
+    @ParameterizedTest
+    @MethodSource("descriptionSource")
+    public void textConfigParameters(Class<?> clazz, Description desc) {
+        try {
+            if (desc.getType() != ComponentType.BUILD_PARAMETER) {
+                // verify that the class has the getter for the description.
+                assertNotNull(desc.getter(clazz));
+            }
+        } catch (NoSuchMethodException e) {
+            fail(format("Missing method: %s.%s",clazz, desc.methodName("get")), e);
+        }
+    }
+
+    /** class to build a list of documents that are class files. */
+    private static class DocumentProcessor implements Consumer<Document> {
+        SortedSet<Document> documents = new TreeSet<>();
+        @Override
+        public void accept(Document document) {
+            if (document.isDirectory()) {
+                document.listChildren().forEach(this);
+            } else {
+                if (document.getName().getName().endsWith(".class")) {
+                    documents.add(document);
+                }
+            }
+        }
+    }
+
+    /** scans the build classes directory to locate all class files that have Description annotations and ensure
+     * @return A stream of class and ddescriptions to velidate.
+     * @throws IOException on IO error
+     * @throws URISyntaxException of URI is incorrect.
+     * @throws ClassNotFoundException if class can not be found.
+     */
+    public static Stream<Arguments> descriptionSource() throws IOException, URISyntaxException, ClassNotFoundException {
+        List<Arguments> arguments = new ArrayList<>();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        URL url = classLoader.getResource("");
+        File baseDir = new File(url.toURI());
+        baseDir = new File(baseDir.getParent(), "classes");
+        DocumentName documentName = new DocumentName(baseDir);
+        FileDocument fileDocument =  new FileDocument(documentName, baseDir, x -> true);
+        DocumentProcessor processor = new DocumentProcessor();
+        processor.accept(fileDocument);
+
+        for (Document document : processor.documents) {
+            String className = document.getName().localized(".");
+            className = className.substring(1, className.length() - ".class".length());
+            Class<?> clazz = Class.forName(className);
+            List<Description> descriptionList = DescriptionBuilder.getConfigComponents(clazz);
+            if (descriptionList != null) {
+                descriptionList.forEach( desc -> {
+                    arguments.add(Arguments.of(clazz, desc));
+                });
+            }
+        }
+
+        return arguments.stream();
+    }
 }

@@ -48,7 +48,8 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
         this.pattern = pattern;
     }
 
-    public String getPattern() {
+    public String getExpression() {
+        // called by reflection
         return pattern.pattern();
     }
 
