@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.document.impl;
 
+import org.apache.rat.document.DocumentAnalyserMultiplexer;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.testhelpers.TestingDocumentAnalyser;

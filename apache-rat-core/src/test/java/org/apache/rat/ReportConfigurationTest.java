@@ -50,7 +50,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.XMLConfigurationReaderTest;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;

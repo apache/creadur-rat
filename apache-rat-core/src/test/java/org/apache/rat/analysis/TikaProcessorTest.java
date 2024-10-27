@@ -20,11 +20,11 @@ package org.apache.rat.analysis;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.document.impl.DocumentNameMatcher;
-import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

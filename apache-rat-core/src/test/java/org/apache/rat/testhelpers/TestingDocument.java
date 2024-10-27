@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.SortedSet;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.document.impl.DocumentNameMatcher;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.DocumentName;
 
 public class TestingDocument extends Document {
 

@@ -34,8 +34,8 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.impl.ArchiveEntryDocument;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.ArchiveEntryDocument;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.DefaultLog;
 

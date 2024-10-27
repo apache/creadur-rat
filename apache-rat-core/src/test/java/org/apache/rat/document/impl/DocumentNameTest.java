@@ -18,6 +18,7 @@
  */
 package org.apache.rat.document.impl;
 
+import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

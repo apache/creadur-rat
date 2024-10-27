@@ -16,11 +16,9 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.document.impl;
+package org.apache.rat.document;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
 
 public class DocumentAnalyserMultiplexer implements IDocumentAnalyser {
 

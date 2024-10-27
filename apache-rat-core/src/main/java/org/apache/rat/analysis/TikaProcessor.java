@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.document.impl.guesser.NoteGuesser;
+import org.apache.rat.document.guesser.NoteGuesser;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;

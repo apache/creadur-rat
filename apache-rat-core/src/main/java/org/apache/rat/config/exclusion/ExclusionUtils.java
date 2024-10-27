@@ -34,8 +34,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 
 import static java.lang.String.format;

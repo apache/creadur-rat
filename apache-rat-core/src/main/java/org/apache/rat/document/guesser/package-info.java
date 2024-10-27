@@ -19,4 +19,4 @@
 /**
  * Classes that attempt to determine if a file is a specific type of file.
  */
-package org.apache.rat.document.impl.guesser;
+package org.apache.rat.document.guesser;
