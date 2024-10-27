@@ -71,6 +71,11 @@ public class DescriptionBuilderTest {
         Description desc = underTest.getChildren().get("enclosed");
     }
 
+    /**
+     * Test to verify that all Description based inspection invoked methods exist.
+     * @param clazz The class to check
+     * @param desc The description of an element in that class.
+     */
     @ParameterizedTest
     @MethodSource("descriptionSource")
     public void textConfigParameters(Class<?> clazz, Description desc) {
