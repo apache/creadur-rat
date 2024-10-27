@@ -27,16 +27,17 @@ import org.apache.rat.analysis.IHeaderMatcher;
  * The definition of a License.
  */
 public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
+
     /**
      * Gets the license family.
-     * 
+     *
      * @return the ILicenseFamily implementation for this license.
      */
     ILicenseFamily getLicenseFamily();
 
     /**
      * Gets the note associated with the license.
-     * 
+     *
      * @return the note associated with this license. May be null or empty.
      */
     String getNote();
@@ -44,14 +45,14 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     /**
      * Returns the name of this license. If no name was specified then the name of
      * the family is returned.
-     * 
+     *
      * @return the name of this license.
      */
     String getName();
 
     /**
      * Gets the name of the family that this license if part of.
-     * 
+     *
      * @return the name of the license family that this license is part of.
      */
     default String getFamilyName() {
@@ -60,7 +61,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
     /**
      * Get the header matcher for this license.
-     * 
+     *
      * @return the header matcher for this license.
      */
     IHeaderMatcher getMatcher();
@@ -87,15 +88,19 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
      * @return true if the object is equal to the license1.
      */
     static boolean equals(ILicense license1, Object o) {
-        if (license1 == o) return true;
-        if (!(o instanceof ILicense)) return false;
+        if (license1 == o) {
+            return true;
+        }
+        if (!(o instanceof ILicense)) {
+            return false;
+        }
         ILicense that = (ILicense) o;
         return license1.compareTo(that) == 0;
     }
 
     /**
      * Gets a builder for licenses.
-     * 
+     *
      * @return An ILicense.Builder instance.
      */
     static ILicense.Builder builder() {
@@ -109,7 +114,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
         /**
          * Sets the matcher from a builder.
-         * 
+         *
          * @param matcher the builder for the matcher for the license.
          * @return this builder for chaining.
          */
@@ -117,7 +122,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
         /**
          * Sets the matcher.
-         * 
+         *
          * @param matcher the matcher for the license.
          * @return this builder for chaining.
          */
@@ -126,7 +131,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         /**
          * Sets the notes for the license. If called multiple times the notes are
          * concatenated to create a single note.
-         * 
+         *
          * @param notes the notes for the license.
          * @return this builder for chaining.
          */
@@ -135,7 +140,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         /**
          * Sets the ID of the license. If the ID is not set then the ID of the license
          * family is used.
-         * 
+         *
          * @param id the ID for the license
          * @return this builder for chaining.
          */
@@ -146,7 +151,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
          * all licenses and must be 5 characters. If more than 5 characters are provided
          * then only the first 5 are taken. If fewer than 5 characters are provided the
          * category is padded with spaces.
-         * 
+         *
          * @param licenseFamilyCategory the family category for the license.
          * @return this builder for chaining.
          */
@@ -155,7 +160,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         /**
          * Sets the name of the license. If the name is not set then the name of the
          * license family is used.
-         * 
+         *
          * @param name the name for the license
          * @return this builder for chaining.
          */
@@ -163,7 +168,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
 
         /**
          * Sets the set of license families to use duirng build.
-         * 
+         *
          * @param licenseFamilies the license families to use
          * @return this builder.
          */

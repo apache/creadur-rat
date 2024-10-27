@@ -24,7 +24,7 @@ import org.apache.rat.DeprecationReporter;
  * An implementation of the ILicenseFamily.
  */
 @Deprecated // remove in v1.0
-@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "ILicenseFamilyBuilder")
+@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "ILicenseFamily.Builder")
 public class SimpleLicenseFamily  {
     private String familyName;
     private String familyCategory;

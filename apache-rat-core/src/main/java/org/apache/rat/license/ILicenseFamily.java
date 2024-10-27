@@ -18,16 +18,18 @@
  */
 package org.apache.rat.license;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
+
 /**
  * The definition of the license family.
  */
 public interface ILicenseFamily extends Comparable<ILicenseFamily> {
 
-    /** The category for generated files */
-    String GENTERATED_CATEGORY = "GEN  ";
-    
-    /** The category for unknown licenses */
-    String UNKNOWN_CATEGORY = "?????";
+    /** The license family for unknown licenses */
+    ILicenseFamily UNKNOWN = new Builder().setLicenseFamilyName("Unknown license").setLicenseFamilyCategory("?????").build();
+    /** The license family  for generated files */
+    ILicenseFamily GENERATED = new Builder().setLicenseFamilyName("Generated file").setLicenseFamilyCategory("GEN").build();
 
     /**
      * Gets the family name.
@@ -46,18 +48,18 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
      * @return A builder for an ILicenseFamily.
      */
     static ILicenseFamily.Builder builder() {
-        return new ILicenseFamilyBuilder();
+        return new Builder();
     }
 
     /**
      * Convert a potential category string into a category string of exactly 5
      * characters either by truncating the string or appending spaces as necessary.
-     * 
+     *
      * @param cat the string to convert.
      * @return a string of exactly 5 characters.
      */
     static String makeCategory(String cat) {
-        return cat == null ? "     " : cat.concat("     ").substring(0, 5);
+        return cat == null ? "     " : cat.concat("     ").substring(0, Builder.CATEGORY_LENGTH);
     }
 
     @Override
@@ -68,35 +70,76 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
     /**
      * The definition of an ILicenseFamily builder.
      */
-    interface Builder {
+    class Builder {
+        /** The maximum length of the category */
+        private static final int CATEGORY_LENGTH = 5;
+        /** The category for the family */
+        private String licenseFamilyCategory;
+        /** The name of the family */
+        private String licenseFamilyName;
+
+
         /**
          * Sets the license family category. Will trim or extends the string with spaces
          * to ensure that it is exactly 5 characters.
-         * 
+         *
          * @param licenseFamilyCategory the category string
          * @return this builder for chaining.
          */
-        Builder setLicenseFamilyCategory(String licenseFamilyCategory);
+        public Builder setLicenseFamilyCategory(final String licenseFamilyCategory) {
+            this.licenseFamilyCategory = licenseFamilyCategory;
+            return this;
+        }
 
         /**
          * Sets the license family name.
-         * 
+         *
          * @param licenseFamilyName the name string
          * @return this builder for chaining.
          */
-        Builder setLicenseFamilyName(String licenseFamilyName);
+        public Builder setLicenseFamilyName(final String licenseFamilyName) {
+            this.licenseFamilyName = licenseFamilyName;
+            return this;
+        }
 
         /**
          * Gets the category that this builder is building.
-         * 
+         *
          * @return the category that this builder is building.
          */
-        String getCategory();
+        public String getCategory() {
+            return licenseFamilyCategory;
+        }
 
         /**
          * Builds the defined license family.
          * @return a new ILicenseFamily instance.
          */
-        ILicenseFamily build();
+        public ILicenseFamily build() {
+            if (StringUtils.isBlank(licenseFamilyCategory)) {
+                throw new ConfigurationException("LicenseFamily Category must be specified");
+            }
+            if (StringUtils.isBlank(licenseFamilyName)) {
+                throw new ConfigurationException("LicenseFamily Name must be specified");
+            }
+            return new ILicenseFamily() {
+                private final String cat = ILicenseFamily.makeCategory(licenseFamilyCategory);
+                private final String name = licenseFamilyName;
+                @Override
+                public String toString() {
+                    return String.format("%s %s", getFamilyCategory(), getFamilyName());
+                }
+
+                @Override
+                public String getFamilyName() {
+                    return name;
+                }
+
+                @Override
+                public String getFamilyCategory() {
+                    return cat;
+                }
+            };
+        }
     }
 }

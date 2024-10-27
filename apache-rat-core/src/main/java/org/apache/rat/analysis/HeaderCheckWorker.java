@@ -142,7 +142,7 @@ public class HeaderCheckWorker {
             licenses.stream().filter(lic -> lic.matches(headers)).forEach(document.getMetaData()::reportOnLicense);
             if (document.getMetaData().detectedLicense()) {
                 if (document.getMetaData().licenses().anyMatch(
-                        lic -> ILicenseFamily.GENTERATED_CATEGORY.equals(lic.getLicenseFamily().getFamilyCategory()))) {
+                        lic -> ILicenseFamily.GENERATED.getFamilyCategory().equals(lic.getLicenseFamily().getFamilyCategory()))) {
                     document.getMetaData().setDocumentType(Document.Type.GENERATED);
                 }
             } else {
