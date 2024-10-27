@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
 public class RatDocumentAnalysisException extends Exception {
@@ -25,15 +25,15 @@ public class RatDocumentAnalysisException extends Exception {
     public RatDocumentAnalysisException() {
     }
 
-    public RatDocumentAnalysisException(String msg) {
+    public RatDocumentAnalysisException(final String msg) {
         super(msg);
     }
 
-    public RatDocumentAnalysisException(Throwable cause) {
+    public RatDocumentAnalysisException(final Throwable cause) {
         super(cause);
     }
 
-    public RatDocumentAnalysisException(String msg, Throwable cause) {
+    public RatDocumentAnalysisException(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 
