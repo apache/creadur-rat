@@ -49,7 +49,6 @@ public class DescriptionBuilderTest {
 
     @Test
     public void matcherMapBuildTest() {
-
         Description underTest = DescriptionBuilder.buildMap(CopyrightMatcher.class);
         assertEquals(ComponentType.MATCHER, underTest.getType());
         assertEquals("copyright", underTest.getCommonName());
@@ -89,7 +88,7 @@ public class DescriptionBuilderTest {
         }
     }
 
-    /** class to build a list of documents that are class files. */
+    /** Class to build a list of documents that are class files. */
     private static class DocumentProcessor implements Consumer<Document> {
         SortedSet<Document> documents = new TreeSet<>();
         @Override
@@ -104,10 +103,11 @@ public class DescriptionBuilderTest {
         }
     }
 
-    /** scans the build classes directory to locate all class files that have Description annotations and ensure
-     * @return A stream of class and ddescriptions to velidate.
+    /**
+     * Scans the build classes directory to locate all class files that have Description annotations and ensure its validity.
+     * @return A stream of class and descriptions to validate.
      * @throws IOException on IO error
-     * @throws URISyntaxException of URI is incorrect.
+     * @throws URISyntaxException if URI is incorrect.
      * @throws ClassNotFoundException if class can not be found.
      */
     public static Stream<Arguments> descriptionSource() throws IOException, URISyntaxException, ClassNotFoundException {
