@@ -18,61 +18,10 @@
  */
 package org.apache.rat.license;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ConfigurationException;
-import org.apache.rat.license.ILicenseFamily.Builder;
-
 /**
  * An instance of the ILicenseFamily Builder.
+ * @deprecated use {@link ILicenseFamily.Builder}
  */
-public class ILicenseFamilyBuilder implements Builder {
-
-    private String licenseFamilyCategory;
-    private String licenseFamilyName;
-
-    @Override
-    public Builder setLicenseFamilyCategory(String licenseFamilyCategory) {
-        this.licenseFamilyCategory = licenseFamilyCategory;
-        return this;
-    }
-    
-
-    @Override
-    public String getCategory() {
-        return licenseFamilyCategory;
-    }
-
-    @Override
-    public Builder setLicenseFamilyName(String licenseFamilyName) {
-        this.licenseFamilyName = licenseFamilyName;
-        return this;
-    }
-
-    @Override
-    public ILicenseFamily build() {
-        if (StringUtils.isBlank(licenseFamilyCategory)) {
-            throw new ConfigurationException("LicenseFamily Category must be specified");
-        }
-        if (StringUtils.isBlank(licenseFamilyName)) {
-            throw new ConfigurationException("LicenseFamily Name must be specified");
-        }
-        return new ILicenseFamily() { 
-            private final String cat = ILicenseFamily.makeCategory(licenseFamilyCategory);
-            private final String name = licenseFamilyName;
-            @Override
-            public String toString() {
-                return String.format("%s %s", getFamilyCategory(), getFamilyName());
-            }
-
-            @Override
-            public final String getFamilyName() {
-                return name;
-            }
-
-            @Override
-            public String getFamilyCategory() {
-                return cat;
-            }
-        };
-    }
+@Deprecated
+public class ILicenseFamilyBuilder extends ILicenseFamily.Builder {
 }

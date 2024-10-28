@@ -55,9 +55,9 @@ public class ClaimAggregator extends AbstractClaimReporter {
     @Override
     protected void handleLicenseClaim(ILicense license) {
         String category = license.getLicenseFamily().getFamilyCategory();
-        if (category.equals(ILicenseFamily.GENTERATED_CATEGORY)) {
+        if (category.equals(ILicenseFamily.GENERATED.getFamilyCategory())) {
             statistic.incCounter(Counter.GENERATED, 1);
-        } else if (category.equals(ILicenseFamily.UNKNOWN_CATEGORY)) {
+        } else if (category.equals(ILicenseFamily.UNKNOWN.getFamilyCategory())) {
             statistic.incCounter(Counter.UNKNOWN, 1);
         }
         statistic.incLicenseCategoryCount(category, 1);

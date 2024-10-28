@@ -84,7 +84,7 @@ public class ClaimStatistic {
     /**
      * Increments the number of times the Document.Type was seen.
      * @param documentType the Document.Type to increment.
-     * @param value the vlaue to increment the counter by.
+     * @param value the value to increment the counter by.
      */
     public void incCounter(Document.Type documentType, int value) {
         documentCategoryMap.compute(documentType, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
@@ -101,7 +101,7 @@ public class ClaimStatistic {
 
     /**
      * Increments the number of times a license family category was seen.
-     * @param licenseFamilyCategory the License family category to incmrement.
+     * @param licenseFamilyCategory the License family category to increment.
      * @param value the value to increment the count by.
      */
     public void incLicenseCategoryCount(String licenseFamilyCategory, int value) {
