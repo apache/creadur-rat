@@ -18,8 +18,6 @@
  */
 package org.apache.rat.tools;
 
-import static java.lang.String.format;
-
 import java.io.CharArrayWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -47,6 +45,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.help.AbstractHelp;
 
+import static java.lang.String.format;
+
 /**
  * A simple tool to convert CLI options to Maven and Ant format and produce a CSV file.
  * <br>
@@ -61,16 +61,21 @@ import org.apache.rat.help.AbstractHelp;
 public final class Naming {
 
     private Naming() { }
-
+    /** THe maximum width of the output */
     private static final Option WIDTH = Option.builder().longOpt("width").type(Integer.class)
             .desc("Set the display width of the output").hasArg().build();
+    /** Option to output Maven names */
     private static final Option MAVEN = Option.builder().longOpt("maven").desc("Produce Maven name mapping").build();
+    /** Option to output Ant names */
     private static final Option ANT = Option.builder().longOpt("ant").desc("Produce Ant name mapping").build();
+    /** Option to output CSV format */
     private static final Option CSV = Option.builder().longOpt("csv").desc("Produce CSV format").build();
+    /** Options to output cli names */
     private static final Option CLI = Option.builder().longOpt("cli").desc("Produce CLI name mapping").build();
+    /** Option for including deprecated options */
     private static final Option INCLUDE_DEPRECATED = Option.builder().longOpt("include-deprecated")
             .desc("Include deprecated options.").build();
-
+    /** The all options */
     private static final Options OPTIONS = new Options().addOption(MAVEN).addOption(ANT).addOption(CLI)
             .addOption(CSV)
             .addOption(INCLUDE_DEPRECATED)
@@ -85,7 +90,7 @@ public final class Naming {
      * @param args arguments, only 1 is required.
      */
     public static void main(final String[] args) throws IOException, ParseException {
-        if(args == null || args.length < 1) {
+        if (args == null || args.length < 1) {
             System.err.println("At least one argument is required: path to file is missing.");
             return;
         }
@@ -116,7 +121,7 @@ public final class Naming {
 
         Function<Option, String> descriptionFunction;
 
-        if (cl.hasOption(CLI) || (antFilter != null && mavenFilter != null)) {
+        if (cl.hasOption(CLI) || antFilter != null && mavenFilter != null) {
             descriptionFunction = o -> {
                 StringBuilder desc = new StringBuilder();
             if (o.isDeprecated()) {
@@ -154,8 +159,8 @@ public final class Naming {
         }
     }
 
-    private static List<String> fillColumns(List<String> columns, Option option, boolean addCLI, Predicate<Option> mavenFilter,
-                                            Predicate<Option> antFilter, Function<Option, String> descriptionFunction) {
+    private static List<String> fillColumns(final List<String> columns, final Option option, final boolean addCLI, final Predicate<Option> mavenFilter,
+                                            final Predicate<Option> antFilter, final Function<Option, String> descriptionFunction) {
         if (addCLI) {
             if (option.hasLongOpt()) {
                 columns.add("--" + option.getLongOpt());
@@ -177,8 +182,9 @@ public final class Naming {
         return columns;
     }
 
-    private static void printCSV(List<String> columns, Predicate<Option> filter, boolean addCLI, Predicate<Option> mavenFilter,
-                                 Predicate<Option> antFilter, Function<Option, String> descriptionFunction, Writer underWriter) throws IOException {
+    private static void printCSV(final List<String> columns, final Predicate<Option> filter, final boolean addCLI, final Predicate<Option> mavenFilter,
+                                 final Predicate<Option> antFilter, final Function<Option, String> descriptionFunction,
+                                 final Writer underWriter) throws IOException {
         try (CSVPrinter printer = new CSVPrinter(underWriter, CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).build())) {
             printer.printRecord(columns);
             for (Option option : OptionCollection.buildOptions().getOptions()) {
@@ -190,7 +196,7 @@ public final class Naming {
         }
     }
 
-    private static int[] calculateColumnWidth(int width, int columnCount, List<List<String>> page) {
+    private static int[] calculateColumnWidth(final int width, final int columnCount, final List<List<String>> page) {
         int[] columnWidth = new int[columnCount];
         for (List<String> row : page) {
             for (int i = 0; i < columnCount; i++) {
@@ -198,7 +204,7 @@ public final class Naming {
             }
         }
         int extra = 0;
-        int averageWidth = (width - ((columnCount-1) * 2)) / columnCount;
+        int averageWidth = (width - ((columnCount - 1) * 2)) / columnCount;
         int[] overage = new int[columnCount];
         int totalOverage = 0;
         for (int i = 0; i < columnCount; i++) {
@@ -219,8 +225,9 @@ public final class Naming {
         return columnWidth;
     }
 
-    private static void printText(List<String> columns, Predicate<Option> filter, boolean addCLI, Predicate<Option> mavenFilter,
-                                  Predicate<Option> antFilter, Function<Option, String> descriptionFunction, Writer underWriter, int width) throws IOException {
+    private static void printText(final List<String> columns, final Predicate<Option> filter, final boolean addCLI,
+                                  final Predicate<Option> mavenFilter, final Predicate<Option> antFilter,
+                                  final Function<Option, String> descriptionFunction, final Writer underWriter, final int width) throws IOException {
         List<List<String>> page = new ArrayList<>();
 
         int columnCount = columns.size();

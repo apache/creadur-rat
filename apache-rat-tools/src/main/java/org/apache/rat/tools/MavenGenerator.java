@@ -18,8 +18,6 @@
  */
 package org.apache.rat.tools;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -45,6 +43,8 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
+
+import static java.lang.String.format;
 
 /**
  * A simple tool to convert CLI options to Maven Mojo base class
@@ -94,7 +94,7 @@ public final class MavenGenerator {
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {
-        if(args == null || args.length < 3) {
+        if (args == null || args.length < 3) {
             System.err.println("At least three arguments are required: package, simple class name, target directory.");
             return;
         }
@@ -161,7 +161,7 @@ public final class MavenGenerator {
         String arg = null;
         if (option.hasArg()) {
             arg = desc.substring(desc.indexOf(" "), desc.indexOf(".") + 1);
-            arg = WordUtils.capitalize(arg.substring(0,1)) + arg.substring(1);
+            arg = WordUtils.capitalize(arg.substring(0, 1)) + arg.substring(1);
         } else {
             arg = "the state";
         }
@@ -171,7 +171,7 @@ public final class MavenGenerator {
                 throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
             }
             String typeDesc = sup.get();
-            typeDesc = WordUtils.uncapitalize(typeDesc.substring(0,1)) + typeDesc.substring(1);
+            typeDesc = WordUtils.uncapitalize(typeDesc.substring(0, 1)) + typeDesc.substring(1);
             desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
                     option.hasArgs() ? "" : "a ", option.getArgName());
         }

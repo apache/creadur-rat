@@ -18,16 +18,16 @@
  */
 package org.apache.rat.tools;
 
-import static java.lang.String.format;
-
 import org.apache.commons.cli.Option;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 
+import static java.lang.String.format;
+
 /**
  * A class that wraps the CLI option and provides Ant specific values.
  */
-public class AntOption extends AbstractOption{
+public class AntOption extends AbstractOption {
 
     /**
      * Constructor.

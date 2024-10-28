@@ -18,21 +18,21 @@
  */
 package org.apache.rat.tools;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.commandline.Arg;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.cli.Option;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.commandline.Arg;
+
 import static java.lang.String.format;
 
 public abstract class AbstractOption {
     /** The pattern to match CLI options in text */
-    protected static final Pattern pattern = Pattern.compile( "\\-(\\-[a-z0-9]+){1,}");
+    protected static final Pattern PATTERN = Pattern.compile("\\-(\\-[a-z0-9]+){1,}");
     /** The CLI that the Maven option is wrapping */
     protected final Option option;
     /** The Maven name for the option */
@@ -57,35 +57,37 @@ public abstract class AbstractOption {
         return arg == null ? null : arg.defaultValue();
     }
 
-    abstract protected String cleanupName(final Option option);
+    protected abstract String cleanupName(Option option);
 
     /**
      * Replaces CLI pattern options with Maven pattern options.
      * @param str the string to clean.
      * @return the string with CLI names replaced with Maven names.
      */
-    protected String cleanup(String str) {
-        if (StringUtils.isNotBlank(str)) {
+    protected String cleanup(final String str) {
+        String workingStr = str;
+        if (StringUtils.isNotBlank(workingStr)) {
             Map<String, String> maps = new HashMap<>();
-            Matcher matcher = pattern.matcher(str);
+            Matcher matcher = PATTERN.matcher(workingStr);
             while (matcher.find()) {
                 String key = matcher.group();
                 String optKey = key.substring(2);
-                Optional<Option> maybeResult = Arg.getOptions().getOptions().stream().filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
+                Optional<Option> maybeResult = Arg.getOptions().getOptions().stream()
+                        .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
             }
             for (Map.Entry<String, String> entry : maps.entrySet()) {
-                str = str.replaceAll(Pattern.quote(format("%s", entry.getKey())), entry.getValue());
+                workingStr = workingStr.replaceAll(Pattern.quote(format("%s", entry.getKey())), entry.getValue());
             }
         }
-        return str;
+        return workingStr;
     }
 
     /**
      * Gets the Maven name for the CLI option.
      * @return The Maven name for the CLI option.
      */
-    final public String getName() {
+    public final String getName() {
         return name;
     }
 
@@ -94,7 +96,7 @@ public abstract class AbstractOption {
      *
      * @return the description or an empty string.
      */
-    final public String getDescription() {
+    public final String getDescription() {
         return cleanup(option.getDescription());
     }
 
@@ -103,7 +105,7 @@ public abstract class AbstractOption {
      * Normally "String".
      * @return the simple class name for the type.
      */
-    final public Class<?> getType() {
+    public final Class<?> getType() {
         return option.hasArg() ? ((Class<?>) option.getType()) : boolean.class;
     }
 
@@ -111,7 +113,7 @@ public abstract class AbstractOption {
      * Gets the argument name if there is one.
      * @return the Argument name
      */
-    final public String getArgName() {
+    public final String getArgName() {
         return option.getArgName();
     }
 
@@ -119,7 +121,7 @@ public abstract class AbstractOption {
      * Determines if the option is deprecated.
      * @return {@code true} if the option is deprecated
      */
-    final public boolean isDeprecated() {
+    public final boolean isDeprecated() {
         return option.isDeprecated();
     }
 
@@ -127,7 +129,7 @@ public abstract class AbstractOption {
      * Determines if the option is required.
      * @return {@code true} if the option is required.
      */
-    final public boolean isRequired() {
+    public final boolean isRequired() {
         return option.isRequired();
     }
 
@@ -135,7 +137,7 @@ public abstract class AbstractOption {
      * Determine if the enclosed option expects an argument.
      * @return {@code true} if the enclosed option expects at least one argument.
      */
-    final public boolean hasArg() {
+    public final boolean hasArg() {
         return option.hasArg();
     }
 
@@ -143,7 +145,7 @@ public abstract class AbstractOption {
      * Returns {@code true} if the option has multiple arguments.
      * @return {@code true} if the option has multiple arguments.
      */
-    final public boolean hasArgs() {
+    public final boolean hasArgs() {
         return option.hasArgs();
     }
 
@@ -151,7 +153,7 @@ public abstract class AbstractOption {
      * The key value for the option.
      * @return the key value for the CLI argument map.
      */
-    final public String keyValue() {
+    public final String keyValue() {
         return format("\"%s\"", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt()));
     }
 
@@ -159,7 +161,7 @@ public abstract class AbstractOption {
      * Gets the deprecated string if the option is deprecated, or an empty string otherwise.
      * @return the deprecated string if the option is deprecated, or an empty string otherwise.
      */
-    final public String getDeprecated() {
+    public final String getDeprecated() {
         return  option.isDeprecated() ? cleanup(StringUtils.defaultIfEmpty(option.getDeprecated().toString(), StringUtils.EMPTY)) : StringUtils.EMPTY;
     }
 }

@@ -18,8 +18,6 @@
  */
 package org.apache.rat.tools;
 
-import static java.lang.String.format;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
@@ -46,6 +44,8 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
+
+import static java.lang.String.format;
 
 /**
  * A simple tool to convert CLI options into an Ant report base class.
@@ -96,7 +96,7 @@ public final class AntGenerator {
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {
-        if(args == null || args.length < 3) {
+        if (args == null || args.length < 3) {
             System.err.println("At least three arguments are required: package, simple class name, target directory.");
             return;
         }

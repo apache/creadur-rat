@@ -18,22 +18,22 @@
  */
 package org.apache.rat.tools;
 
-import static java.lang.String.format;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.commandline.Arg;
 
-import java.util.HashMap;
-import java.util.Map;
+import static java.lang.String.format;
 
 /**
  * A representation of a CLI option as a Maven option
  */
 public class MavenOption extends AbstractOption {
-
-    private static final Map<Arg,String> DEFAULT_VALUES = new HashMap<>();
+    /** Default values for cli options */
+    private static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
 
     static {
         DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");

@@ -34,19 +34,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ConfigurationException;
-import org.apache.rat.DeprecationReporter;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
@@ -55,8 +47,6 @@ import static java.lang.String.format;
  * A simple tool to convert CLI options into an Ant report base class.
  */
 public final class AntDocumentation {
-
-    private final ReportConfiguration config;
     /** The directory to write to. */
     private final File outputDir;
 
@@ -70,60 +60,27 @@ public final class AntDocumentation {
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {
-        // process the command line to get the output directory.
-        Options opts = OptionCollection.buildOptions();
-        CommandLine commandLine;
-        try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                    .setAllowPartialMatching(true).build().parse(opts, args);
-        } catch (ParseException e) {
-            DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options", e);
-            throw new ConfigurationException(e);
-        }
 
-        String[] remainingArgs = commandLine.getArgs();
-        if (remainingArgs.length == 0) {
+        if (args.length == 0) {
             System.err.println("Output directory must be specified");
-            printUsage(opts);
             System.exit(1);
         }
-        File outputDir = new File(remainingArgs[0]);
+        File outputDir = new File(args[0]);
         if (outputDir.exists()) {
             if (!outputDir.isDirectory()) {
-                DefaultLog.getInstance().error(format("%s is not a directory", remainingArgs[0]));
+                DefaultLog.getInstance().error(format("%s is not a directory", args[0]));
                 System.exit(1);
             }
         } else {
             if (!outputDir.mkdirs()) {
-                DefaultLog.getInstance().error(format("Can not create directory %s", remainingArgs[0]));
+                DefaultLog.getInstance().error(format("Can not create directory %s", args[0]));
                 System.exit(1);
             }
         }
-        // remove any excess arguments and create the configuration.
-        List<String> argsList = new ArrayList<>(Arrays.asList(args));
-        argsList.removeAll(Arrays.asList(remainingArgs));
-
-        ReportConfiguration config = OptionCollection.parseCommands(argsList.toArray(new String[0]), AntDocumentation::printUsage, true);
-        if (config != null) {
-            new AntDocumentation(config, outputDir).execute();
-        }
+        new AntDocumentation(outputDir).execute();
     }
 
-    private static void printUsage(final Options opts) {
-        HelpFormatter f = new HelpFormatter();
-        f.setOptionComparator(OptionCollection.OPTION_COMPARATOR);
-        f.setWidth(AbstractHelp.HELP_WIDTH);
-        String header = "\nAvailable options";
-        String footer = "";
-        String cmdLine = format("java -jar apache-rat/target/apache-rat-CURRENT-VERSION.jar %s",
-                AntDocumentation.class.getName());
-        f.printHelp(cmdLine, header, opts, footer, false);
-        System.exit(0);
-    }
-
-   private AntDocumentation(final ReportConfiguration config, final File outputDir) {
-        this.config = config;
+   private AntDocumentation(final File outputDir) {
         this.outputDir = outputDir;
     }
 
