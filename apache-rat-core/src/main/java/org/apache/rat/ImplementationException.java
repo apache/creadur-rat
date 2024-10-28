@@ -19,28 +19,28 @@
 package org.apache.rat;
 
 /**
- * An exception thrown when there is an issue with the configuration.
+ * An exception thrown when there is an issue with the implementation of an extension point.
  */
 public class ImplementationException extends RuntimeException {
 
     private static final long serialVersionUID = 7257245932787579431L;
-    
-    public static ImplementationException makeInstance(Exception e) {
+
+    public static ImplementationException makeInstance(final Exception e) {
         if (e instanceof ImplementationException) {
             return (ImplementationException) e;
         }
         return new ImplementationException(e);
     }
 
-    public ImplementationException(String message, Throwable cause) {
+    public ImplementationException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public ImplementationException(String message) {
+    public ImplementationException(final String message) {
         super(message);
     }
 
-    public ImplementationException(Throwable cause) {
+    public ImplementationException(final Throwable cause) {
         super(cause);
     }
 

@@ -270,7 +270,7 @@ public class ReportConfiguration {
      * @param collection the StandardCollection to exclude.
      * @see ExclusionProcessor#addExcludedCollection(StandardCollection)
      */
-    public void addExcludedCollection(StandardCollection collection) {
+    public void addExcludedCollection(final StandardCollection collection) {
         exclusionProcessor.addExcludedCollection(collection);
     }
 
@@ -279,7 +279,7 @@ public class ReportConfiguration {
      * @param collection the StandardCollection to exclude.
      * @see ExclusionProcessor#addFileProcessor(StandardCollection)
      */
-    public void addExcludedFileProcessor(StandardCollection collection) {
+    public void addExcludedFileProcessor(final StandardCollection collection) {
         exclusionProcessor.addFileProcessor(collection);
     }
 
@@ -287,7 +287,7 @@ public class ReportConfiguration {
      * Excludes files that match a FileFilter.
      * @param fileFilter the file filter to match.
      */
-    public void addExcludedFilter(FileFilter fileFilter) {
+    public void addExcludedFilter(final FileFilter fileFilter) {
         exclusionProcessor.addExcludedFilter(DocumentNameMatcherSupplier.from(fileFilter));
     }
 
@@ -297,11 +297,11 @@ public class ReportConfiguration {
      * @param patterns the collection of patterns to exclude.
      * @see ExclusionProcessor#addIncludedPatterns(Iterable)
      */
-    public void addExcludedPatterns(Iterable<String> patterns) {
+    public void addExcludedPatterns(final Iterable<String> patterns) {
         exclusionProcessor.addExcludedPatterns(patterns);
     }
 
-    public void addIncludedCollection(StandardCollection collection) {
+    public void addIncludedCollection(final StandardCollection collection) {
         exclusionProcessor.addIncludedCollection(collection);
     }
 
@@ -310,7 +310,7 @@ public class ReportConfiguration {
      * exclusion of the same files.
      * @param fileFilter the filter to identify files that should be included.
      */
-    public void addIncludedFilter(FileFilter fileFilter) {
+    public void addIncludedFilter(final FileFilter fileFilter) {
         exclusionProcessor.addIncludedFilter(DocumentNameMatcherSupplier.from(fileFilter));
     }
 
@@ -319,7 +319,7 @@ public class ReportConfiguration {
      * the same files.
      * @param patterns The iterable of Strings containing the patterns.
      */
-    public void addIncludedPatterns(Iterable<String> patterns) {
+    public void addIncludedPatterns(final Iterable<String> patterns) {
         exclusionProcessor.addIncludedPatterns(patterns);
     }
 
@@ -328,7 +328,7 @@ public class ReportConfiguration {
      * @param baseDir the DocumentName for the base directory.
      * @return the DocumentNameMatcher for the base directory.
      */
-    public DocumentNameMatcher getNameMatcher(DocumentName baseDir) {
+    public DocumentNameMatcher getNameMatcher(final DocumentName baseDir) {
         return exclusionProcessor.getNameMatcher(baseDir);
     }
 

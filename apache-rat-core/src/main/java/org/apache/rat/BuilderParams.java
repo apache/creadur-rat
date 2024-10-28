@@ -33,7 +33,7 @@ public interface BuilderParams {
 
     /**
      * Gets one of the contained methods by name.
-     * 
+     *
      * @param name the name of the method to get.
      * @return the Method.
      */
@@ -50,14 +50,14 @@ public interface BuilderParams {
 
     /**
      * Gets a mapping of matcher names to matchers.
-     * 
+     *
      * @return the mapping of matcher names to matchers.
      */
     Map<String, IHeaderMatcher> matcherMap();
 
     /**
      * Gets a sorted set of registered license families.
-     * 
+     *
      * @return the sorted set of license families.
      */
     SortedSet<ILicenseFamily> licenseFamilies();
