@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.report.claim.util;
+package org.apache.rat.report.claim;
 
 import java.util.List;
 
@@ -32,11 +32,13 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
  * Executes a RatReport that multiplexes the running of multiple RatReports
  */
 public class ClaimReporterMultiplexer implements RatReport {
-
+    /** The document analyser to use */
     private final IDocumentAnalyser analyser;
+    /** A list of reports that are being updated */
     private final List<? extends RatReport> reporters;
+    /** If {@code true} this is a dry run do not generate report */
     private final boolean dryRun;
-
+    /** The XML Writer this multiplexer writes to */
     private final IXmlWriter writer;
 
     /**
@@ -54,7 +56,7 @@ public class ClaimReporterMultiplexer implements RatReport {
     }
 
     @Override
-    public void report(Document document) throws RatException {
+    public void report(final Document document) throws RatException {
         if (!dryRun) {
             if (analyser != null) {
                 try {

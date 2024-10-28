@@ -31,19 +31,23 @@ import org.apache.rat.api.Document;
  */
 public class ClaimStatistic {
     /** The counter types */
-    public enum Counter { 
+    public enum Counter {
         /** count of approved files */
-        APPROVED, 
+        APPROVED,
         /** count of unapproved files */
-        UNAPPROVED, 
+        UNAPPROVED,
         /** count of generated files */
-        GENERATED, 
+        GENERATED,
         /** count of unknown files */
         UNKNOWN }
-    
+
+    /** Count of license family name to counter */
     private final ConcurrentHashMap<String, IntCounter> licenseFamilyNameMap = new ConcurrentHashMap<>();
+    /** Map of license family category to counter */
     private final ConcurrentHashMap<String, IntCounter> licenseFamilyCategoryMap = new ConcurrentHashMap<>();
+    /** Map of document type to counter */
     private final ConcurrentHashMap<Document.Type, IntCounter> documentCategoryMap = new ConcurrentHashMap<>();
+    /** Map of counter type to value */
     private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
     /** converts null counter to 0.
@@ -51,7 +55,7 @@ public class ClaimStatistic {
      * @param counter the Counter to retrieve the value from.
      * @return 0 if counter is {@code null} or counter value otherwise.
      */
-    private int getValue(IntCounter counter) {
+    private int getValue(final IntCounter counter) {
         return counter == null ? 0 : counter.value();
     }
     /**
@@ -59,7 +63,7 @@ public class ClaimStatistic {
      * @param counter the counter to get the value for.
      * @return Returns the number times the Counter type was seen.
      */
-    public int getCounter(Counter counter) {
+    public int getCounter(final Counter counter) {
         return getValue(counterMap.get(counter));
     }
 
@@ -68,8 +72,8 @@ public class ClaimStatistic {
      * @param counter the counter to increment.
      * @param value the value to increment the counter by.
      */
-    public void incCounter(Counter counter, int value) {
-        counterMap.compute(counter, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
+    public void incCounter(final Counter counter, final int value) {
+        counterMap.compute(counter, (k, v) -> v == null ? new IntCounter().increment(value) : v.increment(value));
     }
 
     /**
@@ -77,7 +81,7 @@ public class ClaimStatistic {
      * @param documentType the Document.Type to get the counter for.
      * @return Returns the number times the Document.Type was seen
      */
-    public int getCounter(Document.Type documentType) {
+    public int getCounter(final Document.Type documentType) {
         return getValue(documentCategoryMap.get(documentType));
     }
 
@@ -86,8 +90,8 @@ public class ClaimStatistic {
      * @param documentType the Document.Type to increment.
      * @param value the vlaue to increment the counter by.
      */
-    public void incCounter(Document.Type documentType, int value) {
-        documentCategoryMap.compute(documentType, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
+    public void incCounter(final Document.Type documentType, final int value) {
+        documentCategoryMap.compute(documentType, (k, v) -> v == null ? new IntCounter().increment(value) : v.increment(value));
     }
 
     /**
@@ -95,7 +99,7 @@ public class ClaimStatistic {
      * @param licenseFamilyCategory the license family category to get the count for.
      * @return the number of times the license family category was seen.
      */
-    public int getLicenseCategoryCount(String licenseFamilyCategory) {
+    public int getLicenseCategoryCount(final String licenseFamilyCategory) {
         return getValue(licenseFamilyCategoryMap.get(licenseFamilyCategory));
     }
 
@@ -104,8 +108,8 @@ public class ClaimStatistic {
      * @param licenseFamilyCategory the License family category to incmrement.
      * @param value the value to increment the count by.
      */
-    public void incLicenseCategoryCount(String licenseFamilyCategory, int value) {
-        licenseFamilyCategoryMap.compute(licenseFamilyCategory, (k, v)-> v == null? new IntCounter().increment(value) : v.increment(value));
+    public void incLicenseCategoryCount(final String licenseFamilyCategory, final int value) {
+        licenseFamilyCategoryMap.compute(licenseFamilyCategory, (k, v) -> v == null ? new IntCounter().increment(value) : v.increment(value));
     }
 
     /**
@@ -129,7 +133,7 @@ public class ClaimStatistic {
      * @param licenseFilename the license family name to look for.
      * @return the number of times the license family name was seen.
      */
-    public int getLicenseFamilyNameCount(String licenseFilename) {
+    public int getLicenseFamilyNameCount(final String licenseFilename) {
         return getValue(licenseFamilyNameMap.get(licenseFilename));
     }
 
@@ -138,22 +142,25 @@ public class ClaimStatistic {
      * @param licenseFamilyName the license family name to increment.
      * @param value the value to increment the count by.
      */
-    public void incLicenseFamilyNameCount(String licenseFamilyName, int value) {
-        licenseFamilyNameMap.compute(licenseFamilyName, (k,v)-> v == null? new IntCounter().increment(value) : v.increment(value));
+    public void incLicenseFamilyNameCount(final String licenseFamilyName, final int value) {
+        licenseFamilyNameMap.compute(licenseFamilyName, (k, v) -> v == null ? new IntCounter().increment(value) : v.increment(value));
     }
 
     /**
      * A class that wraps and int and allows easy increment and retrieval.
      */
     static class IntCounter {
-        int value = 0;
+        /**
+         * The value of the counter
+         */
+        private int value;
 
         /**
          * Increment the count.
          * @param count the count to increment by (may be negative)
          * @return this.
          */
-        public IntCounter increment(int count) {
+        public IntCounter increment(final int count) {
             value += count;
             return this;
         }

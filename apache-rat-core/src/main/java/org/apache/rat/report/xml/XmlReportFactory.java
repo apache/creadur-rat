@@ -35,10 +35,10 @@ import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.ConfigurationReport;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.claim.impl.ClaimAggregator;
-import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
-import org.apache.rat.report.claim.util.LicenseAddingReport;
+import org.apache.rat.report.claim.ClaimAggregator;
+import org.apache.rat.report.claim.SimpleXmlClaimReporter;
+import org.apache.rat.report.claim.ClaimReporterMultiplexer;
+import org.apache.rat.report.claim.LicenseAddingReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
