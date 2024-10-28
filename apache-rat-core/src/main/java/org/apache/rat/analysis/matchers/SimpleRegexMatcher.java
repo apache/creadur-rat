@@ -48,6 +48,10 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
         this.pattern = pattern;
     }
 
+    /**
+     * Gets the expression of the underlying matching pattern.
+     * @return the underlying pattern's construction expression.
+     */
     public String getExpression() {
         // called by reflection
         return pattern.pattern();
