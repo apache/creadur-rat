@@ -28,17 +28,18 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
  * A report that dumps the ReportConfiguration into the XML output.
  */
 public class ConfigurationReport extends AbstractReport {
-
+    /** The report configuration to report on */
     private final ReportConfiguration configuration;
+    /** The XML writer to write the report with. */
     private final IXmlWriter writer;
 
     /**
      * Constructor.
-     * 
+     *
      * @param writer The writer to write the XML data to.
      * @param configuration the configuration to dump
      */
-    public ConfigurationReport(IXmlWriter writer, ReportConfiguration configuration) {
+    public ConfigurationReport(final IXmlWriter writer, final ReportConfiguration configuration) {
         this.configuration = configuration;
         this.writer = writer;
     }

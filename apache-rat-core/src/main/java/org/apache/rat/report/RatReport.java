@@ -22,7 +22,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 
 /**
- * Interface that defines a RatReport. 
+ * Interface that defines a RatReport.
  * A RatReport examines a document and may report issues or modify the underlying file.
  */
 public interface RatReport {
@@ -34,14 +34,14 @@ public interface RatReport {
      * @see #report(Document)
      */
     void startReport() throws RatException;
-    
+
     /**
      * Performs the actual reporting on the given document.
      * @param document write any reporting results into this document upon analysis.
      * @throws RatException on error.
      */
     void report(Document document) throws RatException;
-    
+
     /**
      * Signals the end of execution for the report.  Will be called after the {@code report()} method
      * to ensure proper cleanup.
