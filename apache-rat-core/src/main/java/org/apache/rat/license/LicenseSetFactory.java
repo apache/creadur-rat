@@ -39,7 +39,7 @@ public class LicenseSetFactory {
     /**
      * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
      * @param target The instance to search for.
-     * @param licenseFamilies the license families to search
+     * @param licenseFamilies the license families to search.
      * @return the matching instance of the target given.
      */
     public static ILicenseFamily familySearch(final String target, final SortedSet<ILicenseFamily> licenseFamilies) {
@@ -51,7 +51,7 @@ public class LicenseSetFactory {
     /**
      * Search a SortedSet of ILicenseFamily instances looking for a matching instance.
      * @param target The instance to search for.
-     * @param licenseFamilies the license families to search
+     * @param licenseFamilies the license families to search.
      * @return the matching instance of the target given.
      */
     public static ILicenseFamily familySearch(final ILicenseFamily target, final SortedSet<ILicenseFamily> licenseFamilies) {
@@ -63,11 +63,11 @@ public class LicenseSetFactory {
      * An enum that defines the types of Licenses to extract.
      */
     public enum LicenseFilter {
-        /** All defined licenses are returned */
+        /** All defined licenses are returned. */
         ALL,
-        /** Only approved licenses are returned */
+        /** Only approved licenses are returned. */
         APPROVED,
-        /** No licenses are returned */
+        /** No licenses are returned. */
         NONE
     }
 
@@ -439,7 +439,7 @@ public class LicenseSetFactory {
 
     /**
      * Search a SortedSet of licenses for the matching license.
-     * License must mach both family code, and license id.
+     * License must match both family code, and license id.
      *
      * @param target the license to search for. Must not be null.
      * @param licenses the SortedSet of licenses to search.
