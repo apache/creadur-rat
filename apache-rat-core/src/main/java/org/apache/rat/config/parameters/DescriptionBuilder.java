@@ -131,7 +131,7 @@ public final class DescriptionBuilder {
                 return matcherBuilder.value();
             }
         } catch (NoSuchMethodException | SecurityException e) {
-            throw new IllegalStateException("the 'build' method of the Builder interface must always be public");
+            throw new IllegalStateException("The 'build' method of the Builder interface must always be public");
         }
     }
 
