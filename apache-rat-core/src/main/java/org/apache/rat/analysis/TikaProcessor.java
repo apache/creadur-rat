@@ -128,7 +128,7 @@ public final class TikaProcessor {
             }
 
             return result;
-        } catch (IOException /* | SAXException | TikaException */ e) {
+        } catch (IOException e) {
             throw new RatDocumentAnalysisException(e);
         }
     }

@@ -59,7 +59,7 @@ public final class ExclusionUtils {
     }
 
     /**
-     * Creates predicate that filters out comment and blank lines.  Leading spaces are removed and
+     * Creates predicate that filters out comment and blank lines. Leading spaces are removed and
      * if the line then starts with a commentPrefix string it is considered a comment and will be removed
      *
      * @param commentPrefixes the list of comment prefixes
@@ -85,7 +85,7 @@ public final class ExclusionUtils {
     }
 
     /**
-     * Creates predicate that filters out comment and blank lines.  Leading spaces are removed and
+     * Creates predicate that filters out comment and blank lines. Leading spaces are removed and
      * if the line then starts with a commentPrefix string it is considered a comment and will be removed
      *
      * @param commentPrefix the prefix string for comments.

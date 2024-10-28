@@ -203,11 +203,10 @@ public final class OptionCollection {
      * @param baseDirectory the base directory where files will be found.
      * @param cl the parsed command line.
      * @return a ReportConfiguration
-     * @throws IOException on error.
      * @see #parseCommands(String[], Consumer)
      * @see #parseCommands(String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final String baseDirectory, final CommandLine cl) throws IOException {
+    static ReportConfiguration createConfiguration(final String baseDirectory, final CommandLine cl) {
         final ReportConfiguration configuration = new ReportConfiguration();
         new ArgumentContext(configuration, cl).processArgs();
         if (StringUtils.isNotBlank(baseDirectory)) {
@@ -264,7 +263,7 @@ public final class OptionCollection {
 
         private String getKey(final Option opt) {
             String key = opt.getOpt();
-            key = key == null ? opt.getLongOpt() : key;
+            key = (key == null ? opt.getLongOpt() : key);
             return key;
         }
 

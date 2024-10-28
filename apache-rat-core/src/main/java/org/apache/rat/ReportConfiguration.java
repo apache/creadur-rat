@@ -756,7 +756,7 @@ public class ReportConfiguration {
         }
 
         /**
-         * Does not actually close the delegate.  But does perform a flush.
+         * Does not actually close the delegate. But does perform a flush.
          * @throws IOException on Error.
          */
         @Override

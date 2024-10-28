@@ -37,7 +37,7 @@ import org.apache.rat.config.exclusion.ExclusionUtils;
  */
 public class FileDocument extends Document {
 
-    /** the wrapped file */
+    /** The wrapped file */
     private final File file;
 
     /**
