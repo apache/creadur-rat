@@ -28,7 +28,7 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
 
     /** The license family for unknown licenses */
     ILicenseFamily UNKNOWN = new Builder().setLicenseFamilyName("Unknown license").setLicenseFamilyCategory("?????").build();
-    /** The license family  for generated files */
+    /** The license family for generated files */
     ILicenseFamily GENERATED = new Builder().setLicenseFamilyName("Generated file").setLicenseFamilyCategory("GEN").build();
 
     /**
@@ -78,9 +78,8 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
         /** The name of the family */
         private String licenseFamilyName;
 
-
         /**
-         * Sets the license family category. Will trim or extends the string with spaces
+         * Sets the license family category. Will trim or extend the string with spaces
          * to ensure that it is exactly 5 characters.
          *
          * @param licenseFamilyCategory the category string

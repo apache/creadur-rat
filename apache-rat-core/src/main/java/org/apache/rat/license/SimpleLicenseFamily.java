@@ -46,11 +46,9 @@ public class SimpleLicenseFamily  {
         return String.format("%s %s", getFamilyCategory(), getFamilyName());
     }
 
-
     public final String getFamilyName() {
         return familyName;
     }
-
 
     public String getFamilyCategory() {
         return familyCategory;

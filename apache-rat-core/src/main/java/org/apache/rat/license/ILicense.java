@@ -73,7 +73,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
     }
 
     /**
-     * A default implementatin of a License hash
+     * A default implementation of a License hash
      * @param license the license to hash
      * @return the license hash value
      */
@@ -167,7 +167,7 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         Builder setName(String name);
 
         /**
-         * Sets the set of license families to use duirng build.
+         * Sets the set of license families to use during build.
          *
          * @param licenseFamilies the license families to use
          * @return this builder.

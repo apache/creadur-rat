@@ -18,11 +18,8 @@
  */
 package org.apache.rat.analysis;
 
-import java.util.Objects;
-
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.ILicenseFamilyBuilder;
 
 /**
  * An ILicense implementation that represents an unknown license.
