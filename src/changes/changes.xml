@@ -75,6 +75,12 @@ The <action> type attribute can be one of:
       <action issue="RAT-425" type="fix" dev="claudenw">
         Fix checkstyle issues in help.
       </action>
+      <action issue="RAT-426" type="fix" dev="claudenw">
+        Fix checkstyle issues in license.
+      </action>
+      <action issue="RAT-424" type="fix" dev="claudenw">
+        Fix checkstyle issues in document.
+      </action>
       <action issue="RAT-420" type="fix" dev="claudenw">
         Fix checkstyle issues in config.
       </action>
