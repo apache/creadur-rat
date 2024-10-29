@@ -28,7 +28,7 @@ import org.apache.rat.api.RatException;
 public interface RatReport {
 
     /**
-     * Signals the start of execution for the report.  Will be called before the {@code report()} method
+     * Signals the start of execution for the report. Will be called before the {@code report()} method
      * to ensure proper setup.
      * @throws RatException on error.
      * @see #report(Document)
@@ -43,7 +43,7 @@ public interface RatReport {
     void report(Document document) throws RatException;
 
     /**
-     * Signals the end of execution for the report.  Will be called after the {@code report()} method
+     * Signals the end of execution for the report. Will be called after the {@code report()} method
      * to ensure proper cleanup.
      * @throws RatException on error.
      * @see #report(Document)

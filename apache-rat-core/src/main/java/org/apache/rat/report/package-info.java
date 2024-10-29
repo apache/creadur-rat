@@ -18,6 +18,6 @@
  */
 
 /**
- * Classes generate the Rat report.
+ * Classes that generate the Rat report.
  */
 package org.apache.rat.report;
