@@ -29,8 +29,8 @@ import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.claim.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -135,9 +135,9 @@ public class DefaultAnalyserFactoryTest {
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        TextUtils.assertContains("<resource name='/elements/dummy.jar' type='ARCHIVE'>", out.toString());
-        TextUtils.assertContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", out.toString());
-        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", out.toString());
+        TextUtils.assertContains("<resource name='/elements/dummy.jar' type='ARCHIVE'>", result);
+        TextUtils.assertContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", result);
+        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", result);
     }
 
     @Test
@@ -152,9 +152,9 @@ public class DefaultAnalyserFactoryTest {
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
-        TextUtils.assertContains("<resource name='/elements/dummy.jar' type='ARCHIVE'>", out.toString());
-        TextUtils.assertNotContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", out.toString());
-        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", out.toString());
+        TextUtils.assertContains("<resource name='/elements/dummy.jar' type='ARCHIVE'>", result);
+        TextUtils.assertNotContains("<license id='?????' name='Unknown license' approval='false' family='?????'/>", result);
+        TextUtils.assertContains("<license id='ASL' name='Applied Apache License Version 2.0' approval='false' family='AL   '/>", result);
     }
 
     @Test
