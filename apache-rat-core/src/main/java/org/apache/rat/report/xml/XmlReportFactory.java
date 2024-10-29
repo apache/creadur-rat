@@ -35,10 +35,10 @@ import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.ConfigurationReport;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.claim.impl.ClaimAggregator;
-import org.apache.rat.report.claim.impl.xml.SimpleXmlClaimReporter;
-import org.apache.rat.report.claim.util.ClaimReporterMultiplexer;
-import org.apache.rat.report.claim.util.LicenseAddingReport;
+import org.apache.rat.report.claim.ClaimAggregator;
+import org.apache.rat.report.claim.SimpleXmlClaimReporter;
+import org.apache.rat.report.claim.ClaimReporterMultiplexer;
+import org.apache.rat.report.claim.LicenseAddingReport;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
@@ -51,9 +51,9 @@ public final class XmlReportFactory {
     private static final String TIMESTAMP = "timestamp";
     /** The version attribute */
     private static final String VERSION = "version";
-    /** the product attribute */
+    /** The product attribute */
     private static final String PRODUCT = "product";
-    /** the vendor attribute */
+    /** The vendor attribute */
     private static final String VENDOR = "vendor";
 
     private XmlReportFactory() {
@@ -114,8 +114,8 @@ public final class XmlReportFactory {
     }
 
     /**
-     * Ends the XML reprot by closing the element that startReport opened.
-     * @param writer the write to write into.
+     * Ends the XML report by closing the element that startReport opened.
+     * @param writer the writer to write into.
      * @throws RatException on error
      * @see #startReport(IXmlWriter)
      */
