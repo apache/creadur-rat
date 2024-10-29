@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.report.claim.util;
+package org.apache.rat.report.claim;
 
 import java.io.File;
 import java.io.IOException;
