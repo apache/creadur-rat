@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.report.claim.util;
+package org.apache.rat.report.claim;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class LicenseAddingReport extends AbstractReport {
 
     /**
      * Creates a LicenseAddingReport that inserts the copyright message and may overwrite the files.
-     * @param copyrightMsg The message to insert into the files.  May be {@code null}.
+     * @param copyrightMsg The message to insert into the files. May be {@code null}.
      * @param overwrite if {@code true} will overwrite the files rather than create {@code .new} files.
      */
     public LicenseAddingReport(final String copyrightMsg, final boolean overwrite) {
