@@ -17,7 +17,7 @@
 * under the License.                                           *
 */
 
-package org.apache.rat.report.claim.impl;
+package org.apache.rat.report.claim;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -36,7 +36,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
      * The default implementations does nothing.
      * @param type The document type counter to increment.
      */
-    protected void handleDocumentCategoryClaim(Document.Type type) {
+    protected void handleDocumentCategoryClaim(final Document.Type type) {
         // Does nothing
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractClaimReporter extends AbstractReport {
      * The default implementation does nothing.
      * @param metadata The metadata for the document
      */
-    protected void handleApprovedLicenseClaim(MetaData metadata) {
+    protected void handleApprovedLicenseClaim(final MetaData metadata) {
         // Does nothing
     }
 
@@ -54,12 +54,12 @@ public abstract class AbstractClaimReporter extends AbstractReport {
      * The default implementation does nothing.
      * @param license the license to record the category for.
      */
-    protected void handleLicenseClaim(ILicense license) {
+    protected void handleLicenseClaim(final ILicense license) {
         // Does nothing
     }
 
     @Override
-    public void report(Document subject) {
+    public void report(final Document subject) {
         final MetaData metaData = subject.getMetaData();
         metaData.licenses().forEach(this::handleLicenseClaim);
         handleDocumentCategoryClaim(metaData.getDocumentType());

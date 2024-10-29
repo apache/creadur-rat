@@ -16,41 +16,8 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.license;
-
-import org.apache.rat.DeprecationReporter;
 
 /**
- * An implementation of the ILicenseFamily.
+ * Classes that generate the Rat report.
  */
-@Deprecated // remove in v1.0
-@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "ILicenseFamily.Builder")
-public class SimpleLicenseFamily  {
-    private String familyName;
-    private String familyCategory;
-
-    public SimpleLicenseFamily() {
-        DeprecationReporter.logDeprecated(SimpleLicenseFamily.class);
-    }
-
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
-    
-    public void setFamilyCategory(String familyCategory) {
-        this.familyCategory = familyCategory;
-    }
-    
-    @Override
-    public String toString() {
-        return String.format("%s %s", getFamilyCategory(), getFamilyName());
-    }
-
-    public final String getFamilyName() {
-        return familyName;
-    }
-
-    public String getFamilyCategory() {
-        return familyCategory;
-    }
-}
+package org.apache.rat.report;

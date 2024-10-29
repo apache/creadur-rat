@@ -18,6 +18,6 @@
  */
 
 /**
- * Classes to write claims in XML format
+ * The definitions of Documents and their analysers.
  */
-package org.apache.rat.report.claim.impl.xml;
+package org.apache.rat.document;
