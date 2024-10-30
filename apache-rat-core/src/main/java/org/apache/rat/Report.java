@@ -19,8 +19,8 @@
 package org.apache.rat;
 
 import org.apache.commons.cli.Options;
-import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.help.Help;
+import org.apache.rat.utils.DefaultLog;
 
 /**
  * The CLI based configuration object for report generation.
@@ -44,7 +44,7 @@ public final class Report {
     }
 
     /**
-     * Prints the usage message on System.out
+     * Prints the usage message on {@code System.out}.
      * @param opts The defined options.
      */
     private static void printUsage(final Options opts) {

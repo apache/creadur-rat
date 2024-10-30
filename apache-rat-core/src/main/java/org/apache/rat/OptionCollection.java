@@ -44,9 +44,9 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
-import org.apache.rat.document.DocumentName;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
@@ -74,7 +74,8 @@ public final class OptionCollection {
     public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
     /** Provide license definition listing */
-    public static final Option HELP_LICENSES = Option.builder().longOpt("help-licenses").desc("Print help for the RAT command line interface and exit.").build();
+    public static final Option HELP_LICENSES = Option.builder().longOpt("help-licenses")
+            .desc("Print help for the RAT command line interface and exit.").build();
 
     /** A mapping of {@code argName(value)} values to a description of those values. */
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
@@ -263,7 +264,7 @@ public final class OptionCollection {
 
         private String getKey(final Option opt) {
             String key = opt.getOpt();
-            key = (key == null ? opt.getLongOpt() : key);
+            key = key == null ? opt.getLongOpt() : key;
             return key;
         }
 

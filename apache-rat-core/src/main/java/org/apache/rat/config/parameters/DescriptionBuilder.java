@@ -78,7 +78,7 @@ public final class DescriptionBuilder {
      * @param clazz source class.
      * @return the Descriptions of the child elements.
      */
-    private static List<Description> getConfigComponents(final Class<?> clazz) {
+    static List<Description> getConfigComponents(final Class<?> clazz) {
         if (clazz == null || clazz == String.class || clazz == Object.class) {
             return Collections.emptyList();
         }
@@ -131,7 +131,7 @@ public final class DescriptionBuilder {
                 return matcherBuilder.value();
             }
         } catch (NoSuchMethodException | SecurityException e) {
-            throw new IllegalStateException("the 'build' method of the Builder interface must always be public");
+            throw new IllegalStateException("The 'build' method of the Builder interface must always be public");
         }
     }
 

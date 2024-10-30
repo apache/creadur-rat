@@ -73,7 +73,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     private final Element rootElement;
     /** The families element in the document */
     private final Element familiesElement;
-    /** The licenses element in the doucment */
+    /** The licenses element in the document */
     private final Element licensesElement;
     /** The approved element in the document */
     private final Element approvedElement;
@@ -171,7 +171,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     /**
-     * Applies the {@code consumer} to each node in the {@code list}.  Generally used for extracting info from a
+     * Applies the {@code consumer} to each node in the {@code list}. Generally used for extracting info from a
      * {@code NodeList}.
      * @param list the NodeList to process
      * @param consumer the consumer to apply to each node in the list.
@@ -302,7 +302,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * Sets the value of the element described by the description in the builder with the value from childDescription.
      * @param description the property in the builder to set.
      * @param childDescription the description of the child property to extract.
-     * @param builder the bulider to set the value in.
+     * @param builder the builder to set the value in.
      * @param child the child to extract the value from.
      */
     private void setValue(final Description description, final Description childDescription, final IHeaderMatcher.Builder builder,
@@ -315,12 +315,12 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     /**
-     * Process the ELEEMENT_NODEs children of the parent whose names match child
-     * descriptions. All children children are processed with the childProcessor. If
+     * Process the ELEMENT_NODEs children of the parent whose names match child
+     * descriptions. All children of children are processed with the childProcessor. If
      * the childProcessor handles the node it is not included in the resulting list.
      * @param description the Description of the parent node.
      * @param parent the node being processed
-     * @param childProcessor the BiProcessor to handle process each child. if the
+     * @param childProcessor the BiProcessor to handle process each child. If the
      * processor handles the child it must return {@code true}.
      * @return A Pair comprising a boolean flag indicating children were found, and
      * a list of all child nodes that were not processed by the childProcessor.
@@ -376,7 +376,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
 
             for (Description childDescription : childDescriptions) {
                 if (XMLConfig.isInlineNode(description.getCommonName(), childDescription.getCommonName())) {
-                    // can only process text inline if there were not child nodes.
+                    // can only process text inline if there were no child nodes.
                     if (childDescription.getChildType() == String.class) {
                         if (!foundChildren) {
                             callSetter(childDescription, builder, matcherNode.getTextContent());
@@ -588,8 +588,8 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         /** The builder we are delegating to */
         private final AbstractBuilder delegate;
         /**
-         * The map of matchers that the system is building during processing.  We will utilize this to set the
-         * matcher value later.
+         * The map of matchers that the system is building during processing.
+         * We will utilize this to set the matcher value later.
          */
         private final Map<String, IHeaderMatcher> matchers;
 
