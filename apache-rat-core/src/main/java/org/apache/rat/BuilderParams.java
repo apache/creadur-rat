@@ -30,7 +30,6 @@ import org.apache.rat.license.ILicenseFamily;
  * should be the same as the name specified in the ConfigComponent.
  */
 public interface BuilderParams {
-
     /**
      * Gets one of the contained methods by name.
      *
@@ -54,6 +53,7 @@ public interface BuilderParams {
      * @return the mapping of matcher names to matchers.
      */
     Map<String, IHeaderMatcher> matcherMap();
+    // the above method is called by reflection.
 
     /**
      * Gets a sorted set of registered license families.
@@ -61,4 +61,5 @@ public interface BuilderParams {
      * @return the sorted set of license families.
      */
     SortedSet<ILicenseFamily> licenseFamilies();
+    // the above method is called  by reflection
 }
