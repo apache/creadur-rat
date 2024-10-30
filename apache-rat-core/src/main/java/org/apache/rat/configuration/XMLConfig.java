@@ -55,12 +55,12 @@ public final class XMLConfig {
     public static final String MATCHER = "matcher";
 
     /** License property names that should be children */
-    static final String[] LICENSE_CHILDREN = { "note", "matcher" };
+    static final String[] LICENSE_CHILDREN = { NOTE, MATCHER };
     /**
      * License property names that should not be displayed contents should be placed
      * inline
      */
-    static final String[] LICENSE_INLINE = { "matcher" };
+    static final String[] LICENSE_INLINE = { MATCHER };
 
     /**
      * Matcher properties that should be directly inlined Entries are matcher node
