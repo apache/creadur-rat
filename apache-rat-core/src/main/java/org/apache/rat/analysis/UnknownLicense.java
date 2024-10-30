@@ -18,11 +18,8 @@
  */
 package org.apache.rat.analysis;
 
-import java.util.Objects;
-
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.ILicenseFamilyBuilder;
 
 /**
  * An ILicense implementation that represents an unknown license.
@@ -46,13 +43,12 @@ public final class UnknownLicense implements ILicense {
      * Do not allow other constructions.
      */
     private UnknownLicense() {
-        family = new ILicenseFamilyBuilder().setLicenseFamilyCategory(ILicenseFamily.UNKNOWN_CATEGORY)
-                .setLicenseFamilyName("Unknown license").build();
+        family = ILicenseFamily.UNKNOWN;
     }
 
     @Override
     public String getId() {
-        return ILicenseFamily.UNKNOWN_CATEGORY;
+        return family.getFamilyCategory();
     }
 
     @Override
@@ -72,7 +68,7 @@ public final class UnknownLicense implements ILicense {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(ILicenseFamily.UNKNOWN_CATEGORY);
+        return family.hashCode();
     }
 
     @Override

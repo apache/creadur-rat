@@ -31,8 +31,6 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
 
 /**
  * A simple implementation of ILicense.
@@ -118,11 +116,6 @@ public class SimpleLicense implements ILicense {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public Description getDescription() {
-        return DescriptionBuilder.build(this);
     }
 
     public static class Builder implements ILicense.Builder {

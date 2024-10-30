@@ -49,15 +49,15 @@ import static java.lang.String.format;
 public final class Defaults {
     /** The default configuration file from the package. */
     private static final URI DEFAULT_CONFIG_URI;
-    /** The path to the default configuration file */
+    /** The path to the default configuration file. */
     private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
-    /** The default ARCHIVES processing style */
+    /** The default ARCHIVES processing style. */
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
-    /** The default STANDARD processing style */
+    /** The default STANDARD processing style. */
     public static final ReportConfiguration.Processing STANDARD_PROCESSING = ReportConfiguration.Processing.ABSENCE;
-    /** The default license families to list */
+    /** The default license families to list. */
     public static final LicenseFilter LIST_FAMILIES = LicenseFilter.NONE;
-    /** The default licenses to list */
+    /** The default licenses to list. */
     public static final LicenseFilter LIST_LICENSES = LicenseFilter.NONE;
 
     /** The license set factory to build license sets based upon default options */

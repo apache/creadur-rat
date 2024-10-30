@@ -55,7 +55,7 @@ import org.apache.rat.utils.ReportingSet;
 
 /**
  * A configuration object is used by the front end to invoke the
- * {@link Reporter}. The sole purpose of the front ends is to create the
+ * {@link Reporter}. The sole purpose of the frontends is to create the
  * configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration {
@@ -93,7 +93,7 @@ public class ReportConfiguration {
     /** The LicenseSetFactory for the configuration */
     private final LicenseSetFactory licenseSetFactory;
 
-       /**
+    /**
      * {@code true} if we are adding license headers to the files.
      */
     private boolean addingLicenses;
@@ -756,7 +756,7 @@ public class ReportConfiguration {
         }
 
         /**
-         * Does not actually close the delegate.  But does perform a flush.
+         * Does not actually close the delegate. But does perform a flush.
          * @throws IOException on Error.
          */
         @Override

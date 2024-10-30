@@ -44,7 +44,7 @@ public final class Report {
     }
 
     /**
-     * Prints the usage message on System.out
+     * Prints the usage message on {@code System.out}.
      * @param opts The defined options.
      */
     private static void printUsage(final Options opts) {

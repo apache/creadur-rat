@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.report;
 
 import org.apache.rat.api.Document;
@@ -37,7 +37,7 @@ public abstract class AbstractReport implements RatReport {
      * Empty default implementation.
      * @param document the actual document
      */
-    public void report(Document document) throws RatException {
+    public void report(final Document document) throws RatException {
         // Does nothing
     }
 
