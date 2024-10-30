@@ -239,7 +239,10 @@ public class ExclusionProcessor {
             }
             if (!excludedPaths.isEmpty()) {
                 for (DocumentNameMatcherSupplier supplier : excludedPaths) {
-                    TraceableDocumentNameMatcher pathMatcher = TraceableDocumentNameMatcher.make(supplier::toString, supplier.get(basedir));
+                    DocumentNameMatcher dnm = supplier.get(basedir);
+                    TraceableDocumentNameMatcher pathMatcher = dnm instanceof DocumentNameMatcher ?
+                            (TraceableDocumentNameMatcher) dnm :
+                            TraceableDocumentNameMatcher.make(supplier::toString, supplier.get(basedir));
                     DefaultLog.getInstance().info(format("Excluding path matcher %s", pathMatcher));
                     exclMatchers.add(pathMatcher);
                 }

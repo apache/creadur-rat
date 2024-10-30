@@ -27,8 +27,9 @@ import java.io.FileFilter;
 public interface DocumentNameMatcherSupplier {
     DocumentNameMatcher get(DocumentName dir);
 
-    static DocumentNameMatcherSupplier from(FileFilter fileFilter) {
-        DocumentNameMatcher nameMatcher = TraceableDocumentNameMatcher.from(fileFilter);
-        return documentName -> docName -> nameMatcher.matches(documentName.resolve(docName.localized()));
+    static DocumentNameMatcherSupplier from(final FileFilter fileFilter) {
+        DocumentNameMatcher nameMatcher = DocumentNameMatcher.from(fileFilter);
+        return docName -> new TraceableDocumentNameMatcher(fileFilter::toString, nameMatcher);
+
     }
 }
