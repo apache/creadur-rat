@@ -111,7 +111,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testaddApprovedLicenseId() {
+    public void testAddApprovedLicenseId() {
         underTest.addApprovedLicenseId("FOO");
         SortedSet<String> result = underTest.getLicenseIds(LicenseFilter.APPROVED);
         assertTrue(result.contains("FOO"));
