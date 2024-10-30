@@ -141,5 +141,14 @@ public class MatcherRefBuilder extends AbstractBuilder {
             checkProxy();
             return wrapped.matches(header);
         }
+
+        /**
+         * Gets the matcher ID that this proxy references.
+         * @return The matcher ID that this proxy references.
+         */
+        public String getRefId() {
+            // called by introspection
+            return proxyId;
+        }
     }
 }
