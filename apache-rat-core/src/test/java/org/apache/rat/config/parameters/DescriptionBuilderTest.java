@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import org.apache.rat.BuilderParams;
 import org.apache.rat.analysis.matchers.AndMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.api.Document;
@@ -79,13 +81,20 @@ public class DescriptionBuilderTest {
     @ParameterizedTest
     @MethodSource("descriptionSource")
     public void textConfigParameters(Class<?> clazz, Description desc) {
-        try {
-            if (desc.getType() != ComponentType.BUILD_PARAMETER) {
+        if (desc.getType() == ComponentType.BUILD_PARAMETER) {
+            try {
+                Method m = BuilderParams.class.getMethod(desc.getCommonName());
+                assertNotNull(m);
+            } catch (NoSuchMethodException e) {
+                fail(format("BuilderParams does not have a %s method", desc.getCommonName()), e);
+            }
+        } else {
+            try {
                 // verify that the class has the getter for the description.
                 assertNotNull(desc.getter(clazz));
+            } catch (NoSuchMethodException e) {
+                fail(format("Missing method: %s.%s", clazz, desc.methodName("get")), e);
             }
-        } catch (NoSuchMethodException e) {
-            fail(format("Missing method: %s.%s",clazz, desc.methodName("get")), e);
         }
     }
 
