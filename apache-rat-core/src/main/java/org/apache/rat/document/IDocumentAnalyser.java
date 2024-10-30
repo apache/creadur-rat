@@ -15,13 +15,19 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
+ */
 package org.apache.rat.document;
 
 import org.apache.rat.api.Document;
 
-
+/**
+ * Analyses Documents.
+ */
 public interface IDocumentAnalyser {
-
+    /**
+     * Analyse the specified document.
+     * @param document the document to analyze
+     * @throws RatDocumentAnalysisException on error.
+     */
     void analyse(Document document) throws RatDocumentAnalysisException;
 }
