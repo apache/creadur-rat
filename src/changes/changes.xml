@@ -90,7 +90,6 @@ The <action> type attribute can be one of:
       <action issue="RAT-424" type="fix" dev="claudenw">
         Fix checkstyle issues in document.
       </action>
-      </action>
       <action issue="RAT-420" type="fix" dev="claudenw">
         Fix checkstyle issues in config.
       </action>

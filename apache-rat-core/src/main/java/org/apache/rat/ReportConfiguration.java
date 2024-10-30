@@ -306,7 +306,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Add the file filter to filter files that should be included, this overrides any
+     * Adds the fileFilter to filter files that should be included, this overrides any
      * exclusion of the same files.
      * @param fileFilter the filter to identify files that should be included.
      */
