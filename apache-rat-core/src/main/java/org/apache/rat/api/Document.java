@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.SortedSet;
 
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 
 /**
  * The representation of a document being scanned.

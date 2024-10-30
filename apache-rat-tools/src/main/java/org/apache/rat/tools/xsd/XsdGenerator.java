@@ -95,7 +95,7 @@ public class XsdGenerator {
 
     /**
      * Constructs an XsdGenerator for the structures in the configuration.
-     * @param cfg the comfiguration to generate the XSD for.
+     * @param cfg the configuration to generate the XSD for.
      */
     public XsdGenerator(ReportConfiguration cfg) {
         this.cfg = cfg;

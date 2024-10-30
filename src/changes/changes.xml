@@ -75,6 +75,9 @@ The <action> type attribute can be one of:
       <action issue="RAT-422" type="fix" dev="claudenw">
         Fix checkstyle issues in configuration.
       </action>
+      <action issue="RAT-423" type="fix" dev="claudenw">
+        Fix checkstyle issues in document subdirectories.
+      </action>
       <action issue="RAT-435" type="fix" dev="claudenw">
         Fix checkstyle issues in root package.
       </action>
@@ -82,7 +85,7 @@ The <action> type attribute can be one of:
         Fix checkstyle issues in report.
       </action>
       <action issue="RAT-428" type="fix" dev="claudenw">
-          Fix checkstyle issues in report/claim.
+        Fix checkstyle issues in report/claim.
       </action>
       <action issue="RAT-425" type="fix" dev="claudenw">
         Fix checkstyle issues in help.

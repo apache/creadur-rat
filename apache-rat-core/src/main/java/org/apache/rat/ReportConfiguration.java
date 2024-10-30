@@ -41,9 +41,9 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.DocumentNameMatcher;
-import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.DocumentNameMatcherSupplier;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -306,7 +306,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Add the file filter to filter files that should be included, this overrides any
+     * Adds the fileFilter to filter files that should be included, this overrides any
      * exclusion of the same files.
      * @param fileFilter the filter to identify files that should be included.
      */

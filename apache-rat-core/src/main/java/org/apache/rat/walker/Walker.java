@@ -20,7 +20,7 @@
 package org.apache.rat.walker;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.report.IReportable;
 
 /**

@@ -19,9 +19,9 @@
 package org.apache.rat.config.exclusion;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.rat.document.impl.DocumentNameMatcher;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.TraceableDocumentNameMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.apache.rat.document.impl.TraceableDocumentNameMatcher.TRUE;
-import static org.apache.rat.document.impl.TraceableDocumentNameMatcher.FALSE;
+import static org.apache.rat.document.TraceableDocumentNameMatcher.TRUE;
+import static org.apache.rat.document.TraceableDocumentNameMatcher.FALSE;
 
 public class ExclusionProcessorTest {
 

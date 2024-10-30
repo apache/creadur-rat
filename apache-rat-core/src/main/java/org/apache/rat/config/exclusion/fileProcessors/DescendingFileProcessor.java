@@ -31,7 +31,7 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.FileProcessor;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 
 /**
  * A FileProcessor that assumes the files contain the already formatted strings and just need to be

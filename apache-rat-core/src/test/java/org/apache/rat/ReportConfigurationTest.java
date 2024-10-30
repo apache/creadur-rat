@@ -50,7 +50,8 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.XMLConfigurationReaderTest;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -61,6 +62,7 @@ import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
+import org.assertj.core.util.Files;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -87,6 +89,34 @@ public class ReportConfigurationTest {
         DefaultLog.setInstance(null);
     }
 
+    @Test
+    public void testAddIncludedFilter() {
+        underTest.addExcludedFilter(DirectoryFileFilter.INSTANCE);
+        DocumentNameMatcher matcher = underTest.getNameMatcher(new DocumentName(new File(File.separator)));
+        assertEquals("not(DirectoryFileFilter)", matcher.toString());
+        assertFalse(matcher.matches(new DocumentName(tempDir)));
+        File f = new File(tempDir, "foo.txt");
+        assertTrue(matcher.matches(new DocumentName(f)));
+    }
+
+    @Test
+    public void testAddFamilies() {
+        ILicenseFamily fam1 = ILicenseFamily.builder().setLicenseFamilyCategory("FOO").setLicenseFamilyName("found on overview").build();
+        ILicenseFamily fam2 = ILicenseFamily.builder().setLicenseFamilyCategory("BAR").setLicenseFamilyName("big and round").build();
+        underTest.addFamilies(Arrays.asList(fam1, fam2));
+        SortedSet<String> result = underTest.getLicenseIds(LicenseFilter.ALL);
+        assertTrue(result.contains(ILicenseFamily.makeCategory("FOO")), "Missing FOO");
+        assertTrue(result.contains(ILicenseFamily.makeCategory("BAR")), "Missing BAR");
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testAddApprovedLicenseId() {
+        underTest.addApprovedLicenseId("FOO");
+        SortedSet<String> result = underTest.getLicenseIds(LicenseFilter.APPROVED);
+        assertTrue(result.contains("FOO"));
+        assertEquals(1, result.size());
+    }
     @Test
     public void testAddAndRemoveApproveLicenseCategories() {
         List<String> expected = new ArrayList<>();

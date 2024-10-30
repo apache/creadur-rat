@@ -15,26 +15,22 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.document.impl.util;
+ */
+package org.apache.rat.document;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
+import java.io.File;
+import java.io.FileFilter;
 
-public class DocumentAnalyserMultiplexer implements IDocumentAnalyser {
+@FunctionalInterface
+public interface DocumentNameMatcher {
+    boolean matches(DocumentName documentName);
 
-    private final IDocumentAnalyser[] analysers;
-    
-    public DocumentAnalyserMultiplexer(final IDocumentAnalyser[] analysers) {
-        super();
-        this.analysers = analysers;
+    /**
+     * Creates a DocumentNameMatcher from a File filter.
+     * @param fileFilter the file filter to execute
+     * @return a DocumentNameMatcher
+     */
+    static DocumentNameMatcher from(FileFilter fileFilter) {
+        return  docName -> fileFilter.accept(new File(docName.getName()));
     }
-
-    public void analyse(Document document) throws RatDocumentAnalysisException {
-        for (IDocumentAnalyser analyser : analysers) {
-            analyser.analyse(document);
-        }
-    }
-
 }

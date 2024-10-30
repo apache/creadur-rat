@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
 

@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.FileProcessor;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 
 /**
  * A file processor for the {@code .csvignore} file.

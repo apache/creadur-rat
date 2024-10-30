@@ -28,10 +28,10 @@ import java.util.function.Supplier;
 
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.DocumentNameMatcher;
-import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
-import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.DocumentNameMatcherSupplier;
+import org.apache.rat.document.TraceableDocumentNameMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
 
@@ -239,7 +239,10 @@ public class ExclusionProcessor {
             }
             if (!excludedPaths.isEmpty()) {
                 for (DocumentNameMatcherSupplier supplier : excludedPaths) {
-                    TraceableDocumentNameMatcher pathMatcher = TraceableDocumentNameMatcher.make(supplier::toString, supplier.get(basedir));
+                    DocumentNameMatcher dnm = supplier.get(basedir);
+                    TraceableDocumentNameMatcher pathMatcher = dnm instanceof DocumentNameMatcher ?
+                            (TraceableDocumentNameMatcher) dnm :
+                            TraceableDocumentNameMatcher.make(supplier::toString, supplier.get(basedir));
                     DefaultLog.getInstance().info(format("Excluding path matcher %s", pathMatcher));
                     exclMatchers.add(pathMatcher);
                 }

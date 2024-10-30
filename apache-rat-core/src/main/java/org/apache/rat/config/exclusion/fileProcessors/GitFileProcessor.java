@@ -18,7 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 
 /**
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
