@@ -16,35 +16,8 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.report;
-
-import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
-
 
 /**
- * Abstract base class for deriving implementations of {@link RatReport}.
+ * Classes that generate the Rat report.
  */
-public abstract class AbstractReport implements RatReport {
-    /**
-     * Empty default implementation.
-     */
-    public void startReport() throws RatException {
-        // Does nothing
-    }
-
-    /**
-     * Empty default implementation.
-     * @param document the actual document
-     */
-    public void report(final Document document) throws RatException {
-        // Does nothing
-    }
-
-    /**
-     * Empty default implementation.
-     */
-    public void endReport() throws RatException {
-        // Does nothing
-    }
-}
+package org.apache.rat.report;
