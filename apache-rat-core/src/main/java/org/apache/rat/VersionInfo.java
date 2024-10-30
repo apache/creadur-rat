@@ -29,7 +29,7 @@ public final class VersionInfo {
     private final Package pkg;
 
     /**
-     * Simple testing output.  Prints values from default constructor.
+     * Simple testing output. Prints values from default constructor.
      * @param args not used.
      */
     public static void main(final String[] args) {
@@ -72,7 +72,7 @@ public final class VersionInfo {
     }
 
     /**
-     * Gets the implementation version of the package.  Will return "VERSION-NUMVER" if
+     * Gets the implementation version of the package. Will return "VERSION-NUMBER" if
      * package information is not available.
      * @return the implementation version.
      */
@@ -81,7 +81,7 @@ public final class VersionInfo {
     }
 
     /**
-     * Gets the implementation vendor of the package.  Will return "VENDOR-NAME" if
+     * Gets the implementation vendor of the package. Will return "VENDOR-NAME" if
      * package information is not available.
      * @return the implementation vendor
      */
@@ -90,7 +90,7 @@ public final class VersionInfo {
     }
 
     /**
-     * Gets the implementation title of the package.  Will return "TITLE" if
+     * Gets the implementation title of the package. Will return "TITLE" if
      * package information is not available.
      * @return the implementation title
      */
@@ -99,7 +99,7 @@ public final class VersionInfo {
     }
 
     /**
-     * Gets the specification version of the package.  Will return "SPEC-VERSION" if
+     * Gets the specification version of the package. Will return "SPEC-VERSION" if
      * package information is not available.
      * @return the specification version.
      */
@@ -108,7 +108,7 @@ public final class VersionInfo {
     }
 
     /**
-     * Gets the specification vendor of the package.  Will return "SPEC-VENDOR" if
+     * Gets the specification vendor of the package. Will return "SPEC-VENDOR" if
      * package information is not available.
      * @return the specification vendor
      */
@@ -117,7 +117,7 @@ public final class VersionInfo {
     }
 
     /**
-     * Gets the specification title of the package.  Will return "SPEC-TITLE" if
+     * Gets the specification title of the package. Will return "SPEC-TITLE" if
      * package information is not available.
      * @return the specification title
      */

@@ -44,9 +44,9 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.document.impl.DocumentNameMatcher;
 import org.apache.rat.document.impl.FileDocument;
-import org.apache.rat.document.impl.DocumentName;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
@@ -74,7 +74,8 @@ public final class OptionCollection {
     public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
     /** Provide license definition listing */
-    public static final Option HELP_LICENSES = Option.builder().longOpt("help-licenses").desc("Print help for the RAT command line interface and exit.").build();
+    public static final Option HELP_LICENSES = Option.builder().longOpt("help-licenses")
+            .desc("Print help for the RAT command line interface and exit.").build();
 
     /** A mapping of {@code argName(value)} values to a description of those values. */
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
@@ -203,11 +204,10 @@ public final class OptionCollection {
      * @param baseDirectory the base directory where files will be found.
      * @param cl the parsed command line.
      * @return a ReportConfiguration
-     * @throws IOException on error.
      * @see #parseCommands(String[], Consumer)
      * @see #parseCommands(String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final String baseDirectory, final CommandLine cl) throws IOException {
+    static ReportConfiguration createConfiguration(final String baseDirectory, final CommandLine cl) {
         final ReportConfiguration configuration = new ReportConfiguration();
         new ArgumentContext(configuration, cl).processArgs();
         if (StringUtils.isNotBlank(baseDirectory)) {

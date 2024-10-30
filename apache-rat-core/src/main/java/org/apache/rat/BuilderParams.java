@@ -26,14 +26,13 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicenseFamily;
 
 /**
- * Parameters that can be set by the BUILDER_PARAM ComponentType.  The name of the method listed here
+ * Parameters that can be set by the BUILDER_PARAM ComponentType. The name of the method listed here
  * should be the same as the name specified in the ConfigComponent.
  */
 public interface BuilderParams {
-
     /**
      * Gets one of the contained methods by name.
-     * 
+     *
      * @param name the name of the method to get.
      * @return the Method.
      */
@@ -50,15 +49,17 @@ public interface BuilderParams {
 
     /**
      * Gets a mapping of matcher names to matchers.
-     * 
+     *
      * @return the mapping of matcher names to matchers.
      */
     Map<String, IHeaderMatcher> matcherMap();
+    // the above method is called by reflection.
 
     /**
      * Gets a sorted set of registered license families.
-     * 
+     *
      * @return the sorted set of license families.
      */
     SortedSet<ILicenseFamily> licenseFamilies();
+    // the above method is called  by reflection
 }
