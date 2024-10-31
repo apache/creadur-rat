@@ -48,13 +48,13 @@ public class XsdWriter {
         CHOICE("xs:choice"),
         /** A complex type */
         COMPLEX_CONTENT("xs:complexContent");
-        /** the element name associated with the type */
+        /** The element name associated with the type */
         private final String elementName;
 
         /**
-         * Type constructor
+         * Type constructor.
          *
-         * @param name The element name associated with the type
+         * @param name The element name associated with the type.
          */
         Type(final String name) {
             elementName = name;
@@ -70,7 +70,7 @@ public class XsdWriter {
     }
 
     /**
-     * Initializes the writer.  Writes the initial "xs:schema tag" .
+     * Initializes the writer. Writes the initial "xs:schema tag" .
      * @return the Writer.
      * @throws IOException on error.
      */
@@ -83,7 +83,7 @@ public class XsdWriter {
     }
 
     /**
-     * Finishes the process.  Closes the document.
+     * Finishes the process. Closes the document.
      * @throws IOException on error.
      */
     public void finish() throws IOException {
@@ -91,8 +91,8 @@ public class XsdWriter {
     }
 
     /**
-     * Writes an attribute map, each pair of items in the string list are consider attribue name and value.
-     * @param attributeMap the array of attribute names and  values.
+     * Writes an attribute map, each pair of items in the string list are considered attribute name and value.
+     * @param attributeMap the array of attribute names and values.
      * @throws IOException on error.
      */
     private void writeAttributes(final String[] attributeMap) throws IOException {
@@ -106,8 +106,8 @@ public class XsdWriter {
     /**
      * Opens (Starts) an element of the specified type along with its attributes.
      * @param type the Type to start.
-     * @param attributeMap the attributes for the element
-     * @return this
+     * @param attributeMap the attributes for the element.
+     * @return this.
      * @throws IOException on error.
      */
     public XsdWriter open(final Type type, final String... attributeMap) throws IOException {
@@ -118,9 +118,9 @@ public class XsdWriter {
 
     /**
      * Writes the attributes
-     * @param name The name of the attribute
+     * @param name The name of the attribute.
      * @param attributeMap the attributes of the attribute.
-     * @return this
+     * @return this.
      * @throws IOException on error.
      */
     public XsdWriter attribute(final String name, final String... attributeMap) throws IOException {
@@ -132,7 +132,7 @@ public class XsdWriter {
 
     /**
      * Closes (Ends) the element for the type.
-     * @param type The type to close
+     * @param type The type to close.
      * @return this.
      * @throws IOException on error
      */
@@ -140,5 +140,4 @@ public class XsdWriter {
         writer.closeElement(type.elementName);
         return this;
     }
-
 }

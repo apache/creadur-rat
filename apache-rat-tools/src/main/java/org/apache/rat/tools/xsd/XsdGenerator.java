@@ -37,8 +37,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.rat.OptionCollection;
-import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
@@ -52,8 +50,6 @@ import org.apache.rat.tools.xsd.XsdWriter.Type;
  * Generates the XSD for a configuration.
  */
 public class XsdGenerator {
-    /** The configuration to generate the XSD for. */
-    private final ReportConfiguration cfg;
     /** The XsdWriter being written to. */
     private XsdWriter writer;
     /** A map of component type to XML element name / property type */
@@ -73,9 +69,7 @@ public class XsdGenerator {
      * @throws TransformerException if the XSD can not be pretty printed.
      */
     public static void main(final String[] args) throws IOException, TransformerException {
-        ReportConfiguration configuration = OptionCollection.parseCommands(args, options -> {
-        });
-        XsdGenerator generator = new XsdGenerator(configuration);
+        XsdGenerator generator = new XsdGenerator();
 
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
@@ -90,14 +84,6 @@ public class XsdGenerator {
             transformer.transform(new StreamSource(in),
                     new StreamResult(new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
         }
-    }
-
-    /**
-     * Constructs an XsdGenerator for the structures in the configuration.
-     * @param cfg the configuration to generate the XSD for.
-     */
-    public XsdGenerator(final ReportConfiguration cfg) {
-        this.cfg = cfg;
     }
 
     /**
