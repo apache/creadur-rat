@@ -18,8 +18,6 @@
  */
 package org.apache.rat.help;
 
-import static java.lang.String.format;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -30,6 +28,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
+
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
@@ -43,6 +42,8 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+
+import static java.lang.String.format;
 
 /**
  * Generates text based documentation for Licenses, LicenceFamilies, and Matchers.
@@ -71,7 +72,7 @@ public final class Licenses extends AbstractHelp {
     }
 
     /**
-     * Prints the text indented and wrapped
+     * Prints the text indented and wrapped.
      * @param indent the number of spaces to indent.
      * @param text the text to write.
      */

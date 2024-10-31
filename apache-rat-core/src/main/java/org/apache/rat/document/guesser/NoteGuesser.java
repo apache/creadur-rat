@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.document.impl.guesser;
+package org.apache.rat.document.guesser;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -83,7 +83,7 @@ public final class NoteGuesser {
             return true;
         }
 
-        for(String extension : NoteGuesser.NOTE_FILE_EXTENSIONS) {
+        for (String extension : NoteGuesser.NOTE_FILE_EXTENSIONS) {
             if (normalisedName.endsWith(DOT + extension)) {
                 return true;
             }

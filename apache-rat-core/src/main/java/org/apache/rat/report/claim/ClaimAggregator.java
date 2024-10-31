@@ -17,47 +17,47 @@
 * under the License.                                           *
 */
 
-package org.apache.rat.report.claim.impl;
+package org.apache.rat.report.claim;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.ClaimStatistic.Counter;
 
 /**
  * The aggregator is used to create a numerical statistic of claims.
  */
 public class ClaimAggregator extends AbstractClaimReporter {
+    /** The claim statistics this aggregator is reporting to. */
     private final ClaimStatistic statistic;
 
     /**
      * Constructor.
      * @param statistic The statistic to store the statistics in.
      */
-    public ClaimAggregator(ClaimStatistic statistic) {
+    public ClaimAggregator(final ClaimStatistic statistic) {
         this.statistic = statistic;
     }
 
     @Override
-    protected void handleDocumentCategoryClaim(Document.Type documentType) {
+    protected void handleDocumentCategoryClaim(final Document.Type documentType) {
         statistic.incCounter(documentType, 1);
     }
 
     @Override
-    protected void handleApprovedLicenseClaim(MetaData metadata) {
+    protected void handleApprovedLicenseClaim(final MetaData metadata) {
         statistic.incCounter(ClaimStatistic.Counter.APPROVED, (int) metadata.approvedLicenses().count());
         statistic.incCounter(ClaimStatistic.Counter.UNAPPROVED,  (int) metadata.unapprovedLicenses().count());
     }
 
     @Override
-    protected void handleLicenseClaim(ILicense license) {
+    protected void handleLicenseClaim(final ILicense license) {
         String category = license.getLicenseFamily().getFamilyCategory();
-        if (category.equals(ILicenseFamily.GENTERATED_CATEGORY)) {
+        if (category.equals(ILicenseFamily.GENERATED.getFamilyCategory())) {
             statistic.incCounter(Counter.GENERATED, 1);
-        } else if (category.equals(ILicenseFamily.UNKNOWN_CATEGORY)) {
+        } else if (category.equals(ILicenseFamily.UNKNOWN.getFamilyCategory())) {
             statistic.incCounter(Counter.UNKNOWN, 1);
         }
         statistic.incLicenseCategoryCount(category, 1);

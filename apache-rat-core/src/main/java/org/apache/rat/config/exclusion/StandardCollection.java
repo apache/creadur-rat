@@ -32,8 +32,8 @@ import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.CVSFileProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.GitFileProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreProcessor;
-import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
-import org.apache.rat.document.impl.TraceableDocumentNameMatcher;
+import org.apache.rat.document.DocumentNameMatcherSupplier;
+import org.apache.rat.document.TraceableDocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 
 public enum StandardCollection {

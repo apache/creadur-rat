@@ -101,9 +101,9 @@ public class HeaderCheckWorker {
      * Convenience constructor wraps given <code>Reader</code> in a
      * <code>BufferedReader</code>.
      *
-     * @param reader The reader on the document. not null.
-     * @param licenses The licenses to check against. not null.
-     * @param name The document that is being checked. possibly null
+     * @param reader The reader on the document. Not null.
+     * @param licenses The licenses to check against. Not null.
+     * @param name The document that is being checked. Possibly null.
      */
     public HeaderCheckWorker(final Reader reader, final Collection<ILicense> licenses, final Document name) {
         this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, licenses, name);
@@ -112,11 +112,11 @@ public class HeaderCheckWorker {
     /**
      * Constructs a check worker for the license against the specified document.
      *
-     * @param reader The reader on the document. not null.
+     * @param reader The reader on the document. Not null.
      * @param numberOfRetainedHeaderLine the maximum number of lines to read to find
      * the license information.
-     * @param licenses The licenses to check against. not null.
-     * @param document The document that is being checked. possibly null
+     * @param licenses The licenses to check against. Not null.
+     * @param document The document that is being checked. Possibly null.
      */
     public HeaderCheckWorker(final Reader reader, final int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,
             final Document document) {
@@ -142,7 +142,7 @@ public class HeaderCheckWorker {
             licenses.stream().filter(lic -> lic.matches(headers)).forEach(document.getMetaData()::reportOnLicense);
             if (document.getMetaData().detectedLicense()) {
                 if (document.getMetaData().licenses().anyMatch(
-                        lic -> ILicenseFamily.GENTERATED_CATEGORY.equals(lic.getLicenseFamily().getFamilyCategory()))) {
+                        lic -> ILicenseFamily.GENERATED.getFamilyCategory().equals(lic.getLicenseFamily().getFamilyCategory()))) {
                     document.getMetaData().setDocumentType(Document.Type.GENERATED);
                 }
             } else {

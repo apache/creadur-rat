@@ -34,8 +34,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.DocumentNameMatcher;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 
 import static java.lang.String.format;
@@ -59,7 +59,7 @@ public final class ExclusionUtils {
     }
 
     /**
-     * Creates predicate that filters out comment and blank lines.  Leading spaces are removed and
+     * Creates predicate that filters out comment and blank lines. Leading spaces are removed and
      * if the line then starts with a commentPrefix string it is considered a comment and will be removed
      *
      * @param commentPrefixes the list of comment prefixes
@@ -85,7 +85,7 @@ public final class ExclusionUtils {
     }
 
     /**
-     * Creates predicate that filters out comment and blank lines.  Leading spaces are removed and
+     * Creates predicate that filters out comment and blank lines. Leading spaces are removed and
      * if the line then starts with a commentPrefix string it is considered a comment and will be removed
      *
      * @param commentPrefix the prefix string for comments.

@@ -41,9 +41,9 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.DocumentNameMatcher;
-import org.apache.rat.document.impl.DocumentNameMatcherSupplier;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.DocumentNameMatcherSupplier;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -55,7 +55,7 @@ import org.apache.rat.utils.ReportingSet;
 
 /**
  * A configuration object is used by the front end to invoke the
- * {@link Reporter}. The sole purpose of the front ends is to create the
+ * {@link Reporter}. The sole purpose of the frontends is to create the
  * configuration and invoke the {@link Reporter}.
  */
 public class ReportConfiguration {
@@ -93,7 +93,7 @@ public class ReportConfiguration {
     /** The LicenseSetFactory for the configuration */
     private final LicenseSetFactory licenseSetFactory;
 
-       /**
+    /**
      * {@code true} if we are adding license headers to the files.
      */
     private boolean addingLicenses;
@@ -270,7 +270,7 @@ public class ReportConfiguration {
      * @param collection the StandardCollection to exclude.
      * @see ExclusionProcessor#addExcludedCollection(StandardCollection)
      */
-    public void addExcludedCollection(StandardCollection collection) {
+    public void addExcludedCollection(final StandardCollection collection) {
         exclusionProcessor.addExcludedCollection(collection);
     }
 
@@ -279,7 +279,7 @@ public class ReportConfiguration {
      * @param collection the StandardCollection to exclude.
      * @see ExclusionProcessor#addFileProcessor(StandardCollection)
      */
-    public void addExcludedFileProcessor(StandardCollection collection) {
+    public void addExcludedFileProcessor(final StandardCollection collection) {
         exclusionProcessor.addFileProcessor(collection);
     }
 
@@ -287,7 +287,7 @@ public class ReportConfiguration {
      * Excludes files that match a FileFilter.
      * @param fileFilter the file filter to match.
      */
-    public void addExcludedFilter(FileFilter fileFilter) {
+    public void addExcludedFilter(final FileFilter fileFilter) {
         exclusionProcessor.addExcludedFilter(DocumentNameMatcherSupplier.from(fileFilter));
     }
 
@@ -297,20 +297,20 @@ public class ReportConfiguration {
      * @param patterns the collection of patterns to exclude.
      * @see ExclusionProcessor#addIncludedPatterns(Iterable)
      */
-    public void addExcludedPatterns(Iterable<String> patterns) {
+    public void addExcludedPatterns(final Iterable<String> patterns) {
         exclusionProcessor.addExcludedPatterns(patterns);
     }
 
-    public void addIncludedCollection(StandardCollection collection) {
+    public void addIncludedCollection(final StandardCollection collection) {
         exclusionProcessor.addIncludedCollection(collection);
     }
 
     /**
-     * Add the file filter to filter files that should be included, this overrides any
+     * Adds the fileFilter to filter files that should be included, this overrides any
      * exclusion of the same files.
      * @param fileFilter the filter to identify files that should be included.
      */
-    public void addIncludedFilter(FileFilter fileFilter) {
+    public void addIncludedFilter(final FileFilter fileFilter) {
         exclusionProcessor.addIncludedFilter(DocumentNameMatcherSupplier.from(fileFilter));
     }
 
@@ -319,7 +319,7 @@ public class ReportConfiguration {
      * the same files.
      * @param patterns The iterable of Strings containing the patterns.
      */
-    public void addIncludedPatterns(Iterable<String> patterns) {
+    public void addIncludedPatterns(final Iterable<String> patterns) {
         exclusionProcessor.addIncludedPatterns(patterns);
     }
 
@@ -328,7 +328,7 @@ public class ReportConfiguration {
      * @param baseDir the DocumentName for the base directory.
      * @return the DocumentNameMatcher for the base directory.
      */
-    public DocumentNameMatcher getNameMatcher(DocumentName baseDir) {
+    public DocumentNameMatcher getNameMatcher(final DocumentName baseDir) {
         return exclusionProcessor.getNameMatcher(baseDir);
     }
 
@@ -756,7 +756,7 @@ public class ReportConfiguration {
         }
 
         /**
-         * Does not actually close the delegate.  But does perform a flush.
+         * Does not actually close the delegate. But does perform a flush.
          * @throws IOException on Error.
          */
         @Override

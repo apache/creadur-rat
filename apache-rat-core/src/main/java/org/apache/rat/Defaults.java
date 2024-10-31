@@ -18,8 +18,6 @@
  */
 package org.apache.rat;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -30,9 +28,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.Supplier;
 
-import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.configuration.Format;
 import org.apache.rat.configuration.LicenseReader;
@@ -43,6 +39,8 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.utils.DefaultLog;
 
+import static java.lang.String.format;
+
 /**
  * A class that provides the standard system defaults for the ReportConfiguration.
  * Properties in this class may be overridden or added to by configuration options in the various UIs.
@@ -51,20 +49,19 @@ import org.apache.rat.utils.DefaultLog;
 public final class Defaults {
     /** The default configuration file from the package. */
     private static final URI DEFAULT_CONFIG_URI;
-    /** The path to the default configuration file */
+    /** The path to the default configuration file. */
     private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
-    /** The default ARCHIVES processing style */
+    /** The default ARCHIVES processing style. */
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
-    /** The default STANDARD processing style */
+    /** The default STANDARD processing style. */
     public static final ReportConfiguration.Processing STANDARD_PROCESSING = ReportConfiguration.Processing.ABSENCE;
-    /** The default license families to list */
+    /** The default license families to list. */
     public static final LicenseFilter LIST_FAMILIES = LicenseFilter.NONE;
-    /** The default licenses to list */
+    /** The default licenses to list. */
     public static final LicenseFilter LIST_LICENSES = LicenseFilter.NONE;
 
     /** The license set factory to build license sets based upon default options */
     private final LicenseSetFactory setFactory;
-    private final Supplier<ExclusionProcessor> exclusionSupplier;
 
     // TODO look at this static block with respect to the init() static method and figure out if we need both.
     static {
@@ -99,9 +96,8 @@ public final class Defaults {
      * Builder constructs instances.
      * @param uris The set of URIs to read.
      */
-    private Defaults(final Set<URI> uris, final Supplier<ExclusionProcessor> exclusionSupplier) {
+    private Defaults(final Set<URI> uris) {
         this.setFactory = Defaults.readConfigFiles(uris);
-        this.exclusionSupplier = exclusionSupplier;
     }
 
     /**
@@ -166,7 +162,6 @@ public final class Defaults {
     public static final class Builder {
         /** The list of URIs that we wil read to configure the Defaults */
         private final Set<URI> fileNames = new TreeSet<>();
-        private final Supplier<ExclusionProcessor> exclusionSupplier;
 
         private Builder() {
             if (DEFAULT_CONFIG_URI == null) {
@@ -174,8 +169,6 @@ public final class Defaults {
             } else {
                fileNames.add(DEFAULT_CONFIG_URI);
             }
-            exclusionSupplier = () -> new ExclusionProcessor().addExcludedCollection(StandardCollection.MISC)
-                    .addExcludedCollection(StandardCollection.HIDDEN_DIR);
         }
 
         /**
@@ -249,7 +242,7 @@ public final class Defaults {
          * @return the current defaults object.
          */
         public Defaults build() {
-            return new Defaults(fileNames, exclusionSupplier);
+            return new Defaults(fileNames);
         }
     }
 }

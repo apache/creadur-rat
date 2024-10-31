@@ -16,55 +16,64 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
+package org.apache.rat.document;
 
-package org.apache.rat.document.impl;
-
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.config.exclusion.ExclusionUtils;
 
 /**
- * A Document that wraps an Archive entry.
+ * Document wrapping a File object
  */
-public class ArchiveEntryDocument extends Document {
+public class FileDocument extends Document {
 
-    /** The contents of the entry */
-    private final byte[] contents;
+    /** The wrapped file */
+    private final File file;
 
     /**
-     * Creates an Archive entry.
-     * @param outerName the name of this entry from outside the archive.
-     * @param contents the contents of the entry.
-     * @param nameMatcher the name matcher to filter contents with.
+     * Creates a File document.
+     * @param basedir the base directory for this document.
+     * @param file the file to wrap.
+     * @param nameMatcher the path matcher to filter files/directories with.
      */
-    public ArchiveEntryDocument(final DocumentName outerName, final byte[] contents, final DocumentNameMatcher nameMatcher) {
-        super(outerName, nameMatcher);
-        this.contents = contents;
-    }
-
-    @Override
-    public InputStream inputStream() {
-        return new ByteArrayInputStream(contents);
+    public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameMatcher) {
+        super(new DocumentName(file, basedir), nameMatcher);
+        this.file = file;
     }
 
     @Override
     public boolean isDirectory() {
-        return false;
+        return file.isDirectory();
     }
 
     @Override
     public SortedSet<Document> listChildren() {
+        if (isDirectory()) {
+            SortedSet<Document> result = new TreeSet<>();
+            File[] lst = file.listFiles(ExclusionUtils.asFileFilter(name, nameMatcher));
+            if (lst != null && lst.length > 0) {
+                Arrays.stream(lst).map(f -> new FileDocument(name, f, nameMatcher)).forEach(result::add);
+            }
+            return result;
+        }
         return Collections.emptySortedSet();
     }
 
-    @Override
-    public Reader reader() {
-        return new InputStreamReader(new ByteArrayInputStream(contents), StandardCharsets.UTF_8);
+    public Reader reader() throws IOException {
+        return new FileReader(file);
+    }
+
+    public InputStream inputStream() throws IOException {
+        return Files.newInputStream(file.toPath());
     }
 }

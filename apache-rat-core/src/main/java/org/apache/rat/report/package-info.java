@@ -15,26 +15,9 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- */ 
-package org.apache.rat.document.impl.util;
+ */
 
-import org.apache.rat.api.Document;
-import org.apache.rat.document.IDocumentAnalyser;
-import org.apache.rat.document.RatDocumentAnalysisException;
-
-public class DocumentAnalyserMultiplexer implements IDocumentAnalyser {
-
-    private final IDocumentAnalyser[] analysers;
-    
-    public DocumentAnalyserMultiplexer(final IDocumentAnalyser[] analysers) {
-        super();
-        this.analysers = analysers;
-    }
-
-    public void analyse(Document document) throws RatDocumentAnalysisException {
-        for (IDocumentAnalyser analyser : analysers) {
-            analyser.analyse(document);
-        }
-    }
-
-}
+/**
+ * Classes that generate the Rat report.
+ */
+package org.apache.rat.report;

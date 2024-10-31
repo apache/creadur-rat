@@ -20,8 +20,8 @@ package org.apache.rat.anttasks;
 
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.impl.DocumentName;
-import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.tools.ant.types.Resource;

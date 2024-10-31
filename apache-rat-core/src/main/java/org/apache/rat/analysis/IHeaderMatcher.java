@@ -67,7 +67,7 @@ public interface IHeaderMatcher {
      * @return the component description.
      */
     default Description getDescription() {
-        return  DescriptionBuilder.build(this);
+        return DescriptionBuilder.build(this);
     }
 
     /**
