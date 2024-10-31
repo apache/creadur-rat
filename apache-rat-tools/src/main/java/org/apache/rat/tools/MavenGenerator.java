@@ -170,8 +170,6 @@ public final class MavenGenerator {
             if (sup == null) {
                 throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
             }
-            String typeDesc = sup.get();
-            typeDesc = WordUtils.uncapitalize(typeDesc.substring(0, 1)) + typeDesc.substring(1);
             desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
                     option.hasArgs() ? "" : "a ", option.getArgName());
         }
