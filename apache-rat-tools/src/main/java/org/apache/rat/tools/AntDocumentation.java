@@ -171,7 +171,7 @@ public final class AntDocumentation {
     private static class AptFormat  {
 
         /**
-         * copy the "license.apt" from the resources to the writer.
+         * Copy the "license.apt" from the resources to the writer.
          * @param writer the writer to write to.
          * @throws IOException on error.
          */
