@@ -136,12 +136,15 @@ public class XsdGenerator {
         Description desc = DescriptionBuilder.buildMap(SimpleLicense.class);
         List<Description> children = new ArrayList<>();
         List<Description> attributes = new ArrayList<>();
-        for (Description child : desc.getChildren().values()) {
-            if (XMLConfig.isLicenseChild(child.getCommonName())) {
-                children.add(child);
-            } else {
-                if (child.getType() == ComponentType.PARAMETER) {
-                    attributes.add(child);
+
+        if(desc != null && desc.getChildren() != null) {
+            for (Description child : desc.getChildren().values()) {
+                if (XMLConfig.isLicenseChild(child.getCommonName())) {
+                    children.add(child);
+                } else {
+                    if (child.getType() == ComponentType.PARAMETER) {
+                        attributes.add(child);
+                    }
                 }
             }
         }
