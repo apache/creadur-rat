@@ -224,7 +224,7 @@ public class XsdGenerator {
         }
     }
 
-    private boolean element(final Description desc) throws IOException {
+    private void element(final Description desc) throws IOException {
         String typeName = TYPE_MAP.get(desc.getType());
         if (typeName != null) {
             writer.open(Type.ELEMENT,
@@ -233,9 +233,7 @@ public class XsdGenerator {
                     "minOccurs", desc.isRequired() ? "1" : "0",
                     "maxOccurs", desc.isCollection() ? "unbounded" : "1"
                     ).close(Type.ELEMENT);
-            return true;
         }
-        return false;
     }
 
     private void attribute(final Description attr) throws IOException {
