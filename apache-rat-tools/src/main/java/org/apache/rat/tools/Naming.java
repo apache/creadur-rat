@@ -54,32 +54,33 @@ import static java.lang.String.format;
  * <ul>
  *     <li>--ant   Produces Ant options in result</li>
  *     <li>--maven Produces Maven options in result</li>
- *     <li>--csv   Produces CSV output text is produced</li>
+ *     <li>--csv   Produces CSV output text</li>
  * </ul>
  * Note: if neither --ant nor --maven are included both will be listed.
  */
 public final class Naming {
 
     private Naming() { }
-    /** THe maximum width of the output */
+    /** The maximum width of the output. */
     private static final Option WIDTH = Option.builder().longOpt("width").type(Integer.class)
             .desc("Set the display width of the output").hasArg().build();
-    /** Option to output Maven names */
+    /** Option to output Maven names. */
     private static final Option MAVEN = Option.builder().longOpt("maven").desc("Produce Maven name mapping").build();
-    /** Option to output Ant names */
+    /** Option to output Ant names. */
     private static final Option ANT = Option.builder().longOpt("ant").desc("Produce Ant name mapping").build();
-    /** Option to output CSV format */
+    /** Option to output CSV format. */
     private static final Option CSV = Option.builder().longOpt("csv").desc("Produce CSV format").build();
-    /** Options to output cli names */
+    /** Options to output cli names. */
     private static final Option CLI = Option.builder().longOpt("cli").desc("Produce CLI name mapping").build();
-    /** Option for including deprecated options */
+    /** Option for including deprecated options. */
     private static final Option INCLUDE_DEPRECATED = Option.builder().longOpt("include-deprecated")
             .desc("Include deprecated options.").build();
-    /** The all options */
+    /** The all option. */
     private static final Options OPTIONS = new Options().addOption(MAVEN).addOption(ANT).addOption(CLI)
             .addOption(CSV)
             .addOption(INCLUDE_DEPRECATED)
             .addOption(WIDTH);
+
     /**
      * Creates the CSV file.
      * Requires 1 argument:

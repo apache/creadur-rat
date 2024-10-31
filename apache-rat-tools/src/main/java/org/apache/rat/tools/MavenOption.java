@@ -32,7 +32,7 @@ import static java.lang.String.format;
  * A representation of a CLI option as a Maven option
  */
 public class MavenOption extends AbstractOption {
-    /** Default values for cli options */
+    /** Default values for CLI options */
     private static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
 
     static {
