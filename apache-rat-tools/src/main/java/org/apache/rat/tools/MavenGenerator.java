@@ -139,6 +139,9 @@ public final class MavenGenerator {
                         break;
                     case "${commonArgs}":
                         try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
+                            if(argsTpl == null) {
+                                throw new RuntimeException("Args.tpl not found");
+                            }
                             IOUtils.copy(argsTpl, writer, StandardCharsets.UTF_8);
                         }
                         break;
@@ -158,7 +161,7 @@ public final class MavenGenerator {
         if (!desc.contains(".")) {
             throw new IllegalStateException(format("First sentence of description for %s must end with a '.'", option.getName()));
         }
-        String arg = null;
+        String arg;
         if (option.hasArg()) {
             arg = desc.substring(desc.indexOf(" "), desc.indexOf(".") + 1);
             arg = WordUtils.capitalize(arg.substring(0, 1)) + arg.substring(1);
