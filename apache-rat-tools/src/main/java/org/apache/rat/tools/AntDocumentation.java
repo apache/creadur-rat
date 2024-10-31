@@ -19,6 +19,7 @@
 package org.apache.rat.tools;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -177,6 +178,9 @@ public final class AntDocumentation {
          */
         public static void writeLicense(final Writer writer) throws IOException {
             try (InputStream in = AntDocumentation.class.getResourceAsStream("/license.apt")) {
+                if(in == null) {
+                    throw new FileNotFoundException("Could not find license.apt");
+                }
                 IOUtils.copy(in, writer, StandardCharsets.UTF_8);
             }
         }
