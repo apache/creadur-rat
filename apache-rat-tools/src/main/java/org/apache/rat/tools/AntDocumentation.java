@@ -84,7 +84,7 @@ public final class AntDocumentation {
         this.outputDir = outputDir;
     }
 
-    public void execute() throws IOException {
+    public void execute() {
         List<AntOption> options = Arg.getOptions().getOptions().stream().filter(AntGenerator.getFilter()).map(AntOption::new)
                 .collect(Collectors.toList());
 
