@@ -25,7 +25,7 @@ import java.util.function.Function;
 
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.utils.ExtendedIterator;
 
 /**

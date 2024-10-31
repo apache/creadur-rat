@@ -20,11 +20,11 @@ package org.apache.rat.analysis;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.document.impl.DocumentNameMatcher;
-import org.apache.rat.document.impl.FileDocument;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -116,7 +116,7 @@ public class TikaProcessorTest {
     }
 
     @Test
-    public void testTikaFiles() throws RatDocumentAnalysisException, IOException {
+    public void testTikaFiles() throws RatDocumentAnalysisException {
         File dir = new File("src/test/resources/tikaFiles");
         Map<String, Document.Type> unseenMime = TikaProcessor.getDocumentTypeMap();
         ClaimStatistic statistic = new ClaimStatistic();
@@ -148,7 +148,7 @@ public class TikaProcessorTest {
         return new Document(new DocumentName("Testing Document", "/", File.pathSeparator, DocumentName.FS_IS_CASE_SENSITIVE), nameMatcher) {
 
             @Override
-            public Reader reader() throws IOException {
+            public Reader reader() {
                 return new InputStreamReader(inputStream(), StandardCharsets.UTF_8);
             }
 

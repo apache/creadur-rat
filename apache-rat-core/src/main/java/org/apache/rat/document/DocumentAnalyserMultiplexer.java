@@ -16,21 +16,35 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.document.impl;
+package org.apache.rat.document;
 
-import java.io.File;
-import java.io.FileFilter;
+import org.apache.rat.api.Document;
 
-@FunctionalInterface
-public interface DocumentNameMatcher {
-    boolean matches(DocumentName documentName);
+public class DocumentAnalyserMultiplexer implements IDocumentAnalyser {
 
     /**
-     * Creates a DocumentNameMatcher from a File filter.
-     * @param fileFilter the file filter to execute
-     * @return a DocumentNameMatcher
+     * Array of Document analyzers that are to be executed.
      */
-    static DocumentNameMatcher from(FileFilter fileFilter) {
-        return  docName -> fileFilter.accept(new File(docName.getName()));
+    private final IDocumentAnalyser[] analysers;
+
+    /**
+     * Constructor.
+     * @param analysers The Document analysers to execute.
+     */
+    public DocumentAnalyserMultiplexer(final IDocumentAnalyser[] analysers) {
+        super();
+        this.analysers = analysers;
     }
+
+    /**
+     * Execute the Document analysers on the provided document.
+     * @param document The document to analyse.
+     * @throws RatDocumentAnalysisException on error.
+     */
+    public void analyse(final Document document) throws RatDocumentAnalysisException {
+        for (IDocumentAnalyser analyser : analysers) {
+            analyser.analyse(document);
+        }
+    }
+
 }

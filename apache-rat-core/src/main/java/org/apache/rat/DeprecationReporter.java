@@ -18,8 +18,6 @@
  */
 package org.apache.rat;
 
-import static java.lang.String.format;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,17 +27,19 @@ import java.util.function.Consumer;
 import org.apache.commons.cli.Option;
 import org.apache.rat.utils.DefaultLog;
 
+import static java.lang.String.format;
+
 /**
  * Reporting methods for deprecated objects.
  */
 public final class DeprecationReporter {
 
-    private DeprecationReporter() {
-        // DO NOT INSTANTIATE
-    }
     /**
      * Deprecated Command line option consumer.
      */
+    private DeprecationReporter() {
+        // DO NOT INSTANTIATE
+    }
 
     /**
      * Creates the consumer that will log usage of deprecated operations to the default log.
@@ -105,7 +105,7 @@ public final class DeprecationReporter {
          */
         boolean forRemoval() default false;
         /**
-         * The component type
+         * The component type.
          * @return the component type.
          */
         String use() default "";

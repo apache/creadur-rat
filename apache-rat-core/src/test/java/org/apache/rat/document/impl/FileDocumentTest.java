@@ -19,6 +19,8 @@
 package org.apache.rat.document.impl;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.test.utils.Resources;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;

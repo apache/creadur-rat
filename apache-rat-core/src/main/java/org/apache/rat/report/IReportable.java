@@ -19,7 +19,7 @@
 package org.apache.rat.report;
 
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 
 public interface IReportable {
     /**

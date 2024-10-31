@@ -16,8 +16,21 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
+package org.apache.rat.document;
 
-/**
- * Implementations of the Document interface.
- */
-package org.apache.rat.document.impl;
+import java.io.File;
+import java.io.FileFilter;
+
+@FunctionalInterface
+public interface DocumentNameMatcher {
+    boolean matches(DocumentName documentName);
+
+    /**
+     * Creates a DocumentNameMatcher from a File filter.
+     * @param fileFilter the file filter to execute
+     * @return a DocumentNameMatcher
+     */
+    static DocumentNameMatcher from(FileFilter fileFilter) {
+        return  docName -> fileFilter.accept(new File(docName.getName()));
+    }
+}

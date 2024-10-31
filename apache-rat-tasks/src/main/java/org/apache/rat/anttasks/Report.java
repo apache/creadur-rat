@@ -37,7 +37,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
-import org.apache.rat.document.impl.DocumentName;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
