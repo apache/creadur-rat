@@ -45,7 +45,7 @@
     <menu name="Apache Rat&#8482;" inherit="bottom">
       <item name="Introducing Rat" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
-      <item name="Changes" href="/RELEASE_NOTES.txt"/>
+      <item name="Changes" href="/changes-report.html"/>
     </menu>
 
     <menu name="Rat from the Command Line" inherit="bottom">
