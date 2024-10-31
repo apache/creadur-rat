@@ -93,7 +93,7 @@ public final class AntGenerator {
      *     <li>the directory in which to write the class file.</li>
      * </ol>
      * @param args the arguments.
-     * @throws IOException on error
+     * @throws IOException on error.
      */
     public static void main(final String[] args) throws IOException {
         if (args == null || args.length < 3) {
@@ -149,6 +149,9 @@ public final class AntGenerator {
                         break;
                     case "${commonArgs}":
                         try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
+                            if(argsTpl == null) {
+                                throw new RuntimeException("Args.tpl not found");
+                            }
                             IOUtils.copy(argsTpl, writer, StandardCharsets.UTF_8);
                         }
                         break;
