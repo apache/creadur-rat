@@ -16,6 +16,6 @@
 */
 
 /**
-* Contains XSD file generation tools
+* Contains XSD file generation tools.
 */
 package org.apache.rat.tools.xsd;
