@@ -32,7 +32,7 @@ import static java.lang.String.format;
 
 public abstract class AbstractOption {
     /** The pattern to match CLI options in text */
-    protected static final Pattern PATTERN = Pattern.compile("\\-(\\-[a-z0-9]+){1,}");
+    protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
     /** The CLI that the Maven option is wrapping */
     protected final Option option;
     /** The Maven name for the option */
