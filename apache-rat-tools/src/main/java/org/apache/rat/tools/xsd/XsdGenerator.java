@@ -18,16 +18,6 @@
  */
 package org.apache.rat.tools.xsd;
 
-import org.apache.rat.OptionCollection;
-import org.apache.rat.ReportConfiguration;
-import org.apache.rat.commandline.StyleSheets;
-import org.apache.rat.config.parameters.ComponentType;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
-import org.apache.rat.configuration.MatcherBuilderTracker;
-import org.apache.rat.configuration.XMLConfig;
-import org.apache.rat.license.SimpleLicense;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,8 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.rat.tools.xsd.XsdWriter.Type;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -49,21 +37,28 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.rat.commandline.StyleSheets;
+import org.apache.rat.config.parameters.ComponentType;
+import org.apache.rat.config.parameters.Description;
+import org.apache.rat.config.parameters.DescriptionBuilder;
+import org.apache.rat.configuration.MatcherBuilderTracker;
+import org.apache.rat.configuration.XMLConfig;
+import org.apache.rat.license.SimpleLicense;
+import org.apache.rat.tools.xsd.XsdWriter.Type;
+
 /**
  * Generates the XSD for a configuration.
  */
 public class XsdGenerator {
-    /** The configuration to generate the XSD for. */
-    private final ReportConfiguration cfg;
     /** The XsdWriter being written to. */
     private XsdWriter writer;
     /** A map of component type to XML element name / property type */
-    private static final Map<ComponentType, String> typeMap = new HashMap<>();
+    private static final Map<ComponentType, String> TYPE_MAP = new HashMap<>();
 
     static {
-        typeMap.put(ComponentType.MATCHER, XMLConfig.MATCHER);
-        typeMap.put(ComponentType.PARAMETER, "xs:string");
-        typeMap.put(ComponentType.LICENSE, XMLConfig.LICENSE);
+        TYPE_MAP.put(ComponentType.MATCHER, XMLConfig.MATCHER);
+        TYPE_MAP.put(ComponentType.PARAMETER, "xs:string");
+        TYPE_MAP.put(ComponentType.LICENSE, XMLConfig.LICENSE);
     }
 
     /**
@@ -73,10 +68,8 @@ public class XsdGenerator {
      * @throws IOException on IO errors.
      * @throws TransformerException if the XSD can not be pretty printed.
      */
-    public static void main(String[] args) throws IOException, TransformerException {
-        ReportConfiguration configuration = OptionCollection.parseCommands(args, (options) -> {
-        });
-        XsdGenerator generator = new XsdGenerator(configuration);
+    public static void main(final String[] args) throws IOException, TransformerException {
+        XsdGenerator generator = new XsdGenerator();
 
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
@@ -91,14 +84,6 @@ public class XsdGenerator {
             transformer.transform(new StreamSource(in),
                     new StreamResult(new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
         }
-    }
-
-    /**
-     * Constructs an XsdGenerator for the structures in the configuration.
-     * @param cfg the configuration to generate the XSD for.
-     */
-    public XsdGenerator(ReportConfiguration cfg) {
-        this.cfg = cfg;
     }
 
     /**
@@ -151,12 +136,15 @@ public class XsdGenerator {
         Description desc = DescriptionBuilder.buildMap(SimpleLicense.class);
         List<Description> children = new ArrayList<>();
         List<Description> attributes = new ArrayList<>();
-        for (Description child : desc.getChildren().values()) {
-            if (XMLConfig.isLicenseChild(child.getCommonName())) {
-                children.add(child);
-            } else {
-                if (child.getType() == ComponentType.PARAMETER) {
-                    attributes.add(child);
+
+        if(desc != null && desc.getChildren() != null) {
+            for (Description child : desc.getChildren().values()) {
+                if (XMLConfig.isLicenseChild(child.getCommonName())) {
+                    children.add(child);
+                } else {
+                    if (child.getType() == ComponentType.PARAMETER) {
+                        attributes.add(child);
+                    }
                 }
             }
         }
@@ -236,8 +224,8 @@ public class XsdGenerator {
         }
     }
 
-    private boolean element(Description desc) throws IOException {
-        String typeName = typeMap.get(desc.getType());
+    private void element(final Description desc) throws IOException {
+        String typeName = TYPE_MAP.get(desc.getType());
         if (typeName != null) {
             writer.open(Type.ELEMENT,
                     "name", desc.getCommonName(),
@@ -245,13 +233,11 @@ public class XsdGenerator {
                     "minOccurs", desc.isRequired() ? "1" : "0",
                     "maxOccurs", desc.isCollection() ? "unbounded" : "1"
                     ).close(Type.ELEMENT);
-            return true;
         }
-        return false;
     }
 
-    private void attribute(Description attr) throws IOException {
-        if(attr.getType() == ComponentType.PARAMETER) {
+    private void attribute(final Description attr) throws IOException {
+        if (attr.getType() == ComponentType.PARAMETER) {
             writer.attribute(attr.getCommonName(), "form", "unqualified", "use", attr.isRequired() ? "required" : "optional");
         }
     }

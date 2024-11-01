@@ -18,29 +18,62 @@
  */
 package org.apache.rat.tools.xsd;
 
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
-
 import java.io.IOException;
 import java.io.Writer;
 
+import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+
+/**
+ * A writer that writes XSD nodes.
+ */
 public class XsdWriter {
+    /** The XML Writer that this writer uses */
     private final XmlWriter writer;
 
+    /** Types of elements in the XSD */
     public enum Type {
-        ELEMENT("xs:element"), ATTRIBUTE("xs:attribute"),
-        COMPLEX("xs:complexType"), SEQUENCE("xs:sequence"), SIMPLE("xs:simpleContent"),
-        EXTENSION("xs:extension"), CHOICE("xs:choice"), COMPLEX_CONTENT("xs:complexContent");
+        /** An element */
+        ELEMENT("xs:element"),
+        /** An attribute */
+        ATTRIBUTE("xs:attribute"),
+        /** A complex type */
+        COMPLEX("xs:complexType"),
+        /** A sequence */
+        SEQUENCE("xs:sequence"),
+        /** A simple type */
+        SIMPLE("xs:simpleContent"),
+        /** An extension */
+        EXTENSION("xs:extension"),
+        /** A choice */
+        CHOICE("xs:choice"),
+        /** A complex type */
+        COMPLEX_CONTENT("xs:complexContent");
+        /** The element name associated with the type */
         private final String elementName;
 
-        Type(String name) {
+        /**
+         * Type constructor.
+         *
+         * @param name The element name associated with the type.
+         */
+        Type(final String name) {
             elementName = name;
         }
     }
 
-    public XsdWriter(Writer writer) {
+    /**
+     * Creates an XSD writer that wraps a standard Writer.
+     * @param writer the writer to wrap.
+     */
+    public XsdWriter(final Writer writer) {
         this.writer = new XmlWriter(writer);
     }
 
+    /**
+     * Initializes the writer. Writes the initial "xs:schema tag" .
+     * @return the Writer.
+     * @throws IOException on error.
+     */
     public XsdWriter init() throws IOException {
         writer.startDocument()
         .openElement("xs:schema")
@@ -49,11 +82,20 @@ public class XsdWriter {
         return this;
     }
 
+    /**
+     * Finishes the process. Closes the document.
+     * @throws IOException on error.
+     */
     public void finish() throws IOException {
         writer.closeDocument();
     }
 
-    private void writeAttributes(String[] attributeMap) throws IOException {
+    /**
+     * Writes an attribute map, each pair of items in the string list are considered attribute name and value.
+     * @param attributeMap the array of attribute names and values.
+     * @throws IOException on error.
+     */
+    private void writeAttributes(final String[] attributeMap) throws IOException {
         if (attributeMap != null) {
             for (int i = 0; i < attributeMap.length; i += 2) {
                 writer.attribute(attributeMap[i], attributeMap[i + 1]);
@@ -61,22 +103,41 @@ public class XsdWriter {
         }
     }
 
-    public XsdWriter open(Type type, String... attributeMap) throws IOException {
+    /**
+     * Opens (Starts) an element of the specified type along with its attributes.
+     * @param type the Type to start.
+     * @param attributeMap the attributes for the element.
+     * @return this.
+     * @throws IOException on error.
+     */
+    public XsdWriter open(final Type type, final String... attributeMap) throws IOException {
         writer.openElement(type.elementName);
         writeAttributes(attributeMap);
         return this;
     }
 
-    public XsdWriter attribute(String name, String... attributeMap) throws IOException {
+    /**
+     * Writes the attributes
+     * @param name The name of the attribute.
+     * @param attributeMap the attributes of the attribute.
+     * @return this.
+     * @throws IOException on error.
+     */
+    public XsdWriter attribute(final String name, final String... attributeMap) throws IOException {
         writer.openElement("xs:attribute").attribute("name", name);
         writeAttributes(attributeMap);
         writer.closeElement();
         return this;
     }
 
-    public XsdWriter close(Type type) throws IOException {
+    /**
+     * Closes (Ends) the element for the type.
+     * @param type The type to close.
+     * @return this.
+     * @throws IOException on error
+     */
+    public XsdWriter close(final Type type) throws IOException {
         writer.closeElement(type.elementName);
         return this;
     }
-
 }

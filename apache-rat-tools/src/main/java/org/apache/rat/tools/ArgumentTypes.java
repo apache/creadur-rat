@@ -18,12 +18,12 @@
  */
 package org.apache.rat.tools;
 
-import org.apache.rat.help.Help;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+
+import org.apache.rat.help.Help;
 
 /**
  * A simple tool to convert CLI options to Maven and Ant format and produce a CSV file.
