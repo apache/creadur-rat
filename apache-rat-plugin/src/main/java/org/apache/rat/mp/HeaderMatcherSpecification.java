@@ -22,7 +22,9 @@ package org.apache.rat.mp;
 /**
  * Used to specify additional license matchers. A license matcher is basically a class, which implements
  * {@link org.apache.rat.analysis.IHeaderMatcher}.
+ * @deprecated use Configuration file to define licenses
  */
+@Deprecated
 public class HeaderMatcherSpecification
 {
     /**

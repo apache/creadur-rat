@@ -22,6 +22,10 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.configuration.builders.AllBuilder;
 
+/**
+ *  @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 public class All extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
     final AllBuilder builder = Builder.all();

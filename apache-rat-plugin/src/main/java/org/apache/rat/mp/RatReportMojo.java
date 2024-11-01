@@ -18,8 +18,6 @@
  */
 package org.apache.rat.mp;
 
-import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -59,6 +57,8 @@ import org.apache.rat.Reporter;
 import org.apache.rat.VersionInfo;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.codehaus.plexus.util.ReaderFactory;
+
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
  * Generates a report with Rat's output.

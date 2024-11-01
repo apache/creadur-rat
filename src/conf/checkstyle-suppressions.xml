@@ -29,6 +29,16 @@
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]license[/\\]SimpleLicenseFamily.java" />
   <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\]All.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\]Any.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\][B-Q].*.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\]Regex.java" />
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\][S-Z].*.java" />
+  <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\][A-Q]*.java" />
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]Regex.java" />

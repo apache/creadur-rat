@@ -20,6 +20,10 @@ package org.apache.rat.mp;
 
 import org.apache.rat.configuration.builders.TextBuilder;
 
+/**
+ *  @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 public class Text extends TextBuilder {
     public void set(String text) {
         super.setSimpleText(text);

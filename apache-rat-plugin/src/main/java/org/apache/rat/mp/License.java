@@ -25,6 +25,10 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
+/**
+ *  @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 public class License extends EnclosingMatcher {
 
     private final ILicense.Builder builder = ILicense.builder();
