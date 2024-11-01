@@ -28,12 +28,11 @@
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]analysis[/\\]license[/\\]*" />
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]license[/\\]SimpleLicenseFamily.java" />
+  <!-- all java file not starting with R -->
   <suppress checks="[a-zA-Z0-9]*"
-            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\][A-Q]*.java" />
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]([A-Q]|[R-Z]).*.java" />
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]Regex.java" />
-  <suppress checks="[a-zA-Z0-9]*"
-            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\][S-Z]*.java" />
 
   <!-- Suppress some test checks-->
   <suppress checks="JavadocMethod" files="src[/\\]test[/\\]java[/\\]" />
