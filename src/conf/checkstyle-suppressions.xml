@@ -28,7 +28,7 @@
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]analysis[/\\]license[/\\]*" />
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]license[/\\]SimpleLicenseFamily.java" />
-  <!-- all java file not starting with R -->
+  <!-- all java files not starting with R -->
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]([A-Q]|[R-Z]).*.java" />
   <suppress checks="[a-zA-Z0-9]*"
