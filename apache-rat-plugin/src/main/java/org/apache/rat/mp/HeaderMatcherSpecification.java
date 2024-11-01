@@ -25,8 +25,7 @@ package org.apache.rat.mp;
  * @deprecated use Configuration file to define licenses
  */
 @Deprecated
-public class HeaderMatcherSpecification
-{
+public class HeaderMatcherSpecification {
     /**
      * The license matchers class name.
      */

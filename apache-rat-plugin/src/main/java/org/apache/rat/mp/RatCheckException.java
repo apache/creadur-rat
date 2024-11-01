@@ -22,7 +22,7 @@ package org.apache.rat.mp;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Exception thrown when Plugion processing encounters an error not found in Core system.
+ * Exception thrown when Plugin processing encounters an error not found in Core system.
  */
 public class RatCheckException extends MojoFailureException {
     private static final long serialVersionUID = -1720861476741779140L;
