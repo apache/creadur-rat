@@ -28,17 +28,17 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.VersionInfo;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.DocumentAnalyserMultiplexer;
+import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.ConfigurationReport;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.ClaimAggregator;
-import org.apache.rat.report.claim.SimpleXmlClaimReporter;
 import org.apache.rat.report.claim.ClaimReporterMultiplexer;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.LicenseAddingReport;
+import org.apache.rat.report.claim.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**

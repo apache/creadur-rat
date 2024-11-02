@@ -139,7 +139,7 @@ public final class MavenGenerator {
                         break;
                     case "${commonArgs}":
                         try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
-                            if(argsTpl == null) {
+                            if (argsTpl == null) {
                                 throw new RuntimeException("Args.tpl not found");
                             }
                             IOUtils.copy(argsTpl, writer, StandardCharsets.UTF_8);

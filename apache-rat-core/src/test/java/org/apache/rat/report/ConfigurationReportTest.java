@@ -35,7 +35,7 @@ import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

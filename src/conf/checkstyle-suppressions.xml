@@ -51,12 +51,4 @@
   <suppress checks="MagicNumber" files="src[/\\]test[/\\]java[/\\]" />
   <suppress checks="ParameterNumber" files="src[/\\]test[/\\]java[/\\]" />
 
-
-  <!-- Suppress magic numbers in old code -->
-  <suppress checks="MagicNumber|JavadocVariable" files="XmlWriter.java" />
-
-  <!-- Suppress errors in imported plexus code -->
-  <suppress checks="JavadocVariable"
-            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]config[/\\]exclusion[/\\]plexus[/\\].*" />
-
 </suppressions>

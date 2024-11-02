@@ -18,7 +18,6 @@
  */ 
 package org.apache.rat.report.xml.writer;
 
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

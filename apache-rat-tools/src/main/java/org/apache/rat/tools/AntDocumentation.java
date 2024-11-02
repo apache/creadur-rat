@@ -178,7 +178,7 @@ public final class AntDocumentation {
          */
         public static void writeLicense(final Writer writer) throws IOException {
             try (InputStream in = AntDocumentation.class.getResourceAsStream("/license.apt")) {
-                if(in == null) {
+                if (in == null) {
                     throw new FileNotFoundException("Could not find license.apt");
                 }
                 IOUtils.copy(in, writer, StandardCharsets.UTF_8);

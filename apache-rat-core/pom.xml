@@ -79,6 +79,7 @@
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
           <failOnViolation>true</failOnViolation>
+          <violationSeverity>warning</violationSeverity>
           <excludeGeneratedSources>true</excludeGeneratedSources>
           <configLocation>../src/conf/checkstyle.xml</configLocation>
           <suppressionsLocation>../src/conf/checkstyle-suppressions.xml</suppressionsLocation>
