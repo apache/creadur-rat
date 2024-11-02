@@ -73,6 +73,10 @@ The <action> type attribute can be one of:
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-438" type="fix" dev="claudenw">
+        Fix checkstyle issues in plugin module.
+        Deprecated several classes.
+      </action>
+      <action issue="RAT-438" type="fix" dev="claudenw">
         Fix checkstyle issues in tools module.
       </action>
       <action issue="RAT-422" type="fix" dev="claudenw">

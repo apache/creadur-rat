@@ -22,6 +22,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.configuration.builders.CopyrightBuilder;
 
+/**
+ *  @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 public class Copyright extends CopyrightBuilder {
 
     @Parameter(required = false)

@@ -22,6 +22,10 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.configuration.builders.NotBuilder;
 
+/**
+ *  @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 public class Not extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
     final NotBuilder builder = Builder.not();
