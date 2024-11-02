@@ -244,6 +244,9 @@ agnostic home for software distribution comprehension and audit tools.
         <configuration>
           <configLocation>src/conf/checkstyle.xml</configLocation>
           <suppressionsLocation>src/conf/checkstyle-suppressions.xml</suppressionsLocation>
+          <violationSeverity>warning</violationSeverity>
+          <failOnViolation>true</failOnViolation>
+          <excludeGeneratedSources>true</excludeGeneratedSources>
         </configuration>
       </plugin>
       <plugin>

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+@SuppressWarnings("checkstyle:RegexpSingleLine")
 /**
  * A list of patterns to be matched
  * <p>Based on code from plexus-utils.</p>
