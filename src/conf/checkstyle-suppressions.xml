@@ -51,4 +51,6 @@
   <suppress checks="MagicNumber" files="src[/\\]test[/\\]java[/\\]" />
   <suppress checks="ParameterNumber" files="src[/\\]test[/\\]java[/\\]" />
 
+  <!-- Suppress checks for RELEASE NOTES -->
+  <suppress checks="LineLength" files="RELEASE_NOTES.txt" />
 </suppressions>
