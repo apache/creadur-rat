@@ -26,7 +26,7 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
-
+@SuppressWarnings({"checkstyle:RegexpSingleLine", "checkstyle:JavadocVariable"})
 /**
  * <p>Describes a match target for SelectorUtils.</p>
  *

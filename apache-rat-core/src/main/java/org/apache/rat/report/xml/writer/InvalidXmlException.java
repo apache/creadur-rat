@@ -21,7 +21,7 @@ package org.apache.rat.report.xml.writer;
 import java.io.IOException;
 
 /**
- * Indicates that the requested document is not well formed.
+ * Indicates that the requested document is not well-formed.
  */
 public class InvalidXmlException extends IOException {
 

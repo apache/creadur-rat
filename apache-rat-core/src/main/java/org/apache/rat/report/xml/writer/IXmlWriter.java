@@ -43,7 +43,7 @@ public interface IXmlWriter extends AutoCloseable {
      *
      * @param elementName the name of the element, not null
      * @return this object
-     * @throws InvalidXmlException if the name is not valid for an xml element
+     * @throws InvalidXmlException if the name is not valid for a xml element
      * @throws OperationNotAllowedException
      * if called after the first element has been closed
      */
@@ -67,7 +67,7 @@ public interface IXmlWriter extends AutoCloseable {
      * @param name the attribute name, not null
      * @param value the attribute value, not null
      * @return this object
-     * @throws InvalidXmlException if the name is not valid for an xml attribute
+     * @throws InvalidXmlException if the name is not valid for a xml attribute
      * or if a value for the attribute has already been written
      * @throws OperationNotAllowedException if called after {@link #content(CharSequence)}
      * or {@link #closeElement()} or before any call to {@link #openElement(CharSequence)}
@@ -90,7 +90,7 @@ public interface IXmlWriter extends AutoCloseable {
     /**
      * Writes CDATA content.
      * This method DOES NOT automatically escape characters.
-     * It will remove enclosed CDATA closing strings (e.g. {@code ]]>}
+     * It will remove enclosed CDATA closing strings (e.g. {@code ]]>})
      *
      * @param content the content to write
      * @return this object

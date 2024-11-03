@@ -137,7 +137,7 @@ public class XsdGenerator {
         List<Description> children = new ArrayList<>();
         List<Description> attributes = new ArrayList<>();
 
-        if(desc != null && desc.getChildren() != null) {
+        if (desc != null && desc.getChildren() != null) {
             for (Description child : desc.getChildren().values()) {
                 if (XMLConfig.isLicenseChild(child.getCommonName())) {
                     children.add(child);

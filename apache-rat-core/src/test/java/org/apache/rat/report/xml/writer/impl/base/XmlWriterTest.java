@@ -20,6 +20,7 @@ package org.apache.rat.report.xml.writer.impl.base;
 
 import org.apache.rat.report.xml.writer.InvalidXmlException;
 import org.apache.rat.report.xml.writer.OperationNotAllowedException;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

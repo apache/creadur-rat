@@ -17,6 +17,6 @@
  * under the License.                                           *
  */
 /**
- * Classes to handle writing well formed XML documents.
+ * Classes to handle writing well-formed XML documents.
  */
 package org.apache.rat.report.xml.writer;

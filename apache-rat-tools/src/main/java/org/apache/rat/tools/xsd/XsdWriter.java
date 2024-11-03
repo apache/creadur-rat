@@ -21,7 +21,7 @@ package org.apache.rat.tools.xsd;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.report.xml.writer.XmlWriter;
 
 /**
  * A writer that writes XSD nodes.

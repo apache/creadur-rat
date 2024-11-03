@@ -242,6 +242,11 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+          <failOnViolation>true</failOnViolation>
+          <violationSeverity>warning</violationSeverity>
+          <excludeGeneratedSources>true</excludeGeneratedSources>
           <configLocation>src/conf/checkstyle.xml</configLocation>
           <suppressionsLocation>src/conf/checkstyle-suppressions.xml</suppressionsLocation>
         </configuration>
@@ -357,8 +362,8 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.6.5</version>
           <configuration>
-            <!-- RAT-369: JDK21 finds 56 errors, while older releases find less -->
-            <maxAllowedViolations>56</maxAllowedViolations>
+            <!-- RAT-369: JDK21 finds 55 errors, while older releases find less -->
+            <maxAllowedViolations>55</maxAllowedViolations>
             <failOnError>true</failOnError>
             <!-- we only want to see our own problems and in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
