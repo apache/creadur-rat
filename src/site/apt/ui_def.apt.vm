@@ -48,7 +48,7 @@ How to define a new User Interface
  client longOption, which is in kebab format, and convert it to camel case, snake case, or several other formats.  See
  the tools module AntGenerator.createName() and MavenGenerator.createName() for examples.  In some cases an existing
  command line option may, when recoded, conflict with a standard option in the target UI framework.  In this case the
- opion should be renamed.  Examples of this are found in AntGenerator and MavenGenerator and are reflected in the
+ opinion should be renamed.  Examples of this are found in AntGenerator and MavenGenerator and are reflected in the
  Naming application. Additional support is available on the Rat developers mailing list.
 
  If the new UI does not have a standard help module, it is advisable to create a documentation program that generate the

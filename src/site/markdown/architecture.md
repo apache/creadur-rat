@@ -38,23 +38,23 @@ The RAT architecture is build around a single engine that parses input files to 
 
 # Configuration
 
-The `ReportConfiguration` contains all the options for the Reporter class.  User interfaces create a `ReportConfiguration` and pass it to the `Reporter` instance for execution. The configuraiton specifies the configuraiton for:
+The `ReportConfiguration` contains all the options for the Reporter class. User interfaces create a `ReportConfiguration` and pass it to the `Reporter` instance for execution. The configuration specifies the configuration for:
 
 * License Families -- An identifier for families of licenses that share the same constraints.  The default list is defined in the `o.a.r.default.xml` file in the families section.
 * Licenses -- the definition of a license that defines the matchers that comprise the test for the license.  The default licenses are defined in the  `o.a.r.default.xml` file in the licenses section.
-* Approved License Families -- A list of license families that are approved.  Licenses of families not in this are unapproved.  The defualt approved license families are defined in the  `o.a.r.default.xml` file in the approved section.
+* Approved License Families -- A list of license families that are approved. Licenses of families not in this are unapproved.  The default approved license families are defined in the  `o.a.r.default.xml` file in the approved section.
 
 ## License Families
 
-A license family comprises an ID and a name.  New families may be added to the `o.a.r.default.xml` file or programattically from the UI.  License family IDs must be unique.  Later ID definitions override earlier definitions.
+A license family comprises an ID and a name. New families may be added to the `o.a.r.default.xml` file or programattically from the UI.  License family IDs must be unique.  Later ID definitions override earlier definitions.
 
 ## License
 
-A license definition comprises a family (identified by its ID), and a matcher.  Licenses adopt the ID of their family which may be overridden with an id attribute.  Licenses also adopt the name of their family unless it is overridden by a name attribute.
+A license definition comprises a family (identified by its ID), and a matcher. Licenses adopt the ID of their family which may be overridden with an id attribute.  Licenses also adopt the name of their family unless it is overridden by a name attribute.
 
 ## Approved Licenses
 
-The approved licenses are enumerated in a list.  Licenses are selected by family and the family ID is specified in the list.
+The approved licenses are enumerated in a list. Licenses are selected by family and the family ID is specified in the list.
 
 ## Matchers
 

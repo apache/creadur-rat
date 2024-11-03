@@ -217,7 +217,7 @@ public class TPBuilder extends AbstractBuilder {
             <QSC/>
         </license>
         <license family="Joke" id="TPM" name="The TPM Check">
-            <TPM one="once" two="upon" three="time">
+            <TPM one="once" two="upon" three="time" />
         </license>
     </licenses>
     <matchers>
@@ -299,12 +299,12 @@ Add the above to the configuration and we have:
             <QSC/>
         </license>
         <license family="Joke" id="TPM" name="The TPM Check">
-            <TPM one="once" two="upon" three="time">
+            <TPM one="once" two="upon" three="time" />
         </license>
         <license family="Joke">
             <highlander>
                 <QSC/>
-                <TPM one="once" two="upon" three="time">
+                <TPM one="once" two="upon" three="time" />
             </highlander>
         </license>
     </licenses>
