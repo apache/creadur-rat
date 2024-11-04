@@ -18,8 +18,6 @@
  */
 package org.apache.rat.mp;
 
-import static java.lang.String.format;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +34,8 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
+
+import static java.lang.String.format;
 
 /**
  * Run Rat to perform a violation check.

@@ -22,6 +22,10 @@ import javax.inject.Named;
 
 import org.apache.rat.configuration.builders.RegexBuilder;
 
+/**
+ *  @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 public class Regex extends RegexBuilder {
 
     @Named("expr")

@@ -34,7 +34,13 @@
     <property name="max" value="160" />
   </module>
 
+  <!-- Filter out Checkstyle warnings that have been suppressed with the @SuppressWarnings annotation -->
+  <module name="SuppressWarningsFilter" />
+
   <module name="TreeWalker">
+    <!-- Make the @SuppressWarnings annotations available to Checkstyle -->
+    <module name="SuppressWarningsHolder" />
+
     <module name="LeftCurly" />
 
     <!-- Checks for Javadoc comments. -->
@@ -132,7 +138,6 @@
       <property name="groups" value="java,javax,org"/>
       <property name="ordered" value="true"/>
       <property name="separated" value="true"/>
-
     </module>
 
   </module>

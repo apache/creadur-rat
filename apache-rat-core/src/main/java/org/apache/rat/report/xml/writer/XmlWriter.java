@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.report.xml.writer.impl.base;
+package org.apache.rat.report.xml.writer;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -25,10 +25,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import org.apache.rat.report.xml.writer.IXmlWriter;
-import org.apache.rat.report.xml.writer.InvalidXmlException;
-import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 
 /**
  * <p>
@@ -41,6 +37,7 @@ import org.apache.rat.report.xml.writer.OperationNotAllowedException;
  * Not intended to be subclassed. Please copy and hack!
  * </p>
  */
+@SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:JavadocVariable"})
 public final class XmlWriter implements IXmlWriter {
 
     private static final byte NAME_START_MASK = 1 << 1;
@@ -447,7 +444,7 @@ public final class XmlWriter implements IXmlWriter {
      *
      * @param elementName the name of the element, not null
      * @return this object
-     * @throws InvalidXmlException if the name is not valid for an xml element
+     * @throws InvalidXmlException if the name is not valid for a xml element
      * @throws OperationNotAllowedException if called after the first element has
      * been closed
      */
@@ -490,7 +487,7 @@ public final class XmlWriter implements IXmlWriter {
      * @param name the attribute name, not null
      * @param value the attribute value, not null
      * @return this object
-     * @throws InvalidXmlException if the name is not valid for an xml attribute or
+     * @throws InvalidXmlException if the name is not valid for a xml attribute or
      * if a value for the attribute has already been written
      * @throws OperationNotAllowedException if called after
      * {@link #content(CharSequence)} or {@link #closeElement()} or before any call

@@ -42,7 +42,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.report.xml.writer.XmlWriter;
 
 /**
  * Writes the XML configuration file format.

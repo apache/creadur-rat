@@ -60,7 +60,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-
+@SuppressWarnings({"checkstyle:RegexpSingleLine", "checkstyle:JavadocVariable"})
 /**
  * <p>This is a utility class used by selectors and DirectoryScanner. The functionality more properly belongs just to
  * selectors, but unfortunately DirectoryScanner exposed these as protected methods. Thus we have to support any

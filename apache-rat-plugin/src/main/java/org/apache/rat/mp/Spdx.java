@@ -21,6 +21,10 @@ package org.apache.rat.mp;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.configuration.builders.SpdxBuilder;
 
+/**
+ *  @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 public class Spdx extends SpdxBuilder {
     
     @Parameter(name="name")

@@ -21,6 +21,10 @@ package org.apache.rat.mp;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.analysis.IHeaderMatcher;
 
+/**
+ *  @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 abstract class EnclosingMatcher {
 
     protected abstract void setMatcher(IHeaderMatcher.Builder builder);

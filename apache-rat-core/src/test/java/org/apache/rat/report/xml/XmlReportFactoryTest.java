@@ -39,7 +39,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.IXmlWriter;
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;

@@ -75,6 +75,16 @@ The <action> type attribute can be one of:
       <action issue="RAT-358" type="add" dev="claudenw">
         Overhaul documentation of the new functionality of RAT 0.17. Improve and comprehend the whole project webpage.
       </action>
+      <action issue="RAT-439" type="fix" dev="claudenw">
+        Fix checkstyle issues and make the build fail in case of new checkstyle warnings and errors.
+      </action>
+      <action issue="RAT-438" type="fix" dev="claudenw">
+        Fix checkstyle issues in plugin module.
+        Deprecated several classes.
+      </action>
+      <action issue="RAT-438" type="fix" dev="claudenw">
+        Fix checkstyle issues in tools module.
+      </action>
       <action issue="RAT-422" type="fix" dev="claudenw">
         Fix checkstyle issues in configuration.
       </action>

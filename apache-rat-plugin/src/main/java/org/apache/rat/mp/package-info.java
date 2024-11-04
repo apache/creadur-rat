@@ -16,7 +16,8 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
+
 /**
- * Classes to handle writing well-formed XML documents.
+ * The base package for the RAT Maven plugin.
  */
-package org.apache.rat.report.xml.writer;
+package org.apache.rat.mp;

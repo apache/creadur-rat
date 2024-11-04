@@ -88,7 +88,7 @@ public final class XMLConfig {
 
     /**
      * Returns true if the child should be a child node of a license node, as
-     * opposed to a attribute of the license.
+     * opposed to an attribute of the license.
      *
      * @param child the name of the child node.
      * @return true if the child should be a child node.

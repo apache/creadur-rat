@@ -22,6 +22,10 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaderMatcher.Builder;
 import org.apache.rat.configuration.builders.AnyBuilder;
 
+/**
+ * @deprecated use Configuration file to define licenses
+ */
+@Deprecated
 public class Any extends EnclosingMatcher implements IHeaderMatcher.Builder {
 
     final AnyBuilder builder = Builder.any();

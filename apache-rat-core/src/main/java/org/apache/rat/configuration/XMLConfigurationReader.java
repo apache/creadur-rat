@@ -540,8 +540,13 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
                 approvedFamilies.add(attributes.get(XMLConfig.ATT_LICENSE_REF));
             } else if (attributes.containsKey(XMLConfig.ATT_ID)) {
                 ILicenseFamily target = parseFamily(attributes);
-                licenseFamilies.add(target);
-                approvedFamilies.add(target.getFamilyCategory());
+                if (target != null) {
+                    licenseFamilies.add(target);
+                    String familyCategory = target.getFamilyCategory();
+                    if (StringUtils.isNotBlank(familyCategory)) {
+                        approvedFamilies.add(familyCategory);
+                    }
+                }
             } else {
                 throw new ConfigurationException(String.format("family tag requires %s or %s attribute",
                         XMLConfig.ATT_LICENSE_REF, XMLConfig.ATT_ID));

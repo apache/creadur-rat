@@ -32,7 +32,7 @@ import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.claim.SimpleXmlClaimReporter;
-import org.apache.rat.report.xml.writer.impl.base.XmlWriter;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.assertj.core.util.Files;
