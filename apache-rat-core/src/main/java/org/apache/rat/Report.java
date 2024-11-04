@@ -18,9 +18,15 @@
  */
 package org.apache.rat;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.cli.Options;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.help.Help;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * The CLI based configuration object for report generation.
@@ -39,7 +45,14 @@ public final class Report {
         ReportConfiguration configuration = OptionCollection.parseCommands(args, Report::printUsage);
         if (configuration != null) {
             configuration.validate(DefaultLog.getInstance()::error);
-            new Reporter(configuration).output();
+            Reporter reporter = new Reporter(configuration);
+            reporter.output();
+            reporter.writeSummary(DefaultLog.getInstance().asWriter());
+
+            if (configuration.getClaimValidator().hasErrors()) {
+                configuration.getClaimValidator().logIssues(reporter.getClaimsStatistic());
+                System.exit(1);
+            }
         }
     }
 

@@ -26,12 +26,12 @@ import org.apache.rat.annotation.AbstractLicenseAppender;
 import org.apache.rat.annotation.ApacheV2LicenseAppender;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.report.AbstractReport;
+import org.apache.rat.report.RatReport;
 
 /**
  * A Report that adds licenses text to files.
  */
-public class LicenseAddingReport extends AbstractReport {
+public class LicenseAddingReport implements RatReport {
     /** The license appender used to update files */
     private final AbstractLicenseAppender appender;
 

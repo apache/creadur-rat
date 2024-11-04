@@ -26,78 +26,46 @@ import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.report.AbstractReport;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.xml.XmlElements;
 import org.apache.rat.report.xml.writer.IXmlWriter;
+
+import static org.apache.rat.report.xml.XmlElements.Attributes.APPROVAL;
+import static org.apache.rat.report.xml.XmlElements.Attributes.FAMILY;
+import static org.apache.rat.report.xml.XmlElements.Attributes.ID;
+import static org.apache.rat.report.xml.XmlElements.Attributes.NAME;
+import static org.apache.rat.report.xml.XmlElements.Elements.LICENSE;
 
 /**
  * A claim reporter to write the XML document.
  */
-public class SimpleXmlClaimReporter extends AbstractReport {
-    /** the resource element name */
-    private static final String RESOURCE = "resource";
-    /** the license element name */
-    private static final String LICENSE = "license";
-    /** the approval attribute name */
-    private static final String APPROVAL = "approval";
-    /** the family attribute name */
-    private static final String FAMILY = "family";
-    /** the notes attribute name */
-    private static final String NOTES = "notes";
-    /** the sample attribute name */
-    private static final String SAMPLE = "sample";
-    /** the type attribute name */
-    private static final String TYPE = "type";
-    /** the ID attribute name */
-    private static final String ID = "id";
-    /** name attribute name */
-    private static final String NAME = "name";
+public class SimpleXmlClaimReporter implements RatReport {
+
 
     /** the writer to write to */
-    private final IXmlWriter writer;
+    private final XmlElements xmlElements;
 
     /**
      * Constructor.
      * @param writer The writer to write the report to.
      */
     public SimpleXmlClaimReporter(final IXmlWriter writer) {
-        this.writer = writer;
+        this.xmlElements = new XmlElements(writer);
     }
 
     @Override
-    public void report(final Document subject) throws RatException {
-        try {
-            writeDocumentClaims(subject);
-        } catch (IOException e) {
-            throw new RatException("XML writing failure: " + e.getMessage() + " subject: " + subject, e);
-        }
-    }
-
-    private void writeLicenseClaims(final ILicense license, final MetaData metaData) throws IOException {
-        writer.openElement(LICENSE).attribute(ID, license.getId()).attribute(NAME, license.getName())
-                .attribute(APPROVAL, Boolean.valueOf(metaData.isApproved(license)).toString())
-                .attribute(FAMILY, license.getLicenseFamily().getFamilyCategory());
-        if (StringUtils.isNotBlank(license.getNote())) {
-            writer.openElement(NOTES).cdata(license.getNote()).closeElement();
-        }
-        writer.closeElement();
-    }
-
-    private void writeDocumentClaims(final Document document) throws IOException {
+    public void report(final Document document) throws RatException {
         final MetaData metaData = document.getMetaData();
-        writer.openElement(RESOURCE).attribute(NAME, document.getName().localized("/")).attribute(TYPE,
-                metaData.getDocumentType().toString());
+        xmlElements.document(document);
         for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext();) {
-            writeLicenseClaims(iter.next(), metaData);
+            final ILicense license = iter.next();
+            xmlElements.license(license, metaData.isApproved(license));
         }
-        writeHeaderSample(metaData);
-        writer.closeElement();
-    }
-
-    private void writeHeaderSample(final MetaData metaData) throws IOException {
         final String sample = metaData.getSampleHeader();
         if (StringUtils.isNotBlank(sample)) {
-            writer.openElement(SAMPLE).cdata(sample).closeElement();
+            xmlElements.sample(sample);
         }
+        xmlElements.closeElement();
     }
 
     @Override

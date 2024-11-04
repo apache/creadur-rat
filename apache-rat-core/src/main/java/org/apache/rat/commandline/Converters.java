@@ -32,4 +32,16 @@ public final class Converters {
     }
     /** Creates a File with fully qualified name */
     public static final Converter<File, NullPointerException> FILE_CONVERTER = s -> new File(s).getAbsoluteFile();
+
+    public static final Converter<Integer, NumberFormatException> POSITIVE_INT = s -> {
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
+        Integer i = Integer.parseInt(s);
+        if (i < 0) {
+            return 0;
+        }
+        return i;
+    };
+
 }

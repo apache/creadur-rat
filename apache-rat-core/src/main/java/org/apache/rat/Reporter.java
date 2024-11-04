@@ -47,6 +47,8 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.w3c.dom.Document;
 
+import static java.lang.String.format;
+
 /**
  * Class that executes the report as defined in a ReportConfiguration and stores
  * the result for later handling.
@@ -75,10 +77,10 @@ public class Reporter {
     }
 
     /**
-     * Initializes the reporter.
+     * Executes the report and builds the output.
      * @throws RatException on error.
      */
-    private void init() throws RatException  {
+    private void exec() throws RatException  {
         if (document == null || statistic == null) {
             try {
                 if (configuration.getReportable() != null) {
@@ -130,7 +132,7 @@ public class Reporter {
      * @throws RatException one error.
      */
     public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
-        init();
+        exec();
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         try (OutputStream out = output.get();
@@ -161,5 +163,17 @@ public class Reporter {
                             lic.getLicenseFamily().getFamilyName(), lic.getNote()));
             pw.println();
         }
+    }
+
+    public void writeSummary(Appendable appendable) throws IOException {
+        appendable.append("Rat summary:").append(System.lineSeparator());
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            appendable.append("  ").append(counter.name()).append("  ")
+                    .append(Integer.toString(getClaimsStatistic().getCounter(counter)))
+                    .append(System.lineSeparator());
+        }
+        appendable.append(format("  %s distinct license families%n", getClaimsStatistic().getLicenseFamilyNameCount()));
+        appendable.append(format("  %s distinct license categories%n", getClaimsStatistic().getLicenseCategoryCount()));
+        appendable.append(format("  %s distinct document types%n", getClaimsStatistic().getDocumentTypeCount()));
     }
 }

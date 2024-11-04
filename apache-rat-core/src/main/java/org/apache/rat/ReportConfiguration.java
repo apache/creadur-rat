@@ -41,6 +41,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentNameMatcherSupplier;
@@ -49,6 +50,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet;
@@ -144,7 +146,10 @@ public class ReportConfiguration {
      * How to process STANDARD document types.
      */
     private Processing standardProcessing;
-
+    /**
+     * The maximum number of unapproved licenses.
+     */
+    private final ClaimValidator claimValidator;
     /**
      * Constructor
      */
@@ -154,6 +159,7 @@ public class ReportConfiguration {
         listLicenses = Defaults.LIST_LICENSES;
         dryRun = false;
         exclusionProcessor = new ExclusionProcessor();
+        claimValidator = new ClaimValidator();
     }
 
     /**
@@ -720,6 +726,22 @@ public class ReportConfiguration {
      */
     public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
         return licenseSetFactory.getLicenseFamilies(filter);
+    }
+
+    /**
+     * Sets the acceptable maximum number of unapproved licenses.
+     * @param maxUnapprovedLicenses the acceptable maximun number of licenses.
+     */
+    public void setMaximumUnapprovedLicenses(int maxUnapprovedLicenses) {
+        claimValidator.set(ClaimStatistic.Counter.UNAPPROVED, maxUnapprovedLicenses);
+    };
+
+    /**
+     * Sets the acceptable maximum number of unapproved licenses.
+     * @return The acceptable maximum number of unapproved licenses.
+     */
+    public ClaimValidator getClaimValidator() {
+        return claimValidator;
     }
 
     /**

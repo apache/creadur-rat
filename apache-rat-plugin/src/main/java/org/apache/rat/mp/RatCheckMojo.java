@@ -20,6 +20,7 @@ package org.apache.rat.mp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
 
@@ -171,12 +173,11 @@ public class RatCheckMojo extends AbstractRatMojo {
 
         ReportConfiguration config = getConfiguration();
 
-
         logLicenses(config.getLicenses(LicenseFilter.ALL));
         try {
             this.reporter = new Reporter(config);
             reporter.output();
-            check();
+            check(config);
         } catch (MojoFailureException e) {
             throw e;
         } catch (Exception e) {
@@ -184,40 +185,30 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
     }
 
-    protected void check() throws MojoFailureException {
-        if (numUnapprovedLicenses > 0) {
-            getLog().info("You requested to accept " + numUnapprovedLicenses + " files with unapproved licenses.");
-        }
-        ClaimStatistic stats = reporter.getClaimsStatistic();
+    protected void check(ReportConfiguration config) throws MojoFailureException {
+        ClaimStatistic statistics = reporter.getClaimsStatistic();
+        try {
+           reporter.writeSummary(DefaultLog.getInstance().asWriter());
+           if (config.getClaimValidator().hasErrors()) {
+               config.getClaimValidator().logIssues(statistics);
+               if (consoleOutput &&
+                       !config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
+                   try {
+                       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                       reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
+                       getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
+                   } catch (Exception e) {
+                       getLog().warn("Unable to print the files with unapproved licenses to the console.");
+                   }
+               }
 
-        int numApproved = stats.getCounter(ClaimStatistic.Counter.APPROVED);
-        String statSummary = "Rat check: Summary over all files. Unapproved: " +
-                stats.getCounter(ClaimStatistic.Counter.UNAPPROVED) + ", unknown: " +
-                stats.getCounter(ClaimStatistic.Counter.UNKNOWN) + ", generated: " +
-                stats.getCounter(ClaimStatistic.Counter.GENERATED) + ", approved: " + numApproved +
-                (numApproved > 0 ? " licenses." : " license.");
-
-        getLog().info(statSummary);
-        if (numUnapprovedLicenses < stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)) {
-            if (consoleOutput) {
-                try {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
-                    getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
-                } catch (Exception e) {
-                    getLog().warn("Unable to print the files with unapproved licenses to the console.");
-                }
-            }
-
-            if (!ignoreErrors) {
-                throw new RatCheckException(format("Too many files with unapproved license: %s. See RAT report in: '%s'",
-                        stats.getCounter(ClaimStatistic.Counter.UNAPPROVED),
-                        getRatTxtFile()));
-            }
-            getLog().warn(format("Rat check: %s files with unapproved licenses. See RAT report in: '%s'",
-                    stats.getCounter(ClaimStatistic.Counter.UNAPPROVED),
-                    getRatTxtFile()));
-        }
+               throw new RatCheckException(format("Too many files of type . See RAT report in: '%s'",
+                       String.join(", ", config.getClaimValidator().listIssues(statistics)),
+                       getRatTxtFile()));
+           }
+        } catch (IOException e) {
+           throw new MojoFailureException(e);
+       }
     }
 
     /**

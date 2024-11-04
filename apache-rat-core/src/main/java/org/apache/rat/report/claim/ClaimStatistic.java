@@ -86,6 +86,15 @@ public class ClaimStatistic {
     }
 
     /**
+     * Gets the number of unique document types seen.
+     * @return The number of unique document types seen.
+     */
+    public int getDocumentTypeCount() {
+        return documentCategoryMap.size();
+    }
+
+
+    /**
      * Increments the number of times the Document.Type was seen.
      * @param documentType the Document.Type to increment.
      * @param value the value to increment the counter by.
@@ -101,6 +110,14 @@ public class ClaimStatistic {
      */
     public int getLicenseCategoryCount(final String licenseFamilyCategory) {
         return getValue(licenseFamilyCategoryMap.get(licenseFamilyCategory));
+    }
+
+    /**
+     * Gets the count of unique license categories detected.
+     * @return The count of unique license categories detected.
+     */
+    public int getLicenseCategoryCount() {
+        return licenseFamilyCategoryMap.size();
     }
 
     /**
@@ -135,6 +152,14 @@ public class ClaimStatistic {
      */
     public int getLicenseFamilyNameCount(final String licenseFilename) {
         return getValue(licenseFamilyNameMap.get(licenseFilename));
+    }
+
+    /**
+     * Retrieves the number of unique license family names was seen.
+     * @return The number of unique license family names was seen.
+     */
+    public int getLicenseFamilyNameCount() {
+        return licenseFamilyNameMap.size();
     }
 
     /**

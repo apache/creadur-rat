@@ -201,6 +201,15 @@ public enum Arg {
             .converter(Converters.FILE_CONVERTER)
             .build())),
 
+    /**
+     * Option to read a list of license families to remove from the approved list.
+     */
+    LICENSES_MAX_UNAPPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-max-unapproved").hasArg().argName("Integer")
+            .desc("The acceptable number of files with unapproved licenses.")
+            .type(Integer.class)
+            .converter(Converters.POSITIVE_INT)
+            .build())),
+
 ////////////////// INPUT OPTIONS
     /**
      * Excludes files by expression
