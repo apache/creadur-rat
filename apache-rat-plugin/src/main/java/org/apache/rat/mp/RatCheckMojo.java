@@ -61,10 +61,8 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Deprecated
     @Parameter
     public void setReportFile(final File reportFile) {
-        if (!reportFile.getParentFile().exists()) {
-            if (!reportFile.getParentFile().mkdirs()) {
-                getLog().error("Unable to create directory " + reportFile.getParentFile());
-            }
+        if (!reportFile.getParentFile().exists() && !reportFile.getParentFile().mkdirs()) {
+            getLog().error("Unable to create directory " + reportFile.getParentFile());
         }
         setOutputFile(reportFile.getAbsolutePath());
     }
