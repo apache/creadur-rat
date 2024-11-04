@@ -170,13 +170,13 @@ Overview of configuration options
 ------------------------------------------------------------------
 
 <copyright> <!-- this will match (c) 1995-1996 joe, or (c) joe 1995-1996 -->
-   <start>1995</text>
+   <start>1995</start>
    <end>1996</end>
    <owner>joe</owner>
 </copyright>
 
 <copyright> <!-- this will match (c) 1995 joe, or (c) joe 1995 -->
-   <start>1995</text>
+   <start>1995</start>
    <owner>joe</owner>
 </copyright>
 
