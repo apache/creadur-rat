@@ -102,7 +102,7 @@ public enum Format {
     }
 
    /**
-    * Determine the {@code Format} from an URI.
+    * Determine the {@code Format} from a URI.
     * @param uri the URI to check.
     * @return the Format
     */

@@ -29,7 +29,7 @@ import org.apache.rat.license.ILicenseFamily;
  */
 public interface LicenseReader {
     /**
-     * Adds an URI to the set of files to be read.
+     * Adds a URI to the set of files to be read.
      * @param uri the URI to read.
      */
     void addLicenses(URI uri);
