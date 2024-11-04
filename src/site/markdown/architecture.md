@@ -46,7 +46,7 @@ The `ReportConfiguration` contains all the options for the Reporter class. User 
 
 ## License Families
 
-A license family comprises an ID and a name. New families may be added to the `o.a.r.default.xml` file or programattically from the UI.  License family IDs must be unique.  Later ID definitions override earlier definitions.
+A license family comprises an ID and a name. New families may be added to the `o.a.r.default.xml` file or programmatically from the UI.  License family IDs must be unique.  Later ID definitions override earlier definitions.
 
 ## License
 

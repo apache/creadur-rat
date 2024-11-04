@@ -68,7 +68,7 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
  * <<<id>>>: The license id.  This is often the same as the license family code with trailing spaces removed, but may be other values.
  It is guaranteed to be unique within licenses.
 
- * <<<name>>>: The name of the license.  This is the human readable name that was provided when the license was defined.
+ * <<<name>>>: The name of the license.  This is the human-readable name that was provided when the license was defined.
 
 ** <<<sample>>> Element
 
