@@ -34,16 +34,9 @@ Apache Rat&#8482;
  Use Rat to improve accuracy and efficiency
  when checking releases for licenses.
 
-** Why Develop Rat?
-
  Reviewing releases in the {{{https://incubator.apache.org/}Apache Incubator}}
  by hand was error-prone and time-consuming.
-
  Rat arises from the Apache style, but is used more widely.
- If your release style isn't supported,
- {{{./mailing-lists.html}get in touch}}.
-
-** Who Develops Rat?
 
  Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
  language- and build-agnostic suite of tools for auditing and comprehending
