@@ -21,6 +21,7 @@ package org.apache.rat.report.xml;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.rat.VersionInfo;
@@ -34,36 +35,97 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
  * Creates the elements in the XML report.
  */
 public class XmlElements {
-    public enum Elements { RAT_REPORT("rat-report"), VERSION("version"),
-        RESOURCE("resource"), LICENSE("license"), NOTES("notes"),
-        SAMPLE("sample"), STATISTICS("statistics");
+    /**
+     * The elements in the report.
+     */
+    public enum Elements {
+        /** The start of the rat report */
+        RAT_REPORT("rat-report"),
+        /** The version of Rat being run */
+        VERSION("version"),
+        /** A resource element */
+        RESOURCE("resource"),
+        /** A license element */
+        LICENSE("license"),
+        /** A notes element */
+        NOTES("notes"),
+        /** A sample from the file */
+        SAMPLE("sample"),
+        /** A statistics element */
+        STATISTICS("statistics");
 
+        /** The XML name for the element */
         private String elementName;
 
-        Elements(String elementName) {
+        /**
+         * Constructor.
+         * @param elementName the XML name for the element.
+         */
+        Elements(final String elementName) {
             this.elementName = elementName;
         }
 
+        /**
+         * Gets the XML element name.
+         * @return The XML element name.
+         */
         public String getElementName() {
             return elementName;
         }
     };
 
-    public enum Attributes { TIMESTAMP, VERSION, PRODUCT, VENDOR,
-        APPROVAL, FAMILY, NOTES, SAMPLE, TYPE, ID, NAME, COUNT };
+    /**
+     * The attributes of elements in the report.
+     */
+    public enum Attributes {
+        /** A time stamp */
+        TIMESTAMP,
+        /** A vesion string */
+        VERSION,
+        /** The product identifier */
+        PRODUCT,
+        /** The vendor identifier */
+        VENDOR,
+        /** The approval flag */
+        APPROVAL,
+        /** The family category */
+        FAMILY,
+        /** The type */
+        TYPE,
+        /** The ID */
+        ID,
+        /** THe name */
+        NAME,
+        /** A counter */
+        COUNT };
 
+    /** The XMLWriter that we write to */
     private final IXmlWriter writer;
 
-    public XmlElements(IXmlWriter xmlWriter) {
+    /**
+     * Constructor.
+     * @param xmlWriter The writer to use.
+     */
+    public XmlElements(final IXmlWriter xmlWriter) {
         this.writer = xmlWriter;
     }
 
+    /**
+     * Create the rat report element.  Includes the timestamp and the version element.
+     * @return this.
+     * @throws RatException on error
+     */
     public XmlElements ratReport() throws RatException {
         return write(Elements.RAT_REPORT).
                 write(Attributes.TIMESTAMP, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()))
                 .version();
     }
 
+    /**
+     * Creates the version element with all version attributes populated.  Closes the version element.
+     * @return this.
+     * @throws RatException on error
+     */
     public XmlElements version() throws RatException {
         VersionInfo versionInfo = new VersionInfo();
         return write(Elements.VERSION)
@@ -71,10 +133,16 @@ public class XmlElements {
                 .write(Attributes.VENDOR, versionInfo.getVendor())
                 .write(Attributes.VERSION, versionInfo.getVersion())
                 .closeElement();
-
     }
 
-    public XmlElements license(final ILicense license, boolean approved) throws RatException {
+    /**
+     * Creates a license element.  Closes the element before exit.
+     * @param license the license for the element.
+     * @param approved {@code true} if the license is approved.
+     * @return this
+     * @throws RatException on error.
+     */
+    public XmlElements license(final ILicense license, final boolean approved) throws RatException {
         write(Elements.LICENSE).write(Attributes.ID, license.getId())
                 .write(Attributes.NAME, license.getName())
                 .write(Attributes.APPROVAL, Boolean.valueOf(approved).toString())
@@ -89,11 +157,23 @@ public class XmlElements {
         return closeElement();
     }
 
-    private XmlElements cdata(String data) throws IOException {
+    /**
+     * Writes a cdata block
+     * @param data the data to write.
+     * @return this
+     * @throws IOException on error.
+     */
+    private XmlElements cdata(final String data) throws IOException {
         writer.cdata(data);
         return this;
     }
 
+    /**
+     * Creates a document element with attributes.  Does NOT close the document element.
+     * @param document the document to write.
+     * @return this
+     * @throws RatException on error.
+     */
     public XmlElements document(final Document document) throws RatException {
         final MetaData metaData = document.getMetaData();
         return write(Elements.RESOURCE)
@@ -101,7 +181,13 @@ public class XmlElements {
                 .write(Attributes.TYPE, metaData.getDocumentType().toString());
     }
 
-    public XmlElements sample(String sample) throws RatException {
+    /**
+     * Creates a sample element.  Closes the sample element before returning.
+     * @param sample the sample ot display.
+     * @return this
+     * @throws RatException on error.
+     */
+    public XmlElements sample(final String sample) throws RatException {
         try {
         return write(Elements.SAMPLE).cdata(sample).closeElement();
         } catch (IOException e) {
@@ -109,7 +195,15 @@ public class XmlElements {
         }
     }
 
-    public XmlElements statistics(String name, int count, boolean isOk) throws RatException {
+    /**
+     * Creates a statistices element.  Closes the element before returning.
+     * @param name the name of the statistics element.
+     * @param count the count for the element.
+     * @param isOk if {@code} true the count is within limits.
+     * @return this
+     * @throws RatException on error.
+     */
+    public XmlElements statistics(final String name, final int count, final boolean isOk) throws RatException {
         return write(Elements.STATISTICS)
                 .write(Attributes.NAME, name)
                 .write(Attributes.COUNT, Integer.toString(count))
@@ -117,6 +211,11 @@ public class XmlElements {
                 .closeElement();
     }
 
+    /**
+     * Closes the currently open element.
+     * @return this
+     * @throws RatException on error.
+     */
     public XmlElements closeElement() throws RatException {
         try {
             writer.closeElement();
@@ -127,7 +226,13 @@ public class XmlElements {
 
     }
 
-    private XmlElements write(Elements element) throws RatException {
+    /**
+     * Write an element. The element is not closed.
+     * @param element the element to write.
+     * @return this
+     * @throws RatException on error.
+     */
+    private XmlElements write(final Elements element) throws RatException {
         try {
             writer.openElement(element.getElementName());
             return this;
@@ -136,7 +241,14 @@ public class XmlElements {
         }
     }
 
-    public XmlElements write(Attributes attribute, String value) throws RatException {
+    /**
+     * Write an attribute.
+     * @param attribute the attribute name.
+     * @param value the attribute value.
+     * @return this
+     * @throws RatException on error.
+     */
+    public XmlElements write(final Attributes attribute, final String value) throws RatException {
         try {
             writer.attribute(attribute.name().toLowerCase(Locale.ROOT), value);
             return this;

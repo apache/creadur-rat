@@ -24,7 +24,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.ReportTest;
+import org.apache.rat.ReporterTest;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
@@ -33,6 +33,7 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
@@ -122,6 +123,7 @@ public abstract class AbstractOptionsProvider {
         testMap.put("license-families-approved-file", this::licenseFamiliesApprovedFileTest);
         testMap.put("license-families-denied", this::licenseFamiliesDeniedTest);
         testMap.put("license-families-denied-file", this::licenseFamiliesDeniedFileTest);
+        testMap.put("license-max-unapproved", this::licenseMaxUnapproved);
         testMap.put("licenses", this::licensesTest);
         testMap.put("licenses-approved", this::licensesApprovedTest);
         testMap.put("licenses-approved-file", this::licensesApprovedFileTest);
@@ -472,6 +474,24 @@ public abstract class AbstractOptionsProvider {
                 new String[] { "GPL" });
     }
 
+    protected void licenseMaxUnapproved() {
+        Option option = Arg.LICENSES_MAX_UNAPPROVED.option();
+        String[] args = {null};
+
+        try {
+            ReportConfiguration config = generateConfig();
+            assertEquals(0, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
+            args[0] = "-1";
+            config = generateConfig(ImmutablePair.of(option, args));
+            assertEquals(Integer.MAX_VALUE, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
+            args[0] = "5";
+            config = generateConfig(ImmutablePair.of(option, args));
+            assertEquals(5, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
     private void configTest(Option option) {
         String[] args = {"src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml"};
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
@@ -720,8 +740,8 @@ public abstract class AbstractOptionsProvider {
         // copy the dummy stylesheet so that  we have a local file for users of the testing jar.
         File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
         try (
-            InputStream in = ReportTest.class.getResourceAsStream("MatcherContainerResource.txt");
-            OutputStream out = Files.newOutputStream(file.toPath())) {
+                InputStream in = ReporterTest.class.getResourceAsStream("MatcherContainerResource.txt");
+                OutputStream out = Files.newOutputStream(file.toPath())) {
             IOUtils.copy(in, out);
         } catch (IOException e) {
             fail("Could not copy MatcherContainerResource.txt: "+e.getMessage());

@@ -732,7 +732,7 @@ public class ReportConfiguration {
      * Sets the acceptable maximum number of unapproved licenses.
      * @param maxUnapprovedLicenses the acceptable maximun number of licenses.
      */
-    public void setMaximumUnapprovedLicenses(int maxUnapprovedLicenses) {
+    public void setMaximumUnapprovedLicenses(final int maxUnapprovedLicenses) {
         claimValidator.set(ClaimStatistic.Counter.UNAPPROVED, maxUnapprovedLicenses);
     };
 

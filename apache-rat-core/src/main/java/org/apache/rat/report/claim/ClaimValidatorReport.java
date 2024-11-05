@@ -25,11 +25,29 @@ import org.apache.rat.report.RatReport;
 import org.apache.rat.report.xml.XmlElements;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
+/**
+ * A RatReport that published the results of the Claim validator.
+ */
 public class ClaimValidatorReport implements RatReport {
+    /**
+     * The XmlElements tool to work with.
+     */
     private final XmlElements elements;
+    /**
+     * The claim statistics to report
+     */
     private final ClaimStatistic statistic;
+    /**
+     * The validator for the statistics.
+     */
     private final ClaimValidator validator;
 
+    /**
+     * Constructor.
+     * @param writer the XMLWriter to write with.
+     * @param statistic the Claim statistics to report.
+     * @param configuration the configuration for the run.
+     */
     public ClaimValidatorReport(final IXmlWriter writer, final ClaimStatistic statistic, final ReportConfiguration configuration) {
         this.elements = new XmlElements(writer);
         this.statistic = statistic;
@@ -40,8 +58,7 @@ public class ClaimValidatorReport implements RatReport {
     public void endReport() throws RatException {
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             int count = statistic.getCounter(counter);
-            elements.statistics(counter.name(), count, validator.isValid(counter, count) );
+            elements.statistics(counter.name(), count, validator.isValid(counter, count));
         }
-
     }
 }

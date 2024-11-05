@@ -19,6 +19,7 @@
 package org.apache.rat.report.xml.writer;
 
 import java.io.IOException;
+
 import org.apache.rat.report.xml.XmlElements;
 
 /**

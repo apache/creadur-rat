@@ -18,7 +18,6 @@
  */
 package org.apache.rat.report.claim;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +28,6 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.xml.XmlElements;
 import org.apache.rat.report.xml.writer.IXmlWriter;
-
-import static org.apache.rat.report.xml.XmlElements.Attributes.APPROVAL;
-import static org.apache.rat.report.xml.XmlElements.Attributes.FAMILY;
-import static org.apache.rat.report.xml.XmlElements.Attributes.ID;
-import static org.apache.rat.report.xml.XmlElements.Attributes.NAME;
-import static org.apache.rat.report.xml.XmlElements.Elements.LICENSE;
 
 /**
  * A claim reporter to write the XML document.
@@ -66,15 +59,5 @@ public class SimpleXmlClaimReporter implements RatReport {
             xmlElements.sample(sample);
         }
         xmlElements.closeElement();
-    }
-
-    @Override
-    public void startReport() {
-        // does nothing
-    }
-
-    @Override
-    public void endReport() {
-        // does nothing
     }
 }

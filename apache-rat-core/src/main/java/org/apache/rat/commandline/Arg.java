@@ -202,12 +202,11 @@ public enum Arg {
             .build())),
 
     /**
-     * Option to read a list of license families to remove from the approved list.
+     * Option specify an acceptable number of unapproved licenses.
      */
     LICENSES_MAX_UNAPPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-max-unapproved").hasArg().argName("Integer")
-            .desc("The acceptable number of files with unapproved licenses.")
+            .desc("The acceptable number of files with unapproved licenses. A value of '-1' specifies an unlimited number. Default = 0")
             .type(Integer.class)
-            .converter(Converters.POSITIVE_INT)
             .build())),
 
 ////////////////// INPUT OPTIONS
@@ -615,6 +614,14 @@ public enum Arg {
                         context.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
                 } catch (IOException | ParseException e) {
+                    throw new ConfigurationException(e);
+                }
+            }
+            if (LICENSES_MAX_UNAPPROVED.isSelected()) {
+                try {
+                    int limit = context.getCommandLine().getParsedOptionValue(LICENSES_MAX_UNAPPROVED.getSelected());
+                    context.getConfiguration().setMaximumUnapprovedLicenses(limit < 0 ? Integer.MAX_VALUE : limit);
+                } catch (ParseException e) {
                     throw new ConfigurationException(e);
                 }
             }

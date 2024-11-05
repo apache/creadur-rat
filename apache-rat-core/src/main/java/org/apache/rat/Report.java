@@ -18,15 +18,9 @@
  */
 package org.apache.rat;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
 import org.apache.commons.cli.Options;
-import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.help.Help;
-import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
-
-import static java.lang.String.format;
 
 /**
  * The CLI based configuration object for report generation.

@@ -18,16 +18,11 @@
  */
 package org.apache.rat.report.xml;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.VersionInfo;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
-import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentAnalyserMultiplexer;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;

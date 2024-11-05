@@ -18,19 +18,15 @@
  */
 package org.apache.rat.report.claim;
 
-import java.io.IOException;
-import java.util.Calendar;
+
 import java.util.List;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.rat.VersionInfo;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.xml.XmlElements;
-import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**

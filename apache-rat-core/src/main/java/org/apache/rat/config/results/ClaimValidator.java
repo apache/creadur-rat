@@ -22,32 +22,73 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
 
-
-public class ClaimValidator {
+/**
+ * Validates the ClaimStatistic results meet the specified requirements.
+ */
+public final class ClaimValidator {
+    /**
+     * The map of counter limits.
+     */
     private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> limits = new ConcurrentHashMap<>();
+    /**
+     * {@code true} if errors were detected in the claim.
+     */
     private boolean hasErrors;
 
+    /**
+     * Constructor.
+     */
     public ClaimValidator() {
+        limits.put(ClaimStatistic.Counter.UNAPPROVED, 0);
+        limits.put(ClaimStatistic.Counter.UNKNOWN, Integer.MAX_VALUE);
+        limits.put(ClaimStatistic.Counter.GENERATED, Integer.MAX_VALUE);
+        limits.put(ClaimStatistic.Counter.APPROVED, Integer.MAX_VALUE);
     }
 
+    /**
+     * Returns {@code true} if any validation failed.
+     * @return {@code true} if any validation failed.
+     */
     public boolean hasErrors() {
         return hasErrors;
     }
-    public void set(ClaimStatistic.Counter counter, int value) {
-        limits.put(counter, value);
+
+    /**
+     * Sets the limit for the specified counter.
+     * @param counter the counter to set the limit for.
+     * @param value the value to set. A negative value specifies no maximum value.
+     */
+    public void set(final ClaimStatistic.Counter counter, final int value) {
+        if (value < 0) {
+            limits.put(counter, Integer.MAX_VALUE);
+        } else {
+            limits.put(counter, value);
+        }
     }
 
-    public int get(ClaimStatistic.Counter counter) {
+    /**
+     * Gets the limit for the specific counter.
+     * @param counter the counter to get the limit for.
+     * @return the limit for the counter or 0 if not set.
+     */
+    public int get(final ClaimStatistic.Counter counter) {
         Integer result = limits.get(counter);
         return result == null ? 0 : result;
     }
 
-    public boolean isValid(ClaimStatistic.Counter counter, int count) {
+    /**
+     * Determines if the specified count is within the limits for the counter.
+     * @param counter The counter to check.
+     * @param count the limit to check.
+     * @return {@code true} if the count is within the limits, {@code false} otherwise.
+     */
+    public boolean isValid(final ClaimStatistic.Counter counter, final int count) {
         boolean result = true;
         if (limits.containsKey(counter)) {
             switch (counter) {
@@ -64,7 +105,11 @@ public class ClaimValidator {
         return result;
     }
 
-    public void logIssues(ClaimStatistic statistic) {
+    /**
+     * Logs all the invalid values as errors.
+     * @param statistic The statistics that contain the run values.
+     */
+    public void logIssues(final ClaimStatistic statistic) {
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             if (!isValid(counter, statistic.getCounter(counter))) {
                 DefaultLog.getInstance().error(format("Unexpected count for %s, limit is %s.  Count: %s", counter,
@@ -73,7 +118,12 @@ public class ClaimValidator {
         }
     }
 
-    public Collection<String> listIssues(ClaimStatistic statistic) {
+    /**
+     * Creates a list of items that have issues.
+     * @param statistic The statistics that contain the run values.
+     * @return a collection of counter names that are invalid.
+     */
+    public Collection<String> listIssues(final ClaimStatistic statistic) {
         List<String> result = new ArrayList<>();
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             if (!isValid(counter, statistic.getCounter(counter))) {
