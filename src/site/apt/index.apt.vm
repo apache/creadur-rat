@@ -31,19 +31,26 @@ Apache Rat&#8482;
 
  Apache Rat is a release audit tool, focused on licenses.
 
-** Rat Is Used To...?
-
  Use Rat to improve accuracy and efficiency
  when checking releases for licenses.
 
-** Why Develop Rat?
-
  Reviewing releases in the {{{https://incubator.apache.org/}Apache Incubator}}
  by hand was error-prone and time-consuming.
-
  Rat arises from the Apache style, but is used more widely.
- If your release style isn't supported,
+
+ Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
+ language- and build-agnostic suite of tools for auditing and comprehending
+ software distributions. Our community develops
+ {{{https://opensource.org/} open source software}} the
+ {{{https://www.apache.org/foundation/how-it-works.html} Apache way}}.
+
+ Please feel free to contribute a
+ {{{./issue-management.html}patch}},
+ {{{https://wiki.c2.com/?TestDrivenDevelopment}demonstrate}} a
+ {{{./issue-management.html}bug}}, or
+ just
  {{{./mailing-lists.html}talk to us}}.
+ All welcome :-)
 
 ** How Do I Use Rat?
 
@@ -53,7 +60,7 @@ Apache Rat&#8482;
 
    * {{{https://maven.apache.org}Apache Maven}} and
 
-   * the command line.
+   * the {{{./apache-rat/index.html}command line}}.
 
  Rat is extensible. If your build tool isn't supported, please contribute a
  {{{./issue-management.html}patch}} or
@@ -63,36 +70,20 @@ Apache Rat&#8482;
  {{{./issue-management.html}patch}} or
  {{{./mailing-lists.html}talk to us}}
  whenever Rat falls short.
- 
+
 ** How do I extend Rat
- 
+
  There are several standard ways to extend Rat.
- 
+
    * Add a {{{./license_def.html}license definition}} via an XML file.
-   
+
    * Add a new {{{./matcher_def.html}Matcher definition}}. Requires Java expertise.
-   
+
    * Add a new definition format.  Requires Java expertise as well as expertise with the format.
 
    * Write a new {{{./xslt_def.html}output report}}.  Requires XSLT knowledge.
 
    * Write a new {{{./ui_def.html}user interface}}.  Requires Java expertise, but there are tools to help.
-
-** Who Develops Rat?
-
-  Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
-  language- and build-agnostic suite of tools for auditing and comprehending
-  software distributions. Our community develops
-  {{{https://opensource.org/} open source software}} the
-  {{{https://www.apache.org/foundation/how-it-works.html} Apache way}}.
-
-  Please feel free to contribute a
-  {{{./issue-management.html}patch}},
-  {{{https://wiki.c2.com/?TestDrivenDevelopment}demonstrate}} a
-  {{{./issue-management.html}bug}}, or
-  just
-  {{{./mailing-lists.html}talk to us}}.
-  All welcome :-)
 
 * Quick Start: Running Rat
 
@@ -150,9 +141,8 @@ java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 ** Standard license and matcher definitions.
 
   Rat ships with a number of licenses, license families, and matcher definitions.  Additional definitions/implementations
-  of these objects may be added to the system as noted in {{{./license_def.html}}the license definition document}.  A
-  {{./apache-rat/default_licenses.html}}{list of default licenses} is also available.
-
+  of these objects may be added to the system as noted in {{{./license_def.html}the license definition document}}.
+  A {{{./apache-rat/default_licenses.html}list of default licenses}} is also available.
 
 * Building Rat from source
 

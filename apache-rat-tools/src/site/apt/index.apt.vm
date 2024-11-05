@@ -15,14 +15,18 @@
 ~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
---------------------------
-Argument Types
---------------------------
+                        -----
+                        Introduction
+                        -----
 
-Available Argument Types
+Apache Rat Tools
 
-  Rat defines several argument types for the pom options. Available types are listed below
+ The tools project contains code generators and tooling to write configuration data for:
 
-------------------------------------------------------------------
-#include( "argument_types.txt" )
-------------------------------------------------------------------
+ * Apache Ant
+
+ * Apache Maven
+
+ * XSD file generation
+
+ * available configuration options or arguments and their documentation for Rat

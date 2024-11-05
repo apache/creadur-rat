@@ -17,7 +17,7 @@
 -->
 <project xmlns="http://maven.apache.org/DECORATION/1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd"
-         name="Apache Rat&trade; Task Library for Apache Ant">
+         name="Apache Rat&trade; Tools">
   <body>  
     <head>
        <![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]>
@@ -27,10 +27,6 @@
 
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Report Task" href="report.html"/>
-    </menu>
-    <menu name="Examples">
-      <item name="Basic Usage" href="examples/basic.html"/>
     </menu>
 
     <menu ref="reports"/>

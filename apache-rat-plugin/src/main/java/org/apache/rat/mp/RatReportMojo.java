@@ -160,10 +160,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
 
             // MSHARED-204: only render Doxia sink if not an external report
             if (!isExternalReport()) {
-                if (!outputDirectory.exists()) {
-                    if (!outputDirectory.mkdirs()) {
-                        getLog().error("Unable to create output directory: " + outputDirectory);
-                    }
+                if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+                    getLog().error("Unable to create output directory: " + outputDirectory);
                 }
 
                 try (Writer writer = new OutputStreamWriter(

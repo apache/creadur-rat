@@ -28,7 +28,7 @@ How to define matchers in Apache Rat
 
 ** The Matcher implementation
 
- For our example we will implement a Matcher that implements the phrase "Quality, speed and cost, pick any two” by looking for the occurrence of all three words anywhere in the header.  
+ For our example we will implement a Matcher that implements the phrase "Quality, speed and cost, pick any two" by looking for the occurrence of all three words anywhere in the header.
  In most cases is it simplest to extend the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/analysis/matchers/AbstractHeaderMatcher.java}AbstractHeaderMatcher}}
  class as this class will handle setting of the unique id for instances that do not otherwise have a unique id.
 
@@ -153,7 +153,7 @@ public class TPMatcher extends AbstractHeaderMatcher {
 
     public TPMatcher(String id, String one, String two, String three) { 
         super(id);
-        if (StringUtils.isEmpthy(one) || StringUtils.isEmpty(two) || StringUtils.isEmpty(three) {
+        if (StringUtils.isEmpty(one) || StringUtils.isEmpty(two) || StringUtils.isEmpty(three) {
             throw new ConfigurationException( "None of the three properties (one, two, or three) may be empty");
         }
         this.one = one;
@@ -217,7 +217,7 @@ public class TPBuilder extends AbstractBuilder {
             <QSC/>
         </license>
         <license family="Joke" id="TPM" name="The TPM Check">
-            <TPM one="once" two="upon" three="time">
+            <TPM one="once" two="upon" three="time" />
         </license>
     </licenses>
     <matchers>
@@ -299,12 +299,12 @@ Add the above to the configuration and we have:
             <QSC/>
         </license>
         <license family="Joke" id="TPM" name="The TPM Check">
-            <TPM one="once" two="upon" three="time">
+            <TPM one="once" two="upon" three="time" />
         </license>
         <license family="Joke">
             <highlander>
                 <QSC/>
-                <TPM one="once" two="upon" three="time">
+                <TPM one="once" two="upon" three="time" />
             </highlander>
         </license>
     </licenses>

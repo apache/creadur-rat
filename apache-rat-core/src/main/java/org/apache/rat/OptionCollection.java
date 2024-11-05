@@ -84,8 +84,8 @@ public final class OptionCollection {
         ARGUMENT_TYPES.put("File", () -> "A file name.");
         ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan.");
         ARGUMENT_TYPES.put("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
-                "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples).  " +
-                "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']' " +
+                "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples). " +
+                "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']'. " +
                 "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase latin letters.");
         ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
                 asString(LicenseSetFactory.LicenseFilter.values())));

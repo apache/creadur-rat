@@ -16,7 +16,7 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/DECORATION/1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd"
+         xsi:schemaLocation="https://maven.apache.org/DECORATION/1.3.0 https://maven.apache.org/xsd/decoration-1.3.0.xsd"
          name="Apache Rat&amp;trade;">
   <bannerLeft>
     <title>The Apache Software Foundation</title>
@@ -29,7 +29,6 @@
       <logo name="Maven"
             href="https://maven.apache.org/"
             img="https://maven.apache.org/images/logos/maven-feather.png"/>
-
   </poweredBy>
 
   <body>
@@ -45,15 +44,21 @@
 
     <menu name="Apache Rat&#8482;" inherit="bottom">
       <item name="Introducing Rat" href="/index.html"/>
-      <item name="Javadocs" href="/apidocs/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
-      <item name="Changes" href="/RELEASE_NOTES.txt"/>
+      <item name="Changes" href="/changes-report.html"/>
     </menu>
 
-    <menu name="Running Rat" inherit="bottom">
-      <item name="From The Command Line" href="apache-rat/index.html"/>
-      <item name="With Ant" href="apache-rat-tasks/index.html"/>
-      <item name="With Maven" href="apache-rat-plugin/index.html"/>
+    <menu name="Rat from the Command Line" inherit="bottom">
+      <item name="Command Line Introduction" href="apache-rat/index.html"/>
+      <item name="Exclusion Expressions" href="apache-rat-core/exclusion_expression.html"/>
+    </menu>
+
+    <menu name="Rat from Ant" inherit="bottom">
+      <item name="Ant Task Introduction" href="apache-rat-tasks/index.html"/>
+    </menu>
+
+    <menu name="Rat from Maven" inherit="bottom">
+      <item name="Maven Plugin Introduction" href="apache-rat-plugin/index.html"/>
     </menu>
 
     <menu name="Configuring Rat" inherit="bottom">
@@ -70,6 +75,14 @@
       <item name ="XSLT - Plain text" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl" />
       <item name ="XSLT - Missing headers list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl" />
       <item name ="XSLT - Unapproved licenses list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl" />
+    </menu>
+
+    <menu name="Developing Rat" inherit="bottom">
+      <item name="Architecture" href="architecture.html"/>
+      <item name="Javadocs" href="/apidocs/index.html"/>
+      <item name="Document Name concept" href="apache-rat-core/development/document_name.html"/>
+      <item name="UI Development" href="development/ui_implementation.html"/>
+      <item name="Writing a File Processor" href="apache-rat-core/development/write_file_processor.html"/>
     </menu>
 
     <menu name="Apache Creadur&#8482;" inherit="bottom">
@@ -105,7 +118,7 @@
     <menu name="Committer Info" inherit="bottom">
       <item name="ASF Committers' FAQ" href='https://www.apache.org/dev/committers.html'/>
       <item name='New Committers Guide' href='https://www.apache.org/dev/new-committers-guide.html'/>
-      <item name="Howto publish this site" href="site-publish.html"/>
+      <item name="How to publish this site" href="https://gitbox.apache.org/repos/asf/creadur-site/blob/asf-site/README.md"/>
       <item name='Community' href='https://community.apache.org/'/>
       <item name='Legal' href='https://www.apache.org/legal/'/>
       <item name='Branding' href='https://www.apache.org/foundation/marks/'/>
