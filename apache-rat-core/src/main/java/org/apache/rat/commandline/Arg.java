@@ -45,6 +45,7 @@ import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
@@ -204,9 +205,8 @@ public enum Arg {
     /**
      * Option specify an acceptable number of unapproved licenses.
      */
-    LICENSES_MAX_UNAPPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-max-unapproved").hasArg().argName("Integer")
-            .desc("The acceptable number of files with unapproved licenses. A value of '-1' specifies an unlimited number. Default = 0")
-            .type(Integer.class)
+    COUNTER_MAX(new OptionGroup().addOption(Option.builder().longOpt("counter-max").hasArgs().argName("CounterPattern")
+            .desc("The acceptable maximum number for the specified counter. A value of '-1' specifies an unlimited number")
             .build())),
 
 ////////////////// INPUT OPTIONS
@@ -617,12 +617,19 @@ public enum Arg {
                     throw new ConfigurationException(e);
                 }
             }
-            if (LICENSES_MAX_UNAPPROVED.isSelected()) {
-                try {
-                    int limit = context.getCommandLine().getParsedOptionValue(LICENSES_MAX_UNAPPROVED.getSelected());
-                    context.getConfiguration().setMaximumUnapprovedLicenses(limit < 0 ? Integer.MAX_VALUE : limit);
-                } catch (ParseException e) {
-                    throw new ConfigurationException(e);
+            if (COUNTER_MAX.isSelected()) {
+                String[] s = context.getCommandLine().getOptionValues(COUNTER_MAX.getSelected());
+                for (String arg : s) {
+                    String[] parts = arg.split(":");
+                    try {
+                        ClaimStatistic.Counter counter = ClaimStatistic.Counter.valueOf(parts[0].toUpperCase());
+                        int limit = Integer.parseInt(parts[1]);
+                        context.getConfiguration().getClaimValidator().set(counter, limit < 0 ? Integer.MAX_VALUE : limit);
+                    } catch (NumberFormatException e) {
+                        throw new ConfigurationException(format("'%s' is not a valid integer", parts[1]), e);
+                    } catch (IllegalArgumentException e) {
+                        throw new ConfigurationException(format("'%s' is not a valid Counter", parts[0]), e);
+                    }
                 }
             }
         } catch (Exception e) {

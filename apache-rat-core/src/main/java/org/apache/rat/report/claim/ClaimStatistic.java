@@ -33,13 +33,39 @@ public class ClaimStatistic {
     /** The counter types */
     public enum Counter {
         /** count of approved files */
-        APPROVED,
+        APPROVED("A count of approved licenses", -1),
         /** count of unapproved files */
-        UNAPPROVED,
+        UNAPPROVED("A count of unapproved licenses", 0),
         /** count of generated files */
-        GENERATED,
+        GENERATED("A count of generated files", -1),
         /** count of unknown files */
-        UNKNOWN }
+        UNKNOWN("A count of unknown file types", -1);
+        /** The description of the Counter */
+        private String description;
+        /** The default max value for the counter */
+        private int defaultMaxValue;
+
+        Counter(final String description, final int defaultMaxValue) {
+            this.description = description;
+            this.defaultMaxValue = defaultMaxValue;
+        }
+
+        /**
+         * Gets the description of the counter.
+         * @return The description of the Counter.
+         */
+        public String getDescription() {
+            return description;
+        }
+
+        /**
+         * Gets the default maximum value for the counter.
+         * @return the default maximum value for the counter.
+         */
+        public int getDefaultMaxValue() {
+            return defaultMaxValue;
+        }
+    }
 
     /** Count of license family name to counter */
     private final ConcurrentHashMap<String, IntCounter> licenseFamilyNameMap = new ConcurrentHashMap<>();

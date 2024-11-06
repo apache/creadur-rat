@@ -45,10 +45,9 @@ public final class ClaimValidator {
      * Constructor.
      */
     public ClaimValidator() {
-        limits.put(ClaimStatistic.Counter.UNAPPROVED, 0);
-        limits.put(ClaimStatistic.Counter.UNKNOWN, Integer.MAX_VALUE);
-        limits.put(ClaimStatistic.Counter.GENERATED, Integer.MAX_VALUE);
-        limits.put(ClaimStatistic.Counter.APPROVED, Integer.MAX_VALUE);
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            limits.put(counter, counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue());
+        }
     }
 
     /**
@@ -89,19 +88,8 @@ public final class ClaimValidator {
      * @return {@code true} if the count is within the limits, {@code false} otherwise.
      */
     public boolean isValid(final ClaimStatistic.Counter counter, final int count) {
-        boolean result = true;
-        if (limits.containsKey(counter)) {
-            switch (counter) {
-                case UNAPPROVED:
-                case GENERATED:
-                case UNKNOWN:
-                    result = limits.get(counter) >= count;
-                    hasErrors |= !result;
-                    break;
-                default:
-                    break;
-            }
-        }
+        boolean result = limits.get(counter) >= count;
+        hasErrors |= !result;
         return result;
     }
 

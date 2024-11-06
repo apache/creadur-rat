@@ -100,6 +100,7 @@ public abstract class AbstractOptionsProvider {
         testMap.put("config", this::configTest);
         testMap.put("configuration-no-defaults", this::configurationNoDefaultsTest);
         testMap.put("copyright", this::copyrightTest);
+        testMap.put("counter-max", this::counterMaxTest);
         testMap.put("dir", () -> DefaultLog.getInstance().info("--dir has no valid test"));
         testMap.put("dry-run", this::dryRunTest);
         testMap.put("edit-copyright", this::editCopyrightTest);
@@ -123,7 +124,6 @@ public abstract class AbstractOptionsProvider {
         testMap.put("license-families-approved-file", this::licenseFamiliesApprovedFileTest);
         testMap.put("license-families-denied", this::licenseFamiliesDeniedTest);
         testMap.put("license-families-denied-file", this::licenseFamiliesDeniedFileTest);
-        testMap.put("license-max-unapproved", this::licenseMaxUnapproved);
         testMap.put("licenses", this::licensesTest);
         testMap.put("licenses-approved", this::licensesApprovedTest);
         testMap.put("licenses-approved-file", this::licensesApprovedFileTest);
@@ -474,19 +474,23 @@ public abstract class AbstractOptionsProvider {
                 new String[] { "GPL" });
     }
 
-    protected void licenseMaxUnapproved() {
-        Option option = Arg.LICENSES_MAX_UNAPPROVED.option();
-        String[] args = {null};
+    protected void counterMaxTest() {
+        Option option = Arg.COUNTER_MAX.option();
+        String[] args = {null, null};
 
         try {
             ReportConfiguration config = generateConfig();
             assertEquals(0, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
-            args[0] = "-1";
+            args[0] = "Unapproved:-1";
+            args[1] = "generated:1";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(Integer.MAX_VALUE, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
-            args[0] = "5";
+            assertEquals(1, config.getClaimValidator().get(ClaimStatistic.Counter.GENERATED));
+            args[1] = "unapproved:5";
+            args[0] = "generated:0";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(5, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(0, config.getClaimValidator().get(ClaimStatistic.Counter.GENERATED));
         } catch (IOException e) {
             fail(e.getMessage());
         }

@@ -50,6 +50,7 @@ import org.apache.rat.document.FileDocument;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
@@ -104,6 +105,11 @@ public final class OptionCollection {
         ARGUMENT_TYPES.put("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %s%n",
                 Arrays.stream(StandardCollection.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
+                        .collect(Collectors.joining(System.lineSeparator()))));
+        ARGUMENT_TYPES.put("CounterPattern", () -> format("A pattern comprising on of the following prefixes followed by " +
+                "a colon and a count (e.g. %s:5).  Prefixes are%n%s.", ClaimStatistic.Counter.UNAPPROVED,
+                Arrays.stream(ClaimStatistic.Counter.values())
+                        .map(v -> format("\t%s: %s Default=%s", v.name(), v.getDescription(), v.getDefaultMaxValue()))
                         .collect(Collectors.joining(System.lineSeparator()))));
     }
 

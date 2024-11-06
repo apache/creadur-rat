@@ -340,7 +340,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void maxUnapprovedTest() throws Exception {
+    public void counterMaxTest() throws Exception {
         ReportConfiguration config = initializeConfiguration();
         Reporter reporter = new Reporter(config);
         reporter.output();
@@ -348,7 +348,7 @@ public class ReporterTest {
         assertFalse(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)));
 
         config = initializeConfiguration();
-        config.setMaximumUnapprovedLicenses(2);
+        config.getClaimValidator().set(ClaimStatistic.Counter.UNAPPROVED, 2);
         reporter = new Reporter(config);
         reporter.output();
         assertFalse(config.getClaimValidator().hasErrors());

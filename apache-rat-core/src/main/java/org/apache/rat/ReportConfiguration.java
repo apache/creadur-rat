@@ -50,7 +50,6 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
-import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet;
@@ -727,14 +726,6 @@ public class ReportConfiguration {
     public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
         return licenseSetFactory.getLicenseFamilies(filter);
     }
-
-    /**
-     * Sets the acceptable maximum number of unapproved licenses.
-     * @param maxUnapprovedLicenses the acceptable maximun number of licenses.
-     */
-    public void setMaximumUnapprovedLicenses(final int maxUnapprovedLicenses) {
-        claimValidator.set(ClaimStatistic.Counter.UNAPPROVED, maxUnapprovedLicenses);
-    };
 
     /**
      * Sets the acceptable maximum number of unapproved licenses.
