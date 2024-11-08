@@ -185,7 +185,7 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
     }
 
-    protected void check(ReportConfiguration config) throws MojoFailureException {
+    protected void check(final ReportConfiguration config) throws MojoFailureException {
         ClaimStatistic statistics = reporter.getClaimsStatistic();
         try {
            reporter.writeSummary(DefaultLog.getInstance().asWriter());
@@ -202,7 +202,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                    }
                }
 
-               throw new RatCheckException(format("Too many files of type . See RAT report in: '%s'",
+               throw new RatCheckException(format("Too many files of type(s) %s. See RAT report in: '%s'",
                        String.join(", ", config.getClaimValidator().listIssues(statistics)),
                        getRatTxtFile()));
            }
