@@ -176,6 +176,13 @@ public abstract class AbstractOptionsProvider {
         unsupportedArgs.forEach(testMap::remove);
     }
 
+    /**
+     * Create the report configuration from the argument pairs.
+     * There must be at least one arg.  it may be `ImmutablePair.nullPair()`
+     * @param args Pairs comprising the argument option and the values for the option.
+     * @return The generated ReportConfiguration.
+     * @throws IOException on error.
+     */
     protected abstract ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException;
 
     protected File writeFile(String name, Iterable<String> lines) {
@@ -479,7 +486,7 @@ public abstract class AbstractOptionsProvider {
         String[] args = {null, null};
 
         try {
-            ReportConfiguration config = generateConfig();
+            ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
             assertEquals(0, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
             args[0] = "Unapproved:-1";
             args[1] = "generated:1";

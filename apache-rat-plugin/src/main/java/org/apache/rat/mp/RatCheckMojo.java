@@ -92,7 +92,9 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     /**
      * Maximum number of files with unapproved licenses.
+     * @deprecated use &lt;counterMax&gt;Unapproved:value&lt;/counterMax&gt;
      */
+    @Deprecated
     @Parameter(property = "rat.numUnapprovedLicenses", defaultValue = "0")
     private int numUnapprovedLicenses;
 
@@ -152,14 +154,23 @@ public class RatCheckMojo extends AbstractRatMojo {
     /** The reporter that this mojo uses */
     private Reporter reporter;
 
-    /**
-     * Invoked by Maven to execute the Mojo.
-     *
-     * @throws MojoFailureException An error in the plugin configuration was
-     * detected.
-     * @throws MojoExecutionException Another error occurred while executing the
-     * plugin.
-     */
+    @Override
+    protected ReportConfiguration getConfiguration() throws MojoExecutionException {
+        ReportConfiguration result = super.getConfiguration();
+        if (numUnapprovedLicenses > 0) {
+            result.getClaimValidator().set(ClaimStatistic.Counter.UNAPPROVED, numUnapprovedLicenses);
+        }
+        return result;
+    }
+
+        /**
+         * Invoked by Maven to execute the Mojo.
+         *
+         * @throws MojoFailureException An error in the plugin configuration was
+         * detected.
+         * @throws MojoExecutionException Another error occurred while executing the
+         * plugin.
+         */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
@@ -202,9 +213,15 @@ public class RatCheckMojo extends AbstractRatMojo {
                    }
                }
 
-               throw new RatCheckException(format("Too many files of type(s) %s. See RAT report in: '%s'",
+               String msg = format("Too many files of type(s) %s. See RAT report in: '%s'",
                        String.join(", ", config.getClaimValidator().listIssues(statistics)),
-                       getRatTxtFile()));
+                       getRatTxtFile());
+
+               if (!ignoreErrors) {
+                   throw new RatCheckException(msg);
+               } else {
+                   getLog().info(msg);
+               }
            }
         } catch (IOException e) {
            throw new MojoFailureException(e);
