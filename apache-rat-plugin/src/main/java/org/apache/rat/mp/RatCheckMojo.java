@@ -58,7 +58,7 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     /**
      * Where to store the report.
-     * @deprecated use 'out' property.
+     * @deprecated Use 'out' property instead.
      */
     @Deprecated
     @Parameter
@@ -74,7 +74,7 @@ public class RatCheckMojo extends AbstractRatMojo {
      * or "xml" for the raw XML report. Alternatively you can give the path of an
      * XSL transformation that will be applied on the raw XML to produce the report
      * written to the output file.
-     * @deprecated use setStyleSheet or xml
+     * @deprecated Use setStyleSheet or xml instead.
      */
     @Deprecated
     @Parameter(property = "rat.outputStyle")
@@ -90,7 +90,7 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     /**
      * Maximum number of files with unapproved licenses.
-     * @deprecated use &lt;counterMax&gt;Unapproved:value&lt;/counterMax&gt;
+     * @deprecated Use &lt;counterMax&gt;Unapproved:value&lt;/counterMax&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.numUnapprovedLicenses", defaultValue = "0")
@@ -99,7 +99,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     /**
      * Whether to add license headers; possible values are {@code forced},
      * {@code true}, and {@code false} (default).
-     * @deprecated use &lt;editLicense&gt; and &lt;editOverwrite&gt;
+     * @deprecated Use &lt;editLicense&gt; and &lt;editOverwrite&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.addLicenseHeaders")
