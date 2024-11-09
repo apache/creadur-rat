@@ -60,7 +60,7 @@ How to define licenses in Apache Rat
         <matcher class="org.apache.rat.configuration.builders.AnyBuilder" />
         <matcher class="org.apache.rat.configuration.builders.SpdxBuilder" />
         <matcher class="org.apache.rat.configuration.builders.TextBuilder" />
-    </matcher>
+    </matchers>
  </rat-config>
 +------------------------------------------+
  

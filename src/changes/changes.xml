@@ -75,6 +75,9 @@ The <action> type attribute can be one of:
       <action issue="RAT-399" type="add" dev="claudenw">
         Moved the ignore code into apache-rat-core and provide more statistics in RAT report. Furthermore the CLI allows configuration of counter minimum and maximum values, e.g. maximum number of allowed unapproved licenses.
       </action>
+      <action issue="RAT-358" type="add" dev="claudenw">
+        Overhaul documentation of the new functionality of RAT 0.17. Improve and comprehend the whole project webpage.
+      </action>
       <action issue="RAT-439" type="fix" dev="claudenw">
         Fix checkstyle issues and make the build fail in case of new checkstyle warnings and errors.
       </action>
@@ -237,7 +240,6 @@ The <action> type attribute can be one of:
       </action>
       <action issue="RAT-366" type="update" dev="claudenw">
         Switch to processing header matches in one call rather than line by line.
-
         This change also resulted in the possibility of multiple licenses being detected and reported.  forcing a change in the
         XML ouptut.  XML schema was developed for the output.
       </action>

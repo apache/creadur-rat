@@ -23,14 +23,14 @@ import org.apache.rat.document.DocumentName;
 import static java.lang.String.format;
 
 /**
- * A processor for {@code .bzignore} files.
+ * A processor for {@code .bzrignore} files.
  */
 public final class BazaarIgnoreProcessor extends DescendingFileProcessor {
     /**
      * Constructor.
      */
     public BazaarIgnoreProcessor() {
-        super(".bzignore", "#");
+        super(".bzrignore", "#");
     }
 
     @Override
