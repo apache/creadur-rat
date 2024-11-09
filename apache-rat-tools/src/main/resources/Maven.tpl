@@ -25,6 +25,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;

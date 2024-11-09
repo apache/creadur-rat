@@ -27,6 +27,9 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
+          <counterMins>
+            <counterMin>STANDARDS:0</counterMin>
+          </counterMins>
           <families>
             <family>
               <id>YAL</id>
