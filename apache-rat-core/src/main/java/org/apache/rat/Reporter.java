@@ -166,7 +166,7 @@ public class Reporter {
     /**
      * Writes a summary of issues with the run.
      * @param appendable the appendable to write to.
-     * @throws IOException On error.
+     * @throws IOException on error.
      */
     public void writeSummary(final Appendable appendable) throws IOException {
         appendable.append("Rat summary:").append(System.lineSeparator());

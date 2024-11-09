@@ -204,16 +204,16 @@ public enum Arg {
             .build())),
 
     /**
-     * Option specify an acceptable number of various counters.
+     * Option to specify an acceptable number of various counters.
      */
     COUNTER_MAX(new OptionGroup().addOption(Option.builder().longOpt("counter-max").hasArgs().argName("CounterPattern")
-            .desc("The acceptable maximum number for the specified counter. A value of '-1' specifies an unlimited number")
+            .desc("The acceptable maximum number for the specified counter. A value of '-1' specifies an unlimited number.")
             .converter(Converters.COUNTER_CONVERTER)
             .type(Pair.class)
             .build())),
 
     /**
-     * Option specify an acceptable number of various counters.
+     * Option to specify an acceptable number of various counters.
      */
     COUNTER_MIN(new OptionGroup().addOption(Option.builder().longOpt("counter-min").hasArgs().argName("CounterPattern")
             .desc("The minimum number for the specified counter.")
@@ -381,7 +381,7 @@ public enum Arg {
      */
     LOG_LEVEL(new OptionGroup().addOption(Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
-            .desc("sets the log level.")
+            .desc("Sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build())),
 

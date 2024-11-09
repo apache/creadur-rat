@@ -106,8 +106,8 @@ public final class OptionCollection {
                 Arrays.stream(StandardCollection.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator()))));
-        ARGUMENT_TYPES.put("CounterPattern", () -> format("A pattern comprising on of the following prefixes followed by " +
-                "a colon and a count (e.g. %s:5).  Prefixes are%n%s.", ClaimStatistic.Counter.UNAPPROVED,
+        ARGUMENT_TYPES.put("CounterPattern", () -> format("A pattern comprising one of the following prefixes followed by " +
+                "a colon and a count (e.g. %s:5).  Prefixes are %n%s.", ClaimStatistic.Counter.UNAPPROVED,
                 Arrays.stream(ClaimStatistic.Counter.values())
                         .map(v -> format("\t%s: %s Default=%s", v.name(), v.getDescription(), v.getDefaultMaxValue()))
                         .collect(Collectors.joining(System.lineSeparator()))));
@@ -159,7 +159,7 @@ public final class OptionCollection {
                     .setAllowPartialMatching(true).build().parse(opts, args);
         } catch (ParseException e) {
             DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options", e);
+            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
@@ -244,7 +244,7 @@ public final class OptionCollection {
         File absBase = base.getAbsoluteFile();
         DocumentName documentName = new DocumentName(absBase);
         if (!absBase.exists()) {
-            DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist");
+            DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist.");
             return null;
         }
         DocumentNameMatcher documentNameMatcher = config.getNameMatcher(documentName);

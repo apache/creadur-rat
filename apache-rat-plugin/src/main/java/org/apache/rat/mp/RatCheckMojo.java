@@ -43,7 +43,7 @@ import static java.lang.String.format;
  * Run Rat to perform a violation check.
  * <p>
  *     This documentation mentions data types for some of the arguments. An <a href="data_types.html">explanation of the data types</a> is included
- *     in ths documentation package.
+ *     in this documentation package.
  * </p>
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
@@ -166,9 +166,9 @@ public class RatCheckMojo extends AbstractRatMojo {
         /**
          * Invoked by Maven to execute the Mojo.
          *
-         * @throws MojoFailureException An error in the plugin configuration was
+         * @throws MojoFailureException if an error in the plugin configuration was
          * detected.
-         * @throws MojoExecutionException Another error occurred while executing the
+         * @throws MojoExecutionException if another error occurred while executing the
          * plugin.
          */
     @Override
@@ -213,7 +213,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                    }
                }
 
-               String msg = format("Counter(s) %s have exceeded minimum or maximum values. See RAT report in: '%s'",
+               String msg = format("Counter(s) %s exceeded minimum or maximum values. See RAT report in: '%s'.",
                        String.join(", ", config.getClaimValidator().listIssues(statistics)),
                        getRatTxtFile());
 

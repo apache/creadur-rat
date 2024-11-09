@@ -27,7 +27,7 @@ import org.apache.rat.report.xml.XmlElements;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 
 /**
- * A RatReport that published the results of the Claim validator.
+ * A RatReport that publishes the results of the ClaimValidator.
  */
 public class ClaimValidatorReport implements RatReport {
     /**
@@ -35,7 +35,7 @@ public class ClaimValidatorReport implements RatReport {
      */
     private final XmlElements elements;
     /**
-     * The claim statistics to report
+     * The claim statistics to report.
      */
     private final ClaimStatistic statistic;
     /**

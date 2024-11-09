@@ -86,6 +86,7 @@ public class ClaimValidatorTest {
             assertTrue(validator.isValid(counter, expected));
         }
     }
+
     @Test
     public void isValidTest() {
         int expected = 5;

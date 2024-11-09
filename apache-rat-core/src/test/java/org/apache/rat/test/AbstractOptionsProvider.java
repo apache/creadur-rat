@@ -179,7 +179,7 @@ public abstract class AbstractOptionsProvider {
 
     /**
      * Create the report configuration from the argument pairs.
-     * There must be at least one arg.  it may be `ImmutablePair.nullPair()`
+     * There must be at least one arg. It may be `ImmutablePair.nullPair()`.
      * @param args Pairs comprising the argument option and the values for the option.
      * @return The generated ReportConfiguration.
      * @throws IOException on error.
@@ -317,6 +317,7 @@ public abstract class AbstractOptionsProvider {
         File outputFile = writeFile("include.txt", Arrays.asList(INCLUDE_ARGS));
         execIncludeTest(option, new String[] {outputFile.getPath()});
     }
+
     protected void inputIncludeFileTest() {
         includeFileTest(Arg.INCLUDE_FILE.find("input-include-file"));
     }
@@ -771,7 +772,7 @@ public abstract class AbstractOptionsProvider {
     }
 
     private void styleSheetTest(Option option) {
-        // copy the dummy stylesheet so that  we have a local file for users of the testing jar.
+        // copy the dummy stylesheet so that we have a local file for users of the testing jar.
         File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
         try (
                 InputStream in = ReporterTest.class.getResourceAsStream("MatcherContainerResource.txt");

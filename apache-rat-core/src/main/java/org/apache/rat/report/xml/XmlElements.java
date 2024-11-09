@@ -39,7 +39,7 @@ public class XmlElements {
      * The elements in the report.
      */
     public enum Elements {
-        /** The start of the rat report */
+        /** The start of the Rat report */
         RAT_REPORT("rat-report"),
         /** The version of Rat being run */
         VERSION("version"),
@@ -75,7 +75,7 @@ public class XmlElements {
 
         /**
          * Gets the XML element name.
-         * @return The XML element name.
+         * @return the XML element name.
          */
         public String getElementName() {
             return elementName;
@@ -86,9 +86,9 @@ public class XmlElements {
      * The attributes of elements in the report.
      */
     public enum Attributes {
-        /** A time stamp */
+        /** A timestamp */
         TIMESTAMP,
-        /** A vesion string */
+        /** A version string */
         VERSION,
         /** The product identifier */
         PRODUCT,
@@ -100,9 +100,9 @@ public class XmlElements {
         FAMILY,
         /** The type */
         TYPE,
-        /** The ID */
+        /** The Id */
         ID,
-        /** THe name */
+        /** The name */
         NAME,
         /** A counter */
         COUNT,
@@ -122,7 +122,7 @@ public class XmlElements {
     }
 
     /**
-     * Create the rat report element.  Includes the timestamp and the version element.
+     * Create the Rat report element. Includes the timestamp and the version element.
      * @return this.
      * @throws RatException on error
      */
@@ -133,7 +133,7 @@ public class XmlElements {
     }
 
     /**
-     * Creates the version element with all version attributes populated.  Closes the version element.
+     * Creates the version element with all version attributes populated. Closes the version element.
      * @return this.
      * @throws RatException on error
      */
@@ -147,7 +147,7 @@ public class XmlElements {
     }
 
     /**
-     * Creates a license element.  Closes the element before exit.
+     * Creates a license element. Closes the element before exit.
      * @param license the license for the element.
      * @param approved {@code true} if the license is approved.
      * @return this
@@ -162,14 +162,14 @@ public class XmlElements {
             try {
                 write(Elements.NOTES).cdata(license.getNote()).closeElement();
             } catch (IOException e) {
-                throw new RatException("Can not write cdata for 'notes' element", e);
+                throw new RatException("Can not write CDATA for 'notes' element", e);
             }
         }
         return closeElement();
     }
 
     /**
-     * Writes a cdata block
+     * Writes a CDATA block
      * @param data the data to write.
      * @return this
      * @throws IOException on error.
@@ -180,7 +180,7 @@ public class XmlElements {
     }
 
     /**
-     * Creates a document element with attributes.  Does NOT close the document element.
+     * Creates a document element with attributes. Does NOT close the document element.
      * @param document the document to write.
      * @return this
      * @throws RatException on error.
@@ -193,7 +193,7 @@ public class XmlElements {
     }
 
     /**
-     * Creates a sample element.  Closes the sample element before returning.
+     * Creates a sample element. Closes the sample element before returning.
      * @param sample the sample ot display.
      * @return this
      * @throws RatException on error.
@@ -202,12 +202,12 @@ public class XmlElements {
         try {
         return write(Elements.SAMPLE).cdata(sample).closeElement();
         } catch (IOException e) {
-            throw new RatException("Can not write cdata for 'notes' element", e);
+            throw new RatException("Can not write CDATA for 'notes' element", e);
         }
     }
 
     /**
-     * Creates a statistices element.
+     * Creates a statistics element.
      * @return this
      * @throws RatException on error.
      */
@@ -216,11 +216,11 @@ public class XmlElements {
     }
 
     /**
-     * Creates a statistic element.  Closes the element before returning.
+     * Creates a statistic element. Closes the element before returning.
      * @param name the name of the statistics element.
      * @param count the count for the element.
      * @param description description of this statistic.
-     * @param isOk if {@code} true the count is within limits.
+     * @param isOk if {@code true} the count is within limits.
      * @return this
      * @throws RatException on error.
      */
@@ -234,7 +234,7 @@ public class XmlElements {
     }
 
     /**
-     * Creates a statistic element.  Closes the element before returning.
+     * Creates a statistic element. Closes the element before returning.
      * @param name the name of the statistics element.
      * @param count the count for the element.
      * @return this
@@ -248,7 +248,7 @@ public class XmlElements {
     }
 
     /**
-     * Creates a statistic element.  Closes the element before returning.
+     * Creates a statistic element. Closes the element before returning.
      * @param name the name of the statistics element.
      * @param count the count for the element.
      * @return this
@@ -262,7 +262,7 @@ public class XmlElements {
     }
 
     /**
-     * Creates a statistic element.  Closes the element before returning.
+     * Creates a statistic element. Closes the element before returning.
      * @param name the name of the statistics element.
      * @param count the count for the element.
      * @return this
@@ -285,7 +285,7 @@ public class XmlElements {
             writer.closeElement();
             return this;
         } catch (IOException e) {
-            throw new RatException("Cannot open close element", e);
+            throw new RatException("Cannot close currently open element", e);
         }
 
     }

@@ -365,7 +365,7 @@ agnostic home for software distribution comprehension and audit tools.
             <!-- RAT-369: JDK21 finds 56 errors, while older releases find fewer -->
             <maxAllowedViolations>56</maxAllowedViolations>
             <failOnError>true</failOnError>
-            <!-- we only want to see our own problems and in all subpackages -->
+            <!-- we only want to see our own problems in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
             <!-- in order to have a global spotbugs configuration an exclusion file needs to exist in all submodules -->
             <excludeFilterFile>${project.basedir}/spotbugs-ignore.xml</excludeFilterFile>

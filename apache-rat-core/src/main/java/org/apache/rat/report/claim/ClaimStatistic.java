@@ -59,8 +59,7 @@ public class ClaimStatistic {
         /** count of unknown files */
         UNKNOWN("A count of unknown file types.", -1, 0);
 
-
-        /** The description of the Counter */
+        /** The description of the counter */
         private String description;
         /** The default max value for the counter */
         private int defaultMaxValue;
@@ -75,7 +74,7 @@ public class ClaimStatistic {
 
         /**
          * Gets the description of the counter.
-         * @return The description of the Counter.
+         * @return The description of the counter.
          */
         public String getDescription() {
             return description;
@@ -96,6 +95,10 @@ public class ClaimStatistic {
             return defaultMinValue;
         }
 
+        /**
+         * Display name is capitalized and any underscores are replaced by spaces.
+         * @return displayName of the counter, capitalized and without underscores.
+         */
         public String displayName() {
             return StringUtils.capitalize(name().replaceAll("_", " ").toLowerCase(Locale.ROOT));
         }
@@ -110,7 +113,8 @@ public class ClaimStatistic {
     /** Map of counter type to value */
     private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
-    /** converts null counter to 0.
+    /** 
+     * Converts null counter to 0.
      *
      * @param counter the Counter to retrieve the value from.
      * @return 0 if counter is {@code null} or counter value otherwise.
@@ -118,17 +122,18 @@ public class ClaimStatistic {
     private int getValue(final IntCounter counter) {
         return counter == null ? 0 : counter.value();
     }
+
     /**
      * Returns the counts for the counter.
      * @param counter the counter to get the value for.
-     * @return Returns the number times the Counter type was seen.
+     * @return the number times the counter type was seen.
      */
     public int getCounter(final Counter counter) {
         return getValue(counterMap.get(counter));
     }
 
     /**
-     * Increments the counts for hte counter.
+     * Increments the counts for the counter.
      * @param counter the counter to increment.
      * @param value the value to increment the counter by.
      */
@@ -139,7 +144,7 @@ public class ClaimStatistic {
     /**
      * Gets the counts for the Document.Type.
      * @param documentType the Document.Type to get the counter for.
-     * @return Returns the number times the Document.Type was seen
+     * @return the number times the Document.Type was seen.
      */
     public int getCounter(final Document.Type documentType) {
         return getValue(documentTypeMap.get(documentType));
@@ -147,7 +152,7 @@ public class ClaimStatistic {
 
     /**
      * Gets the set of Document.Types seen in the run.
-     * @return The set of Document.Types seen in the run.
+     * @return the set of Document.Types seen in the run.
      */
     public List<Document.Type> getDocumentTypes() {
         List<Document.Type> result = new ArrayList<>(documentTypeMap.keySet());
@@ -206,7 +211,7 @@ public class ClaimStatistic {
      * Updates the intCounter with the value and if the intCounter was null creates a new one and registers the
      * creation as a counter type.
      * @param counter the Type of the counter.
-     * @param intCounter the IntCounter to update.  May be null.
+     * @param intCounter the IntCounter to update. May be null.
      * @param value the value to add to the int counter.
      * @return the intCounter if it was not {@code null}, a new IntCounter otherwise.
      */
@@ -238,6 +243,10 @@ public class ClaimStatistic {
         return result;
     }
 
+    /**
+     * Gets the license names sorted by name.
+     * @return sorted list of license names.
+     */
     public List<String> getLicenseNames() {
         List<String> result = new ArrayList<>(licenseNameMap.keySet());
         result.sort(String::compareTo);
@@ -254,7 +263,7 @@ public class ClaimStatistic {
     }
 
     /**
-     * A class that wraps and int and allows easy increment and retrieval.
+     * A class that wraps an int and allows easy increment and retrieval.
      */
     static class IntCounter {
         /**

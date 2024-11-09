@@ -728,8 +728,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * Gets the ClaimValidator for.
-     * @return The ClaimValidator.
+     * Gets the ClaimValidator for the configuration.
+     * @return the ClaimValidator.
      */
     public ClaimValidator getClaimValidator() {
         return claimValidator;
