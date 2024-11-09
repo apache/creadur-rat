@@ -113,7 +113,7 @@ public class ClaimStatistic {
     /** Map of counter type to value */
     private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
-    /** 
+    /**
      * Converts null counter to 0.
      *
      * @param counter the Counter to retrieve the value from.

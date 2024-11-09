@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-399" type="add" dev="claudenw">
+        Moved the ignore code into apache-rat-core and provide more statistics in RAT report. Furthermore the CLI allows configuration of counter minimum and maximum values, e.g. maximum number of allowed unapproved licenses.
+      </action>
       <action issue="RAT-439" type="fix" dev="claudenw">
         Fix checkstyle issues and make the build fail in case of new checkstyle warnings and errors.
       </action>
