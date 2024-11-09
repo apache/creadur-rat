@@ -213,7 +213,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                    }
                }
 
-               String msg = format("Too many files of type(s) %s. See RAT report in: '%s'",
+               String msg = format("Counter(s) %s have exceeded minimum or maximum values. See RAT report in: '%s'",
                        String.join(", ", config.getClaimValidator().listIssues(statistics)),
                        getRatTxtFile());
 

@@ -39,7 +39,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.rat.report.claim.ClaimStatistic.Counter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
@@ -47,7 +46,7 @@ import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.claim.ClaimStatistic.Counter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 

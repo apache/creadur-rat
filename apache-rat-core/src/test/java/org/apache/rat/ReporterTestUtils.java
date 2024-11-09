@@ -19,6 +19,7 @@
 package org.apache.rat;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.report.claim.ClaimStatistic;
 
 /**
  * Utilities to help analyze report test output.
@@ -61,4 +62,17 @@ public class ReporterTestUtils {
     public static String licenseOut(final String family, final String id, final String name) {
         return String.format("\\s+\\Q%s\\E\\s+\\Q%s\\E\\s+\\Q%s\\E$", family, id, name);
     }
+
+    public static String counterText(ClaimStatistic.Counter counter, int count) {
+        return String.format("^%s:\\s*%s ", counter.displayName(), count);
+    }
+
+    public static String apacheLicenseVersion2(int count) {
+        return String.format("^Apache License Version 2.0: %s ", count);
+    }
+
+    public static String unknownLicense(int count) {
+        return String.format("^Unknown license: %s ", count);
+    }
+
 }

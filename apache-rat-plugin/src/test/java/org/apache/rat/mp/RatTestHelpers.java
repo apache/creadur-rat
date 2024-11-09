@@ -201,7 +201,7 @@ public final class RatTestHelpers {
         }
 
         for (String pattern : notIn) {
-            TextUtils.assertPatternInTarget(pattern, document);
+            TextUtils.assertPatternNotInTarget(pattern, document);
         }
     }
 

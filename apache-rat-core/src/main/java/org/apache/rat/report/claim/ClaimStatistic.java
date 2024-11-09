@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -98,7 +97,7 @@ public class ClaimStatistic {
         }
 
         public String displayName() {
-            return StringUtils.capitalize(name().replaceAll("_"," ").toLowerCase(Locale.ROOT));
+            return StringUtils.capitalize(name().replaceAll("_", " ").toLowerCase(Locale.ROOT));
         }
     }
 
@@ -203,14 +202,23 @@ public class ClaimStatistic {
         return getValue(licenseNameMap.get(licenseName));
     }
 
-    private IntCounter updateCounter(Counter counter, IntCounter oldCounter, int value) {
-        if (oldCounter == null) {
-                incCounter(counter, 1);
-                return new IntCounter().increment(value);
-            } else {
-                return oldCounter.increment(value);
-            }
+    /**
+     * Updates the intCounter with the value and if the intCounter was null creates a new one and registers the
+     * creation as a counter type.
+     * @param counter the Type of the counter.
+     * @param intCounter the IntCounter to update.  May be null.
+     * @param value the value to add to the int counter.
+     * @return the intCounter if it was not {@code null}, a new IntCounter otherwise.
+     */
+    private IntCounter updateCounter(final Counter counter, final IntCounter intCounter, final int value) {
+        if (intCounter == null) {
+            incCounter(counter, 1);
+            return new IntCounter().increment(value);
+        } else {
+            return intCounter.increment(value);
+        }
     }
+
     /**
      * Increments the number of times a license family category was seen.
      * @param licenseFamilyCategory the License family category to increment.

@@ -43,8 +43,7 @@ public final class Converters {
     /**
      * converts the Converter pattern into a Converter, count pair.
      */
-    public static final Converter<Pair<ClaimStatistic.Counter, Integer>, ConfigurationException> COUNTER_CONVERTER = arg ->
-    {
+    public static final Converter<Pair<ClaimStatistic.Counter, Integer>, ConfigurationException> COUNTER_CONVERTER = arg -> {
         String[] parts = arg.split(":");
         try {
             ClaimStatistic.Counter counter = ClaimStatistic.Counter.valueOf(parts[0].toUpperCase());

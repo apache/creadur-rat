@@ -47,8 +47,6 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.w3c.dom.Document;
 
-import static java.lang.String.format;
-
 /**
  * Class that executes the report as defined in a ReportConfiguration and stores
  * the result for later handling.

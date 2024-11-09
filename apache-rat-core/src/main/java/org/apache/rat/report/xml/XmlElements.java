@@ -224,7 +224,7 @@ public class XmlElements {
      * @return this
      * @throws RatException on error.
      */
-    public XmlElements statistic(final String name, final int count, String description, final boolean isOk) throws RatException {
+    public XmlElements statistic(final String name, final int count, final String description, final boolean isOk) throws RatException {
         return write(Elements.STATISTIC)
                 .write(Attributes.NAME, name)
                 .write(Attributes.COUNT, Integer.toString(count))

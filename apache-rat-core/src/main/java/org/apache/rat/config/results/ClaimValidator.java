@@ -19,7 +19,6 @@
 package org.apache.rat.config.results;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,9 +32,12 @@ import static java.lang.String.format;
  */
 public final class ClaimValidator {
     /**
-     * The map of counter limits.
+     * The map of  max counter limits.
      */
     private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> max = new ConcurrentHashMap<>();
+    /**
+     * The map of  min counter limits.
+     */
     private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> min = new ConcurrentHashMap<>();
     /**
      * {@code true} if errors were detected in the claim.

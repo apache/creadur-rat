@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.ReporterTestUtils;
@@ -35,13 +36,13 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TextUtils;
 
 /**
  * Test case for the {@link RatCheckMojo} and {@link RatReportMojo}.
  */
 public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
-
     /**
      * Creates a new instance of {@link RatCheckMojo}.
      *
@@ -99,11 +100,17 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         final RatCheckMojo mojo = newRatCheckMojo("it1");
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String[] expected = { 
-                ReporterTestUtils.documentOut(true, Document.Type.STANDARD,  "/pom.xml") +
-                ReporterTestUtils.APACHE_LICENSE,
-                "Notes: 0", "Binaries: 0", "Archives: 0",
-                "Standards: 1$", "Apache Licensed: 1$", "Generated Documents: 0", "^0 Unknown Licenses" };
+        final String[] expected = {
+                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
+                        ReporterTestUtils.APACHE_LICENSE,
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 0),
+                ReporterTestUtils.apacheLicenseVersion2(1)
+        };
 
         ReportConfiguration config = mojo.getConfiguration();
         ReportConfigurationTest.validateDefault(config);
@@ -123,9 +130,13 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = {
                 "^Files with unapproved licenses:\\s+\\Q/src.txt\\E\\s+",
-                "Notes: 0", 
-                "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
-                "^1 Unknown Licenses", 
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.apacheLicenseVersion2(1),
+                ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.txt") +
                 ReporterTestUtils.UNKNOWN_LICENSE,
                 ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
@@ -148,9 +159,14 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testIt3() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it3", "check", true);
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String[] expected = { "^Files with unapproved licenses:\\s+\\Q/src.apt\\E\\s+", "Notes: 0",
-                "Binaries: 0", "Archives: 0", "Standards: 2$", "Apache Licensed: 1$", "Generated Documents: 0",
-                "^1 Unknown Licenses", 
+        final String[] expected = { "^Files with unapproved licenses:\\s+\\Q/src.apt\\E\\s+",
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.apacheLicenseVersion2(1),
+                ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.apt") +
                 ReporterTestUtils.UNKNOWN_LICENSE,
                 ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
@@ -171,8 +187,17 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testIt5() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it5", "check", true);
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String[] expected = { "Notes: 0", "Binaries: 0", "Archives: 0", "Standards: 0$", "Apache Licensed: 0$",
-                "Generated Documents: 1", "^0 Unknown Licenses" };
+        final String[] expected = {
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 1),
+        };
+        final String[] notExpected = {
+                "^Apache License Version 2.0: ",
+                "^Unknown license: "
+        };
 
         ReportConfiguration config = mojo.getConfiguration();
         assertFalse("Should not be adding licenses", config.isAddingLicenses());
@@ -182,12 +207,17 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         assertTrue(config.getLicenseCategories(LicenseFilter.APPROVED).contains(ILicenseFamily.makeCategory("YAL")));
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL");
         assertNotNull(LicenseSetFactory.familySearch("YAL", config.getLicenseFamilies(LicenseFilter.ALL)));
-        ReportConfigurationTest.validateDefaultLicenses(config, "MyLicense", "CpyrT", "RegxT", "SpdxT", "TextT", 
+        ReportConfigurationTest.validateDefaultLicenses(config, "MyLicense", "CpyrT", "RegxT", "SpdxT", "TextT",
                 "Not", "All", "Any");
         assertTrue(LicenseSetFactory.search("YAL", "MyLicense", config.getLicenses(LicenseFilter.ALL)).isPresent());
-        mojo.execute();
+        try {
+            mojo.execute();
+            fail("Should have thrown exception");
+        } catch (RatCheckException e) {
+            assertThat(e.getMessage()).contains("STANDARDS");
+        }
 
-        ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+        ensureRatReportIsCorrect(ratTxtFile, expected, notExpected);
     }
     
     /**
@@ -199,13 +229,23 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-343");
         final File ratTxtFile = mojo.getRatTxtFile();
         // POM reports AL, BSD and CC BYas BSD because it contains the BSD and CC BY strings
-        final String[] expected = { 
+        final String[] expected = {
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/pom.xml") +
-                ReporterTestUtils.APACHE_LICENSE +
-                ReporterTestUtils.licenseOut("BSD", "BSD") +
-                ReporterTestUtils.licenseOut("CC BY", "Creative Commons Attribution (Unapproved)"),
-                "Notes: 0", "Binaries: 0", "Archives: 0",
-                "Standards: 1$", "Apache Licensed: 1$", "Generated Documents: 0", "^0 Unknown Licenses" };
+                        ReporterTestUtils.APACHE_LICENSE +
+                        ReporterTestUtils.licenseOut("BSD", "BSD") +
+                        ReporterTestUtils.licenseOut("CC BY", "Creative Commons Attribution (Unapproved)"),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.apacheLicenseVersion2(1),
+                "^BSD: 1 ",
+                "^Creative Commons Attribution: 1 ",
+        };
+        final String[] notExpected = {
+                "^Unknown License:"
+        };
 
         ReportConfiguration config = mojo.getConfiguration();
         // validate configuration
@@ -219,7 +259,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         ReportConfigurationTest.validateDefaultLicenses(config, "BSD", "CC BY");
 
         mojo.execute();
-        ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+        ensureRatReportIsCorrect(ratTxtFile, expected, notExpected);
     }
 
     /**
@@ -229,21 +269,22 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-335-GitIgnore");
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = {
-            "Notes: 1",
-            "Binaries: 0",
-            "Archives: 0",
-            "Standards: 6$",
-            "Apache Licensed: 2$",
-            "Generated Documents: 0",
-            "^4 Unknown Licenses",
-            ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml")+
-            ReporterTestUtils.APACHE_LICENSE,
-            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir1/dir1.md")+
-                ReporterTestUtils.UNKNOWN_LICENSE,
-            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir2/dir2.txt")+
-                ReporterTestUtils.UNKNOWN_LICENSE,
-            ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir3/file3.log")+
-                ReporterTestUtils.UNKNOWN_LICENSE,  
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 1),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 6),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 4),
+                ReporterTestUtils.apacheLicenseVersion2(2),
+                ReporterTestUtils.unknownLicense(4),
+                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
+                        ReporterTestUtils.APACHE_LICENSE,
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir1/dir1.md") +
+                        ReporterTestUtils.UNKNOWN_LICENSE,
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir2/dir2.txt") +
+                        ReporterTestUtils.UNKNOWN_LICENSE,
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir3/file3.log") +
+                        ReporterTestUtils.UNKNOWN_LICENSE,
         };
         try {
             mojo.execute();
@@ -283,13 +324,13 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         // Create the test file with a content on which it must fail
         File barFile = new File(dir, "bar.md");
         final String[] expected = {
-                "Notes: 0",
-                "Binaries: 0",
-                "Archives: 0",
-                "Standards: 3$",
-                "Apache Licensed: 2$",
-                "Generated Documents: 0",
-                "^1 Unknown Licenses",
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 3),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.apacheLicenseVersion2(2),
+                ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/bar.md") +
                         ReporterTestUtils.UNKNOWN_LICENSE
         };
