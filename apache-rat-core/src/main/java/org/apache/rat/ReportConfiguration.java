@@ -146,7 +146,7 @@ public class ReportConfiguration {
      */
     private Processing standardProcessing;
     /**
-     * The maximum number of unapproved licenses.
+     * The ClaimValidator to validate min/max counts and similar claims.
      */
     private final ClaimValidator claimValidator;
     /**
