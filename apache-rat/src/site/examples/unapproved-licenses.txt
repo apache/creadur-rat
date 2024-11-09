@@ -1,0 +1,6 @@
+*****************************************************
+Generated at: 2024-11-09T14:01:16Z
+
+Files with unapproved licenses:
+  /Source.java
+  /sub/Empty.txt

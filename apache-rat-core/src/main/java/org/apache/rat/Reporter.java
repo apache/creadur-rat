@@ -168,12 +168,9 @@ public class Reporter {
     public void writeSummary(final Appendable appendable) throws IOException {
         appendable.append("Rat summary:").append(System.lineSeparator());
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            appendable.append("  ").append(counter.name()).append("  ")
+            appendable.append("  ").append(counter.displayName()).append(":  ")
                     .append(Integer.toString(getClaimsStatistic().getCounter(counter)))
                     .append(System.lineSeparator());
         }
-        appendable.append(format("  %s distinct license families%n", getClaimsStatistic().getLicenseFamilyNameCount()));
-        appendable.append(format("  %s distinct license categories%n", getClaimsStatistic().getLicenseCategoryCount()));
-        appendable.append(format("  %s distinct document types%n", getClaimsStatistic().getDocumentTypeCount()));
     }
 }

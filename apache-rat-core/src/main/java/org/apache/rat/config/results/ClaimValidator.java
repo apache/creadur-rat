@@ -35,7 +35,8 @@ public final class ClaimValidator {
     /**
      * The map of counter limits.
      */
-    private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> limits = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> max = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> min = new ConcurrentHashMap<>();
     /**
      * {@code true} if errors were detected in the claim.
      */
@@ -46,7 +47,9 @@ public final class ClaimValidator {
      */
     public ClaimValidator() {
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            limits.put(counter, counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue());
+            max.put(counter,
+                    counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue());
+            min.put(counter, counter.getDefaultMinValue());
         }
     }
 
@@ -59,16 +62,27 @@ public final class ClaimValidator {
     }
 
     /**
-     * Sets the limit for the specified counter.
+     * Sets the max value for the specified counter.
      * @param counter the counter to set the limit for.
      * @param value the value to set. A negative value specifies no maximum value.
      */
-    public void set(final ClaimStatistic.Counter counter, final int value) {
+    public void setMax(final ClaimStatistic.Counter counter, final int value) {
         if (value < 0) {
-            limits.put(counter, Integer.MAX_VALUE);
+            max.put(counter, Integer.MAX_VALUE);
         } else {
-            limits.put(counter, value);
+            max.put(counter, value);
         }
+        min.compute(counter, (k, v) -> v != null && v > max.get(k) ? max.get(k) : v);
+    }
+
+    /**
+     * Sets the max value for the specified counter.
+     * @param counter the counter to set the limit for.
+     * @param value the value to set. A negative value specifies no maximum value.
+     */
+    public void setMin(final ClaimStatistic.Counter counter, final int value) {
+        min.put(counter, value);
+        max.compute(counter, (k, v) -> v == null || v < value ? value : v);
     }
 
     /**
@@ -76,8 +90,18 @@ public final class ClaimValidator {
      * @param counter the counter to get the limit for.
      * @return the limit for the counter or 0 if not set.
      */
-    public int get(final ClaimStatistic.Counter counter) {
-        Integer result = limits.get(counter);
+    public int getMax(final ClaimStatistic.Counter counter) {
+        Integer result = max.get(counter);
+        return result == null ? 0 : result;
+    }
+
+    /**
+     * Gets the limit for the specific counter.
+     * @param counter the counter to get the limit for.
+     * @return the limit for the counter or 0 if not set.
+     */
+    public int getMin(final ClaimStatistic.Counter counter) {
+        Integer result = min.get(counter);
         return result == null ? 0 : result;
     }
 
@@ -88,7 +112,7 @@ public final class ClaimValidator {
      * @return {@code true} if the count is within the limits, {@code false} otherwise.
      */
     public boolean isValid(final ClaimStatistic.Counter counter, final int count) {
-        boolean result = limits.get(counter) >= count;
+        boolean result = max.get(counter) >= count && min.get(counter) <= count;
         hasErrors |= !result;
         return result;
     }
@@ -100,8 +124,8 @@ public final class ClaimValidator {
     public void logIssues(final ClaimStatistic statistic) {
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             if (!isValid(counter, statistic.getCounter(counter))) {
-                DefaultLog.getInstance().error(format("Unexpected count for %s, limit is %s.  Count: %s", counter,
-                        limits.get(counter), statistic.getCounter(counter)));
+                DefaultLog.getInstance().error(format("Unexpected count for %s, limit is [%s,%s].  Count: %s", counter,
+                        min.get(counter), max.get(counter), statistic.getCounter(counter)));
             }
         }
     }
@@ -111,7 +135,7 @@ public final class ClaimValidator {
      * @param statistic The statistics that contain the run values.
      * @return a collection of counter names that are invalid.
      */
-    public Collection<String> listIssues(final ClaimStatistic statistic) {
+    public List<String> listIssues(final ClaimStatistic statistic) {
         List<String> result = new ArrayList<>();
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             if (!isValid(counter, statistic.getCounter(counter))) {

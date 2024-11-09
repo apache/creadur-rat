@@ -38,6 +38,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.report.claim.ClaimStatistic.Counter;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
@@ -203,10 +205,21 @@ public enum Arg {
             .build())),
 
     /**
-     * Option specify an acceptable number of unapproved licenses.
+     * Option specify an acceptable number of various counters.
      */
     COUNTER_MAX(new OptionGroup().addOption(Option.builder().longOpt("counter-max").hasArgs().argName("CounterPattern")
             .desc("The acceptable maximum number for the specified counter. A value of '-1' specifies an unlimited number")
+            .converter(Converters.COUNTER_CONVERTER)
+            .type(Pair.class)
+            .build())),
+
+    /**
+     * Option specify an acceptable number of various counters.
+     */
+    COUNTER_MIN(new OptionGroup().addOption(Option.builder().longOpt("counter-min").hasArgs().argName("CounterPattern")
+            .desc("The minimum number for the specified counter.")
+            .converter(Converters.COUNTER_CONVERTER)
+            .type(Pair.class)
             .build())),
 
 ////////////////// INPUT OPTIONS
@@ -618,18 +631,16 @@ public enum Arg {
                 }
             }
             if (COUNTER_MAX.isSelected()) {
-                String[] s = context.getCommandLine().getOptionValues(COUNTER_MAX.getSelected());
-                for (String arg : s) {
-                    String[] parts = arg.split(":");
-                    try {
-                        ClaimStatistic.Counter counter = ClaimStatistic.Counter.valueOf(parts[0].toUpperCase());
-                        int limit = Integer.parseInt(parts[1]);
-                        context.getConfiguration().getClaimValidator().set(counter, limit < 0 ? Integer.MAX_VALUE : limit);
-                    } catch (NumberFormatException e) {
-                        throw new ConfigurationException(format("'%s' is not a valid integer", parts[1]), e);
-                    } catch (IllegalArgumentException e) {
-                        throw new ConfigurationException(format("'%s' is not a valid Counter", parts[0]), e);
-                    }
+                for (String arg : context.getCommandLine().getOptionValues(COUNTER_MAX.getSelected())) {
+                    Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
+                    int limit = pair.getValue();
+                    context.getConfiguration().getClaimValidator().setMax(pair.getKey(), limit < 0 ? Integer.MAX_VALUE : limit);
+                }
+            }
+            if (COUNTER_MIN.isSelected()) {
+                for (String arg : context.getCommandLine().getOptionValues(COUNTER_MIN.getSelected())) {
+                    Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
+                    context.getConfiguration().getClaimValidator().setMin(pair.getKey(), pair.getValue());
                 }
             }
         } catch (Exception e) {

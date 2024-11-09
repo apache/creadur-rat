@@ -35,18 +35,18 @@ public abstract class Document implements Comparable<Document> {
      * An enumeration of document types.
      */
     public enum Type {
-        /** A generated document. */
-        GENERATED,
-        /** An unknown document type. */
-        UNKNOWN,
         /** An archive type document. */
         ARCHIVE,
-        /** A notice document (e.g. LICENSE file). */
-        NOTICE,
         /** A binary file. */
         BINARY,
+        /** A generated document. */
+        GENERATED,
+        /** A notice document (e.g. LICENSE file). */
+        NOTICE,
         /** A standard document. */
-        STANDARD
+        STANDARD,
+        /** An unknown document type. */
+        UNKNOWN;
     }
 
     /** The path matcher used by this document */

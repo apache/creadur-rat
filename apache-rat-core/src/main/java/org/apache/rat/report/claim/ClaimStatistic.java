@@ -19,10 +19,14 @@
 
 package org.apache.rat.report.claim;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
 
 /**
@@ -30,24 +34,44 @@ import org.apache.rat.api.Document;
  * the report.
  */
 public class ClaimStatistic {
+    // keep the counter types in alphabetical order
     /** The counter types */
     public enum Counter {
         /** count of approved files */
-        APPROVED("A count of approved licenses", -1),
-        /** count of unapproved files */
-        UNAPPROVED("A count of unapproved licenses", 0),
+        APPROVED("A count of approved licenses.", -1, 0),
+        /** count of archive files */
+        ARCHIVES("A count of archive files.", -1, 0),
+        /** count of binary  files */
+        BINARIES("A count of binary files.", -1, 0),
+        /** count of distinct document types */
+        DOCUMENT_TYPES("A count of distinct document types.", -1, 1),
         /** count of generated files */
-        GENERATED("A count of generated files", -1),
+        GENERATED("A count of generated files.", -1, 0),
+        /** count of license categories */
+        LICENSE_CATEGORIES("A count of distinct license categories.", -1, 1),
+        /** count of distinct license names */
+        LICENSE_NAMES("A count of distinct license names.", -1, 1),
+        /** count of note files */
+        NOTICES("A count of notice files.", -1, 0),
+        /** count of standard files */
+        STANDARDS("A count of standard files.", -1, 1),
+        /** count of unapproved files */
+        UNAPPROVED("A count of unapproved licenses.", 0, 0),
         /** count of unknown files */
-        UNKNOWN("A count of unknown file types", -1);
+        UNKNOWN("A count of unknown file types.", -1, 0);
+
+
         /** The description of the Counter */
         private String description;
         /** The default max value for the counter */
         private int defaultMaxValue;
+        /** THe default minimum value for the counter */
+        private int defaultMinValue;
 
-        Counter(final String description, final int defaultMaxValue) {
+        Counter(final String description, final int defaultMaxValue, final int defaultMinValue) {
             this.description = description;
             this.defaultMaxValue = defaultMaxValue;
+            this.defaultMinValue = defaultMinValue;
         }
 
         /**
@@ -65,14 +89,25 @@ public class ClaimStatistic {
         public int getDefaultMaxValue() {
             return defaultMaxValue;
         }
+        /**
+         * Gets the default minimum value for the counter.
+         * @return the default maximum value for the counter.
+         */
+        public int getDefaultMinValue() {
+            return defaultMinValue;
+        }
+
+        public String displayName() {
+            return StringUtils.capitalize(name().replaceAll("_"," ").toLowerCase(Locale.ROOT));
+        }
     }
 
     /** Count of license family name to counter */
-    private final ConcurrentHashMap<String, IntCounter> licenseFamilyNameMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, IntCounter> licenseNameMap = new ConcurrentHashMap<>();
     /** Map of license family category to counter */
     private final ConcurrentHashMap<String, IntCounter> licenseFamilyCategoryMap = new ConcurrentHashMap<>();
     /** Map of document type to counter */
-    private final ConcurrentHashMap<Document.Type, IntCounter> documentCategoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Document.Type, IntCounter> documentTypeMap = new ConcurrentHashMap<>();
     /** Map of counter type to value */
     private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
@@ -108,17 +143,18 @@ public class ClaimStatistic {
      * @return Returns the number times the Document.Type was seen
      */
     public int getCounter(final Document.Type documentType) {
-        return getValue(documentCategoryMap.get(documentType));
+        return getValue(documentTypeMap.get(documentType));
     }
 
     /**
-     * Gets the number of unique document types seen.
-     * @return The number of unique document types seen.
+     * Gets the set of Document.Types seen in the run.
+     * @return The set of Document.Types seen in the run.
      */
-    public int getDocumentTypeCount() {
-        return documentCategoryMap.size();
+    public List<Document.Type> getDocumentTypes() {
+        List<Document.Type> result = new ArrayList<>(documentTypeMap.keySet());
+        result.sort(Comparator.comparing(Enum::name));
+        return result;
     }
-
 
     /**
      * Increments the number of times the Document.Type was seen.
@@ -126,7 +162,27 @@ public class ClaimStatistic {
      * @param value the value to increment the counter by.
      */
     public void incCounter(final Document.Type documentType, final int value) {
-        documentCategoryMap.compute(documentType, (k, v) -> v == null ? new IntCounter().increment(value) : v.increment(value));
+        documentTypeMap.compute(documentType, (k, v) -> updateCounter(Counter.DOCUMENT_TYPES, v, value));
+        switch (documentType) {
+            case STANDARD:
+                incCounter(Counter.STANDARDS, value);
+                break;
+            case ARCHIVE:
+                incCounter(Counter.ARCHIVES, value);
+                break;
+            case BINARY:
+                incCounter(Counter.BINARIES, value);
+                break;
+            case NOTICE:
+                incCounter(Counter.NOTICES, value);
+                break;
+            case UNKNOWN:
+                incCounter(Counter.UNKNOWN, value);
+                break;
+            case GENERATED:
+                incCounter(Counter.GENERATED, value);
+                break;
+        }
     }
 
     /**
@@ -139,62 +195,54 @@ public class ClaimStatistic {
     }
 
     /**
-     * Gets the count of unique license categories detected.
-     * @return The count of unique license categories detected.
+     * Gets the counts for the license name.
+     * @param licenseName the license name to get the count for.
+     * @return the number of times the license family category was seen.
      */
-    public int getLicenseCategoryCount() {
-        return licenseFamilyCategoryMap.size();
+    public int getLicenseNameCount(final String licenseName) {
+        return getValue(licenseNameMap.get(licenseName));
     }
 
+    private IntCounter updateCounter(Counter counter, IntCounter oldCounter, int value) {
+        if (oldCounter == null) {
+                incCounter(counter, 1);
+                return new IntCounter().increment(value);
+            } else {
+                return oldCounter.increment(value);
+            }
+    }
     /**
      * Increments the number of times a license family category was seen.
      * @param licenseFamilyCategory the License family category to increment.
      * @param value the value to increment the count by.
      */
     public void incLicenseCategoryCount(final String licenseFamilyCategory, final int value) {
-        licenseFamilyCategoryMap.compute(licenseFamilyCategory, (k, v) -> v == null ? new IntCounter().increment(value) : v.increment(value));
+        licenseFamilyCategoryMap.compute(licenseFamilyCategory, (k, v) -> updateCounter(Counter.LICENSE_CATEGORIES, v, value));
     }
 
     /**
      * Gets the set of license family categories that were seen.
      * @return A set of license family categories.
      */
-    public Set<String> getLicenseFamilyCategories() {
-        return Collections.unmodifiableSet(licenseFamilyCategoryMap.keySet());
+    public List<String> getLicenseFamilyCategories() {
+        List<String> result = new ArrayList<>(licenseFamilyCategoryMap.keySet());
+        result.sort(String::compareTo);
+        return result;
     }
 
-    /**
-     * Gets the set of license family names that were seen.
-     * @return a Set of license family names that were seen.
-     */
-    public Set<String> getLicenseFamilyNames() {
-        return Collections.unmodifiableSet(licenseFamilyNameMap.keySet());
-    }
-
-    /**
-     * Retrieves the number of times a license family name was seen.
-     * @param licenseFilename the license family name to look for.
-     * @return the number of times the license family name was seen.
-     */
-    public int getLicenseFamilyNameCount(final String licenseFilename) {
-        return getValue(licenseFamilyNameMap.get(licenseFilename));
-    }
-
-    /**
-     * Retrieves the number of unique license family names was seen.
-     * @return The number of unique license family names was seen.
-     */
-    public int getLicenseFamilyNameCount() {
-        return licenseFamilyNameMap.size();
+    public List<String> getLicenseNames() {
+        List<String> result = new ArrayList<>(licenseNameMap.keySet());
+        result.sort(String::compareTo);
+        return result;
     }
 
     /**
      * Increments the license family name count.
-     * @param licenseFamilyName the license family name to increment.
+     * @param licenseName the license name to increment.
      * @param value the value to increment the count by.
      */
-    public void incLicenseFamilyNameCount(final String licenseFamilyName, final int value) {
-        licenseFamilyNameMap.compute(licenseFamilyName, (k, v) -> v == null ? new IntCounter().increment(value) : v.increment(value));
+    public void incLicenseNameCount(final String licenseName, final int value) {
+        licenseNameMap.compute(licenseName, (k, v) -> updateCounter(Counter.LICENSE_NAMES, v, value));
     }
 
     /**

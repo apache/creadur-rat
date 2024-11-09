@@ -100,6 +100,7 @@ public abstract class AbstractOptionsProvider {
         testMap.put("config", this::configTest);
         testMap.put("configuration-no-defaults", this::configurationNoDefaultsTest);
         testMap.put("copyright", this::copyrightTest);
+        testMap.put("counter-min", this::counterMinTest);
         testMap.put("counter-max", this::counterMaxTest);
         testMap.put("dir", () -> DefaultLog.getInstance().info("--dir has no valid test"));
         testMap.put("dry-run", this::dryRunTest);
@@ -487,17 +488,39 @@ public abstract class AbstractOptionsProvider {
 
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
-            assertEquals(0, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
             args[0] = "Unapproved:-1";
             args[1] = "generated:1";
             config = generateConfig(ImmutablePair.of(option, args));
-            assertEquals(Integer.MAX_VALUE, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(1, config.getClaimValidator().get(ClaimStatistic.Counter.GENERATED));
+            assertEquals(Integer.MAX_VALUE, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(1, config.getClaimValidator().getMax(ClaimStatistic.Counter.GENERATED));
             args[1] = "unapproved:5";
             args[0] = "generated:0";
             config = generateConfig(ImmutablePair.of(option, args));
-            assertEquals(5, config.getClaimValidator().get(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(0, config.getClaimValidator().get(ClaimStatistic.Counter.GENERATED));
+            assertEquals(5, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.GENERATED));
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    protected void counterMinTest() {
+        Option option = Arg.COUNTER_MIN.option();
+        String[] args = {null, null};
+
+        try {
+            ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
+            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
+            args[0] = "Unapproved:1";
+            args[1] = "generated:1";
+            config = generateConfig(ImmutablePair.of(option, args));
+            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.GENERATED));
+            args[1] = "unapproved:5";
+            args[0] = "generated:0";
+            config = generateConfig(ImmutablePair.of(option, args));
+            assertEquals(5, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.GENERATED));
         } catch (IOException e) {
             fail(e.getMessage());
         }

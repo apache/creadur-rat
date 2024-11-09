@@ -18,14 +18,21 @@
  */
 package org.apache.rat.config.results;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,35 +45,54 @@ public class ClaimValidatorTest {
        assertFalse(validator.hasErrors());
        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
            int expected = counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue();
-           assertEquals(expected, validator.get(counter), () -> format("'%s' value is invalid", counter));
-           assertTrue(validator.isValid(counter, expected));
+           assertEquals(expected, validator.getMax(counter), () -> format("Max value '%s' is invalid", counter));
+           assertEquals(counter.getDefaultMinValue(), validator.getMin(counter), () -> format("Min value '%s' is invalid", counter));
+           assertTrue(validator.isValid(counter, expected), () -> format("max value (%s) should not be invalid", expected));
+           assertTrue(validator.isValid(counter, counter.getDefaultMinValue()), () -> format("min value (%s) should not be invalid",
+                   counter.getDefaultMinValue()));
        }
     }
 
     @Test
-    public void setTest() {
+    public void setMaxTest() {
         ClaimValidator validator = new ClaimValidator();
         int expected = 5;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            validator.set(counter, expected);
-            assertEquals(expected, validator.get(counter), () -> format("'%s' value is invalid", counter));
+            validator.setMax(counter, expected);
+            assertEquals(expected, validator.getMax(counter), () -> format("'%s' value is invalid", counter));
             assertTrue(validator.isValid(counter, expected));
         }
         expected = Integer.MAX_VALUE;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            validator.set(counter, -1);
-            assertEquals(expected, validator.get(counter), () -> format("'%s' value is invalid", counter));
+            validator.setMax(counter, -1);
+            assertEquals(expected, validator.getMax(counter), () -> format("'%s' value is invalid", counter));
             assertTrue(validator.isValid(counter, expected));
         }
     }
 
+    @Test
+    public void setMinTest() {
+        ClaimValidator validator = new ClaimValidator();
+        int expected = 5;
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            validator.setMin(counter, expected);
+            assertEquals(expected, validator.getMin(counter), () -> format("'%s' value is invalid", counter));
+            assertTrue(validator.isValid(counter, expected));
+        }
+        expected = Integer.MAX_VALUE;
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            validator.setMax(counter, -1);
+            assertEquals(expected, validator.getMax(counter), () -> format("'%s' value is invalid", counter));
+            assertTrue(validator.isValid(counter, expected));
+        }
+    }
     @Test
     public void isValidTest() {
         int expected = 5;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             ClaimValidator validator = new ClaimValidator();
             assertFalse(validator.hasErrors());
-            validator.set(counter, expected);
+            validator.setMax(counter, expected);
             assertTrue(validator.isValid(counter, expected), () -> format("error with %s expected", counter)) ;
             assertFalse(validator.hasErrors(), () -> format("error with %s, counter", counter)) ;
             assertTrue(validator.isValid(counter, expected - 1), () -> format("error with %s -1", counter)) ;
@@ -76,23 +102,40 @@ public class ClaimValidatorTest {
         }
     }
 
+    private List<ClaimStatistic.Counter> getRequiredCounters() {
+        return Arrays.stream(ClaimStatistic.Counter.values())
+                .filter(c -> c.getDefaultMinValue() > 0)
+                .collect(Collectors.toList());
+    }
+
     @Test
     public void logIssuesTest() {
         ClaimStatistic statistic = new ClaimStatistic();
         TestingLog log = new TestingLog();
         try {
             DefaultLog.setInstance(log);
+            Map<ClaimStatistic.Counter, String> required = new HashMap<>();
+            getRequiredCounters().forEach(counter ->
+                    required.put(counter, format("ERROR: Unexpected count for %s, limit is [%s,%s].  Count: 0",
+                            counter, counter.getDefaultMinValue(),
+                            counter.getDefaultMaxValue() == -1 ? Integer.MAX_VALUE : counter.getDefaultMaxValue())));
 
             int expected = 5;
             for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
                 ClaimValidator validator = new ClaimValidator();
-                validator.set(counter, expected);
+                validator.setMax(counter, expected);
                 statistic.incCounter(counter, expected);
                 validator.logIssues(statistic);
-                assertTrue(log.getCaptured().isEmpty());
+                assertFalse(log.getCaptured().isEmpty());
+                required.entrySet().stream().filter(e -> e.getKey() != counter)
+                        .map(Map.Entry::getValue).forEach(log::assertContains);
+                if (required.entrySet().contains(counter)) {
+                    log.assertNotContains(required.get(counter));
+                }
                 statistic.incCounter(counter, 1);
                 validator.logIssues(statistic);
-                String expectedStr = format("ERROR: Unexpected count for %s, limit is 5.  Count: 6", counter);
+                String expectedStr = format("ERROR: Unexpected count for %s, limit is [%s,5].  Count: 6", counter,
+                        counter.getDefaultMinValue());
                 log.assertContains(expectedStr);
                 log.clear();
                 statistic.incCounter(counter, -1 - expected);
@@ -105,19 +148,23 @@ public class ClaimValidatorTest {
     @Test
     public void listIssuesTest() {
         ClaimStatistic statistic = new ClaimStatistic();
+        List<String> required = getRequiredCounters().stream().map(ClaimStatistic.Counter::name).collect(Collectors.toList());
 
-        int expected = 5;
+        int value = 5;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            List<String> expected = new ArrayList<>(required);
+            expected.remove(counter.name());
             ClaimValidator validator = new ClaimValidator();
-            validator.set(counter, expected);
-            statistic.incCounter(counter, expected);
+            validator.setMax(counter, value);
+            statistic.incCounter(counter, value);
             Collection<String> actual = validator.listIssues(statistic);
-            assertTrue(actual.isEmpty());
+            assertEquals(expected, actual);
             statistic.incCounter(counter, 1);
+            expected.add(counter.name());
+            expected.sort(String::compareTo);
             actual = validator.listIssues(statistic);
-            Collection<String> expectedCollection = Collections.singletonList(counter.name());
-            assertEquals(expectedCollection, actual);
-            statistic.incCounter(counter, -1 - expected);
+            assertEquals(expected, actual);
+            statistic.incCounter(counter, -1 - value);
         }
     }
 }

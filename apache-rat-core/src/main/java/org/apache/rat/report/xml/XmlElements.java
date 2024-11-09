@@ -52,7 +52,15 @@ public class XmlElements {
         /** A sample from the file */
         SAMPLE("sample"),
         /** A statistics element */
-        STATISTICS("statistics");
+        STATISTICS("statistics"),
+        /** A statistic entry */
+        STATISTIC("statistic"),
+        /** A license name entry */
+        LICENSE_NAME("licenseName"),
+        /** A license category entry */
+        LICENSE_CATEGORY("licenseCategory"),
+        /** A document type entry */
+        DOCUMENT_TYPE("documentType");
 
         /** The XML name for the element */
         private String elementName;
@@ -97,7 +105,10 @@ public class XmlElements {
         /** THe name */
         NAME,
         /** A counter */
-        COUNT };
+        COUNT,
+        /** A description */
+        DESCRIPTION
+    };
 
     /** The XMLWriter that we write to */
     private final IXmlWriter writer;
@@ -196,18 +207,71 @@ public class XmlElements {
     }
 
     /**
-     * Creates a statistices element.  Closes the element before returning.
+     * Creates a statistices element.
+     * @return this
+     * @throws RatException on error.
+     */
+    public XmlElements statistics() throws RatException {
+        return write(Elements.STATISTICS);
+    }
+
+    /**
+     * Creates a statistic element.  Closes the element before returning.
      * @param name the name of the statistics element.
      * @param count the count for the element.
+     * @param description description of this statistic.
      * @param isOk if {@code} true the count is within limits.
      * @return this
      * @throws RatException on error.
      */
-    public XmlElements statistics(final String name, final int count, final boolean isOk) throws RatException {
-        return write(Elements.STATISTICS)
+    public XmlElements statistic(final String name, final int count, String description, final boolean isOk) throws RatException {
+        return write(Elements.STATISTIC)
                 .write(Attributes.NAME, name)
                 .write(Attributes.COUNT, Integer.toString(count))
                 .write(Attributes.APPROVAL, Boolean.toString(isOk))
+                .write(Attributes.DESCRIPTION, description)
+                .closeElement();
+    }
+
+    /**
+     * Creates a statistic element.  Closes the element before returning.
+     * @param name the name of the statistics element.
+     * @param count the count for the element.
+     * @return this
+     * @throws RatException on error.
+     */
+    public XmlElements licenseCategory(final String name, final int count) throws RatException {
+        return write(Elements.LICENSE_CATEGORY)
+                .write(Attributes.NAME, name)
+                .write(Attributes.COUNT, Integer.toString(count))
+                .closeElement();
+    }
+
+    /**
+     * Creates a statistic element.  Closes the element before returning.
+     * @param name the name of the statistics element.
+     * @param count the count for the element.
+     * @return this
+     * @throws RatException on error.
+     */
+    public XmlElements licenseName(final String name, final int count) throws RatException {
+        return write(Elements.LICENSE_NAME)
+                .write(Attributes.NAME, name)
+                .write(Attributes.COUNT, Integer.toString(count))
+                .closeElement();
+    }
+
+    /**
+     * Creates a statistic element.  Closes the element before returning.
+     * @param name the name of the statistics element.
+     * @param count the count for the element.
+     * @return this
+     * @throws RatException on error.
+     */
+    public XmlElements documentType(final String name, final int count) throws RatException {
+        return write(Elements.DOCUMENT_TYPE)
+                .write(Attributes.NAME, name)
+                .write(Attributes.COUNT, Integer.toString(count))
                 .closeElement();
     }
 

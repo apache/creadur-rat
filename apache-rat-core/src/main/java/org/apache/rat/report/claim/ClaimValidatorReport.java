@@ -19,6 +19,7 @@
 package org.apache.rat.report.claim;
 
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.report.RatReport;
@@ -56,9 +57,21 @@ public class ClaimValidatorReport implements RatReport {
 
     @Override
     public void endReport() throws RatException {
+        elements.statistics();
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             int count = statistic.getCounter(counter);
-            elements.statistics(counter.name(), count, validator.isValid(counter, count));
+            elements.statistic(counter.displayName(), count, counter.getDescription(), validator.isValid(counter, count));
         }
+        for (String category : statistic.getLicenseFamilyCategories()) {
+            elements.licenseCategory(category, statistic.getLicenseCategoryCount(category));
+        }
+        for (String category : statistic.getLicenseNames()) {
+            elements.licenseName(category, statistic.getLicenseNameCount(category));
+        }
+        for (Document.Type type : statistic.getDocumentTypes()) {
+            elements.documentType(type.name(), statistic.getCounter(type));
+        }
+
+        elements.closeElement();
     }
 }

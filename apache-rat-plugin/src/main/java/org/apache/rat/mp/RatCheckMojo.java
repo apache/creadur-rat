@@ -158,7 +158,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         ReportConfiguration result = super.getConfiguration();
         if (numUnapprovedLicenses > 0) {
-            result.getClaimValidator().set(ClaimStatistic.Counter.UNAPPROVED, numUnapprovedLicenses);
+            result.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, numUnapprovedLicenses);
         }
         return result;
     }
