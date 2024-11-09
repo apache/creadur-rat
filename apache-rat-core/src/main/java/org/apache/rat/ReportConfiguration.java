@@ -728,8 +728,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * Sets the acceptable maximum number of unapproved licenses.
-     * @return The acceptable maximum number of unapproved licenses.
+     * Gets the ClaimValidator for.
+     * @return The ClaimValidator.
      */
     public ClaimValidator getClaimValidator() {
         return claimValidator;
