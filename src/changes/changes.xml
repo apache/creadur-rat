@@ -142,6 +142,9 @@ The <action> type attribute can be one of:
       <action issue="RAT-390" type="add" dev="claudenw">
         Move and reimplement exclusion configuration from Maven plugin to RAT core. ExclusionProcessor is the central place to handle file inclusions and exclusions now.
       </action>
+      <action issue="RAT-240" type="fix" dev="claudenw">
+        Exclusions can be configured as a full path (due to the newly written ignore engine as of RAT-390).
+      </action>
       <action issue="RAT-383" type="add" dev="claudenw">
         As part of the usage the harmonization generation of Ant documentation was added.
       </action>
