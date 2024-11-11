@@ -19,8 +19,11 @@
 package org.apache.rat;
 
 import org.apache.commons.cli.Options;
+import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.help.Help;
 import org.apache.rat.utils.DefaultLog;
+
+import static java.lang.String.format;
 
 /**
  * The CLI based configuration object for report generation.
@@ -45,7 +48,9 @@ public final class Report {
 
             if (configuration.getClaimValidator().hasErrors()) {
                 configuration.getClaimValidator().logIssues(reporter.getClaimsStatistic());
-                System.exit(1);
+                throw new RatDocumentAnalysisException(format("Issues with %s",
+                        String.join(", ",
+                                configuration.getClaimValidator().listIssues(reporter.getClaimsStatistic()))));
             }
         }
     }

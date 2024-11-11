@@ -53,6 +53,7 @@
             <excludes>
               <!-- These files have bad license headers because they are used to test bad license headers -->
               <exclude>src/test/resources/**</exclude>
+              <exclude>src/it/resources/ReportTest/**</exclude>
               <!-- this has a Apache-1.0 license which is not recognized -->
               <excludes>**/org/apache/rat/config/exclusion/plexus/SelectorUtils.java</excludes>
             </excludes>
@@ -99,6 +100,41 @@
         <configuration>
           <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-integration-test-source</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/it/java</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-integration-test-resources</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/it/resources</directory>
+                  <excludes>
+                    <exclude>notes.md</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -159,6 +195,12 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
+    </dependency>
+    <dependency>
+      <!-- this dependency is actually used by integeration testing code -->
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

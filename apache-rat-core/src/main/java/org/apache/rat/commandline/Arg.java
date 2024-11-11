@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -316,6 +317,7 @@ public enum Arg {
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Parse SCM based exclusion files to exclude specified files and directories.")
+                    .type(StandardCollection.class)
                     .build())
     ),
 
@@ -675,12 +677,15 @@ public enum Arg {
                 }
             }
             if (EXCLUDE_PARSE_SCM.isSelected()) {
-                for (String s : context.getCommandLine().getOptionValues(EXCLUDE_PARSE_SCM.getSelected())) {
-                    StandardCollection sc = StandardCollection.valueOf(s);
-                    if (sc == StandardCollection.ALL) {
-                        Arrays.asList(StandardCollection.values()).forEach(c -> context.getConfiguration().addExcludedFileProcessor(c));
+                StandardCollection[] collections = EXCLUDE_PARSE_SCM.getParsedOptionValues(context.getCommandLine());
+                final ReportConfiguration configuration = context.getConfiguration();
+                for (StandardCollection collection : collections) {
+                    if (collection == StandardCollection.ALL) {
+                        Arrays.asList(StandardCollection.values()).forEach(configuration::addExcludedFileProcessor);
+                        Arrays.asList(StandardCollection.values()).forEach(configuration::addExcludedCollection);
                     } else {
-                        context.getConfiguration().addExcludedFileProcessor(StandardCollection.valueOf(s));
+                        configuration.addExcludedFileProcessor(collection);
+                        configuration.addExcludedCollection(collection);
                     }
                 }
             }
@@ -878,6 +883,33 @@ public enum Arg {
             }
         }
         return null;
+    }
+
+    private <T> T getParsedOptionValue(final CommandLine commandLine) throws ParseException {
+        return commandLine.getParsedOptionValue(this.getSelected());
+    }
+
+    private String getOptionValue(final CommandLine commandLine) {
+        return commandLine.getOptionValue(this.getSelected());
+    }
+
+    private String[] getOptionValues(final CommandLine commandLine) {
+        return commandLine.getOptionValues(this.getSelected());
+    }
+
+    private <T> T[] getParsedOptionValues(final CommandLine commandLine)  {
+        Option option = getSelected();
+        Class<? extends T> clazz = (Class<? extends T>) option.getType();
+        String[] values = getOptionValues(commandLine);
+        T[] result = (T[]) Array.newInstance(clazz, values.length);
+        try {
+            for (int i = 0; i < values.length; i++) {
+                result[i] = clazz.cast(option.getConverter().apply(values[i]));
+            }
+            return result;
+        } catch (Throwable t) {
+            throw new ConfigurationException(format("'%s' converter for %s does not produce a class of tye %s", this, option, option.getType()));
+        }
     }
 
     /**

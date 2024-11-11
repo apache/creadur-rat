@@ -200,6 +200,12 @@ agnostic home for software distribution comprehension and audit tools.
         <artifactId>tika-core</artifactId>
         <version>2.9.2</version>
       </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.4.8</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <reporting>
@@ -547,6 +553,11 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.4.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.6.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
