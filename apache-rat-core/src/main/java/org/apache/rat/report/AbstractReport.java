@@ -24,7 +24,9 @@ import org.apache.rat.api.RatException;
 
 /**
  * Abstract base class for deriving implementations of {@link RatReport}.
+ * @deprecated use {@link RatReport} directly.
  */
+@Deprecated
 public abstract class AbstractReport implements RatReport {
     /**
      * Empty default implementation.

@@ -39,7 +39,14 @@ public final class Report {
         ReportConfiguration configuration = OptionCollection.parseCommands(args, Report::printUsage);
         if (configuration != null) {
             configuration.validate(DefaultLog.getInstance()::error);
-            new Reporter(configuration).output();
+            Reporter reporter = new Reporter(configuration);
+            reporter.output();
+            reporter.writeSummary(DefaultLog.getInstance().asWriter());
+
+            if (configuration.getClaimValidator().hasErrors()) {
+                configuration.getClaimValidator().logIssues(reporter.getClaimsStatistic());
+                System.exit(1);
+            }
         }
     }
 

@@ -18,7 +18,10 @@
  */
 package org.apache.rat;
 
+import static org.apache.commons.io.FileUtils.getFile;
+import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -28,6 +31,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -40,6 +50,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
@@ -49,6 +60,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Tests the output of the Reporter.
@@ -65,24 +77,24 @@ public class ReporterTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[] { "-o", output.getCanonicalPath()});
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath()});
         ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
         new Reporter(config).output();
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
-        assertTrue(content.contains("2 Unknown Licenses"));
+        TextUtils.assertPatternInTarget("^Unapproved:\\s*2 ", content);
         assertTrue(content.contains("/Source.java"));
         assertTrue(content.contains("/sub/Empty.txt"));
     }
 
     @Test
     public void testDefaultOutput() throws Exception {
-        File output = new File(tempDirectory,"sysout");
+        File output = new File(tempDirectory, "sysout");
         output.delete();
         PrintStream origin = System.out;
-        try (PrintStream out = new PrintStream(output)){
+        try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
-            CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[] {});
+            CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{});
             ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
             new Reporter(config).output();
         } finally {
@@ -90,35 +102,16 @@ public class ReporterTest {
         }
         assertTrue(output.exists());
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
-        TextUtils.assertPatternInTarget("Notes: 2$", content);
-        TextUtils.assertPatternInTarget("Binaries: 2$", content);
-        TextUtils.assertPatternInTarget("Archives: 1$", content);
-        TextUtils.assertPatternInTarget("Standards: 8$", content);
-        TextUtils.assertPatternInTarget("Apache Licensed: 5$", content);
-        TextUtils.assertPatternInTarget("Generated Documents: 1$", content);
-        TextUtils.assertPatternInTarget("^2 Unknown Licenses", content);
-        assertTrue(content.contains(" S /ILoggerFactory.java"), () -> " S /ILoggerFactory.java");
-        assertTrue(content.contains(" B /Image.png"), () -> " B /Image.png");
-        assertTrue(content.contains(" N /LICENSE"), () -> " N /LICENSE");
-        assertTrue(content.contains(" N /NOTICE"), () -> " N /NOTICE");
-        assertTrue(content.contains("!S /Source.java"), () -> "!S /Source.java");
-        assertTrue(content.contains(" S /Text.txt"), () -> " S /Text.txt");
-        assertTrue(content.contains(" S /TextHttps.txt"), () -> " S /TextHttps.txt");
-        assertTrue(content.contains(" S /Xml.xml"), () -> " S /Xml.xml");
-        assertTrue(content.contains(" S /buildr.rb"), () -> " S /buildr.rb");
-        assertTrue(content.contains(" A /dummy.jar"), () -> " A /dummy.jar");
-        assertTrue(content.contains("!S /sub/Empty.txt"), () -> "!S /sub/Empty.txt");
-        assertTrue(content.contains(" S /tri.txt"), () -> " S /tri.txt");
-        assertTrue(content.contains(" G /generated.txt"), () -> " G /generated.txt");
+        verifyStandardContent(content);
     }
 
     @Test
     public void testXMLOutput() throws Exception {
-        File output = new File(tempDirectory,"sysout");
+        File output = new File(tempDirectory, "sysout");
         output.delete();
         PrintStream origin = System.out;
 
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[] { "--output-style", "xml", "--output-file", output.getPath() });
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
         ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
         new Reporter(config).output();
 
@@ -173,10 +166,11 @@ public class ReporterTest {
                 "/rat-report/resource[@name='/Source.java']/sample");
         assertEquals(1, nodeList.getLength());
     }
+
     /**
      * Finds a node via xpath on the document. And then checks family, approval and
      * type of elements of the node.
-     * 
+     *
      * @param doc The document to check/
      * @param xpath the XPath instance to use.
      * @param resource the xpath statement to locate the node.
@@ -186,7 +180,7 @@ public class ReporterTest {
      * @throws Exception on XPath error.
      */
     private static void checkNode(Document doc, XPath xpath, String resource, LicenseInfo licenseInfo, String type,
-            boolean hasSample) throws Exception {
+                                  boolean hasSample) throws Exception {
         XmlUtils.getNode(doc, xpath, String.format("/rat-report/resource[@name='%s'][@type='%s']", resource, type));
         if (licenseInfo != null) {
             XmlUtils.getNode(doc, xpath,
@@ -218,10 +212,71 @@ public class ReporterTest {
         return configuration;
     }
 
+    private void verifyStandardContent(String document) {
+        TextUtils.assertPatternInTarget("^Notices:\\s*2 ", document);
+        TextUtils.assertPatternInTarget("^Binaries:\\s*2 ", document);
+        TextUtils.assertPatternInTarget("^Archives:\\s*1 ", document);
+        TextUtils.assertPatternInTarget("^Standards:\\s*8 ", document);
+        TextUtils.assertPatternInTarget("^Generated:\\s*1 ", document);
+        TextUtils.assertPatternInTarget("^Unapproved:\\s*2 ", document);
+        TextUtils.assertPatternInTarget("^Unknown:\\s*2 ", document);
+
+        TextUtils.assertPatternInTarget("^Apache License Version 2.0: 5 ", document);
+        TextUtils.assertPatternInTarget("^BSD 3 clause: 1 ", document);
+        TextUtils.assertPatternInTarget("^Generated Files: 1 ", document);
+        TextUtils.assertPatternInTarget("^The MIT License: 1 ", document);
+        TextUtils.assertPatternInTarget("^The Telemanagement Forum License: 1 ", document);
+        TextUtils.assertPatternInTarget("^Unknown license: 2 ", document);
+
+        TextUtils.assertPatternInTarget("^\\Q?????\\E: 2 ", document);
+        TextUtils.assertPatternInTarget("^AL   : 5 ", document);
+        TextUtils.assertPatternInTarget("^BSD-3: 2 ", document);
+        TextUtils.assertPatternInTarget("^GEN  : 1 ", document);
+        TextUtils.assertPatternInTarget("^MIT  : 1 ", document);
+
+        TextUtils.assertPatternInTarget(
+                "^Files with unapproved licenses:\\s+" //
+                        + "\\Q/Source.java\\E\\s+" //
+                        + "\\Q/sub/Empty.txt\\E\\s",
+                document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.ARCHIVE, "/dummy.jar"),
+                document);
+        TextUtils.assertPatternInTarget(
+                ReporterTestUtils.documentOut(true, Type.STANDARD, "/ILoggerFactory.java")
+                        + ReporterTestUtils.licenseOut("MIT", "The MIT License"),
+                document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.BINARY, "/Image.png"),
+                document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.NOTICE, "/LICENSE"),
+                document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.NOTICE, "/NOTICE"), document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(false, Type.STANDARD, "/Source.java")
+                + ReporterTestUtils.UNKNOWN_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/Text.txt")
+                + ReporterTestUtils.APACHE_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/Xml.xml")
+                + ReporterTestUtils.APACHE_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/buildr.rb")
+                + ReporterTestUtils.APACHE_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/TextHttps.txt")
+                + ReporterTestUtils.APACHE_LICENSE, document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/tri.txt")
+                + ReporterTestUtils.APACHE_LICENSE + ReporterTestUtils.licenseOut("BSD-3", "BSD 3 clause")
+                + ReporterTestUtils.licenseOut("BSD-3", "TMF", "The Telemanagement Forum License"), document);
+        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(false, Type.STANDARD, "/sub/Empty.txt")
+                + ReporterTestUtils.UNKNOWN_LICENSE, document);
+    }
+
+    private Validator initValidator() throws SAXException {
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Source schemaFile = new StreamSource(Reporter.class.getResourceAsStream("/org/apache/rat/rat-report.xsd"));
+        Schema schema = factory.newSchema(schemaFile);
+        return schema.newValidator();
+    }
+
     @Test
     public void xmlReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
 
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
@@ -257,13 +312,19 @@ public class ReporterTest {
                 "GENERATED", false);
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
         assertEquals(14, nodeList.getLength());
+        Validator validator = initValidator();
+        try {
+            validator.validate(new DOMSource(doc));
+        } catch (SAXException e) {
+            fail("Missing properties?", e);
+        }
     }
 
     private static final String NL = System.lineSeparator();
     private static final String PARAGRAPH = "*****************************************************";
     private static final String HEADER = NL + PARAGRAPH + NL + //
             "Summary" + NL + //
-            "-------" + NL + //
+            PARAGRAPH + NL + //
             "Generated at: ";
 
     @Test
@@ -279,48 +340,11 @@ public class ReporterTest {
         TextUtils.assertNotContains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", document);
         assertTrue(document.startsWith(HEADER), "'Generated at' is not present in " + document);
 
-        TextUtils.assertPatternInTarget("^Notes: 2$", document);
-        TextUtils.assertPatternInTarget("^Binaries: 2$", document);
-        TextUtils.assertPatternInTarget("^Archives: 1$", document);
-        TextUtils.assertPatternInTarget("^Standards: 8$", document);
-        TextUtils.assertPatternInTarget("^Apache Licensed: 5$", document);
-        TextUtils.assertPatternInTarget("^Generated Documents: 1$", document);
-        TextUtils.assertPatternInTarget("^2 Unknown Licenses$", document);
-        TextUtils.assertPatternInTarget(
-                "^Files with unapproved licenses:\\s+" //
-                        + "\\Q/Source.java\\E\\s+" //
-                        + "\\Q/sub/Empty.txt\\E\\s",
-                document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.ARCHIVE, "/dummy.jar"),
-                document);
-        TextUtils.assertPatternInTarget(
-                ReporterTestUtils.documentOut(true, Type.STANDARD, "/ILoggerFactory.java")
-                        + ReporterTestUtils.licenseOut("MIT", "The MIT License"),
-                document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.BINARY, "/Image.png"),
-                document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.NOTICE, "/LICENSE"),
-                document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.NOTICE, "/NOTICE"), document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(false, Type.STANDARD, "/Source.java")
-                + ReporterTestUtils.UNKNOWN_LICENSE, document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/Text.txt")
-                + ReporterTestUtils.APACHE_LICENSE, document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/Xml.xml")
-                + ReporterTestUtils.APACHE_LICENSE, document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/buildr.rb")
-                + ReporterTestUtils.APACHE_LICENSE, document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/TextHttps.txt")
-                + ReporterTestUtils.APACHE_LICENSE, document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(true, Type.STANDARD, "/tri.txt")
-                + ReporterTestUtils.APACHE_LICENSE + ReporterTestUtils.licenseOut("BSD-3", "BSD 3 clause")
-                + ReporterTestUtils.licenseOut("BSD-3", "TMF", "The Telemanagement Forum License"), document);
-        TextUtils.assertPatternInTarget(ReporterTestUtils.documentOut(false, Type.STANDARD, "/sub/Empty.txt")
-                + ReporterTestUtils.UNKNOWN_LICENSE, document);
+        verifyStandardContent(document);
     }
 
     @Test
-    public void UnapprovedLicensesReportTest() throws Exception {
+    public void unapprovedLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(() -> out);
@@ -330,10 +354,25 @@ public class ReporterTest {
         out.flush();
         String document = out.toString();
 
-        assertTrue(document.startsWith("Generated at: "), "'Generated at' is not present in " + document);
-
+        TextUtils.assertContains("Generated at: ", document );
         TextUtils.assertPatternInTarget("\\Q/Source.java\\E$", document);
         TextUtils.assertPatternInTarget("\\Q/sub/Empty.txt\\E", document);
+    }
+
+    @Test
+    public void counterMaxTest() throws Exception {
+        ReportConfiguration config = initializeConfiguration();
+        Reporter reporter = new Reporter(config);
+        reporter.output();
+        assertTrue(config.getClaimValidator().hasErrors());
+        assertFalse(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)));
+
+        config = initializeConfiguration();
+        config.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, 2);
+        reporter = new Reporter(config);
+        reporter.output();
+        assertFalse(config.getClaimValidator().hasErrors());
+        assertTrue(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)));
     }
 
     private static class LicenseInfo {

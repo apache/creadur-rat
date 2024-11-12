@@ -41,6 +41,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentNameMatcherSupplier;
@@ -144,7 +145,10 @@ public class ReportConfiguration {
      * How to process STANDARD document types.
      */
     private Processing standardProcessing;
-
+    /**
+     * The ClaimValidator to validate min/max counts and similar claims.
+     */
+    private final ClaimValidator claimValidator;
     /**
      * Constructor
      */
@@ -154,6 +158,7 @@ public class ReportConfiguration {
         listLicenses = Defaults.LIST_LICENSES;
         dryRun = false;
         exclusionProcessor = new ExclusionProcessor();
+        claimValidator = new ClaimValidator();
     }
 
     /**
@@ -720,6 +725,14 @@ public class ReportConfiguration {
      */
     public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
         return licenseSetFactory.getLicenseFamilies(filter);
+    }
+
+    /**
+     * Gets the ClaimValidator for the configuration.
+     * @return the ClaimValidator.
+     */
+    public ClaimValidator getClaimValidator() {
+        return claimValidator;
     }
 
     /**

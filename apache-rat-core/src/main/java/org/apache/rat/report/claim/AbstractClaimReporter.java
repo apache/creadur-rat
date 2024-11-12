@@ -22,15 +22,15 @@ package org.apache.rat.report.claim;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.report.AbstractReport;
+import org.apache.rat.report.RatReport;
 
 
 /**
- * Abstract base implementation of {@link AbstractReport}.
+ * Abstract base implementation of {@link RatReport}.
  * It is strongly suggested, that implementations derive from
  * this class.
  */
-public abstract class AbstractClaimReporter extends AbstractReport {
+public abstract class AbstractClaimReporter implements RatReport {
     /**
      * Increment the document type counter.
      * The default implementations does nothing.

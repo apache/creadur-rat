@@ -19,46 +19,55 @@
 -->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:variable name='newline'><xsl:text>&#xa;</xsl:text></xsl:variable>
+
 <xsl:output method='text'/>
 <xsl:template match='/'>
 *****************************************************
 Summary
--------
+*****************************************************
 Generated at: <xsl:value-of select='rat-report/@timestamp'/>
 
-Notes: <xsl:value-of select='count(descendant::resource[attribute::type="NOTICE"])'/>
-Binaries: <xsl:value-of select='count(descendant::resource[attribute::type="BINARY"])'/>
-Archives: <xsl:value-of select='count(descendant::resource[attribute::type="ARCHIVE"])'/>
-Standards: <xsl:value-of select='count(descendant::resource[attribute::type="STANDARD"])'/>
+Counters:
+    <xsl:for-each select='descendant::statistic'>
+            <xsl:value-of select='concat($newline, substring(concat(@name, ":                  "), 1, 20),
+            @count)' />
+            <xsl:if test='@approval="false"'> (Exceeded limits)</xsl:if>
+            <xsl:value-of select='concat("    ", @description)' />
+    </xsl:for-each>
 
-Apache Licensed: <xsl:value-of select='count(descendant::license[attribute::family="AL   "])'/>
-Generated Documents: <xsl:value-of select='count(descendant::resource[attribute::type="GENERATED"])'/>
 
-JavaDocs are generated, thus a license header is optional.
-Generated files do not require license headers.
+Licenses detected:
+    <xsl:for-each select='descendant::licenseName'>
+    <xsl:value-of select='concat($newline, @name, ": ", @count, " ")' />
+    </xsl:for-each>
 
-<xsl:value-of select='count(descendant::license[attribute::family="?????"])'/> Unknown Licenses
+License Categories detected:
+    <xsl:for-each select='descendant::licenseCategory'>
+        <xsl:value-of select='concat($newline, @name, ": ", @count, " ")' />
+    </xsl:for-each>
+
+Document Types detected:
+    <xsl:for-each select='descendant::documentType'>
+        <xsl:value-of select='concat($newline, @name, ": ", @count, " ")' />
+    </xsl:for-each>
+
 <xsl:if test="descendant::resource[license/@approval='false']">
+
 *****************************************************
 
 Files with unapproved licenses:
 
 <xsl:for-each select='descendant::resource[license/@approval="false"]'>
-  <xsl:text>  </xsl:text>
-  <xsl:value-of select='@name'/>
-  <xsl:text>
-</xsl:text>
+  <xsl:value-of select='concat("  ",@name, $newline)'/>
 </xsl:for-each>
 *****************************************************
 </xsl:if>
 <xsl:if test="descendant::resource[@type='ARCHIVE']">
 Archives:
 <xsl:for-each select='descendant::resource[@type="ARCHIVE"]'>
-  <xsl:text>  </xsl:text>
-  <xsl:value-of select='@name'/>
-  <xsl:text>
-</xsl:text>
- </xsl:for-each>
+  <xsl:value-of select='concat(" ", @name, $newline)'/>
+</xsl:for-each>
 </xsl:if>
 <xsl:text>
 *****************************************************
@@ -76,27 +85,15 @@ Archives:
 </xsl:text>
  <xsl:for-each select='descendant::resource'>
   <xsl:choose>
-     <xsl:when test='license/@approval="false"'>!</xsl:when>
-     <xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise>
+     <xsl:when test='license/@approval="false"'><xsl:value-of select='concat($newline, "!")'/></xsl:when>
+     <xsl:otherwise><xsl:value-of select='concat($newline, " ")'/></xsl:otherwise>
    </xsl:choose>
-   <xsl:value-of select="substring(@type,1,1)"/><xsl:text> </xsl:text>
-   <xsl:value-of select='@name'/><xsl:text>
-</xsl:text>
+   <xsl:value-of select='concat(substring(@type, 1, 1), " ", @name)'/>
    <xsl:for-each select='descendant::license'>
-       <xsl:text>    </xsl:text>
-       <xsl:value-of select='substring(concat(@family, "     "),1,5)'/>
-       <xsl:text>    </xsl:text>
-       <xsl:value-of select='substring(concat(@id, "          "),1,10)'/>
-       <xsl:text>    </xsl:text>
-       <xsl:value-of select='@name'/>
-       <xsl:if test="@approval='false'">
-         <xsl:text> (Unapproved)</xsl:text>
-       </xsl:if>
-       <xsl:text>
-</xsl:text>
+       <xsl:value-of select='concat($newline, "    ", substring(concat(@family, "     "), 1, 5),
+        "    ", substring(concat(@id, "          "), 1,10), "    ", @name)'/>
+        <xsl:if test="@approval='false'"> (Unapproved)</xsl:if>
    </xsl:for-each>
-   <xsl:text>
-</xsl:text>
  </xsl:for-each>
 *****************************************************
 <xsl:if test="descendant::resource[/license/@id='?????']">

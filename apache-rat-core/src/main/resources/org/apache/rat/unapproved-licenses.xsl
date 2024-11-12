@@ -19,14 +19,13 @@
 -->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<xsl:output method='text'/>
-<xsl:template match='/'>Generated at: <xsl:value-of select='rat-report/@timestamp'/>
-Files with unapproved licenses:
-<xsl:for-each select='descendant::resource[license[@approval="false"]]'>
-  <xsl:text>  </xsl:text>
-  <xsl:value-of select='@name'/>
-  <xsl:text>
-</xsl:text>
-</xsl:for-each>
-</xsl:template>
+  <xsl:output method='text'/>
+  <xsl:variable name='newline'><xsl:text>&#xa;</xsl:text></xsl:variable>
+  <xsl:template match='/'>
+    <xsl:value-of select='concat("*****************************************************", $newline, "Generated at: ", rat-report/@timestamp,
+          $newline, $newline, "Files with unapproved licenses:" )' />
+    <xsl:for-each select='descendant::resource[license[@approval="false"]]'>
+      <xsl:value-of select='concat($newline, "  ", @name)' />
+    </xsl:for-each>
+  </xsl:template>
 </xsl:stylesheet>

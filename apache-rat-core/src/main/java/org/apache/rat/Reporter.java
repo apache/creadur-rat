@@ -75,10 +75,10 @@ public class Reporter {
     }
 
     /**
-     * Initializes the reporter.
+     * Executes the report and builds the output.
      * @throws RatException on error.
      */
-    private void init() throws RatException  {
+    private void exec() throws RatException  {
         if (document == null || statistic == null) {
             try {
                 if (configuration.getReportable() != null) {
@@ -130,7 +130,7 @@ public class Reporter {
      * @throws RatException one error.
      */
     public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
-        init();
+        exec();
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         try (OutputStream out = output.get();
@@ -160,6 +160,20 @@ public class Reporter {
                     .forEach(lic -> pw.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
                             lic.getLicenseFamily().getFamilyName(), lic.getNote()));
             pw.println();
+        }
+    }
+
+    /**
+     * Writes a summary of issues with the run.
+     * @param appendable the appendable to write to.
+     * @throws IOException on error.
+     */
+    public void writeSummary(final Appendable appendable) throws IOException {
+        appendable.append("Rat summary:").append(System.lineSeparator());
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            appendable.append("  ").append(counter.displayName()).append(":  ")
+                    .append(Integer.toString(getClaimsStatistic().getCounter(counter)))
+                    .append(System.lineSeparator());
         }
     }
 }

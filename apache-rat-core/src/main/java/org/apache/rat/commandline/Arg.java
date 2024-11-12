@@ -38,6 +38,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
@@ -45,6 +46,7 @@ import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.claim.ClaimStatistic.Counter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
@@ -199,6 +201,24 @@ public enum Arg {
             .desc("Name of file containing the denied license IDs.")
             .type(File.class)
             .converter(Converters.FILE_CONVERTER)
+            .build())),
+
+    /**
+     * Option to specify an acceptable number of various counters.
+     */
+    COUNTER_MAX(new OptionGroup().addOption(Option.builder().longOpt("counter-max").hasArgs().argName("CounterPattern")
+            .desc("The acceptable maximum number for the specified counter. A value of '-1' specifies an unlimited number.")
+            .converter(Converters.COUNTER_CONVERTER)
+            .type(Pair.class)
+            .build())),
+
+    /**
+     * Option to specify an acceptable number of various counters.
+     */
+    COUNTER_MIN(new OptionGroup().addOption(Option.builder().longOpt("counter-min").hasArgs().argName("CounterPattern")
+            .desc("The minimum number for the specified counter.")
+            .converter(Converters.COUNTER_CONVERTER)
+            .type(Pair.class)
             .build())),
 
 ////////////////// INPUT OPTIONS
@@ -361,7 +381,7 @@ public enum Arg {
      */
     LOG_LEVEL(new OptionGroup().addOption(Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
-            .desc("sets the log level.")
+            .desc("Sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build())),
 
@@ -607,6 +627,19 @@ public enum Arg {
                     }
                 } catch (IOException | ParseException e) {
                     throw new ConfigurationException(e);
+                }
+            }
+            if (COUNTER_MAX.isSelected()) {
+                for (String arg : context.getCommandLine().getOptionValues(COUNTER_MAX.getSelected())) {
+                    Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
+                    int limit = pair.getValue();
+                    context.getConfiguration().getClaimValidator().setMax(pair.getKey(), limit < 0 ? Integer.MAX_VALUE : limit);
+                }
+            }
+            if (COUNTER_MIN.isSelected()) {
+                for (String arg : context.getCommandLine().getOptionValues(COUNTER_MIN.getSelected())) {
+                    Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
+                    context.getConfiguration().getClaimValidator().setMin(pair.getKey(), pair.getValue());
                 }
             }
         } catch (Exception e) {

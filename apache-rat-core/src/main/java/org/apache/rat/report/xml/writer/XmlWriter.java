@@ -444,7 +444,7 @@ public final class XmlWriter implements IXmlWriter {
      *
      * @param elementName the name of the element, not null
      * @return this object
-     * @throws InvalidXmlException if the name is not valid for a xml element
+     * @throws InvalidXmlException if the name is not valid for an xml element
      * @throws OperationNotAllowedException if called after the first element has
      * been closed
      */
@@ -487,7 +487,7 @@ public final class XmlWriter implements IXmlWriter {
      * @param name the attribute name, not null
      * @param value the attribute value, not null
      * @return this object
-     * @throws InvalidXmlException if the name is not valid for a xml attribute or
+     * @throws InvalidXmlException if the name is not valid for an xml attribute or
      * if a value for the attribute has already been written
      * @throws OperationNotAllowedException if called after
      * {@link #content(CharSequence)} or {@link #closeElement()} or before any call

@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-399" type="add" dev="claudenw">
+        Moved the ignore code into apache-rat-core and provide more statistics in RAT report. Furthermore the CLI allows configuration of counter minimum and maximum values, e.g. maximum number of allowed unapproved licenses.
+      </action>
       <action issue="RAT-358" type="fix" dev="pottlinger">
         Generate Maven help Mojo documentation under the same package as the auto-generated plugin parts: org.apache.rat.plugin.
       </action>
@@ -141,6 +144,9 @@ The <action> type attribute can be one of:
       </action>
       <action issue="RAT-390" type="add" dev="claudenw">
         Move and reimplement exclusion configuration from Maven plugin to RAT core. ExclusionProcessor is the central place to handle file inclusions and exclusions now.
+      </action>
+      <action issue="RAT-240" type="fix" dev="claudenw">
+        Exclusions can be configured as a full path (due to the newly written ignore engine as of RAT-390).
       </action>
       <action issue="RAT-383" type="add" dev="claudenw">
         As part of the usage the harmonization generation of Ant documentation was added.

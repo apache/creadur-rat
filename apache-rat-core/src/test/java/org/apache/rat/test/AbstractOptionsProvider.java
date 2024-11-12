@@ -24,7 +24,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.ReportTest;
+import org.apache.rat.ReporterTest;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
@@ -33,6 +33,7 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
@@ -99,6 +100,8 @@ public abstract class AbstractOptionsProvider {
         testMap.put("config", this::configTest);
         testMap.put("configuration-no-defaults", this::configurationNoDefaultsTest);
         testMap.put("copyright", this::copyrightTest);
+        testMap.put("counter-min", this::counterMinTest);
+        testMap.put("counter-max", this::counterMaxTest);
         testMap.put("dir", () -> DefaultLog.getInstance().info("--dir has no valid test"));
         testMap.put("dry-run", this::dryRunTest);
         testMap.put("edit-copyright", this::editCopyrightTest);
@@ -174,6 +177,13 @@ public abstract class AbstractOptionsProvider {
         unsupportedArgs.forEach(testMap::remove);
     }
 
+    /**
+     * Create the report configuration from the argument pairs.
+     * There must be at least one arg. It may be `ImmutablePair.nullPair()`.
+     * @param args Pairs comprising the argument option and the values for the option.
+     * @return The generated ReportConfiguration.
+     * @throws IOException on error.
+     */
     protected abstract ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException;
 
     protected File writeFile(String name, Iterable<String> lines) {
@@ -307,6 +317,7 @@ public abstract class AbstractOptionsProvider {
         File outputFile = writeFile("include.txt", Arrays.asList(INCLUDE_ARGS));
         execIncludeTest(option, new String[] {outputFile.getPath()});
     }
+
     protected void inputIncludeFileTest() {
         includeFileTest(Arg.INCLUDE_FILE.find("input-include-file"));
     }
@@ -470,6 +481,50 @@ public abstract class AbstractOptionsProvider {
     protected void licenseFamiliesDeniedTest() {
         execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED.find("license-families-denied"),
                 new String[] { "GPL" });
+    }
+
+    protected void counterMaxTest() {
+        Option option = Arg.COUNTER_MAX.option();
+        String[] args = {null, null};
+
+        try {
+            ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
+            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
+            args[0] = "Unapproved:-1";
+            args[1] = "generated:1";
+            config = generateConfig(ImmutablePair.of(option, args));
+            assertEquals(Integer.MAX_VALUE, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(1, config.getClaimValidator().getMax(ClaimStatistic.Counter.GENERATED));
+            args[1] = "unapproved:5";
+            args[0] = "generated:0";
+            config = generateConfig(ImmutablePair.of(option, args));
+            assertEquals(5, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.GENERATED));
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    protected void counterMinTest() {
+        Option option = Arg.COUNTER_MIN.option();
+        String[] args = {null, null};
+
+        try {
+            ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
+            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
+            args[0] = "Unapproved:1";
+            args[1] = "generated:1";
+            config = generateConfig(ImmutablePair.of(option, args));
+            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.GENERATED));
+            args[1] = "unapproved:5";
+            args[0] = "generated:0";
+            config = generateConfig(ImmutablePair.of(option, args));
+            assertEquals(5, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
+            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.GENERATED));
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
     }
 
     private void configTest(Option option) {
@@ -717,11 +772,11 @@ public abstract class AbstractOptionsProvider {
     }
 
     private void styleSheetTest(Option option) {
-        // copy the dummy stylesheet so that  we have a local file for users of the testing jar.
+        // copy the dummy stylesheet so that we have a local file for users of the testing jar.
         File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
         try (
-            InputStream in = ReportTest.class.getResourceAsStream("MatcherContainerResource.txt");
-            OutputStream out = Files.newOutputStream(file.toPath())) {
+                InputStream in = ReporterTest.class.getResourceAsStream("MatcherContainerResource.txt");
+                OutputStream out = Files.newOutputStream(file.toPath())) {
             IOUtils.copy(in, out);
         } catch (IOException e) {
             fail("Could not copy MatcherContainerResource.txt: "+e.getMessage());
