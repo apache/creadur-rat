@@ -78,7 +78,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * Specifies the licenses to accept. By default, these are added to the default
      * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false.  Arguments should be
      * file name of &lt;Configs&gt; file structure.
-     * @deprecated  use &lt;config>.
+     * @deprecated Use &lt;config&gt;.
      * @since 0.8
      */
     @Parameter
@@ -87,7 +87,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the additional licenses file.
-     * @deprecated  Use &lt;config>.
+     * @deprecated Use &lt;config&gt;.
      */
     @Parameter
     @Deprecated
@@ -105,21 +105,21 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Whether to add the default list of license matchers.
-     * @deprecated use &lt;config>
+     * @deprecated Use &lt;config&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.addDefaultLicenseMatchers")
     private boolean addDefaultLicenseMatchers;
 
     /** The list of approved licenses
-     * @deprecated use &lt;config>
+     * @deprecated Use &lt;config&gt;.
      */
     @Deprecated
     @Parameter(required = false)
     private String[] approvedLicenses;
 
     /** The file of approved licenses
-     * @deprecated use &lt;config>
+     * @deprecated Use &lt;config&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.approvedFile")
@@ -129,21 +129,21 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * Specifies the license families to accept.
      *
      * @since 0.8
-     * @deprecated use LicenseFamily section of configuration file.
+     * @deprecated Use LicenseFamily section of configuration file.
      */
     @Deprecated
     @Parameter
     private SimpleLicenseFamily[] licenseFamilies;
 
     /** The list of license definitions.
-     * @deprecated Deprecated for removal since 0.17: Use &lt;Config&gt; instead.  See Config file documentation.
+     * @deprecated Deprecated for removal since 0.17: Use &lt;Config&gt; instead. See configuration file documentation.
      */
     @Deprecated
     @Parameter
     private Object[] licenses;
 
     /** The list of family definitions.
-     * @deprecated use &lt;Configs&gt;
+     * @deprecated Use &lt;Configs&gt;.
      */
     @Deprecated
     @Parameter
@@ -151,14 +151,14 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the include files character set.
-     * if ${project.build.sourceEncoding} is not set defaults to UTF-8
+     * If ${project.build.sourceEncoding} is not set defaults to UTF-8.
      */
     @Parameter(property = "rat.includesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String includesFileCharset;
 
     /**
      * Specifies the include files character set.
-     * if ${project.build.sourceEncoding} is not set defaults to UTF-8
+     * If ${project.build.sourceEncoding} is not set defaults to UTF-8.
      */
     @Parameter(property = "rat.excludesFileCharset", defaultValue = "${project.build.sourceEncoding}")
     private String excludesFileCharset;
@@ -176,8 +176,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * <li>configuration files for IDEA, see
      * <a href="#useIdeaDefaultExcludes">useIdeaDefaultExcludes</a></li>
      * </ul>
-     * @deprecated when set to true specifies that the STANDARD_PATTERNS are excluded, as are
-     * the STANDARD_SCMS patterns.  Use the various InputExclude and InputInclude elements to
+     * @deprecated When set to true specifies that the STANDARD_PATTERNS are excluded, as are
+     * the STANDARD_SCMS patterns. Use the various InputExclude and InputInclude elements to
      * explicitly specify what to include or exclude.
      */
     @Parameter(property = "rat.useDefaultExcludes", defaultValue = "true")
@@ -189,7 +189,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * Maven specific default excludes are given by the constant
      * MAVEN_DEFAULT_EXCLUDES: The <code>target</code> directory, the
      * <code>cobertura.ser</code> file, and so on.
-     * @deprecated when set to true specifies that the MAVEN patterns are excluded
+     * @deprecated When set to true specifies that the MAVEN patterns are excluded.
      * Use "inputIncludeStd MAVEN" to override.
      */
     @Parameter(property = "rat.useMavenDefaultExcludes", defaultValue = "true")
@@ -201,7 +201,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * their contents as excludes. At the moment this works for the following SCMs:
      *
      * @see org.apache.rat.config.exclusion.StandardCollection
-     * @deprecated when set to true specifies that the STANDARD_SCMS exclusion file
+     * @deprecated When set to true specifies that the STANDARD_SCMS exclusion file
      * processors are used to exclude files and directories (e.g. ".gitignore" or ".hgignore").
      * Use "inputIncludeStd STANDARD_SCMS" to override.
      */
@@ -214,7 +214,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * Eclipse specific default excludes are given by the constant
      * ECLIPSE_DEFAULT_EXCLUDES: The <code>.classpath</code> and
      * <code>.project</code> files, the <code>.settings</code> directory, and so on.
-     * @deprecated when set to true specifies that the ECLIPSE patterns are excluded
+     * @deprecated When set to true specifies that the ECLIPSE patterns are excluded.
      * Use "inputIncludeStd ECLIPSE" to override.
      */
     @Parameter(property = "rat.useEclipseDefaultExcludes", defaultValue = "true")
@@ -226,7 +226,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * IDEA specific default excludes are given by the constant
      * IDEA_DEFAULT_EXCLUDES: The <code>*.iml</code>, <code>*.ipr</code> and
      * <code>*.iws</code> files and the <code>.idea</code> directory.
-     * @deprecated when set to true specifies that the IDEA patterns are excluded
+     * @deprecated When set to true specifies that the IDEA patterns are excluded.
      * Use "inputIncludeStd IDEA" to override.
      */
     @Deprecated
@@ -257,7 +257,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     protected MavenProject project;
 
     /**
-     * @return Returns the Maven project.
+     * @return the Maven project.
      */
     protected MavenProject getProject() {
         return project;
@@ -296,7 +296,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Deprecated // remove this for version 1.0
     private void reportDeprecatedProcessing() {
         if (getDeprecatedConfigs().findAny().isPresent()) {
-            DefaultLog.getInstance().warn("Configuration uses deprecated configuration. Please upgrade to v0.17 configuration options");
+            DefaultLog.getInstance().warn("Configuration uses deprecated configuration. You need to upgrade to v0.17 configuration options.");
         }
     }
 
