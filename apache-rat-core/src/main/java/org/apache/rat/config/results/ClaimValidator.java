@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 
@@ -128,6 +129,8 @@ public final class ClaimValidator {
             if (!isValid(counter, statistic.getCounter(counter))) {
                 DefaultLog.getInstance().error(format("Unexpected count for %s, limit is [%s,%s].  Count: %s", counter,
                         min.get(counter), max.get(counter), statistic.getCounter(counter)));
+                DefaultLog.getInstance().info(format("%s (%s) is %s", counter, counter.displayName(),
+                        StringUtils.uncapitalize(counter.getDescription())));
             }
         }
     }

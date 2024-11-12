@@ -68,6 +68,8 @@
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
             <goalPrefix>apache-rat</goalPrefix>
+            <!-- RAT-451: Generate into the same package as other auto-generated code -->
+            <helpPackageName>org.apache.rat.plugin</helpPackageName>
           </configuration>
           <executions>
             <execution>
