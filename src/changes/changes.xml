@@ -72,8 +72,17 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-426" type="fix" dev="claudenw">
+        Added core integration tests and verified RAT-426 is fixed.
+      </action>
+      <action issue="RAT-450" type="fix" dev="pottlinger">
+        Harmonize log output messages that are automatically generated for Maven command line options to ease migration to v0.17.
+      </action>
       <action issue="RAT-399" type="add" dev="claudenw">
         Moved the ignore code into apache-rat-core and provide more statistics in RAT report. Furthermore the CLI allows configuration of counter minimum and maximum values, e.g. maximum number of allowed unapproved licenses.
+      </action>
+      <action issue="RAT-358" type="fix" dev="pottlinger">
+        Generate Maven help Mojo documentation under the same package as the auto-generated plugin parts: org.apache.rat.plugin.
       </action>
       <action issue="RAT-358" type="add" dev="claudenw">
         Overhaul documentation of the new functionality of RAT 0.17. Improve and comprehend the whole project webpage.
