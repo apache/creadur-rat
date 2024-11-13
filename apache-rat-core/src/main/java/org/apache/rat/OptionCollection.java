@@ -196,6 +196,11 @@ public final class OptionCollection {
         }
         lst.addAll(Arrays.asList(commandLine.getArgs()));
         if (!noArgs && lst.size() != 1) {
+            if (lst.isEmpty()) {
+                DefaultLog.getInstance().error("No directories or files specified for scanning.  Did you forget to close a multi-argument option?");
+            } else {
+                DefaultLog.getInstance().error("Too many directories or files specified for scanning.");
+            }
             helpCmd.accept(opts);
             return null;
         }

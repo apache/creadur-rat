@@ -22,9 +22,6 @@ public class RatDocumentAnalysisException extends Exception {
 
     private static final long serialVersionUID = 2339068944003517510L;
 
-    public RatDocumentAnalysisException() {
-    }
-
     public RatDocumentAnalysisException(final String msg) {
         super(msg);
     }
