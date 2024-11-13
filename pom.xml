@@ -648,11 +648,11 @@ agnostic home for software distribution comprehension and audit tools.
             <artifactId>extra-enforcer-rules</artifactId>
             <version>1.9.0</version>
           </dependency>
-            <dependency>
-              <groupId>org.apache.ws.commons.axiom</groupId>
-              <artifactId>no-package-cycles-enforcer-rule</artifactId>
-              <version>1.2.22</version>
-            </dependency>
+          <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>no-package-cycles-enforcer-rule</artifactId>
+            <version>1.2.22</version>
+          </dependency>
         </dependencies>
       </plugin>
       <plugin>
