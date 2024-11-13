@@ -36,6 +36,7 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
@@ -55,26 +56,26 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Integration tests for the Report class.  Integration tests have a specific structure.
- *
+ * Integration tests for the {@link Report} class.
+ * Integration tests must have a specific structure.
  * <ul>
- *     <li>They are in directories under src/it/resources/ReportText/X wher X is the name of the test. Usually
+ *     <li>They are in directories under {@code src/it/resources/ReportText/X} where {@code X} is the name of the test. Usually
  *     a reference to a reported bug.</li>
- *     <li>Within the directory is a file named {@code commandLine.txt} each line in the file is a single command line
- *     token.  For example "--output-style XML" would be 2 lines in the file "--output-style" and "XML"</li>
- *     <li>Within the directory there is a subdirectory named "src" this is the root of the file system for RAT to scan.</li>
- *     <li>There may be a notes.md describing the test</li>
- *     <li>There is a verify.groovy script.  When executed:
+ *     <li>Within the directory is a file named {@code commandLine.txt}. Each line in the file is a single command line
+ *     token. For example "--output-style XML" would be 2 lines in the file "--output-style" and "XML"</li>
+ *     <li>Within the directory there is a subdirectory named {@code src}. This is the root of the file system for RAT to scan.</li>
+ *     <li>There may be a {@code notes.md} describing the test</li>
+ *     <li>There is a {@code verify.groovy} script. When executed:
  *     <ul>
  *         <li>The first parameter will be then name of the file that captured the output.</li>
  *         <li>The second parameter will be the name of the file that captured the log.</li>
  *         <li>Any assert that fails within the Groovy script will fail the test.</li>
  *         <li>Any value returned from the script execution will fail the test and the returned value will be
- *         use as the failure message.</li>
+ *         used as the failure message.</li>
  *      </ul>
  *      </li>
- *      <li>If an exception is expected when Report is run with the command line a file named "expected-message.txt"
- *      must be present in the directory.  It must contain text that is expected to be found within the message
+ *      <li>If an exception is expected when Report is run with the command line a file named {@code expected-message.txt}
+ *      must be present in the directory. It must contain text that is expected to be found within the message
  *      associated with the exception.</li>
  * </ul>
  */
@@ -97,7 +98,7 @@ public class ReportTest {
 
         File outputFile = new File(baseDir,"output.txt");
         if (!commandLine.hasOption(Arg.OUTPUT_FILE.option())) {
-            argsList.add(0, "--"+Arg.OUTPUT_FILE.option().getLongOpt());
+            argsList.add(0, "--" + Arg.OUTPUT_FILE.option().getLongOpt());
             argsList.add(1, outputFile.getAbsolutePath());
         } else {
             outputFile = new File(baseDir, commandLine.getOptionValue(Arg.OUTPUT_FILE.option()));
@@ -135,6 +136,11 @@ public class ReportTest {
     public static Stream<Arguments> args() throws RatException {
         List<Arguments> results = new ArrayList<>();
         URL url = ReportTest.class.getResource("/ReportTest");
+        String urlAsFile = url.getFile();
+        if(StringUtils.isEmpty(urlAsFile)) {
+            throw new RatException("Could not find root directory for " + url);
+        }
+
         File baseDir = new File(url.getFile());
         DocumentName docName = new DocumentName(baseDir);
         AbstractFileFilter fileFilter = new NameFileFilter("commandLine.txt", docName.isCaseSensitive() ? IOCase.SENSITIVE : IOCase.INSENSITIVE);
@@ -153,11 +159,11 @@ public class ReportTest {
     }
 
     /**
-            * Log that captures output for later review.
-            */
-    public class FileLog implements Log {
+     * Log that captures output for later review.
+     */
+    public static class FileLog implements Log {
 
-        private PrintStream logFile;
+        private final PrintStream logFile;
 
         /**
          * The level at which we will write messages
@@ -171,7 +177,7 @@ public class ReportTest {
         }
 
         /**
-         * Sets the level. Log messages below the specified level will
+         * Sets the level.Log messages below the specified level will
          * not be written to the log.
          *
          * @param level the level to use when writing messages.
