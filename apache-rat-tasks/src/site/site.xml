@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -15,18 +15,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<site
-        xmlns="http://maven.apache.org/SITE/2.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
-        name="Apache Rat\u2122 Task Library for Apache Ant">
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd" name="Apache Rat\u2122 Task Library for Apache Ant">
   <body>
-    <head>
-       <![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]>
-    </head>
-    
+    <head><![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]></head>
     <menu ref="parent"/>
-
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Report Task" href="report.html"/>
@@ -34,7 +26,6 @@
     <menu name="Examples">
       <item name="Basic Usage" href="examples/basic.html"/>
     </menu>
-
     <menu ref="reports"/>
   </body>
 </site>
