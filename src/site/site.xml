@@ -24,7 +24,7 @@
   <custom>
     <fluidoSkin>
       <gitHub>
-        <projectId>apache/${project.artifactId}</projectId>
+        <projectId>apache/creadur-rat</projectId>
         <ribbonOrientation>right</ribbonOrientation>
         <ribbonColor>blue</ribbonColor>
       </gitHub>
