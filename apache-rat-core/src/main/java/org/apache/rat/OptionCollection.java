@@ -109,7 +109,9 @@ public final class OptionCollection {
         ARGUMENT_TYPES.put("CounterPattern", () -> format("A pattern comprising one of the following prefixes followed by " +
                 "a colon and a count (e.g. %s:5).  Prefixes are %n%s.", ClaimStatistic.Counter.UNAPPROVED,
                 Arrays.stream(ClaimStatistic.Counter.values())
-                        .map(v -> format("\t%s: %s Default=%s", v.name(), v.getDescription(), v.getDefaultMaxValue()))
+                        .map(v -> format("\t%s: %s Default range [%s, %s]", v.name(), v.getDescription(),
+                                v.getDefaultMinValue(),
+                                (v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue())))
                         .collect(Collectors.joining(System.lineSeparator()))));
     }
 
