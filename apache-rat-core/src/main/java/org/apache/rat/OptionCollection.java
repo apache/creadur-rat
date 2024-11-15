@@ -111,7 +111,7 @@ public final class OptionCollection {
                 Arrays.stream(ClaimStatistic.Counter.values())
                         .map(v -> format("\t%s: %s Default range [%s, %s]", v.name(), v.getDescription(),
                                 v.getDefaultMinValue(),
-                                (v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue())))
+                                v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue()))
                         .collect(Collectors.joining(System.lineSeparator()))));
     }
 
