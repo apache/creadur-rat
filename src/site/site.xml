@@ -26,6 +26,16 @@
     <!-- version is managed in pom.xml in order to be grabbed by dependabot -->
   </skin>
 
+  <custom>
+    <fluidoSkin>
+      <gitHub>
+        <projectId>apache/${project.artifactId}</projectId>
+        <ribbonOrientation>right</ribbonOrientation>
+        <ribbonColor>blue</ribbonColor>
+      </gitHub>
+    </fluidoSkin>
+  </custom>
+
   <bannerLeft name="Apache Rat" href="https://www.apache.org/">
     <image src="https://www.apache.org/img/asf_logo.png" alt="The Apache Software Foundation"/>
   </bannerLeft>
