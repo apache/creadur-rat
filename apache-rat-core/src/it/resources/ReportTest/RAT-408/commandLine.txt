@@ -1,0 +1,3 @@
+--input-exclude
+**/_init_.py
+--
