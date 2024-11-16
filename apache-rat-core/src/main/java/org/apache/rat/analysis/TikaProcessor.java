@@ -18,8 +18,11 @@
  */
 package org.apache.rat.analysis;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +33,8 @@ import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.mime.MediaType;
+import org.apache.tika.parser.txt.CharsetDetector;
+import org.apache.tika.parser.txt.CharsetMatch;
 
 /**
  * A wrapping around the tika processor.
@@ -42,6 +47,7 @@ public final class TikaProcessor {
      * "text" types are already handled somewhere else
      * BINARY unless listed here*/
     private static final Map<String, Document.Type> DOCUMENT_TYPE_MAP;
+    //private static final DefaultDetector DEFAULT_DETECTOR = new DefaultDetector();
 
     static {
         DOCUMENT_TYPE_MAP = new HashMap<>();
@@ -106,6 +112,14 @@ public final class TikaProcessor {
     }
 
     /**
+     * Ensures that the input stream support mark.
+     * @param stream the stream to test.
+     * @return a string that support mark.
+     */
+    public static InputStream markSupportedInputStream(final InputStream stream) {
+        return stream.markSupported() ? stream : new BufferedInputStream(stream);
+    }
+    /**
      * Process the input document.
      * @param document the Document to process.
      * @return the mimetype as a string.
@@ -113,7 +127,7 @@ public final class TikaProcessor {
      */
     public static String process(final Document document) throws RatDocumentAnalysisException {
         Metadata metadata = new Metadata();
-        try (InputStream stream = document.inputStream()) {
+        try (InputStream stream = markSupportedInputStream(document.inputStream())) {
             metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().getName());
             String result = TIKA.detect(stream, metadata);
             String[] parts = result.split("/");
@@ -122,6 +136,7 @@ public final class TikaProcessor {
             document.getMetaData()
                     .setDocumentType(fromMediaType(mediaType));
             if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
+                document.getMetaData().setCharset(detectCharset(stream));
                 if (NoteGuesser.isNote(document)) {
                     document.getMetaData().setDocumentType(Document.Type.NOTICE);
                 }
@@ -133,6 +148,31 @@ public final class TikaProcessor {
         }
     }
 
+    /**
+     * Determine the character set for the input stream.  Input stream must implement mark.
+     * @param stream the stream to check.
+     * @return the detected characterset or null if not detectable.
+     * @throws IOException on IO error.
+     */
+    private static Charset detectCharset(final InputStream stream) throws IOException {
+        CharsetDetector encodingDetector = new CharsetDetector();
+        encodingDetector.setText(stream);
+        CharsetMatch charsetMatch = encodingDetector.detect();
+        if (charsetMatch != null) {
+            try {
+                return Charset.forName(charsetMatch.getName());
+            } catch (UnsupportedCharsetException e) {
+                // do nothing
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the Document.Type based on the MediaType.
+     * @param mediaType the media type to check.
+     * @return The document type.
+     */
     public static Document.Type fromMediaType(final MediaType mediaType) {
         if ("text".equals(mediaType.getType())) {
             return Document.Type.STANDARD;
