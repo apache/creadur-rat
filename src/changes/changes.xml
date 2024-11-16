@@ -77,8 +77,11 @@ The <action> type attribute can be one of:
         Change adds charset to the metadata when it can be discovered. If not UTF-8 is returned.
         Added integration test to show reading of UTF8 and IBM037 encoding works.
       </action>
+      <action issue="RAT-408" type="fix" dev="claudenw">
+        Added core integration tests and verified RAT-408 is fixed with the new exclusion engine.
+      </action>
       <action issue="RAT-426" type="fix" dev="claudenw">
-        Added core integration tests and verified RAT-426 is fixed.
+        Added core integration tests and verified RAT-426 is fixed with the new exclusion engine.
       </action>
       <action issue="RAT-450" type="fix" dev="pottlinger">
         Harmonize log output messages that are automatically generated for Maven command line options to ease migration to v0.17.
