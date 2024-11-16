@@ -39,7 +39,7 @@ public class MetaData {
     private final SortedSet<ILicense> matchedLicenses;
     /** The list of License Family Categories that are approved */
     private final Set<String> approvedLicenses;
-    /** The Charset for this document */
+    /** The charset for this document */
     private Charset charset;
     /** The media type for this document */
     private MediaType mediaType;
@@ -57,7 +57,7 @@ public class MetaData {
     }
 
     /**
-     * Gets the charset for the document.  If the charset was not set will return the system default charset.
+     * Gets the charset for the document. If the charset was not set will return the system default charset.
      * @return the charset for the document
      */
     public Charset getCharset() {
@@ -65,7 +65,7 @@ public class MetaData {
     }
 
     /**
-     * Sets the charset for the document.  If set to {@code null} the system default charset will be used.
+     * Sets the charset for the document. If set to {@code null} the system default charset will be used.
      * @param charset the charset to use.
      */
     public void setCharset(final Charset charset) {

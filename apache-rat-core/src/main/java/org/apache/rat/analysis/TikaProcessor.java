@@ -112,13 +112,14 @@ public final class TikaProcessor {
     }
 
     /**
-     * Ensures that the input stream support mark.
+     * Ensures that the input stream supports {@code mark}.
      * @param stream the stream to test.
-     * @return a string that support mark.
+     * @return a stream that supports {@code mark}.
      */
     public static InputStream markSupportedInputStream(final InputStream stream) {
         return stream.markSupported() ? stream : new BufferedInputStream(stream);
     }
+
     /**
      * Process the input document.
      * @param document the Document to process.
@@ -149,9 +150,9 @@ public final class TikaProcessor {
     }
 
     /**
-     * Determine the character set for the input stream.  Input stream must implement mark.
+     * Determine the character set for the input stream. Input stream must implement {@code mark}.
      * @param stream the stream to check.
-     * @return the detected characterset or null if not detectable.
+     * @return the detected character set or {@code null} if not detectable.
      * @throws IOException on IO error.
      */
     private static Charset detectCharset(final InputStream stream) throws IOException {

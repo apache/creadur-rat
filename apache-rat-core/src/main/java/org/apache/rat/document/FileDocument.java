@@ -31,7 +31,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 
 /**
- * Document wrapping a File object
+ * Document wrapping a File object.
  */
 public class FileDocument extends Document {
 

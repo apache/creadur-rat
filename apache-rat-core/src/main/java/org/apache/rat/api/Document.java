@@ -48,7 +48,7 @@ public abstract class Document implements Comparable<Document> {
         /** A standard document. */
         STANDARD,
         /** An unknown document type. */
-        UNKNOWN;
+        UNKNOWN
     }
 
     /** The path matcher used by this document */
@@ -106,7 +106,7 @@ public abstract class Document implements Comparable<Document> {
     /**
      * Reads the contents of this document.
      * @return <code>Reader</code> not null
-     * @throws IOException if this document cannot be read
+     * @throws IOException if this document cannot be read.
      */
     public Reader reader() throws IOException {
         return new CharsetDetector().getReader(TikaProcessor.markSupportedInputStream(inputStream()), getMetaData().getCharset().name());
@@ -115,7 +115,7 @@ public abstract class Document implements Comparable<Document> {
     /**
      * Streams the document's contents.
      * @return a non-null input stream of the document.
-     * @throws IOException when stream could not be opened
+     * @throws IOException when stream could not be opened.
      */
     public abstract InputStream inputStream() throws IOException;
 
