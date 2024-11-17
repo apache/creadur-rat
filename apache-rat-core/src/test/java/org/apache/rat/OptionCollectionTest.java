@@ -28,6 +28,7 @@ import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -54,9 +55,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {
 
-    /** The base directory for the test.
+    /**
+     * The base directory for the test.
      * We do not use TempFile because we want the evidence of the run
-     * to exist after a failure.*/
+     * to exist after a failure.
+     */
     private final File baseDir;
 
     /**
@@ -101,6 +104,7 @@ public class OptionCollectionTest {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "target", "-a"};
             ReportConfiguration config = OptionCollection.parseCommands(args, o -> fail("Help printed"), true);
+            assertThat(config).isNotNull();
         } finally {
             DefaultLog.setInstance(null);
         }
@@ -111,7 +115,7 @@ public class OptionCollectionTest {
     @Test
     public void testDirOptionCapturesDirectoryToScan() throws IOException {
         TestingLog log = new TestingLog();
-        ReportConfiguration config = null;
+        ReportConfiguration config;
         try {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "foo"};
@@ -134,7 +138,7 @@ public class OptionCollectionTest {
     }
 
     @Test
-    public void testDefaultConfiguration() throws ParseException, IOException {
+    public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
         ReportConfiguration config = OptionCollection.createConfiguration("", cl);
@@ -159,6 +163,7 @@ public class OptionCollectionTest {
     @ParameterizedTest
     @ArgumentsSource(OptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionTest test) {
+        DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
         test.test();
     }
 
