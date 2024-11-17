@@ -31,7 +31,9 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
@@ -45,6 +47,7 @@ import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentNameMatcherSupplier;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -53,6 +56,8 @@ import org.apache.rat.report.IReportable;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet;
+import org.apache.rat.walker.FileListWalker;
+import org.apache.rat.walker.IReportableListWalker;
 
 /**
  * A configuration object is used by the front end to invoke the
@@ -115,10 +120,16 @@ public class ReportConfiguration {
      * The IOSupplier that provides the stylesheet to style the XML output.
      */
     private IOSupplier<InputStream> styleSheet;
+
     /**
-     * The Reportable instance that provides the documents to process.
+     * A list of files to read file names from.
      */
-    private IReportable reportable;
+    private final List<File> sources;
+
+    /**
+     * A list of reportables to process;
+     */
+    private final List<IReportable> reportables;
 
     /**
      * A predicate to test if a path should be included in the processing.
@@ -159,6 +170,55 @@ public class ReportConfiguration {
         dryRun = false;
         exclusionProcessor = new ExclusionProcessor();
         claimValidator = new ClaimValidator();
+        sources = new ArrayList<>();
+        reportables = new ArrayList<>();
+    }
+
+    /**
+     * Adds a file as a source of files to scan.
+     * The file must be a text file that lists files to be included.
+     * File within the file must be in linux format with a
+     * "/" file separator.
+     * @param file the file to process.
+     */
+    public void addSource(final File file) {
+        notNull(file, "File may not be null.");
+        sources.add(file);
+    }
+
+    private void notNull(final Object o, final String msg) {
+        if (o == null) {
+            throw new ConfigurationException(msg);
+        }
+    }
+
+    /**
+     * Adds a Reportable as a source of files to scan.
+     * @param reportable the reportable to process.
+     */
+    public void addSource(final IReportable reportable) {
+        notNull(reportable, "Reportable may not be null.");
+        reportables.add(reportable);
+    }
+
+    /**
+     * Returns {@code true} if the configuration has any sources defined.
+     * @return {@code true} if the configuration has any sources defined.
+     */
+    public boolean hasSource() {
+        return !reportables.isEmpty() || !sources.isEmpty();
+    }
+
+    /**
+     * Gets a builder initialized with any files specified as sources.
+     * @return a configured builder.
+     */
+    public IReportableListWalker.Builder getSources() {
+        DocumentName name = new DocumentName(new File("."));
+        IReportableListWalker.Builder builder = IReportableListWalker.builder(name);
+        sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, x -> true))));
+        reportables.forEach(builder::addReportable);
+        return builder;
     }
 
     /**
@@ -344,22 +404,6 @@ public class ReportConfiguration {
      */
     public DocumentNameMatcher getNameMatcher(final DocumentName baseDir) {
         return exclusionProcessor.getNameMatcher(baseDir);
-    }
-
-    /**
-     * Gets the reportable object.
-     * @return the thing being reported on.
-     */
-    public IReportable getReportable() {
-        return reportable;
-    }
-
-    /**
-     * Sets the reportable object.
-     * @param reportable the thing being reported on.
-     */
-    public void setReportable(final IReportable reportable) {
-        this.reportable = reportable;
     }
 
     /**
@@ -749,8 +793,8 @@ public class ReportConfiguration {
      * @param logger String consumer to log warning messages to.
      */
     public void validate(final Consumer<String> logger) {
-        if (reportable == null) {
-            throw new ConfigurationException("Reportable may not be null");
+        if (!hasSource()) {
+            throw new ConfigurationException("At least one source must be specified");
         }
         if (licenseSetFactory.getLicenses(LicenseFilter.ALL).isEmpty()) {
             throw new ConfigurationException("You must specify at least one license");

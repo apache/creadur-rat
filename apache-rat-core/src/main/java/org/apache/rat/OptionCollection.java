@@ -22,11 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -38,7 +36,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
@@ -175,57 +172,54 @@ public final class OptionCollection {
         }
 
         if (commandLine.hasOption(HELP_LICENSES)) {
-            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
+            new Licenses(createConfiguration(commandLine), new PrintWriter(System.out)).printHelp();
             return null;
         }
 
         if (commandLine.hasOption(HELP_LICENSES)) {
-            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
+            new Licenses(createConfiguration(commandLine), new PrintWriter(System.out)).printHelp();
             return null;
         }
 
         if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(null, commandLine), new PrintWriter(System.out)).printHelp();
+            new Licenses(createConfiguration(commandLine), new PrintWriter(System.out)).printHelp();
             return null;
         }
 
-        // DIR or end of command line can provide args.
-        String[] clArgs = {null};
-        List<String> lst = new ArrayList<>();
-        String dirValue = commandLine.getOptionValue(Arg.DIR.getSelected());
-        if (dirValue != null) {
-            lst.add(dirValue);
-        }
-        lst.addAll(Arrays.asList(commandLine.getArgs()));
-        if (!noArgs && lst.size() != 1) {
-            if (lst.isEmpty()) {
-                DefaultLog.getInstance().error("No directories or files specified for scanning.  Did you forget to close a multi-argument option?");
-            } else {
-                DefaultLog.getInstance().error("Too many directories or files specified for scanning.");
-            }
+        ReportConfiguration configuration = createConfiguration(commandLine);
+
+        if (!noArgs && !configuration.hasSource()) {
+            String msg = "No directories or files specified for scanning.  Did you forget to close a multi-argument option?";
+            DefaultLog.getInstance().error(msg);
             helpCmd.accept(opts);
-            return null;
+            throw new ConfigurationException(msg);
         }
-        if (!lst.isEmpty()) {
-            clArgs[0] = lst.get(0);
-        }
-        return createConfiguration(clArgs[0], commandLine);
+        return configuration;
     }
 
     /**
      * Create the report configuration.
      * Note: this method is package private for testing. You probably want one of the {@code ParseCommands} methods.
-     * @param baseDirectory the base directory where files will be found.
-     * @param cl the parsed command line.
+     * @param commandLine the parsed command line.
      * @return a ReportConfiguration
      * @see #parseCommands(String[], Consumer)
      * @see #parseCommands(String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final String baseDirectory, final CommandLine cl) {
+    static ReportConfiguration createConfiguration(final CommandLine commandLine) {
         final ReportConfiguration configuration = new ReportConfiguration();
-        new ArgumentContext(configuration, cl).processArgs();
-        if (StringUtils.isNotBlank(baseDirectory)) {
-            configuration.setReportable(getReportable(new File(baseDirectory), configuration));
+        new ArgumentContext(configuration, commandLine).processArgs();
+        if (Arg.DIR.isSelected()) {
+            try {
+                configuration.addSource(getReportable(commandLine.getParsedOptionValue(Arg.DIR.getSelected()), configuration));
+            } catch (ParseException e) {
+                throw new ConfigurationException("Unable to set parse " + Arg.DIR.getSelected(), e);
+            }
+        }
+        for (String s : commandLine.getArgs()) {
+            IReportable reportable = getReportable(new File(s), configuration);
+            if (reportable != null) {
+                configuration.addSource(reportable);
+            }
         }
         return configuration;
     }

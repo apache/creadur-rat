@@ -227,6 +227,17 @@ public enum Arg {
     /**
      * Excludes files by expression
      */
+    SOURCE(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
+                    .desc("A file containing file names to process.  Path to the files must be " +
+                            "relative to the directory where RAT is running.")
+                    .type(File.class)
+                    .build())),
+
+
+    /**
+     * Excludes files by expression
+     */
     EXCLUDE(new OptionGroup()
             .addOption(Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
@@ -335,6 +346,7 @@ public enum Arg {
      * Stop processing an input stream and declare an input file.
      */
     DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
+                    .type(File.class)
             .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                     .setDescription("Use the standard '--' to signal the end of arguments.").get()).build())),
@@ -667,6 +679,12 @@ public enum Arg {
      */
     private static void processInputArgs(final ArgumentContext context) throws ConfigurationException {
         try {
+            if (SOURCE.isSelected()) {
+                File[] files = SOURCE.getParsedOptionValues(context.getCommandLine());
+                for (File f : files) {
+                    context.getConfiguration().addSource(f);
+                }
+            }
             // TODO when include/exclude processing is updated check calling methods to ensure that all specified
             // directories are handled in the list of directories.
             if (EXCLUDE.isSelected()) {

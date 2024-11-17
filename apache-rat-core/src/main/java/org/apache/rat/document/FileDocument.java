@@ -49,6 +49,16 @@ public class FileDocument extends Document {
         this.file = file;
     }
 
+    /**
+     * Creates a File document where the baseDir is the root directory..
+     * @param file the file to wrap.
+     * @param nameMatcher the path matcher to filter files/directories with.
+     */
+    public FileDocument(final File file, final DocumentNameMatcher nameMatcher) {
+        super(new DocumentName(file.getAbsolutePath(), File.separator, File.separator, DocumentName.FS_IS_CASE_SENSITIVE), nameMatcher);
+        this.file = file;
+    }
+
     @Override
     public boolean isDirectory() {
         return file.isDirectory();

@@ -110,7 +110,10 @@ public class ReportTest {
         try {
             oldLog = DefaultLog.setInstance(fileLog);
 
-            argsList.add(new File(baseDir, "src").getAbsolutePath());
+            File src = new File(baseDir, "src");
+            if (src.isDirectory()) {
+                argsList.add(src.getAbsolutePath());
+            }
 
             File expectedMsg = new File(baseDir, "expected-message.txt");
             if (expectedMsg.exists()) {

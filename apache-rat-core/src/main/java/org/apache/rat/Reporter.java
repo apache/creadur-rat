@@ -85,14 +85,14 @@ public class Reporter {
     public ClaimStatistic execute() throws RatException  {
         if (document == null || statistic == null) {
             try {
-                if (configuration.getReportable() != null) {
+                if (configuration.hasSource()) {
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     Writer outputWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
                     try (IXmlWriter writer = new XmlWriter(outputWriter)) {
                         statistic = new ClaimStatistic();
                         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
                         report.startReport();
-                        configuration.getReportable().run(report);
+                        configuration.getSources().build().run(report);
                         report.endReport();
 
                         InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());

@@ -19,7 +19,6 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -62,7 +61,6 @@ import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -469,12 +467,12 @@ public class ReportConfigurationTest {
 
     @Test
     public void reportableTest() {
-        assertThat(underTest.getReportable()).isNull();
+        assertThat(underTest.hasSource()).isFalse();
         IReportable reportable = mock(IReportable.class);
-        underTest.setReportable(reportable);
-        assertThat(underTest.getReportable()).isEqualTo(reportable);
-        underTest.setReportable(null);
-        assertThat(underTest.getReportable()).isNull();
+        underTest.addSource(reportable);
+        assertThat(underTest.hasSource()).isTrue();
+        Exception thrown = assertThrows(ConfigurationException.class, () -> underTest.addSource((IReportable)null));
+        assertThat(thrown.getMessage()).contains("Reportable may not be null.");
     }
 
     @Test
@@ -518,22 +516,20 @@ public class ReportConfigurationTest {
     @Test
     public void testValidate() {
         final StringBuilder sb = new StringBuilder();
-        try {
-            underTest.validate(sb::append);
-            fail("should have thrown ConfigurationException");
-        } catch (ConfigurationException e) {
-            assertThat(e.getMessage()).isEqualTo("Reportable may not be null");
-            assertThat(sb.length()).isEqualTo(0);
-        }
+        Exception thrown = assertThrows(ConfigurationException.class,
+                () -> underTest.validate(sb::append));
 
-        underTest.setReportable(mock(IReportable.class));
-        try {
-            underTest.validate(sb::append);
-            fail("should have thrown ConfigurationException");
-        } catch (ConfigurationException e) {
-            assertThat(e.getMessage()).isEqualTo("You must specify at least one license");
+        assertThat(thrown.getMessage()).isEqualTo("At least one source must be specified");
             assertThat(sb.length()).isEqualTo(0);
-        }
+
+
+        underTest.addSource(mock(IReportable.class));
+        thrown = assertThrows(ConfigurationException.class,
+                () -> underTest.validate(sb::append));
+
+        assertThat(thrown.getMessage()).isEqualTo("You must specify at least one license");
+            assertThat(sb.length()).isEqualTo(0);
+
 
         underTest.addLicense(testingLicense("valid", "Validation testing license"));
         final StringBuilder sb2 = new StringBuilder();

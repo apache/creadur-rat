@@ -122,6 +122,7 @@ public abstract class AbstractOptionsProvider {
         testMap.put("input-include", this::inputIncludeTest);
         testMap.put("input-include-file", this::inputIncludeFileTest);
         testMap.put("input-include-std", this::inputIncludeStdTest);
+        testMap.put("input-source", this::inputSourceTest);
         testMap.put("license-families-approved", this::licenseFamiliesApprovedTest);
         testMap.put("license-families-approved-file", this::licenseFamiliesApprovedFileTest);
         testMap.put("license-families-denied", this::licenseFamiliesDeniedTest);
@@ -375,6 +376,16 @@ public abstract class AbstractOptionsProvider {
             for (String fname : notExcluded) {
                 assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
             }
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    protected void inputSourceTest() {
+        Option option = Arg.SOURCE.find("input-source");
+        try {
+            ReportConfiguration config = generateConfig(ImmutablePair.of(option, new String[]{baseDir.getAbsolutePath()}));
+            assertTrue(config.hasSource());
         } catch (IOException e) {
             fail(e.getMessage());
         }
