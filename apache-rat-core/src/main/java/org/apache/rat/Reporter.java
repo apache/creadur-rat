@@ -76,9 +76,10 @@ public class Reporter {
 
     /**
      * Executes the report and builds the output.
+     * @return the ClaimStatistics
      * @throws RatException on error.
      */
-    private void exec() throws RatException  {
+    public ClaimStatistic exec() throws RatException  {
         if (document == null || statistic == null) {
             try {
                 if (configuration.getReportable() != null) {
@@ -102,6 +103,7 @@ public class Reporter {
                 throw RatException.makeRatException(e);
             }
         }
+        return statistic;
     }
 
     /**
