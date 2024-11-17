@@ -72,6 +72,10 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-81" type="add" dev="claudenw">
+        Added encoding information of the file being read to the RAT report in case of STANDARD document files.
+        Added media type attribute in report for all files.
+      </action>
       <action issue="RAT-81" type="fix" dev="claudenw">
         Fixed encoding issue where text files not in UTF-8 encoding would not be read properly.
         Change adds charset to the metadata when it can be discovered. If not UTF-8 is returned.

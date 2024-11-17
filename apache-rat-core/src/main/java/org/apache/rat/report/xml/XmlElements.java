@@ -95,7 +95,7 @@ public class XmlElements {
         public String getElementName() {
             return elementName;
         }
-    };
+    }
 
     /**
      * The attributes of elements in the report.
@@ -115,7 +115,7 @@ public class XmlElements {
         FAMILY,
         /** The document type */
         TYPE,
-        /** The Id */
+        /** The id */
         ID,
         /** The name */
         NAME,
@@ -123,11 +123,11 @@ public class XmlElements {
         COUNT,
         /** A description */
         DESCRIPTION,
-        /** The Media type for a document */
+        /** The media type for a document */
         MEDIA_TYPE,
-        /** The Encoding for a text document */
-        ENCODING,
-    };
+        /** The encoding for a text document */
+        ENCODING
+    }
 
     /** The XMLWriter that we write to */
     private final IXmlWriter writer;
@@ -210,7 +210,7 @@ public class XmlElements {
                 .write(Attributes.NAME, document.getName().localized("/"))
                 .write(Attributes.TYPE, metaData.getDocumentType().toString())
                 .write(Attributes.MEDIA_TYPE, metaData.getMediaType().toString());
-        if (metaData.getDocumentType() == Document.Type.STANDARD) {
+        if (Document.Type.STANDARD == metaData.getDocumentType()) {
             result = result.write(Attributes.ENCODING, metaData.getCharset().displayName());
         }
         return result;
