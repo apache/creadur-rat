@@ -30,11 +30,22 @@ import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.utils.CasedString;
 
 /**
  * Creates the elements in the XML report.
  */
 public class XmlElements {
+    /**
+     * Converts an enum name to snake case.
+     * @param name the enum name to convert.
+     * @return a camel cased name.
+     */
+    private static String normalizeName(final String name) {
+        CasedString casedName = new CasedString(CasedString.StringCase.SNAKE, name.toLowerCase(Locale.ROOT));
+       return casedName.toCase(CasedString.StringCase.CAMEL);
+    }
+
     /**
      * The elements in the report.
      */
@@ -42,28 +53,28 @@ public class XmlElements {
         /** The start of the Rat report */
         RAT_REPORT("rat-report"),
         /** The version of Rat being run */
-        VERSION("version"),
+        VERSION(),
         /** A resource element */
-        RESOURCE("resource"),
+        RESOURCE(),
         /** A license element */
-        LICENSE("license"),
+        LICENSE(),
         /** A notes element */
-        NOTES("notes"),
+        NOTES(),
         /** A sample from the file */
-        SAMPLE("sample"),
+        SAMPLE(),
         /** A statistics element */
-        STATISTICS("statistics"),
+        STATISTICS(),
         /** A statistic entry */
-        STATISTIC("statistic"),
+        STATISTIC(),
         /** A license name entry */
-        LICENSE_NAME("licenseName"),
+        LICENSE_NAME(),
         /** A license category entry */
-        LICENSE_CATEGORY("licenseCategory"),
+        LICENSE_CATEGORY(),
         /** A document type entry */
-        DOCUMENT_TYPE("documentType");
+        DOCUMENT_TYPE();
 
         /** The XML name for the element */
-        private String elementName;
+        private final String elementName;
 
         /**
          * Constructor.
@@ -71,6 +82,10 @@ public class XmlElements {
          */
         Elements(final String elementName) {
             this.elementName = elementName;
+        }
+
+        Elements() {
+            this.elementName = normalizeName(name());
         }
 
         /**
@@ -98,7 +113,7 @@ public class XmlElements {
         APPROVAL,
         /** The family category */
         FAMILY,
-        /** The type */
+        /** The document type */
         TYPE,
         /** The Id */
         ID,
@@ -107,7 +122,11 @@ public class XmlElements {
         /** A counter */
         COUNT,
         /** A description */
-        DESCRIPTION
+        DESCRIPTION,
+        /** The Media type for a document */
+        MEDIA_TYPE,
+        /** The Encoding for a text document */
+        ENCODING,
     };
 
     /** The XMLWriter that we write to */
@@ -187,9 +206,14 @@ public class XmlElements {
      */
     public XmlElements document(final Document document) throws RatException {
         final MetaData metaData = document.getMetaData();
-        return write(Elements.RESOURCE)
+        XmlElements result = write(Elements.RESOURCE)
                 .write(Attributes.NAME, document.getName().localized("/"))
-                .write(Attributes.TYPE, metaData.getDocumentType().toString());
+                .write(Attributes.TYPE, metaData.getDocumentType().toString())
+                .write(Attributes.MEDIA_TYPE, metaData.getMediaType().toString());
+        if (metaData.getDocumentType() == Document.Type.STANDARD) {
+            result = result.write(Attributes.ENCODING, metaData.getCharset().displayName());
+        }
+        return result;
     }
 
     /**
@@ -314,7 +338,7 @@ public class XmlElements {
      */
     public XmlElements write(final Attributes attribute, final String value) throws RatException {
         try {
-            writer.attribute(attribute.name().toLowerCase(Locale.ROOT), value);
+            writer.attribute(normalizeName(attribute.name()), value);
             return this;
         } catch (IOException e) {
             throw new RatException("Cannot open add attribute: " + attribute, e);
