@@ -48,7 +48,7 @@ import org.apache.rat.report.xml.writer.XmlWriter;
 import org.w3c.dom.Document;
 
 /**
- * Class that executes the report as defined in a ReportConfiguration and stores
+ * Class that executes the report as defined in a {@link ReportConfiguration} and stores
  * the result for later handling.
  */
 public class Reporter {
@@ -77,12 +77,12 @@ public class Reporter {
     /**
      * Executes the report and builds the output.
      * This method will build the internal XML document if it does not already exist.
-     * If {@code exec} or either of the {@link #output()} methods have already been called this method will return
+     * If this method or either of the {@link #output()} methods have already been called this method will return
      * the previous results.
-     * @return the ClaimStatistics
+     * @return the claim statistics.
      * @throws RatException on error.
      */
-    public ClaimStatistic exec() throws RatException  {
+    ClaimStatistic execute() throws RatException  {
         if (document == null || statistic == null) {
             try {
                 if (configuration.getReportable() != null) {
@@ -128,7 +128,7 @@ public class Reporter {
     }
 
     /**
-     * Outputs the report to the specified output using the stylesheet.  It is safe to call this method more than once
+     * Outputs the report to the specified output using the stylesheet. It is safe to call this method more than once
      * in order to generate multiple reports from the same run.
      *
      * @param stylesheet the style sheet to use for XSLT formatting.
@@ -136,7 +136,7 @@ public class Reporter {
      * @throws RatException on error.
      */
     public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
-        exec();
+        execute();
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         try (OutputStream out = output.get();

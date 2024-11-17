@@ -72,8 +72,8 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-408" type="fix" dev="claudenw">
-        Added core integration tests and verified RAT-408 is fixed with the new exclusion engine.
+      <action issue="RAT-41" type="fix" dev="claudenw">
+        Added core integration tests and verified results without generating output via ClaimStatistics.
       </action>
       <action issue="RAT-426" type="fix" dev="claudenw">
         Added core integration tests and verified RAT-426 is fixed with the new exclusion engine.

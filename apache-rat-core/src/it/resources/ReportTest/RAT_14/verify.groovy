@@ -69,7 +69,7 @@ ReportConfiguration configuration = OptionCollection.parseCommands(myArgs, { opt
 assertNotNull(configuration);
 configuration.validate(DefaultLog.getInstance().&error);
 Reporter reporter = new Reporter(configuration);
-ClaimStatistic statistic = reporter.exec();
+ClaimStatistic statistic = reporter.execute();
 
 assertEquals(3, statistic.getCounter(ClaimStatistic.Counter.APPROVED));
 assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.ARCHIVES));
