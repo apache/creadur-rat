@@ -27,8 +27,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.rat.api.Document;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.guesser.NoteGuesser;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
@@ -47,7 +49,6 @@ public final class TikaProcessor {
      * "text" types are already handled somewhere else
      * BINARY unless listed here*/
     private static final Map<String, Document.Type> DOCUMENT_TYPE_MAP;
-    //private static final DefaultDetector DEFAULT_DETECTOR = new DefaultDetector();
 
     static {
         DOCUMENT_TYPE_MAP = new HashMap<>();
@@ -137,7 +138,7 @@ public final class TikaProcessor {
             document.getMetaData()
                     .setDocumentType(fromMediaType(mediaType));
             if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
-                document.getMetaData().setCharset(detectCharset(stream));
+                document.getMetaData().setCharset(detectCharset(stream, document.getName()));
                 if (NoteGuesser.isNote(document)) {
                     document.getMetaData().setDocumentType(Document.Type.NOTICE);
                 }
@@ -152,10 +153,11 @@ public final class TikaProcessor {
     /**
      * Determine the character set for the input stream. Input stream must implement {@code mark}.
      * @param stream the stream to check.
+     * @param documentName the name of the document being read.
      * @return the detected character set or {@code null} if not detectable.
      * @throws IOException on IO error.
      */
-    private static Charset detectCharset(final InputStream stream) throws IOException {
+    private static Charset detectCharset(final InputStream stream, final DocumentName documentName) throws IOException {
         CharsetDetector encodingDetector = new CharsetDetector();
         encodingDetector.setText(stream);
         CharsetMatch charsetMatch = encodingDetector.detect();
@@ -163,7 +165,8 @@ public final class TikaProcessor {
             try {
                 return Charset.forName(charsetMatch.getName());
             } catch (UnsupportedCharsetException e) {
-                // do nothing
+                DefaultLog.getInstance().warn(String.format("Unsupported character set '%s' in file '%s'.  Will use system default encoding.",
+                                charsetMatch.getName(), documentName));
             }
         }
         return null;
