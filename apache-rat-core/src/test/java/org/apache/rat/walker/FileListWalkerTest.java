@@ -30,6 +30,7 @@ import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,6 +70,7 @@ public class FileListWalkerTest {
 
     @BeforeAll
     public static void setUp() throws Exception {
+        tempName = new DocumentName(tempDir);
 
         /*
         Create a directory structure like this:
@@ -84,14 +86,13 @@ public class FileListWalkerTest {
         regular.mkdir();
         fileWriter(regular, "regularFile", "regular file");
         fileWriter(regular, ".hiddenFile", "hidden file");
-        regularName = new DocumentName(new File(regular, ".hiddenFile"));
+        regularName = new DocumentName(new File(regular, ".hiddenFile"), tempName).changeDirectorySeparator("/");
 
         File hidden = new File(tempDir, ".hidden");
         hidden.mkdir();
         fileWriter(hidden, "regularFile", "regular file");
         fileWriter(hidden, ".hiddenFile", "hidden file");
-        hiddenName = new DocumentName(new File(hidden, "regularFile"));
-
+        hiddenName = new DocumentName(new File(hidden, "regularFile"), tempName).changeDirectorySeparator("/");
 
         source = new File(tempDir, "source.txt");
         try (FileWriter writer = new FileWriter(source)) {
@@ -106,14 +107,14 @@ public class FileListWalkerTest {
     
     @Test
     public void readFilesTest() throws RatException {
-        DocumentName name =new DocumentName(source, new DocumentName(source.getParentFile()));
+        DocumentName name = new DocumentName(source, new DocumentName(source.getParentFile()));
         FileListWalker walker = new FileListWalker(new FileDocument(name, source, x -> true));
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
         String[] expected = {regularName.getName(), hiddenName.getName()};
         assertEquals(2, scanned.size());
         for (String ex : expected) {
-            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
+            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s from %s", ex, String.join(", ", scanned)));
         }
     }
 

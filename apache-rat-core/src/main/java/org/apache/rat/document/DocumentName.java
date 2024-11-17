@@ -101,6 +101,18 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
+     * Returns a new DocumentName that is the same as this document Name with the directory separator
+     * replaced with the new directory separator.
+     * @param dirSeparator the new directory separator
+     * @return a DocumentName with the specified directory separator.
+     */
+    public DocumentName changeDirectorySeparator(final String dirSeparator) {
+        String name = String.join(dirSeparator, Arrays.asList(tokenize(getName())));
+        String baseName = String.join(dirSeparator, Arrays.asList(tokenize(getBaseName())));
+        return new DocumentName(name, baseName, dirSeparator, isCaseSensitive);
+    }
+
+    /**
      * Creates a new document name by adding the child to the current name.
      * @param child the child to add (must use directory separator from this document name).
      * @return the new document name with the same base name, directory separator and case sensitivity as this one.
