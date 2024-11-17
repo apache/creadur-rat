@@ -16,13 +16,13 @@ package ReportTest.RAT_246
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-output = new File(args[0]);
+output = new File(args[0])
 content = output.text
 
 assert !content.contains('/dir1/FileToIgnore')
 assert content.contains('/dir1/FileToProcess')
 
-logOutput = new File(args[1]);
+logOutput = new File(args[1])
 log = logOutput.text
 
 assert log.contains('INFO: Processing exclude file from GIT.')

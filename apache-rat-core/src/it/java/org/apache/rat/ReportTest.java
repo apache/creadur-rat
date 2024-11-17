@@ -24,12 +24,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -127,7 +123,6 @@ public class ReportTest {
         File groovyScript = new File(baseDir, "verify.groovy");
         if (groovyScript.exists()) {
             // call groovy expressions from Java code
-            //Binding binding = new Binding();
             CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
 
             GroovyShell shell = new GroovyShell(compilerConfiguration);
@@ -202,7 +197,7 @@ public class ReportTest {
         @Override
         public void log(Level level, String msg) {
             if (isEnabled(level)) {
-                logFile.println(String.format("%s: %s", level, msg));
+                logFile.printf("%s: %s%n", level, msg);
             }
         }
 

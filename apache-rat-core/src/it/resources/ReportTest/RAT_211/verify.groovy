@@ -26,31 +26,31 @@ import javax.xml.xpath.XPathFactory
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertNull
 
-doc = XmlUtils.toDom(new FileInputStream(args[0]));
-XPath xPath = XPathFactory.newInstance().newXPath();
+doc = XmlUtils.toDom(new FileInputStream(args[0]))
+XPath xPath = XPathFactory.newInstance().newXPath()
 
-NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/leader-election-message-arrives.dia']");
-assertEquals(1, nodeList.getLength());
-node = nodeList.item(0);
-attributes = node.getAttributes();
-assertNull(attributes.getNamedItem("encoding"), "There should not be an encoding");
-assertEquals("application/gzip", attributes.getNamedItem("mediaType").getNodeValue());
-assertEquals("ARCHIVE", attributes.getNamedItem("type").getNodeValue());
-nodeList = XmlUtils.getNodeList(node, xPath, "license");
-assertEquals(0, nodeList.getLength());
+NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/leader-election-message-arrives.dia']")
+assertEquals(1, nodeList.getLength())
+node = nodeList.item(0)
+attributes = node.getAttributes()
+assertNull(attributes.getNamedItem("encoding"), "There should not be an encoding")
+assertEquals("application/gzip", attributes.getNamedItem("mediaType").getNodeValue())
+assertEquals("ARCHIVE", attributes.getNamedItem("type").getNodeValue())
+nodeList = XmlUtils.getNodeList(node, xPath, "license")
+assertEquals(0, nodeList.getLength())
 
-nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/side_left.bmp']");
-assertEquals(1, nodeList.getLength());
-node = nodeList.item(0);
-attributes = node.getAttributes();
-assertNull(attributes.getNamedItem("encoding"), "There should not be an encoding");
-assertEquals("image/bmp", attributes.getNamedItem("mediaType").getNodeValue());
-assertEquals("BINARY", attributes.getNamedItem("type").getNodeValue());
-nodeList = XmlUtils.getNodeList(node, xPath, "license");
-assertEquals(0, nodeList.getLength());
+nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/side_left.bmp']")
+assertEquals(1, nodeList.getLength())
+node = nodeList.item(0)
+attributes = node.getAttributes()
+assertNull(attributes.getNamedItem("encoding"), "There should not be an encoding")
+assertEquals("image/bmp", attributes.getNamedItem("mediaType").getNodeValue())
+assertEquals("BINARY", attributes.getNamedItem("type").getNodeValue())
+nodeList = XmlUtils.getNodeList(node, xPath, "license")
+assertEquals(0, nodeList.getLength())
 
-logOutput = new File(args[1]);
+logOutput = new File(args[1])
 log = logOutput.text
 
-TextUtils.assertPatternNotInTarget("^ERROR:", log);
-TextUtils.assertPatternNotInTarget("^WARN:", log);
+TextUtils.assertPatternNotInTarget("^ERROR:", log)
+TextUtils.assertPatternNotInTarget("^WARN:", log)

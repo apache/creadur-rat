@@ -25,39 +25,38 @@ import javax.xml.xpath.XPathFactory
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 
-doc = XmlUtils.toDom(new FileInputStream(args[0]));
-XPath xPath = XPathFactory.newInstance().newXPath();
+doc = XmlUtils.toDom(new FileInputStream(args[0]))
+XPath xPath = XPathFactory.newInstance().newXPath()
 
-NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/unix-newlines.txt.bin']");
-assertEquals(1, nodeList.getLength());
-node = nodeList.item(0);
-attributes = node.getAttributes();
-assertEquals("UTF-8", attributes.getNamedItem("encoding").getNodeValue());
-assertEquals("text/plain", attributes.getNamedItem("mediaType").getNodeValue());
-assertEquals("STANDARD", attributes.getNamedItem("type").getNodeValue());
-nodeList = XmlUtils.getNodeList(node, xPath, "license");
-assertEquals(1, nodeList.getLength());
-node = nodeList.item(0);
-attributes = node.getAttributes();
-assertEquals("false", attributes.getNamedItem("approval").getNodeValue());
-
-
-nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/windows-newlines.txt.bin']");
-assertEquals(1, nodeList.getLength());
-node = nodeList.item(0);
-attributes = node.getAttributes();
-assertEquals("UTF-8", attributes.getNamedItem("encoding").getNodeValue());
-assertEquals("text/plain", attributes.getNamedItem("mediaType").getNodeValue());
-assertEquals("STANDARD", attributes.getNamedItem("type").getNodeValue());
-nodeList = XmlUtils.getNodeList(node, xPath, "license");
-assertEquals(1, nodeList.getLength());
-node = nodeList.item(0);
-attributes = node.getAttributes();
-assertEquals("false", attributes.getNamedItem("approval").getNodeValue());
+NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/unix-newlines.txt.bin']")
+assertEquals(1, nodeList.getLength())
+node = nodeList.item(0)
+attributes = node.getAttributes()
+assertEquals("UTF-8", attributes.getNamedItem("encoding").getNodeValue())
+assertEquals("text/plain", attributes.getNamedItem("mediaType").getNodeValue())
+assertEquals("STANDARD", attributes.getNamedItem("type").getNodeValue())
+nodeList = XmlUtils.getNodeList(node, xPath, "license")
+assertEquals(1, nodeList.getLength())
+node = nodeList.item(0)
+attributes = node.getAttributes()
+assertEquals("false", attributes.getNamedItem("approval").getNodeValue())
 
 
-logOutput = new File(args[1]);
+nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/windows-newlines.txt.bin']")
+assertEquals(1, nodeList.getLength())
+node = nodeList.item(0)
+attributes = node.getAttributes()
+assertEquals("UTF-8", attributes.getNamedItem("encoding").getNodeValue())
+assertEquals("text/plain", attributes.getNamedItem("mediaType").getNodeValue())
+assertEquals("STANDARD", attributes.getNamedItem("type").getNodeValue())
+nodeList = XmlUtils.getNodeList(node, xPath, "license")
+assertEquals(1, nodeList.getLength())
+node = nodeList.item(0)
+attributes = node.getAttributes()
+assertEquals("false", attributes.getNamedItem("approval").getNodeValue())
+
+logOutput = new File(args[1])
 log = logOutput.text
 
-TextUtils.assertPatternNotInTarget("^ERROR:", log);
-TextUtils.assertPatternNotInTarget("^WARN:", log);
+TextUtils.assertPatternNotInTarget("^ERROR:", log)
+TextUtils.assertPatternNotInTarget("^WARN:", log)
