@@ -197,6 +197,10 @@
       <artifactId>tika-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-parser-text-module</artifactId>
+    </dependency>
+    <dependency>
       <!-- this dependency is actually used by integeration testing code -->
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
