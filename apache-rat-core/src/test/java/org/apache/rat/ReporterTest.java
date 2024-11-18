@@ -18,7 +18,7 @@
  */
 package org.apache.rat;
 
-import static org.apache.commons.io.FileUtils.getFile;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -81,13 +81,12 @@ public class ReporterTest {
 
     @Test
     public void testExecute() throws RatException, ParseException {
-        File output = new File(tempDirectory, "sysout");
-        output.delete();
-        PrintStream origin = System.out;
+        File output = new File(tempDirectory, "testExecute");
 
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
         ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
         ClaimStatistic statistic = new Reporter(config).execute();
+
         assertEquals(1, statistic.getCounter(Type.ARCHIVE));
         assertEquals(2, statistic.getCounter(Type.BINARY));
         assertEquals(1, statistic.getCounter(Type.GENERATED));
@@ -109,14 +108,14 @@ public class ReporterTest {
         List<Type> typeList = statistic.getDocumentTypes();
         assertEquals(Arrays.asList(Type.ARCHIVE, Type.BINARY, Type.GENERATED, Type.NOTICE, Type.STANDARD), typeList);
 
-        TreeMap<String, Integer> expected = new TreeMap<String, Integer>();
+        TreeMap<String, Integer> expected = new TreeMap<>();
         expected.put("Unknown license", 2);
         expected.put("Apache License Version 2.0", 5);
         expected.put("The MIT License", 1);
         expected.put("BSD 3 clause", 1);
         expected.put("Generated Files", 1);
         expected.put("The Telemanagement Forum License", 1);
-        TreeMap<String, Integer> actual = new TreeMap();
+        TreeMap<String, Integer> actual = new TreeMap<>();
 
         for (String licenseName : statistic.getLicenseNames()) {
             actual.put(licenseName, statistic.getLicenseNameCount(licenseName));
@@ -151,8 +150,8 @@ public class ReporterTest {
 
     @Test
     public void testDefaultOutput() throws Exception {
-        File output = new File(tempDirectory, "sysout");
-        output.delete();
+        File output = new File(tempDirectory, "testDefaultOutput");
+
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
@@ -169,9 +168,7 @@ public class ReporterTest {
 
     @Test
     public void testXMLOutput() throws Exception {
-        File output = new File(tempDirectory, "sysout");
-        output.delete();
-        PrintStream origin = System.out;
+        File output = new File(tempDirectory, "testXMLOutput");
 
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
         ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
