@@ -23,8 +23,10 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.SortedSet;
 
+import org.apache.rat.analysis.TikaProcessor;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.tika.parser.txt.CharsetDetector;
 
 /**
  * The representation of a document being scanned.
@@ -46,7 +48,7 @@ public abstract class Document implements Comparable<Document> {
         /** A standard document. */
         STANDARD,
         /** An unknown document type. */
-        UNKNOWN;
+        UNKNOWN
     }
 
     /** The path matcher used by this document */
@@ -104,14 +106,16 @@ public abstract class Document implements Comparable<Document> {
     /**
      * Reads the contents of this document.
      * @return <code>Reader</code> not null
-     * @throws IOException if this document cannot be read
+     * @throws IOException if this document cannot be read.
      */
-    public abstract Reader reader() throws IOException;
+    public Reader reader() throws IOException {
+        return new CharsetDetector().getReader(TikaProcessor.markSupportedInputStream(inputStream()), getMetaData().getCharset().name());
+    }
 
     /**
      * Streams the document's contents.
      * @return a non-null input stream of the document.
-     * @throws IOException when stream could not be opened
+     * @throws IOException when stream could not be opened.
      */
     public abstract InputStream inputStream() throws IOException;
 

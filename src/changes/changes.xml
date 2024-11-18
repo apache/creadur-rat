@@ -75,6 +75,18 @@ The <action> type attribute can be one of:
       <action issue="RAT-41" type="fix" dev="claudenw">
         Added core integration tests and verified results without generating output via ClaimStatistics.
       </action>
+      <action issue="RAT-81" type="add" dev="claudenw">
+        Added encoding information of the file being read to the RAT report in case of STANDARD document files.
+        Added media type attribute in report for all files.
+      </action>
+      <action issue="RAT-81" type="fix" dev="claudenw">
+        Fixed encoding issue where text files not in UTF-8 encoding would not be read properly.
+        Change adds charset to the metadata when it can be discovered. If not UTF-8 is returned.
+        Added integration test to show reading of UTF8 and IBM037 encoding works.
+      </action>
+      <action issue="RAT-408" type="fix" dev="claudenw">
+        Added core integration tests and verified RAT-408 is fixed with the new exclusion engine.
+      </action>
       <action issue="RAT-426" type="fix" dev="claudenw">
         Added core integration tests and verified RAT-426 is fixed with the new exclusion engine.
       </action>

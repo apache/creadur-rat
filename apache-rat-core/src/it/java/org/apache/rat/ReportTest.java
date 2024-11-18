@@ -18,7 +18,6 @@
  */
 package org.apache.rat;
 
-import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.io.File;
 import java.io.FileReader;
@@ -48,6 +47,7 @@ import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.DirectoryWalker;
+import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -123,9 +123,12 @@ public class ReportTest {
         File groovyScript = new File(baseDir, "verify.groovy");
         if (groovyScript.exists()) {
             // call groovy expressions from Java code
-            Binding binding = new Binding();
-            GroovyShell shell = new GroovyShell(binding);
+            CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
 
+            GroovyShell shell = new GroovyShell(compilerConfiguration);
+            for (String classPath : System.getProperty("java.class.path").split(File.pathSeparator)) {
+                shell.getClassLoader().addClasspath(classPath);
+            }
             Object value = shell.run(groovyScript, new String[]{outputFile.getAbsolutePath(), logFile.getAbsolutePath()});
             if (value != null) {
                 fail(String.format("%s",value));
@@ -194,7 +197,7 @@ public class ReportTest {
         @Override
         public void log(Level level, String msg) {
             if (isEnabled(level)) {
-                logFile.println(String.format("%s: %s", level, msg));
+                logFile.printf("%s: %s%n", level, msg);
             }
         }
 
