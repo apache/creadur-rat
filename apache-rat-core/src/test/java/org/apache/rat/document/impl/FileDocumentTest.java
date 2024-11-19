@@ -20,6 +20,7 @@ package org.apache.rat.document.impl;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.test.utils.Resources;
 import org.assertj.core.util.Files;
@@ -41,7 +42,7 @@ public class FileDocumentTest {
     public void setUp() throws Exception {
         File basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES);
         file = Resources.getResourceFile("elements/Source.java");
-        document = new FileDocument(new DocumentName(basedir), file, p -> true);
+        document = new FileDocument(DocumentName.builder(basedir).build(), file, DocumentNameMatcher.MATCHES_ALL);
     }
 
     @Test

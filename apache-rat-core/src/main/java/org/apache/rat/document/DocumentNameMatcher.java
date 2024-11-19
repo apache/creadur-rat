@@ -23,6 +23,15 @@ import java.io.FileFilter;
 
 @FunctionalInterface
 public interface DocumentNameMatcher {
+    /**
+     * A matcher that matches all documents.
+     */
+    DocumentNameMatcher MATCHES_ALL = x -> true;
+    /**
+     * A matcher that matches no documents.
+     */
+    DocumentNameMatcher MATCHES_NONE = x -> false;
+
     boolean matches(DocumentName documentName);
 
     /**

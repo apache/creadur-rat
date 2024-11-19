@@ -88,6 +88,6 @@ public interface FileProcessor extends Function<DocumentName, List<String>> {
                     .append(baseName.getDirectorySeparator())
                     .append(normalizedPattern);
         }
-        return new DocumentName(sb.toString(), baseName.getBaseName(), baseName.getDirectorySeparator(), baseName.isCaseSensitive());
+        return DocumentName.builder(baseName).setName(sb.toString()).build();
     }
 }

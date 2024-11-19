@@ -265,7 +265,7 @@ public class ReporterTest {
         final File elementsFile = new File(Resources.getResourceDirectory("elements/Source.java"));
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
-        DocumentName documentName = new DocumentName(elementsFile);
+        DocumentName documentName = DocumentName.builder(elementsFile).build();
         configuration.addSource(new DirectoryWalker(new FileDocument(documentName, elementsFile,
                 configuration.getNameMatcher(documentName))));
         return configuration;

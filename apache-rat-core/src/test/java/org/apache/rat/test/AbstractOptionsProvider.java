@@ -89,7 +89,7 @@ public abstract class AbstractOptionsProvider {
     protected final File baseDir;
 
     protected DocumentName baseName() {
-        return new DocumentName(baseDir);
+        return DocumentName.builder(baseDir).build();
     }
 
     protected AbstractOptionsProvider(Collection<String> unsupportedArgs) {
@@ -199,7 +199,7 @@ public abstract class AbstractOptionsProvider {
     }
 
     protected DocumentName mkDocName(String name) {
-        return new DocumentName(new File(baseDir, name), new DocumentName(baseDir));
+        return DocumentName.builder(new File(baseDir, name)).build();
     }
 
     /* tests to be implemented */

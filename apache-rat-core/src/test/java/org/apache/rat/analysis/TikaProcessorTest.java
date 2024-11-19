@@ -44,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TikaProcessorTest {
-    private final DocumentNameMatcher nameMatcher = p -> true;
     /**
      * Used to swallow a MalformedInputException and return false
      * because the encoding of the stream was different from the
@@ -60,20 +59,20 @@ public class TikaProcessorTest {
             public int read() throws IOException {
                 throw new MalformedInputException(0);
             }
-        }, nameMatcher);
+        }, DocumentNameMatcher.MATCHES_ALL);
         assertThrows(RatDocumentAnalysisException.class, () -> TikaProcessor.process(doc));
     }
 
     @Test
     public void UTF16_input() throws Exception {
         Document doc = mkDocument(Resources.getResourceStream("/binaries/UTF16_with_signature.xml"),
-                nameMatcher);
+                DocumentNameMatcher.MATCHES_ALL);
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     private FileDocument mkDocument(File f) {
-        return new FileDocument(new DocumentName(f, new DocumentName(f.getParentFile())), f, nameMatcher);
+        return new FileDocument(DocumentName.builder(f).build(), f, DocumentNameMatcher.MATCHES_ALL);
     }
 
     private FileDocument mkDocument(String fileName) throws IOException {
@@ -145,7 +144,7 @@ public class TikaProcessorTest {
      */
     private static Document mkDocument(final InputStream stream, DocumentNameMatcher nameMatcher) {
 
-        return new Document(new DocumentName("Testing Document", "/", File.pathSeparator, DocumentName.FS_IS_CASE_SENSITIVE), nameMatcher) {
+        return new Document(DocumentName.builder().setName("Testing Document").setBaseName("/").build(), nameMatcher) {
 
             @Override
             public Reader reader() {

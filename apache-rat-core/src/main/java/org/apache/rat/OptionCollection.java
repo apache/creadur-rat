@@ -243,7 +243,7 @@ public final class OptionCollection {
      */
     static IReportable getReportable(final File base, final ReportConfiguration config) {
         File absBase = base.getAbsoluteFile();
-        DocumentName documentName = new DocumentName(absBase);
+        DocumentName documentName = DocumentName.builder(absBase).build();
         if (!absBase.exists()) {
             DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist.");
             return null;

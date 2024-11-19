@@ -50,7 +50,7 @@ public class ExclusionProcessorTest {
 
     @BeforeEach
     public void setup() {
-        basedir = new DocumentName(basedirFile);
+        basedir = DocumentName.builder(basedirFile).build();
     }
 
     private void testParseExclusion(DocumentNameMatcher nameMatcher, DocumentName name, boolean expected) {
@@ -65,7 +65,7 @@ public class ExclusionProcessorTest {
         } catch (IOException e) {
             fail(e);
         }
-        return new DocumentName(f, basedir);
+        return DocumentName.builder(f).setBaseName(basedir.getBaseName()).build();
     }
 
     @Test

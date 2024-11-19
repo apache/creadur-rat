@@ -41,6 +41,7 @@ import org.apache.rat.analysis.matchers.AndMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -125,8 +126,8 @@ public class DescriptionBuilderTest {
         URL url = classLoader.getResource("");
         File baseDir = new File(url.toURI());
         baseDir = new File(baseDir.getParent(), "classes");
-        DocumentName documentName = new DocumentName(baseDir);
-        FileDocument fileDocument =  new FileDocument(documentName, baseDir, x -> true);
+        DocumentName documentName = DocumentName.builder(baseDir).build();
+        FileDocument fileDocument =  new FileDocument(documentName, baseDir, DocumentNameMatcher.MATCHES_ALL);
         DocumentProcessor processor = new DocumentProcessor();
         processor.accept(fileDocument);
 

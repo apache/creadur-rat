@@ -153,7 +153,7 @@ public class ReportTest {
         }
 
         File baseDir = new File(url.getFile());
-        DocumentName docName = new DocumentName(baseDir);
+        DocumentName docName = DocumentName.builder(baseDir).build();
         AbstractFileFilter fileFilter = new NameFileFilter("commandLine.txt", docName.isCaseSensitive() ? IOCase.SENSITIVE : IOCase.INSENSITIVE);
         fileFilter = new OrFileFilter(fileFilter, DirectoryFileFilter.INSTANCE);
         Document document = new FileDocument(docName, baseDir, DocumentNameMatcher.from(fileFilter));

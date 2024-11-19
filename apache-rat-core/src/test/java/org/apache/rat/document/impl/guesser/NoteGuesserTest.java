@@ -42,8 +42,10 @@ public class NoteGuesserTest {
     private static Stream<Arguments> nameData() {
         List<Arguments> lst = new ArrayList<>();
 
-        final DocumentName linuxBaseName = new DocumentName("/", "/", "/", true);
-        final DocumentName windowsBaseName = new DocumentName("\\", "\\", "\\", false);
+        final DocumentName linuxBaseName = DocumentName.builder().setName("/").setBaseName("/").setDirSeparator("/")
+                .setCaseSensitive(true).build();
+        final DocumentName windowsBaseName = DocumentName.builder().setName("\\").setBaseName("\\")
+                .setDirSeparator("\\").setCaseSensitive(false).build();
 
         lst.add(Arguments.of(linuxBaseName.resolve("DEPENDENCIES"), true));
         lst.add(Arguments.of(linuxBaseName.resolve("LICENSE"), true));

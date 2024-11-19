@@ -27,7 +27,8 @@ public class DocumentNameTest {
 
     @Test
     public void localizeTest() {
-        DocumentName documentName = new DocumentName( "/a/b/c", "/a", "/", false);
+        DocumentName documentName = DocumentName.builder().setName("/a/b/c")
+                .setBaseName("/a").setDirSeparator("/").setCaseSensitive(false).build();
         assertEquals("/b/c", documentName.localized());
         assertEquals("-b-c", documentName.localized("-"));
     }

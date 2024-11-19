@@ -26,11 +26,10 @@ import java.util.List;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,19 +42,20 @@ public class FileListWalkerTest {
 
     private ReportConfiguration reportConfiguration;
     private static File source;
-    private static DocumentName tempName;
     private static DocumentName regularName;
     private static DocumentName hiddenName;
-
+    private static DocumentName anotherName;
 
     @TempDir
     private static File tempDir;
 
-    private static void fileWriter(File dir, String name, String contents) throws IOException {
-        try (FileWriter writer = new FileWriter(new File(dir, name))) {
+    private static File fileWriter(File dir, String name, String contents) throws IOException {
+        File result = new File(dir, name);
+        try (FileWriter writer = new FileWriter(result)) {
             writer.write(contents);
             writer.flush();
         }
+        return result;
     }
 
     @BeforeEach
@@ -64,55 +64,80 @@ public class FileListWalkerTest {
     }
 
     public Document toWalk() {
-        DocumentName documentName = new DocumentName(tempDir);
+        DocumentName documentName = DocumentName.builder(tempDir).build();
         return new FileDocument(documentName, tempDir, reportConfiguration.getNameMatcher(documentName));
     }
 
     @BeforeAll
     public static void setUp() throws Exception {
-        tempName = new DocumentName(tempDir);
+        DocumentName tempName = DocumentName.builder(tempDir).build();
 
         /*
         Create a directory structure like this:
-
-            regular
-                regularFile
-                .hiddenFile
-            .hidden
-                regularFile
-                .hiddenFile
+            working
+                source.txt
+                regular
+                    regularFile
+                    .hiddenFile
+                .hidden
+                    regularFile
+                    .hiddenFile
+            other
+                anotherFile
          */
-        File regular = new File(tempDir, "regular");
+        File working = new File(tempDir, "working");
+        working.mkdir();
+        File other = new File(tempDir, "other");
+        other.mkdir();
+        File anotherFile = fileWriter(other, "anotherFile", "just another file");
+        File p = anotherFile;
+        while (p.getParentFile() != null) {
+            p = p.getParentFile();
+        }
+        DocumentName rootName = DocumentName.builder(p).build();
+        anotherName = DocumentName.builder(anotherFile).setBaseName(p).build();
+
+
+        source = new File(working, "source.txt");
+        DocumentName sourceName = DocumentName.builder(source).setBaseName(working.getAbsolutePath()).build();
+        File regular = new File(working, "regular");
         regular.mkdir();
         fileWriter(regular, "regularFile", "regular file");
         fileWriter(regular, ".hiddenFile", "hidden file");
-        regularName = new DocumentName(new File(regular, ".hiddenFile"), tempName).changeDirectorySeparator("/");
+        regularName = DocumentName.builder(new File(regular, ".hiddenFile")).setBaseName(rootName.getBaseName()).build();
 
-        File hidden = new File(tempDir, ".hidden");
+        File hidden = new File(working, ".hidden");
         hidden.mkdir();
         fileWriter(hidden, "regularFile", "regular file");
         fileWriter(hidden, ".hiddenFile", "hidden file");
-        hiddenName = new DocumentName(new File(hidden, "regularFile"), tempName).changeDirectorySeparator("/");
+        File hiddenFile = new File(hidden, "regularFile");
+        hiddenName = DocumentName.builder(hiddenFile).setBaseName(sourceName.getBaseName()).build();
 
-        source = new File(tempDir, "source.txt");
+
+        source = new File(working, "source.txt");
+
         try (FileWriter writer = new FileWriter(source)) {
-            writer.write(hidden.getPath()+"/regularFile");
+            writer.write(regularName.localized("/"));
             writer.write(System.lineSeparator());
-            writer.write("regular/.hiddenFile");
+            writer.write(hiddenName.localized("/").substring(1));
+            writer.write(System.lineSeparator());
+            writer.write(anotherName.localized("/"));
             writer.write(System.lineSeparator());
             writer.flush();
+            System.out.flush();
         }
-        tempName = new DocumentName(tempDir);
+
+        hiddenName = DocumentName.builder(hiddenFile).setBaseName(rootName.getBaseName()).build();
     }
     
     @Test
     public void readFilesTest() throws RatException {
-        DocumentName name = new DocumentName(source, new DocumentName(source.getParentFile()));
-        FileListWalker walker = new FileListWalker(new FileDocument(name, source, x -> true));
+        FileListWalker walker = new FileListWalker(new FileDocument(source, DocumentNameMatcher.MATCHES_ALL));
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
-        String[] expected = {regularName.getName(), hiddenName.getName()};
-        assertEquals(2, scanned.size());
+        String[] expected = {regularName.localized("/"), hiddenName.localized("/"),
+        anotherName.localized("/")};
+        assertEquals(3, scanned.size());
         for (String ex : expected) {
             assertTrue(scanned.contains(ex), ()-> String.format("Missing %s from %s", ex, String.join(", ", scanned)));
         }

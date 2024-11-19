@@ -90,11 +90,11 @@ public class ReportConfigurationTest {
     @Test
     public void testAddIncludedFilter() {
         underTest.addExcludedFilter(DirectoryFileFilter.INSTANCE);
-        DocumentNameMatcher matcher = underTest.getNameMatcher(new DocumentName(new File(File.separator)));
+        DocumentNameMatcher matcher = underTest.getNameMatcher(DocumentName.builder(new File(File.separator)).build());
         assertEquals("not(DirectoryFileFilter)", matcher.toString());
-        assertFalse(matcher.matches(new DocumentName(tempDir)));
+        assertFalse(matcher.matches(DocumentName.builder(tempDir).build()));
         File f = new File(tempDir, "foo.txt");
-        assertTrue(matcher.matches(new DocumentName(f)));
+        assertTrue(matcher.matches(DocumentName.builder(f).build()));
     }
 
     @Test
@@ -361,11 +361,11 @@ public class ReportConfigurationTest {
     }
 
     DocumentName mkDocumentName(File f) {
-        return new DocumentName(f, new DocumentName(tempDir));
+        return DocumentName.builder(f).setBaseName(tempDir).build();
     }
     @Test
     public void exclusionTest() {
-        DocumentName baseDir = new DocumentName(tempDir);
+        DocumentName baseDir = DocumentName.builder(tempDir).build();
         assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
         assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File("foo"))));
 

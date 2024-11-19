@@ -42,7 +42,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
                 .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
 
         writeFile("test.txt", Arrays.asList(lines));
-        DocumentName documentName = new DocumentName(baseDir);
+        DocumentName documentName = DocumentName.builder(baseDir).build();
 
         DescendingFileProcessor processor = new DescendingFileProcessor("test.txt", "#");
         List<String> actual = processor.apply(baseName);

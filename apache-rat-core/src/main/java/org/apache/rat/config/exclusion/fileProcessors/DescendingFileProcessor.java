@@ -105,10 +105,10 @@ public class DescendingFileProcessor implements FileProcessor {
         List<String> fileNames = new ArrayList<>();
         File dirFile = new File(directory.getName());
         for (File f : listFiles(dirFile, fileFilter)) {
-            fileNames.addAll(process(new DocumentName(f, directory)));
+            fileNames.addAll(process(DocumentName.builder(f).setBaseName(directory.getBaseName()).build()));
         }
         for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
-            fileNames.addAll(checkDirectory(new DocumentName(dir), fileFilter));
+            fileNames.addAll(checkDirectory(DocumentName.builder(dir).build(), fileFilter));
         }
         return fileNames;
     }

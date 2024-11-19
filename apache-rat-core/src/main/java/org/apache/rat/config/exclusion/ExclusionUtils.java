@@ -112,7 +112,7 @@ public final class ExclusionUtils {
      * @return a FileFilter.
      */
     public static FileFilter asFileFilter(final DocumentName parent, final DocumentNameMatcher nameMatcher) {
-        return file -> nameMatcher.matches(new DocumentName(file, parent));
+        return file -> nameMatcher.matches(DocumentName.builder(file).setBaseName(parent.getBaseName()).build());
     }
 
     /**

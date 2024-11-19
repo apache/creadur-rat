@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.utils.DefaultLog;
 
 
@@ -70,46 +69,42 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a Document name.
-     * @param name the name of the document
-     * @param baseName the base name of the document.
-     * @param dirSeparator the directory separator used in the name.
-     * @param isCaseSensitive {@code true} if the name is case-sensitive.
+     * Creates a builder with directory separator and case sensitivity based on the local file system.
+     * @return the Builder.
      */
-    public DocumentName(final String name, final String baseName, final String dirSeparator, final boolean isCaseSensitive) {
-        this.name = Objects.requireNonNull(name);
-        this.baseName = Objects.requireNonNull(StringUtils.defaultIfEmpty(baseName, null));
-        this.dirSeparator = Objects.requireNonNull(dirSeparator);
-        this.isCaseSensitive = isCaseSensitive;
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
-     * Creates a document name with the name of the file and the same basename as the baseName document.
-     * @param file the file to name the document from.
-     * @param baseName the DocumentName to provide the baseName.
+     * Creates a builder from a File.  The base name is set to the file name if it is a directory otherwise
+     * it is set to the directory containing the file. Directory separator is set from the file and
+     * case sensitivity based on the local file system.
+     * @param file The file to set defaults from.
+     * @return the Builder.
      */
-    public DocumentName(final File file, final DocumentName baseName) {
-        this(file.getAbsolutePath(), baseName.baseName, File.separator, FS_IS_CASE_SENSITIVE);
+    public static Builder builder(final File file) {
+        return new Builder(file);
     }
 
     /**
-     * Creates a document name with the name and basename equal to the file name
-     * @param file the file name to use.
+     * Creates a builder from a document name. The builder will be configured to create a clone of the document name.
+     * @param documentName the document name to set the defaults from.
+     * @return the builder.
      */
-    public DocumentName(final File file) {
-        this(file.getAbsolutePath(), file.getAbsolutePath(), File.separator, FS_IS_CASE_SENSITIVE);
+    public static Builder builder(final DocumentName documentName) {
+        return new Builder(documentName);
     }
 
     /**
-     * Returns a new DocumentName that is the same as this document Name with the directory separator
-     * replaced with the new directory separator.
-     * @param dirSeparator the new directory separator
-     * @return a DocumentName with the specified directory separator.
+     * Builds the document name.
+     * @param builder the builder to provide the values.
      */
-    public DocumentName changeDirectorySeparator(final String dirSeparator) {
-        String name = String.join(dirSeparator, Arrays.asList(tokenize(getName())));
-        String baseName = String.join(dirSeparator, Arrays.asList(tokenize(getBaseName())));
-        return new DocumentName(name, baseName, dirSeparator, isCaseSensitive);
+    private DocumentName(final Builder builder) {
+        this.name = builder.name;
+        this.baseName = builder.baseName;
+        this.dirSeparator = builder.dirSeparator;
+        this.isCaseSensitive = builder.isCaseSensitive;
     }
 
     /**
@@ -122,7 +117,7 @@ public final class DocumentName implements Comparable<DocumentName> {
         parts.addAll(Arrays.asList(tokenize(name)));
         parts.addAll(Arrays.asList(tokenize(child)));
         String newName = String.join(dirSeparator, parts);
-        return new DocumentName(newName, baseName, dirSeparator, isCaseSensitive);
+        return new Builder(this).setName(newName).build();
     }
 
     /**
@@ -146,7 +141,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * @return the DocumentName for the basename of this document name.
      */
     public DocumentName getBaseDocumentName() {
-        return name.equals(baseName) ? this : new DocumentName(baseName, baseName, dirSeparator, isCaseSensitive);
+        return name.equals(baseName) ? this : builder(this).setName(baseName).build();
     }
 
     /**
@@ -238,4 +233,112 @@ public final class DocumentName implements Comparable<DocumentName> {
     public int hashCode() {
         return Objects.hash(name, dirSeparator, isCaseSensitive());
     }
+
+    public static final class Builder {
+        /** The name for the document */
+        private String name;
+        /** The base name for the document */
+        private String baseName;
+        /** The directory separator */
+        private String dirSeparator;
+        /** The case sensitivity flag */
+        private boolean isCaseSensitive;
+
+        private Builder() {
+            isCaseSensitive = FS_IS_CASE_SENSITIVE;
+            dirSeparator = File.separator;
+        }
+
+        private Builder(final File file) {
+            this();
+            setName(file);
+            baseName = name;
+            if (!file.isDirectory()) {
+                File p = file.getParentFile();
+                if (p != null) {
+                    baseName = p.getAbsolutePath();
+                }
+            }
+            isCaseSensitive = FS_IS_CASE_SENSITIVE;
+            dirSeparator = File.separator;
+        }
+
+        private Builder(final DocumentName documentName) {
+            this.name = documentName.name;
+            this.baseName = documentName.baseName;
+            this.isCaseSensitive = documentName.isCaseSensitive;
+            this.dirSeparator = documentName.dirSeparator;
+        }
+
+        private void verify() {
+            Objects.requireNonNull(name, "Name cannot be null");
+            Objects.requireNonNull(baseName, "Base name cannot be null");
+        }
+
+        public Builder setName(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setName(final File file) {
+            this.name = file.getAbsolutePath();
+            return this;
+        }
+
+        public Builder setBaseName(final String baseName) {
+            this.baseName = baseName;
+            return this;
+        }
+
+        public Builder setBaseName(final DocumentName baseName) {
+            this.baseName = baseName.getName();
+            return this;
+        }
+
+        public Builder setBaseName(final File file) {
+            this.baseName = file.getAbsolutePath();
+            return this;
+        }
+
+        public Builder setDirSeparator(final String dirSeparator) {
+            Objects.requireNonNull(dirSeparator, "Directory separator cannot be null");
+            this.dirSeparator = dirSeparator;
+            return this;
+        }
+
+        public Builder setCaseSensitive(final boolean isCaseSensitive) {
+            this.isCaseSensitive = isCaseSensitive;
+            return this;
+        }
+
+        public DocumentName build() {
+            verify();
+            return new DocumentName(this);
+        }
+    }
+
+//         public DocumentName(final String name, final String baseName, final String dirSeparator, final boolean isCaseSensitive) {
+//            this.name = Objects.requireNonNull(name);
+//            this.baseName = Objects.requireNonNull(StringUtils.defaultIfEmpty(baseName, null));
+//            this.dirSeparator = Objects.requireNonNull(dirSeparator);
+//            this.isCaseSensitive = isCaseSensitive;
+//        }
+//
+//        /**
+//         * Creates a document name with the name of the file and the same basename as the baseName document.
+//         * @param file the file to name the document from.
+//         * @param baseName the DocumentName to provide the baseName.
+//         */
+//    public DocumentName(final File file, final DocumentName baseName) {
+//            this(file.getAbsolutePath(), baseName.baseName, File.separator, FS_IS_CASE_SENSITIVE);
+//        }
+//
+//        /**
+//         * Creates a document name with the name and basename equal to the file name
+//         * @param file the file name to use.
+//         */
+//    public DocumentName(final File file) {
+//            this(file.getAbsolutePath(), file.getAbsolutePath(), File.separator, FS_IS_CASE_SENSITIVE);
+//        }
+//    }
 }

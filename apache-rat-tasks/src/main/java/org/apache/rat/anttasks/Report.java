@@ -358,7 +358,7 @@ public class Report extends BaseAntTask {
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
                 configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
             }
-            DocumentName name = new DocumentName(getProject().getBaseDir());
+            DocumentName name = DocumentName.builder(getProject().getBaseDir()).build();
             configuration.addSource(new ResourceCollectionContainer(name, configuration, nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);

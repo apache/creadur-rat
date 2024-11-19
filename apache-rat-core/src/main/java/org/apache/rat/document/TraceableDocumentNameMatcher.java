@@ -44,9 +44,9 @@ public class TraceableDocumentNameMatcher implements DocumentNameMatcher {
     /** The supplier for the name */
     protected final Supplier<String> name;
     /** A TraceableDocumentNameMatcher that always returns {@code true} */
-    public static final TraceableDocumentNameMatcher TRUE = TraceableDocumentNameMatcher.make(() -> "True", pth -> true);
+    public static final TraceableDocumentNameMatcher TRUE = TraceableDocumentNameMatcher.make(() -> "True", DocumentNameMatcher.MATCHES_ALL);
     /** A TraceableDocumentNameMatcher that always returns {@code false} */
-    public static final TraceableDocumentNameMatcher FALSE = TraceableDocumentNameMatcher.make(() -> "False", pth -> false);
+    public static final TraceableDocumentNameMatcher FALSE = TraceableDocumentNameMatcher.make(() -> "False", DocumentNameMatcher.MATCHES_NONE);
 
     /**
      * Creates a TraceableDocumentNameMatcher from a PathMatcher.

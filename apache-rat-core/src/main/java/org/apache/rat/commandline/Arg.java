@@ -225,7 +225,7 @@ public enum Arg {
 
 ////////////////// INPUT OPTIONS
     /**
-     * Excludes files by expression
+     * Reads files to test from file.
      */
     SOURCE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
@@ -233,7 +233,6 @@ public enum Arg {
                             "relative to the directory where RAT is running.")
                     .type(File.class)
                     .build())),
-
 
     /**
      * Excludes files by expression

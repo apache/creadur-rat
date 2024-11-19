@@ -214,9 +214,9 @@ public class ReportConfiguration {
      * @return a configured builder.
      */
     public IReportableListWalker.Builder getSources() {
-        DocumentName name = new DocumentName(new File("."));
+        DocumentName name = DocumentName.builder(new File(".")).build();
         IReportableListWalker.Builder builder = IReportableListWalker.builder(name);
-        sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, x -> true))));
+        sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, DocumentNameMatcher.MATCHES_ALL))));
         reportables.forEach(builder::addReportable);
         return builder;
     }

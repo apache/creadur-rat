@@ -23,57 +23,67 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.utils.DefaultLog;
 
 /**
  * Implementation of IReportable that traverses over a resource collection
  * internally.
  */
 public class FileListWalker implements IReportable {
-    /** The document name */
-    private final Document source;
+    /** The source document name */
+    private final FileDocument source;
+    /** The root document name */
+    private final FileDocument rootDoc;
+    /** the base directory for the source document */
+    private final FileDocument baseDoc;
 
-    public FileListWalker(final Document source) {
+    public FileListWalker(final FileDocument source) {
         this.source = source;
+        File baseDir = source.getFile().getParentFile().getAbsoluteFile();
+        this.baseDoc = new FileDocument(baseDir, DocumentNameMatcher.MATCHES_ALL);
+        File p = baseDir;
+        while (p.getParentFile() != null) {
+            p = p.getParentFile();
+        }
+        File rootDir = p;
+        rootDoc = new FileDocument(rootDir, DocumentNameMatcher.MATCHES_ALL);
     }
 
-    private DocumentName createDocumentName(final String unixFileName) {
-        DocumentName sourceName = getName();
-        DocumentName working = new DocumentName(unixFileName, "/", "/", sourceName.isCaseSensitive());
-        if (sourceName.getDirectorySeparator().equals("/")) {
-            return working;
-        } else {
-            return new DocumentName(working.localized(sourceName.getDirectorySeparator()), sourceName.getDirectorySeparator(),
-                    sourceName.getDirectorySeparator(), sourceName.isCaseSensitive());
-        }
+    private FileDocument createDocument(final String unixFileName) {
+        DocumentName sourceName = source.getName();
+        String finalName = "/".equals(sourceName.getDirectorySeparator()) ? unixFileName :
+            unixFileName.replace("/", sourceName.getDirectorySeparator());
+        FileDocument documentBase = unixFileName.startsWith("/") ? rootDoc : baseDoc;
+        File documentFile = new File(documentBase.getFile(), finalName);
+        return new FileDocument(rootDoc.getName(), documentFile, DocumentNameMatcher.MATCHES_ALL);
     }
 
     @Override
     public void run(final RatReport report) throws RatException {
+        DefaultLog.getInstance().debug(String.format("Reading %s file name: ", Arg.SOURCE.option(), source));
         DocumentName sourceName = getName();
-        DocumentName baseDocumentName = new DocumentName(sourceName.getDirectorySeparator(), sourceName.getDirectorySeparator(),
-                sourceName.getDirectorySeparator(), sourceName.isCaseSensitive());
         try (Reader reader = source.reader()) {
             for (String docName : IOUtils.readLines(reader)) {
-                DocumentName documentName = createDocumentName(docName);
-                if (!docName.startsWith("/")) {
-                    documentName = sourceName.getBaseDocumentName().resolve(documentName.getName());
-                }
-                File file = new File(documentName.getName());
-                FileDocument fd =
-                        new FileDocument(baseDocumentName, file, d -> true);
-                if (file.isDirectory()) {
-                    new DirectoryWalker(fd).run(report);
-                } else {
-                    report.report(fd);
+                try {
+                    DefaultLog.getInstance().debug("Reading file name: " + docName);
+                    FileDocument document = createDocument(docName);
+                    if (document.isDirectory()) {
+                        new DirectoryWalker(document).run(report);
+                    } else {
+                        report.report(document);
+                    }
+                } catch (RatException e) {
+                    throw new RatException(String.format("Error reading file `%s` read from `%s`", docName, sourceName), e);
                 }
             }
-        } catch (IOException e) {
+        }  catch (IOException e) {
             throw new RatException("can not read " + sourceName.getName(), e);
         }
     }

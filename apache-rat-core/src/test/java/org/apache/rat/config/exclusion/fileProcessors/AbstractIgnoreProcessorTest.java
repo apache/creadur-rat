@@ -38,7 +38,7 @@ public class AbstractIgnoreProcessorTest {
 
     @BeforeEach
     public void setup() {
-        baseName = new DocumentName(baseDir);
+        baseName = DocumentName.builder(baseDir).build();
     }
 
     /**
