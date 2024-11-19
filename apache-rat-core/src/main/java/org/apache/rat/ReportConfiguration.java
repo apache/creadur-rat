@@ -624,7 +624,7 @@ public class ReportConfiguration {
 
     /**
      * Adds a license family category (id) to the list of approved licenses
-     * @param licenseId the license Id to add.
+     * @param licenseId the license id to add.
      */
     public void addApprovedLicenseId(final String licenseId) {
         licenseSetFactory.addLicenseId(licenseId);

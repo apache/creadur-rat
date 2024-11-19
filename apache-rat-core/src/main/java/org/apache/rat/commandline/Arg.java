@@ -264,12 +264,12 @@ public enum Arg {
     ),
 
     /**
-     * Excludes files based on standard groupings.
+     * Excludes files if they are smaller than the given threshold.
      */
     EXCLUDE_SIZE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-size").argName("Integer")
                     .hasArg().type(Integer.class)
-                    .desc("Excludes files with sizes less than the argument.")
+                    .desc("Excludes files with sizes less than the given argument.")
                     .build())
     ),
     /**
