@@ -738,15 +738,11 @@ public enum Arg {
      */
     public static void processLogLevel(final CommandLine commandLine) {
         if (LOG_LEVEL.getSelected() != null) {
-            if (DefaultLog.getInstance() instanceof DefaultLog) {
-                DefaultLog dLog = (DefaultLog) DefaultLog.getInstance();
-                try {
-                    dLog.setLevel(commandLine.getParsedOptionValue(LOG_LEVEL.getSelected()));
-                } catch (ParseException e) {
-                    logParseException(DefaultLog.getInstance(), e, LOG_LEVEL.getSelected(), commandLine, dLog.getLevel());
-                }
-            } else {
-                DefaultLog.getInstance().error("Log was not a DefaultLog instance. LogLevel not set.");
+            Log dLog = DefaultLog.getInstance();
+            try {
+                dLog.setLevel(commandLine.getParsedOptionValue(LOG_LEVEL.getSelected()));
+            } catch (ParseException e) {
+                logParseException(DefaultLog.getInstance(), e, LOG_LEVEL.getSelected(), commandLine, dLog.getLevel());
             }
         }
     }

@@ -51,6 +51,21 @@ public interface Log {
      */
     Level getLevel();
 
+    /**
+     * Sets the log level.
+     * Implementations may elect not to set the level dynamically.  However, if the option is supported
+     * this method should be overridden.
+     * @param level the level to set.
+     */
+    default void setLevel(Level level) {
+        warn(String.format("This logger does not support dynamically setting the log level.  Setting to %s ignored.", level));
+    }
+
+    /**
+     * Determines if the log level is enabled.
+     * @param level The level to check.
+     * @return true if the level will produce output in the log.
+     */
     default boolean isEnabled(Level level) {
         return getLevel().ordinal() <= level.ordinal();
     }
