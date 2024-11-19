@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-41" type="fix" dev="claudenw">
+        Added core integration tests and verified results without generating output via ClaimStatistics.
+      </action>
       <action issue="RAT-81" type="add" dev="claudenw">
         Added encoding information of the file being read to the RAT report in case of STANDARD document files.
         Added media type attribute in report for all files.
