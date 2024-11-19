@@ -297,6 +297,15 @@ public class ReportConfiguration {
     }
 
     /**
+     * Excludes files that match a FileFilter.
+     * @param name the name of the DocumentNameMatcher.
+     * @param matcher the DocumentNameMatcher to match.
+     */
+    public void addExcludedMatcher(final String name, final DocumentNameMatcher matcher) {
+        exclusionProcessor.addExcludedFilter(DocumentNameMatcherSupplier.from(name, matcher));
+    }
+
+    /**
      * Excludes files that match the pattern.
      *
      * @param patterns the collection of patterns to exclude.

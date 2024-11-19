@@ -27,9 +27,24 @@ import java.io.FileFilter;
 public interface DocumentNameMatcherSupplier {
     DocumentNameMatcher get(DocumentName dir);
 
+    /**
+     * Creates a DocumentNameMatcherSupplier from a file filter.
+     * @param fileFilter the file filter to process.
+     * @return a DocumentNameMatcherSupplier.
+     */
     static DocumentNameMatcherSupplier from(final FileFilter fileFilter) {
         DocumentNameMatcher nameMatcher = DocumentNameMatcher.from(fileFilter);
         return docName -> new TraceableDocumentNameMatcher(fileFilter::toString, nameMatcher);
+    }
 
+    /**
+     * Create a DocumentNameMatcherSupplier from a DocumentNameMatcher and a name.
+     * @param name the name for the matcher.
+     * @param nameMatcher the matcher.
+     * @return A DocumentNameMatcherDupplier.
+     */
+    static DocumentNameMatcherSupplier from(final String name, final DocumentNameMatcher nameMatcher) {
+        TraceableDocumentNameMatcher tmatcher = TraceableDocumentNameMatcher.make(() -> name, nameMatcher);
+        return docName -> tmatcher;
     }
 }

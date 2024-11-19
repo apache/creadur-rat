@@ -118,6 +118,7 @@ public abstract class AbstractOptionsProvider {
         testMap.put("input-exclude-file", this::inputExcludeFileTest);
         testMap.put("input-exclude-parsed-scm", this::inputExcludeParsedScmTest);
         testMap.put("input-exclude-std", this::inputExcludeStdTest);
+        testMap.put("input-exclude-size", this::inputExcludeSizeTest);
         testMap.put("input-include", this::inputIncludeTest);
         testMap.put("input-include-file", this::inputIncludeFileTest);
         testMap.put("input-include-std", this::inputIncludeStdTest);
@@ -279,6 +280,30 @@ public abstract class AbstractOptionsProvider {
         List<String> expected = ExtendedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
                 .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
         expected.add(0, "!" + new File(baseDir, "thingone").getPath());
+        try {
+            ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
+            DocumentNameMatcher matcher = config.getNameMatcher(baseName());
+            for (String fname : excluded) {
+                assertFalse(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+            }
+            for (String fname : notExcluded) {
+                assertTrue(matcher.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+            }
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    private void inputExcludeSizeTest() {
+        Option option = Arg.EXCLUDE_SIZE.option();
+        String[] args = { "5" };
+        writeFile("Hi.txt", Arrays.asList("Hi"));
+        writeFile("Hello.txt", Arrays.asList("Hello"));
+        writeFile("HelloWorld.txt", Arrays.asList("HelloWorld"));
+
+        String[] notExcluded = { "Hello.txt", "HelloWorld.txt"};
+        String[] excluded = { "Hi.txt" };
+
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher matcher = config.getNameMatcher(baseName());
