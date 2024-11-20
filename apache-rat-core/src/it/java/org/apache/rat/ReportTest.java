@@ -106,19 +106,24 @@ public class ReportTest {
 
         File logFile = new File(baseDir,"log.txt");
         FileLog fileLog = new FileLog(logFile);
-        DefaultLog.setInstance(fileLog);
+        Log oldLog = null;
+        try {
+            oldLog = DefaultLog.setInstance(fileLog);
 
-        argsList.add(new File(baseDir, "src").getAbsolutePath());
+            argsList.add(new File(baseDir, "src").getAbsolutePath());
 
-        File expectedMsg = new File(baseDir, "expected-message.txt");
-        if (expectedMsg.exists()) {
-            String msg = IOUtils.readLines(new FileReader(expectedMsg)).get(0).trim();
-            assertThrows(RatDocumentAnalysisException.class, () -> Report.main(asArgs(argsList)),
-                    msg);
-        } else {
-            Report.main(asArgs(argsList));
+            File expectedMsg = new File(baseDir, "expected-message.txt");
+            if (expectedMsg.exists()) {
+                String msg = IOUtils.readLines(new FileReader(expectedMsg)).get(0).trim();
+                assertThrows(RatDocumentAnalysisException.class, () -> Report.main(asArgs(argsList)),
+                        msg);
+            } else {
+                Report.main(asArgs(argsList));
+            }
+        } finally {
+            DefaultLog.setInstance(oldLog);
+            fileLog.close();
         }
-        fileLog.close();
 
         File groovyScript = new File(baseDir, "verify.groovy");
         if (groovyScript.exists()) {

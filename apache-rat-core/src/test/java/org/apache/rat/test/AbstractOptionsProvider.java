@@ -663,7 +663,7 @@ public abstract class AbstractOptionsProvider {
                 }
             }
         } finally {
-            ((DefaultLog) DefaultLog.getInstance()).setLevel(logLevel);
+            DefaultLog.getInstance().setLevel(logLevel);
         }
     }
 
