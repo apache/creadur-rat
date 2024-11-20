@@ -297,6 +297,15 @@ public class ReportConfiguration {
     }
 
     /**
+     * Excludes files that match a FileFilter.
+     * @param name the name of the DocumentNameMatcher.
+     * @param matcher the DocumentNameMatcher to match.
+     */
+    public void addExcludedMatcher(final String name, final DocumentNameMatcher matcher) {
+        exclusionProcessor.addExcludedFilter(DocumentNameMatcherSupplier.from(name, matcher));
+    }
+
+    /**
      * Excludes files that match the pattern.
      *
      * @param patterns the collection of patterns to exclude.
@@ -615,7 +624,7 @@ public class ReportConfiguration {
 
     /**
      * Adds a license family category (id) to the list of approved licenses
-     * @param licenseId the license Id to add.
+     * @param licenseId the license id to add.
      */
     public void addApprovedLicenseId(final String licenseId) {
         licenseSetFactory.addLicenseId(licenseId);

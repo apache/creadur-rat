@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-2" type="add" dev="claudenw">
+        Added --input-exclude-size as an option to skip the scanning of very small files.
+      </action>
       <action issue="RAT-41" type="fix" dev="claudenw">
         Added core integration tests and verified results without generating output via ClaimStatistics.
       </action>

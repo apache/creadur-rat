@@ -46,6 +46,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic.Counter;
 import org.apache.rat.utils.DefaultLog;
@@ -262,6 +263,15 @@ public enum Arg {
                     .build())
     ),
 
+    /**
+     * Excludes files if they are smaller than the given threshold.
+     */
+    EXCLUDE_SIZE(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-exclude-size").argName("Integer")
+                    .hasArg().type(Integer.class)
+                    .desc("Excludes files with sizes less than the given argument.")
+                    .build())
+    ),
     /**
      * Excludes files by expression.
      */
@@ -688,6 +698,15 @@ public enum Arg {
                         configuration.addExcludedCollection(collection);
                     }
                 }
+            }
+            if (EXCLUDE_SIZE.isSelected()) {
+                final int maxSize = EXCLUDE_SIZE.getParsedOptionValue(context.getCommandLine());
+                DocumentNameMatcher matcher =
+                    documentName -> {
+                        File f = new File(documentName.getName());
+                        return f.isFile() && f.length() < maxSize;
+                };
+                context.getConfiguration().addExcludedMatcher(String.format("File size < %s bytes", maxSize), matcher);
             }
             if (INCLUDE.isSelected()) {
                 String[] includes = context.getCommandLine().getOptionValues(INCLUDE.getSelected());
