@@ -197,7 +197,12 @@ public class ExclusionProcessor {
 
             // add the file processors
             for (StandardCollection sc : fileProcessors) {
-                sc.fileProcessor().forEachRemaining(fp -> segregateList(excl, incl, fp.apply(basedir)));
+                ExtendedIterator<FileProcessor> iter =  sc.fileProcessor();
+                if (iter.hasNext()) {
+                    sc.fileProcessor().forEachRemaining(fp -> segregateList(excl, incl, fp.apply(basedir)));
+                } else {
+                    DefaultLog.getInstance().info(String.format("%s does not have a fileProcessor.", sc));
+                }
             }
 
             // add the standard patterns
@@ -206,10 +211,20 @@ public class ExclusionProcessor {
 
             // add the collection patterns
             for (StandardCollection sc : includedCollections) {
-                segregateList(incl, excl, FileProcessor.from(sc.patterns()).apply(basedir));
+                Set<String> patterns = sc.patterns();
+                if (patterns.isEmpty()) {
+                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection.", sc));
+                } else {
+                    segregateList(incl, excl, FileProcessor.from(sc.patterns()).apply(basedir));
+                }
             }
             for (StandardCollection sc : excludedCollections) {
-                segregateList(excl, incl, FileProcessor.from(sc.patterns()).apply(basedir));
+                Set<String> patterns = sc.patterns();
+                if (patterns.isEmpty()) {
+                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection.", sc));
+                } else {
+                    segregateList(excl, incl, FileProcessor.from(sc.patterns()).apply(basedir));
+                }
             }
 
             // add the matchers

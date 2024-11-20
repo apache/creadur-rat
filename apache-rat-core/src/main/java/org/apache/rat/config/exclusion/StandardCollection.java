@@ -80,7 +80,7 @@ public enum StandardCollection {
      * The files and directories created by an Eclipse IDE based tool.
      */
     ECLIPSE("The files and directories created by an Eclipse IDE based tool.",
-            Arrays.asList(".checkstyle", ".classpath", ".factorypath", ".project", ".settings/**"),
+            Arrays.asList("**/.checkstyle", "**/.classpath", "**/.factorypath", "**/.project", "**/.settings/**"),
             null, null),
     /**
      * The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.
@@ -114,11 +114,7 @@ public enum StandardCollection {
      * The files and directories created by an IDEA IDE based tool.
      */
     IDEA("The files and directories created by an IDEA IDE based tool.",
-            Arrays.asList(
-                    "*.iml",
-                    "*.ipr",
-                    "*.iws",
-                    ".idea/**"), null, null),
+            Arrays.asList("**/*.iml", "**/*.ipr", "**/*.iws", "**/.idea/**"), null, null),
     /**
      * The .DS_Store files MAC computer.
      */
@@ -128,15 +124,15 @@ public enum StandardCollection {
      * The files and directories created by Maven build system based project.
      */
     MAVEN("The files and directories created by Maven build system based project.",
-            Arrays.asList(//
-                    "target/**", //
-                    "cobertura.ser", //
+            Arrays.asList(
+                    "**/target/**", //
+                    "**/cobertura.ser", //
                     "**/MANIFEST.MF", // a MANIFEST.MF file cannot contain comment lines. In other words: It is not possible, to include a license.
-                    "release.properties", //
-                    ".repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
-                    "build.log", // RAT-160: until now maven-invoker-plugin runs create a build.log that is not part of a release
-                    ".mvn/**", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
-                    "pom.xml.releaseBackup"), null, null),
+                    "**/release.properties", //
+                    "**/.repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
+                    "**/build.log", // RAT-160: until now maven-invoker-plugin runs create a build.log that is not part of a release
+                    "**/.mvn/**", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
+                    "**/pom.xml.releaseBackup"), null, null),
     /**
      * The files and directories created by a Mercurial source code control based tool.
      */
@@ -245,7 +241,7 @@ public enum StandardCollection {
     /**
      * @return the combined and deduped collection of patterns in the given collection.
      */
-    public Collection<String> patterns() {
+    public Set<String> patterns() {
         Set<String> result = new HashSet<>();
         getCollections().forEach(sc -> result.addAll(sc.patterns));
         return result;

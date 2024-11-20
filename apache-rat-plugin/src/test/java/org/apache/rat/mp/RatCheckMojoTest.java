@@ -344,4 +344,22 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
         }
     }
+
+    /**
+          * Tests implicit excludes apply to submodules too
+          */
+   public void testRAT_107() throws Exception {
+       final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("RAT-107", "check", true);
+       final File ratTxtFile = mojo.getRatTxtFile();
+       final String[] expected = {};
+       final String[] notExpected = {};
+       setVariableValueToObject(mojo, "excludeSubProjects", Boolean.FALSE);
+       mojo.setInputExcludeParsedScm("MAVEN");
+       mojo.setInputExcludeParsedScm("idea");
+       mojo.setInputExcludeParsedScm("eclipse");
+       mojo.execute();
+
+       ensureRatReportIsCorrect(ratTxtFile, expected, notExpected);
+
+   }
 }
