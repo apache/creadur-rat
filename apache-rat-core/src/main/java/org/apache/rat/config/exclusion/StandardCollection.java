@@ -51,7 +51,7 @@ public enum StandardCollection {
      * The files and directories created by a Bazaar source code control based tool.
      */
     BAZAAR("The files and directories created by a Bazaar source code control based tool.",
-            Arrays.asList("**/.bzr/**", ".bzrignore"), null, new BazaarIgnoreProcessor()),
+            Arrays.asList("**/.bzr/**", "**/.bzrignore"), null, new BazaarIgnoreProcessor()),
     /**
      * The files and directories created by a Bitkeeper source code control based tool.
      */
@@ -137,7 +137,7 @@ public enum StandardCollection {
      * The files and directories created by a Mercurial source code control based tool.
      */
     MERCURIAL("The files and directories created by a Mercurial source code control based tool.",
-            Arrays.asList("**/.hg/**", ".hgignore"), null, new HgIgnoreProcessor()),
+            Arrays.asList("**/.hg/**", "**/.hgignore"), null, new HgIgnoreProcessor()),
     /**
      * The set of miscellaneous files generally left by editors and the like.
      */
