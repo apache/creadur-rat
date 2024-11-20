@@ -83,8 +83,8 @@ public class ReporterTest {
     public void testExecute() throws RatException, ParseException {
         File output = new File(tempDirectory, "testExecute");
 
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
-        ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        ReportConfiguration config = OptionCollection.createConfiguration(cl);
         ClaimStatistic statistic = new Reporter(config).execute();
 
         assertEquals(1, statistic.getCounter(Type.ARCHIVE));
