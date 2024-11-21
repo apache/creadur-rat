@@ -213,7 +213,7 @@ public class ExclusionProcessor {
             for (StandardCollection sc : includedCollections) {
                 Set<String> patterns = sc.patterns();
                 if (patterns.isEmpty()) {
-                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection.", sc));
+                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection for inclusion.", sc));
                 } else {
                     segregateList(incl, excl, FileProcessor.from(sc.patterns()).apply(basedir));
                 }
@@ -221,7 +221,7 @@ public class ExclusionProcessor {
             for (StandardCollection sc : excludedCollections) {
                 Set<String> patterns = sc.patterns();
                 if (patterns.isEmpty()) {
-                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection.", sc));
+                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection for exclusion.", sc));
                 } else {
                     segregateList(excl, incl, FileProcessor.from(sc.patterns()).apply(basedir));
                 }
