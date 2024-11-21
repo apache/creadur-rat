@@ -36,9 +36,13 @@ import org.apache.rat.document.DocumentNameMatcherSupplier;
 import org.apache.rat.document.TraceableDocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 
+/**
+ * Collection of standard excludes.
+ * HINT: In order to work recursively each entry is prefixed with {@code "**\/"}.
+ */
 public enum StandardCollection {
     /**
-     * All the standard excludes combined
+     * All the standard excludes combined.
      */
     // see getCollections() for loading
     ALL("All of the Standard Excludes combined.", null, null, null),
@@ -150,7 +154,7 @@ public enum StandardCollection {
     MKS("The files and directories created by an MKS source code control based tool.",
             Collections.singletonList("**/project.pj"), null, null),
     /**
-     * The files and directories created by a RCS source code control based tool.
+     * The files and directories created by an RCS source code control based tool.
      */
     RCS("The files and directories created by a RCS source code control based tool.",
             Collections.singletonList("**/RCS/**"), null, null),

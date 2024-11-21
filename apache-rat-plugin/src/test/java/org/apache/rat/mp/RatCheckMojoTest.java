@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.ReporterTestUtils;
@@ -265,7 +264,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     /**
      * Tests verifying gitignore parsing
      */
-    public void testRAT335GitIgnore() throws Exception {
+    public void testRAT_335GitIgnoreParsing() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-335-GitIgnore");
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = {
@@ -323,6 +322,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         // Create the test file with a content on which it must fail
         File barFile = new File(dir, "bar.md");
+        assertThat(barFile).exists();
         final String[] expected = {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
@@ -346,8 +346,8 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     }
 
     /**
-          * Tests implicit excludes apply to submodules too
-          */
+    * Tests implicit excludes apply to submodules too
+    */
    public void testRAT_107() throws Exception {
        final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("RAT-107", "check", true);
        final File ratTxtFile = mojo.getRatTxtFile();
@@ -360,6 +360,5 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
        mojo.execute();
 
        ensureRatReportIsCorrect(ratTxtFile, expected, notExpected);
-
    }
 }

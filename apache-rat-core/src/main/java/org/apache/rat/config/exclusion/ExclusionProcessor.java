@@ -64,7 +64,7 @@ public class ExclusionProcessor {
     /** The base dir for the last PathMatcher */
     private DocumentName lastMatcherBaseDir;
 
-    /** Reset the pathmatcher to start again */
+    /** Reset the path matcher to start again */
     private void resetLastMatcher() {
         lastMatcher = null;
         lastMatcherBaseDir = null;
