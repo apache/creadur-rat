@@ -20,6 +20,8 @@ package org.apache.rat.report.xml.writer;
 
 import java.io.IOException;
 
+import org.apache.rat.report.xml.XmlElements;
+
 /**
  * Simple interface for creating basic XML documents.
  * Performs basic validation and escaping.
@@ -48,6 +50,19 @@ public interface IXmlWriter extends AutoCloseable {
      * if called after the first element has been closed
      */
     IXmlWriter openElement(CharSequence elementName) throws IOException;
+
+    /**
+     * Writes the start of an element.
+     *
+     * @param element the element, not null
+     * @return this object
+     * @throws InvalidXmlException if the name is not valid for an xml element
+     * @throws OperationNotAllowedException
+     * if called after the first element has been closed
+     */
+    default IXmlWriter openElement(XmlElements.Elements element) throws IOException {
+        return openElement(element.getElementName());
+    }
 
     /**
      * Writes a comment

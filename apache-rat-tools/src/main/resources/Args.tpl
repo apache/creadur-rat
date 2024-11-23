@@ -54,6 +54,9 @@
     protected void setArg(String key, String value) {
         if (validateSet(key)) {
             List<String> values = new ArrayList<>();
+            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", values), key));
+            }
             values.add(value);
             args.put(key, values);
         }
@@ -76,6 +79,9 @@
      */
     protected void addArg(String key, String[] value) {
         if (validateSet(key)) {
+            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
+            }
             List<String> values = args.get(key);
             if (values == null) {
                 values = new ArrayList<>();
@@ -94,6 +100,9 @@
     protected void addArg(String key, String value) {
         if (validateSet(key)) {
             List<String> values = args.get(key);
+            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
+            }
             if (values == null) {
                 values = new ArrayList<>();
                 args.put(key, values);

@@ -18,6 +18,7 @@
  */
 package org.apache.rat.api;
 
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -38,6 +39,8 @@ public class MetaData {
     private final SortedSet<ILicense> matchedLicenses;
     /** The list of License Family Categories that are approved */
     private final Set<String> approvedLicenses;
+    /** The charset for this document */
+    private Charset charset;
     /** The media type for this document */
     private MediaType mediaType;
     /** The document type for this document */
@@ -51,6 +54,22 @@ public class MetaData {
     public MetaData() {
         this.matchedLicenses = new TreeSet<>();
         this.approvedLicenses = new HashSet<>();
+    }
+
+    /**
+     * Gets the charset for the document. If the charset was not set will return the system default charset.
+     * @return the charset for the document
+     */
+    public Charset getCharset() {
+        return charset == null ? Charset.defaultCharset() : charset;
+    }
+
+    /**
+     * Sets the charset for the document. If set to {@code null} the system default charset will be used.
+     * @param charset the charset to use.
+     */
+    public void setCharset(final Charset charset) {
+        this.charset = charset;
     }
 
     /**

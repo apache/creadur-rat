@@ -20,6 +20,7 @@ package org.apache.rat.mp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
 
@@ -41,7 +43,7 @@ import static java.lang.String.format;
  * Run Rat to perform a violation check.
  * <p>
  *     This documentation mentions data types for some of the arguments. An <a href="data_types.html">explanation of the data types</a> is included
- *     in ths documentation package.
+ *     in this documentation package.
  * </p>
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
@@ -56,7 +58,7 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     /**
      * Where to store the report.
-     * @deprecated use 'out' property.
+     * @deprecated Use 'out' property instead.
      */
     @Deprecated
     @Parameter
@@ -72,7 +74,7 @@ public class RatCheckMojo extends AbstractRatMojo {
      * or "xml" for the raw XML report. Alternatively you can give the path of an
      * XSL transformation that will be applied on the raw XML to produce the report
      * written to the output file.
-     * @deprecated use setStyleSheet or xml
+     * @deprecated Use setStyleSheet or xml instead.
      */
     @Deprecated
     @Parameter(property = "rat.outputStyle")
@@ -88,14 +90,16 @@ public class RatCheckMojo extends AbstractRatMojo {
 
     /**
      * Maximum number of files with unapproved licenses.
+     * @deprecated Use &lt;counterMax&gt;Unapproved:value&lt;/counterMax&gt;.
      */
+    @Deprecated
     @Parameter(property = "rat.numUnapprovedLicenses", defaultValue = "0")
     private int numUnapprovedLicenses;
 
     /**
      * Whether to add license headers; possible values are {@code forced},
      * {@code true}, and {@code false} (default).
-     * @deprecated use &lt;editLicense&gt; and &lt;editOverwrite&gt;
+     * @deprecated Use &lt;editLicense&gt; and &lt;editOverwrite&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.addLicenseHeaders")
@@ -148,14 +152,23 @@ public class RatCheckMojo extends AbstractRatMojo {
     /** The reporter that this mojo uses */
     private Reporter reporter;
 
-    /**
-     * Invoked by Maven to execute the Mojo.
-     *
-     * @throws MojoFailureException An error in the plugin configuration was
-     * detected.
-     * @throws MojoExecutionException Another error occurred while executing the
-     * plugin.
-     */
+    @Override
+    protected ReportConfiguration getConfiguration() throws MojoExecutionException {
+        ReportConfiguration result = super.getConfiguration();
+        if (numUnapprovedLicenses > 0) {
+            result.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, numUnapprovedLicenses);
+        }
+        return result;
+    }
+
+        /**
+         * Invoked by Maven to execute the Mojo.
+         *
+         * @throws MojoFailureException if an error in the plugin configuration was
+         * detected.
+         * @throws MojoExecutionException if another error occurred while executing the
+         * plugin.
+         */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
@@ -169,12 +182,11 @@ public class RatCheckMojo extends AbstractRatMojo {
 
         ReportConfiguration config = getConfiguration();
 
-
         logLicenses(config.getLicenses(LicenseFilter.ALL));
         try {
             this.reporter = new Reporter(config);
             reporter.output();
-            check();
+            check(config);
         } catch (MojoFailureException e) {
             throw e;
         } catch (Exception e) {
@@ -182,40 +194,36 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
     }
 
-    protected void check() throws MojoFailureException {
-        if (numUnapprovedLicenses > 0) {
-            getLog().info("You requested to accept " + numUnapprovedLicenses + " files with unapproved licenses.");
-        }
-        ClaimStatistic stats = reporter.getClaimsStatistic();
+    protected void check(final ReportConfiguration config) throws MojoFailureException {
+        ClaimStatistic statistics = reporter.getClaimsStatistic();
+        try {
+           reporter.writeSummary(DefaultLog.getInstance().asWriter());
+           if (config.getClaimValidator().hasErrors()) {
+               config.getClaimValidator().logIssues(statistics);
+               if (consoleOutput &&
+                       !config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
+                   try {
+                       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                       reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
+                       getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
+                   } catch (Exception e) {
+                       getLog().warn("Unable to print the files with unapproved licenses to the console.");
+                   }
+               }
 
-        int numApproved = stats.getCounter(ClaimStatistic.Counter.APPROVED);
-        String statSummary = "Rat check: Summary over all files. Unapproved: " +
-                stats.getCounter(ClaimStatistic.Counter.UNAPPROVED) + ", unknown: " +
-                stats.getCounter(ClaimStatistic.Counter.UNKNOWN) + ", generated: " +
-                stats.getCounter(ClaimStatistic.Counter.GENERATED) + ", approved: " + numApproved +
-                (numApproved > 0 ? " licenses." : " license.");
+               String msg = format("Counter(s) %s exceeded minimum or maximum values. See RAT report in: '%s'.",
+                       String.join(", ", config.getClaimValidator().listIssues(statistics)),
+                       getRatTxtFile());
 
-        getLog().info(statSummary);
-        if (numUnapprovedLicenses < stats.getCounter(ClaimStatistic.Counter.UNAPPROVED)) {
-            if (consoleOutput) {
-                try {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
-                    getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
-                } catch (Exception e) {
-                    getLog().warn("Unable to print the files with unapproved licenses to the console.");
-                }
-            }
-
-            if (!ignoreErrors) {
-                throw new RatCheckException(format("Too many files with unapproved license: %s. See RAT report in: '%s'",
-                        stats.getCounter(ClaimStatistic.Counter.UNAPPROVED),
-                        getRatTxtFile()));
-            }
-            getLog().warn(format("Rat check: %s files with unapproved licenses. See RAT report in: '%s'",
-                    stats.getCounter(ClaimStatistic.Counter.UNAPPROVED),
-                    getRatTxtFile()));
-        }
+               if (!ignoreErrors) {
+                   throw new RatCheckException(msg);
+               } else {
+                   getLog().info(msg);
+               }
+           }
+        } catch (IOException e) {
+           throw new MojoFailureException(e);
+       }
     }
 
     /**

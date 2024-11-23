@@ -21,9 +21,6 @@ package org.apache.rat.document;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.SortedSet;
 
@@ -61,10 +58,5 @@ public class ArchiveEntryDocument extends Document {
     @Override
     public SortedSet<Document> listChildren() {
         return Collections.emptySortedSet();
-    }
-
-    @Override
-    public Reader reader() {
-        return new InputStreamReader(new ByteArrayInputStream(contents), StandardCharsets.UTF_8);
     }
 }

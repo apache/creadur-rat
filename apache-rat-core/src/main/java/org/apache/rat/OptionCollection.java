@@ -50,6 +50,7 @@ import org.apache.rat.document.FileDocument;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
@@ -82,6 +83,7 @@ public final class OptionCollection {
     static {
         ARGUMENT_TYPES = new TreeMap<>();
         ARGUMENT_TYPES.put("File", () -> "A file name.");
+        ARGUMENT_TYPES.put("Integer", () -> "An integer value.");
         ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan.");
         ARGUMENT_TYPES.put("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
                 "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples). " +
@@ -103,6 +105,13 @@ public final class OptionCollection {
         ARGUMENT_TYPES.put("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %s%n",
                 Arrays.stream(StandardCollection.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
+                        .collect(Collectors.joining(System.lineSeparator()))));
+        ARGUMENT_TYPES.put("CounterPattern", () -> format("A pattern comprising one of the following prefixes followed by " +
+                "a colon and a count (e.g. %s:5).  Prefixes are %n%s.", ClaimStatistic.Counter.UNAPPROVED,
+                Arrays.stream(ClaimStatistic.Counter.values())
+                        .map(v -> format("\t%s: %s Default range [%s, %s]", v.name(), v.getDescription(),
+                                v.getDefaultMinValue(),
+                                v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue()))
                         .collect(Collectors.joining(System.lineSeparator()))));
     }
 
@@ -152,7 +161,7 @@ public final class OptionCollection {
                     .setAllowPartialMatching(true).build().parse(opts, args);
         } catch (ParseException e) {
             DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options", e);
+            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
@@ -189,6 +198,11 @@ public final class OptionCollection {
         }
         lst.addAll(Arrays.asList(commandLine.getArgs()));
         if (!noArgs && lst.size() != 1) {
+            if (lst.isEmpty()) {
+                DefaultLog.getInstance().error("No directories or files specified for scanning.  Did you forget to close a multi-argument option?");
+            } else {
+                DefaultLog.getInstance().error("Too many directories or files specified for scanning.");
+            }
             helpCmd.accept(opts);
             return null;
         }
@@ -237,7 +251,7 @@ public final class OptionCollection {
         File absBase = base.getAbsoluteFile();
         DocumentName documentName = new DocumentName(absBase);
         if (!absBase.exists()) {
-            DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist");
+            DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist.");
             return null;
         }
         DocumentNameMatcher documentNameMatcher = config.getNameMatcher(documentName);

@@ -18,16 +18,11 @@
  */
 package org.apache.rat.report.xml;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.VersionInfo;
 import org.apache.rat.analysis.DefaultAnalyserFactory;
-import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentAnalyserMultiplexer;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -37,6 +32,7 @@ import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimAggregator;
 import org.apache.rat.report.claim.ClaimReporterMultiplexer;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.claim.ClaimValidatorReport;
 import org.apache.rat.report.claim.LicenseAddingReport;
 import org.apache.rat.report.claim.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -45,16 +41,6 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
  * A factory to create reports from a writer and a configuration.
  */
 public final class XmlReportFactory {
-    /** The name of the report element */
-    private static final String RAT_REPORT = "rat-report";
-    /** The timestamp attribute */
-    private static final String TIMESTAMP = "timestamp";
-    /** The version attribute */
-    private static final String VERSION = "version";
-    /** The product attribute */
-    private static final String PRODUCT = "product";
-    /** The vendor attribute */
-    private static final String VENDOR = "vendor";
 
     private XmlReportFactory() {
         // Do not instantiate
@@ -85,6 +71,7 @@ public final class XmlReportFactory {
         }
 
         reporters.add(new SimpleXmlClaimReporter(writer));
+        reporters.add(new ClaimValidatorReport(writer, statistic, configuration));
 
         final IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(configuration);
         final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseFamilies(LicenseFilter.APPROVED));
@@ -92,38 +79,5 @@ public final class XmlReportFactory {
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);
         return new ClaimReporterMultiplexer(writer, configuration.isDryRun(), analysisMultiplexer, reporters);
-    }
-
-    /**
-     * Starts the XML report by writing the standard header into the writer.
-     * @param writer The writer to write into
-     * @throws RatException on error
-     */
-    public static void startReport(final IXmlWriter writer) throws RatException {
-        try {
-            VersionInfo versionInfo = new VersionInfo();
-            writer.openElement(RAT_REPORT)
-                    .attribute(TIMESTAMP, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()))
-                    .openElement(VERSION)
-                    .attribute(PRODUCT, versionInfo.getTitle())
-                    .attribute(VENDOR, versionInfo.getVendor())
-                    .attribute(VERSION, versionInfo.getVersion()).closeElement();
-        } catch (IOException e) {
-            throw new RatException("Cannot open start element", e);
-        }
-    }
-
-    /**
-     * Ends the XML report by closing the element that startReport opened.
-     * @param writer the writer to write into.
-     * @throws RatException on error
-     * @see #startReport(IXmlWriter)
-     */
-    public static void endReport(final IXmlWriter writer) throws RatException {
-        try {
-            writer.closeElement();
-        } catch (IOException e) {
-            throw new RatException("Cannot close start element: " + RAT_REPORT, e);
-        }
     }
 }

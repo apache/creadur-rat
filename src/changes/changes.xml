@@ -72,6 +72,36 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-2" type="add" dev="claudenw">
+        Added --input-exclude-size as an option to skip the scanning of very small files.
+      </action>
+      <action issue="RAT-41" type="fix" dev="claudenw">
+        Added core integration tests and verified results without generating output via ClaimStatistics.
+      </action>
+      <action issue="RAT-81" type="add" dev="claudenw">
+        Added encoding information of the file being read to the RAT report in case of STANDARD document files.
+        Added media type attribute in report for all files.
+      </action>
+      <action issue="RAT-81" type="fix" dev="claudenw">
+        Fixed encoding issue where text files not in UTF-8 encoding would not be read properly.
+        Change adds charset to the metadata when it can be discovered. If not UTF-8 is returned.
+        Added integration test to show reading of UTF8 and IBM037 encoding works.
+      </action>
+      <action issue="RAT-408" type="fix" dev="claudenw">
+        Added core integration tests and verified RAT-408 is fixed with the new exclusion engine.
+      </action>
+      <action issue="RAT-426" type="fix" dev="claudenw">
+        Added core integration tests and verified RAT-426 is fixed with the new exclusion engine.
+      </action>
+      <action issue="RAT-450" type="fix" dev="pottlinger">
+        Harmonize log output messages that are automatically generated for Maven command line options to ease migration to v0.17.
+      </action>
+      <action issue="RAT-399" type="add" dev="claudenw">
+        Moved the ignore code into apache-rat-core and provide more statistics in RAT report. Furthermore the CLI allows configuration of counter minimum and maximum values, e.g. maximum number of allowed unapproved licenses.
+      </action>
+      <action issue="RAT-358" type="fix" dev="pottlinger">
+        Generate Maven help Mojo documentation under the same package as the auto-generated plugin parts: org.apache.rat.plugin.
+      </action>
       <action issue="RAT-358" type="add" dev="claudenw">
         Overhaul documentation of the new functionality of RAT 0.17. Improve and comprehend the whole project webpage.
       </action>
@@ -138,6 +168,9 @@ The <action> type attribute can be one of:
       </action>
       <action issue="RAT-390" type="add" dev="claudenw">
         Move and reimplement exclusion configuration from Maven plugin to RAT core. ExclusionProcessor is the central place to handle file inclusions and exclusions now.
+      </action>
+      <action issue="RAT-240" type="fix" dev="claudenw">
+        Exclusions can be configured as a full path (due to the newly written ignore engine as of RAT-390).
       </action>
       <action issue="RAT-383" type="add" dev="claudenw">
         As part of the usage the harmonization generation of Ant documentation was added.

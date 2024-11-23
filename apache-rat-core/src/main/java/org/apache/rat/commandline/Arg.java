@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -38,13 +39,16 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.claim.ClaimStatistic.Counter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
@@ -201,6 +205,24 @@ public enum Arg {
             .converter(Converters.FILE_CONVERTER)
             .build())),
 
+    /**
+     * Option to specify an acceptable number of various counters.
+     */
+    COUNTER_MAX(new OptionGroup().addOption(Option.builder().longOpt("counter-max").hasArgs().argName("CounterPattern")
+            .desc("The acceptable maximum number for the specified counter. A value of '-1' specifies an unlimited number.")
+            .converter(Converters.COUNTER_CONVERTER)
+            .type(Pair.class)
+            .build())),
+
+    /**
+     * Option to specify an acceptable number of various counters.
+     */
+    COUNTER_MIN(new OptionGroup().addOption(Option.builder().longOpt("counter-min").hasArgs().argName("CounterPattern")
+            .desc("The minimum number for the specified counter.")
+            .converter(Converters.COUNTER_CONVERTER)
+            .type(Pair.class)
+            .build())),
+
 ////////////////// INPUT OPTIONS
     /**
      * Excludes files by expression
@@ -241,6 +263,15 @@ public enum Arg {
                     .build())
     ),
 
+    /**
+     * Excludes files if they are smaller than the given threshold.
+     */
+    EXCLUDE_SIZE(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-exclude-size").argName("Integer")
+                    .hasArg().type(Integer.class)
+                    .desc("Excludes files with sizes less than the given argument.")
+                    .build())
+    ),
     /**
      * Excludes files by expression.
      */
@@ -296,6 +327,7 @@ public enum Arg {
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Parse SCM based exclusion files to exclude specified files and directories.")
+                    .type(StandardCollection.class)
                     .build())
     ),
 
@@ -361,7 +393,7 @@ public enum Arg {
      */
     LOG_LEVEL(new OptionGroup().addOption(Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
-            .desc("sets the log level.")
+            .desc("Sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
             .build())),
 
@@ -609,6 +641,19 @@ public enum Arg {
                     throw new ConfigurationException(e);
                 }
             }
+            if (COUNTER_MAX.isSelected()) {
+                for (String arg : context.getCommandLine().getOptionValues(COUNTER_MAX.getSelected())) {
+                    Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
+                    int limit = pair.getValue();
+                    context.getConfiguration().getClaimValidator().setMax(pair.getKey(), limit < 0 ? Integer.MAX_VALUE : limit);
+                }
+            }
+            if (COUNTER_MIN.isSelected()) {
+                for (String arg : context.getCommandLine().getOptionValues(COUNTER_MIN.getSelected())) {
+                    Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
+                    context.getConfiguration().getClaimValidator().setMin(pair.getKey(), pair.getValue());
+                }
+            }
         } catch (Exception e) {
             throw ConfigurationException.from(e);
         }
@@ -642,14 +687,26 @@ public enum Arg {
                 }
             }
             if (EXCLUDE_PARSE_SCM.isSelected()) {
-                for (String s : context.getCommandLine().getOptionValues(EXCLUDE_PARSE_SCM.getSelected())) {
-                    StandardCollection sc = StandardCollection.valueOf(s);
-                    if (sc == StandardCollection.ALL) {
-                        Arrays.asList(StandardCollection.values()).forEach(c -> context.getConfiguration().addExcludedFileProcessor(c));
+                StandardCollection[] collections = EXCLUDE_PARSE_SCM.getParsedOptionValues(context.getCommandLine());
+                final ReportConfiguration configuration = context.getConfiguration();
+                for (StandardCollection collection : collections) {
+                    if (collection == StandardCollection.ALL) {
+                        Arrays.asList(StandardCollection.values()).forEach(configuration::addExcludedFileProcessor);
+                        Arrays.asList(StandardCollection.values()).forEach(configuration::addExcludedCollection);
                     } else {
-                        context.getConfiguration().addExcludedFileProcessor(StandardCollection.valueOf(s));
+                        configuration.addExcludedFileProcessor(collection);
+                        configuration.addExcludedCollection(collection);
                     }
                 }
+            }
+            if (EXCLUDE_SIZE.isSelected()) {
+                final int maxSize = EXCLUDE_SIZE.getParsedOptionValue(context.getCommandLine());
+                DocumentNameMatcher matcher =
+                    documentName -> {
+                        File f = new File(documentName.getName());
+                        return f.isFile() && f.length() < maxSize;
+                };
+                context.getConfiguration().addExcludedMatcher(String.format("File size < %s bytes", maxSize), matcher);
             }
             if (INCLUDE.isSelected()) {
                 String[] includes = context.getCommandLine().getOptionValues(INCLUDE.getSelected());
@@ -700,15 +757,11 @@ public enum Arg {
      */
     public static void processLogLevel(final CommandLine commandLine) {
         if (LOG_LEVEL.getSelected() != null) {
-            if (DefaultLog.getInstance() instanceof DefaultLog) {
-                DefaultLog dLog = (DefaultLog) DefaultLog.getInstance();
-                try {
-                    dLog.setLevel(commandLine.getParsedOptionValue(LOG_LEVEL.getSelected()));
-                } catch (ParseException e) {
-                    logParseException(DefaultLog.getInstance(), e, LOG_LEVEL.getSelected(), commandLine, dLog.getLevel());
-                }
-            } else {
-                DefaultLog.getInstance().error("Log was not a DefaultLog instance. LogLevel not set.");
+            Log dLog = DefaultLog.getInstance();
+            try {
+                dLog.setLevel(commandLine.getParsedOptionValue(LOG_LEVEL.getSelected()));
+            } catch (ParseException e) {
+                logParseException(DefaultLog.getInstance(), e, LOG_LEVEL.getSelected(), commandLine, dLog.getLevel());
             }
         }
     }
@@ -845,6 +898,33 @@ public enum Arg {
             }
         }
         return null;
+    }
+
+    private <T> T getParsedOptionValue(final CommandLine commandLine) throws ParseException {
+        return commandLine.getParsedOptionValue(this.getSelected());
+    }
+
+    private String getOptionValue(final CommandLine commandLine) {
+        return commandLine.getOptionValue(this.getSelected());
+    }
+
+    private String[] getOptionValues(final CommandLine commandLine) {
+        return commandLine.getOptionValues(this.getSelected());
+    }
+
+    private <T> T[] getParsedOptionValues(final CommandLine commandLine)  {
+        Option option = getSelected();
+        Class<? extends T> clazz = (Class<? extends T>) option.getType();
+        String[] values = getOptionValues(commandLine);
+        T[] result = (T[]) Array.newInstance(clazz, values.length);
+        try {
+            for (int i = 0; i < values.length; i++) {
+                result[i] = clazz.cast(option.getConverter().apply(values[i]));
+            }
+            return result;
+        } catch (Throwable t) {
+            throw new ConfigurationException(format("'%s' converter for %s does not produce a class of tye %s", this, option, option.getType()));
+        }
     }
 
     /**

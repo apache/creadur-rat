@@ -19,10 +19,8 @@
 package org.apache.rat.document;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +31,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 
 /**
- * Document wrapping a File object
+ * Document wrapping a File object.
  */
 public class FileDocument extends Document {
 
@@ -67,10 +65,6 @@ public class FileDocument extends Document {
             return result;
         }
         return Collections.emptySortedSet();
-    }
-
-    public Reader reader() throws IOException {
-        return new FileReader(file);
     }
 
     public InputStream inputStream() throws IOException {

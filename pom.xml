@@ -50,6 +50,7 @@ agnostic home for software distribution comprehension and audit tools.
     <ant.version>1.10.15</ant.version>
     <mockito.version>4.11.0</mockito.version>
     <javaVersion>1.8</javaVersion>
+    <tika.version>2.9.2</tika.version>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
@@ -118,7 +119,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.17.0</version>
+        <version>2.18.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -198,7 +199,18 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-core</artifactId>
-        <version>2.9.2</version>
+        <version>${tika.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-parser-text-module</artifactId>
+        <version>${tika.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.4.21</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -360,12 +372,12 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.8.6.5</version>
+          <version>4.8.6.6</version>
           <configuration>
-            <!-- RAT-369: JDK21 finds 55 errors, while older releases find less -->
-            <maxAllowedViolations>55</maxAllowedViolations>
+            <!-- RAT-369: JDK21 finds 56 errors, while older releases find fewer -->
+            <maxAllowedViolations>56</maxAllowedViolations>
             <failOnError>true</failOnError>
-            <!-- we only want to see our own problems and in all subpackages -->
+            <!-- we only want to see our own problems in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
             <!-- in order to have a global spotbugs configuration an exclusion file needs to exist in all submodules -->
             <excludeFilterFile>${project.basedir}/spotbugs-ignore.xml</excludeFilterFile>
@@ -634,11 +646,11 @@ agnostic home for software distribution comprehension and audit tools.
             <artifactId>extra-enforcer-rules</artifactId>
             <version>1.9.0</version>
           </dependency>
-            <dependency>
-              <groupId>org.apache.ws.commons.axiom</groupId>
-              <artifactId>no-package-cycles-enforcer-rule</artifactId>
-              <version>1.2.22</version>
-            </dependency>
+          <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>no-package-cycles-enforcer-rule</artifactId>
+            <version>1.2.22</version>
+          </dependency>
         </dependencies>
       </plugin>
       <plugin>

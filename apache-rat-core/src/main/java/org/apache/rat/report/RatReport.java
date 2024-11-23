@@ -30,23 +30,29 @@ public interface RatReport {
     /**
      * Signals the start of execution for the report. Will be called before the {@code report()} method
      * to ensure proper setup.
+     * Default implementation does nothing.
      * @throws RatException on error.
      * @see #report(Document)
      */
-    void startReport() throws RatException;
+    default void startReport() throws RatException {
+    }
 
     /**
      * Performs the actual reporting on the given document.
+     * Default implementation does nothing.
      * @param document write any reporting results into this document upon analysis.
      * @throws RatException on error.
      */
-    void report(Document document) throws RatException;
+    default void report(Document document) throws RatException {
+    };
 
     /**
      * Signals the end of execution for the report. Will be called after the {@code report()} method
      * to ensure proper cleanup.
+     * Default implementation does nothing.
      * @throws RatException on error.
      * @see #report(Document)
      */
-    void endReport() throws RatException;
+    default void endReport() throws RatException {
+    }
 }
