@@ -104,4 +104,11 @@ public class DocumentNameTest {
         return lst.stream();
     }
 
+    @Test
+    public void listRoots() {
+        for (String root : DocumentName.ROOTS) {
+            System.out.println("List Roots TEST: " + root);
+        }
+    }
+
 }

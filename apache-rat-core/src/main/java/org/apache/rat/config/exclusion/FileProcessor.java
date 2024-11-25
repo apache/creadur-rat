@@ -53,7 +53,6 @@ public class FileProcessor implements Function<DocumentName, Iterable<String>> {
     /**
      * Create a file processor out of a list of file patterns.
      * @param patterns the patterns to simulate the file from.
-     * @return A file processor that processes the patterns.
      */
     public FileProcessor(final Iterable<String> patterns) {
         patterns.forEach(this.patterns::add);

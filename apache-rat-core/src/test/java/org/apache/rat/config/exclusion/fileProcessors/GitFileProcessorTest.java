@@ -20,6 +20,7 @@ package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
@@ -30,7 +31,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,17 +71,7 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
 
     // see https://git-scm.com/docs/gitignore
     @ParameterizedTest
-    @CsvSource({"\\#filename, **/#filename",
-            "!#filename, !**/#filename",
-            "\\#filename, **/#filename",
-            "!#filename, !**/#filename",
-            "/filename, filename",
-            "file/name, file/name",
-            "/file/name, file/name",
-            "filename, **/filename",
-            "filename/, /testDir/**/filename",
-            "/filename/, /testDir/filename"
-    })
+    @MethodSource("modifyEntryData")
     public void modifyEntryTest(String source, String expected) throws IOException {
         GitFileProcessor underTest = new GitFileProcessor();
         DocumentName testName = DocumentName.builder().setName("GitFileProcessorTest").setBaseName("testDir").build();
@@ -91,5 +84,23 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
             assertThat(underTest.modifyEntry(testName, source)).isEqualTo(expected);
             assertThat(underTest.customDocumentNameMatchers().iterator().hasNext()).isFalse();
         }
+    }
+
+    private static Stream<Arguments> modifyEntryData() {
+        List<Arguments> lst = new ArrayList<>();
+
+        lst.add(Arguments.of("\\#filename", "**" + File.separator + "#filename"));
+
+        lst.add(Arguments.of("!#filename", "!**" + File.separator + "#filename"));
+        lst.add(Arguments.of("\\#filename", "**" + File.separator + "#filename"));
+        lst.add(Arguments.of("!#filename", "!**" + File.separator + "#filename"));
+        lst.add(Arguments.of("/filename", "filename"));
+        lst.add(Arguments.of("file/name", "file" + File.separator + "name"));
+        lst.add(Arguments.of("/file/name", "file" + File.separator + "name"));
+        lst.add(Arguments.of("filename", "**" + File.separator + "filename"));
+        lst.add(Arguments.of("filename/", File.separator + "testDir" + File.separator + "**" + File.separator + "filename"));
+        lst.add(Arguments.of("/filename/", File.separator + "testDir" + File.separator + "filename"));
+
+        return lst.stream();
     }
 }

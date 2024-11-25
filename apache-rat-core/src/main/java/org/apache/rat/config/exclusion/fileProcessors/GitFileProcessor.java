@@ -25,10 +25,14 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 
 /**
+ * Processes the .gitignore file.
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
  */
 public class GitFileProcessor extends DescendingFileProcessor {
 
+    /**
+     * Constructs a file processor that processes a .gitignore file and ignores any lines starting with "#".
+     */
     public GitFileProcessor() {
         super(".gitignore", "#");
     }

@@ -53,7 +53,7 @@ import org.apache.rat.utils.DefaultLog;
  */
 public final class DocumentName implements Comparable<DocumentName> {
     /** The list of all roots on the file system. */
-    private static final Set<String> ROOTS = new HashSet<>();
+    static final Set<String> ROOTS = new HashSet<>();
     /** True if the file system on which we are operating is case-sensitive */
     public static final boolean FS_IS_CASE_SENSITIVE;
     /** The full name for the document */
@@ -355,31 +355,41 @@ public final class DocumentName implements Comparable<DocumentName> {
          * @return this
          */
         public Builder setName(final String name) {
-            this.name = name;
-            this.root = "";
+            Pair<String, String> pair = splitRoot(name);
+            this.root = pair.getLeft();
+            this.name = pair.getRight();
             return this;
         }
 
         /**
          * Extracts the root/name pair from a file.
          * @param file the file to extract the root/naim pair from.
-         * @return the root name pair.
+         * @return the root/name pair.
          */
-        private Pair<String, String> splitRoot(final File file) {
-            String name = file.getAbsolutePath();
+        private static Pair<String, String> splitRoot(final File file) {
+            return splitRoot(file.getAbsolutePath());
+        }
+
+        /**
+         * Extracts the root/name pair from a name string.
+         * @param name the name to extract the root/naim pair from.
+         * @return the root/name pair.
+         */
+        private static Pair<String, String> splitRoot(final String name) {
+            String workingName = name;
             String root = "";
             for (String sysRoot : ROOTS) {
-                if (name.startsWith(sysRoot)) {
-                    name = name.substring(sysRoot.length());
-                    if (!name.startsWith(File.separator)) {
+                if (workingName.startsWith(sysRoot)) {
+                    workingName = workingName.substring(sysRoot.length());
+                    if (!workingName.startsWith(File.separator)) {
                         if (sysRoot.endsWith(File.separator)) {
                             root = sysRoot.substring(0, sysRoot.length() - File.separator.length());
                         }
-                        return ImmutablePair.of(root, name);
+                        return ImmutablePair.of(root, workingName);
                     }
                 }
             }
-            return ImmutablePair.of(root, name);
+            return ImmutablePair.of(root, workingName);
         }
 
         /**
