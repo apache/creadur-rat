@@ -1,4 +1,4 @@
-package ReportTest.RAT_246
+package ReportTest.RAT_259
 
 import org.apache.rat.testhelpers.TextUtils
 
@@ -18,24 +18,23 @@ import org.apache.rat.testhelpers.TextUtils
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-output = new File(args[0]);
+output = new File(args[0])
 content = output.text
 
-TextUtils.assertPatternInTarget("^Approved:\\s+9 ", content);
-TextUtils.assertPatternInTarget("^Archives:\\s+1 ", content);
-TextUtils.assertPatternInTarget("^Binaries:\\s+2 ", content);
-TextUtils.assertPatternInTarget("^Document types:\\s+5 ", content);
-TextUtils.assertPatternInTarget("^Generated:\\s+1 ", content);
-TextUtils.assertPatternInTarget("^License categories:\\s+5 ", content);
-TextUtils.assertPatternInTarget("^License names:\\s+6 ", content);
-TextUtils.assertPatternInTarget("^Notices:\\s+2 ", content);
-TextUtils.assertPatternInTarget("^Standards:\\s+8 ", content);
-TextUtils.assertPatternInTarget("^Unapproved:\\s+2 ", content);
-TextUtils.assertPatternInTarget("^Unknown:\\s+2 ", content);
+TextUtils.assertPatternInTarget("^Approved:\\s+9 ", content)
+TextUtils.assertPatternInTarget("^Archives:\\s+1 ", content)
+TextUtils.assertPatternInTarget("^Binaries:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^Document types:\\s+5 ", content)
+TextUtils.assertPatternInTarget("^Generated:\\s+1 ", content)
+TextUtils.assertPatternInTarget("^License categories:\\s+5 ", content)
+TextUtils.assertPatternInTarget("^License names:\\s+6 ", content)
+TextUtils.assertPatternInTarget("^Notices:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^Standards:\\s+8 ", content)
+TextUtils.assertPatternInTarget("^Unapproved:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^Unknown:\\s+2 ", content)
 
-
-logOutput = new File(args[1]);
+logOutput = new File(args[1])
 log = logOutput.text
 
-TextUtils.assertPatternNotInTarget("^ERROR:", log);
-TextUtils.assertPatternNotInTarget("^WARN:", log);
+TextUtils.assertPatternNotInTarget("^ERROR:", log)
+TextUtils.assertPatternNotInTarget("^WARN:", log)
