@@ -29,11 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DocumentNameTest {
 
@@ -41,18 +38,18 @@ public class DocumentNameTest {
     public void localizeTest() {
         DocumentName documentName = DocumentName.builder().setName("/a/b/c")
                 .setBaseName("/a").setDirSeparator("/").setCaseSensitive(false).build();
-        assertEquals("/b/c", documentName.localized());
-        assertEquals("-b-c", documentName.localized("-"));
+        assertThat(documentName.localized()).isEqualTo("/b/c");
+        assertThat(documentName.localized("-")).isEqualTo("-b-c");
     }
 
     @ParameterizedTest(name ="{index} {0}")
     @MethodSource("validBuilderData")
     void validBuilderTest(String testName, DocumentName.Builder builder, String root, String name, String baseName, String dirSeparator) {
         DocumentName underTest = builder.build();
-        assertThat(underTest.getRoot()).isEqualTo(root);
-        assertThat(underTest.getDirectorySeparator()).isEqualTo(dirSeparator);
-        assertThat(underTest.getName()).isEqualTo(root+dirSeparator+name);
-        assertThat(underTest.getBaseName()).isEqualTo(root+dirSeparator+baseName);
+        assertThat(underTest.getRoot()).as(testName).isEqualTo(root);
+        assertThat(underTest.getDirectorySeparator()).as(testName).isEqualTo(dirSeparator);
+        assertThat(underTest.getName()).as(testName).isEqualTo(root+dirSeparator+name);
+        assertThat(underTest.getBaseName()).as(testName).isEqualTo(root+dirSeparator+baseName);
     }
 
     private static Stream<Arguments> validBuilderData() {

@@ -29,8 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
 
@@ -46,7 +45,7 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
 
         DescendingFileProcessor processor = new DescendingFileProcessor("test.txt", "#");
         List<String> actual = processor.apply(baseName);
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -59,13 +58,13 @@ public class DescendingFileProcessorTest extends AbstractIgnoreProcessorTest {
         writeFile("test.txt", Arrays.asList(lines));
 
         File subdir = new File(baseDir, "subdir");
-        assertTrue(subdir.mkdirs(), "Could not make subdirectory");
+        assertThat(subdir.mkdirs()).as("Could not make subdirectory").isTrue();
 
         writeFile("subdir/test.txt", Collections.singletonList("foo.*"));
         expected.add(new File(subdir, "foo.*").getPath());
 
         DescendingFileProcessor processor = new DescendingFileProcessor("test.txt", "#");
         List<String> actual = processor.apply(baseName);
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 }
