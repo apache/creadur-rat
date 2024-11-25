@@ -46,7 +46,6 @@ import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.DocumentNameMatcherSupplier;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -353,16 +352,15 @@ public class ReportConfiguration {
      * @param fileFilter the file filter to match.
      */
     public void addExcludedFilter(final FileFilter fileFilter) {
-        exclusionProcessor.addExcludedFilter(DocumentNameMatcherSupplier.from(fileFilter));
+        exclusionProcessor.addExcludedMatcher(new DocumentNameMatcher(fileFilter));
     }
 
     /**
-     * Excludes files that match a FileFilter.
-     * @param name the name of the DocumentNameMatcher.
+     * Excludes files that match a DocumentNameMatcher..
      * @param matcher the DocumentNameMatcher to match.
      */
-    public void addExcludedMatcher(final String name, final DocumentNameMatcher matcher) {
-        exclusionProcessor.addExcludedFilter(DocumentNameMatcherSupplier.from(name, matcher));
+    public void addExcludedMatcher(final DocumentNameMatcher matcher) {
+        exclusionProcessor.addExcludedMatcher(matcher);
     }
 
     /**
@@ -385,7 +383,7 @@ public class ReportConfiguration {
      * @param fileFilter the filter to identify files that should be included.
      */
     public void addIncludedFilter(final FileFilter fileFilter) {
-        exclusionProcessor.addIncludedFilter(DocumentNameMatcherSupplier.from(fileFilter));
+        exclusionProcessor.addIncludedMatcher(new DocumentNameMatcher(fileFilter));
     }
 
     /**
@@ -791,13 +789,18 @@ public class ReportConfiguration {
     /**
      * Validates that the configuration is valid.
      * @param logger String consumer to log warning messages to.
+     * @throws ConfigurationException on configuration error.
      */
     public void validate(final Consumer<String> logger) {
         if (!hasSource()) {
-            throw new ConfigurationException("At least one source must be specified");
+            String msg = "At least one source must be specified";
+            logger.accept(msg);
+            throw new ConfigurationException(msg);
         }
         if (licenseSetFactory.getLicenses(LicenseFilter.ALL).isEmpty()) {
-            throw new ConfigurationException("You must specify at least one license");
+            String msg = "You must specify at least one license";
+            logger.accept(msg);
+            throw new ConfigurationException(msg);
         }
     }
 

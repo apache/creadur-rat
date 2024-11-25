@@ -83,7 +83,7 @@ public final class Help extends AbstractHelp {
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                     argumentPadding + "File patterns: " + (sc.patterns().isEmpty() ? "<none>" : String.join(", ", sc.patterns())));
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
-                    argumentPadding + "Provides a path matcher: " + sc.hasDocumentNameMatchSupplier());
+                    argumentPadding + "Provides a path matcher: " + sc.hasStaticDocumentNameMatcher());
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                     argumentPadding + "Provides a file processor: " + sc.fileProcessor().hasNext());
         }

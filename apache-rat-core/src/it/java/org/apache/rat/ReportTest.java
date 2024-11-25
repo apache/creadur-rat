@@ -156,7 +156,7 @@ public class ReportTest {
         DocumentName docName = DocumentName.builder(baseDir).build();
         AbstractFileFilter fileFilter = new NameFileFilter("commandLine.txt", docName.isCaseSensitive() ? IOCase.SENSITIVE : IOCase.INSENSITIVE);
         fileFilter = new OrFileFilter(fileFilter, DirectoryFileFilter.INSTANCE);
-        Document document = new FileDocument(docName, baseDir, DocumentNameMatcher.from(fileFilter));
+        Document document = new FileDocument(docName, baseDir, new DocumentNameMatcher(fileFilter));
         DirectoryWalker walker = new DirectoryWalker(document);
         RatReport report = new RatReport() {
             @Override

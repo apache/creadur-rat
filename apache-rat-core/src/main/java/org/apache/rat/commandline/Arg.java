@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
@@ -46,6 +47,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic.Counter;
@@ -718,12 +720,12 @@ public enum Arg {
             }
             if (EXCLUDE_SIZE.isSelected()) {
                 final int maxSize = EXCLUDE_SIZE.getParsedOptionValue(context.getCommandLine());
-                DocumentNameMatcher matcher =
-                    documentName -> {
+                DocumentNameMatcher matcher = new DocumentNameMatcher(String.format("File size < %s bytes", maxSize),
+                        (Predicate<DocumentName>) documentName -> {
                         File f = new File(documentName.getName());
                         return f.isFile() && f.length() < maxSize;
-                };
-                context.getConfiguration().addExcludedMatcher(String.format("File size < %s bytes", maxSize), matcher);
+                });
+                context.getConfiguration().addExcludedMatcher(matcher);
             }
             if (INCLUDE.isSelected()) {
                 String[] includes = context.getCommandLine().getOptionValues(INCLUDE.getSelected());

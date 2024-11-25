@@ -516,25 +516,26 @@ public class ReportConfigurationTest {
     @Test
     public void testValidate() {
         final StringBuilder sb = new StringBuilder();
+        String msg = "At least one source must be specified";
         Exception thrown = assertThrows(ConfigurationException.class,
                 () -> underTest.validate(sb::append));
+        assertThat(thrown.getMessage()).isEqualTo(msg);
+        assertThat(sb.toString()).isEqualTo(msg);
 
-        assertThat(thrown.getMessage()).isEqualTo("At least one source must be specified");
-            assertThat(sb.length()).isEqualTo(0);
 
-
+        sb.setLength(0);
+        msg = "You must specify at least one license";
         underTest.addSource(mock(IReportable.class));
         thrown = assertThrows(ConfigurationException.class,
                 () -> underTest.validate(sb::append));
+        assertThat(thrown.getMessage()).isEqualTo(msg);
+        assertThat(sb.toString()).isEqualTo(msg);
 
-        assertThat(thrown.getMessage()).isEqualTo("You must specify at least one license");
-            assertThat(sb.length()).isEqualTo(0);
-
-
+        sb.setLength(0);
+        msg = "You must specify at least one license";
         underTest.addLicense(testingLicense("valid", "Validation testing license"));
-        final StringBuilder sb2 = new StringBuilder();
-        underTest.validate(sb2::append);
-        assertThat(sb2.length()).isEqualTo(0);
+        underTest.validate(sb::append);
+        assertThat(sb.length()).isEqualTo(0);
     }
     
     @Test

@@ -19,6 +19,9 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +29,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
@@ -41,7 +47,7 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
                 "# some colorful directories",
                 "red/", "blue/*/"};
 
-        List<String> expected = ExtendedIterator.create(Arrays.asList("**/thing*", "**/fish", "**/*_fish", "**/red/**", "blue/*/**").iterator())
+        List<String> expected = ExtendedIterator.create(Arrays.asList("**/thing*", "**/fish", "**/*_fish").iterator())
                 .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
         expected.add(0, "!"+new File(baseDir, "**/thingone").getPath());
         // "thingone",
@@ -50,5 +56,40 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
         GitFileProcessor processor = new GitFileProcessor();
         List<String> actual = processor.apply(baseName);
         assertEquals(expected, actual);
+        actual.clear();
+        processor.customDocumentNameMatchers().forEach(x -> actual.add(x.toString()));
+        expected.clear();
+        ExtendedIterator.create(Arrays.asList("**/red", "blue/*").iterator())
+                .map(s -> new File(baseDir, s).getPath()).map(s -> String.format("and(isDirectory, %s)", s))
+                        .forEachRemaining(expected::add);
+        assertEquals(expected, actual);
+
+    }
+
+    // see https://git-scm.com/docs/gitignore
+    @ParameterizedTest
+    @CsvSource({"\\#filename, **/#filename",
+            "!#filename, !**/#filename",
+            "\\#filename, **/#filename",
+            "!#filename, !**/#filename",
+            "/filename, filename",
+            "file/name, file/name",
+            "/file/name, file/name",
+            "filename, **/filename",
+            "filename/, /testDir/**/filename",
+            "/filename/, /testDir/filename"
+    })
+    public void modifyEntryTest(String source, String expected) throws IOException {
+        GitFileProcessor underTest = new GitFileProcessor();
+        DocumentName testName = DocumentName.builder().setName("GitFileProcessorTest").setBaseName("testDir").build();
+        if (source.endsWith("/")) {
+            assertThat(underTest.modifyEntry(testName, source)).isEqualTo(null);
+            Iterator<DocumentNameMatcher> iter = underTest.customDocumentNameMatchers().iterator();
+            assertThat(iter).hasNext();
+            assertThat(iter.next().toString()).isEqualTo(String.format("and(isDirectory, %s)", expected));
+        } else {
+            assertThat(underTest.modifyEntry(testName, source)).isEqualTo(expected);
+            assertThat(underTest.customDocumentNameMatchers().iterator().hasNext()).isFalse();
+        }
     }
 }

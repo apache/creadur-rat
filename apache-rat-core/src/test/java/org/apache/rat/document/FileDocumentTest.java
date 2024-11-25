@@ -16,12 +16,9 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.document.impl;
+package org.apache.rat.document;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.FileDocument;
 import org.apache.rat.test.utils.Resources;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;

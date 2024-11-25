@@ -16,13 +16,12 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.document.impl.guesser;
+package org.apache.rat.document.guesser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.guesser.NoteGuesser;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

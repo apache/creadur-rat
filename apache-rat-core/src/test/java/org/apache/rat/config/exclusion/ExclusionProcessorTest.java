@@ -21,7 +21,6 @@ package org.apache.rat.config.exclusion;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.TraceableDocumentNameMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -38,11 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.apache.rat.document.TraceableDocumentNameMatcher.TRUE;
-import static org.apache.rat.document.TraceableDocumentNameMatcher.FALSE;
 
 public class ExclusionProcessorTest {
 
+    final private static DocumentNameMatcher TRUE = DocumentNameMatcher.MATCHES_ALL;
+    final private static DocumentNameMatcher FALSE = DocumentNameMatcher.MATCHES_NONE;
     /** The base directory for the test. */
     @TempDir
     private File basedirFile;
@@ -229,25 +228,25 @@ public class ExclusionProcessorTest {
     @Test
     public void orTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        assertTrue(TraceableDocumentNameMatcher.or(Arrays.asList(TRUE, FALSE)).matches(basedir));
-        assertTrue(TraceableDocumentNameMatcher.or(Arrays.asList(FALSE, TRUE)).matches(basedir));
-        assertTrue(TraceableDocumentNameMatcher.or(Arrays.asList(TRUE, TRUE)).matches(basedir));
-        assertFalse(TraceableDocumentNameMatcher.or(Arrays.asList(FALSE, FALSE)).matches(basedir));
+        assertTrue(DocumentNameMatcher.or(Arrays.asList(TRUE, FALSE)).matches(basedir));
+        assertTrue(DocumentNameMatcher.or(Arrays.asList(FALSE, TRUE)).matches(basedir));
+        assertTrue(DocumentNameMatcher.or(Arrays.asList(TRUE, TRUE)).matches(basedir));
+        assertFalse(DocumentNameMatcher.or(Arrays.asList(FALSE, FALSE)).matches(basedir));
     }
 
     @Test
     public void andTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        assertFalse(TraceableDocumentNameMatcher.and(TRUE, FALSE).matches(basedir));
-        assertFalse(TraceableDocumentNameMatcher.and(FALSE, TRUE).matches(basedir));
-        assertTrue(TraceableDocumentNameMatcher.and(TRUE, TRUE).matches(basedir));
-        assertFalse(TraceableDocumentNameMatcher.and(FALSE, FALSE).matches(basedir));
+        assertFalse(DocumentNameMatcher.and(TRUE, FALSE).matches(basedir));
+        assertFalse(DocumentNameMatcher.and(FALSE, TRUE).matches(basedir));
+        assertTrue(DocumentNameMatcher.and(TRUE, TRUE).matches(basedir));
+        assertFalse(DocumentNameMatcher.and(FALSE, FALSE).matches(basedir));
     }
 
     @Test
     public void notTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        assertFalse(TraceableDocumentNameMatcher.not(TRUE).matches(basedir));
-        assertTrue(TraceableDocumentNameMatcher.not(FALSE).matches(basedir));
+        assertFalse(DocumentNameMatcher.not(TRUE).matches(basedir));
+        assertTrue(DocumentNameMatcher.not(FALSE).matches(basedir));
     }
 }

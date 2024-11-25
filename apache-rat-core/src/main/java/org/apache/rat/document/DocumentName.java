@@ -24,18 +24,36 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.utils.DefaultLog;
 
-
 /**
- * A collection of names for a document. All names in the set are
- * either Rat (Linux like) or native (OS specific).
+ * The name for a document.  The {@code DocumentName} is an immutable structure that handles all the intricacies of file
+ * naming on various operating systems.  DocumentNames have several components:
+ * <ul>
+ *     <li>{@code root} - Where in the file system the name starts (e.g C: on windows).  May be empty bu not null.</li>
+ *     <li>{@code dirSeparator} - the separator between name segments (e.g. "\\" on windows, "/" on linux). My not be
+ *     empty or null</li>
+ *     <li>{@code name} - The name of the file relative to the {@code root}. May not be null. Does NOT begin with a {@code dirSeparator}</li>
+ *     <li>{@code baseName} - The name of a directory or file from which this file is reported.  A DocumentName with a
+ *     {@code name} of "foo/bar/baz.txt" and a {@code baseName} of "foo" will be reported as "bar/baz.txt". My not be null.</li>
+ *     <li>{@code isCaseSensitive} - identifies if the underlying file system is cases sensitive.</li>
+ * </ul>
+ * <p>
+ *     {@code DocumentName}s are generally used to represent files on the files system.  However they are also used to represent files
+ *     within an archive.  When representing a file in an archive the baseName is the name of the archive document.
+ * </p>
  */
 public final class DocumentName implements Comparable<DocumentName> {
+    /** The list of all roots on the file system. */
+    private static final Set<String> ROOTS = new HashSet<>();
     /** True if the file system on which we are operating is case-sensitive */
     public static final boolean FS_IS_CASE_SENSITIVE;
     /** The full name for the document */
@@ -46,7 +64,10 @@ public final class DocumentName implements Comparable<DocumentName> {
     private final String dirSeparator;
     /** The case-sensitive flag */
     private final boolean isCaseSensitive;
+    /** The root for the DocumentName.  May be empty but not null */
+    private final String root;
 
+    // determine the cases sensitivity of the File system we are operating on.
     static {
         boolean fsSensitive = true;
         File f = null;
@@ -66,10 +87,20 @@ public final class DocumentName implements Comparable<DocumentName> {
             }
         }
         FS_IS_CASE_SENSITIVE = fsSensitive;
+
+        // determine all of the roots on the file system(s).
+        File[] roots = File.listRoots();
+        if (roots != null) {
+            for (File root : roots) {
+                String name = root.getPath();
+                ROOTS.add(name);
+            }
+        }
+
     }
 
     /**
-     * Creates a builder with directory separator and case sensitivity based on the local file system.
+     * Creates a Builder with directory separator and case sensitivity based on the local file system.
      * @return the Builder.
      */
     public static Builder builder() {
@@ -77,8 +108,8 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a builder from a File.  The base name is set to the file name if it is a directory otherwise
-     * it is set to the directory containing the file. Directory separator is set from the file and
+     * Creates a builder from a File.  The {@link #baseName} is set to the file name if it is a directory otherwise
+     * it is set to the directory containing the file. The {@link #dirSeparator} is set from the file and
      * case sensitivity based on the local file system.
      * @param file The file to set defaults from.
      * @return the Builder.
@@ -88,16 +119,16 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a builder from a document name. The builder will be configured to create a clone of the document name.
+     * Creates a Builder from a document name. The Builder will be configured to create a clone of the DocumentName.
      * @param documentName the document name to set the defaults from.
-     * @return the builder.
+     * @return the Builder.
      */
     public static Builder builder(final DocumentName documentName) {
         return new Builder(documentName);
     }
 
     /**
-     * Builds the document name.
+     * Builds the DocumentName from the builder.
      * @param builder the builder to provide the values.
      */
     private DocumentName(final Builder builder) {
@@ -105,12 +136,14 @@ public final class DocumentName implements Comparable<DocumentName> {
         this.baseName = builder.baseName;
         this.dirSeparator = builder.dirSeparator;
         this.isCaseSensitive = builder.isCaseSensitive;
+        this.root = builder.root;
     }
 
     /**
-     * Creates a new document name by adding the child to the current name.
+     * Creates a new DocumentName by adding the child to the current name.
      * @param child the child to add (must use directory separator from this document name).
-     * @return the new document name with the same base name, directory separator and case sensitivity as this one.
+     * @return the new document name with the same {@link #baseName}, {@link #dirSeparator} and case sensitivity as
+     * this one.
      */
     public DocumentName resolve(final String child) {
         List<String> parts = new ArrayList<>();
@@ -125,7 +158,7 @@ public final class DocumentName implements Comparable<DocumentName> {
      * @return the fully qualified name of the document.
      */
     public String getName() {
-        return name;
+        return root + dirSeparator + name;
     }
 
     /**
@@ -133,11 +166,19 @@ public final class DocumentName implements Comparable<DocumentName> {
      * @return the fully qualified basename of the document.
      */
     public String getBaseName() {
-        return baseName;
+        return root + dirSeparator + baseName;
     }
 
     /**
-     * Gets the DocumentName for the basename of this document name.
+     * Gets the root for this document.
+     * @return the root for this document.
+     */
+    public String getRoot() {
+        return root;
+    }
+
+    /**
+     * Gets the DocumentName for the basename of this DocumentName.
      * @return the DocumentName for the basename of this document name.
      */
     public DocumentName getBaseDocumentName() {
@@ -171,7 +212,7 @@ public final class DocumentName implements Comparable<DocumentName> {
     /**
      * Gets the portion of the name that is not part of the base name.
      * The resulting name will always start with the directory separator.
-     * @param dirSeparator The character to use to separate directories in the result.
+     * @param dirSeparator The character(s) to use to separate directories in the result.
      * @return the portion of the name that is not part of the base name.
      */
     public String localized(final String dirSeparator) {
@@ -179,7 +220,7 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Tokenizes the string based on the dirSeparator
+     * Tokenizes the string based on the {@link #dirSeparator} of this DocumentName.
      * @param source the source to tokenize
      * @return the array of tokenized strings.
      */
@@ -188,7 +229,7 @@ public final class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Gets the last segment of the name. This is the part after the last directory separator.
+     * Gets the last segment of the name. This is the part after the last {@link #dirSeparator}..
      * @return the last segment of the name.
      */
     public String getShortName() {
@@ -204,6 +245,10 @@ public final class DocumentName implements Comparable<DocumentName> {
         return isCaseSensitive;
     }
 
+    /**
+     * Returns the localized file name.
+     * @return the localized file name.
+     */
     @Override
     public String toString() {
         return localized();
@@ -234,6 +279,9 @@ public final class DocumentName implements Comparable<DocumentName> {
         return Objects.hash(name, dirSeparator, isCaseSensitive());
     }
 
+    /**
+     * The Builder for a DocumentName.
+     */
     public static final class Builder {
         /** The name for the document */
         private String name;
@@ -243,26 +291,33 @@ public final class DocumentName implements Comparable<DocumentName> {
         private String dirSeparator;
         /** The case sensitivity flag */
         private boolean isCaseSensitive;
+        /** The file system root */
+        private String root;
 
+        /**
+         * Create with default settings.
+         */
         private Builder() {
             isCaseSensitive = FS_IS_CASE_SENSITIVE;
             dirSeparator = File.separator;
+            root = "";
         }
 
+        /**
+         * Create based on the file provided.
+         * @param file the file to base the builder on.
+         */
         private Builder(final File file) {
             this();
             setName(file);
-            baseName = name;
-            if (!file.isDirectory()) {
-                File p = file.getParentFile();
-                if (p != null) {
-                    baseName = p.getAbsolutePath();
-                }
-            }
             isCaseSensitive = FS_IS_CASE_SENSITIVE;
             dirSeparator = File.separator;
         }
 
+        /**
+         * Create a Builder that clones the specified DocumentName.
+         * @param documentName the DocumentName to clone.
+         */
         private Builder(final DocumentName documentName) {
             this.name = documentName.name;
             this.baseName = documentName.baseName;
@@ -270,75 +325,144 @@ public final class DocumentName implements Comparable<DocumentName> {
             this.dirSeparator = documentName.dirSeparator;
         }
 
+        /**
+         * Verify that the builder will build a proper DocumentName.
+         */
         private void verify() {
             Objects.requireNonNull(name, "Name cannot be null");
-            Objects.requireNonNull(baseName, "Base name cannot be null");
+            Objects.requireNonNull(baseName, "Basename cannot be null");
+            if (name.startsWith(dirSeparator)) {
+                name = name.substring(dirSeparator.length());
+            }
+            if (baseName.startsWith(dirSeparator)) {
+                baseName = baseName.substring(dirSeparator.length());
+            }
         }
 
+        /**
+         * Sets the root for the DocumentName.
+         * @param root the root for the DocumentName.
+         * @return this.
+         */
+        public Builder setRoot(final String root) {
+            this.root = root;
+            return this;
+        }
+
+        /**
+         * Sets the name for this DocumentName. Will reset the root to the empty string.
+         * @param name the name for this Document name.
+         * @return this
+         */
         public Builder setName(final String name) {
             this.name = name;
+            this.root = "";
             return this;
         }
 
+        /**
+         * Extracts the root/name pair from a file.
+         * @param file the file to extract the root/naim pair from.
+         * @return the root name pair.
+         */
+        private Pair<String, String> splitRoot(final File file) {
+            String name = file.getAbsolutePath();
+            String root = "";
+            for (String sysRoot : ROOTS) {
+                if (name.startsWith(sysRoot)) {
+                    name = name.substring(sysRoot.length());
+                    if (!name.startsWith(File.separator)) {
+                        if (sysRoot.endsWith(File.separator)) {
+                            root = sysRoot.substring(0, sysRoot.length() - File.separator.length());
+                        }
+                        return ImmutablePair.of(root, name);
+                    }
+                }
+            }
+            return ImmutablePair.of(root, name);
+        }
+
+        /**
+         * Sets the properties from the file.  This method resets the {@link #root}, {@link #name},
+         * {@link #dirSeparator}, and {@link #baseName}.
+         * @param file the file to set the properties from.
+         * @return this.
+         */
         public Builder setName(final File file) {
-            this.name = file.getAbsolutePath();
+            Pair<String, String> pair = splitRoot(file);
+            this.root = pair.getLeft();
+            this.name = pair.getRight();
+            this.dirSeparator = File.separator;
+            this.baseName = name;
+            if (!file.isDirectory()) {
+                File p = file.getParentFile();
+                if (p != null) {
+                    setBaseName(p);
+                }
+            }
             return this;
         }
 
+        /**
+         * Sets the baseName.
+         * @param baseName the basename to use.
+         * @return this.
+         */
         public Builder setBaseName(final String baseName) {
             this.baseName = baseName;
             return this;
         }
 
+        /**
+         * Sets the basename from the {@link #name} of the specified DocumentName.
+         * @param baseName the DocumentName to set the basename from.
+         * @return this.
+         */
         public Builder setBaseName(final DocumentName baseName) {
             this.baseName = baseName.getName();
             return this;
         }
 
+        /**
+         * Sets the basename from a File.  Sets {@link #root} and the {@link #baseName}
+         * @param file the file to set the base name from.
+         * @return this.
+         */
         public Builder setBaseName(final File file) {
-            this.baseName = file.getAbsolutePath();
+            Pair<String, String> pair = splitRoot(file);
+            this.root = pair.getLeft();
+            this.baseName = pair.getRight();
             return this;
         }
 
+        /**
+         * Sets the directory separator.
+         * @param dirSeparator the directory separator to use.
+         * @return this.
+         */
         public Builder setDirSeparator(final String dirSeparator) {
             Objects.requireNonNull(dirSeparator, "Directory separator cannot be null");
             this.dirSeparator = dirSeparator;
             return this;
         }
 
+        /**
+         * Sets the {@link #isCaseSensitive} flag.
+         * @param isCaseSensitive the expected state of the flag.
+         * @return this.
+         */
         public Builder setCaseSensitive(final boolean isCaseSensitive) {
             this.isCaseSensitive = isCaseSensitive;
             return this;
         }
 
+        /**
+         * Build a DocumentName from this builder.
+         * @return A new DocumentName.
+         */
         public DocumentName build() {
             verify();
             return new DocumentName(this);
         }
     }
-
-//         public DocumentName(final String name, final String baseName, final String dirSeparator, final boolean isCaseSensitive) {
-//            this.name = Objects.requireNonNull(name);
-//            this.baseName = Objects.requireNonNull(StringUtils.defaultIfEmpty(baseName, null));
-//            this.dirSeparator = Objects.requireNonNull(dirSeparator);
-//            this.isCaseSensitive = isCaseSensitive;
-//        }
-//
-//        /**
-//         * Creates a document name with the name of the file and the same basename as the baseName document.
-//         * @param file the file to name the document from.
-//         * @param baseName the DocumentName to provide the baseName.
-//         */
-//    public DocumentName(final File file, final DocumentName baseName) {
-//            this(file.getAbsolutePath(), baseName.baseName, File.separator, FS_IS_CASE_SENSITIVE);
-//        }
-//
-//        /**
-//         * Creates a document name with the name and basename equal to the file name
-//         * @param file the file name to use.
-//         */
-//    public DocumentName(final File file) {
-//            this(file.getAbsolutePath(), file.getAbsolutePath(), File.separator, FS_IS_CASE_SENSITIVE);
-//        }
-//    }
 }
