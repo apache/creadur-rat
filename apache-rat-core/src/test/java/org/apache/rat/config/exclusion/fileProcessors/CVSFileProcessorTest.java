@@ -41,9 +41,6 @@ public class CVSFileProcessorTest extends AbstractIgnoreProcessorTest {
                 .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
 
         writeFile(".cvsignore", Arrays.asList(lines));
-        for (String line : lines) {
-            System.out.format("CVS Input file: [%s]%n", line);
-        }
 
         CVSFileProcessor processor = new CVSFileProcessor();
         List<String> actual = processor.apply(baseName);

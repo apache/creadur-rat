@@ -319,6 +319,7 @@ public final class DocumentName implements Comparable<DocumentName> {
          * @param documentName the DocumentName to clone.
          */
         private Builder(final DocumentName documentName) {
+            this.root = documentName.root;
             this.name = documentName.name;
             this.baseName = documentName.baseName;
             this.isCaseSensitive = documentName.isCaseSensitive;

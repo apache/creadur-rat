@@ -89,17 +89,17 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
     private static Stream<Arguments> modifyEntryData() {
         List<Arguments> lst = new ArrayList<>();
 
-        lst.add(Arguments.of("\\#filename", "**" + File.separator + "#filename"));
+        lst.add(Arguments.of("\\#filename", "**/#filename"));
 
-        lst.add(Arguments.of("!#filename", "!**" + File.separator + "#filename"));
-        lst.add(Arguments.of("\\#filename", "**" + File.separator + "#filename"));
-        lst.add(Arguments.of("!#filename", "!**" + File.separator + "#filename"));
+        lst.add(Arguments.of("!#filename", "!**/#filename"));
+        lst.add(Arguments.of("\\#filename", "**/#filename"));
+        lst.add(Arguments.of("!#filename", "!**/#filename"));
         lst.add(Arguments.of("/filename", "filename"));
-        lst.add(Arguments.of("file/name", "file" + File.separator + "name"));
-        lst.add(Arguments.of("/file/name", "file" + File.separator + "name"));
-        lst.add(Arguments.of("filename", "**" + File.separator + "filename"));
-        lst.add(Arguments.of("filename/", File.separator + "testDir" + File.separator + "**" + File.separator + "filename"));
-        lst.add(Arguments.of("/filename/", File.separator + "testDir" + File.separator + "filename"));
+        lst.add(Arguments.of("file/name", "file/name"));
+        lst.add(Arguments.of("/file/name", "file/name"));
+        lst.add(Arguments.of("filename", "**/filename"));
+        lst.add(Arguments.of("filename/", "/testDir/**/filename"));
+        lst.add(Arguments.of("/filename/", "/testDir/filename"));
 
         return lst.stream();
     }
