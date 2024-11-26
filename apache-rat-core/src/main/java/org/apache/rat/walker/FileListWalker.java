@@ -44,6 +44,10 @@ public class FileListWalker implements IReportable {
     /** the base directory for the source document */
     private final FileDocument baseDoc;
 
+    /**
+     * Constructor.
+     * @param source The file document that is the source from which this walker will read.
+     */
     public FileListWalker(final FileDocument source) {
         this.source = source;
         File baseDir = source.getFile().getParentFile().getAbsoluteFile();

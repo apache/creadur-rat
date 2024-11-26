@@ -71,7 +71,7 @@ public class FileProcessor implements Function<DocumentName, Iterable<String>> {
     public final Iterable<DocumentNameMatcher>  customDocumentNameMatchers() {
         return customMatchers;
     }
-    
+
     /**
      * Allows modification of the file entry to match the {@link MatchPattern} format.
      * Default implementation returns the @{code entry} argument.

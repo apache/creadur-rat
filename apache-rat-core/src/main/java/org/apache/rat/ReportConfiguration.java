@@ -293,6 +293,10 @@ public class ReportConfiguration {
         listFamilies = filter;
     }
 
+    /**
+     * Return the current filter that determines which families will be output in the XML document.
+     * @return the filter that defines the families to list.
+     */
     public LicenseFilter listFamilies() {
         return listFamilies;
     }
@@ -373,6 +377,10 @@ public class ReportConfiguration {
         exclusionProcessor.addExcludedPatterns(patterns);
     }
 
+    /**
+     * Adds the patterns from the standard collection as included patterns.
+     * @param collection the standard colleciton to include
+     */
     public void addIncludedCollection(final StandardCollection collection) {
         exclusionProcessor.addIncludedCollection(collection);
     }
@@ -625,13 +633,10 @@ public class ReportConfiguration {
         familyCategory.forEach(this::removeApprovedLicenseCategory);
     }
 
-    public LicenseSetFactory getLicenseSetFactory() {
-        return licenseSetFactory;
-    }
-
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
      * been removed from the approved list it cannot be re-added</em>
+     * @param filter The LicenseFilter to filter the categories by.
      * @return the Sorted set of approved license categories.
      */
     public SortedSet<String> getLicenseCategories(final LicenseFilter filter) {
@@ -641,6 +646,7 @@ public class ReportConfiguration {
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
      * been removed from the approved list it cannot be re-added</em>
+     * @param filter The LicenseFilter to filter the licenses by.
      * @return the Sorted set of approved license categories.
      */
     public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
@@ -650,6 +656,7 @@ public class ReportConfiguration {
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
      * been removed from the approved list it cannot be re-added</em>
+     * @param filter The LicenseFilter to filter the licenses by.
      * @return the Sorted set of approved license categories.
      */
     public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
@@ -721,6 +728,7 @@ public class ReportConfiguration {
     }
 
     /**
+     * Gets the flag that determines if license headers are "forced" overwriting existing files.
      * This value is ignored if RAT is not adding licenses.
      * @return {@code true} if RAT is forcing the adding license headers.
      * @see #isAddingLicenses()
@@ -730,6 +738,7 @@ public class ReportConfiguration {
     }
 
     /**
+     * Gets the flag that determines if license headers should be added if missing.
      * @return whether RAT should add missing license headers.
      * @see #isAddingLicensesForced()
      * @see #getCopyrightMessage()

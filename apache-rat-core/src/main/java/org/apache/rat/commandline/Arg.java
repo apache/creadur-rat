@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-
 package org.apache.rat.commandline;
 
 import java.io.File;
@@ -513,6 +512,7 @@ public enum Arg {
     }
 
     /**
+     * Gets the default value for this arg.
      * @return default value of this arg.
      */
     public String defaultValue() {
@@ -544,6 +544,7 @@ public enum Arg {
 
     /**
      * Gets the full set of options.
+     * @return  the full set of options for this Arg.
      */
     public static Options getOptions() {
         Options options = new Options();

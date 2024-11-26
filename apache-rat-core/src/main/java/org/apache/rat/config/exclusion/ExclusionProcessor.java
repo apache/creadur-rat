@@ -39,26 +39,39 @@ import static java.lang.String.format;
  */
 public class ExclusionProcessor {
     /** Strings that identify the files/directories to exclude */
-    private final Set<String> excludedPatterns = new HashSet<>();
+    private final Set<String> excludedPatterns;
     /** Path matchers that exclude files/directories */
-    private final List<DocumentNameMatcher> excludedPaths = new ArrayList<>();
+    private final List<DocumentNameMatcher> excludedPaths;
     /** Strings that identify the files/directories to include (overrides exclude) */
-    private final Set<String> includedPatterns = new HashSet<>();
+    private final Set<String> includedPatterns;
     /** Path matchers that identify the files/directories to include (overrides exclude) */
-    private final List<DocumentNameMatcher> includedPaths = new ArrayList<>();
+    private final List<DocumentNameMatcher> includedPaths;
     /**
      * Collections of StandardCollections that have file processors that should be
      * used to add additional exclude files to the process
      */
-    private final Set<StandardCollection> fileProcessors = new HashSet<>();
+    private final Set<StandardCollection> fileProcessors;
     /** Standard collections that contribute to the inclusion processing */
-    private final Set<StandardCollection> includedCollections = new HashSet<>();
+    private final Set<StandardCollection> includedCollections;
     /** Standard collections that contribute to the exclusion procession */
-    private final Set<StandardCollection> excludedCollections = new HashSet<>();
+    private final Set<StandardCollection> excludedCollections;
     /** The last generated PathMatcher */
     private DocumentNameMatcher lastMatcher;
     /** The base dir for the last PathMatcher */
     private DocumentName lastMatcherBaseDir;
+
+    /**
+     * Constructs the processor.
+     */
+    public ExclusionProcessor() {
+        excludedPatterns = new HashSet<>();
+        excludedPaths = new ArrayList<>();
+        includedPatterns = new HashSet<>();
+        includedPaths = new ArrayList<>();
+        fileProcessors = new HashSet<>();
+        includedCollections = new HashSet<>();
+        excludedCollections = new HashSet<>();
+    }
 
     /** Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again */
     private void resetLastMatcher() {

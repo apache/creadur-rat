@@ -157,6 +157,7 @@ public class Reporter {
     /**
      * Lists the licenses on the configured output stream.
      * @param configuration The configuration for the system
+     * @param filter the license filter that specifies which licenses to output.
      * @throws IOException if PrintWriter can not be retrieved from configuration.
      */
     public static void listLicenses(final ReportConfiguration configuration, final LicenseFilter filter) throws IOException {

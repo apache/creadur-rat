@@ -71,6 +71,9 @@ public final class IReportableListWalker implements IReportable {
         return documentName;
     }
 
+    /**
+     * A Builder for the ListWalker.
+     */
     public static final class Builder {
         /** The document name for the walker */
         private final DocumentName documentName;

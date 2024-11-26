@@ -101,6 +101,7 @@ public final class Help extends AbstractHelp {
 
     /**
      * Prints the list of argument types to the writer.
+     * @return returns the padding for the arguments.
      */
     public String printArgumentTypes() {
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);

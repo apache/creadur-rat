@@ -77,10 +77,15 @@ public class FileDocument extends Document {
         return Collections.emptySortedSet();
     }
 
+    @Override
     public InputStream inputStream() throws IOException {
         return Files.newInputStream(file.toPath());
     }
 
+    /**
+     * Gets the file underlying this document.
+     * @return the file underlying this document.
+     */
     public File getFile() {
         return file;
     }
