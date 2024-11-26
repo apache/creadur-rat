@@ -107,13 +107,6 @@ public class DocumentNameTest {
     }
 
     @Test
-    public void listRoots() {
-        for (String root : DocumentName.ROOTS) {
-            System.out.println("List Roots TEST: " + root);
-        }
-    }
-
-    @Test
     public void splitRootsTest() {
         Set<String> preserve = new HashSet<>(DocumentName.ROOTS);
         try {

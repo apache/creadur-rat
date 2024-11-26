@@ -58,18 +58,11 @@ public class GitFileProcessor extends DescendingFileProcessor {
         // otherwise the pattern can match both files and directories.
         if (pattern.endsWith("/")) {
             pattern = pattern.substring(0, pattern.length() - 1);
-            //pattern = this.localizePattern(documentName, pattern);
             String name = prefix ? "!" + pattern : pattern;
-//            if (!"/".equals(documentName.getDirectorySeparator())) {
-//                name = name.replace(documentName.getDirectorySeparator(), "/");
-//            }
-            System.out.format("PATTERN: %s%n", name);
             DocumentName matcherPattern = DocumentName.builder(documentName).setName(name.replace("/", documentName.getDirectorySeparator()))
                             .build();
-            System.out.format("MATCHER PATTERN: %s%n", matcherPattern.localized("/"));
             customMatchers.add(DocumentNameMatcher.and(new DocumentNameMatcher("isDirectory", File::isDirectory),
                     new DocumentNameMatcher(name, MatchPatterns.from(matcherPattern.localized("/")))));
-                            //this.localizePattern(documentName, name)))));
             return null;
         }
         return prefix ? "!" + pattern : pattern;
