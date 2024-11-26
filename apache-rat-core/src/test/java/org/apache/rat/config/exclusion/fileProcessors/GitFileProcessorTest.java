@@ -62,7 +62,7 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
         processor.customDocumentNameMatchers().forEach(x -> actual.add(x.toString()));
         expected.clear();
         ExtendedIterator.create(Arrays.asList("**/red", "blue/*").iterator())
-                .map(s -> new File(baseDir, s).getPath()).map(s -> String.format("and(isDirectory, %s)", s))
+                .map(s -> String.format("and(isDirectory, %s)", s))
                         .forEachRemaining(expected::add);
         assertThat(actual).isEqualTo(expected);
     }
@@ -96,8 +96,8 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
         lst.add(Arguments.of("file/name", "file/name"));
         lst.add(Arguments.of("/file/name", "file/name"));
         lst.add(Arguments.of("filename", "**/filename"));
-        lst.add(Arguments.of("filename/", "/testDir/**/filename"));
-        lst.add(Arguments.of("/filename/", "/testDir/filename"));
+        lst.add(Arguments.of("filename/", "**/filename"));
+        lst.add(Arguments.of("/filename/", "filename"));
 
         return lst.stream();
     }
