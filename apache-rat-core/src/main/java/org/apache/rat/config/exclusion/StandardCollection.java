@@ -36,9 +36,13 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 
+/**
+ * Collection of standard excludes.
+ * HINT: In order to work recursively each entry is prefixed with {@code "**\/"}.
+ */
 public enum StandardCollection {
     /**
-     * All the standard excludes combined
+     * All the standard excludes combined.
      */
     // see getCollections() for loading
     ALL("All of the Standard Excludes combined.", null, null, null),
@@ -51,7 +55,7 @@ public enum StandardCollection {
      * The files and directories created by a Bazaar source code control based tool.
      */
     BAZAAR("The files and directories created by a Bazaar source code control based tool.",
-            Arrays.asList("**/.bzr/**", ".bzrignore"), null, new BazaarIgnoreProcessor()),
+            Arrays.asList("**/.bzr/**", "**/.bzrignore"), null, new BazaarIgnoreProcessor()),
     /**
      * The files and directories created by a Bitkeeper source code control based tool.
      */
@@ -80,7 +84,7 @@ public enum StandardCollection {
      * The files and directories created by an Eclipse IDE based tool.
      */
     ECLIPSE("The files and directories created by an Eclipse IDE based tool.",
-            Arrays.asList(".checkstyle", ".classpath", ".factorypath", ".project", ".settings/**"),
+            Arrays.asList("**/.checkstyle", "**/.classpath", "**/.factorypath", "**/.project", "**/.settings/**"),
             null, null),
     /**
      * The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.
@@ -114,11 +118,7 @@ public enum StandardCollection {
      * The files and directories created by an IDEA IDE based tool.
      */
     IDEA("The files and directories created by an IDEA IDE based tool.",
-            Arrays.asList(
-                    "*.iml",
-                    "*.ipr",
-                    "*.iws",
-                    ".idea/**"), null, null),
+            Arrays.asList("**/*.iml", "**/*.ipr", "**/*.iws", "**/.idea/**"), null, null),
     /**
      * The .DS_Store files MAC computer.
      */
@@ -128,20 +128,20 @@ public enum StandardCollection {
      * The files and directories created by Maven build system based project.
      */
     MAVEN("The files and directories created by Maven build system based project.",
-            Arrays.asList(//
-                    "target/**", //
-                    "cobertura.ser", //
+            Arrays.asList(
+                    "**/target/**", //
+                    "**/cobertura.ser", //
                     "**/MANIFEST.MF", // a MANIFEST.MF file cannot contain comment lines. In other words: It is not possible, to include a license.
-                    "release.properties", //
-                    ".repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
-                    "build.log", // RAT-160: until now maven-invoker-plugin runs create a build.log that is not part of a release
-                    ".mvn/**", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
-                    "pom.xml.releaseBackup"), null, null),
+                    "**/release.properties", //
+                    "**/.repository", // Used by Jenkins when a Maven job uses a private repository that is "Local to the workspace"
+                    "**/build.log", // RAT-160: until now maven-invoker-plugin runs create a build.log that is not part of a release
+                    "**/.mvn/**", // Project configuration since Maven 3.3.1 which contains maven.config, jvm.config, extensions.xml
+                    "**/pom.xml.releaseBackup"), null, null),
     /**
      * The files and directories created by a Mercurial source code control based tool.
      */
     MERCURIAL("The files and directories created by a Mercurial source code control based tool.",
-            Arrays.asList("**/.hg/**", ".hgignore"), null, new HgIgnoreProcessor()),
+            Arrays.asList("**/.hg/**", "**/.hgignore"), null, new HgIgnoreProcessor()),
     /**
      * The set of miscellaneous files generally left by editors and the like.
      */
@@ -154,7 +154,7 @@ public enum StandardCollection {
     MKS("The files and directories created by an MKS source code control based tool.",
             Collections.singletonList("**/project.pj"), null, null),
     /**
-     * The files and directories created by a RCS source code control based tool.
+     * The files and directories created by an RCS source code control based tool.
      */
     RCS("The files and directories created by a RCS source code control based tool.",
             Collections.singletonList("**/RCS/**"), null, null),
@@ -250,7 +250,7 @@ public enum StandardCollection {
     /**
      * @return the combined and deduped collection of patterns in the given collection.
      */
-    public Collection<String> patterns() {
+    public Set<String> patterns() {
         Set<String> result = new HashSet<>();
         getCollections().forEach(sc -> result.addAll(sc.patterns));
         return result;
