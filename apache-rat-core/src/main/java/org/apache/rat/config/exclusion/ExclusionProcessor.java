@@ -200,7 +200,7 @@ public class ExclusionProcessor {
                 ExtendedIterator<FileProcessor> iter =  sc.fileProcessor();
                 if (iter.hasNext()) {
                     iter.forEachRemaining(fp -> {
-                        segregateList(excl, incl, fp.apply(basedir))
+                        segregateList(excl, incl, fp.apply(basedir));
                         fp.customDocumentNameMatchers().forEach(inclMatchers::add);
                     });
                 } else {
