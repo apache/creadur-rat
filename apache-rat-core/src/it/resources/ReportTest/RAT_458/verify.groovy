@@ -1,4 +1,4 @@
-package ReportTest.RAT_246
+package ReportTest.RAT_458
 
 import org.apache.rat.testhelpers.TextUtils
 
@@ -24,4 +24,6 @@ content = output.text
 logOutput = new File(args[1])
 log = logOutput.text
 
-TextUtils.assertPatternInTarget("^DEBUG:", log);
+assert content != null
+assert log != null
+TextUtils.assertPatternInTarget("^DEBUG:", log)
