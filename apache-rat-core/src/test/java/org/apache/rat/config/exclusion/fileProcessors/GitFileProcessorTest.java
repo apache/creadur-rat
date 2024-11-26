@@ -32,11 +32,9 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
 
@@ -58,15 +56,15 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
 
         GitFileProcessor processor = new GitFileProcessor();
         List<String> actual = processor.apply(baseName);
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
+
         actual.clear();
         processor.customDocumentNameMatchers().forEach(x -> actual.add(x.toString()));
         expected.clear();
         ExtendedIterator.create(Arrays.asList("**/red", "blue/*").iterator())
                 .map(s -> new File(baseDir, s).getPath()).map(s -> String.format("and(isDirectory, %s)", s))
                         .forEachRemaining(expected::add);
-        assertEquals(expected, actual);
-
+        assertThat(actual).isEqualTo(expected);
     }
 
     // see https://git-scm.com/docs/gitignore

@@ -88,7 +88,7 @@ public final class DocumentName implements Comparable<DocumentName> {
         }
         FS_IS_CASE_SENSITIVE = fsSensitive;
 
-        // determine all of the roots on the file system(s).
+        // determine all the roots on the file system(s).
         File[] roots = File.listRoots();
         if (roots != null) {
             for (File root : roots) {
@@ -352,12 +352,19 @@ public final class DocumentName implements Comparable<DocumentName> {
 
         /**
          * Sets the name for this DocumentName. Will reset the root to the empty string.
+         * <p>
+         *     To correctly parse the string it must either be the directory separator specified by
+         *     {@link File#separator} or must have been explicitly set by calling {@link #setDirSeparator(String)}
+         *     before making this call.
+         * </p>
          * @param name the name for this Document name.
          * @return this
          */
         public Builder setName(final String name) {
-            Pair<String, String> pair = splitRoot(name);
-            this.root = pair.getLeft();
+            Pair<String, String> pair = splitRoot(name, dirSeparator);
+            if (this.root.isEmpty()) {
+                this.root = pair.getLeft();
+            }
             this.name = pair.getRight();
             return this;
         }
@@ -367,24 +374,28 @@ public final class DocumentName implements Comparable<DocumentName> {
          * @param file the file to extract the root/naim pair from.
          * @return the root/name pair.
          */
-        private static Pair<String, String> splitRoot(final File file) {
-            return splitRoot(file.getAbsolutePath());
+        static Pair<String, String> splitRoot(final File file) {
+            return splitRoot(file.getAbsolutePath(), File.separator);
         }
 
         /**
          * Extracts the root/name pair from a name string.
+         * <p>
+         *     Package private for testing.
+         * </p>
          * @param name the name to extract the root/naim pair from.
+         * @param dirSeparator the directory separator.
          * @return the root/name pair.
          */
-        private static Pair<String, String> splitRoot(final String name) {
+        static Pair<String, String> splitRoot(final String name, final String dirSeparator) {
             String workingName = name;
             String root = "";
             for (String sysRoot : ROOTS) {
                 if (workingName.startsWith(sysRoot)) {
                     workingName = workingName.substring(sysRoot.length());
-                    if (!workingName.startsWith(File.separator)) {
-                        if (sysRoot.endsWith(File.separator)) {
-                            root = sysRoot.substring(0, sysRoot.length() - File.separator.length());
+                    if (!workingName.startsWith(dirSeparator)) {
+                        if (sysRoot.endsWith(dirSeparator)) {
+                            root = sysRoot.substring(0, sysRoot.length() - dirSeparator.length());
                         }
                         return ImmutablePair.of(root, workingName);
                     }
@@ -394,14 +405,24 @@ public final class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Sets the properties from the file.  This method resets the {@link #root}, {@link #name},
+         * Sets the builder root if it is empty.
+         * @param root the root to set the builder root to if it is empty.
+         */
+        private void setEmptyRoot(String root) {
+            if (this.root.isEmpty()) {
+                this.root = root;
+            }
+        }
+
+        /**
+         * Sets the properties from the file.  This method sets the {@link #root} if it is empty, and resets {@link #name},
          * {@link #dirSeparator}, and {@link #baseName}.
          * @param file the file to set the properties from.
          * @return this.
          */
         public Builder setName(final File file) {
             Pair<String, String> pair = splitRoot(file);
-            this.root = pair.getLeft();
+            setEmptyRoot(pair.getLeft());
             this.name = pair.getRight();
             this.dirSeparator = File.separator;
             this.baseName = name;
@@ -416,26 +437,39 @@ public final class DocumentName implements Comparable<DocumentName> {
 
         /**
          * Sets the baseName.
+         * Will set the root if it is not set.
+         * <p>
+         *     To correctly parse the string it must either be the directory separator specified by
+         *     {@link File#separator} or must have been explicitly set by calling {@link #setDirSeparator(String)}
+         *     before making this call.
+         * </p>
          * @param baseName the basename to use.
          * @return this.
          */
         public Builder setBaseName(final String baseName) {
-            this.baseName = baseName;
+            Pair<String, String> pair = splitRoot(baseName, dirSeparator);
+            setEmptyRoot(pair.getLeft());
+            this.baseName = pair.getRight();
             return this;
         }
 
         /**
          * Sets the basename from the {@link #name} of the specified DocumentName.
+         * Will set the root the baseName has the root set.
          * @param baseName the DocumentName to set the basename from.
          * @return this.
          */
         public Builder setBaseName(final DocumentName baseName) {
             this.baseName = baseName.getName();
+            if (!baseName.getRoot().isEmpty()) {
+                this.root = baseName.getRoot();
+            }
             return this;
         }
 
         /**
          * Sets the basename from a File.  Sets {@link #root} and the {@link #baseName}
+         * Will set the root.
          * @param file the file to set the base name from.
          * @return this.
          */

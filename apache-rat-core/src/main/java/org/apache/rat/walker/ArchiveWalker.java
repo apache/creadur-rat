@@ -86,15 +86,15 @@ public class ArchiveWalker extends Walker {
             ArchiveEntry entry = null;
             while ((entry = input.getNextEntry()) != null) {
                 if (!entry.isDirectory() && input.canReadEntryData(entry)) {
-                    DocumentName innerName = DocumentName.builder().setName(entry.getName())
-                            .setBaseName(".").setDirSeparator("/").setCaseSensitive(true).build();
+                    DocumentName innerName = DocumentName.builder().setDirSeparator("/").setName(entry.getName())
+                            .setBaseName(".").setCaseSensitive(true).build();
                     if (this.getDocument().getNameMatcher().matches(innerName)) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         IOUtils.copy(input, baos);
-                        String outerNameStr = format("%s#%s", getDocument().getName(), entry.getName());
-                        DocumentName outerName = DocumentName.builder().setName(outerNameStr)
-                                .setBaseName(getDocument().getName().getName())
-                                .setDirSeparator("/").setCaseSensitive(true).build();
+                        DocumentName archiveName = getDocument().getName();
+                        String outerNameStr = format("%s#%s", archiveName.getName(), entry.getName());
+                        DocumentName outerName = DocumentName.builder(archiveName).setName(outerNameStr)
+                                .setCaseSensitive(true).build();
                         result.add(new ArchiveEntryDocument(outerName, baos.toByteArray(), getDocument().getNameMatcher()));
                     }
                 }
