@@ -33,10 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 
 public class ExclusionProcessorTest {
 
@@ -53,7 +51,7 @@ public class ExclusionProcessorTest {
     }
 
     private void testParseExclusion(DocumentNameMatcher nameMatcher, DocumentName name, boolean expected) {
-        assertEquals(expected, nameMatcher.matches(name), () -> format("Failed on [%s %s]", basedir, name));
+        assertThat(nameMatcher.matches(name)).as(() -> format("Failed on [%s %s]", basedir, name)).isEqualTo(expected);
     }
 
     private DocumentName mkName(String pth) {
@@ -108,8 +106,7 @@ public class ExclusionProcessorTest {
                 throw new RuntimeException("Missing expected value for " + pth + " in pattern " + pattern);
             }
             DocumentName dn = mkName(pth);
-            assertEquals(expected, pathMatcher.matches(dn),
-                    () -> format("%s failed on [%s]", pattern, pth));
+            testParseExclusion(pathMatcher, mkName(pth), expected);
         }
     }
 
@@ -228,25 +225,25 @@ public class ExclusionProcessorTest {
     @Test
     public void orTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        assertTrue(DocumentNameMatcher.or(Arrays.asList(TRUE, FALSE)).matches(basedir));
-        assertTrue(DocumentNameMatcher.or(Arrays.asList(FALSE, TRUE)).matches(basedir));
-        assertTrue(DocumentNameMatcher.or(Arrays.asList(TRUE, TRUE)).matches(basedir));
-        assertFalse(DocumentNameMatcher.or(Arrays.asList(FALSE, FALSE)).matches(basedir));
+        assertThat(DocumentNameMatcher.or(Arrays.asList(TRUE, FALSE)).matches(basedir)).isTrue();
+        assertThat(DocumentNameMatcher.or(Arrays.asList(FALSE, TRUE)).matches(basedir)).isTrue();
+        assertThat(DocumentNameMatcher.or(Arrays.asList(TRUE, TRUE)).matches(basedir)).isTrue();
+        assertThat(DocumentNameMatcher.or(Arrays.asList(FALSE, FALSE)).matches(basedir)).isFalse();
     }
 
     @Test
     public void andTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        assertFalse(DocumentNameMatcher.and(TRUE, FALSE).matches(basedir));
-        assertFalse(DocumentNameMatcher.and(FALSE, TRUE).matches(basedir));
-        assertTrue(DocumentNameMatcher.and(TRUE, TRUE).matches(basedir));
-        assertFalse(DocumentNameMatcher.and(FALSE, FALSE).matches(basedir));
+        assertThat(DocumentNameMatcher.and(TRUE, FALSE).matches(basedir)).isFalse();
+        assertThat(DocumentNameMatcher.and(FALSE, TRUE).matches(basedir)).isFalse();
+        assertThat(DocumentNameMatcher.and(TRUE, TRUE).matches(basedir)).isTrue();
+        assertThat(DocumentNameMatcher.and(FALSE, FALSE).matches(basedir)).isFalse();
     }
 
     @Test
     public void notTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
-        assertFalse(DocumentNameMatcher.not(TRUE).matches(basedir));
-        assertTrue(DocumentNameMatcher.not(FALSE).matches(basedir));
+        assertThat(DocumentNameMatcher.not(TRUE).matches(basedir)).isFalse();
+        assertThat(DocumentNameMatcher.not(FALSE).matches(basedir)).isTrue();
     }
 }

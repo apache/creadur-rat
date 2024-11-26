@@ -106,9 +106,9 @@ public class FileProcessor implements Function<DocumentName, Iterable<String>> {
             return sb.toString();
         } else {
             sb.append(documentName.getBaseName())
-                    .append("/")
-                    .append(documentName.getDirectorySeparator().equals("/") ? normalizedPattern :
-                            normalizedPattern.replace(documentName.getDirectorySeparator(), "/"));
+                    .append("/").append(normalizedPattern);
+//                    .append(documentName.getDirectorySeparator().equals("/") ? normalizedPattern :
+//                            normalizedPattern.replace(documentName.getDirectorySeparator(), "/"));
             System.out.println("LOCALIZING " + documentName + " setName: " + sb.toString());
             return (prefix ? "!" : "") + DocumentName.builder(documentName).setName(sb.toString()).build().getName();
         }
