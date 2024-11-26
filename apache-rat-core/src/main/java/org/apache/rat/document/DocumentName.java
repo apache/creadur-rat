@@ -408,7 +408,7 @@ public final class DocumentName implements Comparable<DocumentName> {
          * Sets the builder root if it is empty.
          * @param root the root to set the builder root to if it is empty.
          */
-        private void setEmptyRoot(String root) {
+        private void setEmptyRoot(final String root) {
             if (this.root.isEmpty()) {
                 this.root = root;
             }
