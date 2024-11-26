@@ -221,7 +221,6 @@
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <settingsFile>src/it/settings.xml</settingsFile>
           <postBuildHookScript>verify</postBuildHookScript>
-          <debug>true</debug>
         </configuration>
         <executions>
           <execution>
