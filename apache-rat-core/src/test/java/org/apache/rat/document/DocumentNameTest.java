@@ -97,10 +97,10 @@ public class DocumentNameTest {
         lst.add(Arguments.of("setName(root)", DocumentName.builder().setName(r), root, "", "", File.separator));
         lst.add(Arguments.of("Builder(root)", DocumentName.builder(r), root, "", "", File.separator));
 
-        lst.add(Arguments.of("foo/bar foo", DocumentName.builder()
+        lst.add(Arguments.of("foo/bar foo", DocumentName.builder().setDirSeparator("/")
                 .setName("/foo/bar").setBaseName("foo"), "", "foo/bar", "foo", "/"));
-        DocumentName.Builder builder = DocumentName.builder().setName("\\foo\\bar").setBaseName("foo")
-                .setDirSeparator("\\").setRoot("C:");
+        DocumentName.Builder builder = DocumentName.builder().setDirSeparator("\\").setName("\\foo\\bar").setBaseName("foo")
+                .setRoot("C:");
         lst.add(Arguments.of("C:\\foo\\bar foo", builder, "C:", "foo\\bar", "foo", "\\"));
 
         return lst.stream();
