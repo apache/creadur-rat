@@ -19,9 +19,7 @@
 package org.apache.rat.testhelpers;
 
 import static java.lang.String.format;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.regex.Pattern;
 
@@ -39,7 +37,8 @@ public class TextUtils {
      * @param target  the string to match.
      */
     public static void assertPatternInTarget(String pattern, String target) {
-        assertTrue(isMatching(pattern, target), () -> format("Target does not match string: %s%n%s", pattern, target));
+        assertThat(isMatching(pattern, target)).as(() -> format("Target does not match string: %s%n%s", pattern, target))
+                        .isTrue();
     }
 
     /**
@@ -49,7 +48,8 @@ public class TextUtils {
      * @param target  the string to match.
      */
     public static void assertPatternNotInTarget(String pattern, String target) {
-        assertFalse(isMatching(pattern, target), () -> format("Target matches the pattern: %s%n%s", pattern, target));
+        assertThat(isMatching(pattern, target)).as(() -> format("Target matches the pattern: %s%n%s", pattern, target))
+                .isFalse();
     }
 
     /**
@@ -69,7 +69,8 @@ public class TextUtils {
      * @param target The string to search.
      */
     public static void assertContains(final String find, final String target) {
-        assertTrue(target.contains(find), () -> format("Target does not contain the text: %s%n%s", find, target));
+        assertThat(target.contains(find)).as(() -> format("Target does not contain the text: %s%n%s", find, target))
+                .isTrue();
     }
 
     /**
@@ -81,10 +82,12 @@ public class TextUtils {
     public static void assertContainsExactly(int times, String find, String target) {
         String t = target;
         for (int i = 0; i < times; i++) {
-            assertTrue(t.contains(find), () -> format("Target does not contain %s copies fo %s%n%s", times, find, target));
+            assertThat(t.contains(find)).as(() -> format("Target does not contain %s copies fo %s%n%s", times, find, target))
+                    .isTrue();
             t = t.substring(t.indexOf(find) + find.length());
         }
-        assertFalse(t.contains(find), () -> format("Target contains more than %s copies fo %s%n%s", times, find, target));
+        assertThat(t.contains(find)).as(() -> format("Target contains more than %s copies fo %s%n%s", times, find, target))
+                .isFalse();
     }
 
     /**
@@ -93,6 +96,7 @@ public class TextUtils {
      * @param target The string to search.
      */
     public static void assertNotContains(final String find, final String target) {
-        assertFalse(target.contains(find), () -> format("Target contains the text: %s%n%s", find , target));
+        assertThat(target.contains(find)).as(() -> format("Target contains the text: %s%n%s", find , target))
+                .isFalse();
     }
 }

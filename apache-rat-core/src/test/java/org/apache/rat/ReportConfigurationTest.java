@@ -674,8 +674,8 @@ public class ReportConfigurationTest {
      * @param config The configuration to test.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
-        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.EXPECTED_IDS.length + additionalIdCount);
-        for (String s : XMLConfigurationReaderTest.EXPECTED_IDS) {
+        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.APPROVED_IDS.length + additionalIdCount);
+        for (String s : XMLConfigurationReaderTest.APPROVED_IDS) {
             assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).contains(ILicenseFamily.makeCategory(s));
         }
     }

@@ -1,4 +1,4 @@
-package ReportTest.RAT_457
+package ReportTest.RAT_455
 
 import org.apache.rat.testhelpers.TextUtils
 
@@ -21,9 +21,5 @@ import org.apache.rat.testhelpers.TextUtils
 output = new File(args[0])
 content = output.text
 
-assert content.contains('!A /apache-rat-0.17-SNAPSHOT.jar')
-
-logOutput = new File(args[1])
-log = logOutput.text
-
-TextUtils.assertPatternInTarget("^INFO:\\s+Archives:\\s+1\$", log)
+assert content.contains('!S /GPL.md')
+assert TextUtils.isMatching('^\\s+GPL\\s+GPL1\\s+GNU General Public License V1.0 \\(Unapproved\\)', content)

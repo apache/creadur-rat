@@ -45,7 +45,10 @@ import org.junit.jupiter.api.Test;
 
 public class XMLConfigurationReaderTest {
 
-    public static final String[] EXPECTED_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL1", "GPL2", "GPL3", "MIT", "OASIS",
+    public static final String[] EXPECTED_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL", "MIT", "OASIS",
+            "W3C", "W3CD" };
+
+    public static final String[] APPROVED_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "MIT", "OASIS",
             "W3C", "W3CD" };
 
     public static final String[] EXPECTED_LICENSES = { "AL", "ASL", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GEN", "GPL1", "GPL2",
@@ -59,7 +62,7 @@ public class XMLConfigurationReaderTest {
 
         Collection<String> readCategories = reader.approvedLicenseId();
 
-        assertArrayEquals(EXPECTED_IDS, readCategories.toArray(new String[readCategories.size()]));
+        assertArrayEquals(APPROVED_IDS, readCategories.toArray(new String[readCategories.size()]));
     }
 
     @Test
