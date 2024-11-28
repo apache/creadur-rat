@@ -71,7 +71,7 @@ public class FileListWalker implements IReportable {
 
     @Override
     public void run(final RatReport report) throws RatException {
-        DefaultLog.getInstance().debug(String.format("Reading %s file name: ", Arg.SOURCE.option(), source));
+        DefaultLog.getInstance().debug(String.format("Reading file name: %s due to option %s", source, Arg.SOURCE.option()));
         DocumentName sourceName = getName();
         try (Reader reader = source.reader()) {
             for (String docName : IOUtils.readLines(reader)) {

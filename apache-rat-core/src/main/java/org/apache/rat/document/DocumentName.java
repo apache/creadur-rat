@@ -36,38 +36,38 @@ import org.apache.rat.utils.DefaultLog;
 
 /**
  * The name for a document.  The {@code DocumentName} is an immutable structure that handles all the intricacies of file
- * naming on various operating systems.  DocumentNames have several components:
+ * naming on various operating systems. DocumentNames have several components:
  * <ul>
- *     <li>{@code root} - Where in the file system the name starts (e.g C: on windows).  May be empty bu not null.</li>
- *     <li>{@code dirSeparator} - the separator between name segments (e.g. "\\" on windows, "/" on linux). My not be
- *     empty or null</li>
+ *     <li>{@code root} - Where in the file system the name starts (e.g C: on windows). May be empty but not null.</li>
+ *     <li>{@code dirSeparator} - the separator between name segments (e.g. "\\" on windows, "/" on linux). May not be
+ *     empty or null.</li>
  *     <li>{@code name} - The name of the file relative to the {@code root}. May not be null. Does NOT begin with a {@code dirSeparator}</li>
- *     <li>{@code baseName} - The name of a directory or file from which this file is reported.  A DocumentName with a
- *     {@code name} of "foo/bar/baz.txt" and a {@code baseName} of "foo" will be reported as "bar/baz.txt". My not be null.</li>
- *     <li>{@code isCaseSensitive} - identifies if the underlying file system is cases sensitive.</li>
+ *     <li>{@code baseName} - The name of a directory or file from which this file is reported. A DocumentName with a
+ *     {@code name} of "foo/bar/baz.txt" and a {@code baseName} of "foo" will be reported as "bar/baz.txt". May not be null.</li>
+ *     <li>{@code isCaseSensitive} - identifies if the underlying file system is case-sensitive.</li>
  * </ul>
  * <p>
- *     {@code DocumentName}s are generally used to represent files on the files system.  However they are also used to represent files
- *     within an archive.  When representing a file in an archive the baseName is the name of the archive document.
+ *     {@code DocumentName}s are generally used to represent files on the files system. However, they are also used to represent files
+ *     within an archive. When representing a file in an archive the baseName is the name of the enclosing archive document.
  * </p>
  */
 public final class DocumentName implements Comparable<DocumentName> {
     /** The list of all roots on the file system. */
     static final Set<String> ROOTS = new HashSet<>();
-    /** True if the file system on which we are operating is case-sensitive */
+    /** {@code True} if the file system on which we are operating is case-sensitive. */
     public static final boolean FS_IS_CASE_SENSITIVE;
-    /** The full name for the document */
+    /** The full name for the document. */
     private final String name;
-    /** The name of the base directory for the document */
+    /** The name of the base directory for the document. */
     private final String baseName;
     /** The directory separator for this document. */
     private final String dirSeparator;
     /** The case-sensitive flag */
     private final boolean isCaseSensitive;
-    /** The root for the DocumentName.  May be empty but not null */
+    /** The root for the DocumentName. May be empty but not null. */
     private final String root;
 
-    // determine the cases sensitivity of the File system we are operating on.
+    // determine the case sensitivity of the file system we are operating on.
     static {
         boolean fsSensitive = true;
         File f = null;
@@ -371,7 +371,7 @@ public final class DocumentName implements Comparable<DocumentName> {
 
         /**
          * Extracts the root/name pair from a file.
-         * @param file the file to extract the root/naim pair from.
+         * @param file the file to extract the root/name pair from.
          * @return the root/name pair.
          */
         static Pair<String, String> splitRoot(final File file) {
@@ -383,7 +383,7 @@ public final class DocumentName implements Comparable<DocumentName> {
          * <p>
          *     Package private for testing.
          * </p>
-         * @param name the name to extract the root/naim pair from.
+         * @param name the name to extract the root/name pair from.
          * @param dirSeparator the directory separator.
          * @return the root/name pair.
          */
@@ -415,8 +415,8 @@ public final class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Sets the properties from the file.  This method sets the {@link #root} if it is empty, and resets {@link #name},
-         * {@link #dirSeparator}, and {@link #baseName}.
+         * Sets the properties from the file. This method sets the {@link #root} if it is empty, and resets {@link #name},
+         * {@link #dirSeparator} and {@link #baseName}.
          * @param file the file to set the properties from.
          * @return this.
          */
@@ -468,7 +468,7 @@ public final class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Sets the basename from a File.  Sets {@link #root} and the {@link #baseName}
+         * Sets the basename from a File. Sets {@link #root} and the {@link #baseName}
          * Will set the root.
          * @param file the file to set the base name from.
          * @return this.

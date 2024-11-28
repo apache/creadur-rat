@@ -360,7 +360,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Excludes files that match a DocumentNameMatcher..
+     * Excludes files that match a DocumentNameMatcher.
      * @param matcher the DocumentNameMatcher to match.
      */
     public void addExcludedMatcher(final DocumentNameMatcher matcher) {
@@ -379,7 +379,7 @@ public class ReportConfiguration {
 
     /**
      * Adds the patterns from the standard collection as included patterns.
-     * @param collection the standard colleciton to include
+     * @param collection the standard collection to include.
      */
     public void addIncludedCollection(final StandardCollection collection) {
         exclusionProcessor.addIncludedCollection(collection);
@@ -433,7 +433,7 @@ public class ReportConfiguration {
 
     /**
      * Adds the licenses and approved licenses from the defaults object to the
-     * configuration. <em>Side effect: </em> if the report should be styled and no
+     * configuration. <em>Side effect:</em> if the report should be styled and no
      * style sheet has been set the plain stylesheet from the defaults will be used.
      * @param defaults The defaults to set.
      */
@@ -461,7 +461,7 @@ public class ReportConfiguration {
      * @param styleSheet the URI of the XSLT style sheet to style the report with.
      */
     public void setStyleSheet(final URI styleSheet) {
-        Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
+        Objects.requireNonNull(styleSheet, "Stylesheet file must not be null");
         try {
             setStyleSheet(styleSheet.toURL());
         } catch (MalformedURLException e) {
@@ -475,7 +475,7 @@ public class ReportConfiguration {
      * @param styleSheet the URL of the XSLT style sheet to style the report with.
      */
     public void setStyleSheet(final URL styleSheet) {
-        Objects.requireNonNull(styleSheet, "styleSheet file should not be null");
+        Objects.requireNonNull(styleSheet, "Stylesheet file must not be null");
         setStyleSheet(styleSheet::openStream);
     }
 

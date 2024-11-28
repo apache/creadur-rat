@@ -23,7 +23,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentName;
@@ -31,7 +30,6 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.RatReport;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -40,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileListWalkerTest {
 
-    private ReportConfiguration reportConfiguration;
     private static File source;
     private static DocumentName regularName;
     private static DocumentName hiddenName;
@@ -58,20 +55,8 @@ public class FileListWalkerTest {
         return result;
     }
 
-    @BeforeEach
-    public void beforeEach() {
-        reportConfiguration = new ReportConfiguration();
-    }
-
-    public Document toWalk() {
-        DocumentName documentName = DocumentName.builder(tempDir).build();
-        return new FileDocument(documentName, tempDir, reportConfiguration.getNameMatcher(documentName));
-    }
-
     @BeforeAll
     public static void setUp() throws Exception {
-        DocumentName tempName = DocumentName.builder(tempDir).build();
-
         /*
         Create a directory structure like this:
             working

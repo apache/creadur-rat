@@ -176,7 +176,7 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Adds to lists of qualified file patterns.  Non-matching patterns start with a "!".
+     * Adds to lists of qualified file patterns. Non-matching patterns start with a {@code !}.
      * @param matching the list to put matching file patterns into.
      * @param notMatching the list to put non-matching files patterns into.
      * @param patterns the patterns to match.
@@ -199,7 +199,7 @@ public class ExclusionProcessor {
      */
     public DocumentNameMatcher getNameMatcher(final DocumentName basedir) {
         // if lastMatcher is not set or the basedir is not the same as the last one then
-        // we have to regenerate the matching document.  Otherwise we can just return the
+        // we have to regenerate the matching document. Otherwise we can just return the
         // lastMatcher since there is no change.
         if (lastMatcher == null || !basedir.equals(lastMatcherBaseDir)) {
             lastMatcherBaseDir = basedir;

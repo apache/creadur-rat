@@ -38,7 +38,7 @@ public final class DocumentNameMatcher {
 
     /** The predicate that does the actual matching. */
     private final Predicate<DocumentName> predicate;
-    /** The name of this matcher */
+    /** The name of this matcher. */
     private final String name;
 
     /**
@@ -52,7 +52,7 @@ public final class DocumentNameMatcher {
     public static final DocumentNameMatcher MATCHES_NONE = new DocumentNameMatcher("FALSE", (Predicate<DocumentName>) x -> false);
 
     /**
-     * Constructs a DocumentNameMatcher from a name and a DoucmentName predicate.
+     * Constructs a DocumentNameMatcher from a name and a DocumentName predicate.
      * @param name the name for this matcher.
      * @param predicate the predicate to determine matches.
      */
@@ -62,7 +62,7 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * Constructs a DocumentNameMatcher from a name and a delegate DocumentNameMatcher
+     * Constructs a DocumentNameMatcher from a name and a delegate DocumentNameMatcher.
      * @param name the name for this matcher.
      * @param delegate the delegate to defer to.
      */
@@ -83,7 +83,7 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * Constructs a DocumentNameMatcher from a name and a DoucmentName predicate.
+     * Constructs a DocumentNameMatcher from a name and a DocumentName predicate.
      * @param name the name of the matcher.
      * @param matchers fully specified matchers.
      */
@@ -102,7 +102,7 @@ public final class DocumentNameMatcher {
 
     /**
      * Creates a DocumentNameMatcher from a File filter.
-     * @param fileFilter the file filter to execute
+     * @param fileFilter the file filter to execute.
      */
     public DocumentNameMatcher(final FileFilter fileFilter) {
         this(fileFilter.toString(), fileFilter);
@@ -123,7 +123,7 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * Performs a logical "not" on a DocumentNameMatcher.
+     * Performs a logical {@code NOT} on a DocumentNameMatcher.
      * @param nameMatcher the matcher to negate.
      * @return a PathMatcher that is the negation of the argument.
      */
@@ -151,9 +151,9 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * Performs a logical "OR" across the collection of matchers.
+     * Performs a logical {@code OR} across the collection of matchers.
      * @param matchers the matchers to check.
-     * @return a matcher that returns TRUE if any of the enclosed matchers returns true.
+     * @return a matcher that returns {@code true} if any of the enclosed matchers returns {@code true}.
      */
     public static DocumentNameMatcher or(final Collection<DocumentNameMatcher> matchers) {
         if (matchers.isEmpty()) {
@@ -177,18 +177,18 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * Performs a logical "OR" across the collection of matchers.
+     * Performs a logical {@code OR} across the collection of matchers.
      * @param matchers the matchers to check.
-     * @return a matcher that returns TRUE if any of the enclosed matchers returns true.
+     * @return a matcher that returns {@code true} if any of the enclosed matchers returns {@code true}.
      */
     public static DocumentNameMatcher or(final DocumentNameMatcher... matchers) {
         return or(Arrays.asList(matchers));
     }
 
     /**
-     * Performs a logical "AND" across the collection of matchers.
+     * Performs a logical {@code AND} across the collection of matchers.
      * @param matchers the matchers to check.
-     * @return a matcher that returns TRUE if all the enclosed matchers return true.
+     * @return a matcher that returns {@code true} if all the enclosed matchers return {@code true}.
      */
     public static DocumentNameMatcher and(final Collection<DocumentNameMatcher> matchers) {
         if (matchers.isEmpty()) {
@@ -212,9 +212,9 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * Performs a logical "AND" across the collection of matchers.
+     * Performs a logical {@code AND} across the collection of matchers.
      * @param matchers the matchers to check.
-     * @return a matcher that returns TRUE if all the enclosed matchers return true.
+     * @return a matcher that returns {@code true} if all the enclosed matchers return {@code true}.
      */
     public static DocumentNameMatcher and(final DocumentNameMatcher... matchers) {
         return and(Arrays.asList(matchers));

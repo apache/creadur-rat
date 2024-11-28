@@ -76,7 +76,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the licenses to accept. By default, these are added to the default
-     * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false.  Arguments should be
+     * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false. Arguments should be
      * file name of &lt;Configs&gt; file structure.
      * @deprecated Use &lt;config&gt;.
      * @since 0.8

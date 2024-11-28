@@ -51,7 +51,7 @@ public final class ExclusionUtils {
     /** A predicate that filters out lines that do NOT start with "!" */
     public static final Predicate<String> NOT_MATCH_FILTER = s -> s.startsWith("!");
 
-    /** A predicate that filters out lines that  start with "!" */
+    /** A predicate that filters out lines that start with "!" */
     public static final Predicate<String> MATCH_FILTER = s -> !s.startsWith("!");
 
     private ExclusionUtils() {

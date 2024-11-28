@@ -248,6 +248,7 @@ public enum StandardCollection {
     }
 
     /**
+     * Returns combined and deduped collection of patterns.
      * @return the combined and deduped collection of patterns in the given collection.
      */
     public Set<String> patterns() {

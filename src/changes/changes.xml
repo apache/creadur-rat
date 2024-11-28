@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-259" type="add" dev="claudenw">
+        Add new option --input-source to explicitly specify which files to scan for licenses.
+      </action>
       <action issue="RAT-107" type="fix" dev="claudenw">
         Exclusions of defaults should work recursively and in submodules now. Added unit and integration tests.
       </action>

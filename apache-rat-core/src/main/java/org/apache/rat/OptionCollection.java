@@ -147,7 +147,7 @@ public final class OptionCollection {
      * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
      * @param noArgs If true then the commands do not need extra arguments
-     * @return a ReportConfiguration or null if Help was printed.
+     * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
      */
     public static ReportConfiguration parseCommands(final String[] args, final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
@@ -187,19 +187,20 @@ public final class OptionCollection {
         }
 
         ReportConfiguration configuration = createConfiguration(commandLine);
-
         if (!noArgs && !configuration.hasSource()) {
-            String msg = "No directories or files specified for scanning.  Did you forget to close a multi-argument option?";
+            String msg = "No directories or files specified for scanning. Did you forget to close a multi-argument option?";
             DefaultLog.getInstance().error(msg);
             helpCmd.accept(opts);
             throw new ConfigurationException(msg);
         }
+
         return configuration;
     }
 
     /**
      * Create the report configuration.
-     * Note: this method is package private for testing. You probably want one of the {@code ParseCommands} methods.
+     * Note: this method is package private for testing.
+     * You probably want one of the {@code ParseCommands} methods.
      * @param commandLine the parsed command line.
      * @return a ReportConfiguration
      * @see #parseCommands(String[], Consumer)

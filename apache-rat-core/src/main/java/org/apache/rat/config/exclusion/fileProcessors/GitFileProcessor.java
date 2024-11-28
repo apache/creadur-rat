@@ -47,7 +47,7 @@ public class GitFileProcessor extends DescendingFileProcessor {
         // the pattern is relative to the directory level of the particular .gitignore file itself.
         // Otherwise, the pattern may also match at any level below the .gitignore level.
         int slashPos = pattern.indexOf("/");
-        // no slash or at end
+        // no slash or at end already
         if (slashPos == -1 || slashPos == pattern.length() - 1) {
             pattern = "**/" + pattern;
         }
