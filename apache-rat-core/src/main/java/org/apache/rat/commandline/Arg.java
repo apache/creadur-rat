@@ -230,8 +230,10 @@ public enum Arg {
      */
     SOURCE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
-                    .desc("A file containing file names to process.  Path to the files must be " +
-                            "relative to the directory where RAT is running.")
+                    .desc("A file containing file names to process. " +
+                            "File names must use linux directory separator ('/') or none at all. " +
+                            "File names that do not start with '/' are relative to the directory where the " +
+                            "argument is located.")
                     .type(File.class)
                     .build())),
 
