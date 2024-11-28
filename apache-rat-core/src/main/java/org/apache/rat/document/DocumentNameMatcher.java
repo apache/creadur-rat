@@ -36,9 +36,6 @@ import static java.lang.String.format;
  */
 public final class DocumentNameMatcher {
 
-    /** The environment variable to set to enable tracing for the PatternMatcher execution */
-    public static final String ENV_VAR = DocumentNameMatcher.class.getName();
-
     /** The predicate that does the actual matching. */
     private final Predicate<DocumentName> predicate;
     /** The name of this matcher */

@@ -31,14 +31,6 @@ import static org.junit.Assert.fail;
 
 public class FileProcessorTest {
 
-    FileProcessor underTest = new FileProcessor(){
-        @Override
-        public List<String> apply(DocumentName documentName) {
-            fail("Should not be called");
-            return null; // keeps IDE happy
-        }
-    };
-
     FileProcessorTest() {}
 
     @ParameterizedTest(name="{index} {1}")
